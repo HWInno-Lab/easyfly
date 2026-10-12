@@ -20,6 +20,8 @@ log-v2/
 /directory_tree.txt
 # 文档、UI 参考图及开发记录仅本地保留，不再入库。
 /docs/
+# 用户提供的本地可选 QGC 二进制（181 MB）；不影响第三方源码。
+/src/third_party/QGC.AppImage
 .vscode/
 src/third_party/livox_sdk2/build/
 src/third_party/librealsense/build/

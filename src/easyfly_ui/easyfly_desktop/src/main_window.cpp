@@ -26,6 +26,8 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QFileDialog>
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QRegularExpressionValidator>
@@ -118,6 +120,15 @@ struct MainWindow::Impl
   std::unique_ptr<ImagePipeline> decoder;
   QTimer * timer{nullptr};
   bool closing{false}, disconnecting{false}, released{false};
+  ToolOptions tool_options;
+  ToolProcess rviz_process, qgc_process;
+  QMessageBox * exit_prompt{nullptr};
+  QLineEdit * rviz_path{nullptr}, *qgc_path{nullptr};
+  QComboBox * rviz_preset{nullptr};
+  QLabel * rviz_state{nullptr}, *qgc_state{nullptr};
+  QPlainTextEdit * tool_log{nullptr};
+  QPushButton * rviz_start{nullptr}, *qgc_start{nullptr};
+  QPushButton * rviz_stop{nullptr}, *qgc_stop{nullptr};
   uint64_t last_session{0}, last_epoch{0};
   int last_camera{-1}; int64_t submitted_stamp{-1};
   std::map<bridge::Key, uint64_t> expected;
@@ -145,8 +156,10 @@ struct MainWindow::Impl
   TextTable * parameter_model{nullptr}, *event_model{nullptr};
   QPlainTextEdit * diagnostics{nullptr};
 
-  Impl(MainWindow * owner, const bridge::BridgeConfig & options, SourceFactory source_factory)
-  : window(owner), config(options), factory(std::move(source_factory))
+  Impl(
+    MainWindow * owner, const bridge::BridgeConfig & options, SourceFactory source_factory,
+    const ToolOptions & tools)
+  : window(owner), config(options), factory(std::move(source_factory)), tool_options(tools)
   {
     build(); connect_source();
     timer = new QTimer(window); timer->setInterval(100);
@@ -511,21 +524,110 @@ struct MainWindow::Impl
   }
   void tools_page()
   {
-    auto * layout =
-      page(
-      QStringLiteral("专业工具边界"), QStringLiteral(
-        "本轮不启动或连接 QGC / RV"
-        "iz；没有伪装成可用的按钮"
-        "。"));
+    auto * layout = page(
+      QStringLiteral("专业工具"), QStringLiteral(
+        "可选独立窗口；不会自动启动。进程运行不是已连接、可飞或控制权确认。"));
     layout->addWidget(
       label(
         QStringLiteral(
-          "RViz2：后续先用独立进程与只读预设；目标输入仍需经过统一导航。\n\nQGC"
-          "：平台之外的命令源；只关闭 EasyFly 按钮不能限制其控制权。连接端点、心跳"
-          "与安全边界尚未验收。\n\nWeb、任务编辑/导入、录像和回放属于后续阶段。本程"
-          "序不查找或管理用户已启动的工具。"),
+          "RViz2：仅查看预设，固定 odom，继承本进程 ROS domain；启动时绑定当前观测"
+          "配置和相机话题。所有 RViz 图层是最后收到的内容，不承诺新鲜度；模拟时钟"
+          "暂停时标记寿命也可能暂停。预测/语义副本尚无显示适配，不混入实测图层。"
+          "切换 UI 配置后请手动停止并重启 RViz。\n\nQGC：仅离线隔离预览，独立临时配置，"
+          "无主机网络/设备访问；缺少隔离条件就拒绝启动，无联网回退。QGC 本身不是只读"
+          "软件；本入口不管理用户从其他方式启动的 QGC，也不代表联网控制已验收。"),
         "toolsBoundary", pages));
+    auto * form = new QFormLayout();
+    rviz_path = new QLineEdit(tool_options.rviz_path, pages); rviz_path->setObjectName("rvizPath");
+    qgc_path = new QLineEdit(tool_options.qgc_path, pages); qgc_path->setObjectName("qgcPath");
+    form->addRow(QStringLiteral("RViz2 绝对路径"), rviz_path);
+    auto * qgc_row = new QHBoxLayout(); qgc_row->addWidget(qgc_path);
+    auto * choose = button(QStringLiteral("选择 AppImage"), "selectQgc", pages); qgc_row->addWidget(
+      choose);
+    form->addRow(QStringLiteral("QGC AppImage"), qgc_row);
+    QObject::connect(
+      choose, &QPushButton::clicked, window, [this] {
+        if (qgc_process.active() || closing) {return;}
+        const auto path = QFileDialog::getOpenFileName(
+          window, QStringLiteral("选择可信来源的 QGC AppImage"), qgc_path->text(),
+          "AppImage (*.AppImage);;All files (*)");
+        if (!path.isEmpty()) {qgc_path->setText(path);}
+      });
+    rviz_preset = new QComboBox(pages); rviz_preset->setObjectName("rvizPreset");
+    rviz_preset->addItems(
+      {QStringLiteral("导航查看"), QStringLiteral("感知查看"),
+        QStringLiteral("精降相机查看")});
+    form->addRow(QStringLiteral("RViz 查看预设"), rviz_preset); layout->addLayout(form);
+    auto * row = new QHBoxLayout();
+    rviz_start = button(QStringLiteral("打开 RViz 查看"), "startRviz", pages);
+    rviz_stop = button(QStringLiteral("停止本次 RViz"), "stopRviz", pages);
+    qgc_start = button(QStringLiteral("打开 QGC 离线预览"), "startQgc", pages);
+    qgc_stop = button(QStringLiteral("停止本次 QGC"), "stopQgc", pages);
+    for (auto * item : {rviz_start, rviz_stop, qgc_start, qgc_stop}) {row->addWidget(item);}
+    layout->addLayout(row);
+    rviz_state = label("", "rvizState", pages); qgc_state = label("", "qgcState", pages);
+    layout->addWidget(rviz_state); layout->addWidget(qgc_state);
+    tool_log = new QPlainTextEdit(pages); tool_log->setObjectName("toolLog");
+    tool_log->setReadOnly(true); tool_log->setMaximumBlockCount(400);
+    tool_log->setMinimumHeight(180);
+    layout->addWidget(tool_log);
+    QObject::connect(
+      rviz_start, &QPushButton::clicked, window, [this] {
+        if (closing || disconnecting) {return;}
+        tool_options.rviz_path = rviz_path->text();
+        rviz_process.start(ToolKind::Rviz, tool_options, config, rviz_preset->currentIndex());
+        tools_tick();
+      });
+    QObject::connect(
+      qgc_start, &QPushButton::clicked, window, [this] {
+        if (closing) {return;}
+        tool_options.qgc_path = qgc_path->text();
+        qgc_process.start(ToolKind::Qgc, tool_options, config); tools_tick();
+      });
+    QObject::connect(rviz_stop, &QPushButton::clicked, window, [this] {rviz_process.stop();});
+    QObject::connect(qgc_stop, &QPushButton::clicked, window, [this] {qgc_process.stop();});
     layout->addStretch();
+  }
+  bool tools_active() const {return rviz_process.active() || qgc_process.active();}
+  void tools_tick()
+  {
+    rviz_path->setEnabled(!rviz_process.active() && !closing);
+    qgc_path->setEnabled(!qgc_process.active() && !closing);
+    rviz_preset->setEnabled(!rviz_process.active() && !closing);
+    rviz_start->setEnabled(!rviz_process.active() && !closing && !disconnecting);
+    qgc_start->setEnabled(!qgc_process.active() && !closing);
+    rviz_stop->setEnabled(rviz_process.active() && !closing);
+    qgc_stop->setEnabled(qgc_process.active() && !closing);
+    rviz_state->setText("RViz: " + rviz_process.status());
+    qgc_state->setText("QGC: " + qgc_process.status());
+    const auto logs = QString("RViz (last 32K characters)\n") + rviz_process.log() +
+      "\nQGC offline (last 32K characters)\n" + qgc_process.log();
+    if (tool_log->toPlainText() != logs) {tool_log->setPlainText(logs);}
+    if (closing && released && !tools_active()) {window->close();}
+  }
+  void request_close()
+  {
+    if (closing || exit_prompt) {return;}
+    if (!tools_active()) {stop_source(true); return;}
+    exit_prompt = new QMessageBox(
+      QMessageBox::Question, QStringLiteral("本次工具仍在运行"),
+      QStringLiteral(
+        "是否停止本次启动的 RViz/QGC 后关闭 EasyFly？\n"
+        "只停止本次受管进程，不关闭用户原有工具或平台节点。QGC 是离线预览。"),
+      QMessageBox::Yes | QMessageBox::Cancel, window);
+    exit_prompt->setObjectName("toolExitPrompt"); exit_prompt->setTextFormat(Qt::PlainText);
+    exit_prompt->setDefaultButton(QMessageBox::Cancel);
+    exit_prompt->setButtonText(QMessageBox::Yes, QStringLiteral("停止本次工具并关闭"));
+    exit_prompt->setButtonText(QMessageBox::Cancel, QStringLiteral("保持窗口和工具"));
+    QObject::connect(
+      exit_prompt, &QMessageBox::finished, window, [this](int answer) {
+        exit_prompt->setObjectName("");
+        exit_prompt->deleteLater(); exit_prompt = nullptr;
+        if (answer == QMessageBox::Yes) {
+          rviz_process.stop(); qgc_process.stop(); stop_source(true);
+        }
+      });
+    exit_prompt->open();
   }
   bool available() const
   {
@@ -926,6 +1028,7 @@ struct MainWindow::Impl
   }
   void tick()
   {
+    tools_tick();
     if (source) {current = source->snapshot();}
     if (disconnecting) {cleanup_tick();}
     if (!current) {return;}
@@ -938,13 +1041,15 @@ struct MainWindow::Impl
   }
 };
 
-MainWindow::MainWindow(const bridge::BridgeConfig & config, SourceFactory factory, QWidget * parent)
-: QMainWindow(parent), impl_(std::make_unique<Impl>(this, config, std::move(factory))) {}
+MainWindow::MainWindow(
+  const bridge::BridgeConfig & config, SourceFactory factory, QWidget * parent,
+  const ToolOptions & tools)
+: QMainWindow(parent), impl_(std::make_unique<Impl>(this, config, std::move(factory), tools)) {}
 MainWindow::~MainWindow() = default;
-bool MainWindow::cleanup_complete() const {return impl_->released;}
+bool MainWindow::cleanup_complete() const {return impl_->released && !impl_->tools_active();}
 void MainWindow::closeEvent(QCloseEvent * event)
 {
-  if (impl_->released) {event->accept(); return;}
-  event->ignore(); if (!impl_->closing) {impl_->stop_source(true);}
+  if (cleanup_complete()) {event->accept(); return;}
+  event->ignore(); impl_->request_close();
 }
 }  // namespace easyfly_desktop

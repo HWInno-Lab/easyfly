@@ -95,6 +95,8 @@ protected:
     // CTest supplies this isolated domain to both mock and SDK contexts.
     ASSERT_STREQ(std::getenv("ROS_DOMAIN_ID"), "92");
     context = std::make_shared<rclcpp::Context>(); context->init(0, nullptr);
+    ASSERT_FALSE(std::getenv("EASYFLY_UI_TEST_FAIL_AFTER_CONTEXT"))
+      << "injected setup failure after context";
     rclcpp::NodeOptions options; options.context(context).use_global_arguments(false);
     node = std::make_shared<rclcpp::Node>("ui_readonly_mock", options);
     clock_publisher = node->create_publisher<rosgraph_msgs::msg::Clock>("/clock", 1);
@@ -209,11 +211,16 @@ protected:
   }
   void TearDown() override
   {
-    executor->cancel(); thread.join(); timer.reset(); platform_resources.clear(); resources.clear();
-    executor->remove_node(node); executor.reset();
+    // Also safe when a fatal SetUp assertion returned before any resource existed.
+    // Shutdown only this mock context; a late-starting spin observes it as stopped.
+    if (context && context->is_valid()) {context->shutdown("mock complete");}
+    if (thread.joinable()) {thread.join();}
+    timer.reset(); platform_resources.clear(); resources.clear();
+    if (executor && node) {executor->remove_node(node);}
+    executor.reset();
     image_publisher.reset(); event_publisher.reset(); state_publisher.reset();
     clock_publisher.reset();
-    node.reset(); context->shutdown("mock complete");
+    node.reset(); context.reset();
     EXPECT_EQ(goals, 0); EXPECT_EQ(cancels, 0); EXPECT_EQ(control_messages, 0);
     EXPECT_EQ(commands, 0); EXPECT_EQ(mission_writes, 0); EXPECT_EQ(param_writes, 0);
   }

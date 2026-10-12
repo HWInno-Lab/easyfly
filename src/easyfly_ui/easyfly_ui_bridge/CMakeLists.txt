@@ -33,6 +33,13 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_observer mavros_msgs)
   set_tests_properties(test_observer PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=92;ROS_LOCALHOST_ONLY=1")
+  foreach(setup_case missing_domain partial_context)
+    add_test(NAME test_setup_${setup_case}
+      COMMAND ${CMAKE_COMMAND} -DTEST_BINARY=$<TARGET_FILE:test_observer>
+        -DPARTIAL_CONTEXT=$<STREQUAL:${setup_case},partial_context>
+        -P ${CMAKE_CURRENT_SOURCE_DIR}/test/check_setup_failure.cmake)
+    set_tests_properties(test_setup_${setup_case} PROPERTIES TIMEOUT 20)
+  endforeach()
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()

@@ -1,7 +1,8 @@
 # EasyFly read-only desktop
 
 Native C++17 / Qt5 Widgets desktop. Uses `easyfly_ui_bridge` to observe an
-already-running ROS graph; it never launches a backend or an external tool.
+already-running ROS graph; it never launches a backend. Optional independent
+viewing tools launch only after explicit user clicks.
 
 ## Build and run
 
@@ -51,7 +52,7 @@ contract, never on the color of a field.
   route, occupied map, global geographic map or navigation input.
 - Diagnostics: capability details, four whitelisted parameter reads, local
   observer evidence and bounded events. No writes, fault clearing or control.
-- Tools: explains future RViz2/QGC boundaries. No tool launch or connection.
+- Tools: explicit RViz viewing presets and offline-isolated QGC preview.
 
 All upstream strings are plain text; tables are non-editable and do not enable
 rich-text tooltips. Global phase events lack execution identity/heartbeat and
@@ -93,7 +94,7 @@ real-camera evidence. Screenshot location is `docs/ui/d6-2/` (ignored by Git).
 
 These checks do not establish SITL/hardware readiness, desktop window-manager
 behavior on every machine, real camera throughput or long-duration performance.
-No D6-3 tools or D6-4 flight operations are enabled.
+D6-4 flight operations are not enabled; D6-3 does not authorize QGC networking.
 
 One bridge regression run terminated with SIGSEGV in its image/global-event
 test. Targeted and whole-suite reruns did not reproduce it. The test now retains
@@ -101,13 +102,71 @@ the same immutable snapshot it validated rather than dereferencing a separately
 loaded snapshot, but without a crash stack the original runtime cause remains
 unconfirmed. Passing reruns are not evidence of a certified crash fix.
 
-An independent retest on 2026-10-12 reproduced the crash twice in 57 native
-runs (about 3.5 percent, both within the first seconds of different cases) and
-on the first attempt under gdb. The captured stack stops inside
-`rclcpp::Executor::cancel()` reached from `ObserverTest::TearDown()`, i.e. the
-harness mock executor teardown, after the Observer under test had already been
-destroyed inside the test body. Without librclcpp debug symbols or an
-AddressSanitizer run this points at a teardown/multi-context race in the test
-harness or rclcpp itself; latent earlier heap corruption from production code
-is not fully excluded. The root cause stays unconfirmed and passing reruns
-still do not certify a fix.
+Correction to the earlier independent retest attribution: the captured gdb
+run had no ROS_DOMAIN_ID, so SetUp failed before creating the executor or the
+production Observer. Its unconditional null-executor cleanup then crashed.
+This is a confirmed test-harness defect, not evidence of a production teardown
+race. Cleanup now shuts down only the owned context and tolerates partial
+initialization; missing-domain and post-context fault-injection probes verify
+normal assertion failure rather than a crash. A different, correctly configured
+CTest run failed without that SetUp assertion and without a stack; its cause
+remains unconfirmed. Ten correctly configured whole-suite repetitions passed,
+which does not certify a fix for that separate failure.
+
+## Optional tools (D6-3)
+
+Install RViz2 and bubblewrap separately if desired. Missing tools or unsupported
+namespaces fail visibly, without falling back to an unisolated process.
+RViz2 is found on PATH; use `--rviz-path /absolute/path` to override it.
+Choose the trusted QGC AppImage with the file picker or pass
+`--qgc-path /home/jia/easyfly_ws/src/third_party/QGC.AppImage`.
+Neither option starts a tool automatically.
+
+RViz presets are generated from the current observation configuration at launch:
+navigation, perception, and landing-camera viewing. They use fixed frame odom,
+inherited ROS_DOMAIN_ID/ROS_LOCALHOST_ONLY, explicit use_sim_time, best-effort
+depth-one observations, and only MoveCamera/Select tools. The planned trajectory
+and SLAM layers are disabled initially. All external RViz displays are explicitly
+last-known/not freshness checked; paused ROS time can pause marker lifetimes.
+They are not the desktop bridge's freshness-filtered evidence or flight admission.
+Prediction and semantic-copy displays are not adapted yet. Stop/restart RViz
+after changing desktop configuration. A user who manually edits RViz can add
+control plugins; this viewing preset is not a hostile-plugin security boundary.
+
+QGC is a full-control application, not a read-only client. This entry permits
+only offline preview: bwrap isolates network, IPC and PID namespaces, substitutes
+minimal /dev, hides host /run and /tmp apart from the X11 transport/authority,
+uses read-only host files and fresh temporary settings, and runs the AppImage
+without FUSE. It does not modify MAVROS endpoints, PX4 or existing QGC settings.
+Trusted binaries and the local X11 session are required; this is not a complete
+malicious-software sandbox. No network connection, vehicle command or QGC
+heartbeat/failsafe interaction is validated in this increment.
+
+Status refers only to the owned wrapper process, never inferred vehicle
+connection. Logs retain at most 32768 characters per tool. Stops are asynchronous,
+then escalate only the owned wrapper after three seconds; PID namespaces contain
+descendants. Closing with active tools asks first (default: keep everything).
+Only an explicit stop-and-close choice stops these owned tools. User-started
+tools and platform processes are never searched for or terminated.
+Unexpected forced termination of EasyFly ends its contained tool processes.
+Normal close waits for both tools and local observer/converter cleanup.
+
+RViz uses Mesa software rendering in its child environment
+(`LIBGL_ALWAYS_SOFTWARE=1`, `__GLX_VENDOR_LIBRARY_NAME=mesa`), without changing
+the desktop's graphics settings or host drivers. Software-rendering behavior is
+documented by [Mesa](https://docs.mesa3d.org/envvars.html); vendor selection is
+implemented in [libglvnd](https://github.com/NVIDIA/libglvnd/blob/master/src/GLX/libglxmapping.c).
+This was verified locally with RViz2 11.2.26; another graphics stack may fail
+visibly rather than render. The three presets passed real-window startup checks
+without a backend. The supplied QGC 5.0.8 AppImage also passed offline startup.
+See `src/third_party/qgc/README.md` for the inspected binary's identity and scope.
+
+Default tool lifecycle/isolation tests require bwrap. Optional real-window
+smoke checks never run in ordinary CTest:
+
+```bash
+QT_QPA_PLATFORM=xcb ROS_DOMAIN_ID=94 ROS_LOCALHOST_ONLY=1 \
+  EASYFLY_QGC_TEST_IMAGE=/absolute/path/QGC.AppImage \
+  build/easyfly_desktop/test_tools --gtest_also_run_disabled_tests \
+  --gtest_filter='Tools.DISABLED_Real*'
+```

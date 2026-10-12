@@ -119,10 +119,11 @@ estimator, or a substitute for backend flight admission.
 
 ## Known test instability
 
-`test_observer` intermittently dies with SIGSEGV during harness teardown: an
-independent retest on 2026-10-12 saw two failures in 57 native runs and one on
-the first gdb run, with the stack inside `rclcpp::Executor::cancel()` called
-from `ObserverTest::TearDown()` after the Observer under test had already been
-destroyed inside the test body. The root cause is unconfirmed (no librclcpp
-debug symbols, no AddressSanitizer run); a failing run only needs a rerun, but
-repeated passes are not evidence of a certified crash fix.
+The earlier gdb attribution was incorrect: that run lacked ROS_DOMAIN_ID, so
+SetUp failed before the mock executor or Observer existed. Unconditional cleanup
+of the null executor caused its SIGSEGV. Cleanup now tolerates partial setup and
+shuts down only the owned context; negative probes cover missing domain and a
+failure immediately after context initialization. This confirmed harness defect
+is separate from a correctly configured native CTest failure without a stack,
+whose cause remains unconfirmed. Ten correctly configured whole-suite reruns
+passed; rerunning a failed test is diagnostic, not proof that its cause is fixed.

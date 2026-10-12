@@ -223,11 +223,14 @@ protected:
     if (window) {
       window->close(); EXPECT_TRUE(until([&] {return window->cleanup_complete();})); window.reset();
     }
-    executor->cancel(); thread.join(); timer.reset(); platform_resources.clear(); resources.clear();
-    executor->remove_node(node); executor.reset();
+    if (context && context->is_valid()) {context->shutdown("mock complete");}
+    if (thread.joinable()) {thread.join();}
+    timer.reset(); platform_resources.clear(); resources.clear();
+    if (executor && node) {executor->remove_node(node);}
+    executor.reset();
     image_publisher.reset(); event_publisher.reset(); state_publisher.reset();
     clock_publisher.reset();
-    node.reset(); context->shutdown("mock complete");
+    node.reset(); context.reset();
     EXPECT_EQ(goals, 0); EXPECT_EQ(cancels, 0); EXPECT_EQ(control_messages, 0);
     EXPECT_EQ(commands, 0); EXPECT_EQ(mission_writes, 0); EXPECT_EQ(param_writes, 0);
   }

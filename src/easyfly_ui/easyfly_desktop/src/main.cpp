@@ -39,6 +39,8 @@ int main(int argc, char ** argv)
   parser.addOption({"system-time", QStringLiteral("显式使用系统时间，默认模拟时钟")});
   parser.addOption(
     {"profile", QStringLiteral("UI 选择标签（不启动后端）"), "name", "navigation_dev"});
+  parser.addOption({"qgc-path", QStringLiteral("QGC AppImage 绝对路径，仅供手动离线预览"), "path"});
+  parser.addOption({"rviz-path", QStringLiteral("覆盖 RViz2 可执行绝对路径"), "path"});
   parser.addOption(
     {"front-topic", QStringLiteral("前视图像 topic"), "topic",
       "/camera/color/image_raw"});
@@ -61,12 +63,17 @@ int main(int argc, char ** argv)
     bool valid = false; duration = parser.value("quit-after-ms").toInt(&valid);
     if (!valid || duration < 100 || duration > 60000) {parser.showHelp(2);}
   }
-  easyfly_desktop::MainWindow window(config); window.show();
+  auto tools = easyfly_desktop::default_tool_options();
+  tools.qgc_path = parser.value("qgc-path");
+  if (parser.isSet("rviz-path")) {tools.rviz_path = parser.value("rviz-path");}
+  easyfly_desktop::MainWindow window(config, easyfly_desktop::bridge_factory(), nullptr, tools);
+  window.show();
   std::signal(SIGINT, request_exit); std::signal(SIGTERM, request_exit);
   QTimer signal_timer;
   QObject::connect(
     &signal_timer, &QTimer::timeout, &window, [&window] {
       if (exit_requested) {
+        exit_requested = 0;
         window.close();
       }
     });

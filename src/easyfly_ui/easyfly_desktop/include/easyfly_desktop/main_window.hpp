@@ -18,6 +18,7 @@
 #include <memory>
 
 #include "easyfly_desktop/source.hpp"
+#include "easyfly_desktop/tools.hpp"
 namespace easyfly_desktop
 {
 class MainWindow : public QMainWindow
@@ -25,7 +26,8 @@ class MainWindow : public QMainWindow
 public:
   explicit MainWindow(
     const bridge::BridgeConfig & config = bridge::BridgeConfig{},
-    SourceFactory factory = bridge_factory(), QWidget * parent = nullptr);
+    SourceFactory factory = bridge_factory(), QWidget * parent = nullptr,
+    const ToolOptions & tools = default_tool_options());
   ~MainWindow() override;
   bool cleanup_complete() const;
 
