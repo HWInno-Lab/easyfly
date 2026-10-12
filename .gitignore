@@ -8,7 +8,7 @@ log-v2/
 .reasonix/
 
 # 本地开发计划、进度、问题与验收记录（保留文件，不入库）
-# 根目录规则不影响 src 内规划器代码及正式技术文档。
+# 根目录规则不影响 src 内规划器代码。
 /plan*.md
 /schedule*.md
 /question*.md
@@ -18,8 +18,8 @@ log-v2/
 /task_*.md
 /test-guide.md
 /directory_tree.txt
-# 新增本地记录可集中放在这里；docs/development 技术说明仍入库。
-/docs/local/
+# 文档、UI 参考图及开发记录仅本地保留，不再入库。
+/docs/
 .vscode/
 src/third_party/livox_sdk2/build/
 src/third_party/librealsense/build/

@@ -1,0 +1,112 @@
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "theme.hpp"
+
+namespace easyfly_desktop
+{
+namespace theme
+{
+QPalette palette()
+{
+  QPalette result;
+  result.setColor(QPalette::Window, QColor("#f4f6f9"));
+  result.setColor(QPalette::WindowText, QColor("#1f2937"));
+  result.setColor(QPalette::Base, QColor("#ffffff"));
+  result.setColor(QPalette::AlternateBase, QColor("#f8fafc"));
+  result.setColor(QPalette::Text, QColor("#1f2937"));
+  result.setColor(QPalette::Button, QColor("#ffffff"));
+  result.setColor(QPalette::ButtonText, QColor("#24589f"));
+  result.setColor(QPalette::Highlight, QColor("#1769df"));
+  result.setColor(QPalette::HighlightedText, QColor("#ffffff"));
+  result.setColor(QPalette::Link, QColor("#1769df"));
+  result.setColor(QPalette::ToolTipBase, QColor("#ffffff"));
+  result.setColor(QPalette::ToolTipText, QColor("#1f2937"));
+  result.setColor(QPalette::Disabled, QPalette::Text, QColor("#64748b"));
+  result.setColor(QPalette::Disabled, QPalette::WindowText, QColor("#64748b"));
+  result.setColor(QPalette::Disabled, QPalette::ButtonText, QColor("#64748b"));
+  return result;
+}
+QString stylesheet()
+{
+  return QStringLiteral(
+    "QWidget { color:#1f2937; font-size:13px; }"
+    "QMainWindow, QWidget#workspaceRoot, QStackedWidget, QScrollArea { background:#f4f6f9; }"
+    "QWidget#pageContent { background:#f4f6f9; }"
+    "QWidget:disabled { color:#64748b; }"
+    "QLabel { background:transparent; }"
+    "QLabel[heading=true] { font-size:23px; font-weight:600; color:#111827; }"
+    "QLabel#pageSubtitle, QLabel#requestNote { color:#526176; }"
+    "QWidget#topBar { background:#202d3d; border-radius:6px; }"
+    "QWidget#topBar QLabel { color:#e6edf5; }"
+    "QLabel#brand { font-size:24px; font-weight:600; color:#f8fafc; padding:8px; }"
+    "QGroupBox { background:#ffffff; border:1px solid #dce3eb; border-radius:7px;"
+    " margin-top:12px; padding:16px 12px 8px; }"
+    "QGroupBox::title { subcontrol-origin:margin; left:14px; color:#344256;"
+    " background:#ffffff; padding:0 5px; }"
+    "QPushButton { background:#ffffff; color:#24589f; border:1px solid #cbd5e1;"
+    " border-radius:5px; padding:8px 13px; }"
+    "QPushButton:hover { background:#eff6ff; border-color:#8cb7f1; }"
+    "QPushButton:pressed { background:#dbeafe; }"
+    "QPushButton:focus { border:2px solid #1769df; }"
+    "QPushButton#listMissions, QPushButton#queryMission { background:#1769df;"
+    " color:#ffffff; border-color:#1769df; }"
+    "QPushButton#listMissions:hover, QPushButton#queryMission:hover { background:#1459bc; }"
+    "QPushButton#observerToggle { background:#304359; color:#f8fafc; border-color:#61758d; }"
+    "QPushButton#observerToggle:hover { background:#3e5671; }"
+    "QPushButton:disabled, QPushButton#queryMission:disabled,"
+    " QPushButton#observerToggle:disabled { background:#e9edf3;"
+    " color:#64748b; border:1px solid #dce3eb; }"
+    "QLineEdit, QComboBox, QPlainTextEdit { background:#ffffff; color:#1f2937;"
+    " border:1px solid #cbd5e1; border-radius:4px; padding:5px;"
+    " selection-background-color:#dbeafe; selection-color:#174a91; }"
+    "QLineEdit:focus, QComboBox:focus, QPlainTextEdit:focus { border-color:#1769df; }"
+    "QLineEdit:disabled, QComboBox:disabled { background:#f1f4f8; color:#64748b; }"
+    "QComboBox QAbstractItemView { background:#ffffff; color:#1f2937;"
+    " selection-background-color:#1769df; selection-color:#ffffff; }"
+    "QListWidget, QTableView { background:#ffffff; color:#1f2937;"
+    " alternate-background-color:#f8fafc; border:1px solid #dce3eb;"
+    " gridline-color:#e5eaf0; selection-background-color:#dbeafe;"
+    " selection-color:#174a91; }"
+    "QListWidget::item { padding:11px; }"
+    "QListWidget::item:selected { background:#dbeafe; color:#174a91; }"
+    "QListWidget#navigation { background:#233142; color:#e6edf5; border:none; }"
+    "QListWidget#navigation::item { padding:13px 11px; border-left:4px solid transparent; }"
+    "QListWidget#navigation::item:hover { background:#30465d; }"
+    "QListWidget#navigation::item:selected { background:#1769df; color:#ffffff;"
+    " border-left-color:#60a5fa; }"
+    "QHeaderView::section { background:#eef2f6; color:#526176; padding:7px;"
+    " border:0; border-bottom:1px solid #dce3eb; }"
+    "QTableView::item:selected { background:#dbeafe; color:#174a91; }"
+    "QSplitter::handle { background:#dce3eb; }"
+    "QMenuBar { background:#202d3d; color:#e6edf5; }"
+    "QMenuBar::item { background:transparent; color:#e6edf5; padding:4px 8px; }"
+    "QMenuBar::item:selected { background:#30465d; }"
+    "QMenu { background:#ffffff; color:#1f2937; border:1px solid #dce3eb; }"
+    "QMenu::item:selected { background:#1769df; color:#ffffff; }"
+    "QStatusBar { background:#202d3d; color:#e6edf5; }"
+    "QDockWidget::title { background:#eef2f6; color:#344256; padding:7px;"
+    " border-bottom:1px solid #dce3eb; }"
+    "QLabel#warningBanner { background:#fff5df; color:#8a4b08;"
+    " border:1px solid #edc36a; border-radius:4px; padding:8px; }"
+    "QScrollBar:vertical { background:#edf1f6; width:12px; margin:0; }"
+    "QScrollBar:horizontal { background:#edf1f6; height:12px; margin:0; }"
+    "QScrollBar::handle { background:#b5c1d0; border-radius:4px; }"
+    "QScrollBar::handle:vertical { min-height:24px; }"
+    "QScrollBar::handle:horizontal { min-width:24px; }"
+    "QScrollBar::handle:hover { background:#8499b1; }"
+    "QScrollBar::add-line, QScrollBar::sub-line { width:0; height:0; }"
+    "QScrollBar::add-page, QScrollBar::sub-page { background:transparent; }");
+}
+}  // namespace theme
+}  // namespace easyfly_desktop

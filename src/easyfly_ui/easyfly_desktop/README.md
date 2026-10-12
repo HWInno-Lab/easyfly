@@ -1,0 +1,113 @@
+# EasyFly read-only desktop
+
+Native C++17 / Qt5 Widgets desktop. Uses `easyfly_ui_bridge` to observe an
+already-running ROS graph; it never launches a backend or an external tool.
+
+## Build and run
+
+From the workspace (dependencies and bridge already built):
+
+```bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+colcon build --packages-select easyfly_desktop --cmake-args -DBUILD_TESTING=ON
+source install/setup.bash
+ros2 run easyfly_desktop easyfly_desktop
+```
+
+The default uses simulation time. With no `/clock`, state/images/geometry remain
+unavailable; the window still opens. Use `--system-time` only for a system-time
+backend. `ROS_DOMAIN_ID` and `ROS_LOCALHOST_ONLY` are inherited at startup; the
+window does not change them. A domain is discovery isolation, not authentication.
+
+Options: `--profile` (selection label only), `--front-topic`, `--down-topic`
+(empty disables that camera), `--system-time`, `--help`.
+Changing profile, topics or time source in the window requires disconnecting
+and completing local cleanup before reconnecting. Backend profile is confirmed
+only by an explicit whitelisted read, not by selection or capabilities.
+
+## Pages and boundaries
+
+The visual theme follows the original references: dark slate navigation/header,
+cool light-gray workspace, white cards/tables and blue selection/primary actions.
+Warnings use dark amber text on a pale amber surface. The local XY canvas is
+light; only the camera viewport retains a dark background. Qt palette and widget
+styles are scoped to this window in `src/theme.cpp`, not the entire application
+or ROS configuration. Color tests check rendered surfaces and text contrast;
+data validity and control admission still depend on the unchanged observation
+contract, never on the color of a field.
+
+- Overview: independent validity flags, local odom/ENU position, velocity,
+  battery, clock/receipt/source evidence and selected camera. Local Z is **not**
+  ground clearance or height above the takeoff point.
+- Missions: list catalog basenames, static validation, query an explicitly
+  known 32-character service `execution_id`. No body/step tree/history discovery,
+  arbitrary file access, mission start or cancel. Service success is not execution
+  success; `execution_pending` is shown separately. `not_found` proves no release.
+- Perception: selectable front/down image and measured target/obstacle tables.
+  Missing, invalid and valid-empty are distinct. No guessed overlays, predictions,
+  semantic obstacle copies or landing observation adapters in this increment.
+- Local XY: actual trajectory and current odom geometry only, not a planned
+  route, occupied map, global geographic map or navigation input.
+- Diagnostics: capability details, four whitelisted parameter reads, local
+  observer evidence and bounded events. No writes, fault clearing or control.
+- Tools: explains future RViz2/QGC boundaries. No tool launch or connection.
+
+All upstream strings are plain text; tables are non-editable and do not enable
+rich-text tooltips. Global phase events lack execution identity/heartbeat and
+are not attached to the selected catalog file. Historical `command_uncertain`
+warnings survive reconnect; new telemetry does not establish fault release.
+
+Qt owns all widgets on the main thread. ROS callbacks never touch Qt. A single
+background converter owns copied QImage pixels and at most one active, one
+latest pending and one latest output frame. Camera/session/time-epoch binding
+prevents stale converted output from reappearing. The main thread polls at 10Hz;
+it never waits for a ROS service response. Source age is never advanced using
+steady time. Bridge budgets and freshness policy remain unchanged.
+
+Disconnect, close and SIGINT/SIGTERM request nonblocking local stop. The window
+stays responsive until its own observer and converter report stopped, then
+releases them. No global ROS shutdown, external goal cancellation, process
+search/kill or cleanup of user-owned nodes/tools occurs. Direct C++ destruction
+without the normal close protocol can join local threads; application entry
+and tests use the close protocol.
+
+## Isolated checks
+
+```bash
+ctest --test-dir build/easyfly_desktop --output-on-failure
+AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS=1 \
+  ctest --test-dir build/easyfly_desktop -R '^cppcheck$' --output-on-failure
+QT_QPA_PLATFORM=offscreen ROS_DOMAIN_ID=94 ROS_LOCALHOST_ONLY=1 \
+  ros2 run easyfly_desktop easyfly_desktop --quit-after-ms 1000
+```
+
+GUI tests use offscreen Qt and domain 93 with isolated read-only service mocks.
+They spy on all nine action endpoints, control messages, mode/arming services,
+task operations and parameter writes. Image tests check format/layout ownership,
+latest-slot overload, rebinding and nonblocking shutdown. Widget tests cover
+offline/stale/paused/invalid data, IDs, pending ownership, pure text, limited
+tables, reconnect and small-window navigation. Local screenshots generated by
+the widget test carry an explicit mock-data watermark; they are not flight or
+real-camera evidence. Screenshot location is `docs/ui/d6-2/` (ignored by Git).
+
+These checks do not establish SITL/hardware readiness, desktop window-manager
+behavior on every machine, real camera throughput or long-duration performance.
+No D6-3 tools or D6-4 flight operations are enabled.
+
+One bridge regression run terminated with SIGSEGV in its image/global-event
+test. Targeted and whole-suite reruns did not reproduce it. The test now retains
+the same immutable snapshot it validated rather than dereferencing a separately
+loaded snapshot, but without a crash stack the original runtime cause remains
+unconfirmed. Passing reruns are not evidence of a certified crash fix.
+
+An independent retest on 2026-10-12 reproduced the crash twice in 57 native
+runs (about 3.5 percent, both within the first seconds of different cases) and
+on the first attempt under gdb. The captured stack stops inside
+`rclcpp::Executor::cancel()` reached from `ObserverTest::TearDown()`, i.e. the
+harness mock executor teardown, after the Observer under test had already been
+destroyed inside the test body. Without librclcpp debug symbols or an
+AddressSanitizer run this points at a teardown/multi-context race in the test
+harness or rclcpp itself; latent earlier heap corruption from production code
+is not fully excluded. The root cause stays unconfirmed and passing reruns
+still do not certify a fix.

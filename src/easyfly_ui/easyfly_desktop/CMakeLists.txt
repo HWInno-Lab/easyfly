@@ -2,10 +2,38 @@ cmake_minimum_required(VERSION 3.8)
 project(easyfly_desktop)
 
 find_package(ament_cmake REQUIRED)
-
-# TODO: add library/executable targets
+find_package(easyfly_ui_bridge REQUIRED)
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_library(desktop_widgets STATIC
+  src/source.cpp src/presentation.cpp src/image_pipeline.cpp src/widgets.cpp
+  src/theme.cpp src/main_window.cpp)
+target_include_directories(desktop_widgets PUBLIC include PRIVATE src)
+target_compile_options(desktop_widgets PRIVATE -Wall -Wextra -Wpedantic)
+set_target_properties(desktop_widgets PROPERTIES POSITION_INDEPENDENT_CODE ON)
+ament_target_dependencies(desktop_widgets PUBLIC easyfly_ui_bridge)
+target_link_libraries(desktop_widgets PUBLIC Qt5::Widgets)
+add_executable(easyfly_desktop src/main.cpp)
+target_link_libraries(easyfly_desktop desktop_widgets)
+install(TARGETS easyfly_desktop DESTINATION lib/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(Qt5 REQUIRED COMPONENTS Test)
+  find_package(mavros_msgs REQUIRED)
+  ament_add_gtest(test_desktop test/test_desktop.cpp TIMEOUT 90)
+  target_link_libraries(test_desktop desktop_widgets Qt5::Test)
+  target_compile_definitions(test_desktop PRIVATE
+    EASYFLY_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-2")
+  ament_add_gtest(test_images test/test_images.cpp TIMEOUT 30)
+  target_link_libraries(test_images desktop_widgets)
+  ament_add_gtest(test_desktop_ros test/test_desktop_ros.cpp TIMEOUT 90)
+  target_link_libraries(test_desktop_ros desktop_widgets Qt5::Test)
+  ament_target_dependencies(test_desktop_ros mavros_msgs)
+  set_tests_properties(test_desktop test_desktop_ros PROPERTIES
+    ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=93;ROS_LOCALHOST_ONLY=1")
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()
