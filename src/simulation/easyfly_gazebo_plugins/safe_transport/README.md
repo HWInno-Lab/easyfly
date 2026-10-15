@@ -27,7 +27,11 @@ work guard, service, and state. Stop on the worker only requests stop, retaining
 all resources until destruction. No reset is called while run is active.
 
 The server explicitly destroys Server, drains all deferred cleanup, requires zero
-live managers, and joins the cleanup thread before successful exit. Late manager
+live managers, and joins the cleanup thread before successful exit. Finish waits
+up to five seconds for both live managers and pending retirement to reach zero:
+the last connection may still be owned by an executing WeakBinder callback even
+when the retirement queue is empty. The reaper remains available during this
+wait. A timeout still fails and does not close or free live state. Late manager
 creation or incomplete cleanup fails loudly rather than freeing active resources.
 A stuck callback means stuck cleanup, not a false successful shutdown.
 
@@ -52,3 +56,10 @@ global LD_LIBRARY_PATH or Gazebo plugin path.
 This addresses the deterministic last-connection-on-IO-thread defect. Without
 the old natural crash stack it does not uniquely attribute the historic shutdown
 incident, nor resolve the independent historic EGO SIGSEGV.
+
+`test_transport_finish` holds the last actual TCP connection in its IO callback,
+starts Finish while live=1/pending=0, then releases the callback. It requires
+Finish to wait, join the deferred worker and return with both counts zero. This
+reproduces the premature-failure window; it does not uniquely attribute every
+historic Gazebo abort. The existing lifetime test also requires Finish to refuse
+a manager that stays live through the deadline and allow further cleanup.

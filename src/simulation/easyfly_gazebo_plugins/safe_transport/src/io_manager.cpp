@@ -31,6 +31,7 @@
 #include <openssl/evp.h>
 #include <array>
 #include <atomic>
+#include <chrono>
 #include <condition_variable>
 #include <cstdlib>
 #include <deque>
@@ -108,6 +109,7 @@ public:
     std::lock_guard<std::mutex> lock(mutex_);
     --stats_.live;
     ++stats_.completed;
+    condition_.notify_all();
   }
 
   void Retire(State * state)
@@ -129,10 +131,15 @@ public:
 
   bool Finish()
   {
-    Drain();
     {
-      std::lock_guard<std::mutex> lock(mutex_);
-      if (stats_.live != 0) {
+      std::unique_lock<std::mutex> lock(mutex_);
+      // Server owners can be gone while the last WeakBinder callback still
+      // owns a Connection. Its destructor has not queued retirement yet:
+      // pending == 0 alone is not quiescence. Keep the reaper open until both
+      // lifecycle counts reach zero. A retained/stuck owner remains a failure.
+      if (!condition_.wait_for(lock, std::chrono::seconds(5), [this] {
+          return stats_.live == 0 && stats_.pending == 0;
+        })) {
         return false;
       }
       closed_ = true;

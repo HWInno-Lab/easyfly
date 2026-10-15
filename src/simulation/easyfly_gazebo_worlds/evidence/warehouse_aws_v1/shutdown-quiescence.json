@@ -1,0 +1,181 @@
+{
+  "baseline_git_commit": "b589593",
+  "scene": "warehouse_aws_v1",
+  "scope": "Fix confirmed premature Finish failure while an actual last TCP callback still owns a connection. Does not uniquely attribute historical Gazebo abort or resolve historical planner SIGSEGV.",
+  "source_sha256": {
+    "src/simulation/easyfly_gazebo_plugins/safe_transport/src/io_manager.cpp": "871cd12f630ce64a534611fcb4ff9dc09f6dddece42211ddb602cd8290e853ae",
+    "src/simulation/easyfly_gazebo_plugins/safe_transport/CMakeLists.txt": "ecf93e251fdc0b6236799c7b417a1239d749c5a5dd7471c1ab1e342453135fc2",
+    "src/simulation/easyfly_gazebo_plugins/safe_transport/test/test_transport_finish.cpp": "6034deb4f51f92b1461904db5043227054bab2ebb11991ba457f147bbd023a57"
+  },
+  "failure_reproduction": {
+    "log": "artifacts/scene-s2-shutdown-20261015/transport-finish-before.log",
+    "log_sha256": "7d1e2ac0de5abc06ed1d15ff9ebf96f06edf5269092ecdb371a7130f98ee7393",
+    "expected_regression_failure": true,
+    "live": 1,
+    "pending": 0,
+    "old_finish_result": false
+  },
+  "fix": {
+    "quiescence": "live == 0 and pending == 0",
+    "deadline_seconds": 5,
+    "deadline_is_failure": true,
+    "no_live_state_freed": true
+  },
+  "checks": {
+    "native_tests_passed": 8,
+    "provenance_pytest_passed": 2,
+    "asan_native_tests_passed": 8,
+    "asan_detect_leaks": false,
+    "native_log": "artifacts/scene-s2-shutdown-20261015/transport-tests-after.log",
+    "asan_log": "artifacts/scene-s2-shutdown-20261015/asan-tests.log"
+  },
+  "runtime": {
+    "capture-roof": {
+      "raw_result": "artifacts/scene-s2-shutdown-20261015/capture-roof/result.json",
+      "raw_result_sha256": "3096efe0ac92d55be9d2e11d68df3b50727cf252c451d677642099213521ddd7",
+      "passed": false,
+      "error": "TimeoutError: evidence deadline 60s; state={'source_ns': 49200000000, 'frame': 'odom', 'ros_now_ns': 49200000000, 'receipt': 14320.439363318, 'steady_now': 14320.538611522, 'armed': False, 'connected': True, 'mode': 2, 'mode_name': 'AUTO.LOITER', 'position': [-0.0385429784655571, 0.008352270349860191, -0.1260986328125], 'velocity': [-0.04548293352127075, -0.005964173469692469, -0.03214230388402939], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 16.200000762939453, 'battery_remaining': 1.0}",
+      "actions": [],
+      "shutdown_seconds": 0.9655169050001859,
+      "started_processes": 24,
+      "normal_exits": 24,
+      "transport_drained": true,
+      "forced": false,
+      "leftovers": [],
+      "abnormal_lines": [],
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 59574,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "992d511a4b904fd24a1dc99a2ccd912836c555468cc47a4203370f48a804f0f7"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 60422,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+        },
+        "libplan_env.so": {
+          "pid": 60535,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "scope": "Original scene probe, including strict stationary calibration",
+      "final_disarmed_state": null,
+      "lidar_non_increasing_stamps": 0
+    },
+    "capture-no-roof": {
+      "raw_result": "artifacts/scene-s2-shutdown-20261015/capture-no-roof/result.json",
+      "raw_result_sha256": "cc3266e9ec9181001873815d78e864ed635279368dca13f6e6baa84a68a0080a",
+      "passed": true,
+      "error": null,
+      "actions": [],
+      "shutdown_seconds": 0.7654835619996447,
+      "started_processes": 24,
+      "normal_exits": 24,
+      "transport_drained": true,
+      "forced": false,
+      "leftovers": [],
+      "abnormal_lines": [],
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 61802,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "992d511a4b904fd24a1dc99a2ccd912836c555468cc47a4203370f48a804f0f7"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 61802,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "de9ce4ac15ac98e96b25a307873f37a5dd4ee459e64a648a0c8f7311215a3d69"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 62630,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+        },
+        "libplan_env.so": {
+          "pid": 63318,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "scope": "active-map disarmed shutdown capture; no coordinate registration or flight qualification",
+      "final_disarmed_state": {
+        "source_ns": 15200000000,
+        "frame": "odom",
+        "ros_now_ns": 15200000000,
+        "receipt": 14553.938325429,
+        "steady_now": 14555.318872711,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.039704881608486176,
+          0.05979342386126518,
+          0.00604248046875
+        ],
+        "velocity": [
+          0.05357895791530609,
+          0.0921916589140892,
+          -0.047637902200222015
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "lidar_non_increasing_stamps": 0
+    },
+    "flight-roof": {
+      "raw_result": "artifacts/scene-s2-shutdown-20261015/flight-roof/result.json",
+      "raw_result_sha256": "29271cff2539d13810085d5d9a6666911206a6ec2d2797feb322bd90572be402",
+      "passed": false,
+      "error": "TimeoutError: evidence deadline 60s; state={'source_ns': 49800000000, 'frame': 'odom', 'ros_now_ns': 49800000000, 'receipt': 14695.140206248, 'steady_now': 14695.195403359, 'armed': False, 'connected': True, 'mode': 2, 'mode_name': 'AUTO.LOITER', 'position': [-0.019284328445792198, -0.01299662608653307, 0.048583984375], 'velocity': [-0.037470493465662, -0.017547626048326492, 0.04406995698809624], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 16.200000762939453, 'battery_remaining': 1.0}",
+      "actions": [],
+      "shutdown_seconds": 0.7149726970001211,
+      "started_processes": 24,
+      "normal_exits": 24,
+      "transport_drained": true,
+      "forced": false,
+      "leftovers": [],
+      "abnormal_lines": [],
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 63702,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "992d511a4b904fd24a1dc99a2ccd912836c555468cc47a4203370f48a804f0f7"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 64526,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+        },
+        "libplan_env.so": {
+          "pid": 64612,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "scope": "Original scene probe, including strict stationary calibration",
+      "final_disarmed_state": null,
+      "lidar_non_increasing_stamps": 0
+    }
+  },
+  "planner_clock": {
+    "raw_result": "artifacts/scene-s2-shutdown-20261015/planner-clock/result.json",
+    "raw_result_sha256": "7744d477464ea36eabec7e29dbd4afcbd701f96f1561c5f6281ad18b2ecaae0b",
+    "cases": 4,
+    "native_process_exits": 8,
+    "all_normal": true,
+    "natural_fault_stack_captured": false
+  },
+  "new_flight_qualification": false,
+  "open_issues": [
+    "Historical EGO and navigation coordinator SIGSEGV stacks not captured; no planner destructor changes.",
+    "Historical Gazebo SIGABRT not uniquely attributed; confirmed quiescence race fixed independently.",
+    "Post-fix bounded flight attempt failed original strict stationary preflight after 60s; zero goals, no new flight pass.",
+    "Roofless scene remains draft."
+  ]
+}
