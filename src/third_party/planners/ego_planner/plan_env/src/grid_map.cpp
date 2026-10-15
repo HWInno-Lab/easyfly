@@ -1,4 +1,5 @@
 #include "plan_env/grid_map.h"
+#include "plan_env/inflation_union.h"
 #include "rclcpp/logging.hpp"
 #include "nav_msgs/msg/odometry.hpp"
 #include <chrono>
@@ -1247,7 +1248,9 @@ void GridMap::cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img)
   md_.last_trusted_cloud_time_ = node_->get_clock()->now();
 
   pcl::PointXYZ pt;
-  Eigen::Vector3d p3d, p3d_inf;
+  Eigen::Vector3d p3d;
+  std::vector<plan_env::InflationBox> inflation_boxes;
+  inflation_boxes.reserve(latest_cloud.size());
 
   const int inf_step = mp_.inflation_step_;
   const int inf_step_z = mp_.trusted_cloud_vertical_step_;
@@ -1270,7 +1273,6 @@ void GridMap::cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img)
 
     /* point inside update range */
     Eigen::Vector3d devi = p3d - md_.camera_pos_;
-    Eigen::Vector3i inf_pt;
 
     if (fabs(devi(0)) < mp_.local_update_range_(0) && fabs(devi(1)) < mp_.local_update_range_(1) &&
         fabs(devi(2)) < mp_.local_update_range_(2))
@@ -1278,36 +1280,36 @@ void GridMap::cloudCallback(const sensor_msgs::msg::PointCloud2::SharedPtr img)
 
       ++local_point_count;
 
-      /* inflate the point */
-      for (int x = -inf_step; x <= inf_step; ++x)
-        for (int y = -inf_step; y <= inf_step; ++y)
-          for (int z = -inf_step_z; z <= inf_step_z; ++z)
-          {
-
-            p3d_inf(0) = pt.x + x * mp_.resolution_;
-            p3d_inf(1) = pt.y + y * mp_.resolution_;
-            p3d_inf(2) = pt.z + z * mp_.resolution_;
-
-            max_x = max(max_x, p3d_inf(0));
-            max_y = max(max_y, p3d_inf(1));
-            max_z = max(max_z, p3d_inf(2));
-
-            min_x = min(min_x, p3d_inf(0));
-            min_y = min(min_y, p3d_inf(1));
-            min_z = min(min_z, p3d_inf(2));
-
-            posToIndex(p3d_inf, inf_pt);
-
-            if (!isInMap(inf_pt))
-              continue;
-
-            int idx_inf = toAddress(inf_pt);
-
-            plan_env::markTrustedCloudVoxel(
-              md_.occupancy_buffer_inflate_, md_.trusted_cloud_age_,
-              static_cast<std::size_t>(idx_inf));
-          }
+      // Endpoints retain the original physical kernel extent. All old
+      // per-offset samples lie inside this inclusive box, including floating
+      // point boundary cases. Unioning fills any rounding holes conservatively.
+      const Eigen::Vector3d extent(inf_step * mp_.resolution_,
+        inf_step * mp_.resolution_, inf_step_z * mp_.resolution_);
+      const Eigen::Vector3d lower = p3d - extent;
+      const Eigen::Vector3d upper = p3d + extent;
+      min_x = min(min_x, lower.x()); min_y = min(min_y, lower.y()); min_z = min(min_z, lower.z());
+      max_x = max(max_x, upper.x()); max_y = max(max_y, upper.y()); max_z = max(max_z, upper.z());
+      Eigen::Vector3i low_index, high_index;
+      posToIndex(lower, low_index);
+      posToIndex(upper, high_index);
+      // Match the original integer isInMap contract, including a partially
+      // occupied last voxel when map size is not a resolution multiple.
+      if ((high_index.array() < 0).any() ||
+          (low_index.array() >= mp_.map_voxel_num_.array()).any()) {continue;}
+      boundIndex(low_index);
+      boundIndex(high_index);
+      inflation_boxes.push_back({{low_index.x(), low_index.y(), low_index.z()},
+        {high_index.x(), high_index.y(), high_index.z()}});
     }
+  }
+
+  if (!plan_env::visitInflationUnion(inflation_boxes, [this](int x, int y, int z) {
+      plan_env::markTrustedCloudVoxel(md_.occupancy_buffer_inflate_, md_.trusted_cloud_age_,
+        static_cast<std::size_t>(toAddress(x, y, z)));
+    })) {
+    RCLCPP_ERROR(node_->get_logger(), "trusted-cloud inflation union exceeded safe work budget");
+    clearLocalCloud();
+    return;
   }
 
   min_x = min(min_x, md_.camera_pos_(0));

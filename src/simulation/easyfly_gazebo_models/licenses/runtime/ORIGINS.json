@@ -1,0 +1,39 @@
+{
+  "px4_revision": "54f0455ffcd755534539a7cf33a09a20bf71d29d",
+  "classic_revision": "70683dc759cbd3ebccfa78429b564f8b1fb5d149",
+  "iris_license_corroboration": "https://raw.githubusercontent.com/PegasusSimulator/PegasusSimulator/main/docs/licenses/assets/iris-license.rst",
+  "iris_meshes": [
+    {
+      "path": "models/iris/meshes/iris.stl",
+      "sha256": "11a9a1453723182f812e4ca0def829b18272a0dfc1145d2c3e28f8c6210cea7b"
+    },
+    {
+      "path": "models/iris/meshes/iris_prop_ccw.dae",
+      "sha256": "5f8b01668ee24a5b663ca8c4dd56e294fd6480db7eec1e5a7c11e45ba9004e99"
+    },
+    {
+      "path": "models/iris/meshes/iris_prop_cw.dae",
+      "sha256": "6cbc686772dccd46253fb65ece000e7ffa6a74b9c097bda349884bd1e78cd879"
+    }
+  ],
+  "gps_files": [
+    {
+      "path": "models/gps/gps.sdf",
+      "sha256": "ed28b2b88fb667218d2e9c360fac77bd7cd73b4c620a1bd4237b690ddb146a99"
+    },
+    {
+      "path": "models/gps/model.config",
+      "sha256": "7d2c9be9e01d898ef42b0525aa97becb5f554d48e2d8e915e284ea84fe0c3d9c"
+    }
+  ],
+  "original_mid360_sdf_sha256": "5f1139f1d4bc97a057671a0eb616de37ad5aff41f585bbcce6ebe501824c32ef",
+  "curated_mid360_sdf_sha256": "dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d",
+  "mid360_change": "Only the visual geometry is replaced by a project primitive; no original mesh is imported.",
+  "gazebo_package": "gazebo-common=11.10.2+dfsg-1",
+  "gazebo_material_sha256": "e6050d698bd8fb0f7479318ef6dccb2de1b3c484cf48c10b78b8b617026cc2e2",
+  "iris_authors": [
+    "Lorenz Meier",
+    "Thomas Gubler"
+  ],
+  "gps_author": "Nuno Marques"
+}

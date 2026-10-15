@@ -674,6 +674,11 @@
       <robotNamespace/>
       <linkName>/imu_link</linkName>
       <imuTopic>/imu</imuTopic>
+      <!-- IIM-42653: 0.005 deg/s/sqrt(Hz), converted to rad/s/sqrt(Hz).
+           DS-000529 gyro specifications: 0.05 deg/s RMS at 100 Hz is NOT density.
+           Explicit nonzero density avoids the plugin's RMS-as-density default.
+           PX4 admission checks and all other sensor parameters are unchanged. -->
+      <gyroscopeNoiseDensity>0.00008726646259971648</gyroscopeNoiseDensity>
     </plugin>
   </model>
 </sdf>

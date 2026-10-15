@@ -10,6 +10,7 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_hrt_compatibility test/test_hrt_compatibility.py)
   ament_add_pytest_test(test_hrt_selection test/test_hrt_selection.py)
+  ament_add_pytest_test(test_scoped_timer test/test_scoped_timer.py TIMEOUT 15)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(
     NAME easyfly_perception_sitl_launch_contract
@@ -31,5 +32,6 @@ install(PROGRAMS scripts/prepare_px4_hrt.py
 install(DIRECTORY launch models rviz compat
   DESTINATION share/easyfly_px4_sitl
   PATTERN ".git" EXCLUDE)
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
 ament_package()

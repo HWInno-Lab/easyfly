@@ -1,0 +1,58 @@
+schema_version: 1
+asset_set_id: gazebo_builtin_v1
+model_root:
+  external: gazebo_share
+  path: models
+provenance:
+  status: recorded
+  source_url: https://packages.ubuntu.com/jammy/gazebo-common
+  revision: 11.10.2+dfsg-1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/GAZEBO-COPYRIGHT
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/ORIGINS.json
+  note: Installed Gazebo sun/ground_plane and selected gazebo.material; package Files:*
+    declaration applies, no matching exception.
+models:
+- name: sun
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://packages.ubuntu.com/jammy/gazebo-common
+    revision: 11.10.2+dfsg-1
+    declared_license: Apache-2.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/GAZEBO-COPYRIGHT
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/ORIGINS.json
+    note: Installed Gazebo sun/ground_plane and selected gazebo.material; package
+      Files:* declaration applies, no matching exception.
+- name: ground_plane
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://packages.ubuntu.com/jammy/gazebo-common
+    revision: 11.10.2+dfsg-1
+    declared_license: Apache-2.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/GAZEBO-COPYRIGHT
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/ORIGINS.json
+    note: Installed Gazebo sun/ground_plane and selected gazebo.material; package
+      Files:* declaration applies, no matching exception.
+files:
+- path: sun/model.config
+  sha256: 194e0880f1b9eea8597ab1d9d8e4dd42ef9dd5f4c86c24f2bfc701176946c284
+- path: sun/model.sdf
+  sha256: d73ffc90c30bad56242bbe2b934c12c39d900c5e4ac098196e32c970abfc6cee
+- path: ground_plane/model.config
+  sha256: 10f52e3c1bf4524e41746682e6ce33a7f24ed78efba11c05edcc342f5756110e
+- path: ground_plane/model.sdf
+  sha256: a43cdd937e2446e2a56f2f09a831041784e1dbabe5c3fae8383d6d86b526a7df
+local_changes: []
+storage: existing
+inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

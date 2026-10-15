@@ -1,0 +1,127 @@
+schema_version: 1
+asset_set_id: legacy_scene_models
+model_root:
+  package: easyfly_gazebo_models
+  path: .
+provenance:
+  status: unverified
+  source_url: null
+  revision: null
+  declared_license: null
+  evidence: []
+  note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+models:
+- name: cardboard_box
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+- name: fire_truck
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+- name: person_standing
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+- name: person_walking
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+files:
+- path: cardboard_box/materials/textures/cardboard_box.png
+  sha256: b58d89413faef28df1efe51c72ca52ced517dc445fca350514311613b47a6ce6
+- path: cardboard_box/meshes/cardboard_box.dae
+  sha256: abb3c56caec5879f1d862e405a26e32a6f14edbb922f93b3445517e33174b8c8
+- path: cardboard_box/model.config
+  sha256: 65d9536b5a96a4fc700b54efdc46d74339a929660bfc17bad43b835167328120
+- path: cardboard_box/model.sdf
+  sha256: e3e198104789021ae98cae8acb5570042cb50159153651be5511eb7ba6f36c50
+- path: fire_truck/materials/textures/fire_truck.png
+  sha256: a9a3003ebaf730427bd669344c5bc734deabefeb8a00260dbac9d18acd44a9cc
+- path: fire_truck/meshes/fire_truck.mtl
+  sha256: 6d8256c0e93fde99aeed61f06e8eeeb8d063581fd3ba011b8fcdaaa284b031c3
+- path: fire_truck/meshes/fire_truck.obj
+  sha256: 6cb094c8cfd01d263961ef8e210ab8e2988373af4a4b14ab525c6e567046dc2e
+- path: fire_truck/model.config
+  sha256: da7efe395a7e5ef92d15800244a18cdff35521abaf2d3967447103a87c098459
+- path: fire_truck/model.sdf
+  sha256: 94517ade5caea4bff18354cd5828a04da597d68a38e16f0094add6c87a048922
+- path: person_standing/materials/textures/eyebrow001-unmodified.png
+  sha256: bd9d94033a85c16af38fb135f5fed4ab2e1a26982db952826e58a2672c8c9a9c
+- path: person_standing/materials/textures/eyebrow001.png
+  sha256: b2b15dd52470d6d073d18ebf56bcb1f3b45567cd42a2c75557c0ed2adc0f1ec1
+- path: person_standing/materials/textures/green_eye.png
+  sha256: 97b79fb62dde7211c142ce398b9506d42a74bdc478230e90ec69377ffdce4e22
+- path: person_standing/materials/textures/jeans01_normals.png
+  sha256: 2aa953834fa0bcf240fe069dc1ef283d801573e077bc5f9da04847370e9837d1
+- path: person_standing/materials/textures/jeans_basic_diffuse.png
+  sha256: c4b2f9126873078ecf8a3678e28622196fa6cb47e131b6067d6ffe81919b0ca6
+- path: person_standing/materials/textures/male02_diffuse_black-unmodified.png
+  sha256: d3ef0f625df4d5cea6c9cd89e00b9e86c3b488d63672f9ed5b1327a17abd60dc
+- path: person_standing/materials/textures/male02_diffuse_black.png
+  sha256: 37c166c53575369f57cf233e775f87ef225b3fe9f66ff7ba34b3abb12dcd46be
+- path: person_standing/materials/textures/teeth.png
+  sha256: d0afb57869c6fbb56b98f5efc4aec629ee7593e70d8dd2bfb9de923acfb65f43
+- path: person_standing/materials/textures/tshirt02_normals.png
+  sha256: f31407a3f8ae20736f8f9693906f6ad64569032bc4afd0798c305526fa51d33d
+- path: person_standing/materials/textures/tshirt02_texture.png
+  sha256: 932e21f76307fda21692a3b4db03fcddc68127d410b4ccbf9fb5cf95ecfbc1b1
+- path: person_standing/materials/textures/young_lightskinned_male_diffuse.png
+  sha256: 4233a4e1e2d423daf8e5aa25521df93253be54b0ab6490147afae39b076f4fcb
+- path: person_standing/meshes/standing.dae
+  sha256: bc20dd2cd005d70a35627e38cb52d4c84f3d66034b196efa28e11b10b3295c15
+- path: person_standing/model.config
+  sha256: 5867d0c4417ded2c20d6d70857ac638eb5c16b460a0af3140dc9552c2f9e5a34
+- path: person_standing/model.sdf
+  sha256: bd2499f97a041d557881c2303a6b314c15df6e7f16f34413d19ee97834720cec
+- path: person_walking/materials/textures/eyebrow001-unmodified.png
+  sha256: bd9d94033a85c16af38fb135f5fed4ab2e1a26982db952826e58a2672c8c9a9c
+- path: person_walking/materials/textures/eyebrow001.png
+  sha256: b2b15dd52470d6d073d18ebf56bcb1f3b45567cd42a2c75557c0ed2adc0f1ec1
+- path: person_walking/materials/textures/green_eye.png
+  sha256: 97b79fb62dde7211c142ce398b9506d42a74bdc478230e90ec69377ffdce4e22
+- path: person_walking/materials/textures/jeans01_normals.png
+  sha256: 2aa953834fa0bcf240fe069dc1ef283d801573e077bc5f9da04847370e9837d1
+- path: person_walking/materials/textures/jeans_basic_diffuse.png
+  sha256: c4b2f9126873078ecf8a3678e28622196fa6cb47e131b6067d6ffe81919b0ca6
+- path: person_walking/materials/textures/male02_diffuse_black-unmodified.png
+  sha256: d3ef0f625df4d5cea6c9cd89e00b9e86c3b488d63672f9ed5b1327a17abd60dc
+- path: person_walking/materials/textures/male02_diffuse_black.png
+  sha256: 37c166c53575369f57cf233e775f87ef225b3fe9f66ff7ba34b3abb12dcd46be
+- path: person_walking/materials/textures/teeth.png
+  sha256: d0afb57869c6fbb56b98f5efc4aec629ee7593e70d8dd2bfb9de923acfb65f43
+- path: person_walking/materials/textures/tshirt02_normals.png
+  sha256: f31407a3f8ae20736f8f9693906f6ad64569032bc4afd0798c305526fa51d33d
+- path: person_walking/materials/textures/tshirt02_texture.png
+  sha256: 932e21f76307fda21692a3b4db03fcddc68127d410b4ccbf9fb5cf95ecfbc1b1
+- path: person_walking/materials/textures/young_lightskinned_male_diffuse.png
+  sha256: 4233a4e1e2d423daf8e5aa25521df93253be54b0ab6490147afae39b076f4fcb
+- path: person_walking/meshes/walking.dae
+  sha256: e2ae109264af6d8a625523a72e30a5ffa1a4ec34278f9bf1e10e614fa074c379
+- path: person_walking/model.config
+  sha256: 413e06f05598f816bb70332fdca95acfadfa544f8f7f781874c2644f94e78f84
+- path: person_walking/model.sdf
+  sha256: 1a5db3073a21509b3a0add6acdb0f48a74fe69d5a3000e866ee902da02b84879
+local_changes: []
+storage: existing
+inventory_note: S0 当前文件快照；不表示上游版本已固定或许可已核实。不添加或修改原模型。

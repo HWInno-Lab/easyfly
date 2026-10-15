@@ -141,6 +141,26 @@ class EasyflyIrisSdfTest(unittest.TestCase):
             raise AssertionError("camera calibration YAML must contain a mapping")
         cls.camera_calibration = cls.calibration["sensors"]["camera"]
 
+    def test_imu_angular_noise_uses_density_not_bandwidth_rms(self):
+        imu = self.model.find("plugin[@name='rotors_gazebo_imu_plugin']")
+        self.assertIsNotNone(imu)
+        self.assertEqual(imu.get("filename"), "libgazebo_imu_plugin.so")
+        self.assertEqual(imu.findtext("linkName"), "/imu_link")
+        self.assertEqual(imu.findtext("imuTopic"), "/imu")
+        densities = imu.findall("gyroscopeNoiseDensity")
+        self.assertEqual(len(densities), 1, "explicit unique gyro density required")
+        density = _number(imu, "gyroscopeNoiseDensity")
+        self.assertTrue(math.isfinite(density))
+        self.assertGreater(density, 0.0, "a noiseless IMU must not bypass this contract")
+        # DS-000529: 0.005 deg/s/sqrt(Hz); 0.05 deg/s is RMS at 100 Hz, not density.
+        self.assertAlmostEqual(density, math.radians(0.005), delta=1e-14)
+        self.assertGreater(abs(density - math.radians(0.05)), 1e-4)
+        # This repair changes no accelerometer/bias/random-walk defaults.
+        self.assertEqual(
+            {child.tag for child in imu},
+            {"robotNamespace", "linkName", "imuTopic", "gyroscopeNoiseDensity"},
+        )
+
     def test_all_explicit_link_inertias_are_physically_realizable(self):
         links = self.model.findall("link")
         self.assertTrue(links, "model must declare links")

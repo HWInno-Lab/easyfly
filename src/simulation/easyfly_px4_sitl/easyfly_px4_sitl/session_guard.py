@@ -189,13 +189,14 @@ def guarded_session(actions, critical_actions, *, lock_directory=None):
     return OpaqueFunction(function=start)
 
 
-def guarded_launch(actions, critical_actions):
+def guarded_launch(actions, critical_actions, *, preflight=()):
     """Keep declarations visible to ros2 launch --show-args before guarding."""
     declarations = [a for a in actions if isinstance(a, DeclareLaunchArgument)]
     guarded = [a for a in actions if not isinstance(a, DeclareLaunchArgument)]
     return LaunchDescription(
         [
             *declarations,
+            *preflight,
             guarded_session(guarded, critical_actions),
         ]
     )

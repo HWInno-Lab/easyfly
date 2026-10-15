@@ -1,0 +1,107 @@
+{
+  "scope": "Disarmed spatial-ground map observation and diagnostic shutdown capture only; no navigation qualification.",
+  "scene": "warehouse_aws_no_roof_v1",
+  "runs": [
+    {
+      "run": "spatial-no-roof-1",
+      "raw_result": "artifacts/scene-s2-fix-20261015/spatial-no-roof-1/result.json",
+      "raw_result_sha256": "b3f4260a73a4f0ce3b96f252e51f23a8deeb6c1e5fa5596799195715b9b582ab",
+      "passed": false,
+      "mapping_ready": true,
+      "counts": {
+        "/uav_state": 156,
+        "/odom": 929,
+        "/occupancy_grid": 57,
+        "/pointcloud_nonground": 67
+      },
+      "world_to_navigation_observation": {
+        "translation": [
+          0.0036231260746717453,
+          0.004320112289860845,
+          -0.08098216145833333
+        ],
+        "yaw": -0.01327940449042234
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 45677,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 46509,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "7b925e06c910b7f1267bccc5814be5725b80a7c754fe1cf114b15ab255001234"
+        },
+        "libplan_env.so": {
+          "pid": 46594,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "60f1a1342936294dba983dc862e18cad9b330644187f692db007db285c6f7122"
+        }
+      },
+      "debugger_targets": [
+        "ego_planner_node"
+      ],
+      "abnormal_lines": [
+        "[ERROR] [navigation_coordinator_node-21]: process has died [pid 46555, exit code -11, cmd '/home/jia/easyfly_ws/install/easyfly_global_planner/lib/easyfly_global_planner/navigation_coordinator_node --ros-args -r __node:=navigation_coordinator --params-file /home/jia/easyfly_ws/install/easyfly_global_planner/share/easyfly_global_planner/config/coordinator.yaml --params-file /tmp/launch_params_w31dsr5h']."
+      ],
+      "normal_exits": 23,
+      "started_processes": 24,
+      "leftovers": [],
+      "flight_goals_sent": 0
+    },
+    {
+      "run": "capture-no-roof-1",
+      "raw_result": "artifacts/scene-s2-fix-20261015/capture-no-roof-1/result.json",
+      "raw_result_sha256": "9efcddf37ff6f087730099f4f54f5caa5bfebab8793a4d1766665435dd1d086c",
+      "passed": true,
+      "mapping_ready": true,
+      "counts": {
+        "/uav_state": 155,
+        "/odom": 968,
+        "/occupancy_grid": 56,
+        "/pointcloud_nonground": 63
+      },
+      "world_to_navigation_observation": {
+        "translation": [
+          0.004142597899772227,
+          0.0053812661208212376,
+          -0.07625193684895833
+        ],
+        "yaw": -0.09384521757896419
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 47176,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 48005,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "7b925e06c910b7f1267bccc5814be5725b80a7c754fe1cf114b15ab255001234"
+        },
+        "libplan_env.so": {
+          "pid": 48115,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "60f1a1342936294dba983dc862e18cad9b330644187f692db007db285c6f7122"
+        }
+      },
+      "debugger_targets": [
+        "ego_planner_node",
+        "navigation_coordinator_node"
+      ],
+      "abnormal_lines": [],
+      "normal_exits": 24,
+      "started_processes": 24,
+      "leftovers": [],
+      "flight_goals_sent": 0
+    }
+  ],
+  "status": "draft",
+  "navigation_tested": false,
+  "open_issues": [
+    "Historical EGO shutdown exit -11 not root-caused",
+    "Navigation coordinator exit -11 after SIGINT in spatial-no-roof-1; subsequent targeted GDB run exited normally, not a repair proof"
+  ]
+}

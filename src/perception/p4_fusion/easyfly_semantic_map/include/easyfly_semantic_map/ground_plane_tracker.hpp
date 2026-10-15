@@ -61,11 +61,27 @@ struct GroundPlaneModel
   }
 };
 
+struct GroundSpatialSupport
+{
+  std::size_t points{0};
+  std::size_t cells{0};
+  std::size_t eligible_cells{0};
+  std::array<std::size_t, 8> sector_cells{};
+
+  bool qualified() const
+  {
+    return points >= 200 && cells >= 120 && eligible_cells >= cells &&
+           eligible_cells > 0 && static_cast<double>(cells) / eligible_cells >= 0.90 &&
+           *std::min_element(sector_cells.begin(), sector_cells.end()) >= 5;
+  }
+};
+
 struct GroundPlaneCandidate
 {
   GroundPlaneModel model;
   std::size_t inlier_count{0};
   std::size_t sample_count{0};
+  GroundSpatialSupport spatial_support;
 };
 
 struct GroundVehiclePose
@@ -108,6 +124,9 @@ public:
     double max_tilt_rad{0.15};
     std::size_t min_inliers{50};
     double min_inlier_ratio{0.15};
+    // Explicit alternative for indoor landed observations. The original
+    // full-frame ratio remains unchanged and is the default policy.
+    bool spatial_support_enabled{false};
     // Direct landed traces show 0.053-0.054 m between base_link and the
     // fitted ground.  Keep a 0.03 m positive floor, leaving about 0.02 m of
     // measured margin while rejecting zero/near-body-height planes.
@@ -169,7 +188,9 @@ public:
         ++pending_count_;
       }
 
-      if (pending_count_ >= params_.init_consecutive_frames) {
+      const int required_frames = usesSpatialSupport(candidate) ?
+        std::max(5, params_.init_consecutive_frames) : params_.init_consecutive_frames;
+      if (pending_count_ >= required_frames) {
         model_ = pending_model_;
         model_valid_ = true;
         clearPending();
@@ -223,6 +244,13 @@ public:
   }
 
 private:
+  bool usesSpatialSupport(const GroundPlaneCandidate & candidate) const
+  {
+    return candidate.sample_count > 0 &&
+           static_cast<double>(candidate.inlier_count) / candidate.sample_count <
+           params_.min_inlier_ratio;
+  }
+
   bool vehicleStateFresh(const GroundVehiclePose & vehicle) const
   {
     return vehicle.connected && vehicle.pose_valid &&
@@ -283,8 +311,6 @@ private:
     }
     if (!candidate.model.valid() || candidate.sample_count == 0 ||
       candidate.inlier_count < params_.min_inliers ||
-      static_cast<double>(candidate.inlier_count) /
-      static_cast<double>(candidate.sample_count) < params_.min_inlier_ratio ||
       !std::isfinite(vehicle.x) || !std::isfinite(vehicle.y) ||
       !std::isfinite(vehicle.z) || normalAngle(candidate.model, GroundPlaneModel{}) >
       params_.max_tilt_rad)
@@ -294,6 +320,13 @@ private:
 
     const double candidate_z = candidate.model.zAt(vehicle.x, vehicle.y);
     const double clearance = vehicle.z - candidate_z;
+    if (usesSpatialSupport(candidate) &&
+      (!params_.spatial_support_enabled || !candidate.spatial_support.qualified() ||
+      vehicle.armed || !vehicleStateFresh(vehicle) || clearance > 0.25 ||
+      normalAngle(candidate.model, GroundPlaneModel{}) > std::min(0.10, params_.max_tilt_rad)))
+    {
+      return false;
+    }
     return std::isfinite(candidate_z) && clearance >= params_.min_ground_clearance &&
            clearance <= params_.max_ground_distance_below_vehicle;
   }

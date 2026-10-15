@@ -740,9 +740,8 @@ class Probe:
         if not self.report['sessions_closed']:
             raise RuntimeError('final mission navigation sessions not fully stopped')
 
-    def start(self):
-        """Start and identify one private simulation before any explicit flight scenario."""
-        self.log = (self.directory / 'console.log').open('x')
+    def launch_command(self):
+        """Build the legacy launch inputs; explicit scene probes may specialize this."""
         command = ['ros2', 'launch', 'easyfly_px4_sitl', 'perception_sitl.launch.py',
                    'headless:=true', 'detection_use_gpu:=false',
                    'detection_input_qos_reliability:=best_effort',
@@ -751,12 +750,16 @@ class Probe:
         if capture:
             command.append('semantic_capture_shutdown:=true')
         self.report['diagnostic_only'] = bool(capture)
+        return command
+
+    def start(self):
+        """Start and identify one private simulation before any explicit flight scenario."""
+        self.log = (self.directory / 'console.log').open('x')
+        command = self.launch_command()
         self.report['command'] = command
         self.process = subprocess.Popen(command, stdout=self.log, stderr=subprocess.STDOUT,
                                         env=self.environment, start_new_session=True)
-        self.wait(lambda: self.ready(False) and
-                  self.counts.get('/occupancy_grid', 0) >= 3 and
-                  'ego_planner_node' in self.node.get_node_names(), 75)
+        self.wait(self.startup_ready, 75)
         self.owned = children(self.process.pid)
         server = (Path(get_package_prefix('easyfly_gazebo_plugins')) /
                   'lib/easyfly_gazebo_plugins/easyfly_gzserver').resolve(strict=True)
@@ -772,6 +775,11 @@ class Probe:
             {'node': v.node_name, 'namespace': v.node_namespace, 'type': v.topic_type,
              'depth': v.qos_profile.depth, 'reliability': v.qos_profile.reliability.name}
             for v in self.node.get_publishers_info_by_topic('/odom')]
+
+    def startup_ready(self):
+        """Flight checks require the original live map and navigator readiness."""
+        return (self.ready(False) and self.counts.get('/occupancy_grid',0)>=3 and
+                'ego_planner_node' in self.node.get_node_names())
 
     def run(self):
         """Execute only the explicitly selected simulation scenario."""

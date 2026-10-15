@@ -13,12 +13,19 @@ semantic_map:
   # ---- 坐标系 ----
   world_frame: odom                   # 障碍输出系 (低空任务短航程, odom 即可; 全局建图需求出现再切 map)
   base_frame: base_link               # 车辆位姿参考系 (用于 TF 跳变守卫与地面相对高度校验)
+  ground_model_frame: ""              # 空值保留 world_frame；场景可声明稳定地面模型系。
 
   # ---- 地面平面候选与可信跟踪 ----
   plane_distance_threshold: 0.12      # 地面平面厚度 [m] (内点距离阈值)
   plane_max_tilt_rad: 0.15            # 候选平面最大相对水平倾角 [rad]
   plane_min_inliers: 50               # 候选最少内点数
   plane_min_inlier_ratio: 0.15        # 候选最少内点比例
+  # Explicit indoor alternative: strict 0.02m fit, 1--3m annulus, >=120
+  # independent 0.2m cells, >=200 points, all 8 sectors, >=90% cell support,
+  # clearance 0.03--0.25m, tilt <=0.10rad, >=5 consistent disarmed frames.
+  # The original full-frame 0.15 ratio remains the default C++ policy and is
+  # unchanged. Above-plane returns remain in the complete obstacle cloud.
+  ground_spatial_support_enabled: true
   # 实测落地净空约 0.053-0.054m；0.03m 保留约 0.02m 裕量并拒绝零/机体同高平面
   ground_min_clearance: 0.03          # 地面相对 base_frame 的最小垂直间距 [m]
   ground_max_distance_below_vehicle: 8.0  # 地面相对车辆的最大间距 [m]

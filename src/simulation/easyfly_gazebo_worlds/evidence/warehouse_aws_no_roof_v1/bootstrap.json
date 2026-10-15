@@ -1,0 +1,85 @@
+{
+  "scene": "warehouse_aws_no_roof_v1",
+  "world_sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+  "passed": false,
+  "error": null,
+  "loaded_and_sensors_observed": true,
+  "mapping_ready": false,
+  "counts": {
+    "/uav_state": 285,
+    "/odom": 2189,
+    "/occupancy_grid": 1
+  },
+  "world_to_navigation": {
+    "translation": [
+      -0.011357941975196203,
+      -0.10693284620841344,
+      -0.9861030110677084
+    ],
+    "yaw": 0.05610759903450272
+  },
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "leftovers": [],
+  "loaded_libraries": {
+    "liblivox_laser_simulation.so": {
+      "pid": 29127,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 29985,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "ca7fdf15b00648700aad02ff1d9e00941bb44ea2a46a3884e259ee4ae15af5d8"
+    }
+  },
+  "abnormal_lines": [
+    "[ERROR] [ego_planner_node-23]: process has died [pid 30071, exit code -11, cmd '/home/jia/easyfly_ws/install/ego_planner/lib/ego_planner/ego_planner_node --ros-args -r __node:=ego_planner_node --params-file /tmp/launch_params_ez1f1650 -r grid_map/cloud:=/pointcloud_nonground -r grid_map/odom:=/odom -r odom_world:=/odom -r planning/bspline:=/planning/bspline -r planning/data_display:=/planning/data_display -r grid_map/occupancy_inflate:=/grid_map/occupancy_inflate']."
+  ],
+  "scope": "Disarmed resource/sensor observation; whole-stack inspection FAILED. No navigation verification.",
+  "raw_result": "artifacts/scene-s2-20261015/bootstrap-open-2/result.json",
+  "raw_result_sha256": "b016a632da7d23ed3494af438b197e5cb37b986ef26d977d8c88d53f6c5c42e5",
+  "processes_started": 24,
+  "processes_cleanly_exited": 23,
+  "flight_goals_sent": 0,
+  "final_armed": false,
+  "sensors": {
+    "/livox/imu": {
+      "count": 3911,
+      "first_source_ns": 2570000000,
+      "last_source_ns": 32087000000,
+      "frame": "livox_frame",
+      "finite": true
+    },
+    "/camera/color/image_raw": {
+      "count": 985,
+      "first_source_ns": 2566000000,
+      "last_source_ns": 32086000000,
+      "frame": "camera_color_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "rgb8",
+      "sample_saved": true
+    },
+    "/camera/aligned_depth_to_color/depth/image_raw": {
+      "count": 986,
+      "first_source_ns": 2566000000,
+      "last_source_ns": 32086000000,
+      "frame": "camera_depth_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "32FC1",
+      "finite_positive_pixels": 307200,
+      "min_m": 1.4307931661605835,
+      "max_m": 6.568933486938477
+    },
+    "/livox/lidar": {
+      "count": 294,
+      "first_source_ns": 2600000000,
+      "last_source_ns": 31900000000,
+      "frame": "livox_frame",
+      "points": 20000
+    }
+  },
+  "limitation": "Trusted ground ratio below unchanged 15% gate; EGO process exited -11 after the SIGINT shutdown request in this disarmed run. Root cause not established. Keep draft. Transform is an observation, not a registered reference."
+}

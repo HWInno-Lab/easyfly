@@ -1,0 +1,95 @@
+schema_version: 1
+id: warehouse_aws_v1
+name: AWS 小型仓库
+status: registered
+category: indoor/warehouse
+tags:
+- warehouse
+- navigation
+- inspection
+- static
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/warehouse/warehouse_aws_v1.world
+  sha256: 4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-small-warehouse-world
+  revision: ee0af733315e78432408c3cd98d378ecee5f767c
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_warehouse/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_warehouse/origins.json
+  note: Only the selected world dependency closure from the pinned official archive;
+    no external model references found.
+asset_sets:
+- aws_warehouse_v1
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0.0
+  - 0.0
+  - 0.83
+  yaw: 0.0
+  basis: Upstream central aisle; spawn world [0,0,0.83], yaw 0, settled body z=0.088225m.
+    Two disarmed runs confirmed continuous maps and repeatable stationary world/odom
+    alignment; see registration evidence. Central aisle reference only.
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - -0.0016776071982652259
+    - -0.004149026392648618
+    - -0.18080515950520834
+    yaw: -0.08824464622475788
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
+  ground_model_frame: map
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; sensor and aircraft physics unchanged.
+  - No full PX4 model root and no legacy scene model root are exposed.
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/warehouse_aws_v1/aisle_out_and_back.yaml
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/bootstrap.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/registration.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/mission.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/mission-initial.json

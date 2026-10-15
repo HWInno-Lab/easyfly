@@ -1,0 +1,262 @@
+{
+  "scene": "warehouse_aws_v1",
+  "scope": "Historical bounded mission before sensor-stamp and SLAM-ground-basis fixes; not current-revision qualification.",
+  "passed": true,
+  "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+  "mission_sha256": "23e182ede188594a547f5c655260c71b4f61e72bda1ebb2a38f388724cfe09e2",
+  "raw_result": "artifacts/scene-s2-fix-20261015/flight-roof-3/result.json",
+  "raw_result_sha256": "7482cfb51f8e42ec193759ba3d33dd6c67f2e07088774506cbb2e13ba02066da",
+  "actions": [
+    {
+      "name": "/execute_mission",
+      "goal_uuid": "fcb8e9e236a44e49967394a786457e22",
+      "status": 4,
+      "success": true,
+      "message": "mission complete",
+      "terminal_state": {
+        "source_ns": 62800000000,
+        "frame": "odom",
+        "ros_now_ns": 62800000000,
+        "receipt": 10156.269980328,
+        "steady_now": 10156.296985329,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.05744040384888649,
+          -0.30373260378837585,
+          -0.088348388671875
+        ],
+        "velocity": [
+          0.17327511310577393,
+          -0.24136030673980713,
+          -0.06823153048753738
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.6700000166893005
+      }
+    }
+  ],
+  "navigation_uuid_status": {
+    "1d3d932f8423cc2c749df1d7abecd54c": {
+      "status": 4,
+      "history": [
+        {
+          "steady": 10095.717346362,
+          "status": 2
+        },
+        {
+          "steady": 10127.243629134,
+          "status": 4
+        }
+      ],
+      "first_terminal": {
+        "steady": 10127.24363053,
+        "state": {
+          "source_ns": 45900000000,
+          "frame": "odom",
+          "ros_now_ns": 45900000000,
+          "receipt": 10127.212937851,
+          "steady_now": 10127.243656113,
+          "armed": true,
+          "connected": true,
+          "mode": 3,
+          "mode_name": "OFFBOARD",
+          "position": [
+            1.442468523979187,
+            -0.020999537780880928,
+            1.45306396484375
+          ],
+          "velocity": [
+            -0.005288902670145035,
+            0.039485715329647064,
+            0.032161395996809006
+          ],
+          "pose_valid": true,
+          "velocity_valid": true,
+          "battery_valid": true,
+          "battery_voltage": 15.42500114440918,
+          "battery_remaining": 0.5899999737739563
+        }
+      }
+    },
+    "1df1e93ef59f9583b9662eb2117cb324": {
+      "status": 4,
+      "history": [
+        {
+          "steady": 10127.250441925,
+          "status": 2
+        },
+        {
+          "steady": 10143.893557147,
+          "status": 4
+        }
+      ],
+      "first_terminal": {
+        "steady": 10143.893558218,
+        "state": {
+          "source_ns": 56000000000,
+          "frame": "odom",
+          "ros_now_ns": 56000000000,
+          "receipt": 10143.851543096,
+          "steady_now": 10143.893585136,
+          "armed": true,
+          "connected": true,
+          "mode": 3,
+          "mode_name": "OFFBOARD",
+          "position": [
+            0.033879343420267105,
+            -0.013172600418329239,
+            1.49285888671875
+          ],
+          "velocity": [
+            0.8839542865753174,
+            0.11273247748613358,
+            -0.015121527016162872
+          ],
+          "pose_valid": true,
+          "velocity_valid": true,
+          "battery_valid": true,
+          "battery_voltage": 15.30000114440918,
+          "battery_remaining": 0.5
+        }
+      }
+    }
+  },
+  "navigation_terminal_errors_m": [
+    0.07716114771264591,
+    0.037044875641106
+  ],
+  "sessions": [
+    {
+      "steady": 10095.749546295,
+      "session_id": "1d3d932f8423cc2c749df1d7abecd54c:1",
+      "active": true
+    },
+    {
+      "steady": 10127.213584069,
+      "session_id": "1d3d932f8423cc2c749df1d7abecd54c:1",
+      "active": false
+    },
+    {
+      "steady": 10127.296497905,
+      "session_id": "1df1e93ef59f9583b9662eb2117cb324:1",
+      "active": true
+    },
+    {
+      "steady": 10143.852874922,
+      "session_id": "1df1e93ef59f9583b9662eb2117cb324:1",
+      "active": false
+    }
+  ],
+  "ownership": [
+    {
+      "service": "/mission/ownership",
+      "requested": "fcb8e9e236a44e49967394a786457e22",
+      "returned": "fcb8e9e236a44e49967394a786457e22",
+      "state": 2,
+      "steady": 10156.30107977
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "1d3d932f8423cc2c749df1d7abecd54c",
+      "returned": "1d3d932f8423cc2c749df1d7abecd54c",
+      "state": 2,
+      "steady": 10156.306324442
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "1df1e93ef59f9583b9662eb2117cb324",
+      "returned": "1df1e93ef59f9583b9662eb2117cb324",
+      "state": 2,
+      "steady": 10156.313896244
+    }
+  ],
+  "sessions_closed": true,
+  "final_disarmed_state": {
+    "source_ns": 62800000000,
+    "frame": "odom",
+    "ros_now_ns": 62800000000,
+    "receipt": 10156.269980328,
+    "steady_now": 10156.302461012,
+    "armed": false,
+    "connected": true,
+    "mode": 3,
+    "mode_name": "OFFBOARD",
+    "position": [
+      0.05744040384888649,
+      -0.30373260378837585,
+      -0.088348388671875
+    ],
+    "velocity": [
+      0.17327511310577393,
+      -0.24136030673980713,
+      -0.06823153048753738
+    ],
+    "pose_valid": true,
+    "velocity_valid": true,
+    "battery_valid": true,
+    "battery_voltage": 16.200000762939453,
+    "battery_remaining": 0.6700000166893005
+  },
+  "counts": {
+    "/uav_state": 595,
+    "/odom": 4796,
+    "/occupancy_grid": 499,
+    "/pointcloud_nonground": 507
+  },
+  "world_to_navigation": {
+    "translation": [
+      0.0017359858223547537,
+      0.01150925395389398,
+      -0.08037180989583333
+    ],
+    "yaw": -0.09419534545350401
+  },
+  "loaded_libraries": {
+    "liblivox_laser_simulation.so": {
+      "pid": 44040,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 44879,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "7b925e06c910b7f1267bccc5814be5725b80a7c754fe1cf114b15ab255001234"
+    },
+    "libplan_env.so": {
+      "pid": 44966,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+      "sha256": "60f1a1342936294dba983dc862e18cad9b330644187f692db007db285c6f7122"
+    }
+  },
+  "scene_probe_sha256": "20e74a20b98194d92262f9490929c1f4841d776c08a9ce7dace1803aeec94ff6",
+  "shutdown_seconds": 1.36667744999977,
+  "started_processes": 24,
+  "normal_exits": 24,
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "leftovers": [],
+  "inflation_logged_ms": {
+    "samples": 34,
+    "min": 8.759,
+    "median": 12.936,
+    "p95": 18.22815,
+    "max": 18.673
+  },
+  "semantic_config_sha256": "ee7beb688ba296e7b78a2820420ec2d1522ade30cced6f50fd292ef06acd12df",
+  "known_open_issue": "Historical EGO and newly observed no-roof navigation coordinator shutdown SIGSEGV have not reproduced under targeted GDB capture or been root-caused; do not mark repaired.",
+  "source_sha256": {
+    "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp": "6df42aa8c1c88c3226bac75a2403a10f5b54ad9c690929a8e59d1e312ecd811a",
+    "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp": "37a13d503c6d7054a67216e5f1ebc6541de0be850ea3b3140429966dd048a7d1",
+    "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp": "812d65641b6345707efa1a0603529891c419887f7b32a71541879f713c946b1e",
+    "src/perception/p4_fusion/easyfly_semantic_map/config/semantic_map.yaml": "ee7beb688ba296e7b78a2820420ec2d1522ade30cced6f50fd292ef06acd12df",
+    "src/third_party/planners/ego_planner/plan_env/src/grid_map.cpp": "d9c26f1fec55398d9934d121a366f3f5b85659eca3f345979c8a9e1653d8351a",
+    "src/third_party/planners/ego_planner/plan_env/include/plan_env/inflation_union.h": "77b53a8f536c8aead6898cda8f71014a2209baa24ef268aadf7934d3349dd651",
+    "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py": "20e74a20b98194d92262f9490929c1f4841d776c08a9ce7dace1803aeec94ff6"
+  }
+}

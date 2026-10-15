@@ -1,0 +1,238 @@
+--- PX4/models/iris/iris.sdf.jinja
++++ EasyFly/easyfly_iris.sdf
+@@ -39,7 +39,7 @@
+         <geometry>
+           <mesh>
+             <scale>1 1 1</scale>
+-            <uri>model://iris/meshes/iris.stl</uri>
++            <uri>model://easyfly_iris/meshes/iris.stl</uri>
+           </mesh>
+         </geometry>
+         <material>
+@@ -49,6 +49,92 @@
+           </script>
+         </material>
+       </visual>
++      <!-- Camera graphics and sensors are model-fixed; no extra rigid body or inertia. -->
++      <visual name='camera_visual'>
++        <pose>0.25 0 0.22 0 0 0</pose>
++        <geometry>
++          <box>
++            <size>0.025 0.09 0.025</size>
++          </box>
++        </geometry>
++        <material>
++          <script>
++            <name>Gazebo/DarkGrey</name>
++            <uri>file://media/materials/scripts/gazebo.material</uri>
++          </script>
++        </material>
++      </visual>
++      <!--
++        These sensors are direct children of base_link, so their local poses
++        use the owning link frame. Compose sensors.yaml's mount
++        (0.25, 0, 0.22) and optical-origin offset (0.0325, 0, 0).
++        The sensor itself remains in the physical FLU camera orientation; the
++        ROS optical-frame rotation is published by the calibration TF contract.
++        Do not add pose@frame here: the deployed SDF 1.6 parser ignores it.
++      -->
++      <sensor name='color' type='camera'>
++        <pose>0.2825 0 0.22 0 0 0</pose>
++        <always_on>true</always_on>
++        <update_rate>30</update_rate>
++        <visualize>false</visualize>
++        <camera name='color'>
++          <horizontal_fov>1.518</horizontal_fov>
++          <image>
++            <width>640</width>
++            <height>480</height>
++            <format>RGB_INT8</format>
++          </image>
++          <clip>
++            <near>0.1</near>
++            <far>100</far>
++          </clip>
++          <noise>
++            <type>gaussian</type>
++            <mean>0.0</mean>
++            <stddev>0.007</stddev>
++          </noise>
++        </camera>
++        <plugin name='color_camera_plugin' filename='libeasyfly_gazebo_ros_camera.so'>
++          <ros>
++            <namespace>/camera</namespace>
++          </ros>
++          <camera_name>color</camera_name>
++          <frame_name>camera_color_optical_frame</frame_name>
++        </plugin>
++      </sensor>
++      <sensor name='depth' type='depth'>
++        <pose>0.2825 0 0.22 0 0 0</pose>
++        <always_on>true</always_on>
++        <update_rate>30</update_rate>
++        <visualize>false</visualize>
++        <camera name='depth'>
++          <horizontal_fov>1.518</horizontal_fov>
++          <image>
++            <width>640</width>
++            <height>480</height>
++            <format>BGR_INT8</format>
++          </image>
++          <clip>
++            <near>0.2</near>
++            <!-- Q23: far 10→20m — 远距目标 3D 定位不再截断 (深度精度 32FC1 足够) -->
++            <far>20.0</far>
++          </clip>
++          <noise>
++            <type>gaussian</type>
++            <mean>0.0</mean>
++            <stddev>0.007</stddev>
++          </noise>
++        </camera>
++        <plugin name='depth_camera_plugin' filename='libeasyfly_gazebo_ros_camera.so'>
++          <ros>
++            <namespace>/camera</namespace>
++          </ros>
++          <camera_name>aligned_depth_to_color</camera_name>
++          <frame_name>camera_depth_optical_frame</frame_name>
++          <min_depth>0.2</min_depth>
++          <max_depth>20.0</max_depth>
++        </plugin>
++      </sensor>
+       <gravity>1</gravity>
+       <velocity_decay/>
+     </link>
+@@ -104,7 +190,7 @@
+         <geometry>
+           <cylinder>
+             <length>0.005</length>
+-            <radius>0.128</radius>
++            <radius>0.001</radius>
+           </cylinder>
+         </geometry>
+         <surface>
+@@ -121,7 +207,7 @@
+         <geometry>
+           <mesh>
+             <scale>1 1 1</scale>
+-            <uri>model://iris/meshes/iris_prop_ccw.dae</uri>
++            <uri>model://easyfly_iris/meshes/iris_prop_ccw.dae</uri>
+           </mesh>
+         </geometry>
+         <material>
+@@ -169,7 +255,7 @@
+         <geometry>
+           <cylinder>
+             <length>0.005</length>
+-            <radius>0.128</radius>
++            <radius>0.001</radius>
+           </cylinder>
+         </geometry>
+         <surface>
+@@ -186,7 +272,7 @@
+         <geometry>
+           <mesh>
+             <scale>1 1 1</scale>
+-            <uri>model://iris/meshes/iris_prop_ccw.dae</uri>
++            <uri>model://easyfly_iris/meshes/iris_prop_ccw.dae</uri>
+           </mesh>
+         </geometry>
+         <material>
+@@ -234,7 +320,7 @@
+         <geometry>
+           <cylinder>
+             <length>0.005</length>
+-            <radius>0.128</radius>
++            <radius>0.001</radius>
+           </cylinder>
+         </geometry>
+         <surface>
+@@ -251,7 +337,7 @@
+         <geometry>
+           <mesh>
+             <scale>1 1 1</scale>
+-            <uri>model://iris/meshes/iris_prop_cw.dae</uri>
++            <uri>model://easyfly_iris/meshes/iris_prop_cw.dae</uri>
+           </mesh>
+         </geometry>
+         <material>
+@@ -299,7 +385,7 @@
+         <geometry>
+           <cylinder>
+             <length>0.005</length>
+-            <radius>0.128</radius>
++            <radius>0.001</radius>
+           </cylinder>
+         </geometry>
+         <surface>
+@@ -316,7 +402,7 @@
+         <geometry>
+           <mesh>
+             <scale>1 1 1</scale>
+-            <uri>model://iris/meshes/iris_prop_cw.dae</uri>
++            <uri>model://easyfly_iris/meshes/iris_prop_cw.dae</uri>
+           </mesh>
+         </geometry>
+         <material>
+@@ -345,6 +431,26 @@
+         <use_parent_model_frame>1</use_parent_model_frame>
+       </axis>
+     </joint>
++    <!-- ==================== Livox MID-360 (水平安装) ==================== -->
++    <!-- 输出: /livox/lidar (CustomMsg) + /livox/imu
++         revolute(限位0,0) 而非 fixed: 避免 gazebo fixed joint 的 link 合并(lumping)
++         与 livox 插件动态创建的 multiray collision 冲突 (M6 踩坑, 与 AstraDroneOpen 一致) -->
++    <include>
++      <uri>model://mid360</uri>
++      <pose>0 0 0.08 0 0 0</pose>
++    </include>
++    <joint name='mid360_joint' type='revolute'>
++      <child>mid360::lidar_link</child>
++      <parent>base_link</parent>
++      <axis>
++        <xyz>0 0 1</xyz>
++        <limit>
++          <upper>0</upper>
++          <lower>0</lower>
++        </limit>
++      </axis>
++    </joint>
++
+     <plugin name='rosbag' filename='libgazebo_multirotor_base_plugin.so'>
+       <robotNamespace/>
+       <linkName>base_link</linkName>
+@@ -450,16 +556,16 @@
+       <magSubTopic>/mag</magSubTopic>
+       <baroSubTopic>/baro</baroSubTopic>
+       <mavlink_addr>INADDR_ANY</mavlink_addr>
+-      <mavlink_tcp_port>{{ mavlink_tcp_port }}</mavlink_tcp_port>
+-      <mavlink_udp_port>{{ mavlink_udp_port }}</mavlink_udp_port>
+-      <serialEnabled>{{ serial_enabled }}</serialEnabled>
+-      <serialDevice>{{ serial_device }}</serialDevice>
+-      <baudRate>{{ serial_baudrate }}</baudRate>
++      <mavlink_tcp_port>4560</mavlink_tcp_port>
++      <mavlink_udp_port>14560</mavlink_udp_port>
++      <serialEnabled>0</serialEnabled>
++      <serialDevice>/dev/ttyACM0</serialDevice>
++      <baudRate>921600</baudRate>
+       <qgc_addr>INADDR_ANY</qgc_addr>
+       <qgc_udp_port>14550</qgc_udp_port>
+       <sdk_addr>INADDR_ANY</sdk_addr>
+       <sdk_udp_port>14540</sdk_udp_port>
+-      <hil_mode>{{ hil_mode }}</hil_mode>
++      <hil_mode>0</hil_mode>
+       <hil_state_level>0</hil_state_level>
+       <send_vision_estimation>0</send_vision_estimation>
+       <send_odometry>1</send_odometry>
+@@ -568,6 +674,11 @@
+       <robotNamespace/>
+       <linkName>/imu_link</linkName>
+       <imuTopic>/imu</imuTopic>
++      <!-- IIM-42653: 0.005 deg/s/sqrt(Hz), converted to rad/s/sqrt(Hz).
++           DS-000529 gyro specifications: 0.05 deg/s RMS at 100 Hz is NOT density.
++           Explicit nonzero density avoids the plugin's RMS-as-density default.
++           PX4 admission checks and all other sensor parameters are unchanged. -->
++      <gyroscopeNoiseDensity>0.00008726646259971648</gyroscopeNoiseDensity>
+     </plugin>
+   </model>
+ </sdf>

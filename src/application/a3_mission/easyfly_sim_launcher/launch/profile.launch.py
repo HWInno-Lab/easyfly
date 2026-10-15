@@ -8,11 +8,29 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, LogInfo, OpaqueFunction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
+from easyfly_px4_sitl.scene_environment import installed_catalog
+from easyfly_px4_sitl.scene_inputs import resolve_scene
 
 
 def _launch_profile(context):
     profile = load_profile(LaunchConfiguration("profile").perform(context))
     ensure_launchable(profile)
+    scene = LaunchConfiguration('scene', default='').perform(context).strip()
+    world = LaunchConfiguration('world', default='').perform(context).strip()
+    if scene and world:
+        raise ValueError('scene and world are mutually exclusive')
+    if world:
+        raise ValueError('raw world is only supported by the low-level px4_sitl debugging entrypoint')
+    arguments = dict(profile['launch_arguments'])
+    headless = LaunchConfiguration('headless', default='').perform(context).strip().lower()
+    if headless:
+        if headless not in ('true', 'false'):
+            raise ValueError('headless must be true or false')
+        arguments['headless'] = headless
+    if scene:
+        catalog, _ = installed_catalog()
+        resolve_scene(catalog, scene, profile['name'])
+        arguments.update(scene=scene, scene_profile=profile['name'])
     if profile["entrypoint"] == "base":
         package, filename = "easyfly_sim_launcher", "easyfly_sim.launch.py"
     else:
@@ -20,7 +38,7 @@ def _launch_profile(context):
     source = Path(get_package_share_directory(package)) / "launch" / filename
     include = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(source)),
-        launch_arguments=profile["launch_arguments"].items(),
+        launch_arguments=arguments.items(),
     )
     platform = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(str(Path(get_package_share_directory('easyfly_mission_srvs')) /
@@ -38,5 +56,9 @@ def _launch_profile(context):
 def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument("profile", default_value="base_sim", choices=PROFILES),
+        DeclareLaunchArgument('scene', default_value='', description='Registered scene ID; empty preserves profile defaults'),
+        DeclareLaunchArgument('world', default_value='', description='Reserved; raw worlds require the low-level debug entrypoint'),
+        DeclareLaunchArgument('headless', default_value='', choices=['', 'true', 'false'],
+                              description='Display override; empty uses the profile default'),
         OpaqueFunction(function=_launch_profile),
     ])

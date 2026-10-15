@@ -30,7 +30,6 @@ from launch.actions import (
     GroupAction,
     IncludeLaunchDescription,
     SetEnvironmentVariable,
-    TimerAction,
 )
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -38,6 +37,8 @@ from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
+from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
+from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
 
 
 def _resolve_px4_dir():
@@ -81,7 +82,6 @@ def generate_launch_description():
 
     pkg_px4_sitl       = get_package_share_directory("easyfly_px4_sitl")
     pkg_gazebo_models  = get_package_share_directory("easyfly_gazebo_models")
-    pkg_gazebo_worlds  = get_package_share_directory("easyfly_gazebo_worlds")
     gazebo_plugins_lib = get_package_prefix("easyfly_gazebo_plugins") + "/lib"
     gazebo_server = gazebo_plugins_lib + "/easyfly_gazebo_plugins/easyfly_gzserver"
 
@@ -90,18 +90,20 @@ def generate_launch_description():
     px4_bin   = str(px4_dir / "build" / "px4_sitl_default" / "bin" / "px4")
 
     model_dir  = pkg_px4_sitl + "/models"
-    world_file = pkg_gazebo_worlds + "/perception_demo.world"
+    world_file = scene_value('world')
     model_name = "easyfly_iris"
-    model_sdf  = model_dir + "/" + model_name + "/" + model_name + ".sdf"
+    default_model = model_dir + "/" + model_name + "/" + model_name + ".sdf"
+    model_sdf = scene_value('model_sdf')
 
     px4_models_dir = str(
         px4_dir / "Tools" / "simulation" / "gazebo-classic" /
         "sitl_gazebo-classic" / "models")
-    gazebo_model_path = ":".join([
+    default_roots = [
         model_dir,
         pkg_gazebo_models,
         px4_models_dir,
-    ])
+    ]
+    gazebo_model_path = scene_value('model_path')
     gazebo_plugin_dir = str(px4_dir / "build" / "px4_sitl_default" / "build_gazebo-classic")
 
     set_model_path = SetEnvironmentVariable("GAZEBO_MODEL_PATH", gazebo_model_path)
@@ -114,7 +116,7 @@ def generate_launch_description():
         "LD_LIBRARY_PATH",
         gazebo_plugin_dir + ":" + os.environ.get("LD_LIBRARY_PATH", ""))
 
-    # ---- Gazebo + 模型 + PX4 (复用 px4_sitl.launch.py 的启动逻辑, 固定 perception_demo.world) ----
+    # ---- Gazebo + 模型 + PX4 (默认 perception_demo；显式 scene 先离线校验) ----
     # -s libgazebo_ros_init.so: 加载 ROS2 时钟插件(SystemPlugin, 发布 /clock), 必须用 -s 方式加载
     gzserver = ExecuteProcess(
         cmd=[gazebo_server, "--verbose", "-s", "libgazebo_ros_init.so", world_file],
@@ -125,9 +127,10 @@ def generate_launch_description():
     spawn_model = ExecuteProcess(
         cmd=[
             "gz", "model",
-            "--spawn-file=" + model_sdf,
+            ["--spawn-file=", model_sdf],
             "--model-name=" + model_name,
-            "-x", "0.0", "-y", "0.0", "-z", "0.83",
+            "-x", scene_value('x'), "-y", scene_value('y'), "-z", scene_value('z'),
+            "-Y", scene_value('yaw'),
         ],
         output="screen",
         name="spawn_model",
@@ -269,7 +272,8 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_semantic_map") + "/launch/semantic_map.launch.py"),
         launch_arguments={"capture_shutdown": LaunchConfiguration(
-            "semantic_capture_shutdown")}.items())
+            "semantic_capture_shutdown"),
+            "ground_model_frame": scene_value('ground_model_frame')}.items())
 
     spawn_delayed = TimerAction(period=3.0, actions=[spawn_model])
     px4_delayed = TimerAction(period=6.0, actions=[px4_sitl])
@@ -311,6 +315,7 @@ def generate_launch_description():
     m43_nodes = TimerAction(period=26.0, actions=[local_planner])
 
     actions = [
+        *selection_arguments('full_perception'),
         set_model_path,
         set_plugin_path,
         set_ld_library_path,
@@ -342,4 +347,7 @@ def generate_launch_description():
     ]
     return guarded_launch(actions, {
         gzserver: "Gazebo", px4_sitl: "PX4", spawn_model: "model spawn",
-    })
+    }, preflight=[preflight_action(
+        px4_dir=px4_dir, default_world='perception_demo.world', default_roots=default_roots,
+        default_model=default_model,
+        allowed_profiles=('full_perception', 'navigation_dev', 'landing_dev'))])

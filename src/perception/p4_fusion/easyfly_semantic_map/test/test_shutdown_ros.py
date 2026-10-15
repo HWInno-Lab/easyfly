@@ -118,7 +118,9 @@ def run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture, work
         transform = TransformStamped(header=header, child_frame_id='base_link')
         transform.transform.translation.z = 1.0
         transform.transform.rotation.w = 1.0
-        broadcaster.sendTransform(transform)
+        ground_basis = TransformStamped(header=Header(frame_id='map', stamp=stamp), child_frame_id='odom')
+        ground_basis.transform.rotation.w = 1.0
+        broadcaster.sendTransform([ground_basis, transform])
         states.publish(UAVState(header=header, connected=True, pose_valid=True,
                                 armed=False, position_z=1.0))
         if not frozen[0]:
@@ -144,7 +146,8 @@ def run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture, work
     try:
         with (tmp_path / 'semantic.log').open('w') as output:
             command = [str(executable), '--ros-args', '-p',
-                       'use_sim_time:=' + ('false' if clock_mode == 'system' else 'true')]
+                       'use_sim_time:=' + ('false' if clock_mode == 'system' else 'true'),
+                       '-p', 'ground_model_frame:=map']
             if capture:
                 command = [sys.executable, str(Path(__file__).parents[1] /
                            'scripts/semantic_shutdown_capture.py'), *command]

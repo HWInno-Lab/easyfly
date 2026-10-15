@@ -1,0 +1,126 @@
+{
+  "scope": "Disarmed map/alignment registration plus separately recorded bounded central aisle mission; see mission.json.",
+  "scene": "warehouse_aws_v1",
+  "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+  "runs": [
+    {
+      "path": "artifacts/scene-s2-fix-20261015/spatial-roof-1/result.json",
+      "sha256": "84e0dde2755cc754c92061057af2fa1dce61316ac6ab74243a8d4389273dc697",
+      "mapping_ready": true,
+      "counts": {
+        "/uav_state": 131,
+        "/odom": 771,
+        "/occupancy_grid": 35,
+        "/pointcloud_nonground": 40
+      },
+      "world_to_navigation": {
+        "translation": [
+          0.011796015780419111,
+          0.005803816641370456,
+          -0.10487742513020833
+        ],
+        "yaw": -0.013890325882551671
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 35511,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 36337,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "bcf9fa9ee6783682afd1edff4ec9cfa85a6418e6b1331f471d3c5e080e8093e7"
+        }
+      },
+      "normal_exits": 24,
+      "leftovers": []
+    },
+    {
+      "path": "artifacts/scene-s2-fix-20261015/spatial-roof-2/result.json",
+      "sha256": "231281f5db8d00f9c28f3d727b439bb10b13b32752cf7e0ae68e7e75d3a4e0de",
+      "mapping_ready": true,
+      "counts": {
+        "/uav_state": 118,
+        "/odom": 713,
+        "/occupancy_grid": 31,
+        "/pointcloud_nonground": 35
+      },
+      "world_to_navigation": {
+        "translation": [
+          0.027645304178198177,
+          0.02325133855144183,
+          -0.08208699750006199
+        ],
+        "yaw": -0.03180195100202252
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 37387,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 38218,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "bcf9fa9ee6783682afd1edff4ec9cfa85a6418e6b1331f471d3c5e080e8093e7"
+        }
+      },
+      "normal_exits": 24,
+      "leftovers": []
+    }
+  ],
+  "alignment_translation_difference_m": 0.03278749083237893,
+  "alignment_yaw_difference_rad": 0.01791162511947085,
+  "semantic_config_sha256": "2e1dbecf2e284846be85ffd14810f865df2a635fd07e223d39cbe464c95dd603",
+  "ground_acceptance": "Explicit spatial support alternative enabled; original global ratio unchanged; see easyfly_semantic_map/README-ground.md.",
+  "navigation_tested": true,
+  "settled_reference_run": {
+    "path": "artifacts/scene-s2-fix-20261015/settled-roof-1/result.json",
+    "sha256": "1c86f3801d6634d85c9832bd142679dc92e9359211bcbe514675c5906029c9a7",
+    "world_to_navigation": {
+      "translation": [
+        -0.0016776071982652259,
+        -0.004149026392648618,
+        -0.18080515950520834
+      ],
+      "yaw": -0.08824464622475788
+    },
+    "settled_state": {
+      "source_ns": 15600000000,
+      "frame": "odom",
+      "ros_now_ns": 15600000000,
+      "receipt": 9523.819023107,
+      "steady_now": 9523.935037908,
+      "armed": false,
+      "connected": true,
+      "mode": 2,
+      "mode_name": "AUTO.LOITER",
+      "position": [
+        -0.004657091572880745,
+        -0.005142421927303076,
+        -0.1072998046875
+      ],
+      "velocity": [
+        -0.002083348575979471,
+        -0.003904405515640974,
+        0.013129930011928082
+      ],
+      "pose_valid": true,
+      "velocity_valid": true,
+      "battery_valid": true,
+      "battery_voltage": 16.200000762939453,
+      "battery_remaining": 1.0
+    },
+    "counts": {
+      "/uav_state": 138,
+      "/odom": 859,
+      "/occupancy_grid": 44,
+      "/pointcloud_nonground": 49
+    }
+  },
+  "preflight_contract": "Before pose calibration, fresh valid disarmed state must report speed <=0.05m/s continuously for >=3s. Original cross-run alignment bounds remain 0.2m and 0.1rad.",
+  "ground_model_frame": "map",
+  "ground_basis_contract": "Only the warehouse manifests select map. Legacy/default entry remains odom. Require fresh TF; >0.25m or >0.10rad inter-frame basis jumps reset the model and invalidate the cloud. Armed refitting remains forbidden.",
+  "current_revision_mission": "evidence/warehouse_aws_v1/mission.json"
+}

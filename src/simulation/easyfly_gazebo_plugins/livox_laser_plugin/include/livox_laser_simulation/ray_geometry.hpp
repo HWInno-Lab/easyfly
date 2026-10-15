@@ -17,14 +17,22 @@
 namespace easyfly_livox
 {
 
-// Gazebo MultiRayShape::GetRange adds min_range to the measured ray length.
-// Both initial construction and per-frame updates must start at min_range,
-// not at the sensor origin; otherwise every return is biased by min_range.
+// Both initial construction and per-frame updates start at the configured
+// minimum range. Sensor-origin distance must add that offset to ray length.
 inline ignition::math::Vector3d rayStart(
   const ignition::math::Vector3d & origin,
   const ignition::math::Vector3d & unit_axis, double min_range)
 {
   return origin + unit_axis * min_range;
+}
+
+// LivoxOdeMultiRayShape overrides Init without running MultiRayShape::Init:
+// the base class's private minRange remains zero. Its GetRange therefore
+// cannot recover the configured segment-start offset. Use actual RayShape
+// length plus the same configured minimum used by rayStart, exactly once.
+inline double sensorRange(double ray_length, double min_range)
+{
+  return min_range + ray_length;
 }
 
 }  // namespace easyfly_livox

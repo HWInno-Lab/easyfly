@@ -1,0 +1,630 @@
+{
+  "source_url": "https://github.com/aws-robotics/aws-robomaker-small-warehouse-world",
+  "revision": "ee0af733315e78432408c3cd98d378ecee5f767c",
+  "archive_sha256": "c536d4a027f42bdac1a15d751ad8fb37296e14871e5af909f01207a854002211",
+  "declared_license": "MIT-0",
+  "included_models": [
+    "aws_robomaker_warehouse_Bucket_01",
+    "aws_robomaker_warehouse_ClutteringA_01",
+    "aws_robomaker_warehouse_ClutteringC_01",
+    "aws_robomaker_warehouse_ClutteringD_01",
+    "aws_robomaker_warehouse_GroundB_01",
+    "aws_robomaker_warehouse_Lamp_01",
+    "aws_robomaker_warehouse_PalletJackB_01",
+    "aws_robomaker_warehouse_RoofB_01",
+    "aws_robomaker_warehouse_ShelfD_01",
+    "aws_robomaker_warehouse_ShelfE_01",
+    "aws_robomaker_warehouse_ShelfF_01",
+    "aws_robomaker_warehouse_TrashCanC_01",
+    "aws_robomaker_warehouse_WallB_01"
+  ],
+  "excluded_models": [
+    "aws_robomaker_warehouse_DeskC_01 (not referenced by selected world)"
+  ],
+  "files": [
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Bucket_01/materials/textures/aws_robomaker_warehouse_Bucket_01.png",
+      "origin": "models/aws_robomaker_warehouse_Bucket_01/materials/textures/aws_robomaker_warehouse_Bucket_01.png",
+      "upstream_sha256": "c79e8bfb9a0bea6a9824ffbb0411230945a52fcbb67074918e7af2d38070663a",
+      "sha256": "c79e8bfb9a0bea6a9824ffbb0411230945a52fcbb67074918e7af2d38070663a",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Bucket_01/meshes/aws_robomaker_warehouse_Bucket_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_Bucket_01/meshes/aws_robomaker_warehouse_Bucket_01_collision.DAE",
+      "upstream_sha256": "c619575cdd23ec8f42fb583317f619ff8b74f287dc7a46ebb5b9837e76d3c28b",
+      "sha256": "c619575cdd23ec8f42fb583317f619ff8b74f287dc7a46ebb5b9837e76d3c28b",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Bucket_01/meshes/aws_robomaker_warehouse_Bucket_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_Bucket_01/meshes/aws_robomaker_warehouse_Bucket_01_visual.DAE",
+      "upstream_sha256": "00996b7fa7145e1af2bccba9e2f56003227805c1b06e410124237ed410cf0642",
+      "sha256": "00996b7fa7145e1af2bccba9e2f56003227805c1b06e410124237ed410cf0642",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Bucket_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_Bucket_01/model.config",
+      "upstream_sha256": "b2f98ce1ed7526c4d1d3a5025ab2ff17778a62accc7c84d5931cc62a1f8c9544",
+      "sha256": "b2f98ce1ed7526c4d1d3a5025ab2ff17778a62accc7c84d5931cc62a1f8c9544",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Bucket_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_Bucket_01/model.sdf",
+      "upstream_sha256": "cba2afedc8566553a652e571344c91572be8f9eddc8c9621d75ac1cc99c710b7",
+      "sha256": "1153fdebb140b21358e2ce96909fbc9cc0e515575bc65914ca962591600257d4",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png",
+      "upstream_sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png",
+      "upstream_sha256": "fa11698ab9127aa550b3a8f79fce4f11fb8988d9e623f1b9e57ef53fef9198c1",
+      "sha256": "fa11698ab9127aa550b3a8f79fce4f11fb8988d9e623f1b9e57ef53fef9198c1",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE",
+      "upstream_sha256": "f2e592215a2e3fef5161da3e0a53339f83c7ccc059a75bce6dfc52e23eafa024",
+      "sha256": "f2e592215a2e3fef5161da3e0a53339f83c7ccc059a75bce6dfc52e23eafa024",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE",
+      "upstream_sha256": "ccf14ca50f55bc5db59b94d8947307a1c2729ffc4f2d36a6f26a0dbe1476c1d8",
+      "sha256": "ccf14ca50f55bc5db59b94d8947307a1c2729ffc4f2d36a6f26a0dbe1476c1d8",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/model.config",
+      "upstream_sha256": "fbb0299646c69626661baca59503a266787ba09f4821029bd17a7c0e39c87506",
+      "sha256": "fbb0299646c69626661baca59503a266787ba09f4821029bd17a7c0e39c87506",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringA_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ClutteringA_01/model.sdf",
+      "upstream_sha256": "8a4174e8a9a0fe58c6b67564b2b15d97a629344c379ebae9dc58cfbd08f34538",
+      "sha256": "0160c32a3babc3c3dc07a84a433fa1f5c79a776cc78b58533e6fc9ab83c9bd6e",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png",
+      "upstream_sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE",
+      "upstream_sha256": "17ea0446b4310bc2828ba9abe48a86bed674f410611c389ff60cd7ff199b2440",
+      "sha256": "17ea0446b4310bc2828ba9abe48a86bed674f410611c389ff60cd7ff199b2440",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE",
+      "upstream_sha256": "0817b2b4b7155ce091bbbba1fe7039434e6698cea23730999571076e21d26154",
+      "sha256": "0817b2b4b7155ce091bbbba1fe7039434e6698cea23730999571076e21d26154",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/model.config",
+      "upstream_sha256": "f59a13a8638c9c5772c4eeeb1a400b4856271d26af999a6c72a0a0d093ec523d",
+      "sha256": "f59a13a8638c9c5772c4eeeb1a400b4856271d26af999a6c72a0a0d093ec523d",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringC_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ClutteringC_01/model.sdf",
+      "upstream_sha256": "d2c2d44e634228c673f4569af3e16259242cef1c5fde970bc239131d2927c878",
+      "sha256": "daa324de15573e0b4b3c827b73f9aa58585469618f40b1a45b7fda3ce523f7d0",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/materials/textures/aws_robomaker_warehouse_ClutteringD_01.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/materials/textures/aws_robomaker_warehouse_ClutteringD_01.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/materials/textures/aws_robomaker_warehouse_ClutteringD_02.png",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/materials/textures/aws_robomaker_warehouse_ClutteringD_02.png",
+      "upstream_sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/meshes/aws_robomaker_warehouse_ClutteringD_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/meshes/aws_robomaker_warehouse_ClutteringD_01_collision.DAE",
+      "upstream_sha256": "602a9683515439e085c8af2f9e2dca905210c7daeff093f1d74a5175d57f6ee0",
+      "sha256": "602a9683515439e085c8af2f9e2dca905210c7daeff093f1d74a5175d57f6ee0",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/meshes/aws_robomaker_warehouse_ClutteringD_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/meshes/aws_robomaker_warehouse_ClutteringD_01_visual.DAE",
+      "upstream_sha256": "6fd0be026df79ceb9125291df7f1f481ed6691d0e49f960c2c22accc55e9baa7",
+      "sha256": "6fd0be026df79ceb9125291df7f1f481ed6691d0e49f960c2c22accc55e9baa7",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/model.config",
+      "upstream_sha256": "de435bfeb2b86c47d771c8c68f9d0c361c951455a190fcd8b29ce053cd36abae",
+      "sha256": "de435bfeb2b86c47d771c8c68f9d0c361c951455a190fcd8b29ce053cd36abae",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ClutteringD_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ClutteringD_01/model.sdf",
+      "upstream_sha256": "4b6751b65cecf74e3e7166ef61e2ddf227167d8c35b0cef02285a197a805c843",
+      "sha256": "9e1ca2392b34ab2b15f69cb5215a17ba3f0d1db5a82ba02eac45628b8fe8ce3f",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/materials/textures/aws_robomaker_warehouse_GroundB_01.png",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/materials/textures/aws_robomaker_warehouse_GroundB_01.png",
+      "upstream_sha256": "2c1d8e8022a0ae76e70d6be54674b087a50db302ad9ff257a8f7fb835f2786c2",
+      "sha256": "2c1d8e8022a0ae76e70d6be54674b087a50db302ad9ff257a8f7fb835f2786c2",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/materials/textures/aws_robomaker_warehouse_GroundB_02.png",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/materials/textures/aws_robomaker_warehouse_GroundB_02.png",
+      "upstream_sha256": "26131b5331f65a44324e4f5315c419d32ab9ec277a788b016f6814374101c8a0",
+      "sha256": "26131b5331f65a44324e4f5315c419d32ab9ec277a788b016f6814374101c8a0",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/meshes/aws_robomaker_warehouse_GroundB_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/meshes/aws_robomaker_warehouse_GroundB_01_collision.DAE",
+      "upstream_sha256": "82482bea3e67f61b43dd385f83e9478142310a88f6c407cec550c523d547891d",
+      "sha256": "82482bea3e67f61b43dd385f83e9478142310a88f6c407cec550c523d547891d",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/meshes/aws_robomaker_warehouse_GroundB_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/meshes/aws_robomaker_warehouse_GroundB_01_visual.DAE",
+      "upstream_sha256": "2549afc839ac9a74554894eff766a7b5265e99fdf6ac398580031a0494293020",
+      "sha256": "2549afc839ac9a74554894eff766a7b5265e99fdf6ac398580031a0494293020",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/model.config",
+      "upstream_sha256": "f8617cf5cb7ddf5e3ee71e34763d5fc81271c0361f9f4b6b6bcdf80c57d28490",
+      "sha256": "f8617cf5cb7ddf5e3ee71e34763d5fc81271c0361f9f4b6b6bcdf80c57d28490",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_GroundB_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_GroundB_01/model.sdf",
+      "upstream_sha256": "12ef0d4d7ed2bbf18e5ca552c08d1cc1a69b49331f1cf6eaa41f2a0e53fcd0ac",
+      "sha256": "1f5fdd9cd2638c563f9f31721975f1901aa4e337f21921435c6ba85e318d0289",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Lamp_01/materials/textures/aws_robomaker_warehouse_Lamp_01.png",
+      "origin": "models/aws_robomaker_warehouse_Lamp_01/materials/textures/aws_robomaker_warehouse_Lamp_01.png",
+      "upstream_sha256": "b64b10041cb5aebfbe753764842296db530b90735eabf613a653e33edb0194ac",
+      "sha256": "b64b10041cb5aebfbe753764842296db530b90735eabf613a653e33edb0194ac",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Lamp_01/meshes/aws_robomaker_warehouse_Lamp_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_Lamp_01/meshes/aws_robomaker_warehouse_Lamp_01_collision.DAE",
+      "upstream_sha256": "262dccf5d5ff7d1859db119ff438c975bdf14e09fdcb8d36184c8afeca6f7be0",
+      "sha256": "262dccf5d5ff7d1859db119ff438c975bdf14e09fdcb8d36184c8afeca6f7be0",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Lamp_01/meshes/aws_robomaker_warehouse_Lamp_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_Lamp_01/meshes/aws_robomaker_warehouse_Lamp_01_visual.DAE",
+      "upstream_sha256": "5718de01253a33d8ed99695560033e99a282abe93030e8ab41be24e16d6f990d",
+      "sha256": "5718de01253a33d8ed99695560033e99a282abe93030e8ab41be24e16d6f990d",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Lamp_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_Lamp_01/model.config",
+      "upstream_sha256": "8ad4bb8ed9729fb3db457ff9fbdeaa8a5b420d0f817ade34e1413136e35b462c",
+      "sha256": "8ad4bb8ed9729fb3db457ff9fbdeaa8a5b420d0f817ade34e1413136e35b462c",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_Lamp_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_Lamp_01/model.sdf",
+      "upstream_sha256": "beb3e7865bebb64ecaa966639d28fc56dc3cd12439a9f8d7770966c7aacfb9f5",
+      "sha256": "556f7386e882049b1fa1077c9540fa81f742204bd2ecb83ca7fc1980e026d40c",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/materials/textures/aws_robomaker_warehouse_PalletJackB_01.png",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/materials/textures/aws_robomaker_warehouse_PalletJackB_01.png",
+      "upstream_sha256": "99d5f2463a5ca912df09a98352e36fae23a51bc3a719ab1054754ca1f82b122c",
+      "sha256": "99d5f2463a5ca912df09a98352e36fae23a51bc3a719ab1054754ca1f82b122c",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/materials/textures/aws_robomaker_warehouse_PalletJackB_02.png",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/materials/textures/aws_robomaker_warehouse_PalletJackB_02.png",
+      "upstream_sha256": "51053443a5f6e546ce1ba00548c627ca00f7e17d404a51c88fe1286126b751fd",
+      "sha256": "51053443a5f6e546ce1ba00548c627ca00f7e17d404a51c88fe1286126b751fd",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/meshes/aws_robomaker_warehouse_PalletJackB_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/meshes/aws_robomaker_warehouse_PalletJackB_01_collision.DAE",
+      "upstream_sha256": "ca7886559e76cad6700c37f726b2285abdaa7364265042a639ebc70c31b9993e",
+      "sha256": "ca7886559e76cad6700c37f726b2285abdaa7364265042a639ebc70c31b9993e",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/meshes/aws_robomaker_warehouse_PalletJackB_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/meshes/aws_robomaker_warehouse_PalletJackB_01_visual.DAE",
+      "upstream_sha256": "40822b3463520932bf793d2340ca111ca383757f5cc3799dd0f9edc76936974e",
+      "sha256": "40822b3463520932bf793d2340ca111ca383757f5cc3799dd0f9edc76936974e",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/model.config",
+      "upstream_sha256": "0225a1fdad90f36e340b84fa6ddcbb34aa6faf10aefee602f3b9f0c7e73348f7",
+      "sha256": "0225a1fdad90f36e340b84fa6ddcbb34aa6faf10aefee602f3b9f0c7e73348f7",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_PalletJackB_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_PalletJackB_01/model.sdf",
+      "upstream_sha256": "f716574a2e2b000fb843d34f3f3c485fe880d10bd2b587c2e2a77fda878b4d7b",
+      "sha256": "4bec46c75a1cac0eb6b7cd602ddab52e3b6b31907131debea04e88e9d2119ccd",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_RoofB_01/materials/textures/aws_robomaker_warehouse_RoofB_01.png",
+      "origin": "models/aws_robomaker_warehouse_RoofB_01/materials/textures/aws_robomaker_warehouse_RoofB_01.png",
+      "upstream_sha256": "b64b10041cb5aebfbe753764842296db530b90735eabf613a653e33edb0194ac",
+      "sha256": "b64b10041cb5aebfbe753764842296db530b90735eabf613a653e33edb0194ac",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_RoofB_01/meshes/aws_robomaker_warehouse_RoofB_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_RoofB_01/meshes/aws_robomaker_warehouse_RoofB_01_collision.DAE",
+      "upstream_sha256": "474e36bc7625611c0c45e947ae712e20a0deaa0890890f56fe3446a5873344d1",
+      "sha256": "474e36bc7625611c0c45e947ae712e20a0deaa0890890f56fe3446a5873344d1",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_RoofB_01/meshes/aws_robomaker_warehouse_RoofB_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_RoofB_01/meshes/aws_robomaker_warehouse_RoofB_01_visual.DAE",
+      "upstream_sha256": "d7b0e9dd5d1b2a295c0f973f153f5ea2fe3b12415b7e3ad0a35bd8ac2523e459",
+      "sha256": "d7b0e9dd5d1b2a295c0f973f153f5ea2fe3b12415b7e3ad0a35bd8ac2523e459",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_RoofB_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_RoofB_01/model.config",
+      "upstream_sha256": "6147f664cd79db7ce21f969088a015f4dbd49ec1f2cce3c8164c9c785bf18401",
+      "sha256": "6147f664cd79db7ce21f969088a015f4dbd49ec1f2cce3c8164c9c785bf18401",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_RoofB_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_RoofB_01/model.sdf",
+      "upstream_sha256": "e0c967137288a9067286faf9e4e4959799893ed9956d39d52175760016401d23",
+      "sha256": "4a1a892284a662a11475aa2464f54fbe7fd675db528f4c8fe8f814ba6858fd30",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_01.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_01.png",
+      "upstream_sha256": "beea1f3edc1b859566bb70e80ab6a30aea848f8ca0b802a73812e27be739e198",
+      "sha256": "beea1f3edc1b859566bb70e80ab6a30aea848f8ca0b802a73812e27be739e198",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_02.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_02.png",
+      "upstream_sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_03.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_03.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_04.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/materials/textures/aws_robomaker_warehouse_ShelfD_04.png",
+      "upstream_sha256": "c86be5fc65bf7b9c622d472c5e70aa7843b756ad32ac24daeb3dd432cae9981b",
+      "sha256": "c86be5fc65bf7b9c622d472c5e70aa7843b756ad32ac24daeb3dd432cae9981b",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/meshes/aws_robomaker_warehouse_ShelfD_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/meshes/aws_robomaker_warehouse_ShelfD_01_collision.DAE",
+      "upstream_sha256": "1ecb3254a361230311251886165dab5150ba006088e5f1ad94284ae5c2fc6364",
+      "sha256": "1ecb3254a361230311251886165dab5150ba006088e5f1ad94284ae5c2fc6364",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/meshes/aws_robomaker_warehouse_ShelfD_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/meshes/aws_robomaker_warehouse_ShelfD_01_visual.DAE",
+      "upstream_sha256": "00db7593f7babfbefb05d28715bb82b6f78edacd0eadedfabe95411776b417ca",
+      "sha256": "00db7593f7babfbefb05d28715bb82b6f78edacd0eadedfabe95411776b417ca",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/model.config",
+      "upstream_sha256": "a239481a060bcfedbe0385a79dc852cdf9cb7b44cefd8414a4c010f4e4b66ffa",
+      "sha256": "a239481a060bcfedbe0385a79dc852cdf9cb7b44cefd8414a4c010f4e4b66ffa",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfD_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ShelfD_01/model.sdf",
+      "upstream_sha256": "9c93f0cab2a1eac18f01c4042677e78d2321c7c8cde02db6bbb7fdd23da1271e",
+      "sha256": "8a8c080d3294141bac8335d242671e0746636381ccb764e497f78a2341682469",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_01.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_01.png",
+      "upstream_sha256": "beea1f3edc1b859566bb70e80ab6a30aea848f8ca0b802a73812e27be739e198",
+      "sha256": "beea1f3edc1b859566bb70e80ab6a30aea848f8ca0b802a73812e27be739e198",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_02.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_02.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_03.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_03.png",
+      "upstream_sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_04.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/materials/textures/aws_robomaker_warehouse_ShelfE_04.png",
+      "upstream_sha256": "c86be5fc65bf7b9c622d472c5e70aa7843b756ad32ac24daeb3dd432cae9981b",
+      "sha256": "c86be5fc65bf7b9c622d472c5e70aa7843b756ad32ac24daeb3dd432cae9981b",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/meshes/aws_robomaker_warehouse_ShelfE_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/meshes/aws_robomaker_warehouse_ShelfE_01_collision.DAE",
+      "upstream_sha256": "ae1d25d5770ab46af26d27f60e36a5cab3fd506401a3e07b73b44eb0b4cdf920",
+      "sha256": "ae1d25d5770ab46af26d27f60e36a5cab3fd506401a3e07b73b44eb0b4cdf920",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/meshes/aws_robomaker_warehouse_ShelfE_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/meshes/aws_robomaker_warehouse_ShelfE_01_visual.DAE",
+      "upstream_sha256": "fda6508ff115732a52f12577363cb759f408040aa1ac54a9fc69fe85f7ad451e",
+      "sha256": "fda6508ff115732a52f12577363cb759f408040aa1ac54a9fc69fe85f7ad451e",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/model.config",
+      "upstream_sha256": "ef116b493ad76be26d9572c8b41220d368df0c52fb97037cb296b5496dccaf3e",
+      "sha256": "ef116b493ad76be26d9572c8b41220d368df0c52fb97037cb296b5496dccaf3e",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfE_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ShelfE_01/model.sdf",
+      "upstream_sha256": "94f7e3d97eac34b99ef40e7b56a9140adee7c119bf8e444ef2d5c033aa04d548",
+      "sha256": "ab7daeaaa8b7b99cf902b7f6cee593e7f2ca58aa0f9a66f0eb93bacc13c501f7",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_01.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_01.png",
+      "upstream_sha256": "d2c5d8496addcae8e129ec7960b29287b551f7f1aaec65f2ab0dc98f77af49ca",
+      "sha256": "d2c5d8496addcae8e129ec7960b29287b551f7f1aaec65f2ab0dc98f77af49ca",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_02.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_02.png",
+      "upstream_sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_03.png",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/materials/textures/aws_robomaker_warehouse_ShelfF_03.png",
+      "upstream_sha256": "c79e8bfb9a0bea6a9824ffbb0411230945a52fcbb67074918e7af2d38070663a",
+      "sha256": "c79e8bfb9a0bea6a9824ffbb0411230945a52fcbb67074918e7af2d38070663a",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/meshes/aws_robomaker_warehouse_ShelfF_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/meshes/aws_robomaker_warehouse_ShelfF_01_collision.DAE",
+      "upstream_sha256": "2a1fb6e3429942f77d959aefdc608a6c0d9655759524e8921f8a4e9671660bb8",
+      "sha256": "2a1fb6e3429942f77d959aefdc608a6c0d9655759524e8921f8a4e9671660bb8",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/meshes/aws_robomaker_warehouse_ShelfF_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/meshes/aws_robomaker_warehouse_ShelfF_01_visual.DAE",
+      "upstream_sha256": "17addb9300025be5aee756787979a5199d1be24b731d2bc23b654d4b43649255",
+      "sha256": "17addb9300025be5aee756787979a5199d1be24b731d2bc23b654d4b43649255",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/model.config",
+      "upstream_sha256": "c68e9779f21091976048880996145b3a96f09f12c867834ec30470d7afc98982",
+      "sha256": "c68e9779f21091976048880996145b3a96f09f12c867834ec30470d7afc98982",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_ShelfF_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_ShelfF_01/model.sdf",
+      "upstream_sha256": "b10f60c2cb88f0aebf87e0bfe18c55d800392c87990fc4cf0d03adbf6e745f94",
+      "sha256": "5f1330d17eb3bb4fc6c215a55468a395f681f20149b998caff3d89c2e6a942f3",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_TrashCanC_01/materials/textures/aws_robomaker_warehouse_TrashCanC_01.png",
+      "origin": "models/aws_robomaker_warehouse_TrashCanC_01/materials/textures/aws_robomaker_warehouse_TrashCanC_01.png",
+      "upstream_sha256": "f9d263a6b617cb309472ad613b91839ce18d5b04fd39263e698b7a40c309ce96",
+      "sha256": "f9d263a6b617cb309472ad613b91839ce18d5b04fd39263e698b7a40c309ce96",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_TrashCanC_01/meshes/aws_robomaker_warehouse_TrashCanC_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_TrashCanC_01/meshes/aws_robomaker_warehouse_TrashCanC_01_collision.DAE",
+      "upstream_sha256": "83741a96a3181a38c68cedd03a43c723275dfc448bffaaae8af8674d3572540e",
+      "sha256": "83741a96a3181a38c68cedd03a43c723275dfc448bffaaae8af8674d3572540e",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_TrashCanC_01/meshes/aws_robomaker_warehouse_TrashCanC_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_TrashCanC_01/meshes/aws_robomaker_warehouse_TrashCanC_01_visual.DAE",
+      "upstream_sha256": "62e98f8a895e99ad5a199e34e3425d96253fa10284f27dafffdcd6eb5920c394",
+      "sha256": "62e98f8a895e99ad5a199e34e3425d96253fa10284f27dafffdcd6eb5920c394",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_TrashCanC_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_TrashCanC_01/model.config",
+      "upstream_sha256": "e5e1bf0f1a89c5b75781c53786e31514c127d868e858a798fb9626d7065369a9",
+      "sha256": "e5e1bf0f1a89c5b75781c53786e31514c127d868e858a798fb9626d7065369a9",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_TrashCanC_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_TrashCanC_01/model.sdf",
+      "upstream_sha256": "95334d565445a9bda3d15b5f422e3753713d2676b7400d792060365ca7dc0c69",
+      "sha256": "89587275b53139c3489f978d3951377e83cc4ad33406440ccfcea9ca9ea5568b",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_WallB_01/materials/textures/aws_robomaker_warehouse_WallB_01.png",
+      "origin": "models/aws_robomaker_warehouse_WallB_01/materials/textures/aws_robomaker_warehouse_WallB_01.png",
+      "upstream_sha256": "2225618a5e1b728ea9cff6ca9295060f8ed341559607bef5c3eed57bb8043ad5",
+      "sha256": "2225618a5e1b728ea9cff6ca9295060f8ed341559607bef5c3eed57bb8043ad5",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_WallB_01/meshes/aws_robomaker_warehouse_WallB_01_collision.DAE",
+      "origin": "models/aws_robomaker_warehouse_WallB_01/meshes/aws_robomaker_warehouse_WallB_01_collision.DAE",
+      "upstream_sha256": "25abc9a936e6c94075847eb15f689dde08c43807fff9f40ec471acfb80021280",
+      "sha256": "25abc9a936e6c94075847eb15f689dde08c43807fff9f40ec471acfb80021280",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_WallB_01/meshes/aws_robomaker_warehouse_WallB_01_visual.DAE",
+      "origin": "models/aws_robomaker_warehouse_WallB_01/meshes/aws_robomaker_warehouse_WallB_01_visual.DAE",
+      "upstream_sha256": "0f18a7855f634485bf491abfd335e8f12fb5830545e7827c08e6145db5d1b491",
+      "sha256": "0f18a7855f634485bf491abfd335e8f12fb5830545e7827c08e6145db5d1b491",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_WallB_01/model.config",
+      "origin": "models/aws_robomaker_warehouse_WallB_01/model.config",
+      "upstream_sha256": "037a10813e1b4d7e736604fee460583dba0e45d8cdb043c2e668cf253fca9f9f",
+      "sha256": "037a10813e1b4d7e736604fee460583dba0e45d8cdb043c2e668cf253fca9f9f",
+      "changes": []
+    },
+    {
+      "path": "third_party/aws/warehouse/aws_robomaker_warehouse_WallB_01/model.sdf",
+      "origin": "models/aws_robomaker_warehouse_WallB_01/model.sdf",
+      "upstream_sha256": "c921007e19c3c0d162902e063a4e9a49078233c66c8e52bd6d499ec8704b10a4",
+      "sha256": "4deb4ac5f418208a4a4fd37d81af47abee08ff7b0738be3dd65bb94df3132130",
+      "changes": [
+        "file://models/ -> model:// for relocatable model references"
+      ]
+    },
+    {
+      "path": "worlds/indoor/warehouse/warehouse_aws_v1.world",
+      "origin": "worlds/small_warehouse/small_warehouse.world",
+      "upstream_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+      "sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+      "changes": []
+    },
+    {
+      "path": "worlds/indoor/warehouse/warehouse_aws_no_roof_v1.world",
+      "origin": "worlds/no_roof_small_warehouse/no_roof_small_warehouse.world",
+      "upstream_sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+      "sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+      "changes": []
+    }
+  ],
+  "excluded_files": [
+    "models/aws_robomaker_warehouse_Bucket_01/.DS_Store",
+    "models/aws_robomaker_warehouse_Bucket_01/materials/.DS_Store",
+    "models/aws_robomaker_warehouse_ClutteringA_01/.DS_Store",
+    "models/aws_robomaker_warehouse_ClutteringA_01/materials/.DS_Store",
+    "models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/.DS_Store",
+    "models/aws_robomaker_warehouse_PalletJackB_01/.DS_Store",
+    "models/aws_robomaker_warehouse_PalletJackB_01/materials/.DS_Store",
+    "models/aws_robomaker_warehouse_ShelfE_01/.DS_Store",
+    "models/aws_robomaker_warehouse_ShelfE_01/materials/.DS_Store"
+  ]
+}

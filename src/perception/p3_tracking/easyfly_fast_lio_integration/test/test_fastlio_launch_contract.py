@@ -2,6 +2,7 @@
 """Launch-semantic regression tests for the composed FAST-LIO path."""
 
 import importlib.util
+import inspect
 import tempfile
 from pathlib import Path
 
@@ -14,6 +15,7 @@ from launch.actions import (
     OpaqueFunction,
 )
 from launch_ros.actions import Node
+from launch_ros.actions.load_composable_nodes import get_composable_node_load_request
 
 
 PACKAGE_DIR = Path(__file__).resolve().parents[1]
@@ -45,6 +47,17 @@ def make_context(**configurations: str) -> LaunchContext:
     context = LaunchContext()
     context.launch_configurations.update(configurations)
     return context
+
+
+def guarded_actions(description):
+    """Inspect the reservation's actions without executing/acquiring its lock."""
+    for action in description.entities:
+        if isinstance(action, OpaqueFunction):
+            function = action._OpaqueFunction__function
+            if function.__module__ == "easyfly_px4_sitl.session_guard":
+                yield from inspect.getclosurevars(function).nonlocals["actions"]
+        else:
+            yield action
 
 
 def test_standalone_legacy_config_file_is_effective() -> None:
@@ -104,7 +117,7 @@ def test_parent_group_blocks_detection_config_file() -> None:
     try:
         description = parent.generate_launch_description()
         p2_timer = next(
-            action for action in description.entities
+            action for action in guarded_actions(description)
             if getattr(action, "period", None) == 14.0)
         fastlio_group = next(
             action for action in p2_timer.actions if isinstance(action, GroupAction))
@@ -148,9 +161,24 @@ def test_parent_group_blocks_detection_config_file() -> None:
         ament_packages.get_package_share_directory = original_ament_lookup
 
 
+def test_delayed_map_clock_is_frozen_before_parent_scope_exits() -> None:
+    fastlio = load_launch_module(FASTLIO_PATH, "fastlio_launch_delayed_clock")
+    for value, expected in (("true", True), ("false", False)):
+        context = make_context(use_sim_time=value)
+        timer = fastlio._launch_map_odom_tf(context)[0]
+        assert timer.period == 5.0
+        container = timer.actions[0]
+        description = container._ComposableNodeContainer__composable_node_descriptions[0]
+        context.launch_configurations.clear()  # Outer scoped include has returned.
+        request = get_composable_node_load_request(description, context)
+        parameter = next(p for p in request.parameters if p.name == "use_sim_time")
+        assert parameter.value.bool_value is expected
+
+
 def main() -> None:
     test_standalone_legacy_config_file_is_effective()
     test_parent_group_blocks_detection_config_file()
+    test_delayed_map_clock_is_frozen_before_parent_scope_exits()
     print("PASS FAST-LIO launch semantic contracts")
 
 

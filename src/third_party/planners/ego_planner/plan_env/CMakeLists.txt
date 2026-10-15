@@ -96,6 +96,13 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_inflation_safety test/test_inflation_safety.cpp)
   target_include_directories(test_inflation_safety PRIVATE include)
+  ament_add_gtest(test_inflation_union test/test_inflation_union.cpp)
+  target_include_directories(test_inflation_union PRIVATE include)
+  target_compile_options(test_inflation_union PRIVATE
+    -fsanitize=address,undefined -fno-omit-frame-pointer)
+  target_link_libraries(test_inflation_union -fsanitize=address,undefined)
+  set_tests_properties(test_inflation_union PROPERTIES
+    ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1;UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1" TIMEOUT 30)
   ament_add_gtest(test_trusted_cloud_persistence test/test_trusted_cloud_persistence.cpp)
   target_include_directories(test_trusted_cloud_persistence PRIVATE include)
   ament_add_gtest(test_odom_freshness test/test_odom_freshness.cpp)

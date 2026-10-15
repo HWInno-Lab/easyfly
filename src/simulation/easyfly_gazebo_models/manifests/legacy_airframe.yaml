@@ -1,0 +1,38 @@
+schema_version: 1
+asset_set_id: legacy_airframe
+model_root:
+  package: easyfly_px4_sitl
+  path: models
+provenance:
+  status: unverified
+  source_url: null
+  revision: null
+  declared_license: null
+  evidence: []
+  note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+models:
+- name: easyfly_iris
+  sdf: easyfly_iris.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+files:
+- path: easyfly_iris/easyfly_iris.sdf
+  sha256: 98389948e74b08261cf8a2587d255c255ea3bd10f9e080f3b589b35bb3b5e770
+- path: easyfly_iris/easyfly_iris.urdf
+  sha256: 1d9521ff9721f5ab85dc76dbab438f38e16e6b3902c8dc5fa4e9b9d03ac134cf
+- path: easyfly_iris/meshes/iris.stl
+  sha256: 11a9a1453723182f812e4ca0def829b18272a0dfc1145d2c3e28f8c6210cea7b
+- path: easyfly_iris/meshes/iris_prop_ccw.dae
+  sha256: 5f8b01668ee24a5b663ca8c4dd56e294fd6480db7eec1e5a7c11e45ba9004e99
+- path: easyfly_iris/meshes/iris_prop_cw.dae
+  sha256: 6cbc686772dccd46253fb65ece000e7ffa6a74b9c097bda349884bd1e78cd879
+- path: easyfly_iris/model.config
+  sha256: 1b72f68079363208226271342696d51c5371c115f0b2f243b87e957b0e05e6f2
+local_changes: []
+storage: existing
+inventory_note: S0 当前文件快照；不表示上游版本已固定或许可已核实。不添加或修改原模型。

@@ -49,6 +49,7 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
+install(FILES README-ground.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -68,6 +69,16 @@ if(BUILD_TESTING)
   ament_add_gtest(test_ground_plane_tracker test/test_ground_plane_tracker.cpp)
   target_include_directories(test_ground_plane_tracker PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_ground_spatial_support test/test_ground_spatial_support.cpp)
+  target_include_directories(test_ground_spatial_support PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_ground_plane_transform test/test_ground_plane_transform.cpp)
+  target_include_directories(test_ground_plane_transform PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS})
+  ament_add_gtest(test_ground_candidate_selection test/test_ground_candidate_selection.cpp)
+  target_include_directories(test_ground_candidate_selection PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS})
+  target_link_libraries(test_ground_candidate_selection ${PCL_LIBRARIES})
   ament_add_gtest(test_map_validity test/test_map_validity.cpp)
   target_include_directories(test_map_validity PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

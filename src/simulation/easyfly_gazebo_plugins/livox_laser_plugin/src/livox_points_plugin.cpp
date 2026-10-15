@@ -10,6 +10,7 @@
 #include <gazebo/physics/Model.hh>
 #include <gazebo/physics/MultiRayShape.hh>
 #include <gazebo/physics/PhysicsEngine.hh>
+#include <gazebo/physics/RayShape.hh>
 #include <gazebo/physics/World.hh>
 #include <gazebo/sensors/RaySensor.hh>
 #include <gazebo/transport/Node.hh>
@@ -321,7 +322,11 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
 
     // ROS2 移植: 手工构造 PointCloud2 (x,y,z,intensity), 不依赖 PCL
     sensor_msgs::msg::PointCloud2 cloud;
-    cloud.header.stamp = rosNode->now();
+    // The ROS /clock subscription can lag or repeat while Gazebo produces
+    // distinct scans. Use this scan's native simulator measurement time,
+    // already recorded for the Gazebo LaserScanStamped message.
+    cloud.header.stamp.sec = laserMsg.time().sec();
+    cloud.header.stamp.nanosec = laserMsg.time().nsec();
     cloud.header.frame_id = frameName;
     cloud.height = 1;
     cloud.is_bigendian = false;
@@ -353,7 +358,8 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
         }
         if (verticle_index < verticalRayCount && horizon_index < rayCount) {
             auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
-            auto range = rayShape->GetRange(pair.first);
+            auto range = easyfly_livox::sensorRange(
+                rayShape->RayShapes()[pair.first]->GetLength(), minDist);
             auto intensity = rayShape->GetRetro(pair.first);
             if (range >= maxDist || range <= minDist || range <= 1e-5) {
                 range = 0.0;
@@ -398,9 +404,10 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
     livox_ros_driver2::msg::CustomMsg msg;
     msg.header.frame_id = frameName;
 
-    rclcpp::Time timestamp = rosNode->now();
-    msg.header.stamp = timestamp;
-    msg.timebase = timestamp.nanoseconds();
+    msg.header.stamp.sec = laserMsg.time().sec();
+    msg.header.stamp.nanosec = laserMsg.time().nsec();
+    msg.timebase = static_cast<uint64_t>(laserMsg.time().sec()) * 1000000000ULL +
+        static_cast<uint64_t>(laserMsg.time().nsec());
 
     msg.points.reserve(points_pair.size());
     for (int i = 0; i < points_pair.size(); ++i) {
@@ -412,7 +419,8 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
         }
         if (verticle_index < verticalRayCount && horizon_index < rayCount) {
             auto index = (verticalRayCount - verticle_index - 1) * rayCount + horizon_index;
-            auto range = rayShape->GetRange(pair.first);
+            auto range = easyfly_livox::sensorRange(
+                rayShape->RayShapes()[pair.first]->GetLength(), minDist);
             auto intensity = rayShape->GetRetro(pair.first);
             if (range >= maxDist || range <= minDist || abs(range) <= 1e-5) {
                 range = 0.0;

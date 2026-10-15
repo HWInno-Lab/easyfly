@@ -1,0 +1,65 @@
+schema_version: 1
+asset_set_id: easyfly_runtime_v1
+model_root:
+  package: easyfly_gazebo_models
+  path: easyfly/runtime_models
+provenance:
+  status: recorded
+  source_url: https://github.com/PX4/PX4-SITL_gazebo-classic
+  revision: 70683dc759cbd3ebccfa78429b564f8b1fb5d149
+  declared_license: BSD AND Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/PX4-LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/PX4-CLASSIC-package.xml
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/PROJECT-LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/ORIGINS.json
+  note: Curated GPS and project MID360 only; no sun/ground_plane and no vendor lidar
+    mesh.
+models:
+- name: gps
+  sdf: gps.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/PX4/PX4-SITL_gazebo-classic
+    revision: 70683dc759cbd3ebccfa78429b564f8b1fb5d149
+    declared_license: BSD
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/PX4-LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/PX4-CLASSIC-package.xml
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/ORIGINS.json
+    note: Unmodified GPS files from pinned Classic package declaring BSD; retain PX4
+      BSD-3-Clause notice; author Nuno Marques.
+- name: mid360
+  sdf: mid360.sdf
+  provenance:
+    status: recorded
+    source_url: null
+    revision: easyfly-mid360-primitive-v1
+    declared_license: Apache-2.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/PROJECT-LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/ORIGINS.json
+    note: Project sensor configuration, self-authored cylinder visual; all original
+      sensor/IMU/physics fields retained; vendor mesh excluded.
+files:
+- path: gps/gps.sdf
+  sha256: ed28b2b88fb667218d2e9c360fac77bd7cd73b4c620a1bd4237b690ddb146a99
+- path: gps/model.config
+  sha256: 7d2c9be9e01d898ef42b0525aa97becb5f554d48e2d8e915e284ea84fe0c3d9c
+- path: mid360/mid360.sdf
+  sha256: dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d
+- path: mid360/model.config
+  sha256: 3ec98913762f4a3ac3d4467ee69cec3f74863c61642672a02406a991c5f24d69
+local_changes:
+- MID360 visual mesh replaced with own cylinder; sensor, IMU, mass and inertia unchanged.
+storage: vendored
+inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

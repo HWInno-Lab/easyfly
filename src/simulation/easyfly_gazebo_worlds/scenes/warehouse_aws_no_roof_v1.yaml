@@ -1,0 +1,76 @@
+schema_version: 1
+id: warehouse_aws_no_roof_v1
+name: AWS 小型仓库（上游无屋顶版本）
+status: draft
+category: indoor/warehouse
+tags:
+- warehouse
+- navigation
+- inspection
+- static
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/warehouse/warehouse_aws_no_roof_v1.world
+  sha256: bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-small-warehouse-world
+  revision: ee0af733315e78432408c3cd98d378ecee5f767c
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_warehouse/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_warehouse/origins.json
+  note: Only the selected world dependency closure from the pinned official archive;
+    no external model references found. Official no_roof_small_warehouse.world variant,
+    unchanged upstream bytes; separate ID from full-roof world.
+asset_sets:
+- aws_warehouse_v1
+required_plugins: []
+supported_profiles: []
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0.0
+  - 0.0
+  - 0.83
+  yaw: 0.0
+  basis: Central aisle observed disarmed; new spatial-ground policy produced continuous
+    maps. Historical EGO and new coordinator shutdown exits remain unresolved; variant
+    navigation untested, keep draft.
+navigation:
+  frame: odom
+  world_to_navigation: null
+  recommended_region: null
+  ground_model_frame: map
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; sensor and aircraft physics unchanged.
+  - No full PX4 model root and no legacy scene model root are exposed.
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: false
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_no_roof_v1/bootstrap.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_no_roof_v1/inspection-spatial.json

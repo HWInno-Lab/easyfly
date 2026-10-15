@@ -25,12 +25,13 @@ from launch.actions import (
     DeclareLaunchArgument,
     ExecuteProcess,
     SetEnvironmentVariable,
-    TimerAction,
 )
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration
 from launch.conditions import IfCondition
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
+from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
+from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
 
 
 def _resolve_px4_dir():
@@ -40,18 +41,13 @@ def _resolve_px4_dir():
 
 def generate_launch_description():
     # ---- 参数 ----
-    world_arg = DeclareLaunchArgument(
-        "world", default_value="empty.world",
-        description="世界文件名 (位于 easyfly_gazebo_worlds)")
+    scene_args = selection_arguments('base_sim')
     gzclient_arg = DeclareLaunchArgument(
         "gzclient", default_value="true", description="Start the Gazebo GUI")
-
-    world_name = LaunchConfiguration("world")
 
     # ---- 路径 ----
     pkg_px4_sitl      = get_package_share_directory("easyfly_px4_sitl")
     pkg_gazebo_models = get_package_share_directory("easyfly_gazebo_models")
-    pkg_gazebo_worlds = get_package_share_directory("easyfly_gazebo_worlds")
     gazebo_plugins_lib = get_package_prefix("easyfly_gazebo_plugins") + "/lib"
     gazebo_server = gazebo_plugins_lib + "/easyfly_gazebo_plugins/easyfly_gzserver"
 
@@ -60,24 +56,24 @@ def generate_launch_description():
     px4_bin   = str(px4_dir / "build" / "px4_sitl_default" / "bin" / "px4")
 
     model_dir   = pkg_px4_sitl + "/models"
-    # PathJoinSubstitution 延迟求值 — 直接用 str + LaunchConfiguration 相加会在
-    # launch 生成期抛 "can only concatenate str (not LaunchConfiguration)" (回归测试发现)
-    world_file  = PathJoinSubstitution([pkg_gazebo_worlds, world_name])
+    # 预检查先解析资源；进程只读取随后设置的受管输入。
+    world_file = scene_value('world')
     model_name  = "easyfly_iris"
     model_sdf_arg = DeclareLaunchArgument(
         "model_sdf", default_value=model_dir + "/" + model_name + "/" + model_name + ".sdf",
         description="Explicit simulation fixture SDF; default production Iris unchanged")
-    model_sdf = LaunchConfiguration("model_sdf")
+    model_sdf = scene_value('model_sdf')
 
     # ---- GAZEBO_MODEL_PATH ----
     px4_models_dir = str(
         px4_dir / "Tools" / "simulation" / "gazebo-classic" /
         "sitl_gazebo-classic" / "models")
-    gazebo_model_path = ":".join([
+    default_roots = [
         model_dir,
         pkg_gazebo_models,
         px4_models_dir,
-    ])
+    ]
+    gazebo_model_path = scene_value('model_path')
 
     # ---- 插件路径: PX4 插件 + easyfly 传感器插件(livox) + 系统 gazebo_ros 插件 ----
     gazebo_plugin_dir = str(px4_dir / "build" / "px4_sitl_default" / "build_gazebo-classic")
@@ -109,9 +105,10 @@ def generate_launch_description():
             "gz", "model",
             ["--spawn-file=", model_sdf],
             "--model-name=" + model_name,
-            "-x", "0.0",
-            "-y", "0.0",
-            "-z", "0.83",
+            "-x", scene_value('x'),
+            "-y", scene_value('y'),
+            "-z", scene_value('z'),
+            "-Y", scene_value('yaw'),
         ],
         output="screen",
         name="spawn_model",
@@ -158,7 +155,7 @@ def generate_launch_description():
     )
 
     actions = [
-        world_arg,
+        *scene_args,
         model_sdf_arg,
         gzclient_arg,
         set_model_path,
@@ -170,4 +167,7 @@ def generate_launch_description():
     ]
     return guarded_launch(actions, {
         gzserver: "Gazebo", px4_sitl: "PX4", spawn_model: "model spawn",
-    })
+    }, preflight=[preflight_action(
+        px4_dir=px4_dir, default_world='empty.world', default_roots=default_roots,
+        default_model=model_dir + '/' + model_name + '/' + model_name + '.sdf',
+        allowed_profiles=('base_sim',))])

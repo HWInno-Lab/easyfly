@@ -53,7 +53,7 @@ TEST_F(RayGeometry, ExternalSurfaceHasUnbiasedNativeOdeRange)
   dContactGeom contact{};
   ASSERT_EQ(dCollide(ray, box, 1, &contact, sizeof(contact)), 1);
   EXPECT_NEAR(contact.depth, 1.8, 1e-9);
-  EXPECT_NEAR(0.2 + contact.depth, 2.0, 1e-9);
+  EXPECT_NEAR(easyfly_livox::sensorRange(contact.depth, 0.2), 2.0, 1e-9);
 }
 
 TEST_F(RayGeometry, ReturnInsidePreprocessingBlindZoneStaysInside)
@@ -62,8 +62,8 @@ TEST_F(RayGeometry, ReturnInsidePreprocessingBlindZoneStaysInside)
   dGeomSetPosition(box, 0.3, 0, 0);  // Surface at 0.25m, not an apparent 0.45m.
   dContactGeom contact{};
   ASSERT_EQ(dCollide(ray, box, 1, &contact, sizeof(contact)), 1);
-  EXPECT_NEAR(0.2 + contact.depth, 0.25, 1e-9);
-  EXPECT_LT(0.2 + contact.depth, 0.3);
+  EXPECT_NEAR(easyfly_livox::sensorRange(contact.depth, 0.2), 0.25, 1e-9);
+  EXPECT_LT(easyfly_livox::sensorRange(contact.depth, 0.2), 0.3);
 }
 
 TEST_F(RayGeometry, GeometryEntirelyBeforeMinimumIsNotMeasured)
@@ -80,7 +80,25 @@ TEST_F(RayGeometry, ExternalGeometryBeyondMaximumIsNotMeasured)
   dGeomSetPosition(box, 25.2, 0, 0);
   dContactGeom contact{};
   EXPECT_EQ(dCollide(ray, box, 1, &contact, sizeof(contact)), 0);
-  EXPECT_DOUBLE_EQ(0.2 + dGeomRayGetLength(ray), 25.0);
+  EXPECT_DOUBLE_EQ(easyfly_livox::sensorRange(dGeomRayGetLength(ray), 0.2), 25.0);
+}
+
+TEST_F(RayGeometry, GroundContactRetainsSensorOriginClearance)
+{
+  const double sensor_height = 0.35;
+  const double minimum = 0.2;
+  const auto start = easyfly_livox::rayStart(
+    {0, 0, sensor_height}, {0, 0, -1}, minimum);
+  dGeomRaySet(ray, start.X(), start.Y(), start.Z(), 0, 0, -1);
+  dGeomRaySetLength(ray, 25.0 - minimum);
+  dGeomSetPosition(box, 0, 0, -0.1);  // Top surface is z=0.
+  dContactGeom contact{};
+  ASSERT_EQ(dCollide(ray, box, 1, &contact, sizeof(contact)), 1);
+  EXPECT_NEAR(contact.depth, sensor_height - minimum, 1e-9);
+  const double distance = easyfly_livox::sensorRange(contact.depth, minimum);
+  EXPECT_NEAR(sensor_height - distance, 0.0, 1e-9);
+  // Publishing contact.depth alone would move the floor up by 0.2m.
+  EXPECT_NEAR(sensor_height - contact.depth, minimum, 1e-9);
 }
 
 TEST(RayStart, RotationAndTranslationRemainInCollisionFrame)

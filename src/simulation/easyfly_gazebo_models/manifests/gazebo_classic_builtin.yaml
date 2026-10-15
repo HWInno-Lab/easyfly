@@ -1,0 +1,43 @@
+schema_version: 1
+asset_set_id: gazebo_classic_builtin
+model_root:
+  external: gazebo_share
+  path: models
+provenance:
+  status: unverified
+  source_url: null
+  revision: null
+  declared_license: null
+  evidence: []
+  note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+models:
+- name: sun
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+- name: ground_plane
+  sdf: model.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+files:
+- path: sun/model.config
+  sha256: 194e0880f1b9eea8597ab1d9d8e4dd42ef9dd5f4c86c24f2bfc701176946c284
+- path: sun/model.sdf
+  sha256: d73ffc90c30bad56242bbe2b934c12c39d900c5e4ac098196e32c970abfc6cee
+- path: ground_plane/model.config
+  sha256: 10f52e3c1bf4524e41746682e6ce33a7f24ed78efba11c05edcc342f5756110e
+- path: ground_plane/model.sdf
+  sha256: a43cdd937e2446e2a56f2f09a831041784e1dbabe5c3fae8383d6d86b526a7df
+local_changes: []
+storage: existing
+inventory_note: S0 当前文件快照；不表示上游版本已固定或许可已核实。不添加或修改原模型。

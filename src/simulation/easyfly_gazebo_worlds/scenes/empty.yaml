@@ -1,0 +1,64 @@
+schema_version: 1
+id: empty
+name: empty
+status: draft
+category: benchmark/navigation
+tags:
+- legacy
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: empty.world
+  sha256: 839206a2c39ce1f8038de69ea475780750f6f5ad932b3907cdf0b48cb15d8155
+provenance:
+  status: recorded
+  source_url: null
+  revision: null
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  note: 项目内 world；依据 world 包的 Apache-2.0 声明与项目 LICENSE；不覆盖所引用模型。
+asset_sets: []
+required_plugins: []
+supported_profiles: []
+legacy_profiles:
+- base_sim
+spawn:
+  frame: world
+  position:
+  - 0.0
+  - 0.0
+  - 0.83
+  yaw: 0.0
+  basis: 基础/感知入口当前 -x 0 -y 0 -z 0.83，未传 yaw；仅为源码默认，未做本轮运行确认。
+navigation:
+  frame: odom
+  world_to_navigation: null
+  recommended_region: null
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - legacy_airframe
+  - legacy_mid360
+  - px4_classic_gps
+  - gazebo_classic_builtin
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - 此登记针对当前基础/感知入口的默认 easyfly_iris，不覆盖独立 D5 飞机 fixture。
+  - Livox 插件当前用编译期 SCAN_MODE_DIR 解析相对 CSV；文件存在不等于二进制可重定位。
+  - PX4 模型根由调用者显式传入；目录检查不替代现有 PX4 HRT 兼容性验证。
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: false
+  world_loaded: false
+  sensors_checked: false
+  navigation_tested: false
+  evidence_refs: []

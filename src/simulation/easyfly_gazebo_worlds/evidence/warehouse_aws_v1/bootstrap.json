@@ -1,0 +1,82 @@
+{
+  "scene": "warehouse_aws_v1",
+  "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+  "passed": true,
+  "error": null,
+  "loaded_and_sensors_observed": true,
+  "mapping_ready": false,
+  "counts": {
+    "/uav_state": 284,
+    "/odom": 2188,
+    "/occupancy_grid": 1
+  },
+  "world_to_navigation": {
+    "translation": [
+      0.0022155275801196694,
+      0.005507211511333783,
+      -0.15316640625
+    ],
+    "yaw": -0.016746436757684027
+  },
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "leftovers": [],
+  "loaded_libraries": {
+    "liblivox_laser_simulation.so": {
+      "pid": 27676,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "bb9a9ea4ccac59ad32e77bd62884d3c9edd0fdcbaa411dcd3fc581747709950f"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 28528,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "ca7fdf15b00648700aad02ff1d9e00941bb44ea2a46a3884e259ee4ae15af5d8"
+    }
+  },
+  "scope": "Disarmed load/sensor/coordinate inspection only; navigation NOT verified.",
+  "raw_result": "artifacts/scene-s2-20261015/bootstrap-4/result.json",
+  "raw_result_sha256": "7a8bf1bf498e78ef30a91a8285175b230dfd832f17a7b2ab1ff869784e2aad1d",
+  "processes_started": 24,
+  "processes_cleanly_exited": 24,
+  "flight_goals_sent": 0,
+  "final_armed": false,
+  "sensors": {
+    "/livox/imu": {
+      "count": 3901,
+      "first_source_ns": 2573000000,
+      "last_source_ns": 31904000000,
+      "frame": "livox_frame",
+      "finite": true
+    },
+    "/camera/color/image_raw": {
+      "count": 972,
+      "first_source_ns": 2569000000,
+      "last_source_ns": 31896000000,
+      "frame": "camera_color_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "rgb8",
+      "sample_saved": true
+    },
+    "/camera/aligned_depth_to_color/depth/image_raw": {
+      "count": 970,
+      "first_source_ns": 2569000000,
+      "last_source_ns": 31885000000,
+      "frame": "camera_depth_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "32FC1",
+      "finite_positive_pixels": 307200,
+      "min_m": 1.4307931661605835,
+      "max_m": 6.568933486938477
+    },
+    "/livox/lidar": {
+      "count": 293,
+      "first_source_ns": 2600000000,
+      "last_source_ns": 31800000000,
+      "frame": "livox_frame",
+      "points": 20000
+    }
+  },
+  "limitation": "Trusted ground inliers around 9-10% of the original frame, below unchanged 15% acceptance threshold. Keep draft; no flight attempted."
+}

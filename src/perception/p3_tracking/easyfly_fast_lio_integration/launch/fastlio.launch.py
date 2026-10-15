@@ -20,6 +20,7 @@ from launch.substitutions import (
 )
 from launch_ros.actions import ComposableNodeContainer, Node
 from launch_ros.descriptions import ComposableNode
+from launch_ros.parameter_descriptions import ParameterValue
 from ament_index_python.packages import get_package_share_directory
 
 
@@ -43,8 +44,28 @@ def _launch_fast_lio(context):
     )]
 
 
+def _launch_map_odom_tf(context):
+    """Resolve the clock before this include's scope is popped by a parent."""
+    simulation = ParameterValue(LaunchConfiguration('use_sim_time'), value_type=bool).evaluate(context)
+    container = ComposableNodeContainer(
+        name="fastlio_integration_container",
+        namespace="",
+        package="rclcpp_components",
+        executable="component_container",
+        composable_node_descriptions=[
+            ComposableNode(
+                package="easyfly_fast_lio_integration",
+                plugin="easyfly_fast_lio_integration::MapOdomTf",
+                name="map_odom_tf",
+                parameters=[{"use_sim_time": simulation}],
+            ),
+        ],
+        output="screen",
+    )
+    return [TimerAction(period=5.0, actions=[container])]
+
+
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time')
     # This argument intentionally has a package-specific name.  Included launch
     # descriptions share the parent launch context, so the generic
     # ``config_file`` argument from the detection stack could otherwise replace
@@ -65,22 +86,7 @@ def generate_launch_description():
     fast_lio_node = OpaqueFunction(function=_launch_fast_lio)
 
     # map→odom TF (延后启动: 等 fast_lio 出 Odometry)
-    map_odom_tf_container = ComposableNodeContainer(
-        name="fastlio_integration_container",
-        namespace="",
-        package="rclcpp_components",
-        executable="component_container",
-        composable_node_descriptions=[
-            ComposableNode(
-                package="easyfly_fast_lio_integration",
-                plugin="easyfly_fast_lio_integration::MapOdomTf",
-                name="map_odom_tf",
-                parameters=[{"use_sim_time": use_sim_time}],
-            ),
-        ],
-        output="screen",
-    )
-    map_odom_delayed = TimerAction(period=5.0, actions=[map_odom_tf_container])
+    map_odom_delayed = OpaqueFunction(function=_launch_map_odom_tf)
 
     return LaunchDescription([
         declare_sim_time,

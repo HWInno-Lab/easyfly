@@ -1,0 +1,103 @@
+# EasyFly 仿真启动与场景目录
+
+构建并加载安装环境后，可以查询或离线校验场景：
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog list
+ros2 run easyfly_sim_launcher scene_catalog list --json
+ros2 run easyfly_sim_launcher scene_catalog validate empty --json
+```
+
+命令只读取清单、资源和许可记录，不启动节点、仿真、任务或下载。
+`list` 返回 0，如实展示不完整的场景。`validate` 全部检查通过返回 0，
+资源/许可/登记不完整返回 1，未知 ID、无效清单或配置错误返回 2。
+`runtime_verified` 始终为 false，离线通过不表示可起飞。
+
+Humble 的 `ros2 run` 会在非零退出时向 stdout 追加自己的错误提示。
+自动化需要严格 JSON 时使用同一安装模块：
+
+```bash
+python3 -m easyfly_sim_launcher.scene_cli validate empty --json
+```
+
+可在子命令前指定 `--px4-dir /path/to/existing/PX4-tree`、
+`--px4-models /path/to/models` 或 `--gazebo-share /usr/share/gazebo-11`。
+这些选项仅用于离线文件检查，不执行该目录中的代码。
+默认读取已安装资源和现有兼容性目录；缺失输入会在结果中报告。
+
+## 统一启动
+
+```bash
+# 原默认行为保留，不发送飞行 Goal
+ros2 launch easyfly_sim_launcher profile.launch.py profile:=base_sim
+
+# 指定完成登记的场景；当前 empty 仍是草稿，会明确拒绝
+ros2 launch easyfly_sim_launcher profile.launch.py \
+  profile:=base_sim scene:=empty headless:=true
+```
+
+`scene` 选择环境，`profile` 选择能力，`headless` 只影响显示。
+不指定 scene 时保留原 world、模型路径、出生位姿与能力参数。
+指定后必须通过资源、许可、出生点、坐标登记和 profile 兼容检查；
+profile 与两个 SITL 入口共用解析器，在会话锁及进程之前检查。
+飞机入口、模型根和出生 xyz/yaw 来自清单，不修改原 profile 的规划和安全契约。
+
+同时提供非空 scene/world 会拒绝。公共 profile 和一键包装不接受 raw world；
+既有 `px4_sitl.launch.py world:=... model_sdf:=...` 保留为低层调试入口。
+低层 world 参数以空字符串表示未指定，实际默认仍为 `empty.world`；
+感知入口默认仍为 `perception_demo.world`。独立 D5 包装保留原环境与飞机 fixture。
+
+原三张地图均为 draft，没有新增运行兼容性记录。感知场景缺 `suv`；
+PX4 与系统 Gazebo 根目录存在 sun/ground_plane 同名冲突，资产许可与坐标对齐待补。
+查询和受管启动分别报告状态，不为启用命令而修改验证标记。
+
+## 资源解析
+
+共用核心为 `easyfly_px4_sitl.scene_catalog`；launcher 原导入路径保留兼容入口，
+避免 SITL 反向依赖 launcher。安装环境从 ament 索引解析包。
+symlink-install 下，通过安装 package.xml 的源码链接和包名核对，仅信任该包源码根，
+不信任任意资源链接或整个工作区。离线工具也可显式传入受信根。
+启动仍须通过原有 PX4 HRT 兼容性检查；离线文件选项不提供启动旁路。
+
+## 仓库检查（S2）
+
+新增 `warehouse_aws_v1` 与上游独立无屋顶版本 `warehouse_aws_no_roof_v1`。
+两者资源和许可检查通过。完整屋顶版本已登记支持 `navigation_dev`，连续可信地图与
+中央通道 1.5m 往返、降落已通过。无屋顶版本仍为 draft，validate 返回 1 并拒绝受管启动。
+仓库用 SLAM map 系保存可信地面，导航/点云输出仍为 odom；旧默认入口保留原 odom 行为。
+仿真 LiDAR 使用原生 Gazebo 扫描时间，消费者仍拒绝时间戳重复/回退。
+旧 EGO 及无屋顶检查中的导航协调节点关闭 SIGSEGV 尚未定位，不能因为本轮正常退出而宣称修复。
+
+完成构建并加载含本轮世界、语义地图、plan_env 和启动包的安装环境后：
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog validate warehouse_aws_v1 --json
+ros2 launch easyfly_sim_launcher profile.launch.py \
+  profile:=navigation_dev scene:=warehouse_aws_v1 headless:=true
+```
+
+启动只加载环境和能力；飞行任务仍需显式提交。支持范围限于清单内参考任务与证据，
+不能将该有界检查视为任意仓库路径已验证。
+
+显式未解锁诊断命令如下（先构建并加载安装环境及已验证的 HRT 目录）：
+
+```bash
+mkdir -p artifacts/my-warehouse-bootstrap  # 必须是新的空目录
+ros2 run easyfly_sim_launcher scene_sitl --scene warehouse_aws_v1 --bootstrap \
+  --px4-dir /path/to/reviewed/PX4-source \
+  --output-dir "$PWD/artifacts/my-warehouse-bootstrap" --domain 128 --gazebo-port 11428
+```
+
+bootstrap 使用低层 raw world 与显式 `debug_model_path` 进行诊断，所有飞行 Goal 被禁止；
+该参数不由公共 profile 转发，也不能与 scene 混用。检查分别记录资源/传感器观测、
+连续地图、坐标及退出状态。`passed` 仅表示所选检查流程通过；必须另看
+`mapping_ready`，不能将未解锁检查通过当成导航通过。
+真实深度是 `/camera/aligned_depth_to_color/depth/image_raw`（32FC1），
+`/camera/aligned_depth_to_color/image_raw` 是可视化图像，不能代替米制深度。
+
+检查工具同时核对实际加载的 LiDAR、语义地图和 plan_env 库路径与 SHA256。
+坐标采样前要求未解锁、状态健康、估计速度连续三秒 <=0.05m/s；
+飞行检查保留相对场景参考的 0.2m / 0.1rad 偏差门槛。
+修改后请用 `colcon build` 完成安装和环境钩子生成；单独 `cmake --install` 可能覆盖
+colcon 的 package.dsv 钩子，造成选中了新包前缀却加载旧库。
+完整原始证据与当前缺口见工作区 `schedule-v5-scene.md` 的 S2 记录。

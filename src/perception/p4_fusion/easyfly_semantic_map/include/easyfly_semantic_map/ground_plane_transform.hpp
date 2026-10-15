@@ -1,0 +1,32 @@
+// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+#pragma once
+#include <Eigen/Geometry>
+#include "easyfly_semantic_map/ground_plane_tracker.hpp"
+
+namespace easyfly_semantic_map
+{
+// n_G . (R_GW p_W + t_GW) + d_G = 0. Transport a fixed plane;
+// this never fits/fuses an armed candidate or changes physical ground.
+inline GroundPlaneModel groundPlaneInWorld(
+  const GroundPlaneModel & ground, const Eigen::Isometry3d & world_to_ground)
+{
+  const Eigen::Vector3d normal(ground.normal[0], ground.normal[1], ground.normal[2]);
+  const Eigen::Vector3d transformed = world_to_ground.linear().transpose() * normal;
+  GroundPlaneModel world;
+  world.normal = {transformed.x(), transformed.y(), transformed.z()};
+  world.offset = ground.offset + normal.dot(world_to_ground.translation());
+  return world;
+}
+inline bool groundBasisContinuous(
+  const Eigen::Isometry3d & previous, const Eigen::Isometry3d & current)
+{
+  return previous.matrix().allFinite() && current.matrix().allFinite() &&
+         (current.translation() - previous.translation()).norm() <= 0.25 &&
+         std::abs(Eigen::AngleAxisd(previous.linear().transpose() * current.linear()).angle()) <= 0.10;
+}
+inline bool groundBasisStampFresh(double now, double stamp, double timeout)
+{
+  return std::isfinite(now) && std::isfinite(stamp) && std::isfinite(timeout) &&
+         stamp > 0 && timeout > 0 && now - stamp >= -0.2 && now - stamp <= timeout;
+}
+}  // namespace easyfly_semantic_map

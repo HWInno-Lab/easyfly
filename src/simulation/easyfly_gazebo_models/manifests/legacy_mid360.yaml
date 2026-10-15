@@ -1,0 +1,32 @@
+schema_version: 1
+asset_set_id: legacy_mid360
+model_root:
+  package: easyfly_gazebo_models
+  path: .
+provenance:
+  status: unverified
+  source_url: null
+  revision: null
+  declared_license: null
+  evidence: []
+  note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+models:
+- name: mid360
+  sdf: mid360.sdf
+  provenance:
+    status: unverified
+    source_url: null
+    revision: null
+    declared_license: null
+    evidence: []
+    note: 遗留资源，仅记录当前文件指纹；模型配置作者信息不等于资产许可，来源修订与逐资产许可待补。
+files:
+- path: mid360/meshes/livox_mid-360-90x.dae
+  sha256: a75f3a446b596c1a21ac5c8201a3716d657b0a1164a1b0060c4f7aca46118647
+- path: mid360/mid360.sdf
+  sha256: 5f1139f1d4bc97a057671a0eb616de37ad5aff41f585bbcce6ebe501824c32ef
+- path: mid360/model.config
+  sha256: 63b3bdcaa4141889f90bcd039d872498d474446be201f7d83a31972c93e3c079
+local_changes: []
+storage: existing
+inventory_note: S0 当前文件快照；不表示上游版本已固定或许可已核实。不添加或修改原模型。
