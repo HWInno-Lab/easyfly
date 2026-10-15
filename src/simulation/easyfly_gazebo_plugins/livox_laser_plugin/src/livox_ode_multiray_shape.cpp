@@ -13,6 +13,7 @@
 #include <gazebo/physics/ode/ODERayShape.hh>
 #include <gazebo/physics/ode/ODEMultiRayShape.hh>
 #include "livox_laser_simulation/livox_ode_multiray_shape.h"
+#include "livox_laser_simulation/ray_box_intersection.hpp"
 
 using namespace gazebo;
 using namespace physics;
@@ -142,7 +143,18 @@ void LivoxOdeMultiRayShape::UpdateCallback(void *_data, dGeomID _o1, dGeomID _o2
         // Check for ray/collision intersections
         if (rayCollision && hitCollision)
         {
-            int n = dCollide(_o1, _o2, 1, &contact, sizeof(contact));
+            const auto ray_id = dGeomGetClass(_o1) == dRayClass ? _o1 : _o2;
+            const auto hit_id = ray_id == _o1 ? _o2 : _o1;
+            int n = 0;
+            if (dGeomGetClass(hit_id) == dBoxClass) {
+                // Gazebo 11 ODE treats a tiny nonzero direction as parallel in
+                // its slab division but not in its outside test, producing
+                // contacts outside a box. Solve all three bounded slabs.
+                const auto distance = easyfly_livox::boxRayDistance(ray_id, hit_id);
+                if (distance) {contact.depth = *distance; n = 1;}
+            } else {
+                n = dCollide(_o1, _o2, 1, &contact, sizeof(contact));
+            }
 
             if (n > 0)
             {

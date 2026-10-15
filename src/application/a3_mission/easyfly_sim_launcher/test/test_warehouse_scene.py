@@ -87,3 +87,66 @@ def test_bootstrap_probe_forbids_all_flight_goals():
     assert probe.startup_ready()  # Sensor inspection can diagnose a missing map.
     probe.args.bootstrap=False
     assert not probe.startup_ready()  # Flight still requires the original live map.
+
+@pytest.fixture
+def scene_probe_module():
+    path=Path(__file__).resolve().parents[1]/'scripts/scene_sitl.py'
+    spec=importlib.util.spec_from_file_location('scene_recovery_test',path)
+    module=importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_postlanding_gate_rejects_motion_stale_maps_and_invalid_state(scene_probe_module):
+    def valid(state,healthy,anchor,now,receipts):
+        return scene_probe_module.recovery_sample_valid(state,healthy,anchor,now,receipts,
+            state['position'] if state else None)
+    state=dict(armed=False,position=[0.,0.,0.],velocity=[0.,0.,0.])
+    receipts={'/occupancy_grid':10.,'/pointcloud_nonground':10.}
+    assert valid(state,True,[0.,0.,0.],10.,receipts)
+    assert not valid(state,False,[0.,0.,0.],10.,receipts)
+    assert not valid(None,True,[0.,0.,0.],10.,receipts)
+    assert not valid({**state,'armed':True},True,[0.,0.,0.],10.,receipts)
+    assert not valid({**state,'velocity':[0.,0.,0.051]},True,[0.,0.,0.],10.,receipts)
+    assert not valid({**state,'position':[0.,0.,0.151]},True,[0.,0.,0.],10.,receipts)
+    assert not valid({**state,'velocity':[float('nan'),0.,0.]},True,[0.,0.,0.],10.,receipts)
+    assert not valid(state,True,[0.,0.,0.],11.01,receipts)
+    assert not valid(state,True,[0.,0.,0.],9.99,receipts)
+    assert not valid(state,True,[0.,0.,0.],10.,{'/occupancy_grid':10.})
+
+
+def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_module,monkeypatch):
+    module=scene_probe_module
+    probe=module.SceneProbe.__new__(module.SceneProbe)
+    clock=[0.]
+    monkeypatch.setattr(module.time,'monotonic',lambda:clock[0])
+    probe.state=lambda:dict(armed=False,position=[0.,0.,0.],velocity=[0.,0.,0.])
+    probe.ready=lambda armed:True
+    probe.receipts={}
+    probe.reference_position=lambda:dict(frame='map',position=[0.,0.,0.])
+    observed=[]
+    def wait(predicate,seconds):
+        assert seconds==120
+        for moment in [0.,2.,2.5,3.,5.5,6.]:
+            clock[0]=moment
+            # A single stale non-ground observation interrupts the interval.
+            probe.receipts={'/occupancy_grid':moment,'/pointcloud_nonground':moment if moment!=2.5 else 0.}
+            observed.append(predicate())
+    probe.wait=wait
+    entry={}
+    probe.recover_after_landing(dict(frame='map',position=[0.,0.,0.]),entry)
+    assert observed==[False,False,False,False,False,True]
+    assert entry['recovery_seconds']==6.
+
+
+def test_recovery_compares_in_declared_ground_reference(scene_probe_module):
+    module=scene_probe_module
+    state=dict(armed=False,position=[0.,0.,.29],velocity=[0.,0.,.03])
+    receipts={'/occupancy_grid':10.,'/pointcloud_nonground':10.}
+    corrected=module.transform_position(state['position'],[0.,0.,-.35],[0.,0.,0.,1.])
+    assert module.recovery_sample_valid(state,True,[0.,0.,0.],10.,receipts,corrected)
+    assert not module.recovery_sample_valid(state,True,[0.,0.,0.],10.,receipts,None)
+    assert not module.recovery_sample_valid(state,True,[0.,0.,0.],10.,receipts,[0.,0.,.151])
+    assert module.transform_position([1.,0.,0.],[1.,2.,3.],[0.,0.,2**-.5,2**-.5])==pytest.approx([1.,3.,3.])
+    assert module.transform_position([1.,0.,0.],[0.,0.,0.],[0.,0.,0.,0.]) is None
+    assert module.transform_position([1.,0.,0.],[float('nan'),0.,0.],[0.,0.,0.,1.]) is None

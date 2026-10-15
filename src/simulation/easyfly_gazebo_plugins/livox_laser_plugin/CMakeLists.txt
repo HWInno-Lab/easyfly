@@ -62,6 +62,8 @@ install(DIRECTORY scan_mode/
   DESTINATION share/${PROJECT_NAME}/livox_laser_plugin/scan_mode
 )
 
+install(FILES README.md DESTINATION share/${PROJECT_NAME}/livox_laser_plugin)
+
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_livox_ray_geometry test/test_ray_geometry.cpp TIMEOUT 15)

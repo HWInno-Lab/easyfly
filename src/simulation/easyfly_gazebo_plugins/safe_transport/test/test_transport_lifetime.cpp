@@ -13,6 +13,7 @@
 #include <gtest/gtest.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <atomic>
 #include <chrono>
 #include <future>
 #include <memory>
@@ -191,4 +192,47 @@ TEST_F(TransportLifetime, ActualLastConnectionReleasedByInstalledWeakBinder)
   auto after = easyfly_transport::GetStatistics();
   EXPECT_EQ(after.deferred, before.deferred + 1);
   EXPECT_EQ(after.completed, before.completed + 1);
+}
+
+TEST_F(TransportLifetime, ConcurrentLastConnectionsRetireManagerOnce)
+{
+  for (int iteration = 0; iteration < 200; ++iteration) {
+    auto * first = new gazebo::transport::Connection;
+    auto * second = new gazebo::transport::Connection;
+    std::atomic<int> ready{0};
+    std::atomic<bool> release{false};
+    auto drop = [&](gazebo::transport::Connection * connection) {
+        ++ready;
+        while (!release.load()) {std::this_thread::yield();}
+        delete connection;
+      };
+    std::thread one(drop, first), two(drop, second);
+    while (ready.load() != 2) {std::this_thread::yield();}
+    release = true;
+    one.join(); two.join();
+    easyfly_transport::Drain();
+    ASSERT_EQ(easyfly_transport::GetStatistics().live, 0u) << iteration;
+    ASSERT_EQ(easyfly_transport::GetStatistics().pending, 0u) << iteration;
+  }
+}
+
+TEST_F(TransportLifetime, ConcurrentConstructionSharesOneManager)
+{
+  for (int iteration = 0; iteration < 100; ++iteration) {
+    std::atomic<int> ready{0};
+    std::atomic<bool> release{false};
+    auto construct = [&] {
+        auto connection = std::make_unique<gazebo::transport::Connection>();
+        ++ready;
+        while (!release.load()) {std::this_thread::yield();}
+      };
+    std::thread one(construct), two(construct);
+    while (ready.load() != 2) {std::this_thread::yield();}
+    const auto live = easyfly_transport::GetStatistics().live;
+    release = true;
+    one.join(); two.join();
+    ASSERT_EQ(live, 1u) << iteration;
+    easyfly_transport::Drain();
+    ASSERT_EQ(easyfly_transport::GetStatistics().live, 0u) << iteration;
+  }
 }

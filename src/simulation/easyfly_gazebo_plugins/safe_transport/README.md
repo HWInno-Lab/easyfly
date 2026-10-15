@@ -14,8 +14,10 @@ Derived Apache-2.0 sources:
 - [Gazebo 11.10.2 IOManager.cc](https://github.com/gazebosim/gazebo-classic/blob/gazebo11_11.10.2/gazebo/transport/IOManager.cc)
 - [Gazebo 11.10.2 server_main.cc](https://github.com/gazebosim/gazebo-classic/blob/gazebo11_11.10.2/gazebo/server_main.cc)
 
-Eleven remaining transport implementation files in `upstream/` are byte-identical
-imports from that tag, verified by `upstream/SHA256SUMS`. They are compiled against
+The eleven transport source snapshots in `upstream/` are byte-identical
+imports from that tag, verified by `upstream/SHA256SUMS`. Ten are compiled directly;
+`src/connection.cpp` is a separately maintained derivative of `upstream/Connection.cc`.
+They are compiled against
 installed headers, which match the tag (transport_pch.hh is not used). Original
 copyright notices are retained. The source archive SHA256 is
 `51976f29e375463e3bbf1343b7532b038728f13389e94e78b2fa8271911b2dcb`.
@@ -63,3 +65,15 @@ Finish to wait, join the deferred worker and return with both counts zero. This
 reproduces the premature-failure window; it does not uniquely attribute every
 historic Gazebo abort. The existing lifetime test also requires Finish to refuse
 a manager that stays live through the deadline and allow further cleanup.
+
+The Connection derivative serializes shared IOManager creation, reference-count
+changes and final unpublication under one lifecycle mutex. Previously two
+concurrent destructors could both decrement the count, both observe zero and
+both delete the same manager; a real two-connection native reproducer produced
+a SIGSEGV through Connection::~Connection → IOManager::~IOManager → Dispose.
+Final deletion occurs outside the mutex so joining an IO callback cannot block
+another Connection destructor on that mutex. Concurrent construction is also
+covered: it must not publish two managers or race the connection ID counter.
+The object ABI, TCP protocol and all upstream snapshots remain unchanged.
+This is a reproduced defect; it does not identify the missing historic planner
+crash stacks or, by itself, explain every retained-manager timeout.

@@ -23,7 +23,7 @@ if(NOT EASYFLY_SYSTEM_TRANSPORT_SHA STREQUAL
 endif()
 get_filename_component(EASYFLY_TRANSPORT_HEADERS "${EASYFLY_IO_HEADER}" DIRECTORY)
 add_library(easyfly_transport_compat SHARED src/io_manager.cpp
-  upstream/CallbackHelper.cc upstream/Connection.cc upstream/ConnectionManager.cc
+  upstream/CallbackHelper.cc src/connection.cpp upstream/ConnectionManager.cc
   upstream/Node.cc upstream/Publication.cc upstream/PublicationTransport.cc
   upstream/Publisher.cc upstream/Subscriber.cc upstream/SubscriptionTransport.cc
   upstream/TopicManager.cc upstream/TransportIface.cc)

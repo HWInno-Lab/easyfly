@@ -19,6 +19,8 @@ from easyfly_px4_sitl.scene_environment import installed_catalog
 from sensor_msgs.msg import Image, Imu, PointCloud2
 from livox_ros_driver2.msg import CustomMsg
 from rclpy.qos import qos_profile_sensor_data
+from rclpy.time import Time
+from tf2_ros import Buffer, TransformListener, TransformException
 import numpy as np
 import yaml
 
@@ -63,6 +65,8 @@ class SceneProbe(navigation.Probe):
                            ('/camera/aligned_depth_to_color/depth/image_raw',Image),
                            ('/livox/imu',Imu),('/livox/lidar',CustomMsg)]:
             self.node.create_subscription(kind,topic,lambda msg,name=topic:self.sensor(name,msg),qos_profile_sensor_data)
+        self.tf_buffer=Buffer(node=self.node)
+        self.tf_listener=TransformListener(self.tf_buffer,self.node)
         self.ground_cloud=None
         self.node.create_subscription(PointCloud2,'/pointcloud_filtered',
             lambda msg:setattr(self,'ground_cloud',msg),qos_profile_sensor_data)
@@ -143,6 +147,8 @@ class SceneProbe(navigation.Probe):
             'libeasyfly_semantic_map_nodes.so':Path(get_package_prefix('easyfly_semantic_map'))/'lib/libeasyfly_semantic_map_nodes.so',
             'liblivox_laser_simulation.so':Path(get_package_prefix('easyfly_gazebo_plugins'))/'lib/liblivox_laser_simulation.so',
             'libplan_env.so':Path(get_package_prefix('plan_env'))/'lib/libplan_env.so',
+            'libgazebo_transport.so.11.10.2':Path(get_package_prefix('easyfly_gazebo_plugins'))/
+                'lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2',
         }
         loaded={}
         for pid in self.owned:
@@ -245,31 +251,123 @@ class SceneProbe(navigation.Probe):
             self.report['final_disarmed_state']=self.state()
             self.report['inspection_only']=True
             return
-        registered=self.scene['navigation']['world_to_navigation']
-        measured=self.report['world_to_navigation']
-        if registered is None or math.dist(registered['translation'],measured['translation'])>0.2 or abs(
-                math.atan2(math.sin(registered['yaw']-measured['yaw']),
-                           math.cos(registered['yaw']-measured['yaw'])))>0.1:
-            raise RuntimeError('current alignment differs from scene reference; no flight goal sent')
-        mission=self.args.mission.resolve(strict=True)
-        self.report['mission_sha256']=hashlib.sha256(mission.read_bytes()).hexdigest()
-        action=self.send('/execute_mission',ExecuteMission,ExecuteMission.Goal(mission_file=str(mission)))
-        self.finish(action,seconds=300)
-        self.wait(lambda:self.ready(False),15)
+        self.wait(lambda:self.reference_position() is not None,5)
+        anchor=self.reference_position()
+        self.report['landing_reference_anchor']=anchor
+        self.report['mission_cycles']=[]
+        for cycle in range(1,self.args.cycles+1):
+            if cycle>1:
+                self.inspect()  # Fresh stationary alignment before another goal.
+            registered=self.scene['navigation']['world_to_navigation']
+            measured=self.report['world_to_navigation']
+            if registered is None or math.dist(registered['translation'],measured['translation'])>0.2 or abs(
+                    math.atan2(math.sin(registered['yaw']-measured['yaw']),
+                               math.cos(registered['yaw']-measured['yaw'])))>0.1:
+                raise RuntimeError('current alignment differs from scene reference; no flight goal sent')
+            mission=self.args.mission.resolve(strict=True)
+            self.report['mission_sha256']=hashlib.sha256(mission.read_bytes()).hexdigest()
+            before=set(self.navigation_goals)
+            entry=dict(cycle=cycle,alignment=measured,preflight_state=self.state())
+            self.report['mission_cycles'].append(entry)
+            action=self.send('/execute_mission',ExecuteMission,ExecuteMission.Goal(mission_file=str(mission)))
+            entry['goal_uuid']=action['entry']['goal_uuid']
+            self.finish(action,seconds=300)
+            entry['status']=action['entry']['status']
+            self.wait(lambda:self.ready(False),15)
+            identities=self.navigation_goals-before
+            if len(identities)!=2 or not navigation.sessions_closed(self.report['sessions'],identities):
+                raise RuntimeError('two genuine navigation UUIDs with completed sessions required per cycle')
+            entries=self.report['action_status']['/navigate']
+            terminals=sorted([entries[k]['first_terminal'] for k in identities
+                              if entries[k]['status']==4 and 'first_terminal' in entries[k]],key=lambda v:v['steady'])
+            if len(terminals)!=2:
+                raise RuntimeError('successful child navigation terminals missing')
+            errors=[math.dist(v['state']['position'],goal) for v,goal in zip(terminals,[[1.5,0.0,1.5],[0.0,0.0,1.5]])]
+            if max(errors)>0.15:
+                raise RuntimeError('actual navigation terminal arrival error: '+str(errors))
+            for identity in sorted(identities):
+                self.ownership('/navigation/ownership',identity)
+            entry.update(navigation_uuids=sorted(identities),navigation_terminal_errors_m=errors,
+                         landed_state=self.state())
+            self.report['navigation_terminal_errors_m']=errors
+            self.recover_after_landing(anchor,entry)
         self.report['final_disarmed_state']=self.state()
-        if len(self.navigation_goals)!=2 or not navigation.sessions_closed(self.report['sessions'],self.navigation_goals):
-            raise RuntimeError('two genuine navigation UUIDs with completed sessions required')
-        entries=self.report['action_status']['/navigate']
-        terminals=sorted([entries[k]['first_terminal'] for k in self.navigation_goals
-                          if entries[k]['status']==4 and 'first_terminal' in entries[k]],key=lambda v:v['steady'])
-        if len(terminals)!=2:
-            raise RuntimeError('successful child navigation terminals missing')
-        errors=[math.dist(v['state']['position'],goal) for v,goal in zip(terminals,[[1.5,0.0,1.5],[0.0,0.0,1.5]])]
-        if max(errors)>0.15:
-            raise RuntimeError('actual navigation terminal arrival error: '+str(errors))
-        for identity in sorted(self.navigation_goals):
-            self.ownership('/navigation/ownership',identity)
-        self.report.update(navigation_terminal_errors_m=errors,sessions_closed=True)
+        self.report['sessions_closed']=navigation.sessions_closed(self.report['sessions'],self.navigation_goals)
+        if not self.report['sessions_closed']:
+            raise RuntimeError('navigation sessions remain open')
+
+    def recover_after_landing(self,anchor,entry):
+        # A successful land action can precede estimator convergence. Never
+        # admit a second task using only its terminal status or armed bit.
+        began=time.monotonic()
+        settled_since=None
+        last_reference=None
+        entry['recovery_limits']=dict(timeout_wall_s=120,continuous_wall_s=3,
+            speed_m_s=0.05,anchor_error_m=0.15,map_receipt_age_s=1.0,anchor_frame=anchor['frame'])
+        def stationary():
+            nonlocal settled_since,last_reference
+            now=time.monotonic()
+            state=self.state()
+            last_reference=self.reference_position()
+            valid=recovery_sample_valid(state,self.ready(False),anchor['position'],now,self.receipts,
+                last_reference['position'] if last_reference and last_reference['frame']==anchor['frame'] else None)
+            if not valid:
+                settled_since=None
+            elif settled_since is None:
+                settled_since=now
+            return settled_since is not None and now-settled_since>=3.0
+        self.wait(stationary,120)
+        entry.update(recovery_seconds=time.monotonic()-began,recovered_state=self.state(),
+                     recovered_reference=last_reference)
+
+    def close(self):
+        self.tf_listener.unregister()
+        super().close()
+
+    def reference_position(self):
+        state=self.state()
+        if state is None:
+            return None
+        frame=self.scene['navigation'].get('ground_model_frame','odom')
+        if frame=='odom':
+            return dict(frame=frame,position=state['position'],basis=None)
+        try:
+            tf=self.tf_buffer.lookup_transform(frame,'odom',Time())
+        except TransformException:
+            return None
+        source=tf.header.stamp.sec*1000000000+tf.header.stamp.nanosec
+        age=(self.node.get_clock().now().nanoseconds-source)*1e-9
+        if source<=0 or not -0.2<=age<=1.0:
+            return None
+        t=tf.transform.translation;q=tf.transform.rotation
+        position=transform_position(state['position'],[t.x,t.y,t.z],[q.x,q.y,q.z,q.w])
+        if position is None:
+            return None
+        return dict(frame=frame,position=position,basis=dict(source_ns=source,age_s=age,
+                    translation=[t.x,t.y,t.z],quaternion_xyzw=[q.x,q.y,q.z,q.w]))
+
+
+def recovery_sample_valid(state,healthy,anchor,now,receipts,reference_position):
+    """The observation budget is separate from unchanged physical health gates."""
+    return (healthy and state is not None and reference_position is not None and not state['armed'] and
+            all(math.isfinite(v) for v in state['position']+state['velocity']+list(anchor)+list(reference_position)) and
+            math.dist(state['velocity'],[0,0,0])<=0.05 and
+            math.dist(reference_position,anchor)<=0.15 and
+            all(0<=now-receipts.get(topic,float('-inf'))<=1.0
+                for topic in ['/occupancy_grid','/pointcloud_nonground']))
+
+
+def transform_position(position,translation,quaternion):
+    if not all(math.isfinite(v) for v in list(position)+list(translation)+list(quaternion)):
+        return None
+    x,y,z,w=quaternion
+    if abs(x*x+y*y+z*z+w*w-1.0)>1e-3:
+        return None
+    # Quaternion rotation q*v*q^-1, without inventing a new timestamp or pose.
+    vx,vy,vz=position
+    c=[y*vz-z*vy,z*vx-x*vz,x*vy-y*vx]
+    d=[y*c[2]-z*c[1],z*c[0]-x*c[2],x*c[1]-y*c[0]]
+    return [position[i]+2*w*c[i]+2*d[i]+translation[i] for i in range(3)]
 
 
 def main():
@@ -278,6 +376,8 @@ def main():
     parser.add_argument('--bootstrap',action='store_true',help='Disarmed raw-world inspection only; no flight goals')
     parser.add_argument('--ego-debugger',type=Path,help='GDB command file, only for disarmed diagnostic runs')
     parser.add_argument('--mission',type=Path)
+    parser.add_argument('--cycles',type=int,choices=(1,2),default=1,
+                        help='Explicit reviewed missions in one simulator; recovery required after each')
     parser.add_argument('--px4-dir',type=Path,required=True)
     parser.add_argument('--output-dir',type=Path,required=True)
     parser.add_argument('--domain',type=int,required=True)
@@ -285,6 +385,8 @@ def main():
     args=parser.parse_args()
     if not 0<=args.domain<=232 or not 1024<=args.gazebo_port<=65535:
         parser.error('invalid explicit domain or port')
+    if args.bootstrap and args.cycles!=1:
+        parser.error('bootstrap cannot request repeated flight missions')
     if not args.bootstrap and args.mission is None:
         parser.error('flight mode requires an explicit --mission; bootstrap sends no goals')
     args.scenario='scene-inspection' if args.bootstrap else 'scene-mission'

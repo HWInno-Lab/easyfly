@@ -101,3 +101,20 @@ bootstrap 使用低层 raw world 与显式 `debug_model_path` 进行诊断，所
 修改后请用 `colcon build` 完成安装和环境钩子生成；单独 `cmake --install` 可能覆盖
 colcon 的 package.dsv 钩子，造成选中了新包前缀却加载旧库。
 完整原始证据与当前缺口见工作区 `schedule-v5-scene.md` 的 S2 记录。
+
+`scene_sitl --cycles 2` explicitly runs the registered bounded reference mission
+twice in the same owned simulator. Every cycle requires two new real navigation
+UUIDs, successful terminal results within 0.15 m, closed sessions and released
+ownership. After landing, it waits for healthy disarmed state, speed ≤0.05 m/s,
+position within 0.15 m of the initial stationary position in the declared ground
+reference frame (map for these warehouses), and fresh occupancy and
+non-ground observations continuously for three wall seconds. This also applies
+to the default single cycle. The postlanding observation budget is 120 wall
+seconds; a recorded 60-second observation ended while the estimator was only
+approaching the continuous stationary gate. The initial preflight budget remains
+60 seconds. A map reference requires a finite, fresh map←odom transform; drift in
+odom must not be mistaken for physical motion. Raw odom state and the measured
+basis are retained alongside the transformed observation. No physical admission
+threshold is relaxed. Before cycle two, the
+scene's independent world/odom reference is checked again. A timeout prevents
+the next goal and fails acceptance. `--bootstrap` continues to forbid all goals.
