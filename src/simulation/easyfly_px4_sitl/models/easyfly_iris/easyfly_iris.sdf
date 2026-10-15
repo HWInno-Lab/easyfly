@@ -679,6 +679,11 @@
            Explicit nonzero density avoids the plugin's RMS-as-density default.
            PX4 admission checks and all other sensor parameters are unchanged. -->
       <gyroscopeNoiseDensity>0.00008726646259971648</gyroscopeNoiseDensity>
+      <!-- DS-000529 accelerometer PSD: XY 65, Z 70 ug/sqrt(Hz).
+           The scalar plugin uses the conservative Z value on every axis:
+           70e-6 * 9.80665 = 0.0006864655 m/s^2/sqrt(Hz).
+           0.65 mg RMS at 100 Hz is not a spectral density. -->
+      <accelerometerNoiseDensity>0.0006864655</accelerometerNoiseDensity>
     </plugin>
   </model>
 </sdf>

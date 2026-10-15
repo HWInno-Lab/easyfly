@@ -34,7 +34,7 @@ environment isolation and cancellation have process-free LaunchService tests.
 FAST-LIO resolves its delayed component's boolean clock parameter before its
 own include scope ends; it does not acquire a dependency on this SITL wrapper.
 
-## Explicit simulation gyroscope noise
+## Explicit simulation IMU noise densities
 
 The EasyFly model explicitly sets `gyroscopeNoiseDensity` to
 `0.00008726646259971648` rad/s/sqrt(Hz), equivalent to the IIM-42653 typical
@@ -43,14 +43,21 @@ The separate 0.05 deg/s RMS figure at 100 Hz is not a density. The installed
 Gazebo plugin's default confused these figures, making a stationary simulated
 vehicle repeatedly exceed PX4's gyro-vibration rest threshold.
 
-This model-level repair keeps nonzero noise. It does not modify system plugins,
-PX4 admission/protection parameters, the 0.83 m spawn height, accelerometer
-noise, random walk, bias settings, or hardware configuration. This typical
+The accelerometer also explicitly uses `0.0006864655` m/s^2/sqrt(Hz):
+DS-000529 table 2 gives 65 ug/sqrt(Hz) for X/Y and 70 ug/sqrt(Hz) for Z.
+The scalar plugin conservatively uses the larger value on every axis, converted
+with standard gravity 9.80665 m/s^2. Its default `0.00637` incorrectly treats
+0.65 mg RMS at 100 Hz as a spectral density. The reference and model hash are
+recorded in the model package's `licenses/runtime/imu-noise-reference.json`.
+
+These model-level repairs keep nonzero noise. They do not modify system plugins,
+PX4 admission/protection parameters, the 0.83 m spawn height,
+random walk, bias settings, or hardware configuration. This typical
 simulation reference is not a measurement or calibration of a real device.
 See the [TDK product and datasheet entry](https://www.invensense.tdk.com/en-us/products/inertial-sensors/industrial-motion/iim-42653).
 
 The SDF regression checks physical inertias, camera/TF contracts and the unique,
-finite, nonzero gyro density including degree-to-radian conversion. Omission,
+finite, nonzero densities including degree-to-radian and micro-g conversion. Omission,
 zero/noise suppression, RMS-as-density and unrelated IMU overrides fail it.
 Cold-start native-state checks are separate from flight and UI acceptance;
 passing these checks is not hardware readiness or proof that every historical

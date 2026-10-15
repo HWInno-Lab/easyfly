@@ -1,0 +1,21 @@
+{
+  "source_url": "https://invensense.tdk.com/wp-content/uploads/2023/12/DS-000529-IIM-42653-v1.1.pdf",
+  "reference": "TDK IIM-42653 DS-000529 revision 1.1, page 12 table 2",
+  "verification": "Official source indexed table text read; direct PDF fetch returned 404, no local PDF fingerprint claimed.",
+  "xy_ug_per_sqrt_hz": 65,
+  "z_ug_per_sqrt_hz": 70,
+  "scalar_policy": "Use larger Z density for all three axes; no axis noiseless.",
+  "standard_gravity_m_s2": 9.80665,
+  "accelerometer_noise_density": 0.0006864654999999999,
+  "old_plugin_default": 0.00637,
+  "old_default_issue": "100 Hz bandwidth RMS value used as a density",
+  "model_sha256": "142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef",
+  "unchanged": [
+    "gyroscopeNoiseDensity",
+    "random walk",
+    "turn-on bias",
+    "PX4 protection and admission limits",
+    "spawn and aircraft inertias",
+    "GPS, barometer, lidar and camera configuration"
+  ]
+}

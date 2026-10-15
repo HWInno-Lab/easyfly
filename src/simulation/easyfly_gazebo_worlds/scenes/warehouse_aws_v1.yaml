@@ -38,17 +38,17 @@ spawn:
   - 0.0
   - 0.83
   yaw: 0.0
-  basis: Upstream central aisle; spawn world [0,0,0.83], yaw 0, settled body z=0.088225m.
-    Two disarmed runs confirmed continuous maps and repeatable stationary world/odom
-    alignment; see registration evidence. Central aisle reference only.
+  basis: Upstream central aisle; unchanged world [0,0,0.83], yaw 0, settled body z=0.088225m.
+    Two disarmed cold starts with datasheet IMU densities confirmed stationary alignment;
+    see calibration-imu-density evidence.
 navigation:
   frame: odom
   world_to_navigation:
     translation:
-    - -0.0016776071982652259
-    - -0.004149026392648618
-    - -0.18080515950520834
-    yaw: -0.08824464622475788
+    - 0.0038936974791189036
+    - -0.013482058110336464
+    - 0.04318369140625
+    yaw: -0.015698551008509667
   recommended_region:
     min:
     - -0.3
@@ -93,3 +93,7 @@ verification:
     path: evidence/warehouse_aws_v1/mission.json
   - package: easyfly_gazebo_worlds
     path: evidence/warehouse_aws_v1/mission-initial.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/calibration-imu-density.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/mission-imu-density.json

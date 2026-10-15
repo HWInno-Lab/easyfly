@@ -44,7 +44,7 @@ models:
       remain in maintained aircraft SDF; no parameter changed by this curation.
 files:
 - path: easyfly_iris/easyfly_iris.sdf
-  sha256: 98389948e74b08261cf8a2587d255c255ea3bd10f9e080f3b589b35bb3b5e770
+  sha256: 142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef
 - path: easyfly_iris/easyfly_iris.urdf
   sha256: 1d9521ff9721f5ab85dc76dbab438f38e16e6b3902c8dc5fa4e9b9d03ac134cf
 - path: easyfly_iris/meshes/iris.stl
@@ -55,6 +55,9 @@ files:
   sha256: 6cbc686772dccd46253fb65ece000e7ffa6a74b9c097bda349884bd1e78cd879
 - path: easyfly_iris/model.config
   sha256: 1b72f68079363208226271342696d51c5371c115f0b2f243b87e957b0e05e6f2
-local_changes: []
+local_changes:
+- Explicit accelerometer density 70 ug/sqrt(Hz) (conservative scalar IIM-42653 Z-axis
+  PSD); corrects RMS-as-density units, retains nonzero noise and existing protection
+  limits.
 storage: existing
 inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

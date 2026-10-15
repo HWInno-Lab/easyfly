@@ -155,11 +155,24 @@ class EasyflyIrisSdfTest(unittest.TestCase):
         # DS-000529: 0.005 deg/s/sqrt(Hz); 0.05 deg/s is RMS at 100 Hz, not density.
         self.assertAlmostEqual(density, math.radians(0.005), delta=1e-14)
         self.assertGreater(abs(density - math.radians(0.05)), 1e-4)
-        # This repair changes no accelerometer/bias/random-walk defaults.
+        # Both densities are explicit; bias and random-walk defaults are retained.
         self.assertEqual(
             {child.tag for child in imu},
-            {"robotNamespace", "linkName", "imuTopic", "gyroscopeNoiseDensity"},
+            {"robotNamespace", "linkName", "imuTopic", "gyroscopeNoiseDensity",
+             "accelerometerNoiseDensity"},
         )
+
+    def test_imu_acceleration_noise_uses_conservative_density_not_bandwidth_rms(self):
+        imu = self.model.find("plugin[@name='rotors_gazebo_imu_plugin']")
+        densities = imu.findall("accelerometerNoiseDensity")
+        self.assertEqual(len(densities), 1, "explicit unique acceleration density required")
+        density = _number(imu, "accelerometerNoiseDensity")
+        self.assertTrue(math.isfinite(density))
+        self.assertGreater(density, 0.0)
+        # DS-000529 table 2: XY=65, Z=70 ug/sqrt(Hz). The plugin is scalar.
+        self.assertAlmostEqual(density, 70e-6 * 9.80665, delta=1e-14)
+        self.assertGreaterEqual(density, 65e-6 * 9.80665)
+        self.assertGreater(abs(density - 0.65e-3 * 9.80665), 0.005)
 
     def test_all_explicit_link_inertias_are_physically_realizable(self):
         links = self.model.findall("link")

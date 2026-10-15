@@ -1,0 +1,155 @@
+{
+  "scene": "warehouse_aws_v1",
+  "scope": "Two disarmed cold-start alignment measurements after correcting accelerometer RMS/density units; no flight goals. Navigation qualification pending a separate mission.",
+  "passed": true,
+  "model_sha256": "142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef",
+  "previous_reference": {
+    "translation": [
+      -0.0016776071982652259,
+      -0.004149026392648618,
+      -0.18080515950520834
+    ],
+    "yaw": -0.08824464622475788
+  },
+  "world_to_navigation": {
+    "translation": [
+      0.0038936974791189036,
+      -0.013482058110336464,
+      0.04318369140625
+    ],
+    "yaw": -0.015698551008509667
+  },
+  "pair_translation_difference_m": 0.008265043172735593,
+  "pair_yaw_difference_rad": 0.00016239897593427023,
+  "unchanged_limits": {
+    "speed_m_s": 0.05,
+    "continuous_stationary_wall_s": 3,
+    "preflight_timeout_wall_s": 60,
+    "alignment_translation_m": 0.2,
+    "alignment_yaw_rad": 0.1
+  },
+  "runs": [
+    {
+      "raw_result": "artifacts/scene-s2-stationary-20261015/corrected-roof-inspection/result.json",
+      "raw_result_sha256": "f7fc5adfabc059602ad4242f91dc38ae8b1a6b34039f590f40a05a5873a8eb4b",
+      "transform": {
+        "translation": [
+          0.0034912042319774628,
+          -0.01626167508463065,
+          0.04015227864583334
+        ],
+        "yaw": -0.0157797504964768
+      },
+      "settled_preflight_state": {
+        "source_ns": 16300000000,
+        "frame": "odom",
+        "ros_now_ns": 16300000000,
+        "receipt": 15823.420860007,
+        "steady_now": 15823.519308033,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.003009634790942073,
+          -0.010377428494393826,
+          0.123443603515625
+        ],
+        "velocity": [
+          -0.0009720442467369139,
+          -0.006923348177224398,
+          0.01769634708762169
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 67122,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "992d511a4b904fd24a1dc99a2ccd912836c555468cc47a4203370f48a804f0f7"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 67975,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+        },
+        "libplan_env.so": {
+          "pid": 68060,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 67122,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "de9ce4ac15ac98e96b25a307873f37a5dd4ee459e64a648a0c8f7311215a3d69"
+        }
+      },
+      "shutdown_seconds": 1.6673976379988744
+    },
+    {
+      "raw_result": "artifacts/scene-s2-stationary-20261015/corrected-roof-confirmation/result.json",
+      "raw_result_sha256": "fa30ed9128086e88bbd427c9a6d4d58ef04bdf53da725753b8cb765c866d9a05",
+      "transform": {
+        "translation": [
+          0.0042961907262603445,
+          -0.010702441136042276,
+          0.046215104166666666
+        ],
+        "yaw": -0.015617351520542529
+      },
+      "settled_preflight_state": {
+        "source_ns": 16300000000,
+        "frame": "odom",
+        "ros_now_ns": 16300000000,
+        "receipt": 15929.855143226,
+        "steady_now": 15929.908824572,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.0049873399548232555,
+          -0.011252328753471375,
+          0.125
+        ],
+        "velocity": [
+          0.0018245864193886518,
+          -0.005199018400162458,
+          0.018921857699751854
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "loaded_libraries": {
+        "liblivox_laser_simulation.so": {
+          "pid": 68300,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "992d511a4b904fd24a1dc99a2ccd912836c555468cc47a4203370f48a804f0f7"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 69131,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+        },
+        "libplan_env.so": {
+          "pid": 69216,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 68300,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "de9ce4ac15ac98e96b25a307873f37a5dd4ee459e64a648a0c8f7311215a3d69"
+        }
+      },
+      "shutdown_seconds": 1.3660939229994256
+    }
+  ]
+}
