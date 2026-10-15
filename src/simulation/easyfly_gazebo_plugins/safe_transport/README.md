@@ -15,8 +15,9 @@ Derived Apache-2.0 sources:
 - [Gazebo 11.10.2 server_main.cc](https://github.com/gazebosim/gazebo-classic/blob/gazebo11_11.10.2/gazebo/server_main.cc)
 
 The eleven transport source snapshots in `upstream/` are byte-identical
-imports from that tag, verified by `upstream/SHA256SUMS`. Ten are compiled directly;
-`src/connection.cpp` is a separately maintained derivative of `upstream/Connection.cc`.
+imports from that tag, verified by `upstream/SHA256SUMS`. Nine are compiled directly;
+`src/connection.cpp` and `src/connection_manager.cpp` are separately maintained
+derivatives of the corresponding upstream snapshots.
 They are compiled against
 installed headers, which match the tag (transport_pch.hh is not used). Original
 copyright notices are retained. The source archive SHA256 is
@@ -77,3 +78,15 @@ covered: it must not publish two managers or race the connection ID counter.
 The object ABI, TCP protocol and all upstream snapshots remain unchanged.
 This is a reproduced defect; it does not identify the missing historic planner
 crash stacks or, by itself, explain every retained-manager timeout.
+
+ConnectionManager::Fini cancels and closes every connection it owns before
+releasing its list. OnAccept binds a strong ConnectionPtr into a pending read;
+clearing the list alone leaves an operation → handler → connection → IOManager
+ownership cycle while a peer remains open. The native pending-read test runs
+an actual Master and ConnectionManager, keeps a TCP peer open without sending a
+header, finalizes transport, and requires Finish to drain successfully before
+closing that peer. The old code deterministically left live=1/pending=0 and
+failed; the corrected code drains to zero. The list is moved under its mutex,
+then Shutdown runs outside that mutex to allow reentrant shutdown callbacks.
+This fixes a reproduced retained-owner defect without extending the deadline,
+forcing successful exit, detaching threads, or suppressing an incomplete drain.

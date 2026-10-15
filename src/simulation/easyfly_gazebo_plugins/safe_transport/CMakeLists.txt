@@ -23,7 +23,7 @@ if(NOT EASYFLY_SYSTEM_TRANSPORT_SHA STREQUAL
 endif()
 get_filename_component(EASYFLY_TRANSPORT_HEADERS "${EASYFLY_IO_HEADER}" DIRECTORY)
 add_library(easyfly_transport_compat SHARED src/io_manager.cpp
-  upstream/CallbackHelper.cc src/connection.cpp upstream/ConnectionManager.cc
+  upstream/CallbackHelper.cc src/connection.cpp src/connection_manager.cpp
   upstream/Node.cc upstream/Publication.cc upstream/PublicationTransport.cc
   upstream/Publisher.cc upstream/Subscriber.cc upstream/SubscriptionTransport.cc
   upstream/TopicManager.cc upstream/TransportIface.cc)
@@ -63,4 +63,6 @@ if(BUILD_TESTING)
   target_link_libraries(test_transport_lifetime TBB::tbb)
   ament_add_gtest(test_transport_finish test/test_transport_finish.cpp TIMEOUT 15)
   target_link_libraries(test_transport_finish easyfly_transport_compat TBB::tbb)
+  ament_add_gtest(test_transport_pending_read test/test_pending_read.cpp TIMEOUT 20)
+  target_link_libraries(test_transport_pending_read easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
 endif()
