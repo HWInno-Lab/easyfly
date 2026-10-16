@@ -4,6 +4,8 @@ import hashlib
 from pathlib import Path
 import sys
 
+root = Path(sys.argv[1])
+
 def reader_patch():
     path = Path(sys.argv[1]) / 'src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp'
     before = 'c98c42fd227b5e0e7bd7ce7a093a611e234c31e4d5e06b1ed88a1c2d83d41a1d'
@@ -27,7 +29,48 @@ def reader_patch():
         raise RuntimeError('Unexpected patched source')
     path.write_bytes(data)
 
-root = Path(sys.argv[1])
+
+def discovery_patch(class_name, original_hash, patched_hash):
+    """Snapshot all three reader discovery events without extending lock scope."""
+    path = root / f'src/cpp/rtps/reader/{class_name}.cpp'
+    data = path.read_bytes()
+    digest = hashlib.sha256(data).hexdigest()
+    if digest == patched_hash:
+        return
+    if digest != original_hash:
+        raise RuntimeError(f'Unexpected upstream {class_name}.cpp; refusing patch')
+    start = data.index(f'bool {class_name}::matched_writer_add('.encode())
+    middle = data.index(f'bool {class_name}::matched_writer_remove('.encode(), start)
+    end = data.index(f'bool {class_name}::matched_writer_is_matched('.encode(), middle)
+    add, remove = data[start:middle], data[middle:end]
+    old = b'    {\n        std::unique_lock<RecursiveTimedMutex> guard(mp_mutex);'
+    if add.count(old) != 1 or add.count(b'if (nullptr != mp_listener)') != 2:
+        raise RuntimeError('Unexpected reader discovery add context')
+    add = add.replace(old, b'    ReaderListener* listener = nullptr;\n' + old +
+                      b'\n        listener = mp_listener;', 1)
+    add = add.replace(b'if (nullptr != mp_listener)', b'if (nullptr != listener)')
+    add = add.replace(b'mp_listener->on_writer_discovery', b'listener->on_writer_discovery')
+    if remove.count(b'if (nullptr != mp_listener)') != 1:
+        raise RuntimeError('Unexpected reader discovery remove context')
+    indent = b'            ' if class_name == 'StatefulReader' else b'                '
+    remove = remove.replace(b'if (nullptr != mp_listener)',
+                            b'// Capture under the reader mutex before releasing it for discovery.\n' +
+                            indent + b'ReaderListener* listener = mp_listener;\n' +
+                            indent + b'if (nullptr != listener)')
+    remove = remove.replace(b'mp_listener->on_writer_discovery', b'listener->on_writer_discovery')
+    data = data[:start] + add + remove + data[end:]
+    if hashlib.sha256(data).hexdigest() != patched_hash:
+        raise RuntimeError(f'Unexpected patched {class_name}.cpp')
+    path.write_bytes(data)
+
+
+discovery_patch('StatefulReader',
+                'aca08de4053e27fdf21ae1f60336b6c027616bb98226edda136e9b13666666d6',
+                '605e7710db34068442fb291a1f299bfc4597fc74c626b35e1c1fd4965de6f03b')
+discovery_patch('StatelessReader',
+                'c526380b5631d71411bc54d0f202e283fb8a4745683cc7cb3803e6071504ac77',
+                '153a3f2a5ff14e65b5013d9331866f1ddc1190d32360efcfb4254b5c3bdb4350')
+
 path = root / "src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp"
 if hashlib.sha256(path.read_bytes()).hexdigest() != '6efc6392bea2bba8c5a8f3b6a471e0c062f244ef28932f1d298b61746c7357e5':
     reader_patch()

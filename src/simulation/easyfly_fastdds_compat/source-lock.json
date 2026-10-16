@@ -7,12 +7,22 @@
   "modified_file": "src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp",
   "original_sha256": "c98c42fd227b5e0e7bd7ce7a093a611e234c31e4d5e06b1ed88a1c2d83d41a1d",
   "modified_sha256": "6efc6392bea2bba8c5a8f3b6a471e0c062f244ef28932f1d298b61746c7357e5",
-  "change": "Snapshot reader/writer listeners under their endpoint mutex before unmatch callbacks; synchronize writer setter. Release endpoint lock before callbacks/PDP updates. Existing endpoint traversal retains DDS owner.",
+  "change": "Snapshot reader/writer listeners under their endpoint mutex before unmatch callbacks; synchronize writer setter. Release endpoint lock before callbacks/PDP updates. Existing endpoint traversal retains DDS owner. Snapshot reliable/best-effort reader discovery listeners under the same mutex for add, QoS update and removal; callback lock scope unchanged.",
   "additional_modified_files": [
     {
       "path": "include/fastdds/rtps/writer/RTPSWriter.h",
       "original_sha256": "4414c565be56eb9240f54df7ad2ed77217ae9fccaa05fde7fce74a16aebcfde5",
       "modified_sha256": "afe142d08866f61f842cb9b618ffb00d81d0ba7ffb45ca3216e5c100514f8a4d"
+    },
+    {
+      "path": "src/cpp/rtps/reader/StatefulReader.cpp",
+      "original_sha256": "aca08de4053e27fdf21ae1f60336b6c027616bb98226edda136e9b13666666d6",
+      "modified_sha256": "605e7710db34068442fb291a1f299bfc4597fc74c626b35e1c1fd4965de6f03b"
+    },
+    {
+      "path": "src/cpp/rtps/reader/StatelessReader.cpp",
+      "original_sha256": "c526380b5631d71411bc54d0f202e283fb8a4745683cc7cb3803e6071504ac77",
+      "modified_sha256": "153a3f2a5ff14e65b5013d9331866f1ddc1190d32360efcfb4254b5c3bdb4350"
     }
   ]
 }

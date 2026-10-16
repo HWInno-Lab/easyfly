@@ -48,6 +48,31 @@ Ordinary tests exercise native endpoints and guards, never Gazebo, PX4 or flight
 This fixes the captured DDS race; it does not uniquely attribute old crashes
 whose native stacks were not retained.
 
+Two S3 shutdown faults (pointcloud filter and target tracking) were also
+identified from the kernel's fault PCs: both map to ELF address `0x3334bf` in
+the preceding private library, `StatefulReader::matched_writer_remove + 575`.
+The reader checked its listener under its mutex, unlocked, then reloaded a
+pointer that `setListener(nullptr)` could clear in that interval. This inner
+writer-discovery notification precedes the EDP unmatch callbacks described above.
+Both reliable and best-effort readers now capture the discovery listener under
+their existing mutex for writer discovery, QoS updates and removal. Callbacks
+still run after unlocking. Endpoint traversal retains the DDS inner listener's
+owner; applications using the RTPS API must likewise keep listeners alive while
+endpoint operations are in flight.
+
+`test_reader_discovery` uses real matched endpoints and a separate thread calling
+the public reader setter. A test-only Linux/glibc x86_64 mutex scheduling barrier
+tracks recursive lock depth and pauses immediately after the outer unlock, so
+the setter completes before the notification. The old reliable removal crashes
+at the same `0x3334bf` instruction; best-effort removal and both QoS update paths
+also crash. The old new-writer paths instead skip the notification after the
+clear. Six cases require one notification from the captured listener and prove
+that clearing completes before the callback. No signal or null pointer is
+injected, and the barrier is never installed in the runtime library.
+An unrelated Gazebo rendering startup fault and a diagnostic MAVROS interruption
+during plugin construction are recorded separately; this DDS fix does not
+attribute or resolve them.
+
 Managed scenes also load six explicitly named component-loader reply profiles.
 A recorded launch lost replies for already-instantiated components because RMW
 waited only the default 100 ms for the server's response writer to discover the

@@ -1,0 +1,152 @@
+{
+  "scope": "Native reader discovery concurrency regression only; no simulator flight acceptance inherited.",
+  "passed": true,
+  "diagnostic_only": true,
+  "old_library": {
+    "path": "artifacts/scene-s2-20261015/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+    "sha256": "63f3ce89fa78c3f4b1113545c1f98bd4e3e3f1733bb5531db12fa16fc29c54b3"
+  },
+  "fixed_library": {
+    "path": "artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+    "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d"
+  },
+  "original_kernel_journal": {
+    "path": "artifacts/scene-s3-20261016/reader-discovery-race/kernel-previous-boot.log",
+    "sha256": "c67c9fca02454f9bc7c651b9a81324204ffb731e4d6edaff3f1fa5a6c0e79164"
+  },
+  "captured_faults": [
+    {
+      "run": "qualified-v6-house-calibration-1",
+      "thread": 131581,
+      "pc": "0x7ca895d334bf",
+      "text_mapping": "0x7ca895ba2000"
+    },
+    {
+      "run": "diagnostic-filter-postfatal-1",
+      "thread": 134391,
+      "pc": "0x7bb2267334bf",
+      "text_mapping": "0x7bb2265a2000"
+    }
+  ],
+  "mapping": {
+    "text_load_virtual_address": "0x1a2000",
+    "both_elf_pc": "0x3334bf",
+    "symbol": "StatefulReader::matched_writer_remove + 575",
+    "fault_instruction": "mov (%rdi),%rax",
+    "fault_rdi": "0x0"
+  },
+  "cause": "mp_listener checked under reader mutex, then reloaded after unlock while the public setter can clear it.",
+  "fix": "Capture the discovery listener under the existing reader mutex for add/QoS/remove in reliable and best-effort readers; unlock before callbacks. Existing discovery endpoint traversal retains the DDS owner.",
+  "fixture": {
+    "source": "src/simulation/easyfly_fastdds_compat/test/test_reader_discovery.cpp",
+    "binary": {
+      "path": "artifacts/scene-s3-20261016/reader-discovery-race/test_reader_discovery_v3",
+      "sha256": "b74f4357a2147e4496d5f5c3fc102c80a8bfcac6c3e4109cbe9bfee8b03911f4"
+    },
+    "mechanism": "Real matched RTPS endpoints, real setter thread, test-only glibc mutex scheduling barrier with recursive depth tracking; listener retained through endpoint destruction. No signal or pointer injection. Identical fixture executable used against old and new library."
+  },
+  "cases": [
+    {
+      "reliability": "reliable",
+      "event": "remove",
+      "old_behavior": "SIGSEGV at null listener",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-reliable-remove.log",
+        "sha256": "0c4da87b74eaa0e05b3934789e2c74f089dce4a62f3ffaaef292d48f79e6e992"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-reliable-remove.log",
+        "sha256": "b48ad4b92a8c80e542e683b10b99e0bcf4c5843a37107d0a596da131a6186d27"
+      }
+    },
+    {
+      "reliability": "reliable",
+      "event": "add",
+      "old_behavior": "notification skipped after concurrent clear",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-reliable-add.log",
+        "sha256": "886e4489222dbd561294e1489dfb3a9fec1bcc2df4ac429298e91e6b143bd4b5"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-reliable-add.log",
+        "sha256": "5ec5f4743859102e80e7fc47c41b65ffbbf4f3834afcda04c8a0edcef7ebef4b"
+      }
+    },
+    {
+      "reliability": "reliable",
+      "event": "qos",
+      "old_behavior": "SIGSEGV at null listener",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-reliable-qos.log",
+        "sha256": "7ee395e98d06f74b37a215e5dda96c5b5decbe6ce297df72e6937a6a81495394"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-reliable-qos.log",
+        "sha256": "a3c421012543e413b69e73815e3efff486d19c898938a209a931016f21083a14"
+      }
+    },
+    {
+      "reliability": "best_effort",
+      "event": "remove",
+      "old_behavior": "SIGSEGV at null listener",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-best_effort-remove.log",
+        "sha256": "0195aee46e5fc0e733e631772647c60520c3cd8d099d8b62c7c5c43c1a8be947"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-best_effort-remove.log",
+        "sha256": "04bd8774031a8f3eb554b3c184a2164c2c963d9c255d19aeca4c016be67e7337"
+      }
+    },
+    {
+      "reliability": "best_effort",
+      "event": "add",
+      "old_behavior": "notification skipped after concurrent clear",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-best_effort-add.log",
+        "sha256": "a092478c3e51866104ff2fbd2903ffaee145cb2773b6e7fbd360a27765dfb431"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-best_effort-add.log",
+        "sha256": "087d85544cfb6645626041bf2d32ec2cca6f6ca40479b2de77ea67e84e5d27e8"
+      }
+    },
+    {
+      "reliability": "best_effort",
+      "event": "qos",
+      "old_behavior": "SIGSEGV at null listener",
+      "baseline": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/baseline-v3-best_effort-qos.log",
+        "sha256": "8904f97497730645954978b9bd8d03371943736d8e855307538b359de1f169d2"
+      },
+      "fixed": {
+        "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-best_effort-qos.log",
+        "sha256": "c2eae34d2eac176246593acba37307dfd91a610dd1376b8da934ebd51f3de57e"
+      }
+    }
+  ],
+  "fixed_summary": {
+    "path": "artifacts/scene-s3-20261016/reader-discovery-race/fixed-summary.json",
+    "sha256": "f55535af0bb54d3b5ad15b1e112eefec52d52f6124b4953dc5d6c87d68fed151"
+  },
+  "regression": {
+    "ctest_targets": 12,
+    "result_records": 16,
+    "errors": 0,
+    "failures": 0,
+    "log": {
+      "path": "artifacts/scene-s3-20261016/dds-discovery-tests.log",
+      "sha256": "edcfac888f0eff94168c16a6b15b4f82227f0ec2eafb4d20220012f05d45f75c"
+    },
+    "result": {
+      "path": "artifacts/scene-s3-20261016/dds-discovery-test-results.log",
+      "sha256": "35a0ee9d821275f0006f1791e66ba17ace32e7d3b7522e2ea0cc4da38bac2ef6"
+    }
+  },
+  "limitations": [
+    "First fixture revision paused at an inner recursive unlock and timed out; its baseline logs are retained and excluded from reproduction evidence.",
+    "A separate Gazebo rendering startup SIGSEGV (ELF PC 0x1656d4) is not attributed to DDS.",
+    "Diagnostic churn interrupted MAVROS during asynchronous plugin construction and captured RCLError/SIGABRT, a separate failure.",
+    "S3 requires fresh successful cold starts and two-cycle mission runs with this exact runtime before navigation signoff."
+  ]
+}
