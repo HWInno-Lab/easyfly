@@ -1,0 +1,24 @@
+{
+  "scene": "primitives_corridor_seed1042_v1",
+  "passed": false,
+  "inspection_passed": true,
+  "mapping_ready": false,
+  "scope": "Sensors and normal exit observed, but trusted floor support is insufficient for map readiness; navigation registration rejected. No flight goals sent.",
+  "raw_result": "artifacts/scene-s4-20261017/qualified-v1-primitives_corridor_seed1042_v1-draft/result.json",
+  "raw_result_sha256": "486276e35ea4b84af5c3bf995fdd23b41ec23f8e52b0e2b05d93979712174c1c",
+  "counts": {
+    "/uav_state": 329,
+    "/odom": 2398,
+    "/occupancy_grid": 1
+  },
+  "normal_exits": 24,
+  "world_sha256": "2be7468f1d25096632bebd9f86d52dc9eccde86514e70119fd6f14aa30c9a65c",
+  "world_to_navigation": {
+    "translation": [
+      0.0007451766189963868,
+      0.003384538538133105,
+      -0.024097562500000003
+    ],
+    "yaw": -0.016465621396890243
+  }
+}

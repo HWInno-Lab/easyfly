@@ -1,0 +1,27 @@
+{
+  "scene": "primitives_corridor_seed1042_v1",
+  "passed": true,
+  "scope": "Standalone Gazebo/ODE geometry only; no flight, vehicle or sensor acceptance.",
+  "world_sha256": "2be7468f1d25096632bebd9f86d52dc9eccde86514e70119fd6f14aa30c9a65c",
+  "generator_sha256": "1c02724c27b819a4513a9af0152aa89ba669cd2b05a7aa27721674903330e8c9",
+  "layout_sha256": "f76a22fc674e827880c92141971115f4eaf8416ff7e4b1fe76027b0484f857e7",
+  "native_probe_source": "tools/scenes/primitive_geometry_probe.cpp",
+  "native_probe_source_sha256": "b55914533ce62ae41507895b87979e3dd14f16a1a81c6481a030e47fde13f435",
+  "native_probe_sha256": "77c07615ff052271b2059190d83b4ffd8390e610edbf631036e7be318b1ea634",
+  "rays": 21794,
+  "positions": 17,
+  "height_range_m": [
+    0.1,
+    4.0
+  ],
+  "azimuth_samples": 32,
+  "min_horizontal_clearance_m": 1.7,
+  "floor_z": 0,
+  "upward_ray_length_m": 25,
+  "upward_no_hit": true,
+  "all_static_models_checked": 19,
+  "returncode": 0,
+  "raw_rays": "artifacts/scene-s4-20261017/primitives_corridor_seed1042_v1-rays.csv",
+  "raw_rays_sha256": "c53bbc00e5d6922e3c294c907d497dca968f03e4fe65275ad924a506f3dca1c8",
+  "raw_models_sha256": "4fa9ed3fc4993d59881bc54ea332aa70b6220974a65a7ea7d443ae76ed2ac8d7"
+}

@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "scope": "Negative generation input rejected before writing any bundle; no simulator or flight invoked.",
+  "input": "src/simulation/easyfly_gazebo_worlds/generators/primitives_blocked_seed42_v1.json",
+  "input_sha256": "fda0c212307c002326ffd45f24581e2d6a56a196fcd6636d7ff201a37d749e8c",
+  "returncode": 1,
+  "expected_error": "reference corridor blocked by rejected_barrier",
+  "output_created": false,
+  "log": "artifacts/scene-s4-20261017/blocked-generation-rejection.log",
+  "log_sha256": "1e4812d9948926c679da24259f766a087a9a1ca54dc588a9f53a6b11e1f74919"
+}

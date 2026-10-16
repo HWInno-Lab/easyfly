@@ -1,0 +1,246 @@
+{
+  "bounds": {
+    "max": [
+      8,
+      5
+    ],
+    "min": [
+      -6,
+      -5
+    ]
+  },
+  "config_sha256": "d2394a8e0e48154bb6fa84ec7af47f4469c9721fa493ac3d385ab175e16ed0d5",
+  "generator": "primitive_v1",
+  "generator_sha256": "1c02724c27b819a4513a9af0152aa89ba669cd2b05a7aa27721674903330e8c9",
+  "initial_scene_sha256": "b71e161d4ea873859483b8247c83f542139e4f3d4ec4745864c0124f90c6604b",
+  "layout_sha256": "0998b93c7d9931831518a4a912a8b8ab380898fd0cebb3e7c9f7e7c0bf8ca380",
+  "obstacles": [
+    {
+      "height": 4,
+      "name": "boundary_west",
+      "shape": "box",
+      "size": [
+        0.2,
+        10.4
+      ],
+      "x": -6.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_east",
+      "shape": "box",
+      "size": [
+        0.2,
+        10.4
+      ],
+      "x": 8.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_south",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": -5.1
+    },
+    {
+      "height": 4,
+      "name": "boundary_north",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": 5.1
+    },
+    {
+      "height": 1.713,
+      "name": "obstacle_000",
+      "shape": "box",
+      "size": [
+        0.93,
+        0.93
+      ],
+      "x": 0.439,
+      "y": 3.572
+    },
+    {
+      "height": 1.333,
+      "name": "obstacle_001",
+      "shape": "box",
+      "size": [
+        0.766,
+        0.766
+      ],
+      "x": 3.671,
+      "y": -0.327
+    },
+    {
+      "height": 2.191,
+      "name": "obstacle_002",
+      "shape": "box",
+      "size": [
+        0.741,
+        0.741
+      ],
+      "x": -1.322,
+      "y": -3.954
+    },
+    {
+      "height": 2.168,
+      "name": "obstacle_003",
+      "shape": "cylinder",
+      "size": [
+        0.735,
+        0.735
+      ],
+      "x": 5.316,
+      "y": -0.684
+    },
+    {
+      "height": 2.356,
+      "name": "obstacle_004",
+      "shape": "cylinder",
+      "size": [
+        0.613,
+        0.613
+      ],
+      "x": 4.192,
+      "y": 3.011
+    },
+    {
+      "height": 2.241,
+      "name": "obstacle_005",
+      "shape": "box",
+      "size": [
+        0.726,
+        0.726
+      ],
+      "x": 5.562,
+      "y": 3.11
+    },
+    {
+      "height": 2.107,
+      "name": "obstacle_006",
+      "shape": "box",
+      "size": [
+        0.854,
+        0.854
+      ],
+      "x": -3.306,
+      "y": -3.991
+    },
+    {
+      "height": 1.879,
+      "name": "obstacle_007",
+      "shape": "cylinder",
+      "size": [
+        0.852,
+        0.852
+      ],
+      "x": -3.954,
+      "y": -0.143
+    },
+    {
+      "height": 1.191,
+      "name": "obstacle_008",
+      "shape": "cylinder",
+      "size": [
+        0.753,
+        0.753
+      ],
+      "x": -2.045,
+      "y": 3.86
+    },
+    {
+      "height": 1.298,
+      "name": "obstacle_009",
+      "shape": "box",
+      "size": [
+        0.567,
+        0.567
+      ],
+      "x": 6.106,
+      "y": 0.921
+    },
+    {
+      "height": 2.322,
+      "name": "obstacle_010",
+      "shape": "box",
+      "size": [
+        0.793,
+        0.793
+      ],
+      "x": 6.924,
+      "y": -0.518
+    },
+    {
+      "height": 1.47,
+      "name": "obstacle_011",
+      "shape": "cylinder",
+      "size": [
+        0.79,
+        0.79
+      ],
+      "x": 3.635,
+      "y": -3.171
+    },
+    {
+      "height": 2.745,
+      "name": "obstacle_012",
+      "shape": "box",
+      "size": [
+        0.615,
+        0.615
+      ],
+      "x": -4.04,
+      "y": 4.042
+    },
+    {
+      "height": 2.561,
+      "name": "obstacle_013",
+      "shape": "cylinder",
+      "size": [
+        0.904,
+        0.904
+      ],
+      "x": -4.961,
+      "y": -3.333
+    },
+    {
+      "height": 2.519,
+      "name": "obstacle_014",
+      "shape": "cylinder",
+      "size": [
+        0.746,
+        0.746
+      ],
+      "x": 4.533,
+      "y": 1.75
+    },
+    {
+      "height": 1.705,
+      "name": "obstacle_015",
+      "shape": "cylinder",
+      "size": [
+        0.776,
+        0.776
+      ],
+      "x": -5.025,
+      "y": 2.554
+    }
+  ],
+  "route": {
+    "length_m": 1.5,
+    "width_m": 3.4
+  },
+  "scope": "Analytic placement only; no native collision, sensor or flight verification.",
+  "seed": 42,
+  "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63"
+}

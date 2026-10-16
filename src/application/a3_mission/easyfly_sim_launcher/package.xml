@@ -23,6 +23,8 @@
   <exec_depend>easyfly_mission_srvs</exec_depend>
   <exec_depend>easyfly_mission_scripts</exec_depend>
   <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>python3-jsonschema</exec_depend>
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>easyfly_precision_landing</exec_depend>
   <exec_depend>easyfly_flight_control</exec_depend>

@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "scene_id", "layout", "seed", "bounds", "spawn", "route", "obstacles"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "scene_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,79}$"},
+    "layout": {"enum": ["sparse", "corridor", "blocked"]},
+    "seed": {"type": "integer", "minimum": 0, "maximum": 4294967295},
+    "bounds": {
+      "type": "object", "additionalProperties": false, "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": -30, "maximum": 30}},
+        "max": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": -30, "maximum": 30}}
+      }
+    },
+    "spawn": {
+      "type": "array", "minItems": 3, "maxItems": 3,
+      "items": [{"type": "number", "minimum": -30, "maximum": 30},
+                {"type": "number", "minimum": -30, "maximum": 30},
+                {"type": "number", "const": 0.1}]
+    },
+    "route": {
+      "type": "object", "additionalProperties": false, "required": ["length_m", "width_m"],
+      "properties": {
+        "length_m": {"type": "number", "minimum": 1.5, "maximum": 10},
+        "width_m": {"type": "number", "minimum": 2.4, "maximum": 8}
+      }
+    },
+    "obstacles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["count", "min_size_m", "max_size_m", "min_height_m", "max_height_m", "spacing_m"],
+      "properties": {
+        "count": {"type": "integer", "minimum": 1, "maximum": 160},
+        "min_size_m": {"type": "number", "minimum": 0.3, "maximum": 1.5},
+        "max_size_m": {"type": "number", "minimum": 0.3, "maximum": 1.5},
+        "min_height_m": {"type": "number", "minimum": 0.5, "maximum": 3.5},
+        "max_height_m": {"type": "number", "minimum": 0.5, "maximum": 3.5},
+        "spacing_m": {"type": "number", "minimum": 0.2, "maximum": 3}
+      }
+    }
+  }
+}

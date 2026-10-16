@@ -1,0 +1,33 @@
+{
+  "bounds": {
+    "max": [
+      8,
+      5
+    ],
+    "min": [
+      -6,
+      -5
+    ]
+  },
+  "layout": "corridor",
+  "obstacles": {
+    "count": 12,
+    "max_height_m": 2.8,
+    "max_size_m": 1.0,
+    "min_height_m": 1.0,
+    "min_size_m": 0.4,
+    "spacing_m": 0.5
+  },
+  "route": {
+    "length_m": 1.5,
+    "width_m": 3.4
+  },
+  "scene_id": "primitives_corridor_seed1042_v1",
+  "schema_version": 1,
+  "seed": 1042,
+  "spawn": [
+    0,
+    0,
+    0.1
+  ]
+}

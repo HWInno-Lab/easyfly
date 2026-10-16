@@ -1,0 +1,224 @@
+{
+  "bounds": {
+    "max": [
+      8,
+      6
+    ],
+    "min": [
+      -6,
+      -6
+    ]
+  },
+  "config_sha256": "ca0b79c8bdc65828068b45685f2f868047fdb9a9fc56f0d9cec273db9f0088fb",
+  "generator": "primitive_v1",
+  "generator_sha256": "1c02724c27b819a4513a9af0152aa89ba669cd2b05a7aa27721674903330e8c9",
+  "initial_scene_sha256": "79b80a575e5fa6b6d012ff60cb6d8654cdf088463e43876a826a12e8cc9f3d98",
+  "layout_sha256": "310ff0686e163dfa565824bdcf7c10464d49e644ebfb293ef036ae7bbc0e89ea",
+  "obstacles": [
+    {
+      "height": 4,
+      "name": "boundary_west",
+      "shape": "box",
+      "size": [
+        0.2,
+        12.4
+      ],
+      "x": -6.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_east",
+      "shape": "box",
+      "size": [
+        0.2,
+        12.4
+      ],
+      "x": 8.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_south",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": -6.1
+    },
+    {
+      "height": 4,
+      "name": "boundary_north",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": 6.1
+    },
+    {
+      "height": 4,
+      "name": "corridor_south",
+      "shape": "box",
+      "size": [
+        5.5,
+        0.2
+      ],
+      "x": 0.75,
+      "y": -2.8000000000000003
+    },
+    {
+      "height": 4,
+      "name": "corridor_north",
+      "shape": "box",
+      "size": [
+        5.5,
+        0.2
+      ],
+      "x": 0.75,
+      "y": 2.8000000000000003
+    },
+    {
+      "height": 1.287,
+      "name": "obstacle_000",
+      "shape": "cylinder",
+      "size": [
+        0.455,
+        0.455
+      ],
+      "x": 5.739,
+      "y": -0.306
+    },
+    {
+      "height": 1.48,
+      "name": "obstacle_001",
+      "shape": "box",
+      "size": [
+        0.622,
+        0.622
+      ],
+      "x": -5.052,
+      "y": -2.666
+    },
+    {
+      "height": 1.869,
+      "name": "obstacle_002",
+      "shape": "box",
+      "size": [
+        0.422,
+        0.422
+      ],
+      "x": 1.861,
+      "y": -3.919
+    },
+    {
+      "height": 2.147,
+      "name": "obstacle_003",
+      "shape": "box",
+      "size": [
+        0.758,
+        0.758
+      ],
+      "x": 6.995,
+      "y": -3.859
+    },
+    {
+      "height": 2.601,
+      "name": "obstacle_004",
+      "shape": "cylinder",
+      "size": [
+        0.498,
+        0.498
+      ],
+      "x": -5.172,
+      "y": 2.054
+    },
+    {
+      "height": 2.776,
+      "name": "obstacle_005",
+      "shape": "cylinder",
+      "size": [
+        0.524,
+        0.524
+      ],
+      "x": 4.453,
+      "y": -3.531
+    },
+    {
+      "height": 1.819,
+      "name": "obstacle_006",
+      "shape": "cylinder",
+      "size": [
+        0.874,
+        0.874
+      ],
+      "x": -0.855,
+      "y": 3.952
+    },
+    {
+      "height": 2.28,
+      "name": "obstacle_007",
+      "shape": "cylinder",
+      "size": [
+        0.925,
+        0.925
+      ],
+      "x": -3.863,
+      "y": -4.777
+    },
+    {
+      "height": 1.14,
+      "name": "obstacle_008",
+      "shape": "box",
+      "size": [
+        0.997,
+        0.997
+      ],
+      "x": 5.732,
+      "y": 4.414
+    },
+    {
+      "height": 1.154,
+      "name": "obstacle_009",
+      "shape": "box",
+      "size": [
+        0.805,
+        0.805
+      ],
+      "x": -2.933,
+      "y": -3.287
+    },
+    {
+      "height": 2.492,
+      "name": "obstacle_010",
+      "shape": "cylinder",
+      "size": [
+        0.934,
+        0.934
+      ],
+      "x": -4.075,
+      "y": -0.973
+    },
+    {
+      "height": 1.926,
+      "name": "obstacle_011",
+      "shape": "box",
+      "size": [
+        0.718,
+        0.718
+      ],
+      "x": -0.294,
+      "y": -3.893
+    }
+  ],
+  "route": {
+    "length_m": 1.5,
+    "width_m": 5.4
+  },
+  "scope": "Analytic placement only; no native collision, sensor or flight verification.",
+  "seed": 1042,
+  "world_sha256": "e70d971a430a339294078d2a3a55bcfb7175b1738de5a59d71e5823e3b07cccb"
+}

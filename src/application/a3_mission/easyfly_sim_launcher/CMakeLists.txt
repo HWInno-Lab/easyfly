@@ -10,6 +10,7 @@ install(DIRECTORY launch
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 install(PROGRAMS scripts/d5_simulation DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/scene_catalog DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/scene_generator DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/scene_sitl.py DESTINATION lib/${PROJECT_NAME} RENAME scene_sitl)
 install(PROGRAMS scripts/navigation_sitl.py
   DESTINATION lib/${PROJECT_NAME} RENAME navigation_sitl)
@@ -26,6 +27,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_scene_launch test/test_scene_launch.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_indoor_scene test/test_indoor_scene.py TIMEOUT 30
+    APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
+  ament_add_pytest_test(test_scene_generator test/test_scene_generator.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_warehouse_scene test/test_warehouse_scene.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})

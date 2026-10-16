@@ -116,3 +116,35 @@ OGRE 仅解析 SDF 明确选中的简单 material 块及其纹理引用；继承
 
 `scene_sitl --bootstrap`仅收集无飞行Goal的传感器/静止证据；已注册场景使用受管入口，
 草稿检查才显式传入raw-world、受管模型根与几何测量出生点。
+
+## S4 程序化场景
+
+`generators/`保存固定输入，`worlds/benchmark/navigation/`保存生成后的world，
+`evidence/<scene>/generation.json`保存生成器/输入/布局/world指纹。
+首批稀疏场景`primitives_sparse_seed42_v1`含16个随机基础障碍；
+宽通道候选`primitives_corridor_seed1042_v2`含12个随机障碍及两侧通道墙。
+边界墙高4m，地面顶面z=0，参考路线world `(0,0)`→`(1.5,0)`；稀疏图预留净宽3.4m，宽通道v2净宽5.4m。
+所有障碍为自有static box/cylinder，无外部mesh/纹理依赖，采用项目Apache-2.0许可。
+
+生成器总是先输出draft；来源/解析/几何通过不能代替坐标、真实传感器和飞行验收。
+`geometry-s4.json`记录独立原生Gazebo/ODE核对：每图21794条射线、17个位置、
+0.1～4.0m高度采样，以及全部模型位置、尺寸和static状态与布局指纹的匹配。
+ODE无命中距离返回1000且entity为空，记录只说明25m向上射线内未命中，不把哨兵当实际净空。
+堵塞参数`primitives_blocked_seed42_v1.json`在生成阶段明确拒绝，不生成world或场景条目。
+
+初版`primitives_corridor_seed1042_v1`保留为draft：原生碰撞和传感器输出通过，
+但实测可信地面点比例低于原有0.15要求，未形成可信地图；
+`mapping-rejected-s4.json`保留该次实测拒绝。未减小阈值或复用稀疏场景签收。
+
+本轮已打通稀疏固定种子样本的完整闭环：`primitives_sparse_seed42_v1`支持
+`navigation_dev`，各两次managed冷启动与两轮连续任务通过，四次导航终态成功，
+最大到位误差0.07692515m，每项24正常退出，无强制清理/残留。
+对应参考任务为`missions/scenes/primitives_sparse_seed42_v1/straight_out_and_back.yaml`。
+
+宽通道v2可信地图及两次冷启动通过，第一轮任务成功；第二轮前测得航向相对
+冷启动参考偏差0.10355775rad，超过原有0.1rad门限，未发送第二轮任务，
+24个进程正常退出。`mission-s4-rejected-v2.json`保留真实拒绝与全部UUID/状态。
+该图已恢复draft、无supported_profiles、navigation_tested=false，不能受管启动。
+ULog显示该轮估计航向在飞行期间发生reset，但尚未完成根因归属，
+未修改磁场、GPS、EKF、IMU、航向门限或任务路线去取得通过。
+因此当前交付为S4第一步（生成器+一个固定种子样本），S4整体仍在进行。

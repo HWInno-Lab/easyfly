@@ -1,0 +1,95 @@
+schema_version: 1
+id: primitives_corridor_seed1042_v2
+name: primitives_corridor_seed1042_v2
+status: draft
+category: benchmark/navigation
+tags:
+- procedural
+- static
+- corridor
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/benchmark/navigation/primitives_corridor_seed1042_v2.world
+  sha256: e70d971a430a339294078d2a3a55bcfb7175b1738de5a59d71e5823e3b07cccb
+provenance:
+  status: recorded
+  source_url: null
+  revision: primitive_v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/generation.json
+  note: Project-authored primitive geometry; pinned input, generator and layout fingerprints.
+asset_sets: []
+required_plugins: []
+supported_profiles: []
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0
+  - 0
+  - 0.1
+  yaw: 0.0
+  basis: Generated flat floor and reserved route capsule, independently checked by
+    native ODE; geometry and coordinate evidence recorded per scene.
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 0.006483246184264621
+    - 0.005579784978181124
+    - -0.0644570595703125
+    yaw: -0.014484107619249093
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Same managed vehicle, sensors and admission limits as qualified indoor scenes.
+  heartbeat_rate_hz: 5
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: false
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/generation.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/bootstrap-s4-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/geometry-s4.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/calibration-s4-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/mission-s4-rejected-v2.json

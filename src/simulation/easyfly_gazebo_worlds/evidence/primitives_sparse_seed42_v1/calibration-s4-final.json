@@ -1,0 +1,3633 @@
+{
+  "scene": "primitives_sparse_seed42_v1",
+  "passed": true,
+  "scope": "Two independent registered managed cold starts; flight qualified separately.",
+  "grid_footprint_mode": "observed_cells",
+  "spawn": {
+    "frame": "world",
+    "position": [
+      0,
+      0,
+      0.1
+    ],
+    "yaw": 0.0,
+    "basis": "Generated flat floor and reserved route capsule, independently checked by native ODE; geometry and coordinate evidence recorded per scene."
+  },
+  "previous_reference": {
+    "translation": [
+      0.0027215770872620246,
+      0.006199638204028209,
+      -0.032245755859375
+    ],
+    "yaw": -0.01493275446207535
+  },
+  "world_to_navigation": {
+    "translation": [
+      -0.0022726787016533003,
+      0.008400217862799764,
+      -0.053023140299479174
+    ],
+    "yaw": -0.01472671008727012
+  },
+  "pair_translation_difference_m": 0.007813382228521997,
+  "pair_yaw_difference_rad": 0.0008879365074416033,
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "runs": [
+    {
+      "px4_telemetry": {
+        "command_returncodes": [
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "5df380603e0c1b8c19e69b36bacc18a68218bb0c216e0c29976d2b6d7931e227",
+        "pid": 22723,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "331345",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 14200000000,
+            "receipt": 3331.692086214,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 14400000000,
+            "receipt": 3332.003817748,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 14600000000,
+            "receipt": 3332.485214878,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 14800000000,
+            "receipt": 3332.892070705,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 15000000000,
+            "receipt": 3333.280947536,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 15200000000,
+            "receipt": 3333.724258118,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 0.48139713000000484
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                -0.00035066367127001286,
+                0.008400646038353443,
+                -0.001190185546875
+              ],
+              "yaw": -0.015064038783116341,
+              "translation": [
+                -0.00035066367127001286,
+                0.008400646038353443,
+                -0.055561185546875
+              ],
+              "state": {
+                "source_ns": 18700000000,
+                "frame": "odom",
+                "ros_now_ns": 19000000000,
+                "receipt": 3340.453640019,
+                "steady_now": 3340.453755191,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.00035066367127001286,
+                  0.008400646038353443,
+                  -0.001190185546875
+                ],
+                "velocity": [
+                  -0.0027974939439445734,
+                  -0.002877990948036313,
+                  -0.0012582394992932677
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 18600000000,
+                "frame": "odom",
+                "ros_now_ns": 18700000000,
+                "receipt": 3339.776217769,
+                "steady_now": 3339.959329465,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  0.00033968270872719586,
+                  0.008561608381569386,
+                  -0.0006103515625
+                ],
+                "velocity": [
+                  -0.002460740739479661,
+                  -0.002940324367955327,
+                  -0.0009495140402577817
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                -0.004692847840487957,
+                0.009002882987260818,
+                -0.00299072265625
+              ],
+              "yaw": -0.015191501275322393,
+              "translation": [
+                -0.004692847840487957,
+                0.009002882987260818,
+                -0.05736172265625
+              ],
+              "state": {
+                "source_ns": 19300000000,
+                "frame": "odom",
+                "ros_now_ns": 19500000000,
+                "receipt": 3341.523864272,
+                "steady_now": 3341.523914972,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.004692847840487957,
+                  0.009002882987260818,
+                  -0.00299072265625
+                ],
+                "velocity": [
+                  -0.0054345265962183475,
+                  -0.002648855559527874,
+                  -0.0013435474829748273
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 19200000000,
+                "frame": "odom",
+                "ros_now_ns": 19200000000,
+                "receipt": 3340.789634377,
+                "steady_now": 3340.958047967,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.004518544301390648,
+                  0.008898972533643246,
+                  -0.002716064453125
+                ],
+                "velocity": [
+                  -0.005460221786051989,
+                  -0.0024345212150365114,
+                  -0.0016170708695426583
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                -0.005075015127658844,
+                0.007819339632987976,
+                -0.003021240234375
+              ],
+              "yaw": -0.015256494964438747,
+              "translation": [
+                -0.005075015127658844,
+                0.007819339632987976,
+                -0.057392240234375
+              ],
+              "state": {
+                "source_ns": 19900000000,
+                "frame": "odom",
+                "ros_now_ns": 20000000000,
+                "receipt": 3342.43536648,
+                "steady_now": 3342.435458648,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.005075015127658844,
+                  0.007819339632987976,
+                  -0.003021240234375
+                ],
+                "velocity": [
+                  -0.005251690745353699,
+                  -0.002923565683886409,
+                  -0.0022002991754561663
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 19800000000,
+                "frame": "odom",
+                "ros_now_ns": 19800000000,
+                "receipt": 3341.813310139,
+                "steady_now": 3342.025194727,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.005002076271921396,
+                  0.008081435225903988,
+                  -0.003082275390625
+                ],
+                "velocity": [
+                  -0.005168795585632324,
+                  -0.002898180391639471,
+                  -0.0021986225619912148
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              -0.003372842213138938,
+              0.008407622886200746,
+              -0.05677171614583334
+            ],
+            "yaw": -0.015170678340990921
+          },
+          "settled_preflight_state": {
+            "source_ns": 18600000000,
+            "frame": "odom",
+            "ros_now_ns": 18700000000,
+            "receipt": 3339.776217769,
+            "steady_now": 3339.959322928,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.00033968270872719586,
+              0.008561608381569386,
+              -0.0006103515625
+            ],
+            "velocity": [
+              -0.002460740739479661,
+              -0.002940324367955327,
+              -0.0009495140402577817
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 22595,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 22595,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 22595,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 23395,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 23397,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 23480,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-f1w2bpa_/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-f1w2bpa_/profiles.xml"
+        },
+        "loaded_pids": [
+          22595,
+          23042,
+          23044,
+          23046,
+          23186,
+          23188,
+          23190,
+          23276,
+          23278,
+          23304,
+          23306,
+          23354,
+          23369,
+          23382,
+          23395,
+          23397,
+          23426,
+          23439,
+          23441,
+          23443,
+          23478,
+          23480
+        ],
+        "child_profile_paths": {
+          "23042": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23426": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23044": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23046": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23304": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23306": "/tmp/easyfly-scene-dds-f1w2bpa_/profiles.xml",
+          "23439": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23441": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23186": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23443": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23188": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23190": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23478": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23480": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23354": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "22595": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23369": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23382": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23395": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23397": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23276": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml",
+          "23278": "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-f1w2bpa_/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-n7erz_je/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 179,
+          "first_source_ns": 2582000000,
+          "last_source_ns": 20402000000,
+          "receipt": 3342.973230718,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.06981770694255829,
+              5.0,
+              3.649226188659668
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.022863972932100296,
+              -5.0,
+              2.958672046661377
+            ],
+            [
+              -1.9585726261138916,
+              -5.0,
+              3.5289862155914307
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.932309627532959,
+              5.0,
+              3.6931509971618652
+            ],
+            [
+              -0.33735910058021545,
+              5.0,
+              2.7406890392303467
+            ],
+            [
+              1.6236337423324585,
+              5.0,
+              3.132192373275757
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              3.067606210708618,
+              -5.0,
+              3.0269014835357666
+            ],
+            [
+              0.2762170433998108,
+              -5.0,
+              2.209460496902466
+            ],
+            [
+              -1.2166435718536377,
+              -3.5834999084472656,
+              1.8560889959335327
+            ],
+            [
+              -5.868544101715088,
+              -5.0,
+              3.4846372604370117
+            ],
+            [
+              -6.0,
+              -2.201270818710327,
+              2.9205236434936523
+            ],
+            [
+              -6.0,
+              1.0374584197998047,
+              2.8940207958221436
+            ],
+            [
+              -6.0,
+              3.7216074466705322,
+              3.0099475383758545
+            ],
+            [
+              -3.103756904602051,
+              5.0,
+              2.8153302669525146
+            ],
+            [
+              -0.5184637904167175,
+              5.0,
+              2.0449576377868652
+            ],
+            [
+              1.502925992012024,
+              5.0,
+              2.319843292236328
+            ],
+            [
+              5.166812896728516,
+              5.0,
+              2.866914987564087
+            ],
+            [
+              4.161468505859375,
+              1.716933250427246,
+              1.7451163530349731
+            ],
+            [
+              8.0,
+              -0.9808592200279236,
+              3.179107189178467
+            ],
+            [
+              8.0,
+              -4.801185607910156,
+              3.1638848781585693
+            ],
+            [
+              3.1951746940612793,
+              -5.0,
+              2.2775075435638428
+            ],
+            [
+              0.41564369201660156,
+              -5.0,
+              1.6079641580581665
+            ],
+            [
+              -1.1566102504730225,
+              -3.5834999084472656,
+              1.3633259534835815
+            ],
+            [
+              -5.627875328063965,
+              -5.0,
+              2.4996118545532227
+            ],
+            [
+              -6.0,
+              -2.2972986698150635,
+              2.1413450241088867
+            ],
+            [
+              -6.0,
+              0.9707133173942566,
+              2.1447010040283203
+            ],
+            [
+              -6.0,
+              3.6122937202453613,
+              2.1496007442474365
+            ],
+            [
+              -3.115859270095825,
+              5.0,
+              2.086716651916504
+            ],
+            [
+              -0.5749826431274414,
+              5.0,
+              1.4611599445343018
+            ],
+            [
+              1.5143513679504395,
+              5.0,
+              1.6817642450332642
+            ],
+            [
+              5.093369007110596,
+              5.0,
+              2.0233123302459717
+            ],
+            [
+              4.161062240600586,
+              1.7218670845031738,
+              1.2138899564743042
+            ],
+            [
+              3.2880001068115234,
+              -0.39730945229530334,
+              0.9250155687332153
+            ],
+            [
+              8.0,
+              -4.740614891052246,
+              2.095303535461426
+            ],
+            [
+              3.1706488132476807,
+              -5.0,
+              1.5902858972549438
+            ],
+            [
+              0.44184038043022156,
+              -5.0,
+              1.0504536628723145
+            ],
+            [
+              -1.1858232021331787,
+              -3.5834999084472656,
+              0.9328621625900269
+            ],
+            [
+              -5.635794639587402,
+              -5.0,
+              1.664607286453247
+            ],
+            [
+              -6.0,
+              -2.23364520072937,
+              1.4021275043487549
+            ],
+            [
+              -6.0,
+              1.0353015661239624,
+              1.460972547531128
+            ],
+            [
+              -6.0,
+              3.6998913288116455,
+              1.362155795097351
+            ],
+            [
+              -2.973505973815918,
+              5.0,
+              1.3921164274215698
+            ],
+            [
+              -0.5078814625740051,
+              5.0,
+              0.8888850212097168
+            ],
+            [
+              1.6642478704452515,
+              5.0,
+              1.0859317779541016
+            ],
+            [
+              5.281809329986572,
+              5.0,
+              1.2352008819580078
+            ],
+            [
+              4.190649032592773,
+              1.6019296646118164,
+              0.6874842047691345
+            ],
+            [
+              3.2880001068115234,
+              -0.4802534282207489,
+              0.5486587285995483
+            ],
+            [
+              7.986155986785889,
+              -5.0,
+              1.0242987871170044
+            ],
+            [
+              2.9499287605285645,
+              -5.0,
+              0.8927093148231506
+            ],
+            [
+              0.315975159406662,
+              -5.0,
+              0.4667809307575226
+            ],
+            [
+              -1.3401721715927124,
+              -3.5834999084472656,
+              0.5038595199584961
+            ],
+            [
+              -6.0,
+              -4.996528148651123,
+              0.8262924551963806
+            ],
+            [
+              -6.0,
+              -1.944772481918335,
+              0.6492047309875488
+            ],
+            [
+              -6.0,
+              1.2972458600997925,
+              0.7715608477592468
+            ],
+            [
+              -6.0,
+              4.097527503967285,
+              0.5573651194572449
+            ],
+            [
+              -1.8496860265731812,
+              3.53812313079834,
+              0.5022541880607605
+            ],
+            [
+              -0.25066444277763367,
+              5.0,
+              0.30311891436576843
+            ],
+            [
+              2.036391258239746,
+              5.0,
+              0.5015525221824646
+            ],
+            [
+              5.931384563446045,
+              5.0,
+              0.4240916967391968
+            ],
+            [
+              4.541075229644775,
+              1.3770874738693237,
+              0.18403731286525726
+            ],
+            [
+              3.2880001068115234,
+              -0.7042859196662903,
+              0.17456598579883575
+            ],
+            [
+              6.849175453186035,
+              -5.0,
+              -0.06634744256734848
+            ],
+            [
+              2.464642286300659,
+              -5.0,
+              0.2395353615283966
+            ],
+            [
+              -0.04773620516061783,
+              -5.0,
+              -0.11455375701189041
+            ],
+            [
+              -2.365518093109131,
+              -5.0,
+              0.12843094766139984
+            ],
+            [
+              -4.527430534362793,
+              -3.2052438259124756,
+              -0.0324929803609848
+            ],
+            [
+              -6.0,
+              -1.353698968887329,
+              -0.022151095792651176
+            ],
+            [
+              -6.0,
+              1.8641977310180664,
+              0.13115887343883514
+            ],
+            [
+              -5.973574161529541,
+              5.0,
+              -0.21655938029289246
+            ],
+            [
+              -2.0018820762634277,
+              5.0,
+              0.15415681898593903
+            ],
+            [
+              0.16609373688697815,
+              3.1070001125335693,
+              -0.1266707181930542
+            ],
+            [
+              2.7317516803741455,
+              5.0,
+              0.012922458350658417
+            ],
+            [
+              4.070982456207275,
+              2.729402780532837,
+              -0.20204822719097137
+            ],
+            [
+              4.6685791015625,
+              0.809760570526123,
+              -0.23000000417232513
+            ],
+            [
+              5.948929309844971,
+              -2.024022340774536,
+              -0.23000000417232513
+            ],
+            [
+              1.7626919746398926,
+              -1.6698111295700073,
+              -0.23000000417232513
+            ],
+            [
+              1.7284739017486572,
+              -5.0,
+              -0.19577215611934662
+            ],
+            [
+              -0.2967281639575958,
+              -2.1150803565979004,
+              -0.23000000417232513
+            ],
+            [
+              -2.5994410514831543,
+              -4.011366367340088,
+              -0.23000000417232513
+            ],
+            [
+              -2.4577908515930176,
+              -1.2925586700439453,
+              -0.23000000417232513
+            ],
+            [
+              -3.4216277599334717,
+              -0.28036510944366455,
+              -0.23000000417232513
+            ],
+            [
+              -4.796247959136963,
+              2.240604877471924,
+              -0.22957707941532135
+            ],
+            [
+              -1.8251591920852661,
+              2.0463554859161377,
+              -0.23000000417232513
+            ],
+            [
+              -1.218868613243103,
+              5.0,
+              -0.10606782138347626
+            ],
+            [
+              0.5198372602462769,
+              2.530207633972168,
+              -0.23000000417232513
+            ],
+            [
+              3.7938313484191895,
+              5.0,
+              -0.20281419157981873
+            ],
+            [
+              2.5980076789855957,
+              1.219761610031128,
+              -0.23000000417232513
+            ],
+            [
+              3.215921401977539,
+              0.04939689114689827,
+              -0.23000000417232513
+            ],
+            [
+              3.1829946041107178,
+              -1.6619077920913696,
+              -0.23000000417232513
+            ],
+            [
+              1.2598764896392822,
+              -1.6544232368469238,
+              -0.23000000417232513
+            ],
+            [
+              0.7913838028907776,
+              -4.3895344734191895,
+              -0.23000000417232513
+            ],
+            [
+              -0.5747551918029785,
+              -1.8432866334915161,
+              -0.23000000417232513
+            ],
+            [
+              -3.101306676864624,
+              -3.4607133865356445,
+              -0.23000000417232513
+            ],
+            [
+              -2.4869184494018555,
+              -0.835394561290741,
+              -0.23000000417232513
+            ],
+            [
+              -4.0895185470581055,
+              0.30677467584609985,
+              -0.23000000417232513
+            ],
+            [
+              -5.1789469718933105,
+              3.4840452671051025,
+              -0.23000000417232513
+            ],
+            [
+              -1.9964385032653809,
+              3.102621078491211,
+              -0.23000000417232513
+            ],
+            [
+              -0.4453585147857666,
+              5.0,
+              0.005242350976914167
+            ],
+            [
+              1.3782401084899902,
+              3.6862704753875732,
+              -0.23000000417232513
+            ],
+            [
+              5.102267742156982,
+              5.0,
+              0.040949732065200806
+            ],
+            [
+              5.375021934509277,
+              1.5890932083129883,
+              -0.23000000417232513
+            ],
+            [
+              3.2880001068115234,
+              -0.4258696138858795,
+              -0.061558905988931656
+            ],
+            [
+              6.892022609710693,
+              -5.0,
+              -0.1349516063928604
+            ],
+            [
+              2.3827364444732666,
+              -4.2879743576049805,
+              -0.23000000417232513
+            ],
+            [
+              0.1917310506105423,
+              -5.0,
+              0.033529337495565414
+            ],
+            [
+              -1.9615988731384277,
+              -4.116644859313965,
+              -0.23000000417232513
+            ],
+            [
+              -5.854248046875,
+              -5.0,
+              0.14777161180973053
+            ],
+            [
+              -6.0,
+              -1.1259045600891113,
+              -0.10594978928565979
+            ],
+            [
+              -6.0,
+              1.2261674404144287,
+              0.1364387720823288
+            ],
+            [
+              -4.234468460083008,
+              3.734499931335449,
+              0.20896312594413757
+            ],
+            [
+              -1.7527878284454346,
+              3.6225881576538086,
+              0.09608303010463715
+            ],
+            [
+              0.09547021985054016,
+              3.1070001125335693,
+              0.2560594975948334
+            ],
+            [
+              2.5597305297851562,
+              5.0,
+              0.18694810569286346
+            ],
+            [
+              3.8906915187835693,
+              3.067173957824707,
+              0.47945311665534973
+            ],
+            [
+              5.822500228881836,
+              1.0465840101242065,
+              0.3217248320579529
+            ],
+            [
+              8.0,
+              -1.8410637378692627,
+              0.6734117269515991
+            ],
+            [
+              3.303266763687134,
+              -2.9565751552581787,
+              0.3668402433395386
+            ],
+            [
+              2.2136073112487793,
+              -5.0,
+              0.33388739824295044
+            ],
+            [
+              -0.2781427800655365,
+              -5.0,
+              0.5452782511711121
+            ],
+            [
+              -2.9444022178649902,
+              -5.0,
+              0.3511987328529358
+            ],
+            [
+              -4.518313407897949,
+              -3.24171781539917,
+              0.6968687176704407
+            ],
+            [
+              -3.5855772495269775,
+              -0.3568706214427948,
+              0.33294808864593506
+            ],
+            [
+              -6.0,
+              1.706880807876587,
+              0.823782205581665
+            ],
+            [
+              -3.7325000762939453,
+              3.881352186203003,
+              0.7813876867294312
+            ],
+            [
+              -2.013028860092163,
+              5.0,
+              0.7350822687149048
+            ],
+            [
+              0.32326963543891907,
+              3.1070001125335693,
+              0.5969650745391846
+            ],
+            [
+              2.9664225578308105,
+              5.0,
+              0.8556588888168335
+            ],
+            [
+              3.9947381019592285,
+              2.7764153480529785,
+              1.0103769302368164
+            ],
+            [
+              5.822500228881836,
+              0.7025378346443176,
+              0.9881129264831543
+            ],
+            [
+              8.0,
+              -2.2502052783966064,
+              1.6232147216796875
+            ],
+            [
+              3.2441890239715576,
+              -3.2283735275268555,
+              0.8994269967079163
+            ],
+            [
+              1.9826691150665283,
+              -5.0,
+              0.94919353723526
+            ],
+            [
+              -0.5129075050354004,
+              -5.0,
+              1.1177881956100464
+            ],
+            [
+              -3.19185733795166,
+              -5.0,
+              1.0500186681747437
+            ],
+            [
+              -4.613285064697266,
+              -3.0442121028900146,
+              1.3192049264907837
+            ],
+            [
+              -3.5348567962646484,
+              -0.21912413835525513,
+              0.7375654578208923
+            ],
+            [
+              -6.0,
+              1.912536859512329,
+              1.5447028875350952
+            ],
+            [
+              -3.7325000762939453,
+              4.192211627960205,
+              1.457275629043579
+            ],
+            [
+              -1.8684288263320923,
+              5.0,
+              1.3317283391952515
+            ],
+            [
+              0.4289212226867676,
+              3.1070001125335693,
+              0.9555031657218933
+            ],
+            [
+              3.1110153198242188,
+              5.0,
+              1.532610535621643
+            ],
+            [
+              4.111612796783447,
+              2.7152295112609863,
+              1.5768471956253052
+            ],
+            [
+              8.0,
+              0.8140210509300232,
+              2.2640960216522217
+            ],
+            [
+              8.0,
+              -2.3621160984039307,
+              2.5540547370910645
+            ],
+            [
+              4.858892917633057,
+              -5.0,
+              2.1585958003997803
+            ],
+            [
+              1.954446792602539,
+              -5.0,
+              1.5396720170974731
+            ],
+            [
+              -0.5813498497009277,
+              -5.0,
+              1.6883509159088135
+            ],
+            [
+              -3.205138921737671,
+              -5.0,
+              1.7132227420806885
+            ],
+            [
+              -4.645565986633301,
+              -3.009263515472412,
+              1.9449703693389893
+            ],
+            [
+              -3.532284736633301,
+              -0.20326820015907288,
+              1.1395801305770874
+            ],
+            [
+              -6.0,
+              1.9310108423233032,
+              2.2544710636138916
+            ],
+            [
+              -3.7325000762939453,
+              4.265102386474609,
+              2.132601022720337
+            ],
+            [
+              -1.881368637084961,
+              5.0,
+              1.934497356414795
+            ],
+            [
+              0.45381611585617065,
+              3.1070001125335693,
+              1.3288291692733765
+            ],
+            [
+              3.073615074157715,
+              5.0,
+              2.1966099739074707
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              8.0,
+              0.8662527203559875,
+              3.204310894012451
+            ],
+            [
+              8.0,
+              -2.281879425048828,
+              3.5098371505737305
+            ],
+            [
+              4.9272284507751465,
+              -5.0,
+              3.0162339210510254
+            ],
+            [
+              2.0567688941955566,
+              -5.0,
+              2.1715378761291504
+            ],
+            [
+              -0.5360229015350342,
+              -5.0,
+              2.3065435886383057
+            ],
+            [
+              -3.0550084114074707,
+              -5.0,
+              2.380941152572632
+            ],
+            [
+              -6.0,
+              -3.9995360374450684,
+              3.4389333724975586
+            ],
+            [
+              -3.548828601837158,
+              -0.2745753228664398,
+              1.5925848484039307
+            ],
+            [
+              -6.0,
+              1.8069370985031128,
+              3.0376949310302734
+            ],
+            [
+              -4.505181312561035,
+              5.0,
+              3.4449474811553955
+            ],
+            [
+              -2.021146297454834,
+              5.0,
+              2.6504387855529785
+            ],
+            [
+              0.6618139743804932,
+              5.0,
+              2.8606297969818115
+            ],
+            [
+              2.879774332046509,
+              5.0,
+              2.9308433532714844
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              2.314561605453491,
+              -5.0,
+              2.9849469661712646
+            ],
+            [
+              -0.3553345799446106,
+              -5.0,
+              3.0898115634918213
+            ],
+            [
+              -2.715569496154785,
+              -5.0,
+              3.134227991104126
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -0.7857072353363037,
+              3.665330171585083
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.3784537315368652,
+              5.0,
+              3.6550607681274414
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/livox/imu": {
+          "count": 2607,
+          "first_source_ns": 2587000000,
+          "last_source_ns": 20402000000,
+          "receipt": 3342.879206165,
+          "frame": "livox_frame",
+          "finite": true
+        },
+        "/camera/color/image_raw": {
+          "count": 533,
+          "first_source_ns": 2583000000,
+          "last_source_ns": 20388000000,
+          "receipt": 3342.869612058,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 20
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 533,
+          "first_source_ns": 2583000000,
+          "last_source_ns": 20388000000,
+          "receipt": 3342.871251742,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 265910,
+          "min_m": 0.4507322907447815,
+          "max_m": 7.717502593994141,
+          "non_increasing_stamps": 20
+        }
+      },
+      "shutdown_seconds": 1.517141392999747,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "5df380603e0c1b8c19e69b36bacc18a68218bb0c216e0c29976d2b6d7931e227",
+      "scene_probe_sha256": "1c09dd9961cf1b2d4e74b108cbace4a733444cebb910421c29b33a7d431d7ef0",
+      "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+      "settled_preflight_state": {
+        "source_ns": 18600000000,
+        "frame": "odom",
+        "ros_now_ns": 18700000000,
+        "receipt": 3339.776217769,
+        "steady_now": 3339.959322928,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.00033968270872719586,
+          0.008561608381569386,
+          -0.0006103515625
+        ],
+        "velocity": [
+          -0.002460740739479661,
+          -0.002940324367955327,
+          -0.0009495140402577817
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v2-primitives_sparse_seed42_v1-calibration-1/result.json",
+      "raw_result_sha256": "d6439a8e575030d3245ecf2a4ab8e49ef99952252961746f91bef39dbba9b7e1",
+      "transform": {
+        "translation": [
+          -0.003372842213138938,
+          0.008407622886200746,
+          -0.05677171614583334
+        ],
+        "yaw": -0.015170678340990921
+      },
+      "normal_exits": 24
+    },
+    {
+      "px4_telemetry": {
+        "command_returncodes": [
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "5df380603e0c1b8c19e69b36bacc18a68218bb0c216e0c29976d2b6d7931e227",
+        "pid": 23760,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "335222",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 14400000000,
+            "receipt": 3370.555458087,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 14600000000,
+            "receipt": 3370.94720541,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 14800000000,
+            "receipt": 3371.323021804,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 15000000000,
+            "receipt": 3371.597843692,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 15200000000,
+            "receipt": 3371.979992633,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 15400000000,
+            "receipt": 3372.260756821,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 0.3917473230003452
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                0.00011047384759876877,
+                0.007794443983584642,
+                0.009796142578125
+              ],
+              "yaw": -0.014097061317104273,
+              "translation": [
+                0.00011047384759876877,
+                0.007794443983584642,
+                -0.044574857421875
+              ],
+              "state": {
+                "source_ns": 17900000000,
+                "frame": "odom",
+                "ros_now_ns": 18200000000,
+                "receipt": 3376.852503416,
+                "steady_now": 3376.852577476,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  0.00011047384759876877,
+                  0.007794443983584642,
+                  0.009796142578125
+                ],
+                "velocity": [
+                  7.437476597260684e-05,
+                  -0.001400560257025063,
+                  0.0024301880039274693
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 17800000000,
+                "frame": "odom",
+                "ros_now_ns": 17800000000,
+                "receipt": 3376.198881747,
+                "steady_now": 3376.378891604,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  4.562742105918005e-05,
+                  0.0077196224592626095,
+                  0.009674072265625
+                ],
+                "velocity": [
+                  -9.56522926571779e-05,
+                  -0.0015766347059980035,
+                  0.002884801011532545
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                -0.0009397630929015577,
+                0.008391604758799076,
+                0.005340576171875
+              ],
+              "yaw": -0.014309577296878333,
+              "translation": [
+                -0.0009397630929015577,
+                0.008391604758799076,
+                -0.049030423828125
+              ],
+              "state": {
+                "source_ns": 18600000000,
+                "frame": "odom",
+                "ros_now_ns": 19000000000,
+                "receipt": 3377.962483682,
+                "steady_now": 3377.962548702,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0009397630929015577,
+                  0.008391604758799076,
+                  0.005340576171875
+                ],
+                "velocity": [
+                  -0.0005553754745051265,
+                  -0.0015719123184680939,
+                  8.065258589340374e-05
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 18500000000,
+                "frame": "odom",
+                "ros_now_ns": 18500000000,
+                "receipt": 3377.238214265,
+                "steady_now": 3377.386673022,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0001542529062135145,
+                  0.008290043100714684,
+                  0.00592041015625
+                ],
+                "velocity": [
+                  2.1449275664053857e-05,
+                  -0.001237540040165186,
+                  0.00016522362420801073
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                0.0,
+                0.0,
+                0.054371,
+                -0.0,
+                0.0,
+                0.0
+              ],
+              "odom_position": [
+                -0.0026882563252002,
+                0.008992389775812626,
+                0.000152587890625
+              ],
+              "yaw": -0.014441586886269597,
+              "translation": [
+                -0.0026882563252002,
+                0.008992389775812626,
+                -0.054218412109375
+              ],
+              "state": {
+                "source_ns": 19400000000,
+                "frame": "odom",
+                "ros_now_ns": 19600000000,
+                "receipt": 3379.005778533,
+                "steady_now": 3379.005883623,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0026882563252002,
+                  0.008992389775812626,
+                  0.000152587890625
+                ],
+                "velocity": [
+                  -0.002067004796117544,
+                  -0.0011874608462676406,
+                  -0.0014300186885520816
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 19300000000,
+                "frame": "odom",
+                "ros_now_ns": 19300000000,
+                "receipt": 3378.441099047,
+                "steady_now": 3378.464435835,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0028169420547783375,
+                  0.008817221038043499,
+                  0.000518798828125
+                ],
+                "velocity": [
+                  -0.00214960309676826,
+                  -0.0011289856629446149,
+                  -0.001758716069161892
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              -0.001172515190167663,
+              0.008392812839398781,
+              -0.049274564453125
+            ],
+            "yaw": -0.014282741833549318
+          },
+          "settled_preflight_state": {
+            "source_ns": 17800000000,
+            "frame": "odom",
+            "ros_now_ns": 17800000000,
+            "receipt": 3376.198881747,
+            "steady_now": 3376.378882224,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              4.562742105918005e-05,
+              0.0077196224592626095,
+              0.009674072265625
+            ],
+            "velocity": [
+              -9.56522926571779e-05,
+              -0.0015766347059980035,
+              0.002884801011532545
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 23622,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 23622,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 23622,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 24435,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 24437,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 24519,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-q078k480/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-q078k480/profiles.xml"
+        },
+        "loaded_pids": [
+          23622,
+          24079,
+          24081,
+          24083,
+          24225,
+          24227,
+          24229,
+          24314,
+          24316,
+          24342,
+          24344,
+          24392,
+          24407,
+          24421,
+          24435,
+          24437,
+          24465,
+          24478,
+          24480,
+          24482,
+          24517,
+          24519
+        ],
+        "child_profile_paths": {
+          "24079": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24081": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24465": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24083": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24342": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24344": "/tmp/easyfly-scene-dds-q078k480/profiles.xml",
+          "24478": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24480": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24225": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24482": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24227": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24229": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24517": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "23622": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24519": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24392": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24407": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24421": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24435": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24437": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24314": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml",
+          "24316": "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-q078k480/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-3hh6oh3n/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 172,
+          "first_source_ns": 2776000000,
+          "last_source_ns": 19893000000,
+          "receipt": 3379.494015243,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.06981770694255829,
+              5.0,
+              3.649226188659668
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.022863972932100296,
+              -5.0,
+              2.958672046661377
+            ],
+            [
+              -1.9585726261138916,
+              -5.0,
+              3.5289862155914307
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.932309627532959,
+              5.0,
+              3.6931509971618652
+            ],
+            [
+              -0.33735910058021545,
+              5.0,
+              2.7406890392303467
+            ],
+            [
+              1.6236337423324585,
+              5.0,
+              3.132192373275757
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              3.067606210708618,
+              -5.0,
+              3.0269014835357666
+            ],
+            [
+              0.2762170433998108,
+              -5.0,
+              2.209460496902466
+            ],
+            [
+              -1.2166435718536377,
+              -3.5834999084472656,
+              1.8560889959335327
+            ],
+            [
+              -5.868544101715088,
+              -5.0,
+              3.4846372604370117
+            ],
+            [
+              -6.0,
+              -2.201270818710327,
+              2.9205236434936523
+            ],
+            [
+              -6.0,
+              1.0374584197998047,
+              2.8940207958221436
+            ],
+            [
+              -6.0,
+              3.7216074466705322,
+              3.0099475383758545
+            ],
+            [
+              -3.103756904602051,
+              5.0,
+              2.8153302669525146
+            ],
+            [
+              -0.5184637904167175,
+              5.0,
+              2.0449576377868652
+            ],
+            [
+              1.502925992012024,
+              5.0,
+              2.319843292236328
+            ],
+            [
+              5.166812896728516,
+              5.0,
+              2.866914987564087
+            ],
+            [
+              4.161468505859375,
+              1.716933250427246,
+              1.7451163530349731
+            ],
+            [
+              8.0,
+              -0.9808592200279236,
+              3.179107189178467
+            ],
+            [
+              8.0,
+              -4.801185607910156,
+              3.1638848781585693
+            ],
+            [
+              3.1951746940612793,
+              -5.0,
+              2.2775075435638428
+            ],
+            [
+              0.41564369201660156,
+              -5.0,
+              1.6079641580581665
+            ],
+            [
+              -1.1566102504730225,
+              -3.5834999084472656,
+              1.3633259534835815
+            ],
+            [
+              -5.627875328063965,
+              -5.0,
+              2.4996118545532227
+            ],
+            [
+              -6.0,
+              -2.2972986698150635,
+              2.1413450241088867
+            ],
+            [
+              -6.0,
+              0.9707133173942566,
+              2.1447010040283203
+            ],
+            [
+              -6.0,
+              3.6122937202453613,
+              2.1496007442474365
+            ],
+            [
+              -3.115859270095825,
+              5.0,
+              2.086716651916504
+            ],
+            [
+              -0.5749826431274414,
+              5.0,
+              1.4611599445343018
+            ],
+            [
+              1.5143513679504395,
+              5.0,
+              1.6817642450332642
+            ],
+            [
+              5.093369007110596,
+              5.0,
+              2.0233123302459717
+            ],
+            [
+              4.161062240600586,
+              1.7218670845031738,
+              1.2138899564743042
+            ],
+            [
+              3.2880001068115234,
+              -0.39730945229530334,
+              0.9250155687332153
+            ],
+            [
+              8.0,
+              -4.740614891052246,
+              2.095303535461426
+            ],
+            [
+              3.1706488132476807,
+              -5.0,
+              1.5902858972549438
+            ],
+            [
+              0.44184038043022156,
+              -5.0,
+              1.0504536628723145
+            ],
+            [
+              -1.1858232021331787,
+              -3.5834999084472656,
+              0.9328621625900269
+            ],
+            [
+              -5.635794639587402,
+              -5.0,
+              1.664607286453247
+            ],
+            [
+              -6.0,
+              -2.23364520072937,
+              1.4021275043487549
+            ],
+            [
+              -6.0,
+              1.0353015661239624,
+              1.460972547531128
+            ],
+            [
+              -6.0,
+              3.6998913288116455,
+              1.362155795097351
+            ],
+            [
+              -2.973505973815918,
+              5.0,
+              1.3921164274215698
+            ],
+            [
+              -0.5078814625740051,
+              5.0,
+              0.8888850212097168
+            ],
+            [
+              1.6642478704452515,
+              5.0,
+              1.0859317779541016
+            ],
+            [
+              5.281809329986572,
+              5.0,
+              1.2352008819580078
+            ],
+            [
+              4.190649032592773,
+              1.6019296646118164,
+              0.6874842047691345
+            ],
+            [
+              3.2880001068115234,
+              -0.4802534282207489,
+              0.5486587285995483
+            ],
+            [
+              7.986155986785889,
+              -5.0,
+              1.0242987871170044
+            ],
+            [
+              2.9499287605285645,
+              -5.0,
+              0.8927093148231506
+            ],
+            [
+              0.315975159406662,
+              -5.0,
+              0.4667809307575226
+            ],
+            [
+              -1.3401721715927124,
+              -3.5834999084472656,
+              0.5038595199584961
+            ],
+            [
+              -6.0,
+              -4.996528148651123,
+              0.8262924551963806
+            ],
+            [
+              -6.0,
+              -1.944772481918335,
+              0.6492047309875488
+            ],
+            [
+              -6.0,
+              1.2972458600997925,
+              0.7715608477592468
+            ],
+            [
+              -6.0,
+              4.097527503967285,
+              0.5573651194572449
+            ],
+            [
+              -1.8496860265731812,
+              3.53812313079834,
+              0.5022541880607605
+            ],
+            [
+              -0.25066444277763367,
+              5.0,
+              0.30311891436576843
+            ],
+            [
+              2.036391258239746,
+              5.0,
+              0.5015525221824646
+            ],
+            [
+              5.931384563446045,
+              5.0,
+              0.4240916967391968
+            ],
+            [
+              4.541075229644775,
+              1.3770874738693237,
+              0.18403731286525726
+            ],
+            [
+              3.2880001068115234,
+              -0.7042859196662903,
+              0.17456598579883575
+            ],
+            [
+              6.849175453186035,
+              -5.0,
+              -0.06634744256734848
+            ],
+            [
+              2.464642286300659,
+              -5.0,
+              0.2395353615283966
+            ],
+            [
+              -0.04773620516061783,
+              -5.0,
+              -0.11455375701189041
+            ],
+            [
+              -2.365518093109131,
+              -5.0,
+              0.12843094766139984
+            ],
+            [
+              -4.527430534362793,
+              -3.2052438259124756,
+              -0.0324929803609848
+            ],
+            [
+              -6.0,
+              -1.353698968887329,
+              -0.022151095792651176
+            ],
+            [
+              -6.0,
+              1.8641977310180664,
+              0.13115887343883514
+            ],
+            [
+              -5.973574161529541,
+              5.0,
+              -0.21655938029289246
+            ],
+            [
+              -2.0018820762634277,
+              5.0,
+              0.15415681898593903
+            ],
+            [
+              0.16609373688697815,
+              3.1070001125335693,
+              -0.1266707181930542
+            ],
+            [
+              2.7317516803741455,
+              5.0,
+              0.012922458350658417
+            ],
+            [
+              4.070982456207275,
+              2.729402780532837,
+              -0.20204822719097137
+            ],
+            [
+              4.6685791015625,
+              0.809760570526123,
+              -0.23000000417232513
+            ],
+            [
+              5.948929309844971,
+              -2.024022340774536,
+              -0.23000000417232513
+            ],
+            [
+              1.7626919746398926,
+              -1.6698111295700073,
+              -0.23000000417232513
+            ],
+            [
+              1.7284739017486572,
+              -5.0,
+              -0.19577215611934662
+            ],
+            [
+              -0.2967281639575958,
+              -2.1150803565979004,
+              -0.23000000417232513
+            ],
+            [
+              -2.5994410514831543,
+              -4.011366367340088,
+              -0.23000000417232513
+            ],
+            [
+              -2.4577908515930176,
+              -1.2925586700439453,
+              -0.23000000417232513
+            ],
+            [
+              -3.4216277599334717,
+              -0.28036510944366455,
+              -0.23000000417232513
+            ],
+            [
+              -4.796247959136963,
+              2.240604877471924,
+              -0.22957707941532135
+            ],
+            [
+              -1.8251591920852661,
+              2.0463554859161377,
+              -0.23000000417232513
+            ],
+            [
+              -1.218868613243103,
+              5.0,
+              -0.10606782138347626
+            ],
+            [
+              0.5198372602462769,
+              2.530207633972168,
+              -0.23000000417232513
+            ],
+            [
+              3.7938313484191895,
+              5.0,
+              -0.20281419157981873
+            ],
+            [
+              2.5980076789855957,
+              1.219761610031128,
+              -0.23000000417232513
+            ],
+            [
+              3.215921401977539,
+              0.04939689114689827,
+              -0.23000000417232513
+            ],
+            [
+              3.1829946041107178,
+              -1.6619077920913696,
+              -0.23000000417232513
+            ],
+            [
+              1.2598764896392822,
+              -1.6544232368469238,
+              -0.23000000417232513
+            ],
+            [
+              0.7913838028907776,
+              -4.3895344734191895,
+              -0.23000000417232513
+            ],
+            [
+              -0.5747551918029785,
+              -1.8432866334915161,
+              -0.23000000417232513
+            ],
+            [
+              -3.101306676864624,
+              -3.4607133865356445,
+              -0.23000000417232513
+            ],
+            [
+              -2.4869184494018555,
+              -0.835394561290741,
+              -0.23000000417232513
+            ],
+            [
+              -4.0895185470581055,
+              0.30677467584609985,
+              -0.23000000417232513
+            ],
+            [
+              -5.1789469718933105,
+              3.4840452671051025,
+              -0.23000000417232513
+            ],
+            [
+              -1.9964385032653809,
+              3.102621078491211,
+              -0.23000000417232513
+            ],
+            [
+              -0.4453585147857666,
+              5.0,
+              0.005242350976914167
+            ],
+            [
+              1.3782401084899902,
+              3.6862704753875732,
+              -0.23000000417232513
+            ],
+            [
+              5.102267742156982,
+              5.0,
+              0.040949732065200806
+            ],
+            [
+              5.375021934509277,
+              1.5890932083129883,
+              -0.23000000417232513
+            ],
+            [
+              3.2880001068115234,
+              -0.4258696138858795,
+              -0.061558905988931656
+            ],
+            [
+              6.892022609710693,
+              -5.0,
+              -0.1349516063928604
+            ],
+            [
+              2.3827364444732666,
+              -4.2879743576049805,
+              -0.23000000417232513
+            ],
+            [
+              0.1917310506105423,
+              -5.0,
+              0.033529337495565414
+            ],
+            [
+              -1.9615988731384277,
+              -4.116644859313965,
+              -0.23000000417232513
+            ],
+            [
+              -5.854248046875,
+              -5.0,
+              0.14777161180973053
+            ],
+            [
+              -6.0,
+              -1.1259045600891113,
+              -0.10594978928565979
+            ],
+            [
+              -6.0,
+              1.2261674404144287,
+              0.1364387720823288
+            ],
+            [
+              -4.234468460083008,
+              3.734499931335449,
+              0.20896312594413757
+            ],
+            [
+              -1.7527878284454346,
+              3.6225881576538086,
+              0.09608303010463715
+            ],
+            [
+              0.09547021985054016,
+              3.1070001125335693,
+              0.2560594975948334
+            ],
+            [
+              2.5597305297851562,
+              5.0,
+              0.18694810569286346
+            ],
+            [
+              3.8906915187835693,
+              3.067173957824707,
+              0.47945311665534973
+            ],
+            [
+              5.822500228881836,
+              1.0465840101242065,
+              0.3217248320579529
+            ],
+            [
+              8.0,
+              -1.8410637378692627,
+              0.6734117269515991
+            ],
+            [
+              3.303266763687134,
+              -2.9565751552581787,
+              0.3668402433395386
+            ],
+            [
+              2.2136073112487793,
+              -5.0,
+              0.33388739824295044
+            ],
+            [
+              -0.2781427800655365,
+              -5.0,
+              0.5452782511711121
+            ],
+            [
+              -2.9444022178649902,
+              -5.0,
+              0.3511987328529358
+            ],
+            [
+              -4.518313407897949,
+              -3.24171781539917,
+              0.6968687176704407
+            ],
+            [
+              -3.5855772495269775,
+              -0.3568706214427948,
+              0.33294808864593506
+            ],
+            [
+              -6.0,
+              1.706880807876587,
+              0.823782205581665
+            ],
+            [
+              -3.7325000762939453,
+              3.881352186203003,
+              0.7813876867294312
+            ],
+            [
+              -2.013028860092163,
+              5.0,
+              0.7350822687149048
+            ],
+            [
+              0.32326963543891907,
+              3.1070001125335693,
+              0.5969650745391846
+            ],
+            [
+              2.9664225578308105,
+              5.0,
+              0.8556588888168335
+            ],
+            [
+              3.9947381019592285,
+              2.7764153480529785,
+              1.0103769302368164
+            ],
+            [
+              5.822500228881836,
+              0.7025378346443176,
+              0.9881129264831543
+            ],
+            [
+              8.0,
+              -2.2502052783966064,
+              1.6232147216796875
+            ],
+            [
+              3.2441890239715576,
+              -3.2283735275268555,
+              0.8994269967079163
+            ],
+            [
+              1.9826691150665283,
+              -5.0,
+              0.94919353723526
+            ],
+            [
+              -0.5129075050354004,
+              -5.0,
+              1.1177881956100464
+            ],
+            [
+              -3.19185733795166,
+              -5.0,
+              1.0500186681747437
+            ],
+            [
+              -4.613285064697266,
+              -3.0442121028900146,
+              1.3192049264907837
+            ],
+            [
+              -3.5348567962646484,
+              -0.21912413835525513,
+              0.7375654578208923
+            ],
+            [
+              -6.0,
+              1.912536859512329,
+              1.5447028875350952
+            ],
+            [
+              -3.7325000762939453,
+              4.192211627960205,
+              1.457275629043579
+            ],
+            [
+              -1.8684288263320923,
+              5.0,
+              1.3317283391952515
+            ],
+            [
+              0.4289212226867676,
+              3.1070001125335693,
+              0.9555031657218933
+            ],
+            [
+              3.1110153198242188,
+              5.0,
+              1.532610535621643
+            ],
+            [
+              4.111612796783447,
+              2.7152295112609863,
+              1.5768471956253052
+            ],
+            [
+              8.0,
+              0.8140210509300232,
+              2.2640960216522217
+            ],
+            [
+              8.0,
+              -2.3621160984039307,
+              2.5540547370910645
+            ],
+            [
+              4.858892917633057,
+              -5.0,
+              2.1585958003997803
+            ],
+            [
+              1.954446792602539,
+              -5.0,
+              1.5396720170974731
+            ],
+            [
+              -0.5813498497009277,
+              -5.0,
+              1.6883509159088135
+            ],
+            [
+              -3.205138921737671,
+              -5.0,
+              1.7132227420806885
+            ],
+            [
+              -4.645565986633301,
+              -3.009263515472412,
+              1.9449703693389893
+            ],
+            [
+              -3.532284736633301,
+              -0.20326820015907288,
+              1.1395801305770874
+            ],
+            [
+              -6.0,
+              1.9310108423233032,
+              2.2544710636138916
+            ],
+            [
+              -3.7325000762939453,
+              4.265102386474609,
+              2.132601022720337
+            ],
+            [
+              -1.881368637084961,
+              5.0,
+              1.934497356414795
+            ],
+            [
+              0.45381611585617065,
+              3.1070001125335693,
+              1.3288291692733765
+            ],
+            [
+              3.073615074157715,
+              5.0,
+              2.1966099739074707
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              8.0,
+              0.8662527203559875,
+              3.204310894012451
+            ],
+            [
+              8.0,
+              -2.281879425048828,
+              3.5098371505737305
+            ],
+            [
+              4.9272284507751465,
+              -5.0,
+              3.0162339210510254
+            ],
+            [
+              2.0567688941955566,
+              -5.0,
+              2.1715378761291504
+            ],
+            [
+              -0.5360229015350342,
+              -5.0,
+              2.3065435886383057
+            ],
+            [
+              -3.0550084114074707,
+              -5.0,
+              2.380941152572632
+            ],
+            [
+              -6.0,
+              -3.9995360374450684,
+              3.4389333724975586
+            ],
+            [
+              -3.548828601837158,
+              -0.2745753228664398,
+              1.5925848484039307
+            ],
+            [
+              -6.0,
+              1.8069370985031128,
+              3.0376949310302734
+            ],
+            [
+              -4.505181312561035,
+              5.0,
+              3.4449474811553955
+            ],
+            [
+              -2.021146297454834,
+              5.0,
+              2.6504387855529785
+            ],
+            [
+              0.6618139743804932,
+              5.0,
+              2.8606297969818115
+            ],
+            [
+              2.879774332046509,
+              5.0,
+              2.9308433532714844
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              2.314561605453491,
+              -5.0,
+              2.9849469661712646
+            ],
+            [
+              -0.3553345799446106,
+              -5.0,
+              3.0898115634918213
+            ],
+            [
+              -2.715569496154785,
+              -5.0,
+              3.134227991104126
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.0,
+              -0.7857072353363037,
+              3.665330171585083
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.3784537315368652,
+              5.0,
+              3.6550607681274414
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/livox/imu": {
+          "count": 2410,
+          "first_source_ns": 2781000000,
+          "last_source_ns": 19951000000,
+          "receipt": 3379.504455828,
+          "frame": "livox_frame",
+          "finite": true
+        },
+        "/camera/color/image_raw": {
+          "count": 486,
+          "first_source_ns": 2777000000,
+          "last_source_ns": 19945000000,
+          "receipt": 3379.501817678,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 4
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 486,
+          "first_source_ns": 2777000000,
+          "last_source_ns": 19945000000,
+          "receipt": 3379.504113417,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 265910,
+          "min_m": 0.4507322907447815,
+          "max_m": 7.717502593994141,
+          "non_increasing_stamps": 4
+        }
+      },
+      "shutdown_seconds": 1.6163732580002943,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "5df380603e0c1b8c19e69b36bacc18a68218bb0c216e0c29976d2b6d7931e227",
+      "scene_probe_sha256": "1c09dd9961cf1b2d4e74b108cbace4a733444cebb910421c29b33a7d431d7ef0",
+      "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+      "settled_preflight_state": {
+        "source_ns": 17800000000,
+        "frame": "odom",
+        "ros_now_ns": 17800000000,
+        "receipt": 3376.198881747,
+        "steady_now": 3376.378882224,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          4.562742105918005e-05,
+          0.0077196224592626095,
+          0.009674072265625
+        ],
+        "velocity": [
+          -9.56522926571779e-05,
+          -0.0015766347059980035,
+          0.002884801011532545
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v2-primitives_sparse_seed42_v1-calibration-2/result.json",
+      "raw_result_sha256": "2db6df493837359100847ea32dff2fce27c643a99cfcb22fa1e0eda5c4ad84dc",
+      "transform": {
+        "translation": [
+          -0.001172515190167663,
+          0.008392812839398781,
+          -0.049274564453125
+        ],
+        "yaw": -0.014282741833549318
+      },
+      "normal_exits": 24
+    }
+  ]
+}

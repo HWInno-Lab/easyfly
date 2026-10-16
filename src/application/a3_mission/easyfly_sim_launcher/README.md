@@ -150,3 +150,43 @@ and two consecutive reference missions, with all 24 processes exiting normally
 in every run. These results cover the named routes and recorded runtime only.
 The scene README retains the separate unresolved historical Gazebo rendering
 startup fault; it is not attributed to the fixed DDS reader discovery race.
+
+## S4 primitive scene generation
+
+`scene_generator` is an explicit offline tool. It reads a strict JSON parameter
+document and writes a new bundle containing a world, draft scene, canonical
+parameters, generation record and project license. It does not launch simulation
+or submit flight goals. Bounds, obstacle count/size/height/spacing, route clearance
+and a fixed seed define the layout. V1 uses static boxes/cylinders on a flat z=0
+floor, yaw=0 and spawn z=0.1; the reserved route runs along world +X.
+
+```bash
+ros2 run easyfly_sim_launcher scene_generator \
+  /path/to/primitives_sparse_seed42_v1.json --output-dir /path/to/new-bundle
+ros2 run easyfly_sim_launcher scene_generator \
+  /path/to/primitives_sparse_seed42_v1.json --output-dir /path/to/new-bundle --check-layout
+```
+
+The output directory must not exist. Copy reviewed bundle resources into the
+world package without overwriting an existing scene revision, then build and use
+`scene_catalog validate`. Parameters live in `easyfly_gazebo_worlds/generators/`;
+their schema is `schemas/generator-v1.schema.json`. A specified SplitMix64 stream
+and integer-millimetre placements make layouts reproducible without a random
+package dependency. The record locks parameter, generator-source, layout and
+world hashes. Collision and visual primitives have identical geometry.
+
+A reserved route capsule includes both endpoints and the vertical takeoff area.
+A bounded placement search must satisfy the exact obstacle count, separation and
+clearance; failure writes no partial bundle. `primitives_blocked_seed42_v1.json`
+is a deliberate rejected input, not a registered or flyable scene. Generation
+never supplies measured world/odom alignment or marks sensors/navigation tested.
+Qualification adds separate native geometry, cold-start and mission evidence.
+`--check-layout` checks immutable fields and generated resources while preserving
+measured qualification metadata; it always reports `runtime_verified=false`.
+
+The first complete S4 sample is `primitives_sparse_seed42_v1`: two managed
+cold starts and two sequential reference missions passed, including normal
+process exit. The corridor v1 remains draft after insufficient floor support;
+corridor v2 remains draft after the second-mission heading check rejected it.
+Their evidence is retained. A generated or geometrically valid layout does not
+inherit the sparse sample's navigation qualification. S4 as a whole is pending.

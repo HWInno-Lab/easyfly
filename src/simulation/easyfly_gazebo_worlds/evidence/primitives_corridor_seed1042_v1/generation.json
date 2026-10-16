@@ -1,0 +1,224 @@
+{
+  "bounds": {
+    "max": [
+      8,
+      5
+    ],
+    "min": [
+      -6,
+      -5
+    ]
+  },
+  "config_sha256": "caf1be748a9894d38721a70e300f9d5f1ccde7a9b0f16f60f04f82dd96311adf",
+  "generator": "primitive_v1",
+  "generator_sha256": "1c02724c27b819a4513a9af0152aa89ba669cd2b05a7aa27721674903330e8c9",
+  "initial_scene_sha256": "eeb20f957c39f79952d45b17ea229573ab806a17ecc9547fcc355ffe6cb03d6a",
+  "layout_sha256": "f76a22fc674e827880c92141971115f4eaf8416ff7e4b1fe76027b0484f857e7",
+  "obstacles": [
+    {
+      "height": 4,
+      "name": "boundary_west",
+      "shape": "box",
+      "size": [
+        0.2,
+        10.4
+      ],
+      "x": -6.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_east",
+      "shape": "box",
+      "size": [
+        0.2,
+        10.4
+      ],
+      "x": 8.1,
+      "y": 0.0
+    },
+    {
+      "height": 4,
+      "name": "boundary_south",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": -5.1
+    },
+    {
+      "height": 4,
+      "name": "boundary_north",
+      "shape": "box",
+      "size": [
+        14,
+        0.2
+      ],
+      "x": 1.0,
+      "y": 5.1
+    },
+    {
+      "height": 4,
+      "name": "corridor_south",
+      "shape": "box",
+      "size": [
+        5.5,
+        0.2
+      ],
+      "x": 0.75,
+      "y": -1.8
+    },
+    {
+      "height": 4,
+      "name": "corridor_north",
+      "shape": "box",
+      "size": [
+        5.5,
+        0.2
+      ],
+      "x": 0.75,
+      "y": 1.8
+    },
+    {
+      "height": 2.239,
+      "name": "obstacle_000",
+      "shape": "cylinder",
+      "size": [
+        0.878,
+        0.878
+      ],
+      "x": -1.14,
+      "y": -3.288
+    },
+    {
+      "height": 1.287,
+      "name": "obstacle_001",
+      "shape": "cylinder",
+      "size": [
+        0.455,
+        0.455
+      ],
+      "x": 5.739,
+      "y": 2.829
+    },
+    {
+      "height": 1.661,
+      "name": "obstacle_002",
+      "shape": "box",
+      "size": [
+        0.821,
+        0.821
+      ],
+      "x": 2.033,
+      "y": -3.499
+    },
+    {
+      "height": 1.48,
+      "name": "obstacle_003",
+      "shape": "box",
+      "size": [
+        0.622,
+        0.622
+      ],
+      "x": -5.052,
+      "y": -0.797
+    },
+    {
+      "height": 2.768,
+      "name": "obstacle_004",
+      "shape": "box",
+      "size": [
+        0.629,
+        0.629
+      ],
+      "x": 3.645,
+      "y": -3.097
+    },
+    {
+      "height": 2.147,
+      "name": "obstacle_005",
+      "shape": "box",
+      "size": [
+        0.758,
+        0.758
+      ],
+      "x": 6.995,
+      "y": -3.534
+    },
+    {
+      "height": 2.601,
+      "name": "obstacle_006",
+      "shape": "cylinder",
+      "size": [
+        0.498,
+        0.498
+      ],
+      "x": -5.172,
+      "y": 3.529
+    },
+    {
+      "height": 2.776,
+      "name": "obstacle_007",
+      "shape": "cylinder",
+      "size": [
+        0.524,
+        0.524
+      ],
+      "x": 4.453,
+      "y": 3.694
+    },
+    {
+      "height": 1.819,
+      "name": "obstacle_008",
+      "shape": "cylinder",
+      "size": [
+        0.874,
+        0.874
+      ],
+      "x": -0.855,
+      "y": 3.79
+    },
+    {
+      "height": 2.057,
+      "name": "obstacle_009",
+      "shape": "box",
+      "size": [
+        0.831,
+        0.831
+      ],
+      "x": -2.342,
+      "y": 0.484
+    },
+    {
+      "height": 2.308,
+      "name": "obstacle_010",
+      "shape": "cylinder",
+      "size": [
+        0.685,
+        0.685
+      ],
+      "x": 5.344,
+      "y": -1.141
+    },
+    {
+      "height": 1.154,
+      "name": "obstacle_011",
+      "shape": "box",
+      "size": [
+        0.805,
+        0.805
+      ],
+      "x": -2.933,
+      "y": 3.128
+    }
+  ],
+  "route": {
+    "length_m": 1.5,
+    "width_m": 3.4
+  },
+  "scope": "Analytic placement only; no native collision, sensor or flight verification.",
+  "seed": 1042,
+  "world_sha256": "2be7468f1d25096632bebd9f86d52dc9eccde86514e70119fd6f14aa30c9a65c"
+}
