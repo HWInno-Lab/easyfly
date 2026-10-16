@@ -150,3 +150,17 @@ def test_recovery_compares_in_declared_ground_reference(scene_probe_module):
     assert module.transform_position([1.,0.,0.],[1.,2.,3.],[0.,0.,2**-.5,2**-.5])==pytest.approx([1.,3.,3.])
     assert module.transform_position([1.,0.,0.],[0.,0.,0.],[0.,0.,0.,0.]) is None
     assert module.transform_position([1.,0.,0.],[float('nan'),0.,0.],[0.,0.,0.,1.]) is None
+
+
+def test_disarmed_bootstrap_uses_reviewed_registered_scene_spawn(scene_probe_module,monkeypatch):
+    module=scene_probe_module
+    probe=module.SceneProbe.__new__(module.SceneProbe)
+    probe.args=SimpleNamespace(bootstrap=True,scene='warehouse_aws_v1',ego_debugger=None)
+    probe.scene={'supported_profiles':['navigation_dev']}
+    probe.report={'scene_audit':{'registration_complete':True}}
+    monkeypatch.setattr(module.navigation.Probe,'launch_command',lambda self:['ros2','launch','pkg','fixture.launch.py'])
+    command=probe.launch_command()
+    assert command[-2:]==['scene:=warehouse_aws_v1','scene_profile:=navigation_dev']
+    assert probe.report['bootstrap_registered_scene']
+    with pytest.raises(RuntimeError,match='flight goals forbidden'):
+        probe.send('/takeoff',None,None)

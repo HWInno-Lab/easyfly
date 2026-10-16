@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_fastdds_compat</name>
+  <version>0.1.0</version>
+  <description>Process-local Fast DDS 2.6.11 endpoint-listener teardown fix for managed simulation.</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <depend>fastrtps</depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

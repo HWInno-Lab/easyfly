@@ -68,8 +68,13 @@ int main(int argc, char ** argv)
   }
   // ServerPrivate contains transport owners: release it before closing cleanup.
   server.reset();
+  easyfly_transport::ShutdownConnections();
   if (!easyfly_transport::Finish()) {
-    std::cerr << "EasyFly transport: shutdown retained live IO managers\n";
+    const auto stats = easyfly_transport::GetStatistics();
+    std::cerr << "EasyFly transport: shutdown retained live IO managers: live=" <<
+      stats.live << " pending=" << stats.pending << " deferred=" << stats.deferred <<
+      " completed=" << stats.completed << easyfly_transport::DescribeConnections() <<
+      easyfly_transport::DescribeManagers() << "\n";
     return 2;
   }
   auto stats = easyfly_transport::GetStatistics();

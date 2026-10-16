@@ -108,7 +108,23 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
 
 
 def preflight_action(**kwargs):
-    return OpaqueFunction(function=simulation_preflight, kwargs=kwargs)
+    return OpaqueFunction(function=_managed_preflight, kwargs=kwargs)
+
+
+def _managed_preflight(context, **kwargs):
+    # Validate selection first. Loading the private native middleware must
+    # precede launch_ros's first component service/client DDS initialization.
+    actions = simulation_preflight(context, **kwargs)
+    if _value(context, 'scene'):
+        import os
+        from easyfly_fastdds_compat.runtime import activate
+        from launch.actions import SetEnvironmentVariable
+        middleware = activate()
+        actions.insert(0, SetEnvironmentVariable('LD_LIBRARY_PATH', os.environ['LD_LIBRARY_PATH']))
+        actions.insert(1, SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'))
+        actions[2:2] = [SetEnvironmentVariable(key, value)
+                       for key, value in middleware['profile_environment'].items()]
+    return actions
 
 
 def scene_value(name):

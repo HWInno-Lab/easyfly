@@ -57,10 +57,16 @@
 #include "gazebo/msgs/msgs.hh"
 
 #include "gazebo/transport/IOManager.hh"
+#include <algorithm>
 #include <mutex>
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+#include <vector>
+#include <map>
+#endif
 
 #include "gazebo/transport/ConnectionManager.hh"
 #include "gazebo/transport/Connection.hh"
+#include "easyfly_transport/compat.hpp"
 
 using namespace gazebo;
 using namespace transport;
@@ -70,7 +76,81 @@ extern void dummy_callback_fn(uint32_t);
 // Derived from gazebo11_11.10.2 transport/Connection.cc. Connection object
 // layout and transport protocol are unchanged. Serialize the shared manager's
 // publication/refcount/final retirement, not just individual atomic counters.
-namespace { std::mutex connection_lifecycle_mutex; }
+namespace
+{
+std::mutex connection_lifecycle_mutex;
+std::mutex connection_registry_mutex;
+std::vector<boost::weak_ptr<Connection>> connection_registry;
+bool connections_closing = false;
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+std::vector<Connection *> diagnostic_connections;
+std::map<Connection *, boost::weak_ptr<Connection>> diagnostic_streams;
+#endif
+
+bool RegisterStream(const ConnectionPtr & connection)
+{
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  {
+    std::lock_guard<std::mutex> lock(connection_lifecycle_mutex);
+    diagnostic_streams[connection.get()] = connection;
+  }
+#endif
+  bool closing;
+  {
+    std::lock_guard<std::mutex> lock(connection_registry_mutex);
+    closing = connections_closing;
+    if (!closing)
+    {
+      connection_registry.erase(std::remove_if(connection_registry.begin(),
+        connection_registry.end(), [](const auto & p) {return p.expired();}),
+        connection_registry.end());
+      connection_registry.emplace_back(connection);
+    }
+  }
+  if (closing)
+    connection->Shutdown();
+  return !closing;
+}
+}
+
+std::string easyfly_transport::DescribeConnections()
+{
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  std::ostringstream out;
+  std::lock_guard<std::mutex> lock(connection_lifecycle_mutex);
+  out << " connections=" << diagnostic_connections.size();
+  for (const auto * connection : diagnostic_connections)
+  {
+    out << " {address=" << connection << " id=" << connection->GetId();
+    const auto found = diagnostic_streams.find(const_cast<Connection *>(connection));
+    if (found != diagnostic_streams.end())
+      out << " stream_owners=" << found->second.use_count();
+    else
+      out << " stream_owners=unregistered";
+    out << "}";
+  }
+  return out.str();
+#else
+  return {};
+#endif
+}
+
+void easyfly_transport::ShutdownConnections()
+{
+  std::vector<ConnectionPtr> remaining;
+  {
+    std::lock_guard<std::mutex> lock(connection_registry_mutex);
+    connections_closing = true;
+    for (const auto & weak : connection_registry)
+      if (auto connection = weak.lock())
+        remaining.push_back(connection);
+    connection_registry.clear();
+  }
+  // Shutdown can fire hooks which reenter ConnectionManager. Neither registry
+  // nor manager locks may be held. Weak registration adds no transport owner.
+  for (const auto & connection : remaining)
+    connection->Shutdown();
+}
 
 unsigned int Connection::idCounter = 0;
 IOManager *Connection::iomanager = NULL;
@@ -127,6 +207,10 @@ Connection::Connection()
     this->ipWhiteList = "," + this->localAddress + ",127.0.0.1,"
       + whiteListEnv + ",";
   }
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  std::lock_guard<std::mutex> lock(connection_lifecycle_mutex);
+  diagnostic_connections.push_back(this);
+#endif
 }
 
 //////////////////////////////////////////////////
@@ -137,6 +221,11 @@ Connection::~Connection()
   IOManager * retired = nullptr;
   {
     std::lock_guard<std::mutex> lock(connection_lifecycle_mutex);
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+    diagnostic_connections.erase(std::remove(diagnostic_connections.begin(),
+      diagnostic_connections.end(), this), diagnostic_connections.end());
+    diagnostic_streams.erase(this);
+#endif
     if (iomanager)
     {
       iomanager->DecCount();
@@ -222,8 +311,7 @@ bool Connection::Connect(const std::string &_host, unsigned int _port)
   }
 
   this->isOpen = true;
-
-  return true;
+  return RegisterStream(this->shared_from_this());
 }
 
 //////////////////////////////////////////////////
@@ -245,7 +333,7 @@ void Connection::Listen(unsigned int port, const AcceptCallback &_acceptCB)
   this->acceptor->bind(endpoint);
   this->acceptor->listen();
 
-  this->acceptConn = ConnectionPtr(new Connection());
+  this->acceptConn = easyfly_transport::MakeConnection();
 
   this->acceptor->async_accept(*this->acceptConn->socket,
       common::weakBind(&Connection::OnAccept, this->shared_from_this(),
@@ -259,6 +347,8 @@ void Connection::OnAccept(const boost::system::error_code &e)
   if (!e)
   {
     this->acceptConn->isOpen = true;
+    if (!RegisterStream(this->acceptConn))
+      return;
 
     if (!this->ipWhiteList.empty() &&
         this->ipWhiteList.find("," +
@@ -274,7 +364,7 @@ void Connection::OnAccept(const boost::system::error_code &e)
     }
 
     // First start a new acceptor
-    this->acceptConn = ConnectionPtr(new Connection());
+    this->acceptConn = easyfly_transport::MakeConnection();
 
     this->acceptor->async_accept(*this->acceptConn->socket,
         common::weakBind(&Connection::OnAccept, this->shared_from_this(),

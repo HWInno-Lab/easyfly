@@ -28,6 +28,7 @@
 // Derived from Gazebo Classic gazebo11_11.10.2 transport/IOManager.cc.
 // The externally visible IOManager ABI and private field layout are preserved.
 #include <dlfcn.h>
+#include <algorithm>
 #include <openssl/evp.h>
 #include <array>
 #include <atomic>
@@ -42,8 +43,13 @@
 #include <mutex>
 #include <sstream>
 #include <thread>
+#include <tbb/task.h>
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+#include <vector>
+#endif
 #include <boost/thread/thread.hpp>
 #include <gazebo/transport/IOManager.hh>
+#include <gazebo/transport/Connection.hh>
 #include "easyfly_transport/compat.hpp"
 
 extern "C" const char * easyfly_transport_build_tag()
@@ -53,6 +59,10 @@ extern "C" const char * easyfly_transport_build_tag()
 
 namespace gazebo::transport
 {
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+std::vector<IOManager *> diagnostic_managers;
+std::mutex diagnostic_managers_mutex;
+#endif
 class IOManagerPrivate
 {
 public:
@@ -63,9 +73,28 @@ public:
 };
 }  // namespace gazebo::transport
 
+std::string easyfly_transport::DescribeManagers()
+{
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  std::ostringstream out;
+  std::lock_guard<std::mutex> lock(gazebo::transport::diagnostic_managers_mutex);
+  out << " managers=" << gazebo::transport::diagnostic_managers.size();
+  for (const auto * manager : gazebo::transport::diagnostic_managers)
+    out << " {address=" << manager << " count=" << manager->GetCount() << "}";
+  return out.str();
+#else
+  return {};
+#endif
+}
+
 namespace
 {
 using State = gazebo::transport::IOManagerPrivate;
+struct Retirement
+{
+  State * state = nullptr;
+  gazebo::transport::Connection * connection = nullptr;
+};
 std::atomic_bool validated{false};
 
 void Dispose(State * state)
@@ -116,8 +145,19 @@ public:
   {
     std::lock_guard<std::mutex> lock(mutex_);
     // A live manager keeps Finish() from closing the worker.
-    queue_.push_back(state);
+    queue_.push_back({state, nullptr});
     --stats_.live;
+    ++stats_.deferred;
+    ++stats_.pending;
+    condition_.notify_all();
+  }
+
+  void RetireConnection(gazebo::transport::Connection * connection)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    // The raw object still owns its IOManager. Pending includes the complete
+    // Connection destructor and its member TaskGroup wait, not just IO cleanup.
+    queue_.push_back({nullptr, connection});
     ++stats_.deferred;
     ++stats_.pending;
     condition_.notify_all();
@@ -161,18 +201,21 @@ private:
   void Run()
   {
     for (;; ) {
-      State * state;
+      Retirement retirement;
       {
         std::unique_lock<std::mutex> lock(mutex_);
         condition_.wait(lock, [this] {return closed_ || !queue_.empty();});
         if (queue_.empty()) {
           return;
         }
-        state = queue_.front();
+        retirement = queue_.front();
         queue_.pop_front();
       }
       // Do not hold the queue mutex while waiting for callbacks to return.
-      Dispose(state);
+      if (retirement.connection)
+        delete retirement.connection;
+      else
+        Dispose(retirement.state);
       {
         std::lock_guard<std::mutex> lock(mutex_);
         --stats_.pending;
@@ -184,7 +227,7 @@ private:
 
   std::mutex mutex_;
   std::condition_variable condition_;
-  std::deque<State *> queue_;
+  std::deque<Retirement> queue_;
   easyfly_transport::Statistics stats_{0, 0, 0, 0};
   bool closed_{false};
   std::thread worker_;
@@ -261,6 +304,20 @@ bool ValidateLibrary(const std::string & expected_sha)
 }
 
 void Drain() {Cleanup().Drain();}
+boost::shared_ptr<gazebo::transport::Connection> MakeConnection()
+{
+  return boost::shared_ptr<gazebo::transport::Connection>(
+    new gazebo::transport::Connection,
+    [](gazebo::transport::Connection * connection) {
+      // A read task's functor is destroyed before oneTBB releases its wait
+      // context. Deleting its own Connection here would wait for itself.
+      // Keep ordinary owner teardown synchronous (including raw callbacks).
+      if (tbb::task::current_context())
+        Cleanup().RetireConnection(connection);
+      else
+        delete connection;
+    });
+}
 bool Finish() {return Cleanup().Finish();}
 Statistics GetStatistics() {return Cleanup().Statistics();}
 }  // namespace easyfly_transport
@@ -284,10 +341,21 @@ IOManager::IOManager()
   state->thread = thread.release();
   Cleanup().Created();
   this->dataPtr = state.release();
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  std::lock_guard<std::mutex> lock(diagnostic_managers_mutex);
+  diagnostic_managers.push_back(this);
+#endif
 }
 
 IOManager::~IOManager()
 {
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+  {
+    std::lock_guard<std::mutex> lock(diagnostic_managers_mutex);
+    diagnostic_managers.erase(std::remove(diagnostic_managers.begin(),
+      diagnostic_managers.end(), this), diagnostic_managers.end());
+  }
+#endif
   State * state = this->dataPtr;
   state->io_service->stop();
   this->dataPtr = nullptr;

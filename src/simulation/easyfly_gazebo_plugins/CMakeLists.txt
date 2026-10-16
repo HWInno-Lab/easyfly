@@ -9,6 +9,9 @@ add_subdirectory(livox_laser_plugin)
 # M4.1: 巡航移动目标驱动 (纯 Gazebo 插件, 无 ROS 依赖)
 add_subdirectory(patrol_mover)
 
+# Filter native IMU samples before the existing 4:1 MAVLink decimator.
+add_subdirectory(imu_antialias)
+
 # Independently named upstream camera with a fail-closed duplicate-node guard.
 add_subdirectory(safe_camera)
 

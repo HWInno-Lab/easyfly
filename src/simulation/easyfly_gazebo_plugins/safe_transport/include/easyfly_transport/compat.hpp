@@ -13,6 +13,9 @@
 
 #include <cstddef>
 #include <string>
+#include <boost/shared_ptr.hpp>
+
+namespace gazebo { namespace transport { class Connection; } }
 
 namespace easyfly_transport
 {
@@ -23,6 +26,14 @@ constexpr char kCoreSha[] =
 bool ValidateLibrary(const std::string & expected_sha = kCoreSha);
 // Main-thread lifecycle controls; never call these from an IO callback.
 void Drain();
+// A task functor can own its Connection. Retire the complete object outside
+// that task group before running the member TaskGroup's mandatory wait.
+boost::shared_ptr<gazebo::transport::Connection> MakeConnection();
+// Terminal server-only phase, after simulator/transport owners have finalized.
+// Cancels registered socket operations; retained object owners still fail Finish.
+void ShutdownConnections();
+std::string DescribeConnections();
+std::string DescribeManagers();
 bool Finish();
 struct Statistics
 {

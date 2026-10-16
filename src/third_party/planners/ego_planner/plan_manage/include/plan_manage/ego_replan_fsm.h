@@ -6,6 +6,7 @@
 #include <array>
 #include <chrono>
 #include <cstdint>
+#include <functional>
 #include <iostream>
 #include <nav_msgs/msg/path.hpp>
 
@@ -199,7 +200,8 @@ namespace ego_planner
     {
     }
 
-    void init(std::shared_ptr<rclcpp::Node> &nh);
+    void init(std::shared_ptr<rclcpp::Node> &nh,
+              const std::function<bool()> &stop_requested = {});
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW
   };

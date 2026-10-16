@@ -14,7 +14,8 @@
 namespace ego_planner
 {
 
-  void EGOReplanFSM::init(std::shared_ptr<rclcpp::Node> &nh)
+  void EGOReplanFSM::init(std::shared_ptr<rclcpp::Node> &nh,
+                         const std::function<bool()> &stop_requested)
   {
     current_wp_ = 0;
     exec_state_ = FSM_EXEC_STATE::INIT;
@@ -225,6 +226,7 @@ namespace ego_planner
       int count = 0;
       while (rclcpp::ok() && count++ < 1000)
       {
+        if (stop_requested && stop_requested()) {return;}
         // ros::spinOnce();
         // ros::Duration(0.001).sleep();
         rclcpp::spin_some(nh);
@@ -235,13 +237,14 @@ namespace ego_planner
       RCLCPP_WARN(rclcpp::get_logger("EGOReplanFSM"), "Waiting for trigger from [n3ctrl] from RC");
       while (rclcpp::ok() && (!have_odom_ || !have_trigger_))
       {
+        if (stop_requested && stop_requested()) {return;}
         // ros::spinOnce();
         rclcpp::spin_some(nh);
         // ros::Duration(0.001).sleep();
         std::this_thread::sleep_for(std::chrono::milliseconds(1));
       }
 
-      readGivenWps();
+      if (rclcpp::ok() && !(stop_requested && stop_requested())) {readGivenWps();}
     }
     else if (!navigation_managed_)
       cout << "Wrong target_type_ value! target_type_=" << target_type_ << endl;

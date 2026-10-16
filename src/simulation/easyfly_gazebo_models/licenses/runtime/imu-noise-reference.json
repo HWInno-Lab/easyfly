@@ -9,7 +9,7 @@
   "accelerometer_noise_density": 0.0006864654999999999,
   "old_plugin_default": 0.00637,
   "old_default_issue": "100 Hz bandwidth RMS value used as a density",
-  "model_sha256": "142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef",
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
   "unchanged": [
     "gyroscopeNoiseDensity",
     "random walk",
@@ -17,5 +17,7 @@
     "PX4 protection and admission limits",
     "spawn and aircraft inertias",
     "GPS, barometer, lidar and camera configuration"
-  ]
+  ],
+  "previous_model_sha256": "142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef",
+  "native_sampling": "Original noisy 1000Hz IMU producer retained on /imu_native; project relay averages four native samples on /imu before unchanged 250Hz MAVLink decimation; source seq/time/orientation preserved."
 }

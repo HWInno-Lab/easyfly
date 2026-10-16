@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Only component-load replies; no default QoS or participant changes. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <publisher profile_name="rr/calib_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+  <publisher profile_name="rr/coord_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+  <publisher profile_name="rr/detection_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+  <publisher profile_name="rr/tracking_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+  <publisher profile_name="rr/pixel_to_3d_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+  <publisher profile_name="rr/fastlio_integration_container/_container/load_nodeReply">
+    <qos><reliability>
+      <kind>RELIABLE</kind>
+      <max_blocking_time><sec>2</sec><nanosec>0</nanosec></max_blocking_time>
+    </reliability></qos>
+  </publisher>
+</profiles>

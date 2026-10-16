@@ -101,6 +101,11 @@ install(DIRECTORY launch config
 
 if(BUILD_TESTING)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_test(NAME test_ego_signal_shutdown_ros
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_ego_signal_shutdown.py
+      $<TARGET_FILE:ego_planner_node>)
+  set_tests_properties(test_ego_signal_shutdown_ros PROPERTIES TIMEOUT 60 LABELS "ros_network"
+    RUN_SERIAL TRUE)
   add_test(NAME test_traj_shutdown_ros
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_traj_shutdown.py)
   set_tests_properties(test_traj_shutdown_ros PROPERTIES TIMEOUT 45 LABELS "ros_network"

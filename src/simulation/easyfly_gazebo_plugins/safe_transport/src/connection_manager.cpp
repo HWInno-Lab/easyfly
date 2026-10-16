@@ -21,6 +21,7 @@
 #include "gazebo/common/Events.hh"
 #include "gazebo/transport/TopicManager.hh"
 #include "gazebo/transport/ConnectionManager.hh"
+#include "easyfly_transport/compat.hpp"
 
 #include "gazebo/gazebo_config.h"
 
@@ -94,8 +95,8 @@ bool ConnectionManager::Init(const std::string &_masterHost,
                              uint32_t _timeoutIterations)
 {
   this->stop = false;
-  this->masterConn.reset(new Connection());
-  this->serverConn.reset(new Connection());
+  this->masterConn = easyfly_transport::MakeConnection();
+  this->serverConn = easyfly_transport::MakeConnection();
 
   // Create a new TCP server on a free port
   using namespace boost::placeholders;
@@ -663,7 +664,7 @@ ConnectionPtr ConnectionManager::ConnectToRemoteHost(const std::string &_host,
   // if (!conn)
   {
     // Connect to the remote host
-    conn.reset(new Connection());
+    conn = easyfly_transport::MakeConnection();
     if (conn->Connect(_host, _port))
     {
       boost::recursive_mutex::scoped_lock lock(this->connectionMutex);

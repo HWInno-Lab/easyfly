@@ -31,6 +31,7 @@ target_compile_features(easyfly_transport_compat PUBLIC cxx_std_17)
 target_include_directories(easyfly_transport_compat PUBLIC include ${GAZEBO_INCLUDE_DIRS}
   PRIVATE "${EASYFLY_TRANSPORT_HEADERS}")
 target_compile_definitions(easyfly_transport_compat PRIVATE
+  $<$<CONFIG:Debug>:EASYFLY_TRANSPORT_DIAGNOSTICS>
   BUILDING_DLL_GZ_TRANSPORT GAZEBO_DEFAULT_MASTER_HOST="localhost"
   GAZEBO_DEFAULT_MASTER_PORT=11345)
 target_link_libraries(easyfly_transport_compat PUBLIC
@@ -65,4 +66,8 @@ if(BUILD_TESTING)
   target_link_libraries(test_transport_finish easyfly_transport_compat TBB::tbb)
   ament_add_gtest(test_transport_pending_read test/test_pending_read.cpp TIMEOUT 20)
   target_link_libraries(test_transport_pending_read easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  ament_add_gtest(test_transport_orphan_read test/test_orphan_read.cpp TIMEOUT 20)
+  target_link_libraries(test_transport_orphan_read easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  ament_add_gtest(test_transport_task_retirement test/test_task_retirement.cpp TIMEOUT 20)
+  target_link_libraries(test_transport_task_retirement easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
 endif()

@@ -33,7 +33,7 @@ from launch.actions import (
 )
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
@@ -114,7 +114,7 @@ def generate_launch_description():
     # PX4 gazebo 插件依赖 libmav_msgs.so / libsensor_msgs.so 等, 位于 PX4 build_gazebo-classic
     set_ld_library_path = SetEnvironmentVariable(
         "LD_LIBRARY_PATH",
-        gazebo_plugin_dir + ":" + os.environ.get("LD_LIBRARY_PATH", ""))
+        [gazebo_plugin_dir + ":", EnvironmentVariable("LD_LIBRARY_PATH", default_value="")])
 
     # ---- Gazebo + 模型 + PX4 (默认 perception_demo；显式 scene 先离线校验) ----
     # -s libgazebo_ros_init.so: 加载 ROS2 时钟插件(SystemPlugin, 发布 /clock), 必须用 -s 方式加载

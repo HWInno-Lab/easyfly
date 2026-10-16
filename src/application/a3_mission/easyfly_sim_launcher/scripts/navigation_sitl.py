@@ -935,7 +935,7 @@ class Probe:
         for client in self.clients:
             client.destroy()
         self.node.destroy_node()
-        rclpy.shutdown()
+        rclpy.try_shutdown()
         self.states.close()
         self.inputs.close()
         if hasattr(self, 'log'):

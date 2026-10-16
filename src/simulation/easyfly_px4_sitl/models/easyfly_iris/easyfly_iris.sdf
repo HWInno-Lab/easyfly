@@ -673,7 +673,7 @@
     <plugin name='rotors_gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
       <robotNamespace/>
       <linkName>/imu_link</linkName>
-      <imuTopic>/imu</imuTopic>
+      <imuTopic>/imu_native</imuTopic>
       <!-- IIM-42653: 0.005 deg/s/sqrt(Hz), converted to rad/s/sqrt(Hz).
            DS-000529 gyro specifications: 0.05 deg/s RMS at 100 Hz is NOT density.
            Explicit nonzero density avoids the plugin's RMS-as-density default.
@@ -684,6 +684,12 @@
            70e-6 * 9.80665 = 0.0006864655 m/s^2/sqrt(Hz).
            0.65 mg RMS at 100 Hz is not a spectral density. -->
       <accelerometerNoiseDensity>0.0006864655</accelerometerNoiseDensity>
+    </plugin>
+    <!-- Preserve noisy native 1kHz impulses before the existing 250Hz MAVLink sample. -->
+    <plugin name='easyfly_imu_antialias' filename='libeasyfly_imu_antialias.so'>
+      <robotNamespace/>
+      <inputTopic>/imu_native</inputTopic>
+      <outputTopic>/imu</outputTopic>
     </plugin>
   </model>
 </sdf>

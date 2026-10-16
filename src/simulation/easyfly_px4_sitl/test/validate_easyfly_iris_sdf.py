@@ -146,7 +146,7 @@ class EasyflyIrisSdfTest(unittest.TestCase):
         self.assertIsNotNone(imu)
         self.assertEqual(imu.get("filename"), "libgazebo_imu_plugin.so")
         self.assertEqual(imu.findtext("linkName"), "/imu_link")
-        self.assertEqual(imu.findtext("imuTopic"), "/imu")
+        self.assertEqual(imu.findtext("imuTopic"), "/imu_native")
         densities = imu.findall("gyroscopeNoiseDensity")
         self.assertEqual(len(densities), 1, "explicit unique gyro density required")
         density = _number(imu, "gyroscopeNoiseDensity")
@@ -161,6 +161,18 @@ class EasyflyIrisSdfTest(unittest.TestCase):
             {"robotNamespace", "linkName", "imuTopic", "gyroscopeNoiseDensity",
              "accelerometerNoiseDensity"},
         )
+
+    def test_native_imu_antialias_is_wired_before_existing_mavlink_input(self):
+        plugins=self.model.findall("plugin")
+        native=self.model.find("plugin[@name='rotors_gazebo_imu_plugin']")
+        relay=self.model.find("plugin[@name='easyfly_imu_antialias']")
+        mavlink=self.model.find("plugin[@name='mavlink_interface']")
+        self.assertIsNotNone(relay)
+        self.assertEqual(relay.get("filename"), "libeasyfly_imu_antialias.so")
+        self.assertEqual(relay.findtext("inputTopic"), "/imu_native")
+        self.assertEqual(relay.findtext("outputTopic"), "/imu")
+        self.assertEqual(mavlink.findtext("imuSubTopic"), "/imu")
+        self.assertLess(plugins.index(native),plugins.index(relay))
 
     def test_imu_acceleration_noise_uses_conservative_density_not_bandwidth_rms(self):
         imu = self.model.find("plugin[@name='rotors_gazebo_imu_plugin']")

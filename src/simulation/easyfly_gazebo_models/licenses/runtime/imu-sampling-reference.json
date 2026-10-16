@@ -1,0 +1,117 @@
+{
+  "source_revision": "70683dc759cbd3ebccfa78429b564f8b1fb5d149",
+  "source_urls": [
+    "https://github.com/PX4/PX4-SITL_gazebo-classic/blob/70683dc759cbd3ebccfa78429b564f8b1fb5d149/src/gazebo_mavlink_interface.cpp",
+    "https://github.com/PX4/PX4-SITL_gazebo-classic/blob/70683dc759cbd3ebccfa78429b564f8b1fb5d149/src/mavlink_interface.cpp"
+  ],
+  "policy": "Retain native noisy 1000Hz producer; four-sample sliding mean before unchanged 250Hz latest-value decimator. Require native 1ms timestamps and consecutive seq, refuse gaps instead of interpolating. Preserve protobuf source metadata, orientation and covariance.",
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "native_fixture": "artifacts/scene-s2-acceptance-20261015/imu-native-adc-contract/analysis.json",
+  "native_fixture_sha256": "c874d9eed178692cdde317177dc284db452dca697484e3248ba071b989fa8000",
+  "native_result": {
+    "passed": true,
+    "scope": "Native generated-class protocol, linear averaging followed by reviewed PX4 accel FIFO saturation; clipped impulses are not claimed to preserve full velocity integral.",
+    "samples": 6005,
+    "source_seq_time_orientation_exact": true,
+    "typed_cpp_identity_valid": true,
+    "max_accel_float_error": 0.0,
+    "max_gyro_mean_error": 1.214306433183765e-17,
+    "saturated_channels": 4,
+    "legacy_sign_reversals_avoided": 0,
+    "existing_clip_detection_triggered": true,
+    "limit_m_s2": 156.90159606933594,
+    "raw_freefall_az_std": 0.021633403215088803,
+    "output_freefall_az_std": 0.010255713311518975,
+    "native_exit": {
+      "error": null,
+      "exit": 0,
+      "shutdown_seconds": 0.06347087700123666,
+      "library_sha256": "e26af32e8e30064b7f55ec69557fbf6f3b1075d944e6d2802622336cc73683c5"
+    },
+    "csv_sha256": "874cb8b65672511a918c90776fd251efa1c512da8626aaaba9e8a339dd9612ee"
+  },
+  "native_class_policy": "Use the original generated_factory prototype, not a DynamicMessage: Gazebo local typed callbacks require matching C++ class identity. Before/after typed native fixtures and startup GDB evidence retained.",
+  "linear_window_native_fixture": "artifacts/scene-s2-acceptance-20261015/imu-native-typed-contract-after/analysis.json",
+  "linear_window_native_result": {
+    "passed": true,
+    "scope": "Actual typed and raw protobuf consumers, six-channel native averaging and rigid-body contact; no flight goals.",
+    "samples_compared": 6041,
+    "source_metadata_exact": true,
+    "generated_cpp_type_valid": true,
+    "max_six_channel_mean_error": 1.580957587066223e-13,
+    "raw_full_rate_velocity_increment": [
+      0.0020020514836545764,
+      0.0013342754983126125,
+      0.9710738013771038
+    ],
+    "raw_250hz_phase_increments": [
+      [
+        -1.0064084661810857,
+        0.04297828807916193,
+        -25.60585251162728
+      ],
+      [
+        1.0263087717618526,
+        -0.05560135603683003,
+        16.977829385757403
+      ],
+      [
+        -1.0007798204689335,
+        0.023223749889625882,
+        -25.4972647168573
+      ],
+      [
+        0.9888877208227849,
+        -0.005263579938707217,
+        38.00958304823561
+      ]
+    ],
+    "averaged_250hz_phase_increments": [
+      [
+        0.0011399339834084854,
+        0.0007774466956631093,
+        0.9388440792372753
+      ],
+      [
+        0.0011571400650960267,
+        0.0023621835244866727,
+        0.9515318792406049
+      ],
+      [
+        0.00039262784248258033,
+        0.0031465746941577847,
+        0.9574833636662293
+      ],
+      [
+        0.0020020514836501654,
+        0.001334275498316004,
+        0.9710738013776585
+      ]
+    ],
+    "native_initial_velocity": [
+      0.0,
+      0.0,
+      -0.9711899999999988
+    ],
+    "native_final_velocity": [
+      0.0007773524138179583,
+      -0.00047002426918361066,
+      0.0016977132108605293
+    ],
+    "max_averaged_phase_final_velocity_error_m_s": 0.034068411517564255,
+    "native_exit": {
+      "error": null,
+      "exit": 0,
+      "shutdown_seconds": 0.06359457099824795,
+      "library_sha256": "2f9fa291be29c1ed71141f886fa12c6ce9b5e77d853966906ec7f3f52bb40850"
+    },
+    "csv_sha256": "111a05cdddde664c785b06c29d93fff1a8d39d35541f53cf573ea9f16f884f0d",
+    "truth_sha256": "de884c7d35f7c7f3053b04647c10869c79786fb6a34f81ec0de4160fb313d32f",
+    "raw_tail_az_std_including_contact": 4.289059220531476,
+    "averaged_tail_az_std_including_contact": 0.38046210226909455,
+    "tail_statistics_scope": "This pre-ADC tail includes contact and is not a stationary-noise measurement; current ADC fixture separately measures actual freefall noise."
+  },
+  "adc_policy": "After linear averaging, saturate acceleration to the reviewed PX4 accel-0 signed 16-bit FIFO capacity at g/2048 scale, with one float ULP inward. Preserve FLU/FRD sign and existing driver clipping detection; raw producer topic remains unbounded and unchanged.",
+  "adc_source_url": "https://github.com/PX4/PX4-Autopilot/blob/54f0455ffcd755534539a7cf33a09a20bf71d29d/src/modules/simulation/simulator_mavlink/SimulatorMavlink.cpp",
+  "adc_source_sha256": "82cc7fc774d6fe92328e444354da1f63b3fb197ea61a26aa27862ce76098d670"
+}

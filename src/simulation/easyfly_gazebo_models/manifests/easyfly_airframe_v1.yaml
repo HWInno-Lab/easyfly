@@ -44,7 +44,7 @@ models:
       remain in maintained aircraft SDF; no parameter changed by this curation.
 files:
 - path: easyfly_iris/easyfly_iris.sdf
-  sha256: 142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef
+  sha256: c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956
 - path: easyfly_iris/easyfly_iris.urdf
   sha256: 1d9521ff9721f5ab85dc76dbab438f38e16e6b3902c8dc5fa4e9b9d03ac134cf
 - path: easyfly_iris/meshes/iris.stl
@@ -59,5 +59,9 @@ local_changes:
 - Explicit accelerometer density 70 ug/sqrt(Hz) (conservative scalar IIM-42653 Z-axis
   PSD); corrects RMS-as-density units, retains nonzero noise and existing protection
   limits.
+- Native noisy 1000Hz IMU is routed through a four-sample accumulator before the
+  existing 250Hz MAVLink consumer, followed by reviewed signed 16-bit accel FIFO
+  saturation; source seq/time, nonzero noise and control limits retained. Original
+  raw native samples remain available separately.
 storage: existing
 inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

@@ -90,3 +90,43 @@ failed; the corrected code drains to zero. The list is moved under its mutex,
 then Shutdown runs outside that mutex to allow reentrant shutdown callbacks.
 This fixes a reproduced retained-owner defect without extending the deadline,
 forcing successful exit, detaching threads, or suppressing an incomplete drain.
+
+The server's terminal phase also calls `ShutdownConnections` after Server and
+transport managers have finalized. Successful outgoing connects and accepted
+streams are weakly registered without adding an owner or changing Connection's
+layout. The terminal phase snapshots surviving streams, cancels/closes them
+outside registry/manager locks, and rejects late stream admission. This reaches
+pending reads whose connection was already removed from the manager's list.
+Ordinary `Finish` does not initiate this terminal phase, so a refused Finish
+continues to permit ordinary cleanup and further managers as before.
+
+A native removed-read fixture reproduces live=1/pending=0 even after the fixed
+manager Fini: the public RemoveConnection API has already removed its entry,
+while the pending read handler still owns that connection. Terminal cancellation
+breaks that cycle while the raw TCP peer stays open. The regression additionally
+retains a separate explicit Connection owner: Finish must still refuse it through
+the unchanged five-second deadline, then join and succeed only after it is
+released. No live count is reset and no still-owned IO state is discarded.
+This additional reproduced case does not uniquely attribute every historical
+retained-manager observation.
+
+Nonempty socket reads run `ConnectionReadTask` in the Connection's own oneTBB
+TaskGroup. oneTBB destroys the task functor before releasing its wait context.
+If the functor releases the last Connection reference, the member TaskGroup
+would therefore wait for the very task currently destroying it. A native TCP
+fixture reproduces this self-wait and its retained live-manager footprint.
+
+All five Connection factory sites in the private transport use `MakeConnection`.
+Its deleter transfers the whole object to the independent cleanup thread only
+when `tbb::task::current_context()` identifies an executing task. Ordinary owner
+reset remains synchronous, including waiting for callbacks that use raw owners.
+The cleanup thread executes the original complete Connection destructor and
+TaskGroup wait; pending accounting covers that entire operation. No task wait
+or IO join is skipped. The native regression checks both ordinary owner blocking
+and last-reference release from a real nonempty TCP read task.
+
+The reviewed oneTBB implementation returns null outside an executing task,
+including after a task wait and within an otherwise idle task arena:
+[oneTBB v2021.5.0 task_dispatcher.cpp](https://github.com/oneapi-src/oneTBB/blob/v2021.5.0/src/tbb/task_dispatcher.cpp#L128).
+This fixes the reproduced self-wait; independent scene exits still determine
+whether the full runtime qualifies.

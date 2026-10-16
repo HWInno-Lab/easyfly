@@ -1,0 +1,11 @@
+{
+  "source_url": "https://github.com/eProsima/Fast-DDS",
+  "revision": "v2.6.11",
+  "archive_url": "https://codeload.github.com/eProsima/Fast-DDS/tar.gz/refs/tags/v2.6.11",
+  "archive_sha256": "81db506b123a6c1fcb4fc16c36173bd68132f71afa610dfb8205a3d6ec40729d",
+  "declared_license": "Apache-2.0",
+  "modified_file": "src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp",
+  "original_sha256": "c98c42fd227b5e0e7bd7ce7a093a611e234c31e4d5e06b1ed88a1c2d83d41a1d",
+  "modified_sha256": "c347aca0b447b3e7ad45ece94500b52bc96628f751481b8cb8dfd2e1116d623c",
+  "change": "One reader-listener snapshot under the existing reader mutex; release before both callbacks and PDP status update. Existing endpoint traversal lock and DataReaderImpl retirement retain its inner listener."
+}
