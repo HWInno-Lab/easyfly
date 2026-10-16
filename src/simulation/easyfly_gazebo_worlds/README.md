@@ -226,3 +226,38 @@ v2交点与240个静态模型边界均与原v1一致。原点路线近护栏，�
 当前冷启动证据为`calibration-s6-telemetry-v8.json`，任务为`mission-s6-final.json`；
 早期calibration-s6-final和各拒绝记录保留其当时配置，不代替当前矩阵。
 `evidence/scene-s6-racetrack-signoff.json`只签收首个新增分类，S6其他分类仍待逐项接入。
+
+## S6 森林派生场景
+
+`forest_pine_v1`分类为`outdoor/forest`。布局来自ETHZ `forest_gen`固定提交
+`4ca3e45cd4fe8f5d8ac9fd13daafec67c0d0417d`的`worlds/forest0.world`，
+20棵树的位置、朝向和缩放均保留。布局的BSD-2-Clause许可与署名在
+`licenses/forest_gen/`；原树模型另有TurboSquid来源说明，未导入其网格或octomap。
+场景改用官方Open Robotics CC-BY-3.0 `pine_tree`，六文件保持原字节，
+资源清单为`osrf_pine_tree_v1`，模型署名和原许可在model包`licenses/osrf_pine/`。
+这是替换树木几何的派生场景，不复现原论文基准几何或结果。ROS1插件均不使用。
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog fetch forest_pine_v1
+ros2 run easyfly_sim_launcher scene_catalog validate forest_pine_v1 --json
+ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene:=forest_pine_v1 headless:=true
+```
+
+需source当前安装前缀与已审核运行库，并选择含`mag_lpf_interval_v1`的PX4构建。
+大型原归档、提取的树模型及下载收据只在外部缓存，默认安装只含轻量登记资源。
+缺失或损坏缓存在启动前拒绝；可用同一固定归档`fetch --archive`完成离线导入。
+
+首次范围为西南林缘：world出生点`(-5.5,-6.5,0.1)`，参考任务在odom中
+1.5m高度、1.5m往返。原生ODE检查全部20个静态树链接与地面，21,794射线
+最小采样水平净距2.847m；连续路线到全部树木AABB的保守XY距离不小于1.934m。
+中心原点路线仅审查、未用于飞行；林内穿行、整片森林、长时间运行另行验收。
+运行配置沿用已审核的5Hz心跳、5Hz电池、100Hz原生ROS时钟和原Iris物理/传感器。
+当前资格状态以scene清单和逐项证据为准；任务在
+`missions/scenes/forest_pine_v1/edge_out_and_back.yaml`。
+
+2026-10-17签收：normal/symlink各一次独立断网受管冷启动，以及同一断网仿真
+两轮参考任务均通过。两个parent、四个导航UUID成功，最大到位误差0.093161m；
+两次落地恢复6.90/6.37墙秒。三个正式运行共72正常退出，无强制/异常/所属残留；
+此前草稿检查另有24正常退出。证据为`calibration-s6-final.json`、
+`mission-s6-final.json`及`evidence/scene-s6-forest-signoff.json`。
+常规测试及两种安装各36个CLI检查通过。S6整体仍未完成，办公室和医院依赖待续。

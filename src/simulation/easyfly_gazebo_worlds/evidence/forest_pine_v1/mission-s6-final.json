@@ -1,0 +1,2962 @@
+{
+  "world_sha256": "960af1553c92ac8ca1be5adb9550f96b68603594e18b0048776dba7e99206f1b",
+  "mission_sha256": "bb86003c0f56e21ef05fbf59a9211d0af4372000fb2bdff7ff6cee7431464c76",
+  "scene_probe_sha256": "0ebeab5a10919610253c53bcd9356d5ef9e3e975a617e0b4d8fb4f1cd2752466",
+  "script_sha256": "6a0e7ed9754b0f30802f619ff751c920fd3b14fe481620fa07d2ffe318f3c8c4",
+  "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+  "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "px4_telemetry": {
+    "battery_rate_hz": 5,
+    "command_returncodes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "local_port": 14580,
+    "native_output_deferred": false,
+    "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "pid": 74752,
+    "rate_hz": 5,
+    "remote_port": 14540,
+    "start_ticks": "1278895",
+    "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)    64\n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)    72\n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)    66\n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited         64\n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)    72\n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)    66\n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENT",
+    "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)    64\n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)    72\n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)    66\n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited         64\n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)    72\n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)    66\n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENT",
+    "observed_state_samples": [
+      {
+        "stamp": 74160000000,
+        "receipt": 12917.478984319,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74360000000,
+        "receipt": 12917.773574206,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74560000000,
+        "receipt": 12918.128104296,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74760000000,
+        "receipt": 12918.490395216,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74960000000,
+        "receipt": 12918.949606194,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 75160000000,
+        "receipt": 12920.123294599,
+        "armed": false,
+        "mode": "OFFBOARD"
+      }
+    ],
+    "max_receipt_gap_seconds": 1.1736884049987566,
+    "observed_battery_samples": [
+      {
+        "stamp": 74110000000,
+        "receipt": 12917.288110836,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9700000286102295
+      },
+      {
+        "stamp": 74310000000,
+        "receipt": 12917.6680821,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9800000190734863
+      },
+      {
+        "stamp": 74510000000,
+        "receipt": 12917.976010726,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9800000190734863
+      },
+      {
+        "stamp": 74710000000,
+        "receipt": 12918.383331368,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9900000095367432
+      },
+      {
+        "stamp": 74910000000,
+        "receipt": 12918.789521358,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9900000095367432
+      },
+      {
+        "stamp": 75110000000,
+        "receipt": 12920.123367734,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9900000095367432
+      }
+    ],
+    "max_battery_receipt_gap_seconds": 1.33384637600102
+  },
+  "gazebo_clock": {
+    "rate_hz": 100,
+    "publisher": "gazebo",
+    "samples": [
+      {
+        "stamp": 73970000000,
+        "receipt": 12917.003184208
+      },
+      {
+        "stamp": 73980000000,
+        "receipt": 12917.012858437
+      },
+      {
+        "stamp": 73990000000,
+        "receipt": 12917.122526593
+      },
+      {
+        "stamp": 74000000000,
+        "receipt": 12917.132073106
+      },
+      {
+        "stamp": 74010000000,
+        "receipt": 12917.176914228
+      },
+      {
+        "stamp": 74070000000,
+        "receipt": 12917.287883999
+      },
+      {
+        "stamp": 74080000000,
+        "receipt": 12917.29388118
+      },
+      {
+        "stamp": 74090000000,
+        "receipt": 12917.296484727
+      },
+      {
+        "stamp": 74100000000,
+        "receipt": 12917.297611121
+      },
+      {
+        "stamp": 74110000000,
+        "receipt": 12917.299247837
+      },
+      {
+        "stamp": 74120000000,
+        "receipt": 12917.388690651
+      },
+      {
+        "stamp": 74130000000,
+        "receipt": 12917.389779887
+      },
+      {
+        "stamp": 74140000000,
+        "receipt": 12917.456346618
+      },
+      {
+        "stamp": 74150000000,
+        "receipt": 12917.466146296
+      },
+      {
+        "stamp": 74160000000,
+        "receipt": 12917.476457542
+      },
+      {
+        "stamp": 74170000000,
+        "receipt": 12917.486167712
+      },
+      {
+        "stamp": 74180000000,
+        "receipt": 12917.496357059
+      },
+      {
+        "stamp": 74190000000,
+        "receipt": 12917.506598037
+      },
+      {
+        "stamp": 74200000000,
+        "receipt": 12917.516418895
+      },
+      {
+        "stamp": 74210000000,
+        "receipt": 12917.526245156
+      },
+      {
+        "stamp": 74220000000,
+        "receipt": 12917.621872186
+      },
+      {
+        "stamp": 74230000000,
+        "receipt": 12917.625819415
+      },
+      {
+        "stamp": 74240000000,
+        "receipt": 12917.626971901
+      },
+      {
+        "stamp": 74250000000,
+        "receipt": 12917.627831956
+      },
+      {
+        "stamp": 74260000000,
+        "receipt": 12917.628222808
+      },
+      {
+        "stamp": 74270000000,
+        "receipt": 12917.628593058
+      },
+      {
+        "stamp": 74280000000,
+        "receipt": 12917.637260933
+      },
+      {
+        "stamp": 74290000000,
+        "receipt": 12917.647162101
+      },
+      {
+        "stamp": 74300000000,
+        "receipt": 12917.657117372
+      },
+      {
+        "stamp": 74310000000,
+        "receipt": 12917.667394102
+      },
+      {
+        "stamp": 74320000000,
+        "receipt": 12917.773436765
+      },
+      {
+        "stamp": 74330000000,
+        "receipt": 12917.777470789
+      },
+      {
+        "stamp": 74340000000,
+        "receipt": 12917.77820175
+      },
+      {
+        "stamp": 74350000000,
+        "receipt": 12917.778591112
+      },
+      {
+        "stamp": 74360000000,
+        "receipt": 12917.779375351
+      },
+      {
+        "stamp": 74370000000,
+        "receipt": 12917.780873741
+      },
+      {
+        "stamp": 74380000000,
+        "receipt": 12917.785541152
+      },
+      {
+        "stamp": 74390000000,
+        "receipt": 12917.795413856
+      },
+      {
+        "stamp": 74400000000,
+        "receipt": 12917.805540279
+      },
+      {
+        "stamp": 74410000000,
+        "receipt": 12917.815452739
+      },
+      {
+        "stamp": 74420000000,
+        "receipt": 12917.927937254
+      },
+      {
+        "stamp": 74430000000,
+        "receipt": 12917.930995191
+      },
+      {
+        "stamp": 74440000000,
+        "receipt": 12917.932407331
+      },
+      {
+        "stamp": 74450000000,
+        "receipt": 12917.933175434
+      },
+      {
+        "stamp": 74460000000,
+        "receipt": 12917.933549425
+      },
+      {
+        "stamp": 74470000000,
+        "receipt": 12917.935014999
+      },
+      {
+        "stamp": 74480000000,
+        "receipt": 12917.945066072
+      },
+      {
+        "stamp": 74490000000,
+        "receipt": 12917.955704816
+      },
+      {
+        "stamp": 74500000000,
+        "receipt": 12917.964964221
+      },
+      {
+        "stamp": 74510000000,
+        "receipt": 12917.975372077
+      },
+      {
+        "stamp": 74560000000,
+        "receipt": 12918.127985327
+      },
+      {
+        "stamp": 74570000000,
+        "receipt": 12918.131821961
+      },
+      {
+        "stamp": 74580000000,
+        "receipt": 12918.133887994
+      },
+      {
+        "stamp": 74590000000,
+        "receipt": 12918.135486883
+      },
+      {
+        "stamp": 74600000000,
+        "receipt": 12918.136774861
+      },
+      {
+        "stamp": 74610000000,
+        "receipt": 12918.137807475
+      },
+      {
+        "stamp": 74620000000,
+        "receipt": 12918.291189048
+      },
+      {
+        "stamp": 74630000000,
+        "receipt": 12918.301670518
+      },
+      {
+        "stamp": 74640000000,
+        "receipt": 12918.311214746
+      },
+      {
+        "stamp": 74650000000,
+        "receipt": 12918.321095361
+      },
+      {
+        "stamp": 74660000000,
+        "receipt": 12918.331458516
+      },
+      {
+        "stamp": 74670000000,
+        "receipt": 12918.341456731
+      },
+      {
+        "stamp": 74680000000,
+        "receipt": 12918.35112972
+      },
+      {
+        "stamp": 74690000000,
+        "receipt": 12918.363887448
+      },
+      {
+        "stamp": 74700000000,
+        "receipt": 12918.371255433
+      },
+      {
+        "stamp": 74710000000,
+        "receipt": 12918.382140483
+      },
+      {
+        "stamp": 74720000000,
+        "receipt": 12918.441222256
+      },
+      {
+        "stamp": 74730000000,
+        "receipt": 12918.490288402
+      },
+      {
+        "stamp": 74740000000,
+        "receipt": 12918.492409127
+      },
+      {
+        "stamp": 74750000000,
+        "receipt": 12918.493171943
+      },
+      {
+        "stamp": 74760000000,
+        "receipt": 12918.493539688
+      },
+      {
+        "stamp": 74770000000,
+        "receipt": 12918.493917745
+      },
+      {
+        "stamp": 74780000000,
+        "receipt": 12918.501391818
+      },
+      {
+        "stamp": 74790000000,
+        "receipt": 12918.510913715
+      },
+      {
+        "stamp": 74800000000,
+        "receipt": 12918.523049621
+      },
+      {
+        "stamp": 74810000000,
+        "receipt": 12918.531282088
+      },
+      {
+        "stamp": 74820000000,
+        "receipt": 12918.651354691
+      },
+      {
+        "stamp": 74830000000,
+        "receipt": 12918.652868283
+      },
+      {
+        "stamp": 74840000000,
+        "receipt": 12918.653790488
+      },
+      {
+        "stamp": 74850000000,
+        "receipt": 12918.728607343
+      },
+      {
+        "stamp": 74860000000,
+        "receipt": 12918.738989305
+      },
+      {
+        "stamp": 74870000000,
+        "receipt": 12918.74897952
+      },
+      {
+        "stamp": 74880000000,
+        "receipt": 12918.759015916
+      },
+      {
+        "stamp": 74890000000,
+        "receipt": 12918.76873415
+      },
+      {
+        "stamp": 74900000000,
+        "receipt": 12918.778775117
+      },
+      {
+        "stamp": 74910000000,
+        "receipt": 12918.788888302
+      },
+      {
+        "stamp": 74950000000,
+        "receipt": 12918.949494887
+      },
+      {
+        "stamp": 74960000000,
+        "receipt": 12918.952685541
+      },
+      {
+        "stamp": 74970000000,
+        "receipt": 12918.95418482
+      },
+      {
+        "stamp": 74980000000,
+        "receipt": 12918.955105388
+      },
+      {
+        "stamp": 74990000000,
+        "receipt": 12918.955985888
+      },
+      {
+        "stamp": 75000000000,
+        "receipt": 12919.023346677
+      },
+      {
+        "stamp": 75010000000,
+        "receipt": 12919.062394488
+      },
+      {
+        "stamp": 75030000000,
+        "receipt": 12919.12707337
+      },
+      {
+        "stamp": 75040000000,
+        "receipt": 12919.12966173
+      },
+      {
+        "stamp": 75050000000,
+        "receipt": 12919.131181848
+      },
+      {
+        "stamp": 75060000000,
+        "receipt": 12919.131968734
+      },
+      {
+        "stamp": 75070000000,
+        "receipt": 12919.132598658
+      },
+      {
+        "stamp": 75080000000,
+        "receipt": 12919.132983011
+      },
+      {
+        "stamp": 75570000000,
+        "receipt": 12920.123228274
+      }
+    ],
+    "median_sim_interval_s": 0.01
+  },
+  "loaded_libraries": {
+    "libeasyfly_imu_antialias.so": {
+      "pid": 74628,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+      "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+    },
+    "liblivox_laser_simulation.so": {
+      "pid": 74628,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+    },
+    "libgazebo_transport.so.11.10.2": {
+      "pid": 74628,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+      "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+    },
+    "libeasyfly_pointcloud_filter_nodes.so": {
+      "pid": 75656,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+      "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 75658,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+    },
+    "libplan_env.so": {
+      "pid": 75772,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+      "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+    }
+  },
+  "dds_compatibility": {
+    "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+    "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+    "implementation": "rmw_fastrtps_cpp",
+    "source_version": "2.6.11",
+    "fix": "reader_writer_listener_snapshot",
+    "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+    "profile_environment": {
+      "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-05yaslfc/profiles.xml",
+      "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-05yaslfc/profiles.xml"
+    },
+    "loaded_pids": [
+      74628,
+      75073,
+      75075,
+      75077,
+      75217,
+      75219,
+      75221,
+      75407,
+      75409,
+      75481,
+      75483,
+      75565,
+      75628,
+      75640,
+      75656,
+      75658,
+      75696,
+      75716,
+      75718,
+      75720,
+      75770,
+      75772
+    ],
+    "child_profile_paths": {
+      "74628": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75656": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75658": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75407": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75409": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75565": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75696": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75073": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75075": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75716": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75077": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75718": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75720": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75217": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75219": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75221": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75481": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75483": "/tmp/easyfly-scene-dds-05yaslfc/profiles.xml",
+      "75628": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75640": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75770": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml",
+      "75772": "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml"
+    },
+    "child_profiles": {
+      "/tmp/easyfly-scene-dds-akmsgzps/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+      "/tmp/easyfly-scene-dds-05yaslfc/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+    },
+    "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+  },
+  "landing_reference_anchor": {
+    "frame": "map",
+    "position": [
+      0.033970626505570936,
+      -0.003927868248517655,
+      -0.012982400348646225
+    ],
+    "basis": {
+      "source_ns": 18801834999,
+      "age_s": 0.058165001,
+      "translation": [
+        0.03309963460986334,
+        -0.0023887633352025085,
+        -0.013411377538972855
+      ],
+      "quaternion_xyzw": [
+        -0.000973464992417599,
+        0.0007503929345328759,
+        0.01011852256012094,
+        0.9999480510394291
+      ]
+    }
+  },
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          5.611769567953566,
+          6.403039720962847,
+          -0.045795560546875
+        ],
+        "yaw": -0.017174433749875647
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 18840000000,
+        "frame": "odom",
+        "ros_now_ns": 18860000000,
+        "receipt": 12817.208116138,
+        "steady_now": 12817.213981365,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.0008390172733925283,
+          -0.0015572421252727509,
+          0.00042724609375
+        ],
+        "velocity": [
+          -0.00025594275211915374,
+          -0.0041610426269471645,
+          -0.0013199617387726903
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "e030d689ba2242fbbf21daae89d29867",
+      "status": 4,
+      "navigation_uuids": [
+        "2ebc337395d4eeb93cee117292e57458",
+        "947c90dcde28aa81b91564f72b48b5a2"
+      ],
+      "navigation_terminal_errors_m": [
+        0.08763471911782077,
+        0.09156555324747301
+      ],
+      "landed_state": {
+        "source_ns": 71410000000,
+        "frame": "odom",
+        "ros_now_ns": 71410000000,
+        "receipt": 12912.330336967,
+        "steady_now": 12912.334302072,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.04699113219976425,
+          -0.01164496410638094,
+          -0.160400390625
+        ],
+        "velocity": [
+          -0.012271749787032604,
+          0.002739994553849101,
+          -0.07789978384971619
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.5699999928474426
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map"
+      },
+      "recovery_seconds": 6.904671035999854,
+      "recovered_state": {
+        "source_ns": 75080000000,
+        "frame": "odom",
+        "ros_now_ns": 75080000000,
+        "receipt": 12919.180091541,
+        "steady_now": 12919.238994625,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.051572687923908234,
+          -0.01084095612168312,
+          -0.146392822265625
+        ],
+        "velocity": [
+          -0.005129996221512556,
+          -0.0004911861033178866,
+          -0.03037676028907299
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.9900000095367432
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.06944461470898401,
+          -0.01531732439678513,
+          -0.0001669005007463309
+        ],
+        "basis": {
+          "source_ns": 74998680000,
+          "age_s": 0.08132,
+          "translation": [
+            0.01788397004745331,
+            -0.005117325970536609,
+            0.1462762175841123
+          ],
+          "quaternion_xyzw": [
+            -0.0009897280123994984,
+            0.0006895787686763871,
+            0.00902481318414483,
+            0.9999585479741521
+          ]
+        }
+      }
+    },
+    {
+      "cycle": 2,
+      "alignment": {
+        "translation": [
+          5.580783317203061,
+          6.42992309126269,
+          -0.14482702799479166
+        ],
+        "yaw": -0.01299372511605881
+      },
+      "inspection_index": 2,
+      "preflight_state": {
+        "source_ns": 79210000000,
+        "frame": "odom",
+        "ros_now_ns": 79210000000,
+        "receipt": 12926.379542807,
+        "steady_now": 12926.552145085,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.05398447811603546,
+          -0.010099644772708416,
+          -0.072052001953125
+        ],
+        "velocity": [
+          0.001937633496709168,
+          -0.001253281137906015,
+          0.0017103062709793448
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "db34b3e826e7494d92fca5121ece3a9b",
+      "status": 4,
+      "navigation_uuids": [
+        "6e83fe4cda79aafc20f31cf3107eece2",
+        "a237d33d2e9dc3c7ef8c8c8b449c1671"
+      ],
+      "navigation_terminal_errors_m": [
+        0.09316041938440268,
+        0.08596841393292418
+      ],
+      "landed_state": {
+        "source_ns": 131410000000,
+        "frame": "odom",
+        "ros_now_ns": 131410000000,
+        "receipt": 13015.477533211,
+        "steady_now": 13015.483060873,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.03802897781133652,
+          -0.017695123329758644,
+          -0.139556884765625
+        ],
+        "velocity": [
+          -0.0080077750608325,
+          0.009808254428207874,
+          -0.07318014651536942
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.30000114440918,
+        "battery_remaining": 0.5
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map"
+      },
+      "recovery_seconds": 6.371307583998714,
+      "recovered_state": {
+        "source_ns": 134900000000,
+        "frame": "odom",
+        "ros_now_ns": 134910000000,
+        "receipt": 13021.825891023,
+        "steady_now": 13021.854387148,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.039935678243637085,
+          -0.02157384529709816,
+          -0.135498046875
+        ],
+        "velocity": [
+          -0.0018429347546771169,
+          0.006555555853992701,
+          -0.03113286942243576
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.9800000190734863
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.05669965953380124,
+          -0.03240457056160069,
+          -0.001989555009083377
+        ],
+        "basis": {
+          "source_ns": 134899000000,
+          "age_s": 0.011000000000000001,
+          "translation": [
+            0.01654219578754468,
+            -0.011309212620886891,
+            0.13351828197255908
+          ],
+          "quaternion_xyzw": [
+            -0.0008841488911644139,
+            0.0005932547427422326,
+            0.008965529233291303,
+            0.9999592419769495
+          ]
+        }
+      }
+    }
+  ],
+  "inspections": [
+    {
+      "index": 1,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            -5.5,
+            -6.5,
+            0.054371,
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -0.001471198396757245,
+            -0.001498318975791335,
+            0.00927734375
+          ],
+          "yaw": -0.017265795406538637,
+          "translation": [
+            5.609931120055373,
+            6.4025756984345366,
+            -0.04509365625
+          ],
+          "state": {
+            "source_ns": 17260000000,
+            "frame": "odom",
+            "ros_now_ns": 17470000000,
+            "receipt": 12814.552080167,
+            "steady_now": 12814.552248784,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.001471198396757245,
+              -0.001498318975791335,
+              0.00927734375
+            ],
+            "velocity": [
+              -0.0004234979278407991,
+              -0.0038042915984988213,
+              0.0032136142253875732
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 17210000000,
+            "frame": "odom",
+            "ros_now_ns": 17210000000,
+            "receipt": 12814.135907416,
+            "steady_now": 12814.139394839,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.001890048966743052,
+              -0.001523815793916583,
+              0.009033203125
+            ],
+            "velocity": [
+              -0.0005767385591752827,
+              -0.003847048617899418,
+              0.0031429105438292027
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.5,
+            -6.5,
+            0.054371,
+            -0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            0.0020064942073076963,
+            -0.0017112441128119826,
+            0.010162353515625
+          ],
+          "yaw": -0.01706851617838576,
+          "translation": [
+            5.612145312693098,
+            6.403469661788196,
+            -0.044208646484375
+          ],
+          "state": {
+            "source_ns": 17710000000,
+            "frame": "odom",
+            "ros_now_ns": 17840000000,
+            "receipt": 12815.491122622,
+            "steady_now": 12815.49136845,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.0020064942073076963,
+              -0.0017112441128119826,
+              0.010162353515625
+            ],
+            "velocity": [
+              0.0015970122767612338,
+              -0.004318770952522755,
+              0.0033759542275220156
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 17660000000,
+            "frame": "odom",
+            "ros_now_ns": 17660000000,
+            "receipt": 12814.940194929,
+            "steady_now": 12815.053421498,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.001764611923135817,
+              -0.0017807866679504514,
+              0.0101318359375
+            ],
+            "velocity": [
+              0.001477116602472961,
+              -0.004604037385433912,
+              0.0037485917564481497
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.5,
+            -6.5,
+            0.054371,
+            -0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            0.002321838866919279,
+            -0.0014311837730929255,
+            0.00628662109375
+          ],
+          "yaw": -0.017188989664632122,
+          "translation": [
+            5.613232271112228,
+            6.403073802665809,
+            -0.04808437890625
+          ],
+          "state": {
+            "source_ns": 18320000000,
+            "frame": "odom",
+            "ros_now_ns": 18530000000,
+            "receipt": 12816.709731496,
+            "steady_now": 12816.709872217,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.002321838866919279,
+              -0.0014311837730929255,
+              0.00628662109375
+            ],
+            "velocity": [
+              0.0015063302125781775,
+              -0.003793183248490095,
+              0.0010524888057261705
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 18110000000,
+            "frame": "odom",
+            "ros_now_ns": 18110000000,
+            "receipt": 12815.985584362,
+            "steady_now": 12816.004376529,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.0023978911340236664,
+              -0.0013058005133643746,
+              0.00830078125
+            ],
+            "velocity": [
+              0.0015829146141186357,
+              -0.003644672455266118,
+              0.0017741110641509295
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          5.611769567953566,
+          6.403039720962847,
+          -0.045795560546875
+        ],
+        "yaw": -0.017174433749875647
+      },
+      "settled_preflight_state": {
+        "source_ns": 17210000000,
+        "frame": "odom",
+        "ros_now_ns": 17210000000,
+        "receipt": 12814.135907416,
+        "steady_now": 12814.139383343,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.001890048966743052,
+          -0.001523815793916583,
+          0.009033203125
+        ],
+        "velocity": [
+          -0.0005767385591752827,
+          -0.003847048617899418,
+          0.0031429105438292027
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    },
+    {
+      "index": 2,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            -5.44461,
+            -6.50866,
+            0.05479,
+            -0.00081,
+            -5.7e-05,
+            1.43076
+          ],
+          "odom_position": [
+            0.049172233790159225,
+            -0.0074862148612737656,
+            -0.1009521484375
+          ],
+          "yaw": -0.013043860979575996,
+          "translation": [
+            5.578214709863377,
+            6.429603371704857,
+            -0.1557421484375
+          ],
+          "state": {
+            "source_ns": 77550000000,
+            "frame": "odom",
+            "ros_now_ns": 77710000000,
+            "receipt": 12923.808254196,
+            "steady_now": 12923.808418384,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.049172233790159225,
+              -0.0074862148612737656,
+              -0.1009521484375
+            ],
+            "velocity": [
+              -0.002584455069154501,
+              0.00023719778982922435,
+              -0.008052288554608822
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 77310000000,
+            "frame": "odom",
+            "ros_now_ns": 77310000000,
+            "receipt": 12923.180881978,
+            "steady_now": 12923.34559899,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.049006715416908264,
+              -0.0072111040353775024,
+              -0.103363037109375
+            ],
+            "velocity": [
+              -0.002937641693279147,
+              0.00021725181431975216,
+              -0.00923478975892067
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.44461,
+            -6.50866,
+            0.05479,
+            -0.00081,
+            -5.7e-05,
+            1.43076
+          ],
+          "odom_position": [
+            0.05300195515155792,
+            -0.006767978426069021,
+            -0.090911865234375
+          ],
+          "yaw": -0.012967082283924736,
+          "translation": [
+            5.58155018358625,
+            6.43074610183594,
+            -0.145701865234375
+          ],
+          "state": {
+            "source_ns": 78120000000,
+            "frame": "odom",
+            "ros_now_ns": 78310000000,
+            "receipt": 12924.825008293,
+            "steady_now": 12924.825206386,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.05300195515155792,
+              -0.006767978426069021,
+              -0.090911865234375
+            ],
+            "velocity": [
+              1.048375906975707e-05,
+              -0.0002745946403592825,
+              -0.004127872176468372
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 77920000000,
+            "frame": "odom",
+            "ros_now_ns": 77950000000,
+            "receipt": 12924.279857161,
+            "steady_now": 12924.309278458,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.05215409770607948,
+              -0.007184908725321293,
+              -0.095428466796875
+            ],
+            "velocity": [
+              -0.001212132046930492,
+              -0.0004591995384544134,
+              -0.005696198903024197
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.44461,
+            -6.50866,
+            0.05479,
+            -0.00081,
+            -5.7e-05,
+            1.43076
+          ],
+          "odom_position": [
+            0.05401655286550522,
+            -0.008076866157352924,
+            -0.0782470703125
+          ],
+          "yaw": -0.01297023208469139,
+          "translation": [
+            5.582585058159559,
+            6.429419800247274,
+            -0.1330370703125
+          ],
+          "state": {
+            "source_ns": 78860000000,
+            "frame": "odom",
+            "ros_now_ns": 79000000000,
+            "receipt": 12925.935830461,
+            "steady_now": 12925.93599382,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.05401655286550522,
+              -0.008076866157352924,
+              -0.0782470703125
+            ],
+            "velocity": [
+              0.001621711766347289,
+              -0.0008501749252900481,
+              -0.0004681381396949291
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 78610000000,
+            "frame": "odom",
+            "ros_now_ns": 78610000000,
+            "receipt": 12925.329872083,
+            "steady_now": 12925.329995217,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.054000891745090485,
+              -0.006653966382145882,
+              -0.082275390625
+            ],
+            "velocity": [
+              0.0012988621601834893,
+              -0.00016163178952410817,
+              -0.0015251922886818647
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          5.580783317203061,
+          6.42992309126269,
+          -0.14482702799479166
+        ],
+        "yaw": -0.01299372511605881
+      },
+      "settled_preflight_state": {
+        "source_ns": 77310000000,
+        "frame": "odom",
+        "ros_now_ns": 77310000000,
+        "receipt": 12923.180881978,
+        "steady_now": 12923.345593135,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.049006715416908264,
+          -0.0072111040353775024,
+          -0.103363037109375
+        ],
+        "velocity": [
+          -0.002937641693279147,
+          0.00021725181431975216,
+          -0.00923478975892067
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    }
+  ],
+  "ownership": [
+    {
+      "service": "/mission/ownership",
+      "requested": "e030d689ba2242fbbf21daae89d29867",
+      "returned": "e030d689ba2242fbbf21daae89d29867",
+      "state": 2,
+      "steady": 12912.327078337
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "2ebc337395d4eeb93cee117292e57458",
+      "returned": "2ebc337395d4eeb93cee117292e57458",
+      "state": 2,
+      "steady": 12912.331219909
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "947c90dcde28aa81b91564f72b48b5a2",
+      "returned": "947c90dcde28aa81b91564f72b48b5a2",
+      "state": 2,
+      "steady": 12912.333520696
+    },
+    {
+      "service": "/mission/ownership",
+      "requested": "db34b3e826e7494d92fca5121ece3a9b",
+      "returned": "db34b3e826e7494d92fca5121ece3a9b",
+      "state": 2,
+      "steady": 13015.472957594
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "6e83fe4cda79aafc20f31cf3107eece2",
+      "returned": "6e83fe4cda79aafc20f31cf3107eece2",
+      "state": 2,
+      "steady": 13015.478926769
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "a237d33d2e9dc3c7ef8c8c8b449c1671",
+      "returned": "a237d33d2e9dc3c7ef8c8c8b449c1671",
+      "state": 2,
+      "steady": 13015.482162185
+    }
+  ],
+  "sessions": [
+    {
+      "steady": 12833.535767329,
+      "session_id": "2ebc337395d4eeb93cee117292e57458:1",
+      "active": true
+    },
+    {
+      "steady": 12869.179147294,
+      "session_id": "2ebc337395d4eeb93cee117292e57458:1",
+      "active": false
+    },
+    {
+      "steady": 12869.283860767,
+      "session_id": "947c90dcde28aa81b91564f72b48b5a2:1",
+      "active": true
+    },
+    {
+      "steady": 12902.223830368,
+      "session_id": "947c90dcde28aa81b91564f72b48b5a2:1",
+      "active": false
+    },
+    {
+      "steady": 12941.778507667,
+      "session_id": "a237d33d2e9dc3c7ef8c8c8b449c1671:1",
+      "active": true
+    },
+    {
+      "steady": 12973.462841615,
+      "session_id": "a237d33d2e9dc3c7ef8c8c8b449c1671:1",
+      "active": false
+    },
+    {
+      "steady": 12973.52670053,
+      "session_id": "6e83fe4cda79aafc20f31cf3107eece2:1",
+      "active": true
+    },
+    {
+      "steady": 13004.519916703,
+      "session_id": "6e83fe4cda79aafc20f31cf3107eece2:1",
+      "active": false
+    }
+  ],
+  "final_disarmed_state": {
+    "source_ns": 134900000000,
+    "frame": "odom",
+    "ros_now_ns": 134910000000,
+    "receipt": 13021.825891023,
+    "steady_now": 13021.854401483,
+    "armed": false,
+    "connected": true,
+    "mode": 3,
+    "mode_name": "OFFBOARD",
+    "position": [
+      0.039935678243637085,
+      -0.02157384529709816,
+      -0.135498046875
+    ],
+    "velocity": [
+      -0.0018429347546771169,
+      0.006555555853992701,
+      -0.03113286942243576
+    ],
+    "pose_valid": true,
+    "velocity_valid": true,
+    "battery_valid": true,
+    "battery_voltage": 16.200000762939453,
+    "battery_remaining": 0.9800000190734863
+  },
+  "sensors": {
+    "/livox/lidar": {
+      "count": 1323,
+      "first_source_ns": 2597000000,
+      "last_source_ns": 134812000000,
+      "receipt": 13021.771206528,
+      "frame": "livox_frame",
+      "points": 20000,
+      "sample_xyz": [
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.592143535614014,
+          1.755406141281128,
+          2.5865492820739746
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.44076681137085,
+          1.8321657180786133,
+          1.8622403144836426
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.609708786010742,
+          4.525206089019775,
+          1.8311811685562134
+        ],
+        [
+          4.149706840515137,
+          1.7171679735183716,
+          1.210577130317688
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          3.7751524448394775,
+          3.57373046875,
+          0.8828549981117249
+        ],
+        [
+          4.088932514190674,
+          1.563047170639038,
+          0.6707974076271057
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.4796271324157715,
+          10.998934745788574,
+          1.1033086776733398
+        ],
+        [
+          9.425397872924805,
+          7.94536018371582,
+          0.6739122271537781
+        ],
+        [
+          6.5916218757629395,
+          1.9989184141159058,
+          0.26714032888412476
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          23.74334716796875,
+          -17.332996368408203,
+          -0.23000000417232513
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0958443209528923,
+          -10.038954734802246,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -32.04719924926758,
+          -22.68816375732422,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -6.344320297241211,
+          5.310321807861328,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.30158162117004395,
+          5.641477584838867,
+          -0.23000000417232513
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          4.6341705322265625,
+          3.106994152069092,
+          -0.23000000417232513
+        ],
+        [
+          4.6685791015625,
+          0.809760570526123,
+          -0.23000000417232513
+        ],
+        [
+          5.948929309844971,
+          -2.024022340774536,
+          -0.23000000417232513
+        ],
+        [
+          1.7626919746398926,
+          -1.6698111295700073,
+          -0.23000000417232513
+        ],
+        [
+          2.0306715965270996,
+          -5.874175548553467,
+          -0.23000000417232513
+        ],
+        [
+          -0.2967281639575958,
+          -2.1150803565979004,
+          -0.23000000417232513
+        ],
+        [
+          -2.5994410514831543,
+          -4.011366367340088,
+          -0.23000000417232513
+        ],
+        [
+          -2.4577908515930176,
+          -1.2925586700439453,
+          -0.23000000417232513
+        ],
+        [
+          -3.4216277599334717,
+          -0.28036510944366455,
+          -0.23000000417232513
+        ],
+        [
+          -4.805083274841309,
+          2.244732618331909,
+          -0.23000000417232513
+        ],
+        [
+          -1.8251591920852661,
+          2.0463554859161377,
+          -0.23000000417232513
+        ],
+        [
+          -2.643023729324341,
+          10.842119216918945,
+          -0.23000000417232513
+        ],
+        [
+          0.5198372602462769,
+          2.530207633972168,
+          -0.23000000417232513
+        ],
+        [
+          4.302367687225342,
+          5.670214653015137,
+          -0.23000000417232513
+        ],
+        [
+          2.5980076789855957,
+          1.219761610031128,
+          -0.23000000417232513
+        ],
+        [
+          3.215921401977539,
+          0.04939689114689827,
+          -0.23000000417232513
+        ],
+        [
+          3.1829946041107178,
+          -1.6619077920913696,
+          -0.23000000417232513
+        ],
+        [
+          1.2598764896392822,
+          -1.6544232368469238,
+          -0.23000000417232513
+        ],
+        [
+          0.7913838028907776,
+          -4.3895344734191895,
+          -0.23000000417232513
+        ],
+        [
+          -0.5747551918029785,
+          -1.8432866334915161,
+          -0.23000000417232513
+        ],
+        [
+          -3.101306676864624,
+          -3.4607133865356445,
+          -0.23000000417232513
+        ],
+        [
+          -2.4869184494018555,
+          -0.835394561290741,
+          -0.23000000417232513
+        ],
+        [
+          -4.0895185470581055,
+          0.30677467584609985,
+          -0.23000000417232513
+        ],
+        [
+          -5.1789469718933105,
+          3.4840452671051025,
+          -0.23000000417232513
+        ],
+        [
+          -1.9964385032653809,
+          3.102621078491211,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.3782401084899902,
+          3.6862704753875732,
+          -0.23000000417232513
+        ],
+        [
+          10.22240161895752,
+          10.017508506774902,
+          0.08204285800457001
+        ],
+        [
+          5.375021934509277,
+          1.5890932083129883,
+          -0.23000000417232513
+        ],
+        [
+          12.284818649291992,
+          -1.5911591053009033,
+          -0.23000000417232513
+        ],
+        [
+          11.746174812316895,
+          -8.521573066711426,
+          -0.23000000417232513
+        ],
+        [
+          2.3827364444732666,
+          -4.2879743576049805,
+          -0.23000000417232513
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -1.9615988731384277,
+          -4.116644859313965,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -13.02503776550293,
+          -2.4441583156585693,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.3020608127117157,
+          9.830321311950684,
+          0.810153603553772
+        ],
+        [
+          5.022371768951416,
+          9.81035327911377,
+          0.36680537462234497
+        ],
+        [
+          6.135689735412598,
+          4.8369879722595215,
+          0.7561060786247253
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.8706910014152527,
+          8.368361473083496,
+          1.6078593730926514
+        ],
+        [
+          2.2078826427459717,
+          3.72145676612854,
+          0.6368595361709595
+        ],
+        [
+          4.575551986694336,
+          3.180091381072998,
+          1.157280445098877
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          1.1928077936172485,
+          8.640406608581543,
+          2.6572048664093018
+        ],
+        [
+          2.341447353363037,
+          3.7631561756134033,
+          1.1534905433654785
+        ],
+        [
+          4.888406276702881,
+          3.2282087802886963,
+          1.8747557401657104
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          2.4416346549987793,
+          3.971926689147949,
+          1.7449547052383423
+        ],
+        [
+          5.025537967681885,
+          3.314990520477295,
+          2.637007236480713
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          5.250513553619385,
+          3.623439311981201,
+          3.724705457687378
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "/camera/color/image_raw": {
+      "count": 4179,
+      "first_source_ns": 2599000000,
+      "last_source_ns": 134901000000,
+      "receipt": 13021.827437808,
+      "frame": "camera_color_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "rgb8",
+      "sample_saved": true,
+      "non_increasing_stamps": 258
+    },
+    "/camera/aligned_depth_to_color/depth/image_raw": {
+      "count": 4177,
+      "first_source_ns": 2599000000,
+      "last_source_ns": 134901000000,
+      "receipt": 13021.829205639,
+      "frame": "camera_depth_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "32FC1",
+      "finite_positive_pixels": 193747,
+      "min_m": 0.4507089853286743,
+      "max_m": 19.630544662475586,
+      "non_increasing_stamps": 257
+    },
+    "/livox/imu": {
+      "count": 18463,
+      "first_source_ns": 2607000000,
+      "last_source_ns": 134912000000,
+      "receipt": 13021.834073869,
+      "frame": "livox_frame",
+      "finite": true
+    }
+  },
+  "shutdown_seconds": 1.0156280610008253,
+  "scene": "forest_pine_v1",
+  "passed": true,
+  "scope": "Two sequential bounded southwest forest-edge reference missions in one offline native simulator. Not forest weaving, whole-forest, long-duration or hardware acceptance.",
+  "raw_result": "artifacts/scene-s6-forest-20261017/qualified-two-cycles/result.json",
+  "raw_result_sha256": "160d125ae15573cdf6c3b2506ccb3e5da823eccbea2cf52e30fc5035973462a2",
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "normal_exits": 24,
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "leftovers": [],
+  "cache": {
+    "passed": true,
+    "read_only": true,
+    "observer_sha256": "7565e3ac34c5653bdb7342f7f0c3262f728f37a9f477cd31b79c3e768b055d2a",
+    "asset_lock": {
+      "schema_version": 1,
+      "asset_set_id": "osrf_pine_tree_v1",
+      "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+      "lock_sha256": "973597d8cdef250faa0c21d1fcf1e89ac88bec15f9e9140985fda0f8fefae7c3",
+      "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+      "archive_size_bytes": 227118253
+    },
+    "processes": [
+      {
+        "pid": 74628,
+        "identity": {
+          "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+          "start_ticks": "1278294"
+        },
+        "model_paths": [
+          "/home/jia/.cache/easyfly/assets/osrf_pine_tree_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/973597d8cdef250faa0c21d1fcf1e89ac88bec15f9e9140985fda0f8fefae7c3/models",
+          "/usr/share/gazebo-11/models",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/normal/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models"
+        ],
+        "asset_mode": "cache",
+        "cache_root": null
+      }
+    ]
+  },
+  "offline_network": {
+    "namespace": "net:[4026532958]",
+    "interfaces": [
+      {
+        "ifindex": 1,
+        "ifname": "lo",
+        "flags": [
+          "LOOPBACK",
+          "UP",
+          "LOWER_UP"
+        ],
+        "mtu": 65536,
+        "qdisc": "noqueue",
+        "operstate": "UNKNOWN",
+        "group": "default",
+        "txqlen": 1000,
+        "link_type": "loopback",
+        "address": "00:00:00:00:00:00",
+        "broadcast": "00:00:00:00:00:00",
+        "addr_info": [
+          {
+            "family": "inet",
+            "local": "127.0.0.1",
+            "prefixlen": 8,
+            "scope": "host",
+            "label": "lo",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          },
+          {
+            "family": "inet6",
+            "local": "::1",
+            "prefixlen": 128,
+            "scope": "host",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          }
+        ]
+      }
+    ],
+    "routes": []
+  }
+}

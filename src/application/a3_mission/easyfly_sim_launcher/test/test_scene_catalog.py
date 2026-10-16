@@ -265,6 +265,51 @@ def test_selected_ogre_material(catalog_data, body, complete):
     assert save(catalog_data).validate('test').as_dict()['scene_resources_complete'] is complete
 
 
+def test_name_only_builtin_material_keeps_existing_behavior(catalog_data):
+    add_model(catalog_data, '<sdf><material><script><name>Gazebo/Black</name></script></material></sdf>')
+    assert save(catalog_data).validate('test').as_dict()['scene_resources_complete']
+
+
+@pytest.mark.parametrize('fault', [None, 'missing_texture', 'missing_name', 'duplicate',
+                                  'advanced', 'remote', 'traversal', 'missing_directory',
+                                  'symlink', 'directory_mesh'])
+def test_ogre_directory_locations_keep_closed_dependencies(catalog_data, tmp_path, fault):
+    content = ('<sdf><material><script>'
+               '<uri>model://box/materials/scripts/</uri>'
+               '<uri>model://box/materials/textures/</uri>'
+               '<name>Pine/Branch</name></script></material></sdf>')
+    directory, asset = add_model(catalog_data, content)
+    scripts = directory / 'materials/scripts'; scripts.mkdir(parents=True)
+    textures = directory / 'materials/textures'; textures.mkdir()
+    material = scripts / 'pine.material'
+    material.write_text('material Pine/Branch { technique { pass { '
+                        'alpha_rejection greater 128\ntexture_unit {\ntexture branch.png\n} } } }')
+    (textures / 'branch.png').write_bytes(b'locked test texture')
+    if fault == 'missing_texture':
+        (textures / 'branch.png').unlink()
+    elif fault == 'missing_name':
+        material.write_text('material Other {}')
+    elif fault == 'duplicate':
+        (scripts / 'duplicate.material').write_bytes(material.read_bytes())
+    elif fault == 'advanced':
+        material.write_text('material Pine/Branch { technique { pass { vertex_program_ref Foo {} } } }')
+    elif fault in ('remote', 'traversal', 'missing_directory'):
+        replacement = {'remote':'https://example.com/script/', 'traversal':'model://box/../scripts/',
+                       'missing_directory':'model://box/absent/'}[fault]
+        (directory / 'model.sdf').write_text(content.replace('model://box/materials/scripts/', replacement))
+    elif fault == 'symlink':
+        outside = tmp_path / 'outside.material'; outside.write_bytes(material.read_bytes())
+        material.unlink(); material.symlink_to(outside)
+    elif fault == 'directory_mesh':
+        (directory / 'model.sdf').write_text(content.replace('</sdf>', '<mesh><uri>model://box/materials/scripts/</uri></mesh></sdf>'))
+    refresh_inventory(catalog_data, asset)
+    result = save(catalog_data).validate('test').as_dict()
+    assert result['scene_resources_complete'] is (fault is None), result['issues']
+    if fault is None:
+        assert str(material) in result['checked_files']
+        assert str(textures / 'branch.png') in result['checked_files']
+
+
 def test_symlink_install_with_individual_model_files(catalog_data, tmp_path):
     add_model(catalog_data, '<sdf><model name="box"/></sdf>')
     save(catalog_data)

@@ -360,11 +360,13 @@ class _ResourceWalker:
             script_uris = set()
             for node in root.iter():
                 if node.tag.split('}')[-1] == 'script':
-                    names = [c.text.strip() for c in node if c.tag == 'name' and c.text]
                     for child in node:
                         if child.tag == 'uri' and child.text:
                             script_uris.add(child)
-                            self.reference(child.text.strip(), path, owner, names)
+                    # Keep the existing Gazebo builtin name-only convention;
+                    # explicit file/directory URIs receive the closure audit.
+                    if any(c.tag == 'uri' and c.text for c in node):
+                        self.script(node, path, owner)
             for node in root.iter():
                 tag = node.tag.split('}')[-1]
                 if tag == 'uri' and node.text and node not in script_uris:
@@ -396,6 +398,66 @@ class _ResourceWalker:
             self.fail(f'OGRE program dependency audit pending: {path}')
         elif suffix not in ('.png', '.jpg', '.jpeg', '.stl', '.csv', '.dds', '.tga', '.bmp', '.gif', '.tif', '.tiff'):
             self.fail(f'unsupported resource format; dependency audit pending: {path}')
+
+    def script(self, node, source, owner):
+        """Resolve selected OGRE materials across explicit local search locations.
+
+        SDF permits both script files and directories (including a separate
+        texture directory). A directory is never accepted as a mesh/resource
+        file. Every selected material must have exactly one definition across
+        these locations and still passes the existing dependency audit.
+        """
+        names = [c.text.strip() for c in node if c.tag == 'name' and c.text]
+        uris = [c.text.strip() for c in node if c.tag == 'uri' and c.text]
+        if not names or len(set(names)) != len(names) or not uris:
+            self.fail(f'OGRE script requires unique selected materials and local URIs: {source}')
+            return
+        candidates = {}
+        for uri in uris:
+            try:
+                if uri.startswith('model://'):
+                    suffix = str(_relative(uri[len('model://'):]))
+                    name, _, rest = suffix.partition('/')
+                    if name not in self.models:
+                        raise CatalogError(f'{source.name}: undeclared/missing model {name}')
+                    directory, _ = self.models[name]
+                    target = _inside(directory, rest or '.')
+                elif uri.startswith('file://media/'):
+                    directory = self.catalog.external['gazebo_share'].resolve(strict=True)
+                    target = self.catalog.resolve({'external':'gazebo_share', 'path':uri[7:]})
+                elif '://' in uri or uri.startswith('file:'):
+                    raise CatalogError(f'unsupported or remote URI: {uri}')
+                else:
+                    if '\\' in uri or '%' in uri or ':' in uri or Path(uri).is_absolute():
+                        raise CatalogError(f'invalid resource URI: {uri}')
+                    directory = owner
+                    target = (source.parent / uri).resolve(strict=True)
+                    if not target.is_relative_to(directory):
+                        raise CatalogError(f'relative reference escapes model: {uri}')
+                if target.is_dir():
+                    files = sorted(target.glob('*.material'))
+                elif target.is_file() and target.suffix.lower() == '.material':
+                    files = [target]
+                else:
+                    raise CatalogError(f'unsupported OGRE script location: {uri}')
+                for path in files:
+                    path = path.resolve(strict=True)
+                    if not path.is_relative_to(directory):
+                        raise CatalogError(f'OGRE script symlink escapes model: {uri}')
+                    candidates[path] = directory
+            except (OSError, ValueError, KeyError) as error:
+                self.fail(error)
+        for name in names:
+            matches = []
+            for path in candidates:
+                text = re.sub(r'/\*.*?\*/|//[^\n]*', '', path.read_text(), flags=re.S)
+                if re.search(r'\bmaterial\s+' + re.escape(name) + r'\s*\{', text):
+                    matches.append(path)
+            if len(matches) != 1:
+                self.fail(f'OGRE material absent, ambiguous or inherited/unsupported: {name} in {source}')
+            else:
+                path = matches[0]
+                self.walk(path, candidates[path], [name])
 
     def material(self, path, owner, names):
         """Audit selected simple OGRE materials; fail closed on advanced syntax."""

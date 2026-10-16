@@ -1,0 +1,54 @@
+{
+  "source_url": "https://github.com/osrf/gazebo_models",
+  "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+  "declared_license": "CC-BY-3.0",
+  "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+  "archive_bytes": 227118253,
+  "selected_model": "pine_tree",
+  "selected_model_license_declarations": [],
+  "license_sha256": "776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e",
+  "files": [
+    {
+      "source": "pine_tree/materials/scripts/pine_tree.material",
+      "target": "cache:models/pine_tree/materials/scripts/pine_tree.material",
+      "source_sha256": "ce9df2f64da08083bddebc404032bf535cf5d3657a578811733b42d43acd28f1",
+      "sha256": "ce9df2f64da08083bddebc404032bf535cf5d3657a578811733b42d43acd28f1",
+      "changes": []
+    },
+    {
+      "source": "pine_tree/materials/textures/bark_diffuse.png",
+      "target": "cache:models/pine_tree/materials/textures/bark_diffuse.png",
+      "source_sha256": "344e17ef587dc7d0e2e36d3094c7aa0d0dbd048b3f5af05e917a84f21d9abd17",
+      "sha256": "344e17ef587dc7d0e2e36d3094c7aa0d0dbd048b3f5af05e917a84f21d9abd17",
+      "changes": []
+    },
+    {
+      "source": "pine_tree/materials/textures/branch_2_diffuse.png",
+      "target": "cache:models/pine_tree/materials/textures/branch_2_diffuse.png",
+      "source_sha256": "aece9329148a3cb072c252029bd00624d7e62541b25c3303c0e0152e6bdd0c99",
+      "sha256": "aece9329148a3cb072c252029bd00624d7e62541b25c3303c0e0152e6bdd0c99",
+      "changes": []
+    },
+    {
+      "source": "pine_tree/meshes/pine_tree.dae",
+      "target": "cache:models/pine_tree/meshes/pine_tree.dae",
+      "source_sha256": "59ed97a15067ff158d2e165f651bb71756ebbe8261146672e0cce085eb1e99c4",
+      "sha256": "59ed97a15067ff158d2e165f651bb71756ebbe8261146672e0cce085eb1e99c4",
+      "changes": []
+    },
+    {
+      "source": "pine_tree/model.config",
+      "target": "cache:models/pine_tree/model.config",
+      "source_sha256": "01d6020e5589492b84a6a36bffacdcfd68f0a18abba9e3057806e818b2966528",
+      "sha256": "01d6020e5589492b84a6a36bffacdcfd68f0a18abba9e3057806e818b2966528",
+      "changes": []
+    },
+    {
+      "source": "pine_tree/model.sdf",
+      "target": "cache:models/pine_tree/model.sdf",
+      "source_sha256": "f2fea2127535dc48102afab0b0376d6e5385b31135df40956bccf8067b9d8943",
+      "sha256": "f2fea2127535dc48102afab0b0376d6e5385b31135df40956bccf8067b9d8943",
+      "changes": []
+    }
+  ]
+}

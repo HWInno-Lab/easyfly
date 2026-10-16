@@ -1,0 +1,117 @@
+schema_version: 1
+id: forest_pine_v1
+name: ETHZ 布局松树林
+status: registered
+category: outdoor/forest
+tags:
+- forest
+- pine
+- static
+- occlusion
+- navigation
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/outdoor/forest/forest_pine_v1.world
+  sha256: 960af1553c92ac8ca1be5adb9550f96b68603594e18b0048776dba7e99206f1b
+provenance:
+  status: recorded
+  source_url: https://github.com/ethz-asl/forest_gen
+  revision: 4ca3e45cd4fe8f5d8ac9fd13daafec67c0d0417d
+  declared_license: BSD-2-Clause
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/forest_gen/LICENSE
+  - package: easyfly_gazebo_worlds
+    path: licenses/forest_gen/ATTRIBUTION.md
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/layout-source.json
+  note: Derived first twenty-tree layout. Poses/scales retained; third-party original
+    tree assets replaced by separately reviewed CC-BY-3.0 OSRF pine assets. Not original
+    benchmark geometry.
+asset_sets:
+- osrf_pine_tree_v1
+- gazebo_builtin_v1
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - -5.5
+  - -6.5
+  - 0.1
+  yaw: 0.0
+  basis: 'Native ODE: southwest forest edge only, floor z=0; 21,794 rays, minimum
+    sampled clearance 2.847m; continuous route to all tree AABBs >=1.934m. All twenty
+    original placements retained.'
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 5.599212667069178
+    - 6.414283842203048
+    - -0.0423318154296875
+    yaw: -0.015069397213101226
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+  heartbeat_rate_hz: 5
+  clock_rate_hz: 100
+  battery_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/forest_pine_v1/edge_out_and_back.yaml
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/layout-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/geometry-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/bootstrap-s6-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/calibration-s6-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/mission-s6-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/forest_pine_v1/resource-audit-s6.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

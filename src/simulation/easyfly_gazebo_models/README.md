@@ -67,3 +67,25 @@ for offline import, validation, interruption and version behavior.
 `tools/scenes/lock_aws_house_archive.py` is a maintainer's read-only-source recipe
 builder/checker against the already reviewed archive and origin records. Runtime
 fetch consumes its declarative output and never executes this or upstream code.
+
+## S6 Pine Tree cache asset
+
+`osrf_pine_tree_v1` selects the six unchanged `pine_tree` files from the official
+Open Robotics `osrf/gazebo_models` snapshot at
+`8163eb4b5e7e21985c6591d1c0bfb56468c0093f`. The repository declares CC-BY-3.0;
+the original notice, model author Louise Poubel, source, license link and
+per-file origins are retained under `licenses/osrf_pine/`. This review concerns
+this selected model, not every model in the upstream repository.
+
+The locked official GitHub archive is 227,118,253 bytes; only six files (about
+621 KB) are extracted into the external model cache. The full original archive
+and license remain cache evidence, outside ROS installation. All forest layouts
+using this asset share one cached model version. Prepare it explicitly with
+`scene_catalog fetch forest_pine_v1`; `--archive` and `--offline` behave as for
+the existing S5 cache. Startup never downloads missing assets.
+
+`tools/scenes/import_pine_forest.py <archive> <forest_gen-source-root> --check`
+reproduces the fixed asset manifest, notices, derived world and layout record
+from local source bytes. It neither executes upstream code nor overwrites files.
+The derived world preserves ETHZ's twenty original poses/scales but uses these
+separately licensed pine meshes; original TurboSquid tree assets are not imported.

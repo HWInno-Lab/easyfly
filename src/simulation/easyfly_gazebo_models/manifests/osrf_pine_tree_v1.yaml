@@ -1,0 +1,90 @@
+schema_version: 1
+asset_set_id: osrf_pine_tree_v1
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://github.com/osrf/gazebo_models
+  revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  declared_license: CC-BY-3.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_pine/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_pine/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_pine/origins.json
+  note: Only the pine_tree six-file closure is selected. Original file bytes and model
+    author credits retained; no claim about other models in the archive.
+models:
+- name: pine_tree
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/osrf/gazebo_models
+    revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+    declared_license: CC-BY-3.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_pine/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_pine/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_pine/origins.json
+    note: Only the pine_tree six-file closure is selected. Original file bytes and
+      model author credits retained; no claim about other models in the archive.
+files:
+- path: pine_tree/materials/scripts/pine_tree.material
+  sha256: ce9df2f64da08083bddebc404032bf535cf5d3657a578811733b42d43acd28f1
+- path: pine_tree/materials/textures/bark_diffuse.png
+  sha256: 344e17ef587dc7d0e2e36d3094c7aa0d0dbd048b3f5af05e917a84f21d9abd17
+- path: pine_tree/materials/textures/branch_2_diffuse.png
+  sha256: aece9329148a3cb072c252029bd00624d7e62541b25c3303c0e0152e6bdd0c99
+- path: pine_tree/meshes/pine_tree.dae
+  sha256: 59ed97a15067ff158d2e165f651bb71756ebbe8261146672e0cce085eb1e99c4
+- path: pine_tree/model.config
+  sha256: 01d6020e5589492b84a6a36bffacdcfd68f0a18abba9e3057806e818b2966528
+- path: pine_tree/model.sdf
+  sha256: f2fea2127535dc48102afab0b0376d6e5385b31135df40956bccf8067b9d8943
+storage: cached
+local_changes: []
+inventory_note: All six pine_tree files, unchanged. Unrelated repository models remain
+  in the original archive and are not extracted into model roots.
+archive:
+  format: tar.gz
+  urls:
+  - https://codeload.github.com/osrf/gazebo_models/tar.gz/8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  sha256: e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a
+  size_bytes: 227118253
+  prefix: gazebo_models-8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  max_members: 2384
+  max_unpacked_bytes: 322220389
+  license:
+    source: LICENSE
+    sha256: 776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e
+  members:
+  - source: pine_tree/materials/scripts/pine_tree.material
+    target: pine_tree/materials/scripts/pine_tree.material
+    source_sha256: ce9df2f64da08083bddebc404032bf535cf5d3657a578811733b42d43acd28f1
+    replacements: []
+  - source: pine_tree/materials/textures/bark_diffuse.png
+    target: pine_tree/materials/textures/bark_diffuse.png
+    source_sha256: 344e17ef587dc7d0e2e36d3094c7aa0d0dbd048b3f5af05e917a84f21d9abd17
+    replacements: []
+  - source: pine_tree/materials/textures/branch_2_diffuse.png
+    target: pine_tree/materials/textures/branch_2_diffuse.png
+    source_sha256: aece9329148a3cb072c252029bd00624d7e62541b25c3303c0e0152e6bdd0c99
+    replacements: []
+  - source: pine_tree/meshes/pine_tree.dae
+    target: pine_tree/meshes/pine_tree.dae
+    source_sha256: 59ed97a15067ff158d2e165f651bb71756ebbe8261146672e0cce085eb1e99c4
+    replacements: []
+  - source: pine_tree/model.config
+    target: pine_tree/model.config
+    source_sha256: 01d6020e5589492b84a6a36bffacdcfd68f0a18abba9e3057806e818b2966528
+    replacements: []
+  - source: pine_tree/model.sdf
+    target: pine_tree/model.sdf
+    source_sha256: f2fea2127535dc48102afab0b0376d6e5385b31135df40956bccf8067b9d8943
+    replacements: []

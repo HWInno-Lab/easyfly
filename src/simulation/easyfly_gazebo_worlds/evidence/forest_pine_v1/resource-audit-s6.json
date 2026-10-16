@@ -1,0 +1,72 @@
+{
+  "scene": "forest_pine_v1",
+  "scope": "Resource and offline-check history only; no flight acceptance.",
+  "layout": {
+    "source": "https://github.com/ethz-asl/forest_gen",
+    "revision": "4ca3e45cd4fe8f5d8ac9fd13daafec67c0d0417d",
+    "license": "BSD-2-Clause",
+    "original_tree_meshes_imported": false,
+    "reason": "README separately attributes original trees to TurboSquid; no reviewed independent redistribution closure. Reuse only layout with separate reviewed pine geometry."
+  },
+  "model": {
+    "source": "https://github.com/osrf/gazebo_models",
+    "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+    "license": "CC-BY-3.0",
+    "author": "Louise Poubel",
+    "unchanged_files": 6,
+    "asset": "osrf_pine_tree_v1",
+    "cache_lock": "973597d8cdef250faa0c21d1fcf1e89ac88bec15f9e9140985fda0f8fefae7c3"
+  },
+  "changes": [
+    "Declare builtin ground/sun explicitly in scene asset sets.",
+    "Resolve explicit OGRE script file/directory locations as one selected-material closure; retain existing name-only builtin behavior.",
+    "Reject missing/ambiguous material definitions and retain texture/program/path/inventory checks; no model payload changes."
+  ],
+  "failures_preserved": [
+    {
+      "path": "artifacts/scene-s6-forest-20261017/draft-validate.json",
+      "sha256": "b209bd57af81566c64a90dc21cc4714aaec27fadb5025ccff79b952277a710ee"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/draft-bootstrap-v1-validate.json",
+      "sha256": "9974c252462115c09102f2a3c61018c7f997faafa3b5fd045444c1f65c1e8684"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/draft-bootstrap-v1.console.log",
+      "sha256": "8c457f8c9453d9cfeb9b5b921d132f0e00e0e1e70d2560d832386e452d820463"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/normal-tests.log",
+      "sha256": "97ed14d57717ee36b0dc0e008ef1508465cf572597b5068d4cb49f2a1853ed18"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/test-results-normal.txt",
+      "sha256": "7c5dbba80f5e88f8b9ef7e5e417bebf85bba7aac376d178db18afde4aa239a75"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/normal-schema-recheck.log",
+      "sha256": "e0b465e8b078ff189e02cd90f204183ea9dc910f790b116fef53a19bcb6e7581"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/test-results-normal-premature-schema.txt",
+      "sha256": "12cb350ea0bd60e80f520ba3e13d2aab916e3c70c3522bf1b2a2f99f599200aa"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/xml-schema/origin.json",
+      "sha256": "c0adc9059548dc470924f18bf45f977cc1b515e8c41947f30e67677c79c4fa4a"
+    },
+    {
+      "path": "artifacts/scene-s6-forest-20261017/symlink-cli.log",
+      "sha256": "24504e627f65417fd5c1f67e6f318f9a1c193de9cc4a42814b1b6f17d31b5d44"
+    }
+  ],
+  "native_startup_in_rejected_draft_v1": false,
+  "ordinary_tests_start_flight": false,
+  "parser_source_sha256": "ca251132fd1885390c38000050f0bcbdbf86de65057d5c50e5d69b56f65ab517",
+  "limitations": [
+    "Central route not qualified; no layout/seed changed to seek a passing flight.",
+    "Camera duplicate-stamp counters retained under existing acceptance gates; no all-frame camera monotonicity claim.",
+    "Historical Gazebo rendering startup fault remains a separate unresolved issue; not a diagnosis from this scene."
+  ],
+  "symlink_cli_rejection": "New calibration evidence had not been reinstalled after recording; first matrix rejected before simulator children. Lightweight resource package rebuilt and fresh 36-check matrix passed."
+}
