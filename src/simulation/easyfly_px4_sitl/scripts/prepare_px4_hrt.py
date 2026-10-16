@@ -41,7 +41,7 @@ def compile_command(entry, output, patched):
     return ['-DMODULE_NAME="px4"' if v.startswith('-DMODULE_NAME=') else v for v in args]
 
 
-def link_command(line, output, layer):
+def link_command(line, output, layer, mag_archive=None):
     """Discard CMake's alias postcommands, rejecting anything except one known link step."""
     args = shlex.split(line)
     if args[:2] != [':', '&&']:
@@ -52,7 +52,13 @@ def link_command(line, output, layer):
             args[args.index('-o') + 1] != 'bin/px4':
         raise ValueError('unsupported PX4 link targets')
     args[args.index('-o') + 1] = str(output)
-    return [str(layer) if v == LAYER_PATH else v for v in args]
+    args = [str(layer) if v == LAYER_PATH else v for v in args]
+    if mag_archive is not None:
+        from easyfly_px4_sitl.mag_compatibility import EKF_ARCHIVE
+        if args.count(EKF_ARCHIVE) != 1:
+            raise ValueError('unsupported PX4 magnetometer link targets')
+        args = [str(mag_archive) if v == EKF_ARCHIVE else v for v in args]
+    return args
 
 
 def native_probe(source, build, patched, resources, output):
@@ -90,7 +96,7 @@ def native_probe(source, build, patched, resources, output):
     return results
 
 
-def prepare(source, output, resources):
+def prepare(source, output, resources, mag_lpf_interval=False):
     """Patch one local copy, verify the race, then relink a separate simulation-only binary."""
     source = source.resolve(strict=True)
     output = output.resolve()
@@ -99,6 +105,9 @@ def prepare(source, output, resources):
     if digest(source / HRT_PATH) != HRT_SHA256 or digest(original_binary) != BINARY_SHA256:
         raise ValueError(
             'unsupported PX4 HRT source or binary; explicit compatibility review needed')
+    if mag_lpf_interval:
+        from easyfly_px4_sitl.mag_compatibility import check_inputs, prepare_mag
+        check_inputs(source, resources)
     if output == source or output in source.parents or source in output.parents or \
             not output.parent.is_dir() or output.exists():
         raise ValueError('new independent output directory with an existing parent required')
@@ -116,13 +125,15 @@ def prepare(source, output, resources):
     layer = output / 'libpx4_layer.a'
     shutil.copy2(build / LAYER_PATH, layer)
     subprocess.run(['ar', 'r', str(layer), str(obj)], check=True)
+    mag_archive, mag_record = (prepare_mag(source, output, resources, compile_command)
+                               if mag_lpf_interval else (None, None))
     input_tree = output / 'px4-input'
     local_build = input_tree / 'build/px4_sitl_default'
     local_bin = local_build / 'bin'
     local_bin.mkdir(parents=True)
     link_lines = subprocess.run(['ninja', '-t', 'commands', 'bin/px4'], cwd=build,
                                 check=True, text=True, capture_output=True).stdout.splitlines()
-    link_args = link_command(link_lines[-1], local_bin / 'px4', layer)
+    link_args = link_command(link_lines[-1], local_bin / 'px4', layer, mag_archive)
     subprocess.run(link_args, check=True, cwd=build)
     for alias in (build / 'bin').glob('px4-*'):
         if alias.name == 'px4-alias.sh' and alias.is_file() and not alias.is_symlink():
@@ -150,6 +161,8 @@ def prepare(source, output, resources):
                 'alias_script_sha256': digest(local_bin / 'px4-alias.sh'),
                 'compile_args': compile_args, 'link_args': link_args,
                 'safety_thresholds_changed': False}
+    if mag_record is not None:
+        manifest['mag_lpf_interval'] = mag_record
     (output / 'compatibility.json').write_text(json.dumps(manifest, indent=2) + '\n')
     return manifest
 
@@ -159,12 +172,14 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--px4-dir', required=True, type=Path)
     parser.add_argument('--output-dir', required=True, type=Path)
+    parser.add_argument('--mag-lpf-interval', action='store_true',
+                        help='Also apply the pinned simulation-only mag sample interval fix')
     args = parser.parse_args()
     resources = Path(__file__).resolve().parents[1] / 'compat'
     if not resources.is_dir():
         from ament_index_python.packages import get_package_share_directory
         resources = Path(get_package_share_directory('easyfly_px4_sitl')) / 'compat'
-    result = prepare(args.px4_dir, args.output_dir, resources)
+    result = prepare(args.px4_dir, args.output_dir, resources, args.mag_lpf_interval)
     print(json.dumps({k: result[k] for k in ('input_tree', 'binary_sha256', 'simulation_only')}))
 
 

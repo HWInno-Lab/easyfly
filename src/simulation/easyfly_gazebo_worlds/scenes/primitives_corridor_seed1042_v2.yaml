@@ -1,7 +1,7 @@
 schema_version: 1
 id: primitives_corridor_seed1042_v2
 name: primitives_corridor_seed1042_v2
-status: draft
+status: registered
 category: benchmark/navigation
 tags:
 - procedural
@@ -25,7 +25,8 @@ provenance:
   note: Project-authored primitive geometry; pinned input, generator and layout fingerprints.
 asset_sets: []
 required_plugins: []
-supported_profiles: []
+supported_profiles:
+- navigation_dev
 legacy_profiles: []
 spawn:
   frame: world
@@ -40,10 +41,10 @@ navigation:
   frame: odom
   world_to_navigation:
     translation:
-    - 0.006483246184264621
-    - 0.005579784978181124
-    - -0.0644570595703125
-    yaw: -0.014484107619249093
+    - 0.0018967905149717506
+    - 0.007083981142689785
+    - -0.04139085677083334
+    yaw: -0.013249625820769785
   recommended_region:
     min:
     - -0.3
@@ -71,13 +72,15 @@ runtime:
   notes:
   - Same managed vehicle, sensors and admission limits as qualified indoor scenes.
   heartbeat_rate_hz: 5
-recommended_missions: []
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/primitives_corridor_seed1042_v2/straight_out_and_back.yaml
 map_products: []
 verification:
   resources_complete: true
   world_loaded: true
   sensors_checked: true
-  navigation_tested: false
+  navigation_tested: true
   evidence_refs:
   - package: easyfly_gazebo_worlds
     path: evidence/primitives_corridor_seed1042_v2/generation.json
@@ -93,3 +96,11 @@ verification:
     path: evidence/primitives_corridor_seed1042_v2/calibration-s4-final.json
   - package: easyfly_gazebo_worlds
     path: evidence/primitives_corridor_seed1042_v2/mission-s4-rejected-v2.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/calibration-s4-mag-interval-v4.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_corridor_seed1042_v2/mission-s4-mag-interval-v6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/px4-mag-interval-fix-s4.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

@@ -5,6 +5,41 @@ build, a single-vehicle reservation, and the maintained EasyFly Iris SDF.
 Missing or mismatched compatibility inputs fail closed; the original PX4
 installation is not patched by this launcher. No automatic flight goal is sent.
 
+## Optional magnetometer sample interval compatibility
+
+The pinned PX4 1.16.2 magnetometer reset filter is initialized with a 10 ms
+EKF step, but updated only when magnetometer samples arrive. The default native
+magnetometer publication rate is 15 Hz. Using the prediction interval for these
+arrivals stretches the intended 0.09 s filter time constant, producing a stale
+body-frame field during turns and a large heading correction at airborne
+magnetic alignment. The retained S4 ULog and native update-expression replay
+record this failure separately from scene qualification.
+
+An explicit simulation-only build can correct the interval using successive
+native magnetometer sample timestamps. It retains the 0.09 s constant, noisy
+measurements, all fusion/reset conditions, and the existing HRT repair:
+
+```bash
+ros2 run easyfly_px4_sitl prepare_px4_hrt \
+  --px4-dir /home/jia/PX4-Autopilot-1.16.2 \
+  --output-dir /home/jia/easyfly_ws/build/easyfly_px4_mag_compat \
+  --mag-lpf-interval
+export EASYFLY_PX4_HRT_COMPAT_DIR=/home/jia/easyfly_ws/build/easyfly_px4_mag_compat
+```
+
+The output must be a new directory. Preparation checks the source, original
+archive, filter header and patch hashes; compiles the original and corrected
+update expressions with the actual PX4 AlphaFilter; then replaces one object
+in a private EKF archive and relinks a private binary. No upstream source or
+previous compatibility build is overwritten. Ordinary tests never build PX4
+or launch flight. The option is explicit; HRT-only builds remain supported.
+
+A scene qualification can require `verification.required_px4_compatibility:
+[mag_lpf_interval_v1]`. The catalog derives that feature from the selected,
+fully checked build or private staging manifest. A missing feature makes its
+runtime resources incomplete and managed startup fails before children start.
+An offline PASS still does not certify flight readiness.
+
 ## Managed scenes
 
 Both entries accept an optional `scene` ID and a `scene_profile` compatibility

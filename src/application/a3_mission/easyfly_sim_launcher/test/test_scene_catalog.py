@@ -54,6 +54,17 @@ def test_positive_offline_is_not_runtime_verification(catalog_data):
     assert result['runtime_verified'] is False
 
 
+def test_qualification_dependency_requires_reviewed_px4_feature(catalog_data):
+    shares, data = catalog_data
+    data['verification']['required_px4_compatibility'] = ['mag_lpf_interval_v1']
+    catalog = save(catalog_data)
+    report = catalog.validate('test').as_dict()
+    assert not report['runtime_resources_complete']
+    assert any('mag_lpf_interval_v1' in issue['message'] for issue in report['issues'])
+    checked = SceneCatalog(shares, px4_compatibility=['mag_lpf_interval_v1'])
+    assert checked.validate('test').as_dict()['runtime_resources_complete']
+
+
 def test_unknown_scene(catalog_data):
     with pytest.raises(CatalogError, match='unknown scene'):
         save(catalog_data).validate('../../test')

@@ -117,11 +117,13 @@ class ValidationReport:
 class SceneCatalog:
     """Load schema-v1 catalogs from explicitly trusted roots (including symlink installs)."""
 
-    def __init__(self, package_shares, *, external_roots=None, plugin_dirs=(), trusted_sources=()):
+    def __init__(self, package_shares, *, external_roots=None, plugin_dirs=(), trusted_sources=(),
+                 px4_compatibility=()):
         self.packages = {k: Path(v).resolve(strict=True) for k, v in package_shares.items()}
         self.external = {k: Path(v).resolve(strict=True) for k, v in (external_roots or {}).items()}
         self.plugin_dirs = tuple(Path(p).resolve(strict=True) for p in plugin_dirs)
         self.trusted_sources = tuple(Path(p).resolve(strict=True) for p in trusted_sources)
+        self.px4_compatibility = frozenset(px4_compatibility)
         worlds = self.packages['easyfly_gazebo_worlds']
         schemas = worlds / 'schemas'
         self.schemas = {}
@@ -162,6 +164,9 @@ class SceneCatalog:
             raise CatalogError(f'unknown scene: {scene_id}')
         scene = self.scenes[scene_id]
         report = ValidationReport(scene_id)
+        for feature in scene['verification'].get('required_px4_compatibility', []):
+            if feature not in self.px4_compatibility:
+                report.add('runtime_resources', f'required reviewed PX4 compatibility missing: {feature}')
         self._provenance(scene['provenance'], report, 'world')
         if scene['status'] == 'draft' or not scene['supported_profiles']:
             report.add('registration', 'draft scene; no newly verified profile compatibility')

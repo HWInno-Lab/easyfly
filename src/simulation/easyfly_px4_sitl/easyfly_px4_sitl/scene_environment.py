@@ -59,8 +59,15 @@ def installed_catalog(*, px4_dir=None, px4_models=None, gazebo_share=None, packa
     for path in candidates:
         if path.is_dir():
             plugin_dirs.append(path)
+    features = ()
+    if px4_dir is not None:
+        from .hrt_compatibility import verified_features
+        try:
+            features = verified_features(px4_dir)
+        except (OSError, RuntimeError, ValueError) as error:
+            notes.append('PX4 qualification features unavailable: ' + str(error))
     catalog = SceneCatalog(shares, external_roots=roots, plugin_dirs=plugin_dirs,
-                           trusted_sources=sources)
+                           trusted_sources=sources, px4_compatibility=features)
     def referenced_packages(value):
         if isinstance(value,dict):
             if 'package' in value and 'path' in value:

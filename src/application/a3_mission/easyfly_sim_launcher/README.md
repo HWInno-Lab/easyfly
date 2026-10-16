@@ -184,9 +184,19 @@ Qualification adds separate native geometry, cold-start and mission evidence.
 `--check-layout` checks immutable fields and generated resources while preserving
 measured qualification metadata; it always reports `runtime_verified=false`.
 
-The first complete S4 sample is `primitives_sparse_seed42_v1`: two managed
-cold starts and two sequential reference missions passed, including normal
-process exit. The corridor v1 remains draft after insufficient floor support;
-corridor v2 remains draft after the second-mission heading check rejected it.
-Their evidence is retained. A generated or geometrically valid layout does not
-inherit the sparse sample's navigation qualification. S4 as a whole is pending.
+The two qualified S4 samples are `primitives_sparse_seed42_v1` and
+`primitives_corridor_seed1042_v2`. Each has two independent managed cold starts
+and two sequential bounded reference missions with normal process exit.
+Current evidence is `calibration-s4-mag-interval-v4.json` and
+`mission-s4-mag-interval-v6.json` under each scene's evidence directory.
+
+Corridor v2 requires the checked `mag_lpf_interval_v1` PX4 compatibility feature;
+select an explicitly prepared `--mag-lpf-interval` build through
+`EASYFLY_PX4_HRT_COMPAT_DIR`. HRT-only builds are rejected before startup for this
+scene. See easyfly_px4_sitl/README.md for the preparation command. Its earlier
+heading rejection remains in `mission-s4-rejected-v2.json`.
+Corridor v1 remains draft after insufficient floor support; the blocked input
+is rejected without output. Neither inherits another layout's qualification.
+This completes S4's generator and selected sample scope, covering only the
+recorded routes and runtime; every new generated layout needs independent
+qualification.

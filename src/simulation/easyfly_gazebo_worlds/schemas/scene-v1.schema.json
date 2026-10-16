@@ -544,6 +544,11 @@
     "verification": {
       "type": "object",
       "properties": {
+        "required_px4_compatibility": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["mag_lpf_interval_v1"]}
+        },
         "resources_complete": {
           "type": "boolean"
         },

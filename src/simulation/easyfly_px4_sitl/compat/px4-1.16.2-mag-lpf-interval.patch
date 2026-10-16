@@ -1,0 +1,14 @@
+--- mag_control.cpp
++++ mag_control.cpp
+@@ -82,7 +82,10 @@
+ 			}
+ 
+ 		} else {
+-			_mag_lpf.update(mag_sample.mag);
++			// This filter runs on mag arrivals, not every EKF prediction. Keep its
++			// time constant independent of the sensor publication rate.
++			_mag_lpf.update(mag_sample.mag,
++				       1e-6f * (mag_sample.time_us - aid_src.timestamp_sample));
+ 			_mag_counter++;
+ 		}
+ 

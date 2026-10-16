@@ -41,10 +41,10 @@ navigation:
   frame: odom
   world_to_navigation:
     translation:
-    - -0.0022726787016533003
-    - 0.008400217862799764
-    - -0.053023140299479174
-    yaw: -0.01472671008727012
+    - 0.004588799866420838
+    - 0.007065612822771072
+    - -0.060932279296875
+    yaw: -0.014703053372776168
   recommended_region:
     min:
     - -0.3
@@ -96,3 +96,9 @@ verification:
     path: evidence/primitives_sparse_seed42_v1/calibration-s4-final.json
   - package: easyfly_gazebo_worlds
     path: evidence/primitives_sparse_seed42_v1/mission-s4-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_sparse_seed42_v1/calibration-s4-mag-interval-v4.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/primitives_sparse_seed42_v1/mission-s4-mag-interval-v6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/px4-mag-interval-fix-s4.json

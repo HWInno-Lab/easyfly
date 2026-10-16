@@ -64,6 +64,9 @@ def validate_tree(tree):
         raise ValueError('real executable compatibility binary required')
     if any(digest(path) != expected for path, expected in checks):
         raise ValueError('PX4 compatibility input fingerprint mismatch')
+    if 'mag_lpf_interval' in value:
+        from easyfly_px4_sitl.mag_compatibility import validate_mag
+        validate_mag(value, source, tree.parent)
     for variant, expected_corrupt in [('original', True), ('patched', False)]:
         runs = value['native_comparison'][variant]['runs']
         if len(runs) != 10 or any(v.get('queue_corrupt') is not expected_corrupt for v in runs):
@@ -149,3 +152,12 @@ def select_px4_directory(requested=None, compatibility_root=None):
             'SITL refused: reviewed project-local PX4 HRT compatibility build required; '
             'run easyfly_px4_sitl prepare_px4_hrt or check EASYFLY_PX4_HRT_COMPAT_DIR; '
             'no unpatched fallback. Detail: ' + str(error)) from error
+
+
+def verified_features(directory):
+    """Derive qualification features from actual checked inputs, never a path or flag."""
+    tree = select_px4_directory(directory)
+    if (tree / 'easyfly_staging.json').exists():
+        tree = Path(read_manifest(tree / 'easyfly_staging.json')['source'])
+    value = validate_tree(tree)
+    return frozenset({'mag_lpf_interval_v1'} if 'mag_lpf_interval' in value else ())

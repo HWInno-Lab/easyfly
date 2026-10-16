@@ -1,0 +1,108 @@
+{
+  "passed": true,
+  "scope": "Pinned simulation-only magnetometer reset LPF interval correction. Native filter/production-expression evidence only; independent scene mission evidence is required.",
+  "cause": "The 0.09s magnetometer LPF used a 10ms EKF prediction interval but was updated only at native mag arrivals (median 70.8ms), stretching its effective time constant. During turning, airborne magnetic alignment reset heading using the stale filtered body field.",
+  "trigger": "checkHaglYawResetReq requests the first airborne magnetic alignment above estimated 1.5m HAGL; no 30-second timer.",
+  "correction": "Use consecutive native mag sample timestamps for AlphaFilter.update dt. Preserve filter time constant, nonzero native sensor noise, all fusion/reset conditions and acceptance gates.",
+  "acceptance_thresholds_changed": false,
+  "upstream_modified": false,
+  "legacy_build_modified": false,
+  "default_build_changed": false,
+  "feature": "mag_lpf_interval_v1",
+  "feature_requirement": "verification.required_px4_compatibility; derived only from fully checked selected build or staging",
+  "sources": [
+    {
+      "path": "src/simulation/easyfly_px4_sitl/compat/px4-1.16.2-mag-lpf-interval.patch",
+      "sha256": "7cd0b9fa7df803b44bb93721ad059285ed7afa65a2e4451851fdf08a197f324f"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/compat/px4_mag_lpf_probe.cpp",
+      "sha256": "f3a9714560078dd164d2120ab9b82939d2223043f845806dac664dc5e8300abb"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/mag_compatibility.py",
+      "sha256": "26b9eca21dbfac92671588f026f85e4c6541b17a7626d724bfeab840262c86e2"
+    }
+  ],
+  "compatibility_manifest": "artifacts/scene-s4-20261017/px4-mag-lpf-v2/compatibility.json",
+  "compatibility_manifest_sha256": "84e101bc4b306e0bba79eb5e36626c37f524d40dc90e169b079056034cf16aaa",
+  "binary_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "original_source": "/home/jia/PX4-Autopilot-1.16.2",
+  "original_mag_source_sha256": "c4c4d174657dd9e58ad94062eb527574a5ced34ca285358a3ddd47a11ed548e5",
+  "patched_mag_source_sha256": "a87be0746865df4525c798f35dda3d50ffa06260472f4c1e06f13b29b1ac69ec",
+  "original_archive_sha256": "96fbdacfc017348de850ae4970a2d24dfd064e4ba2ee96617854cab5a166cc5d",
+  "patched_archive_sha256": "5135e66b63b779deb94e92a5036861f9c1b30ffb1783f71061aa3cc763cb7eba",
+  "archive_members": 43,
+  "only_changed_archive_members": [
+    "mag_control.cpp.o"
+  ],
+  "native_comparison": {
+    "original": {
+      "step_140ms": {
+        "10000": 0.7712320089,
+        "70000": 0.1899999827
+      },
+      "binary_sha256": "7ef4356e60a18f6dcbe17004ed1edad609f3dc6bb24f46b84e9cc17839c8265d",
+      "production_expression": "_mag_lpf.update(mag_sample.mag);\n"
+    },
+    "patched": {
+      "step_140ms": {
+        "10000": 0.7712320089,
+        "70000": 0.68359375
+      },
+      "binary_sha256": "bfcc4ef35bc312eccf98d2a9418943854f4de9e9f031f7d6f344907197a5fe9c",
+      "production_expression": "_mag_lpf.update(mag_sample.mag,\n\t\t\t\t       1e-6f * (mag_sample.time_us - aid_src.timestamp_sample));\n"
+    }
+  },
+  "recorded_observation_replay": {
+    "scope": "Native PX4 AlphaFilter with exact production update expression, driven by recorded estimator mag observations. This is not a complete EKF replay or flight acceptance.",
+    "raw_ulog": "artifacts/scene-s4-20261017/qualified-v2-primitives_corridor_seed1042_v2-two-cycles/px4/build/px4_sitl_default/rootfs/log/2026-10-16/20_28_38.ulg",
+    "raw_ulog_sha256": "e81a939f33ab6047668eb9619f7415f389274d61b917642d8c684dc93d41dd87",
+    "samples": 1036,
+    "mag_interval_s_percentiles": [
+      0.066322,
+      0.0708,
+      0.073334
+    ],
+    "reset_wall_sim_s": 53.467,
+    "reset_mag_sample_s": 53.307,
+    "actual_quaternion_reset_yaw_rad": 0.5334591865539551,
+    "groundtruth_yaw_at_mag_sample_rad": 0.6466356515884399,
+    "variants": {
+      "original": {
+        "native_probe_sha256": "7ef4356e60a18f6dcbe17004ed1edad609f3dc6bb24f46b84e9cc17839c8265d",
+        "step_140ms": {
+          "10000": 0.7712320089,
+          "70000": 0.1899999827
+        },
+        "filter_vector_at_reset_gauss": [
+          0.08354569227,
+          -0.1882626116,
+          0.4280584157
+        ],
+        "level_heading_at_reset_rad": 1.2125335894579194,
+        "level_heading_error_vs_groundtruth_rad": 0.5658979378694795
+      },
+      "patched": {
+        "native_probe_sha256": "bfcc4ef35bc312eccf98d2a9418943854f4de9e9f031f7d6f344907197a5fe9c",
+        "step_140ms": {
+          "10000": 0.7712320089,
+          "70000": 0.68359375
+        },
+        "filter_vector_at_reset_gauss": [
+          0.1566848755,
+          -0.1466089487,
+          0.4271072447
+        ],
+        "level_heading_at_reset_rad": 0.8115887091146065,
+        "level_heading_error_vs_groundtruth_rad": 0.16495305752616649
+      }
+    }
+  },
+  "limits": [
+    "Native observation replay exercises the actual update expression and PX4 AlphaFilter, not the complete EKF or a counterfactual closed-loop trajectory.",
+    "Successful bounded scene flights do not certify arbitrary procedural layouts, long-duration flights or hardware."
+  ],
+  "raw_replay_report": "artifacts/scene-s4-20261017/mag-lpf-diagnostic/native-replay.json",
+  "raw_replay_report_sha256": "b7c2bd1bf856f6fe4aded57272bd0de475f9b265303476b36f0bbea92ca2c616"
+}

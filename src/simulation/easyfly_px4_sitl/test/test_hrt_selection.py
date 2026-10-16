@@ -79,6 +79,38 @@ def test_missing_default_has_no_legacy_fallback(tmp_path):
         MODULE.select_px4_directory(compatibility_root=tmp_path / 'missing')
 
 
+def test_mag_feature_requires_current_checked_bytes(fixture, monkeypatch):
+    """Use inert mocked fingerprints to exercise optional feature/tamper predicates."""
+    from easyfly_px4_sitl import mag_compatibility as mag
+    source, root, tree, value = fixture
+    files = [(source / mag.MAG_PATH, 'MAG_SHA256', 'inert original mag'),
+             (source / mag.ALPHA_PATH, 'ALPHA_SHA256', 'inert filter header'),
+             (source / 'build/px4_sitl_default' / mag.EKF_ARCHIVE,
+              'EKF_SHA256', 'inert original archive'),
+             (root / 'mag_control.cpp', 'PATCHED_MAG_SHA256', 'inert patched mag')]
+    for path, key, content in files:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+        monkeypatch.setattr(mag, key, mag.digest(path))
+    archive = root / 'libmodules__ekf2.a'
+    archive.write_text('inert patched archive')
+    assert MODULE.verified_features(tree) == frozenset()
+    value['mag_lpf_interval'] = {
+        'original_source_sha256': mag.MAG_SHA256,
+        'patched_source_sha256': mag.PATCHED_MAG_SHA256,
+        'patch_sha256': mag.MAG_PATCH_SHA256, 'alpha_filter_sha256': mag.ALPHA_SHA256,
+        'original_archive_sha256': mag.EKF_SHA256,
+        'patched_archive_sha256': mag.digest(archive), 'time_constant_seconds': 0.09,
+        'sample_clock': 'native magnetometer timestamp_sample',
+        'native_comparison': {name: {'step_140ms': {'10000': 0.7712, '70000': v}}
+                              for name, v in [('original', 0.19), ('patched', 0.6836)]}}
+    (root / 'compatibility.json').write_text(json.dumps(value))
+    assert MODULE.verified_features(tree) == {'mag_lpf_interval_v1'}
+    (root / 'mag_control.cpp').write_text('changed since preparation')
+    with pytest.raises(RuntimeError, match='fingerprint mismatch'):
+        MODULE.verified_features(tree)
+
+
 @pytest.mark.parametrize('changed', [
     'binary', 'original', 'timer', 'alias', 'policy',
     'comparison', 'source_identity', 'other_installation'])

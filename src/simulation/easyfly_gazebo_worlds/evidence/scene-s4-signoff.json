@@ -1,0 +1,109 @@
+{
+  "passed": true,
+  "S4_complete": true,
+  "scope": "Versioned self-authored primitive generator and selected fixed-seed samples; independent bounded route acceptance only.",
+  "qualified_scenes": [
+    "primitives_sparse_seed42_v1",
+    "primitives_corridor_seed1042_v2"
+  ],
+  "rejected_draft_scene": "primitives_corridor_seed1042_v1",
+  "rejected_input": "primitives_blocked_seed42_v1",
+  "layout_world_generator_and_prior_rejection_bytes_preserved": [
+    "src/application/a3_mission/easyfly_sim_launcher/easyfly_sim_launcher/scene_generator.py",
+    "src/simulation/easyfly_gazebo_worlds/evidence/primitives_corridor_seed1042_v2/mission-s4-rejected-v2.json",
+    "src/simulation/easyfly_gazebo_worlds/evidence/primitives_corridor_seed1042_v1/mapping-rejected-s4.json",
+    "src/simulation/easyfly_gazebo_worlds/worlds/benchmark/navigation/primitives_sparse_seed42_v1.world",
+    "src/simulation/easyfly_gazebo_worlds/evidence/primitives_sparse_seed42_v1/generation.json",
+    "src/simulation/easyfly_gazebo_worlds/worlds/benchmark/navigation/primitives_corridor_seed1042_v2.world",
+    "src/simulation/easyfly_gazebo_worlds/evidence/primitives_corridor_seed1042_v2/generation.json",
+    "src/simulation/easyfly_gazebo_worlds/worlds/benchmark/navigation/primitives_corridor_seed1042_v1.world",
+    "src/simulation/easyfly_gazebo_worlds/evidence/primitives_corridor_seed1042_v1/generation.json"
+  ],
+  "ordinary_tests": {
+    "normal": {
+      "results": "artifacts/scene-s4-20261017/mag-normal-results-signoff.log",
+      "sha256": "891e6857514b3647f2482ed4a720318ffa2255a86fb80a8dca99716f2c4247f9",
+      "result_records": 219,
+      "errors": 0,
+      "failures": 0
+    },
+    "symlink": {
+      "results": "artifacts/scene-s4-20261017/mag-symlink-results-signoff.log",
+      "sha256": "83dcd9d37f2c9f684a4431a926172d6d84403b5a8c9d0a8042677bbf39a749cc",
+      "result_records": 219,
+      "errors": 0,
+      "failures": 0
+    }
+  },
+  "installed_cli": {
+    "normal": {
+      "checks": 29,
+      "summary": "artifacts/scene-s4-20261017/mag-final-normal-cli/summary.json",
+      "sha256": "20fdd02e4c34301ea3d15ef8e3432a50ace53df88ae2c0cda12cd9e5297d4af9"
+    },
+    "symlink": {
+      "checks": 29,
+      "summary": "artifacts/scene-s4-20261017/mag-final-symlink-cli/summary.json",
+      "sha256": "580fe6c98b0e4899823490eca2838ab7f133bd4cfc8cc914736ed6ee2828ee79"
+    }
+  },
+  "runs": [
+    {
+      "label": "qualified-v4-primitives_sparse_seed42_v1-calibration-1",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v4-primitives_sparse_seed42_v1-calibration-1/result.json",
+      "sha256": "c521a8d3035ff1f893a52a14e42953592a4d7b3d4131f9813b608c8d4a7c025a",
+      "normal_exits": 24,
+      "bootstrap": true
+    },
+    {
+      "label": "qualified-v4-primitives_sparse_seed42_v1-calibration-2",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v4-primitives_sparse_seed42_v1-calibration-2/result.json",
+      "sha256": "cd3df6bf4a33e6832bcec98055a9b76e9623a5ec67bf9ba3c504ae92abd2c44f",
+      "normal_exits": 24,
+      "bootstrap": true
+    },
+    {
+      "label": "qualified-v6-primitives_sparse_seed42_v1-two-cycles",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v6-primitives_sparse_seed42_v1-two-cycles/result.json",
+      "sha256": "09034d7bfd384714172f578f09e08f45192474f17c92da1b3b1e12dbdf883197",
+      "normal_exits": 24,
+      "bootstrap": false
+    },
+    {
+      "label": "qualified-v4-primitives_corridor_seed1042_v2-calibration-1",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v4-primitives_corridor_seed1042_v2-calibration-1/result.json",
+      "sha256": "a172ba06297ff9968a8b6d15e3a3735a545a632a0ab7037fde30afeb840d78fe",
+      "normal_exits": 24,
+      "bootstrap": true
+    },
+    {
+      "label": "qualified-v4-primitives_corridor_seed1042_v2-calibration-2",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v4-primitives_corridor_seed1042_v2-calibration-2/result.json",
+      "sha256": "7b11cf47f5275c8009afa7988153379832a4f908428f928d4f81770937feeb04",
+      "normal_exits": 24,
+      "bootstrap": true
+    },
+    {
+      "label": "qualified-v6-primitives_corridor_seed1042_v2-two-cycles",
+      "raw_result": "artifacts/scene-s4-20261017/qualified-v6-primitives_corridor_seed1042_v2-two-cycles/result.json",
+      "sha256": "f78d8f311ad7600ed05c3fb3e1733111720ca0b09df64cc309a7fefebb960be8",
+      "normal_exits": 24,
+      "bootstrap": false
+    }
+  ],
+  "total_normal_exits": 144,
+  "flight_parent_missions": 4,
+  "navigation_goals": 8,
+  "flight_cycles_per_scene": 2,
+  "native_fix": "evidence/px4-mag-interval-fix-s4.json",
+  "native_fix_sha256": "b1d2a173d6b2c0d4b6b456f190ad25225aa8437245165ea5869e470aa44f6f5d",
+  "yaw_analysis": "artifacts/scene-s4-20261017/mag-flight-yaw-analysis.json",
+  "yaw_analysis_sha256": "ed230ac82ea22ccb01f77390ad06f4121e058e3f0bc70f50aaf7285b249afcbe",
+  "acceptance_thresholds_changed": false,
+  "negative_cases_inherit_no_positive_acceptance": true,
+  "limits": [
+    "Only the recorded routes, layout revisions, runtime and bounded cycles are accepted.",
+    "Every newly generated layout still starts draft and requires independent qualification.",
+    "This is not all-phase airborne heading-reset, long-duration or real-hardware acceptance."
+  ]
+}

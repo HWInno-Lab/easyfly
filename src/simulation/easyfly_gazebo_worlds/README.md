@@ -136,15 +136,28 @@ ODE无命中距离返回1000且entity为空，记录只说明25m向上射线内�
 但实测可信地面点比例低于原有0.15要求，未形成可信地图；
 `mapping-rejected-s4.json`保留该次实测拒绝。未减小阈值或复用稀疏场景签收。
 
-本轮已打通稀疏固定种子样本的完整闭环：`primitives_sparse_seed42_v1`支持
-`navigation_dev`，各两次managed冷启动与两轮连续任务通过，四次导航终态成功，
-最大到位误差0.07692515m，每项24正常退出，无强制清理/残留。
-对应参考任务为`missions/scenes/primitives_sparse_seed42_v1/straight_out_and_back.yaml`。
+当前稀疏v1和宽通道v2均支持`navigation_dev`、`navigation_tested=true`。
+本轮新运行时下，每图两次独立managed冷启动与两轮连续任务通过，
+共四个parent、八个导航UUID成功；稀疏/宽通道最大到位误差分别
+0.07958447/0.08126353m。六次运行各24正常退出、launch退出0、
+Gazebo IO归零，无强制/异常/所属残留。当前证据分别为
+`calibration-s4-mag-interval-v4.json`和`mission-s4-mag-interval-v6.json`；
+原始标定、稀疏首版通过和宽通道失败记录均保留，不覆盖历史证据。
+参考任务位于`easyfly_mission_scripts/missions/scenes/<scene>/straight_out_and_back.yaml`。
 
-宽通道v2可信地图及两次冷启动通过，第一轮任务成功；第二轮前测得航向相对
-冷启动参考偏差0.10355775rad，超过原有0.1rad门限，未发送第二轮任务，
-24个进程正常退出。`mission-s4-rejected-v2.json`保留真实拒绝与全部UUID/状态。
-该图已恢复draft、无supported_profiles、navigation_tested=false，不能受管启动。
-ULog显示该轮估计航向在飞行期间发生reset，但尚未完成根因归属，
-未修改磁场、GPS、EKF、IMU、航向门限或任务路线去取得通过。
-因此当前交付为S4第一步（生成器+一个固定种子样本），S4整体仍在进行。
+宽通道旧运行曾在第二轮前测得航向偏差0.10355775rad而被原有0.1rad门限拒绝，
+没有发送第二轮任务；`mission-s4-rejected-v2.json`保留真实拒绝。
+ULog与固定版本源码定位出磁力计复位滤波步长问题：LPF按10ms预测步长初始化，
+实际mag样本约70.8ms才更新，导致转向时使用滞后磁场进行首次空中对齐。
+`px4-mag-interval-fix-s4.json`记录原生实际AlphaFilter对照和旧ULog观测只读重放。
+独立兼容构建仅以相邻mag原生采样时间戳计算dt，保留0.09秒常数、非零噪声、
+融合/复位条件、任务路线和全部验收门限；原始PX4目录及旧兼容构建未改。
+
+宽通道v2的`verification.required_px4_compatibility`要求`mag_lpf_interval_v1`。
+需显式准备`prepare_px4_hrt --mag-lpf-interval`并用`EASYFLY_PX4_HRT_COMPAT_DIR`
+选择；具体命令见easyfly_px4_sitl/README.md。已校验的新构建/私有staging才提供此能力；
+选中HRT-only旧运行时，离线校验及受管启动明确拒绝，不静默回退。
+
+S4生成器与选定样本范围已完成；这里的通过仅覆盖上述有界路线和实际运行时，
+不代表任意种子、整张场景、所有空中复位相位、长时间运行或真实硬件已验收。
+新生成布局仍从draft开始，必须独立完成相同检查。
