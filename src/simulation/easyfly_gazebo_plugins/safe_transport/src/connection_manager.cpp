@@ -28,6 +28,13 @@
 using namespace gazebo;
 using namespace transport;
 
+namespace
+{
+// Keep the pinned Gazebo class layout while making lifecycle polling defined.
+bool ReadFlag(const bool & flag) {return __atomic_load_n(&flag, __ATOMIC_ACQUIRE);}
+void WriteFlag(bool & flag, bool value) {__atomic_store_n(&flag, value, __ATOMIC_RELEASE);}
+}
+
 #if TBB_VERSION_MAJOR < 2021
 /// TBB task to process nodes.
 class TopicManagerProcessTask : public tbb::task
@@ -72,9 +79,9 @@ class TopicManagerConnectionTask
 ConnectionManager::ConnectionManager()
 {
   this->tmpIndex = 0;
-  this->initialized = false;
-  this->stop = false;
-  this->stopped = true;
+  WriteFlag(this->initialized, false);
+  WriteFlag(this->stop, false);
+  WriteFlag(this->stopped, true);
 
   this->eventConnections.push_back(
       event::Events::ConnectStop(boost::bind(&ConnectionManager::Stop, this)));
@@ -94,7 +101,10 @@ bool ConnectionManager::Init(const std::string &_masterHost,
                              unsigned int _masterPort,
                              uint32_t _timeoutIterations)
 {
-  this->stop = false;
+  {
+    boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+    WriteFlag(this->stop, false);
+  }
   this->masterConn = easyfly_transport::MakeConnection();
   this->serverConn = easyfly_transport::MakeConnection();
 
@@ -202,7 +212,7 @@ bool ConnectionManager::Init(const std::string &_masterHost,
   this->masterConn->AsyncRead(
       boost::bind(&ConnectionManager::OnMasterRead, this, _1));
 
-  this->initialized = true;
+  WriteFlag(this->initialized, true);
 
   // Tell the user what address will be publicized to other nodes.
   gzmsg << "Publicized address: "
@@ -214,18 +224,18 @@ bool ConnectionManager::Init(const std::string &_masterHost,
 //////////////////////////////////////////////////
 bool ConnectionManager::IsInitialized() const
 {
-  return this->initialized;
+  return ReadFlag(this->initialized);
 }
 
 //////////////////////////////////////////////////
 void ConnectionManager::Fini()
 {
-  if (!this->initialized)
+  if (!ReadFlag(this->initialized))
     return;
 
   this->Stop();
-  if (this->initialized)
-    while (this->stopped == false)
+  if (ReadFlag(this->initialized))
+    while (!ReadFlag(this->stopped))
       common::Time::MSleep(100);
 
   if (this->masterConn)
@@ -263,13 +273,14 @@ void ConnectionManager::Fini()
   this->namespaces.clear();
   this->masterMessages.clear();
 
-  this->initialized = false;
+  WriteFlag(this->initialized, false);
 }
 
 //////////////////////////////////////////////////
 void ConnectionManager::Stop()
 {
-  this->stop = true;
+  boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+  WriteFlag(this->stop, true);
 }
 
 //////////////////////////////////////////////////
@@ -322,9 +333,9 @@ void ConnectionManager::Run()
 {
   boost::mutex::scoped_lock lock(this->updateMutex);
 
-  this->stopped = false;
+  WriteFlag(this->stopped, false);
 
-  while (!this->stop && this->masterConn && this->masterConn->IsOpen())
+  while (!ReadFlag(this->stop) && this->masterConn && this->masterConn->IsOpen())
   {
     this->RunUpdate();
     this->updateCondition.timed_wait(lock,
@@ -332,7 +343,7 @@ void ConnectionManager::Run()
   }
   this->RunUpdate();
 
-  this->stopped = true;
+  WriteFlag(this->stopped, true);
 
   this->masterConn->Shutdown();
 }
@@ -340,7 +351,7 @@ void ConnectionManager::Run()
 //////////////////////////////////////////////////
 bool ConnectionManager::IsRunning() const
 {
-  return !this->stop;
+  return !ReadFlag(this->stop);
 }
 
 //////////////////////////////////////////////////
@@ -473,13 +484,23 @@ void ConnectionManager::ProcessMessage(const std::string &_data)
 //////////////////////////////////////////////////
 void ConnectionManager::OnAccept(ConnectionPtr _newConnection)
 {
+  bool admitted = false;
+  {
+    boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+    if (!ReadFlag(this->stop))
+    {
+      this->connections.push_back(_newConnection);
+      admitted = true;
+    }
+  }
+  if (!admitted)
+  {
+    _newConnection->Shutdown();
+    return;
+  }
   using namespace boost::placeholders;
   _newConnection->AsyncRead(
       boost::bind(&ConnectionManager::OnRead, this, _newConnection, _1));
-
-  // Add the connection to the list of connections
-  boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
-  this->connections.push_back(_newConnection);
 }
 
 //////////////////////////////////////////////////
@@ -520,7 +541,7 @@ void ConnectionManager::OnRead(ConnectionPtr _connection,
 void ConnectionManager::Advertise(const std::string &topic,
                                   const std::string &msgType)
 {
-  if (!this->initialized)
+  if (!ReadFlag(this->initialized))
     return;
 
   msgs::Publish msg;
@@ -535,7 +556,7 @@ void ConnectionManager::Advertise(const std::string &topic,
 //////////////////////////////////////////////////
 void ConnectionManager::RegisterTopicNamespace(const std::string &_name)
 {
-  if (!this->initialized)
+  if (!ReadFlag(this->initialized))
     return;
 
   msgs::GzString msg;
@@ -576,7 +597,7 @@ void ConnectionManager::GetAllPublishers(std::list<msgs::Publish> &_publishers)
 //////////////////////////////////////////////////
 void ConnectionManager::GetTopicNamespaces(std::list<std::string> &_namespaces)
 {
-  if (!this->initialized)
+  if (!ReadFlag(this->initialized))
   {
     gzerr << "Not initialized\n";
     return;
@@ -622,7 +643,7 @@ void ConnectionManager::Subscribe(const std::string &_topic,
                                   const std::string &_msgType,
                                   bool _latching)
 {
-  if (!this->initialized)
+  if (!ReadFlag(this->initialized))
   {
     gzerr << "ConnectionManager is not initialized\n";
     return;
@@ -656,8 +677,11 @@ ConnectionPtr ConnectionManager::ConnectToRemoteHost(const std::string &_host,
 {
   ConnectionPtr conn;
 
-  if (!this->initialized)
-    return conn;
+  {
+    boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+    if (!ReadFlag(this->initialized) || ReadFlag(this->stop))
+      return conn;
+  }
 
   // Sharing connections is broken
   // conn = this->FindConnection(_host, _port);
@@ -667,8 +691,20 @@ ConnectionPtr ConnectionManager::ConnectToRemoteHost(const std::string &_host,
     conn = easyfly_transport::MakeConnection();
     if (conn->Connect(_host, _port))
     {
-      boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
-      this->connections.push_back(conn);
+      bool admitted = false;
+      {
+        boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+        if (ReadFlag(this->initialized) && !ReadFlag(this->stop))
+        {
+          this->connections.push_back(conn);
+          admitted = true;
+        }
+      }
+      if (!admitted)
+      {
+        conn->Shutdown();
+        return ConnectionPtr();
+      }
     }
     else
     {

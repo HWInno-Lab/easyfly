@@ -1,0 +1,37 @@
+{
+  "scope": "Two native shutdown defects. Publication-cycle attribution is supported by the captured bookstore core; the late-admission race is independently reproduced.",
+  "transport_library_sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb",
+  "publication_cycle": {
+    "core": "artifacts/scene-s3-20261016/diagnostic-bookstore-parent-4/gazebo.core",
+    "core_inspection": "artifacts/scene-s3-20261016/retained-owner-inspection-8.log",
+    "core_inspection_sha256": "50bd527ce0ae961f2e0ab86a384e4c67c04914c17deec8c3cd2ba949e2a48532",
+    "topic": "/gazebo/default/response",
+    "publisher_count": 4,
+    "node_pointers_null": true,
+    "connection_id": 10,
+    "connection_socket_null": true,
+    "connection_strong_owners": 1,
+    "before_log": "artifacts/scene-s3-20261016/publication-cycle-before.log",
+    "before_log_sha256": "3d780b88e41d93aeac8b7852c33e3191d3e5be6d6da7421d5d8122aa766f720c"
+  },
+  "late_admission": {
+    "before_log": "artifacts/scene-s3-20261016/late-connection-before.log",
+    "before_log_sha256": "440edb364d4a04a7a9724c2aacd1cfb4bbeee8791745473119686e262f67812c",
+    "captured_core_manager_list_empty": true
+  },
+  "validation": {
+    "native_ctest_targets": 13,
+    "native_log": "artifacts/scene-s3-20261016/lifecycle-fix-tests.log",
+    "native_log_sha256": "8050cd4c26280b7a35070a22f01fc6a0761bb64bd58d70a07b8dcf1d4af0071a",
+    "asan_targets": 2,
+    "asan_log": "artifacts/scene-s3-20261016/asan-tests.log",
+    "asan_log_sha256": "db930a882dc18b67b1dd1a6df2a1e354ea542c3a82db493b148ffacfd5264f3a",
+    "asan_options": "detect_leaks=0:abort_on_error=1",
+    "flight_performed": false
+  },
+  "source_files": {
+    "src/simulation/easyfly_gazebo_plugins/safe_transport/src/publisher.cpp": "de4656010c9cdbc30ee78404bf7b2d2855034ddb726f2cb7382e7424d182c91b",
+    "src/simulation/easyfly_gazebo_plugins/safe_transport/src/connection_manager.cpp": "9da53e784cc8e248663528925ea0f651b72205048a02fa26fe93674dfa772e30"
+  },
+  "limits": "No system library or class layout changed. S2 recorded binaries remain intact; S3 uses its separate overlay. Native fixtures are separate from scene flight qualification. No general whole-process leak-free claim."
+}

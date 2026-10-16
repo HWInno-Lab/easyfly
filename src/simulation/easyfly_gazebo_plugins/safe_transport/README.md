@@ -130,3 +130,26 @@ including after a task wait and within an otherwise idle task arena:
 [oneTBB v2021.5.0 task_dispatcher.cpp](https://github.com/oneapi-src/oneTBB/blob/v2021.5.0/src/tbb/task_dispatcher.cpp#L128).
 This fixes the reproduced self-wait; independent scene exits still determine
 whether the full runtime qualifies.
+
+A captured bookstore shutdown core retained a closed Connection through a
+SubscriptionTransport in `/gazebo/default/response`. Its Publication still
+owned four Publishers; all four had already cleared their node but retained
+that Publication. Gazebo finalizes transport before physics/sensors, so a late
+Publisher::Fini can find an empty topic table. The original Unadvertise lookup
+then cannot remove its Publisher, leaving the reciprocal ownership cycle.
+`src/publisher.cpp` releases its own Publication registration/reference even
+after topic removal. Repeated Fini and post-Fini publication/count checks are
+safe. The original upstream source remains unmodified for provenance.
+A real native fixture recreates the same four-Publisher/TCP-subscription chain,
+finalizes transport first, then nodes/publishers. Weak pointers expire and
+Finish drains without removing the retained peer to make the test pass.
+
+A separate real TCP-backlog fixture holds ConnectToRemoteHost in SYN_SENT until
+Fini returns, then permits the real handshake. The old implementation inserts
+that late connection into the cleared manager list. Incoming/outgoing admission
+now shares the existing connection mutex with Stop; outgoing connections check
+again after their blocking handshake, and rejected sockets close outside that
+mutex. Lifecycle bool polling uses acquire/release builtins without changing the
+pinned class layout. This separate defect was reproduced independently; the
+captured bookstore core had an empty manager list and is attributed to the
+Publication cycle, not to this admission race.

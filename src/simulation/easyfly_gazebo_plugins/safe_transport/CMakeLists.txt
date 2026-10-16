@@ -25,7 +25,7 @@ get_filename_component(EASYFLY_TRANSPORT_HEADERS "${EASYFLY_IO_HEADER}" DIRECTOR
 add_library(easyfly_transport_compat SHARED src/io_manager.cpp
   upstream/CallbackHelper.cc src/connection.cpp src/connection_manager.cpp
   upstream/Node.cc upstream/Publication.cc upstream/PublicationTransport.cc
-  upstream/Publisher.cc upstream/Subscriber.cc upstream/SubscriptionTransport.cc
+  src/publisher.cpp upstream/Subscriber.cc upstream/SubscriptionTransport.cc
   upstream/TopicManager.cc upstream/TransportIface.cc)
 target_compile_features(easyfly_transport_compat PUBLIC cxx_std_17)
 target_include_directories(easyfly_transport_compat PUBLIC include ${GAZEBO_INCLUDE_DIRS}
@@ -55,6 +55,14 @@ install(FILES README.md ../safe_camera/LICENSE
 install(FILES upstream/SHA256SUMS DESTINATION share/${PROJECT_NAME}/safe_transport)
 
 if(BUILD_TESTING)
+  add_executable(test_transport_late_admission test/test_late_admission.cpp)
+  target_link_libraries(test_transport_late_admission easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_transport_late_admission COMMAND test_transport_late_admission)
+  set_tests_properties(test_transport_late_admission PROPERTIES TIMEOUT 15)
+  add_executable(test_transport_publication_cycle test/test_publication_cycle.cpp)
+  target_link_libraries(test_transport_publication_cycle easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_transport_publication_cycle COMMAND test_transport_publication_cycle)
+  set_tests_properties(test_transport_publication_cycle PROPERTIES TIMEOUT 15)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_transport_patch_contract
