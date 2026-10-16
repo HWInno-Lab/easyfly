@@ -1,0 +1,202 @@
+{
+  "scope": "Native ray geometry, transport retirement, IMU sampling/ADC, DDS listener lifetime and EGO shutdown regressions. Native fixtures do not grant scene flight acceptance.",
+  "transport": {
+    "reproduced": "Concurrent actual Connection destruction double-frees the shared IOManager, producing a native SIGSEGV.",
+    "fix": "Serialize shared creation/count/final unpublication; delete outside the lifecycle lock.",
+    "unchanged": "Object ABI, upstream snapshots, protocol, mandatory joins and retained-owner timeout.",
+    "additional_fixes": [
+      "Cancel pending reads still owning removed connections during the explicit terminal phase; retained independent owners still refuse Finish.",
+      "Private Connection factories defer complete object destruction only from an executing oneTBB task; ordinary owner teardown remains synchronous, and TaskGroup wait plus IO joins remain mandatory."
+    ]
+  },
+  "ray_box": {
+    "reproduced": "Native ODE returned an intersection at z=0.13 for a box with top z=0.055; moving native fixture reproduced aircraft self returns.",
+    "fix": "Independent finite slab intersection using actual native box pose, dimensions and ray geometry; other geometry uses original dCollide.",
+    "unchanged": "System ODE, aircraft/world geometry, scan pattern, physical noise, blind zone, source timestamps, planner margins."
+  },
+  "checks": {
+    "native_ray_cases": 13,
+    "native_transport_cases": 10,
+    "source_contracts": 2,
+    "asan_ray_cases": 13,
+    "asan_transport_cases": 10,
+    "current_native_gtest_cases": {
+      "test_transport_orphan_read.gtest": 1,
+      "test_camera_duplicate.gtest": 1,
+      "test_imu_antialias.gtest": 5,
+      "test_livox_ray_geometry.gtest": 13,
+      "test_transport_task_retirement.gtest": 1,
+      "test_transport_pending_read.gtest": 1,
+      "test_imu_message_type.gtest": 1,
+      "test_transport_lifetime.gtest": 9,
+      "test_transport_finish.gtest": 1
+    },
+    "current_plugin_ctest_targets": 11,
+    "current_asan_targets": 8,
+    "asan_options": "detect_leaks=0:abort_on_error=1; lifecycle counts and actual joins separately asserted"
+  },
+  "evidence": [
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/connection-race-before.log",
+      "sha256": "ecf1d493e6494a63a2bd4d0f2881ea32ebd6d157a3be654dddaca56d846a575b"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/connection-race-after.log",
+      "sha256": "2bc3a1597f17a0bfa32824aa4d45f78508dbd2a7fac9c01127676784ff8d1bd7"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/ray-box-axis-aligned-before.log",
+      "sha256": "4829a1bd569c67c5478b7c48a3f16ed06208323c5ef6ebf6c418c373998021dc"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/ray-box-fix-tests.log",
+      "sha256": "a04e2647482098de90cbea63bc437df56905d87d3dc92b57cb6eda000baf114b"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/transport-asan-tests.log",
+      "sha256": "d209b33de1dae453b398486eacab057dfb8e925989fadd9fd3558a988ccd8c5e"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/ray-asan-tests.log",
+      "sha256": "4029ba913514d088aac8d0909cc442aaf4186b1c2917e13d9b0f3d8cfd617d7e"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/self-ray-moving-before/result.json",
+      "sha256": "d57518fc3b4cb8c3cb139de478cdb44385b67f40d0ef43dadee64807b44df7b7"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/self-ray-moving-detail/result.json",
+      "sha256": "3b7df4755b47383513433d6ce3d12cb653981847f1afbe64fabb2ec87fc108c7"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/self-ray-moving-ode/result.json",
+      "sha256": "6c2544130b00b3bbdf7ed6d8a702358c23765a5a7d73dc08704e45df689ce9ca"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/self-ray-moving-after/result.json",
+      "sha256": "6a87627e368c3d3885a7c147e092aec3ec051c372aeeb29ede8c5914affef044"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/self-ray-real-wall/result.json",
+      "sha256": "f7788c923950f609145dc2ac0957efb54d141a008c40aaf1fd2a0aec0e681d7e"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/tbb-repro-before.log",
+      "sha256": "76408d46c8fd29e24d31b8721ef05c1cdc2bd3911de43a77d84e793aade91ae5"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/tbb-conditional-after.log",
+      "sha256": "c4a94b2a0668da070f023f21f2b31bd1618553eb84cdc7ad8ab8920feb3421cf"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/tbb-normal-tests.log",
+      "sha256": "fbb93d8c2dd1029336a2492c9b40dcb4ef1184d0aae0ccffb4fe9fce5e6c4795"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/tbb-asan-tests.log",
+      "sha256": "438403b460f96c385ad942e836ffefc1775aa20c53138380d491e58d226eb3ed"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/component-profile-inheritance-tests.log",
+      "sha256": "eac20697af91dcc42e999fc328b86eaed904baefd7c554f612d7b0f0630ce8c0"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/profile-content-tests.log",
+      "sha256": "a00d95dfbc084b6eb22229f4a5b545b4452162a59797c0faa121535a79212580"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/planner-early-shutdown/result.json",
+      "sha256": "2679a16ed1c77b001d48d08454a2afd81d028438592e7693932034b2c62cb9b7"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/planner-early-shutdown-after/result.json",
+      "sha256": "277a64aa80e259df7a572ce79a5c963073ac456bb47a254910f47b867aacb557"
+    },
+    {
+      "path": "artifacts/scene-s2-acceptance-20261015/ego-main-shutdown-tests.log",
+      "sha256": "78cf3f9b7c38b6cf5c07ceea98cfd37f386971452f383393ad4414f922cb741c"
+    }
+  ],
+  "historical_limits": "These independently reproduced defects do not uniquely attribute every historic shutdown failure. The v10 formal matrix passed four cold starts and two two-cycle scene runs, with 24 normal exits per run. Scene qualification is recorded separately in each calibration-s2-final.json and mission-s2-final.json, and is limited to the recorded revision, configuration and central-aisle route.",
+  "dds": {
+    "source_version": "2.6.11",
+    "actual_core": "pixel-actual-core",
+    "reproduced": "EDP::unpairWriterProxy+406 null listener dereference; real RTPS listener-clear fixture reproduces the same crash.",
+    "fix": "One listener snapshot under existing reader lock, released before callbacks/PDP; real DDS owner-deletion regression verifies traversal lifetime.",
+    "component_replies": "Six exact load_nodeReply writer profiles get 2s; original participant/transports and 100ms default writer policy retained.",
+    "writer_unmatch": {
+      "commit": "11770f2",
+      "library_sha256": "63f3ce89fa78c3f4b1113545c1f98bd4e3e3f1733bb5531db12fa16fc29c54b3",
+      "before_native_crash": {
+        "path": "artifacts/scene-s2-acceptance-20261015/writer-listener-before-4.log",
+        "sha256": "429136c77dca6ded586481cb599e20fb646d1019e9b6647bb14ebbaf50982c50"
+      },
+      "tests": {
+        "path": "artifacts/scene-s2-acceptance-20261015/writer-dds-tests.log",
+        "sha256": "895a233505428bb5aca394e999cb0e0d091aa58894e1f706ff2c9dccce2906aa",
+        "ctest_targets_passed": 6
+      },
+      "change": "Writer listener snapshot under endpoint mutex; private inline setter synchronized. Release lock before callbacks and PDP updates. Native writer owner lifetime regression.",
+      "limit": "No stack was retained for qualified-v9 bridge SIGSEGV; this independently reproduced writer race is not its proven unique cause.",
+      "report_label_note": "The v10 runs record the new native library SHA while their descriptive fix field still says reader_listener_snapshot. The runtime label was subsequently corrected to reader_writer_listener_snapshot; native code and library bytes are unchanged."
+    }
+  },
+  "ego_shutdown": {
+    "reproduced": "Actual EGO initialization SIGINT/SIGTERM invalidated Context while the main thread was creating publishers; four native cases aborted.",
+    "fix": "Block process stop signals before thread creation; main thread consumes pending requests, retires executor/FSM/node, then closes Context synchronously.",
+    "regressions": "Same four native cases pass; twelve early/ready/preset-wait active/frozen signal combinations and ten functional CTest targets pass.",
+    "native_binary_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5"
+  },
+  "cloud_transform_timing": {
+    "problem": "When measurement-time TF was unavailable, the pointcloud filter used latest TF while retaining the measurement timestamp.",
+    "fix": "Bounded asynchronous wait for measurement-time TF; no latest fallback, frozen-clock expiry and epoch reset; original geometry and navigation margins retained.",
+    "commit": "fd84f2e",
+    "before": {
+      "path": "artifacts/scene-s2-acceptance-20261015/cloud-tf-before-running-clock/result.json",
+      "sha256": "3c7d9c6de4f57e29b956cc97a9c48ef05471a0f082a5649470320527001380ab"
+    },
+    "after": {
+      "path": "artifacts/scene-s2-acceptance-20261015/cloud-tf-after/result.json",
+      "sha256": "8b101f0d753cc785eff813b87a2505e25c0cbff856ad9e4513b3554705204b98"
+    },
+    "tests": {
+      "path": "artifacts/scene-s2-acceptance-20261015/cloud-tf-tests-3.log",
+      "sha256": "931261aa15735db98b5fae5ee29542a3ad34f18ef24114d3f3f56c4ac50696c2"
+    },
+    "launcher_tests": {
+      "path": "artifacts/scene-s2-acceptance-20261015/cloud-tf-launcher-tests.log",
+      "sha256": "0e2882b92688e510f68530e1668f342c19fe76fbe693923e280ab86a1d184f9b"
+    },
+    "runtime_library_sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d",
+    "attribution_limit": "The native delayed-TF coordinate error is reproduced. The v8 diagnostic second-cycle route failure was not recorded with a full occupancy-grid snapshot and cannot be uniquely attributed to this defect."
+  },
+  "additional_transport_diagnostics": {
+    "qualification_v8": {
+      "path": "artifacts/scene-s2-acceptance-20261015/qualified-v8-roof-two-cycles/result.json",
+      "sha256": "a71cc57c13c8cdf07217434561d6ac39ffb86303d56eab50afdc4c1d6e639b66"
+    },
+    "pubsub_stress": {
+      "path": "artifacts/scene-s2-acceptance-20261015/pubsub-stress.log",
+      "sha256": "53dde13ef3274316cd583b9a3ad3549efd3254f45629077ad4405c86e68a36d6"
+    },
+    "scope": "Six rounds of three actual TCP subscribers completed with zero live/pending managers. This does not reproduce or uniquely explain the v8 final retained-manager failure.",
+    "release_machine_code": {
+      "path": "artifacts/scene-s2-acceptance-20261015/transport-text-sha.json",
+      "sha256": "a75665d2accd03b2886bf3d63b5cf3307f32f4fbc71b82b75eb069128f575f62"
+    },
+    "debug_runs_only": [
+      {
+        "path": "artifacts/scene-s2-acceptance-20261015/diagnostic-v8-optimized-roof-flight-2/result.json",
+        "sha256": "0c1aabe6a2bd6bacca5b7674a6c7278b9e618e44229fb92ec293cf4d9ffcaf33"
+      },
+      {
+        "path": "artifacts/scene-s2-acceptance-20261015/diagnostic-v8-release-roof-flight/result.json",
+        "sha256": "4e33193f2bb935a18dc860ce922b9c5ce92c11be2960a800914c20febebaf1c2"
+      },
+      {
+        "path": "artifacts/scene-s2-acceptance-20261015/diagnostic-v8-release-traced-roof/result.json",
+        "sha256": "d5e58eb52999535aae88898b0b75be7ce51ae16a26a63c8d2d349716cae83ed6"
+      }
+    ]
+  }
+}

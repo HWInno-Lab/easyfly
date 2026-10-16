@@ -57,33 +57,31 @@ OGRE 仅解析 SDF 明确选中的简单 material 块及其纹理引用；继承
 `worlds/indoor/warehouse/` 保存固定上游版本的完整屋顶和无屋顶 world，
 分别登记为 `warehouse_aws_v1`、`warehouse_aws_no_roof_v1`，两者均保持上游原字节。
 模型在 model 包的 `third_party/aws/warehouse/`，MIT-0 原文与逐文件来源锁单独保留。
-`evidence/<scene_id>/bootstrap.json` 安装轻量观测摘要，原始运行日志保存在工作区 artifacts。
+两个场景均登记支持 `navigation_dev`，显式出生点为 world `(0, 0, 0.10)`，yaw=0。
+原始日志、ULog 和完整点云保留在工作区 artifacts；安装包只保存轻量证据。
 
-`warehouse_aws_v1` 已登记支持 `navigation_dev`：采用显式室内地面空间支撑策略，
-连续地图、静止坐标检查和中央通道 1.5m 往返、降落均实测通过。
-先前 map 地面模型版本两段到位误差约 0.075m / 0.066m，24 个进程正常退出，无残留。
-证据为 `registration.json` 与 `mission.json`；旧 `bootstrap.json` 保留历史缺口。
-此结论只覆盖该参考任务与记录的代码、配置，不代表整个仓库或长期飞行已验证。
+导航任务使用会话 odom 坐标，地面模型使用 map 坐标；实时检查要求新鲜的 SLAM TF。
+每张地图的 `calibration-s2-final.json` 记录两次独立冷启动、静止坐标测量、
+传感器及七个组件观测、实际运行库指纹，以及每次 24/24 子进程正常退出。
+两个场景分别测量，不互相继承通过记录。离线校验始终不构成实时起飞许可。
 
-无屋顶版本保持 draft，不能继承带屋顶版本的导航通过标记。
-其历史 EGO 关闭阶段 exit -11 以及本轮导航协调节点关闭 exit -11 尚未定位；
-定向调试取证未复现不代表修复。
-导航使用会话 odom 坐标，参考变换需在静止后复核，检查器不把离线登记当作实时起飞许可。
-可选 `navigation.ground_model_frame` 声明地面模型参考系（map/odom，省略为 odom）。
-仓库声明 map 以稳定保存地面，要求新鲜连续的 SLAM TF；不覆写规划参数。
+参考任务安装在 `easyfly_mission_scripts/missions/scenes/<scene_id>/aisle_out_and_back.yaml`：
+起飞至 1.5m、悬停、沿中央通道前往 `(1.5, 0, 1.5)`、返回 `(0, 0, 1.5)`、降落。
+连续任务验收要求同一仿真内执行两轮；每轮检查真实导航结果、终点误差、会话和所有权释放，
+并在降落后连续检查静止状态、地图新鲜度和 map 中的返回位置。
+场景 `verification` 记录当前修订已取得的证据；正常退出也必须通过才可签导航验收。
 
-`shutdown-quiescence.json` 另记后续传输退出修正：真实 TCP 最后一个回调仍持有
-连接时，清理函数会等待 live/pending 同时归零，最多 5 秒，超时仍失败。
-原生与 ASAN 回归通过；这不等于已唯一解释历史 Gazebo SIGABRT。
-本次无屋顶调试检查正常退出，四组时钟/信号检查中的两个规划进程均正常退出，
-仍未取得历史 SIGSEGV 栈。后续带屋顶任务复验在原静止准入检查处超时，
-没有发送飞行 Goal，24 个进程正常退出；没有新增任务通过结论。
-`mission.json` 保留先前对应版本的有界通过证据，不能替代后续运行的实时检查。
+2026-10-16 的 v10 正式矩阵中，两场景各两次独立冷启动及各两轮连续任务全部通过，
+`navigation_tested` 均为 true。每个运行的 24 个进程正常退出，Gazebo IO 管理器归零，
+无强制清理或所属进程残留。`mission-s2-final.json` 保存真实任务/导航 UUID、终态、
+到位误差、落地恢复、所有权释放及运行库指纹，并与冷启动证据交叉核对。
 
-后续 IMU 加速度 RMS/密度单位修正见模型包 `imu-noise-reference.json`。
-两次独立未解锁冷启动在原 0.05m/s、连续 3 秒、最多 60 秒的检查下通过，
-对齐差异 0.0083m / 0.000163rad，参考已按两次测量更新，旧参考保存在新证据中。
-`calibration-imu-density.json` 与 `mission-imu-density.json` 记录该版本的校准和有界任务：
-两段误差约 0.075m / 0.085m，正常降落并解除武装，24/24 正常退出，722 帧 LiDAR 无非递增时标。
-无屋顶未继承该次通过。降落末段仍观察到估计 odom 高度/速度与静止真值不一致，
-本次不签落地后的估计收敛或连续多任务可靠性；历史原生退出故障继续开放。
+历史失败仍保留：v8 屋顶两轮任务成功但 Gazebo 退出残留，v9 冷启动 bridge 退出崩溃；
+两者均未计入通过成绩。已复现并修正的原生缺陷不能唯一解释所有旧失败，
+本次签收只说明 v10 所记录代码、配置和中央通道任务满足验收门限。
+
+`evidence/warehouse_aws_v1/native-fixes-s2.json` 汇总原生传感器、ODE 射线、传输和 DDS
+生命周期修复及对应回归。模型包的 `imu-noise-reference.json` 与 `imu-sampling-reference.json`
+分别记录非零噪声密度、原生采样和 FIFO 限幅。调试器运行只用于定位问题，不作为正式通过证据。
+历史 `bootstrap.json`、`mission.json`、`mission-imu-density.json` 等保留其各自版本结论，
+不覆盖当前清单。任何有界任务通过也只覆盖所记录路线、代码和配置，不代表整个仓库已验收。

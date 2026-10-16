@@ -36,19 +36,20 @@ spawn:
   position:
   - 0.0
   - 0.0
-  - 0.83
+  - 0.1
   yaw: 0.0
-  basis: Upstream central aisle; unchanged world [0,0,0.83], yaw 0, settled body z=0.088225m.
-    Two disarmed cold starts with datasheet IMU densities confirmed stationary alignment;
-    see calibration-imu-density evidence.
+  basis: Measured resting body z=0.088225m. Scene-only ground preparation spawn z=0.10m
+    leaves about 0.0118m clearance, avoiding an unarmed 0.74m free fall from the legacy
+    default. World, body physics and reference task targets unchanged; final geometry/alignment
+    verification is separate.
 navigation:
   frame: odom
   world_to_navigation:
     translation:
-    - 0.0038936974791189036
-    - -0.013482058110336464
-    - 0.04318369140625
-    yaw: -0.015698551008509667
+    - -0.0026482104634245234
+    - 0.004477132305813333
+    - -0.074755326171875
+    yaw: -0.015027005946450973
   recommended_region:
     min:
     - -0.3
@@ -73,8 +74,11 @@ runtime:
   - package: easyfly_gazebo_plugins
     path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
   notes:
-  - Curated GPS and primitive lidar visual; sensor and aircraft physics unchanged.
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
   - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
 recommended_missions:
 - package: easyfly_mission_scripts
   path: missions/scenes/warehouse_aws_v1/aisle_out_and_back.yaml
@@ -97,3 +101,7 @@ verification:
     path: evidence/warehouse_aws_v1/calibration-imu-density.json
   - package: easyfly_gazebo_worlds
     path: evidence/warehouse_aws_v1/mission-imu-density.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/calibration-s2-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_v1/mission-s2-final.json

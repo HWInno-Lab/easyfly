@@ -51,8 +51,9 @@ with standard gravity 9.80665 m/s^2. Its default `0.00637` incorrectly treats
 recorded in the model package's `licenses/runtime/imu-noise-reference.json`.
 
 These model-level repairs keep nonzero noise. They do not modify system plugins,
-PX4 admission/protection parameters, the 0.83 m spawn height,
-random walk, bias settings, or hardware configuration. This typical
+PX4 admission/protection parameters, random walk, bias settings, or hardware
+configuration. Legacy launches retain their 0.83 m spawn default; both registered
+warehouse scenes explicitly select 0.10 m in their scene manifests. This typical
 simulation reference is not a measurement or calibration of a real device.
 See the [TDK product and datasheet entry](https://www.invensense.tdk.com/en-us/products/inertial-sensors/industrial-motion/iim-42653).
 
@@ -62,3 +63,21 @@ zero/noise suppression, RMS-as-density and unrelated IMU overrides fail it.
 Cold-start native-state checks are separate from flight and UI acceptance;
 passing these checks is not hardware readiness or proof that every historical
 GPS or shutdown fault has been eliminated.
+
+## Native sampling and managed process shutdown
+
+The curated Iris publishes the original noisy 1000 Hz stream on `/imu_native`.
+The private IMU relay checks contiguous native sequence/timestamps, averages four
+samples, and limits acceleration to the representable PX4 signed 16-bit FIFO range
+before the existing 250 Hz MAVLink sampler. Clipped impacts do not preserve the
+full impulse integral. The model package's `imu-sampling-reference.json` records
+the sampling and clipping evidence. Missing native samples stop the relay.
+
+Managed scenes use the private `easyfly_fastdds_compat` runtime and the complete
+private Gazebo transport build. They preserve the caller's DDS configuration and
+add six named component-loader reply profiles; ordinary writer defaults remain
+unchanged. Their package READMEs describe native lifetime fixes and regression
+coverage. EGO consumes process stop signals on its main thread and destroys its
+nodes before shutting down the ROS context. Native tests are separate from scene
+acceptance: current scene evidence must also show successful tasks and normal
+exit of every owned process.

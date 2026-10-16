@@ -1,0 +1,12 @@
+# AWS no-roof variant central aisle only; explicit simulation reference mission.
+# Requires the matching registered scene, live trusted map and navigation_dev.
+schema_version: 1
+frame_id: odom
+units: {position: m, angle: rad, time: s}
+failure_policy: abort
+steps:
+  - {type: takeoff, altitude: 1.5, climb_speed: 0.3, timeout: 75}
+  - {type: hover, duration: 2, timeout: 10}
+  - {type: navigate, x: 1.5, y: 0, z: 1.5, max_speed: 0.4, timeout: 90}
+  - {type: navigate, x: 0, y: 0, z: 1.5, max_speed: 0.4, timeout: 90}
+  - {type: land, timeout: 90}

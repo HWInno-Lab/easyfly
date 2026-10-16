@@ -1,7 +1,7 @@
 schema_version: 1
 id: warehouse_aws_no_roof_v1
 name: AWS 小型仓库（上游无屋顶版本）
-status: draft
+status: registered
 category: indoor/warehouse
 tags:
 - warehouse
@@ -29,22 +29,37 @@ provenance:
 asset_sets:
 - aws_warehouse_v1
 required_plugins: []
-supported_profiles: []
+supported_profiles:
+- navigation_dev
 legacy_profiles: []
 spawn:
   frame: world
   position:
   - 0.0
   - 0.0
-  - 0.83
+  - 0.1
   yaw: 0.0
-  basis: Central aisle observed disarmed; new spatial-ground policy produced continuous
-    maps. Historical EGO and new coordinator shutdown exits remain unresolved; variant
-    navigation untested, keep draft.
+  basis: Measured resting body z=0.088225m. Scene-only ground preparation spawn z=0.10m
+    leaves about 0.0118m clearance, avoiding an unarmed 0.74m free fall from the legacy
+    default. World, body physics and reference task targets unchanged; final geometry/alignment
+    verification is separate.
 navigation:
   frame: odom
-  world_to_navigation: null
-  recommended_region: null
+  world_to_navigation:
+    translation:
+    - 0.004644486180040985
+    - 0.004295372714598973
+    - -0.07001492903645834
+    yaw: -0.014466961937233267
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
   ground_model_frame: map
 runtime:
   entrypoint:
@@ -60,17 +75,28 @@ runtime:
   - package: easyfly_gazebo_plugins
     path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
   notes:
-  - Curated GPS and primitive lidar visual; sensor and aircraft physics unchanged.
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
   - No full PX4 model root and no legacy scene model root are exposed.
-recommended_missions: []
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/warehouse_aws_no_roof_v1/aisle_out_and_back.yaml
 map_products: []
 verification:
   resources_complete: true
   world_loaded: true
   sensors_checked: true
-  navigation_tested: false
+  navigation_tested: true
   evidence_refs:
   - package: easyfly_gazebo_worlds
     path: evidence/warehouse_aws_no_roof_v1/bootstrap.json
   - package: easyfly_gazebo_worlds
     path: evidence/warehouse_aws_no_roof_v1/inspection-spatial.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_no_roof_v1/calibration-s2.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_no_roof_v1/calibration-s2-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/warehouse_aws_no_roof_v1/mission-s2-final.json

@@ -6,7 +6,7 @@
 每个集合记录一个直接包含模型目录的 `model_root`、各模型的入口、逐文件 SHA256、
 来源/许可状态和修改记录。`files` 是本轮文件快照；未登记的新增文件或哈希变化会报错。
 `storage: existing` 表示原已存在的资源，不表示本轮导入或完成来源审查。
-本轮不修改原模型、纹理或材质。
+S0 保留原模型、纹理和材质；S2 的运行模型改动单独记录如下。
 
 集合包括场景模型、MID360、默认 Iris、Gazebo 内置 sun/ground_plane、PX4 GPS。
 外部集合仅登记文件指纹，不将外部资源复制进本包；路径由调用者明确提供。
@@ -27,7 +27,10 @@
 
 `easyfly/runtime_models/` 仅含原版 PX4 GPS 与项目 MID360 的圆柱外观版本。
 MID360 传感器、IMU、质量和惯量保持原值；来源不清的外观 mesh 没有导入该集合。
-`easyfly_airframe_v1` 引用现有维护的 Iris，未改其 SDF；
+`easyfly_airframe_v1` 引用项目维护的 Iris；其 SDF 显式修正非零 IMU 噪声密度，
+并接入 1000Hz 原始样本的四点均值与 PX4 FIFO 量程限制。详见
+`licenses/runtime/imu-noise-reference.json` 和 `imu-sampling-reference.json`。
+原始 `/imu_native` 保留，`/imu` 供原 250Hz MAVLink 采样使用；不改 PX4 参数。
 `gazebo_builtin_v1` 单独引用系统模型。四个新增清单有独立来源及版权证据，
 避免同时暴露完整 PX4 与系统同名模型。`storage: vendored` 标明本轮提取资源。
 整理脚本 `tools/scenes/prepare_runtime_assets.py` 核对指定 PX4 修订与原 mesh 指纹，

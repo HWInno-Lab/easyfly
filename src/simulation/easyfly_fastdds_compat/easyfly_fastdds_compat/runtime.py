@@ -77,6 +77,6 @@ def activate(prefix=None):
     os.environ['LD_LIBRARY_PATH'] = ':'.join(paths)
     os.environ['RMW_IMPLEMENTATION'] = 'rmw_fastrtps_cpp'
     return dict(path=str(library), sha256=digest, implementation='rmw_fastrtps_cpp',
-                source_version='2.6.11', fix='reader_listener_snapshot',
+                source_version='2.6.11', fix='reader_writer_listener_snapshot',
                 component_profiles_sha256=hashlib.sha256(profile.read_bytes()).hexdigest(),
                 profile_environment=profile_environment)
