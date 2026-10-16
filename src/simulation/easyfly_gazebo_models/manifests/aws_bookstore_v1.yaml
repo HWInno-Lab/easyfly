@@ -1,0 +1,661 @@
+schema_version: 1
+asset_set_id: aws_bookstore_v1
+model_root:
+  package: easyfly_gazebo_models
+  path: third_party/aws/bookstore
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+  revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_bookstore/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_bookstore/origins.json
+  note: Pinned official snapshot dependency closure; original license and per-file
+    source hashes retained.
+models:
+- name: aws_robomaker_retail_AirConditionerC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Bicycle_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookD_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookE_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookF_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookshelfA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookshelfB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_BookshelfC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_ChairB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_ColumnB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Computer_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_DeskA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_DeskB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_DoorB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Holder_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Horologe_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_InfoDesk_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_LightA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_MagicCube_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_RetailShopFloor_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_RetailShopWall_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_SecurityCamera_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_ShopWindow_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Spotlight_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_TabletB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_retail_Tablet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-bookstore-world
+    revision: f5a2aaacd5418f9ecfa30f79e788856417f17c13
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_bookstore/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+local_changes:
+- Normalize SDF file://models/ URIs and Spotlight mesh filename case; preserve all
+  mesh/texture bytes.
+inventory_note: S3 pinned dependency snapshot; see origins.json for world-instance
+  changes.
+files:
+- path: aws_robomaker_retail_AirConditionerC_01/materials/textures/aws_AirConditionerC_01.png
+  sha256: 36ab8c100d687f3ce5dbedec996667a7098b2bf53027e99ae7be9abf38ccd947
+- path: aws_robomaker_retail_AirConditionerC_01/meshes/aws_AirConditionerC_01_collision.DAE
+  sha256: b8b6cabed9188465002071af7d2a719896ff03e2dd2ecc524dfdb5bbc52e344d
+- path: aws_robomaker_retail_AirConditionerC_01/meshes/aws_AirConditionerC_01_visual.DAE
+  sha256: e9053a09cf975dcf3759bf8eb18de1034758e65500694ec7a01b0a4f3035296f
+- path: aws_robomaker_retail_AirConditionerC_01/model.config
+  sha256: 20efd67883dac3193cb6751857a5187391dc2cda48e961c7bb9550e27daef71c
+- path: aws_robomaker_retail_AirConditionerC_01/model.sdf
+  sha256: 3c73dabf403ef4a40a4b8d3a53a454e533b3294e88d3c8572aac5c9b2f62a911
+- path: aws_robomaker_retail_Bicycle_01/materials/textures/aws_Bicycle_01.png
+  sha256: 5ed65b54727c5d3a6655d1c8de7431813b14d583f5bd5f1e2cf37a02d69cc8b5
+- path: aws_robomaker_retail_Bicycle_01/meshes/aws_Bicycle_01_collision.DAE
+  sha256: 640c417017210b60ab17ad91a5141b3f826aec61af22ee6e7b67719d82295a18
+- path: aws_robomaker_retail_Bicycle_01/meshes/aws_Bicycle_01_visual.DAE
+  sha256: 6c4f2f7749b8e295043008e40c8c91d97bead3e38503d819472b587935dccfc0
+- path: aws_robomaker_retail_Bicycle_01/model.config
+  sha256: 135eb464d229e9c6749c59dd793786819ab818861df5577d6c5c4a6236c2684d
+- path: aws_robomaker_retail_Bicycle_01/model.sdf
+  sha256: ad9349a0b2d7dd25e42f1447bccd5c648af54979f0eeee73621f2769c29a8893
+- path: aws_robomaker_retail_BookD_01/materials/textures/aws_BookD_01.png
+  sha256: eb67ed042eb7bd6d54f27024e7eb726e59ce4fc787314103a7f9c0f722b7c546
+- path: aws_robomaker_retail_BookD_01/meshes/aws_BookD_01_collision.DAE
+  sha256: 56bbe619a3cab321ff3fe383f9b73706c7d93b552bd6fdcdd0ce847c4dd71280
+- path: aws_robomaker_retail_BookD_01/meshes/aws_BookD_01_visual.DAE
+  sha256: 8a1bcfe0deb39e89a077d245d8d1c8c0e247bcc8cfabfed39a0135983d1e4d5c
+- path: aws_robomaker_retail_BookD_01/model.config
+  sha256: ea47b3f09c6c09e920a1dca36eabc6ef9824b420c7ea1acdc4d67c9c747ebeb7
+- path: aws_robomaker_retail_BookD_01/model.sdf
+  sha256: 3b9f16a31ee43b29d9624024cc12016dcb6ea66a314b8d18246af8622e528999
+- path: aws_robomaker_retail_BookE_01/materials/textures/aws_BookE_01.png
+  sha256: 8e0d60c9e852b15ff9abe1fe72151616accc16cf547deb9a4d9a8780e37bbba7
+- path: aws_robomaker_retail_BookE_01/materials/textures/aws_BookE_02.png
+  sha256: 2f662a36cb05a1df5a935411aebd281e2e2b7e15cb92f6f3613ed94286a3d9c4
+- path: aws_robomaker_retail_BookE_01/meshes/aws_BookE_01_collision.DAE
+  sha256: bf098cd880d5c46438d137c96fb1b232eb80fdcf0581a04ac7257309015dc2eb
+- path: aws_robomaker_retail_BookE_01/meshes/aws_BookE_01_visual.DAE
+  sha256: 10858ca7867e7290445b6a5f18776ee74be40181ebf8222ad0f1c41a41d0c9ea
+- path: aws_robomaker_retail_BookE_01/model.config
+  sha256: 15b616201b0650af2565cb2680dc317343b0d83726e16eb483f6caee6665f238
+- path: aws_robomaker_retail_BookE_01/model.sdf
+  sha256: a65a2a12794547ea5b60a77ded1ce7c717b792d4cfe274f86deb5692176b7000
+- path: aws_robomaker_retail_BookF_01/materials/textures/aws_BookF_01.png
+  sha256: 12ae6b40721becce678393582ec21c2440ea155a99a3a96a50d116b95d55ee11
+- path: aws_robomaker_retail_BookF_01/meshes/aws_BookF_01_collision.DAE
+  sha256: 9bf18e0cc67b50de9affc5e750ed35753458282c4f2ed9d4d9fadf9d7cf31cf2
+- path: aws_robomaker_retail_BookF_01/meshes/aws_BookF_01_visual.DAE
+  sha256: c2d3c624dba1e6361228adca0f73cfe5f0090184841ee609726880615ca1e45c
+- path: aws_robomaker_retail_BookF_01/model.config
+  sha256: 92908ffc9de722aaad66c3dcf292fceae9afdb16e7eb3c7193050773eb8cc0d3
+- path: aws_robomaker_retail_BookF_01/model.sdf
+  sha256: d9152562438fb2f63ea43ee0841c3b476b054e8eee1a76195bd93f943f02dde8
+- path: aws_robomaker_retail_BookshelfA_01/materials/textures/aws_BookshelfA_01.png
+  sha256: ce7a1bdb9c4091ac802021a20a21d44a8de75d3cc57475c82489819a45a14b68
+- path: aws_robomaker_retail_BookshelfA_01/materials/textures/aws_BookshelfA_02.png
+  sha256: 17fc77cc5185ff7f37f7cea9302599f809d06308d8ed214300598e1de29ed497
+- path: aws_robomaker_retail_BookshelfA_01/materials/textures/aws_BookshelfA_03.png
+  sha256: 913d1a25a6b5703cc6469b65588bbf933969e47a9a175b189af7450f728dc435
+- path: aws_robomaker_retail_BookshelfA_01/meshes/aws_BookshelfA_01_collision.DAE
+  sha256: 22aa3a0558ce4df560338aec05e375bddf86d37d35e3576f17c62cca6dc1d5c2
+- path: aws_robomaker_retail_BookshelfA_01/meshes/aws_BookshelfA_01_visual.DAE
+  sha256: 423bf39455dc35237a14311b195ecbf3bf7004d86032ef377d9e52af22eabf54
+- path: aws_robomaker_retail_BookshelfA_01/model.config
+  sha256: 05f7ce00042a53f3196c020cc6a4fc3c56da3cdc464e45ebae67e0f58d6ee09d
+- path: aws_robomaker_retail_BookshelfA_01/model.sdf
+  sha256: 1c473907659ef209f402810ccde947a58f8d2e53cf438cbef831d233b75a6a8c
+- path: aws_robomaker_retail_BookshelfB_01/materials/textures/aws_BookshelfB_01.png
+  sha256: ce7a1bdb9c4091ac802021a20a21d44a8de75d3cc57475c82489819a45a14b68
+- path: aws_robomaker_retail_BookshelfB_01/materials/textures/aws_BookshelfB_02.png
+  sha256: 3788e4fd58fbae794b62ea4e0b3f13a7ef0b039c2f571058c8cd82c7cd8b87d5
+- path: aws_robomaker_retail_BookshelfB_01/meshes/aws_BookshelfB_01_collision.DAE
+  sha256: 7e4b32b63c9b26a27d27080404b17d4ebd66528a15c4807eb61cf0792cd8e88a
+- path: aws_robomaker_retail_BookshelfB_01/meshes/aws_BookshelfB_01_visual.DAE
+  sha256: d5393f1c766637d355fb07e2f86617c0959389a3bb275aa16c04fd92cf81c5db
+- path: aws_robomaker_retail_BookshelfB_01/model.config
+  sha256: 28a705fd0f9c588cc05710eccbba90c5f5a4878162cd7243f2b1371b1eefa925
+- path: aws_robomaker_retail_BookshelfB_01/model.sdf
+  sha256: 1b5980d28f5a1584070ac504607baa01d8bce9bfffc3879dfebec57b325fd2bd
+- path: aws_robomaker_retail_BookshelfC_01/materials/textures/aws_BookshelfC_01.png
+  sha256: ce7a1bdb9c4091ac802021a20a21d44a8de75d3cc57475c82489819a45a14b68
+- path: aws_robomaker_retail_BookshelfC_01/meshes/aws_BookshelfC_01_collision.DAE
+  sha256: d0584e6b04b8ad781d235ea1ce4861dadbdc16a33a3c597444ba6caf673e5591
+- path: aws_robomaker_retail_BookshelfC_01/meshes/aws_BookshelfC_01_visual.DAE
+  sha256: 68658964ae4791682dc79bf2fd060c17d9c069808ceded01724fe2b60ab2974e
+- path: aws_robomaker_retail_BookshelfC_01/model.config
+  sha256: f99e9e2143c4b4b9a7a9454753282555f20f5789fe458a5373a0610b8958eb48
+- path: aws_robomaker_retail_BookshelfC_01/model.sdf
+  sha256: 31aade0ceb2eda135b4b32b6aadaa04f90440ba0042cf72625b0db2f862f7335
+- path: aws_robomaker_retail_ChairB_01/materials/textures/aws_ChairB_01.png
+  sha256: 9d24775f5648b46b31c4447fa931ea8705fcc436cbcff43ac1d8ea0eb21b75ec
+- path: aws_robomaker_retail_ChairB_01/meshes/aws_ChairB_01_collision.DAE
+  sha256: 3717de407e54ced82d29c6bb0a58163eab692230593656aa6cf16d682a7269f1
+- path: aws_robomaker_retail_ChairB_01/meshes/aws_ChairB_01_visual.DAE
+  sha256: 232400d6d482fb0e0c38ca441301a9a6c3fa99084a7c1a9b57a78c73778fc8fb
+- path: aws_robomaker_retail_ChairB_01/model.config
+  sha256: a1246f6a60efa8311f74baaae7837888d4edf714576016340b5f1894f2ef094c
+- path: aws_robomaker_retail_ChairB_01/model.sdf
+  sha256: d493875f30dc6833cb11c70cfdce6025a4afce0037c1766b84185d4c6d8247fe
+- path: aws_robomaker_retail_ColumnB_01/materials/textures/aws_ColumnB_01.png
+  sha256: ce7a1bdb9c4091ac802021a20a21d44a8de75d3cc57475c82489819a45a14b68
+- path: aws_robomaker_retail_ColumnB_01/meshes/aws_ColumnB_01_collision.DAE
+  sha256: c9f600d15aa3ccde85dde824895be8baf0afb0c1b8a9c19e103f9d55168d0afa
+- path: aws_robomaker_retail_ColumnB_01/meshes/aws_ColumnB_01_visual.DAE
+  sha256: 13df8c6fef07978e3c177baa1a6e4dfd7b6f964c8b50949c1b3920f9ef1bf526
+- path: aws_robomaker_retail_ColumnB_01/model.config
+  sha256: e5f74c22d29513958e97160c911a839e7946984b7a1d397a62e505468230f8ec
+- path: aws_robomaker_retail_ColumnB_01/model.sdf
+  sha256: 277eb7f2b7523f819db769330178f0fc4a59cf96c6cf8629ee4294666f993106
+- path: aws_robomaker_retail_Computer_01/materials/textures/aws_Computer_01.png
+  sha256: 2a8435ba1484b51305b0f2edd986366e0034c95154d04a080ed42f7522accf9b
+- path: aws_robomaker_retail_Computer_01/meshes/aws_Computer_01_collision.DAE
+  sha256: 054d54332da5dd995d474c2441d2572dc35519b756981a92982c09b39ad03151
+- path: aws_robomaker_retail_Computer_01/meshes/aws_Computer_01_visual.DAE
+  sha256: 6c355777edc75847c6179a2e5e6e0b39a61e7c0fdcb304c8b7f4984f7b7e1a30
+- path: aws_robomaker_retail_Computer_01/model.config
+  sha256: 79c7c6d14f98338b77841f6052deecb0a9ab3d1bfbd8484372b046206ffd1d06
+- path: aws_robomaker_retail_Computer_01/model.sdf
+  sha256: c4f1bbfdabb04cc304c7a9cf3aeb6207ba526400fa5c6c66cbf3bb15e195c57e
+- path: aws_robomaker_retail_DeskA_01/materials/textures/aws_DeskA_01.png
+  sha256: 0ca5399200d86bbc7583723567558730243eb1483da59efa09cda2614e7ee3c0
+- path: aws_robomaker_retail_DeskA_01/materials/textures/aws_DeskA_02.png
+  sha256: 7d7fa882cb870620c7f9dabae13f1bc6e8b77e60a44c30b583bf47eef0f7120e
+- path: aws_robomaker_retail_DeskA_01/materials/textures/aws_DeskA_03.png
+  sha256: 913d1a25a6b5703cc6469b65588bbf933969e47a9a175b189af7450f728dc435
+- path: aws_robomaker_retail_DeskA_01/meshes/aws_DeskA_01_collision.DAE
+  sha256: 2199a0f5275d3ba2d211f87d166ae00876fda57d03bcbbf9020fc7b3352399af
+- path: aws_robomaker_retail_DeskA_01/meshes/aws_DeskA_01_visual.DAE
+  sha256: 1ac3b743354767d3d968faf0acdfdd960ba984c662eb0ed01169e9f55462ecdc
+- path: aws_robomaker_retail_DeskA_01/model.config
+  sha256: 4ad7d856bac9ae1ae66d992cb02c782c1f183c7dd6d974086e4e78ead29c4b73
+- path: aws_robomaker_retail_DeskA_01/model.sdf
+  sha256: fa689541077676e7d259d056d1420b92491afe77c0d14f01679a8b6e42f9c08b
+- path: aws_robomaker_retail_DeskB_01/materials/textures/aws_DeskB_01.png
+  sha256: f46ffe48dc70516023fb8331dad5334c0a95679aa842a7c705fd145d213bdc4d
+- path: aws_robomaker_retail_DeskB_01/meshes/aws_DeskB_01_collision.DAE
+  sha256: 8e57789a7a94e0864960639451853128a46eb9b14c2aa1a8c77d420e8bcab74d
+- path: aws_robomaker_retail_DeskB_01/meshes/aws_DeskB_01_visual.DAE
+  sha256: 38774ed4953735e12dfedcbc55f933c9dfdb9c1f1260d94bac45e6c118008579
+- path: aws_robomaker_retail_DeskB_01/model.config
+  sha256: ffeb5782803da535b3cd2a98e1220aadda415f443bce2f220f74169bba225fba
+- path: aws_robomaker_retail_DeskB_01/model.sdf
+  sha256: a8455f806e7de40f028f1e437ddc5db1975f81e59c127dd2f2c92e31eb2005a3
+- path: aws_robomaker_retail_DoorB_01/materials/textures/aws_DoorB_01.png
+  sha256: 16d7277c9b0570bc621f8de5243b3ff70bb3008bdfce936a6d3e83b8552a3876
+- path: aws_robomaker_retail_DoorB_01/meshes/aws_DoorB_01_collision.DAE
+  sha256: 2ce41c9744db89ed2487c04b31a72d2632b1a277050a459d70fbffc3873b4a81
+- path: aws_robomaker_retail_DoorB_01/meshes/aws_DoorB_01_visual.DAE
+  sha256: 94454a612a9fa7bf36569d57c16bcc99daf3640b9dcfb5fc209539bf7b0044c7
+- path: aws_robomaker_retail_DoorB_01/model.config
+  sha256: 96d8c073440a2f7f87900b6c693a6055b254af919ec2828b558042bf097b8e62
+- path: aws_robomaker_retail_DoorB_01/model.sdf
+  sha256: 419cefe763ef9adf84414d485cdf9c83480a2600c3183d97a00e8360a77301b2
+- path: aws_robomaker_retail_Holder_01/materials/textures/aws_Holder_01.png
+  sha256: 648b6136a10fd19b9ae4da4656f70539ce5f84437526ad75381ee62e15d77082
+- path: aws_robomaker_retail_Holder_01/meshes/aws_Holder_01_collision.DAE
+  sha256: 0041738c4f2948bc74119346ff383b5fef670f5923d4a91cbef499f9128ed7ba
+- path: aws_robomaker_retail_Holder_01/meshes/aws_Holder_01_visual.DAE
+  sha256: 968432c4c30ef2f94ac266cf8e67a5da2ae6bd8428da8edfb7b9397aad563f75
+- path: aws_robomaker_retail_Holder_01/model.config
+  sha256: 901c6dc9eb62eec084d76ae84c1ed39e0e369b80196c119246c903c438520596
+- path: aws_robomaker_retail_Holder_01/model.sdf
+  sha256: 7488fd58879d456b4926d4f55d29d353bde938eb38152fdc9818fbf845f66b38
+- path: aws_robomaker_retail_Horologe_01/materials/textures/aws_Horologe_01.png
+  sha256: 709b1ebcca4a71d4e4af3069ea4327a72d7465dc78766cb608e3b13e94e31a8f
+- path: aws_robomaker_retail_Horologe_01/meshes/aws_Horologe_01_collision.DAE
+  sha256: bf739194bebd88617dd522fb42634d5aeaee1a24929b4c672c5d75fd2eabf35c
+- path: aws_robomaker_retail_Horologe_01/meshes/aws_Horologe_01_visual.DAE
+  sha256: 33af4a6a916c63a472ad9308274dff8dac45b6da59cc4d92336279922c2bad07
+- path: aws_robomaker_retail_Horologe_01/model.config
+  sha256: acfd52f0f93e93de6265f70ec4d9cd1e2889abcd58362cb7226799e9cd758e2e
+- path: aws_robomaker_retail_Horologe_01/model.sdf
+  sha256: e6c67c6a2d6c2b20674c717c82aaa6569a54ed212d969dc99de9e1f8ec2cbc6f
+- path: aws_robomaker_retail_InfoDesk_01/materials/textures/aws_InfoDesk_01.png
+  sha256: 320622e2a0bb18453cdd72a7e304c5a337339824c53cb3c663a1f85fdd46c603
+- path: aws_robomaker_retail_InfoDesk_01/meshes/aws_InfoDesk_01_collision.DAE
+  sha256: 6863865c4be53e36c153d453186b49f5ce4cc7c3a6278f9d5c05c4b28c456578
+- path: aws_robomaker_retail_InfoDesk_01/meshes/aws_InfoDesk_01_visual.DAE
+  sha256: 74364e8632b3bf771d82e15b73592f21601f6a5bf1700aeb218466b7b2f4dc42
+- path: aws_robomaker_retail_InfoDesk_01/model.config
+  sha256: 8bb55b0b14b51da4603cf24c4bb64a407d7efbe6ebb0f2d43da06b0c3171e614
+- path: aws_robomaker_retail_InfoDesk_01/model.sdf
+  sha256: 6ea8cf6730897c148aa16761626a7231df000101ae2513c5523486f9a06ec691
+- path: aws_robomaker_retail_LightA_01/materials/textures/aws_LightA_01.png
+  sha256: 807b24535c35d2153894ae7e0eb7d96a92928c9f30c4dd00abf5460c246c6e30
+- path: aws_robomaker_retail_LightA_01/meshes/aws_LightA_01_collision.DAE
+  sha256: 1d3c280384000155c214d407a694f36249c513cfecf7fc30830c4c8a83a58f8e
+- path: aws_robomaker_retail_LightA_01/meshes/aws_LightA_01_visual.DAE
+  sha256: 26b81c86cd69e00459e788d2461badfe774f2747445b6ce186161bb827ba6b71
+- path: aws_robomaker_retail_LightA_01/model.config
+  sha256: e9bc9f4eb6322dded450429f801a40f1bee917e62965582f4f70f3ca2fc4ebb9
+- path: aws_robomaker_retail_LightA_01/model.sdf
+  sha256: fa8dd183ebf0807a281f2afb8b4864046b0093a61e52d54867b6ba66ee94e44e
+- path: aws_robomaker_retail_MagicCube_01/materials/textures/aws_MagicCube_01.png
+  sha256: 801f296492c2a4c33242c5bedbfa0eaf7932872ee8199d9f7faf4a9ca99fd612
+- path: aws_robomaker_retail_MagicCube_01/meshes/aws_MagicCube_01_collision.DAE
+  sha256: 2152e8967919267ce1b6f03d7bce23fb796be0e873001e90d1752f58e9595d58
+- path: aws_robomaker_retail_MagicCube_01/meshes/aws_MagicCube_01_visual.DAE
+  sha256: 20937460a48149d6ff96239704f1fb34c0277f3f509b465c7834a27596034771
+- path: aws_robomaker_retail_MagicCube_01/model.config
+  sha256: 0382b86d7ba648af6d7a967521db5fdd3ce8acdef70d35cdab31729c25216363
+- path: aws_robomaker_retail_MagicCube_01/model.sdf
+  sha256: 43a18ffb4dc131dbdc4c7c43c3145d2df9f62da18595add70c946659a8156282
+- path: aws_robomaker_retail_RetailShopFloor_01/materials/textures/aws_RetailShopFloor_01.png
+  sha256: 943cac901efdb091ddfb35028ceed2f4e71759ec76f699e11ba448cc1729ac92
+- path: aws_robomaker_retail_RetailShopFloor_01/meshes/aws_RetailShopFloor_01_collision.DAE
+  sha256: e1b886174620819196e9954db8c8c69e2d65e34e719bd13b4a8f2d5ef3cbb1a2
+- path: aws_robomaker_retail_RetailShopFloor_01/meshes/aws_RetailShopFloor_01_visual.DAE
+  sha256: b83ac5540117cb278bc4db082e2c3dea4ac8d9fcd0c0d0b283e076ac2eb15b1c
+- path: aws_robomaker_retail_RetailShopFloor_01/model.config
+  sha256: 69c38bf5010770e7399f6a103d423e14188fca297d98b19c28242d364aae9a5c
+- path: aws_robomaker_retail_RetailShopFloor_01/model.sdf
+  sha256: 2c900bc605eec800ee63da1913633cddca680d1655637c8d58b22b28e0acc1f2
+- path: aws_robomaker_retail_RetailShopWall_01/materials/textures/aws_RetailShopWall_01.png
+  sha256: d0cc6dd4eea907af5c3cfcd498e2dc252bd0d1edc3783dbab85fe8f2fa5c59df
+- path: aws_robomaker_retail_RetailShopWall_01/meshes/aws_RetailShopWall_01_collision.DAE
+  sha256: 7bab2fa9128fbe430f026348dd3e39be059ca33bcb5494b1c496b01a7a3298f4
+- path: aws_robomaker_retail_RetailShopWall_01/meshes/aws_RetailShopWall_01_visual.DAE
+  sha256: 4ac4b6bb2ee064006d80cf0548f0c3cb61b15f270b51e7ce8b576de2b4031979
+- path: aws_robomaker_retail_RetailShopWall_01/model.config
+  sha256: c2e2a872d897e3dd1a895a41d2de69db96ba2ccbc0cfba0ffc96efda7ebb2c16
+- path: aws_robomaker_retail_RetailShopWall_01/model.sdf
+  sha256: a99a9e8152f351e7cad75b1a12bad853bb23aaffa83b71035c2f1bec7e51b563
+- path: aws_robomaker_retail_SecurityCamera_01/materials/textures/aws_SecurityCamera_01.png
+  sha256: d2852509c00eb15c0e9d47b3320ff14547d4bbc3756f635f70a0e800013fa632
+- path: aws_robomaker_retail_SecurityCamera_01/meshes/aws_SecurityCamera_01_collision.DAE
+  sha256: b1c1eab4ecd1c41824ef6b95224f5227bf2e30d73d04e2d7c271912dc143a900
+- path: aws_robomaker_retail_SecurityCamera_01/meshes/aws_SecurityCamera_01_visual.DAE
+  sha256: 56a226314816db6159501d95cf02ed951649a40274e7360e72df420003b47b61
+- path: aws_robomaker_retail_SecurityCamera_01/model.config
+  sha256: 6b4e031e173868f284d8353c0f28e5c4f15e32d31efc61a6a9e6b9d57230f9ed
+- path: aws_robomaker_retail_SecurityCamera_01/model.sdf
+  sha256: 75819b5ce9ed7f9f41087d8b7c373cfde79e4ee7fd7f12b73f21ab34f9865506
+- path: aws_robomaker_retail_ShopWindow_01/materials/textures/aws_ShopWindow_01.png
+  sha256: 584df862a2131a6fa7fe55826cf46d8010dfb6a9b36b894cee3cca5f109cd15a
+- path: aws_robomaker_retail_ShopWindow_01/meshes/aws_ShopWindow_01_collision.DAE
+  sha256: c8ac71f9746fb7d8d1273eca2b51196f1a606cb4e03b6f2c3f24347d02ff2e29
+- path: aws_robomaker_retail_ShopWindow_01/meshes/aws_ShopWindow_01_visual.DAE
+  sha256: 79516177abfaf3331cc7451d57034839664b0ae08912b3f6a5bd9b40512ee0ea
+- path: aws_robomaker_retail_ShopWindow_01/model.config
+  sha256: 4f4338cc698da51962c3732194bd7d6308de55e40faf22020031eb54579d9d40
+- path: aws_robomaker_retail_ShopWindow_01/model.sdf
+  sha256: 3cc1374129ac69a748250a94be683a0203709ceab827cf34a18fb173cc310cce
+- path: aws_robomaker_retail_Spotlight_01/materials/textures/aws_SpotlightDiffuse_01.png
+  sha256: 5389b4b1dc44299e5678f4d1cd09e8320748353082f0ffa6a2965eef076eac01
+- path: aws_robomaker_retail_Spotlight_01/meshes/aws_spotlight_01_collision.DAE
+  sha256: a957e19483d90464ec185e715d24c66ecf962f390fc39b4e0db9f32cadecc961
+- path: aws_robomaker_retail_Spotlight_01/meshes/aws_spotlight_01_visual.DAE
+  sha256: 11fd4d00dfcf084962dd01b17eff8007a8a9910ed3291db75565b428c868335c
+- path: aws_robomaker_retail_Spotlight_01/model.config
+  sha256: 45c04927b48eac21d857a12ce9732d98f4b9fe082d1ebede3fbf2edede38694e
+- path: aws_robomaker_retail_Spotlight_01/model.sdf
+  sha256: 2d7e4fd99f23f0c90aff4e1280d16893781e8ce5f154bd94a50a4ef353cc3e6a
+- path: aws_robomaker_retail_TabletB_01/materials/textures/aws_TabletB_01.png
+  sha256: 8c12b6ba01289e936052846fbffd15f0d82bf67439fb1d1a65507928c3a9001f
+- path: aws_robomaker_retail_TabletB_01/meshes/aws_TabletB_01_collision.DAE
+  sha256: 40e1efd33ff167a17e112d2286c0094f4162b55198986ad52eac82721c89c04a
+- path: aws_robomaker_retail_TabletB_01/meshes/aws_TabletB_01_visual.DAE
+  sha256: 214fd04fa85cabc2f4ea4b820ef0b2029b9eb80e6ffd7fae43dfcef60f6b7c0a
+- path: aws_robomaker_retail_TabletB_01/model.config
+  sha256: fce6724d9f766dddc308425529c6e2ec1f595a9b1f268bb11ddd1f8dfaa51ed6
+- path: aws_robomaker_retail_TabletB_01/model.sdf
+  sha256: b179b66bcbbbdfc25dc114c2702514ebece1f4b61e5726bf57c9cb8b1f589a7f
+- path: aws_robomaker_retail_Tablet_01/materials/textures/aws_Tablet_01_nologo.png
+  sha256: 54f36b9bd982b7887fb351a40ce78cdfac7186e42baf04abea71c8ed06efa17a
+- path: aws_robomaker_retail_Tablet_01/meshes/aws_Tablet_01_collision.DAE
+  sha256: 02f6b5210a5cfa6c0c418c80a32b0b8c80089af6c2debf6b523b7acc12621cd2
+- path: aws_robomaker_retail_Tablet_01/meshes/aws_Tablet_01_visual.DAE
+  sha256: 7093aadbce8f37c56335e469a5a67b3fbe2cd9da2c3d28e586db5a1aef3df46b
+- path: aws_robomaker_retail_Tablet_01/model.config
+  sha256: 1713a47bcc5ad6db80862657c013223d3a37f34ed0f0d0bb6e1278060afb003d
+- path: aws_robomaker_retail_Tablet_01/model.sdf
+  sha256: f5dd70c947da8f335a4abaaccf0f7bdfab0857c06e8752c08978cb556f4f61c0
+storage: vendored

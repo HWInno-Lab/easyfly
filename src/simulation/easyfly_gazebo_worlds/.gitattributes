@@ -1,0 +1,5 @@
+# World fingerprints apply to exact upstream/derived bytes on every checkout.
+worlds/indoor/residential/house_aws_v1.world -text -whitespace
+worlds/indoor/commercial/bookstore_aws_v1.world -text -whitespace
+licenses/aws_house/LICENSE -text
+licenses/aws_bookstore/LICENSE -text

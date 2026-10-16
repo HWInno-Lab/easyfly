@@ -45,6 +45,11 @@ class SceneProbe(navigation.Probe):
         from easyfly_fastdds_compat.runtime import activate
         middleware = activate()
         super().__init__(args)
+        # The base probe freezes its transport XML. Merge the six named loader
+        # reply policies into that owned baseline for raw draft inspections too.
+        middleware = activate()
+        self.environment.update(middleware['profile_environment'])
+        self.environment['LD_LIBRARY_PATH'] = os.environ['LD_LIBRARY_PATH']
         self.report['dds_compatibility'] = middleware
         self.catalog,_=installed_catalog(px4_dir=Path(self.report['staging']['staging']))
         if args.scene not in self.catalog.scenes:
@@ -127,10 +132,11 @@ class SceneProbe(navigation.Probe):
             sets=dict.fromkeys(self.scene['asset_sets']+self.scene['runtime']['asset_sets'])
             roots=list(dict.fromkeys(str(self.catalog.resolve(self.catalog.assets[k]['model_root'])) for k in sets))
             spawn=self.scene['spawn']
-            if spawn['position']!=[0.0,0.0,0.83] or spawn['yaw']!=0.0:
-                raise ValueError('bootstrap harness currently requires the unchanged default spawn')
+            if spawn['position'] is None or spawn['yaw'] is None:
+                raise ValueError('bootstrap requires a geometry-reviewed explicit spawn')
             command.extend(['world:='+str(self.catalog.resolve(self.scene['world'])),
                             'debug_model_path:='+':'.join(roots),
+                            'debug_spawn_pose:='+' '.join(str(v) for v in [*spawn['position'],spawn['yaw']]),
                             'ground_model_frame:='+self.scene['navigation'].get('ground_model_frame','odom')])
             self.report['bootstrap_only_raw_debug_inputs']=True
         else:

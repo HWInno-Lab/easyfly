@@ -1,0 +1,8 @@
+# Retain exact upstream asset bytes, including CRLF and exporter whitespace.
+third_party/aws/house/** -text -whitespace
+third_party/aws/bookstore/** -text -whitespace
+licenses/aws_house/upstream-small_house.world -text -whitespace
+licenses/aws_bookstore/upstream-bookstore.world -text -whitespace
+licenses/aws_bookstore/world-changes.diff -text -whitespace
+licenses/aws_house/LICENSE -text
+licenses/aws_bookstore/LICENSE -text

@@ -1,4 +1,4 @@
-# 场景登记（S0–S2）
+# 场景登记（S0–S3）
 
 现有 `empty.world`、`perception_demo.world`、`precision_landing.world` 保留根路径。
 `scenes/` 是场景登记，`schemas/` 使用 JSON Schema Draft 7，兼容 Jammy 的 python3-jsonschema。
@@ -85,3 +85,18 @@ OGRE 仅解析 SDF 明确选中的简单 material 块及其纹理引用；继承
 分别记录非零噪声密度、原生采样和 FIFO 限幅。调试器运行只用于定位问题，不作为正式通过证据。
 历史 `bootstrap.json`、`mission.json`、`mission-imu-density.json` 等保留其各自版本结论，
 不覆盖当前清单。任何有界任务通过也只覆盖所记录路线、代码和配置，不代表整个仓库已验收。
+
+## AWS 住宅与书店（S3）
+
+`house_aws_v1`归类为`indoor/residential`，`bookstore_aws_v1`归类为`indoor/commercial`。
+模型与运行传感器分开管理，继续复用同一Iris、GPS、MID360及相机配置。
+每张图有独立的来源、几何测量、出生位置、静止坐标标定和参考任务证据。
+
+住宅候选为客厅world `(0,1,0.10)`；书店候选为北侧宽横通道`(-3,5.4,0.115)`。
+`geometry-s3.json`记录真实Gazebo/ODE碰撞测量：每条候选路线17个位置，
+21个高度、32个方位，以及地面和向上射线。书店的细书架通道未纳入参考路线。
+
+当前两图资源闭包和原生几何检查已通过，完整SITL独立冷启动进行中。
+清单保持draft与导航未验收状态，待独立标定和任务结果通过后更新。
+注册前使用`scene_sitl --bootstrap`仅收集无飞行Goal的传感器/静止证据；
+它显式传入raw-world、受管模型根与几何测量出生点，不能覆盖已注册scene的出生点。

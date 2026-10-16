@@ -1,0 +1,1633 @@
+schema_version: 1
+asset_set_id: aws_house_v1
+model_root:
+  package: easyfly_gazebo_models
+  path: third_party/aws/house
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+  revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_house/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_house/origins.json
+  note: Pinned official snapshot dependency closure; original license and per-file
+    source hashes retained.
+models:
+- name: aws_robomaker_residential_AirconditionerA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_AirconditionerB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_BalconyTable_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Ball_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Bed_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Board_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Carpet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_ChairA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_ChairD_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Chandelier_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_CoffeeTable_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_CookingBench_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Curtain_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitA_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitB_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitC_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitD_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitD_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitD_03
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_DeskPortraitD_04
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Door_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Dumbbell_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_FitnessEquipment_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_FloorB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_FoldingDoor_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_FoldingDoor_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Handle_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_HouseWallB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_KitchenCabinet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_KitchenTable_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_KitchenUtensils_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_LightC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_NightStand_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitA_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitB_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitB_03
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitD_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitD_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitE_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_PortraitE_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Rangehood_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_ReadingDesk_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Refrigerator_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_RoomWall_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_RoomWindow_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_SeasoningBox_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_SecurityCamera_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_ShoeRack_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_SofaC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_TVCabinet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_TV_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_TV_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Tablet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Tableware_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Trash_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Vase_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+- name: aws_robomaker_residential_Wardrobe_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+    revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_house/origins.json
+    note: Pinned official snapshot dependency closure; original license and per-file
+      source hashes retained.
+local_changes:
+- Relocate referenced house portrait photos inside owning models; preserve image and
+  mesh geometry bytes.
+inventory_note: S3 pinned dependency snapshot; see origins.json for world-instance
+  changes.
+files:
+- path: aws_robomaker_residential_AirconditionerA_01/materials/textures/aws_AirconditionerA_01.png
+  sha256: d0064caa3cbdfbdb0a40a1e2d17a09c525ebe6744ecbb2b300b31d09fa2050f6
+- path: aws_robomaker_residential_AirconditionerA_01/meshes/aws_AirconditionerA_01_collision.DAE
+  sha256: 368f5c40e819afb1d9ba5c87c805f5ac430cbfc18b5148eb50471ea55090283a
+- path: aws_robomaker_residential_AirconditionerA_01/meshes/aws_AirconditionerA_01_visual.DAE
+  sha256: 7d7bc998891587bb641cd60f2a196f19264463d45d86541af025943f7836a3ef
+- path: aws_robomaker_residential_AirconditionerA_01/meshes/aws__Air conditioner_01.DAE
+  sha256: e5b2175ddca2a967586f5c7dee6399345c67ac35b46506e3fdb37c04432976ab
+- path: aws_robomaker_residential_AirconditionerA_01/model.config
+  sha256: c649b2afd1de626f5950dcd43965558737c8245d773fcb43b46ae79a21ee3954
+- path: aws_robomaker_residential_AirconditionerA_01/model.sdf
+  sha256: 3f620ac82b8cef89cca52b28afea7d6033e8e9bd875e07eab1b1a0d0cfd4bf46
+- path: aws_robomaker_residential_AirconditionerB_01/materials/textures/aws_AirconditionerB_01.png
+  sha256: 0aa9efcca8b70f1174a8a29ca3cd85d29fd6a7e050c52aa515b76182e72d9dee
+- path: aws_robomaker_residential_AirconditionerB_01/meshes/aws_AirconditionerB_01_collision.DAE
+  sha256: 5011f5a17c9b23e1250d6e9a35d36c717bfe7f91ef2c09e700755e68bece4a7e
+- path: aws_robomaker_residential_AirconditionerB_01/meshes/aws_AirconditionerB_01_visual.DAE
+  sha256: f0e33471c078950a406fbc28eaf9b2542be56c2ce976db9b4dbc365af912414a
+- path: aws_robomaker_residential_AirconditionerB_01/model.config
+  sha256: b8ce3fd21b56b1a36cf8cfde0515c2f7cdb6765ba94efabf9b59a223bd65c9ed
+- path: aws_robomaker_residential_AirconditionerB_01/model.sdf
+  sha256: ea1151f9afbb33537ab50b379564984cc72ebb496daa933c7d938b73c4ada1b2
+- path: aws_robomaker_residential_BalconyTable_01/materials/textures/aws_BalconyTable_01.png
+  sha256: 55ed2ccddfcdbf665d8328eb5b3ac7d5e0837c069be5e1f756d47586a80e3464
+- path: aws_robomaker_residential_BalconyTable_01/meshes/aws_BalconyTable_01_collision.DAE
+  sha256: c40aa457df15d22096cea4d6fc9ea226774ae0a833ca4294bb666f99ed454a3c
+- path: aws_robomaker_residential_BalconyTable_01/meshes/aws_BalconyTable_01_visual.DAE
+  sha256: cbd9d03518c88e2f3989a709a3766c261820797efbca2684a37a5086079d88b3
+- path: aws_robomaker_residential_BalconyTable_01/model.config
+  sha256: 53937cab847805d925d1b62fc52ac199bba5148fecfd4219f927a08ced472755
+- path: aws_robomaker_residential_BalconyTable_01/model.sdf
+  sha256: 5fdcba0fb2f957db01ec53c7737b9f680d4f5fea3a85975dd47ebe1b7b31cdb0
+- path: aws_robomaker_residential_Ball_01/materials/textures/aws_Ball_01.png
+  sha256: 7b8cc063ec768341e5613627d178d492e7a4c799837f47e9676f7ac07e041e30
+- path: aws_robomaker_residential_Ball_01/meshes/aws_Ball_01_collision.DAE
+  sha256: cde2c88aa7078ca7bad5a8b6552da4d377dd8478467be5437391ba728fabe50a
+- path: aws_robomaker_residential_Ball_01/meshes/aws_Ball_01_visual.DAE
+  sha256: 2271589c0c1b54e6db912f8e25a333ea5c4d546956a5f9c3bbf8f2a94ada1716
+- path: aws_robomaker_residential_Ball_01/model.config
+  sha256: 7b1dc5123849f56cea02e8dcdbc0662b818228779ad634fd595f9622d4bf3833
+- path: aws_robomaker_residential_Ball_01/model.sdf
+  sha256: 72bb65019185626e9772e77b7715747ffa4c72de09113fc7d398e34032cc07c0
+- path: aws_robomaker_residential_Bed_01/materials/textures/aws_BedA_01.png
+  sha256: cf36006479c6e960d79f8805991502ac86fbdba9d35f68866628928a38b90f6a
+- path: aws_robomaker_residential_Bed_01/materials/textures/aws_BedB_01.png
+  sha256: b90a79e86dca100e3cb3375cf7185c4c9ce348e6de18871a7bdcadd1081da433
+- path: aws_robomaker_residential_Bed_01/materials/textures/aws_BedC_01.png
+  sha256: d0843477390219389727a2cc9877ab1e6e92a687b5d97e926841aab0b1446669
+- path: aws_robomaker_residential_Bed_01/materials/textures/aws_Bed_01.png
+  sha256: 1308da47d60b65c4d54794c0edd72526d3dcc9caab5771c77fd951817f0139a7
+- path: aws_robomaker_residential_Bed_01/meshes/aws_Bed_01_collision.DAE
+  sha256: a4b8e8c8fb129a0e3e984743f066254febf7492dbd11634b7ecd2e846263e464
+- path: aws_robomaker_residential_Bed_01/meshes/aws_Bed_01_visual.DAE
+  sha256: 7c48aa9044b30699020ae3a18c4780b1b16db4f4ecaf22510b2c6c2b8002c5e0
+- path: aws_robomaker_residential_Bed_01/model.config
+  sha256: 476a774f3a72cfe4ba30e3713b4fe82e906e91fc2241905dc59d5980d6d1f119
+- path: aws_robomaker_residential_Bed_01/model.sdf
+  sha256: 0ce182082a584e1bd5bd69ddcfeab124c3eb2b8c928928135615fe9e8fa4fefc
+- path: aws_robomaker_residential_Board_01/materials/textures/aws_Board_01.png
+  sha256: 795abd1e5bd2dad04dc1ac934b33f768db6a23eaeb6c1e5d4b1b77f3368d454f
+- path: aws_robomaker_residential_Board_01/meshes/aws_Board_01_collision.DAE
+  sha256: 2e1d2bbfe35207b6aa59772f3bc5744c175bba4d1f6e29bfbab6ef073839312b
+- path: aws_robomaker_residential_Board_01/meshes/aws_Board_01_visual.DAE
+  sha256: 45175114fb497e82c8fc62dd1037144666fa16a1f683ffbf0db8642adb50c5a6
+- path: aws_robomaker_residential_Board_01/model.config
+  sha256: 21ea9df0dad50f9341baa5904c212419fcb1f8aa39036dd6e2f14f50e92b66a8
+- path: aws_robomaker_residential_Board_01/model.sdf
+  sha256: ec29e1e646a610ecce25e9b1029551937bb59c0153ad1fce12855c253a413841
+- path: aws_robomaker_residential_Carpet_01/materials/textures/aws_Carpet_01.png
+  sha256: bebfa3305fb60e141249299e256b33b021a018f0835d14bc172c3eee86036f75
+- path: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_collision.DAE
+  sha256: 44f3ee9d4be182016f4e20a01cd18cd7f5e61c24d76e2e2ef181a281c5438d42
+- path: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_visual.DAE
+  sha256: 2c12d1a52d8027a37803a6abb6bb0342b6f79ae1e853c27bde83b0dcd5651169
+- path: aws_robomaker_residential_Carpet_01/model.config
+  sha256: feb070246f4a120937b361938438a66ad098e3b3b00c5fe9460edd24616f2e2c
+- path: aws_robomaker_residential_Carpet_01/model.sdf
+  sha256: ef87534968bb110a78a91c1bf26256caaf23a271ea2b771f6615c783bae10f69
+- path: aws_robomaker_residential_ChairA_01/materials/textures/aws_ChairA_01.png
+  sha256: 80369d365081b818f68adf7c4e5c514184cf6e9a8b8cfed4867ef10e5ebef168
+- path: aws_robomaker_residential_ChairA_01/meshes/aws_ChairA_01_collision.DAE
+  sha256: 2763098ea4411dc89256ecde2b2df4646520b0b9a5f89a9101750648e09dcba4
+- path: aws_robomaker_residential_ChairA_01/meshes/aws_ChairA_01_visual.DAE
+  sha256: 05ba09caca3176610ee215698d7c47993cee15d825f60eda6f128791ce926701
+- path: aws_robomaker_residential_ChairA_01/model.config
+  sha256: 9c1d704aa4d53f4e5c7e0a5aa89ed969e8d67138cd218d18cd12d870033686eb
+- path: aws_robomaker_residential_ChairA_01/model.sdf
+  sha256: 145737f636315b7db89591e62f72ffa3c8e4cd8db9cb14337b4d6d8d7c52078b
+- path: aws_robomaker_residential_ChairD_01/materials/textures/aws_ChairD_01.png
+  sha256: 55ed2ccddfcdbf665d8328eb5b3ac7d5e0837c069be5e1f756d47586a80e3464
+- path: aws_robomaker_residential_ChairD_01/meshes/aws_ChairD_01_collision.DAE
+  sha256: 4cb613af05615762143bc21272cd75058ad7dc9ff9abd07269464c432e199434
+- path: aws_robomaker_residential_ChairD_01/meshes/aws_ChairD_01_visual.DAE
+  sha256: bd40cbe5daaeb4ae3304af255cd014d64f5c73021b11c96965b9e8e2e4b71eea
+- path: aws_robomaker_residential_ChairD_01/model.config
+  sha256: d1d282e4e4184710ce1961afa8d6d3a3316866f8fee9bbb791bf6a2bd17d1271
+- path: aws_robomaker_residential_ChairD_01/model.sdf
+  sha256: 39939f76d3185018f310c45f1f13d2fe00544e499b9d1d644ccef409fb092ea5
+- path: aws_robomaker_residential_Chandelier_01/materials/textures/aws_Chandelier_01.png
+  sha256: c032dfbdd5a2a7ed3dc741ccf21e3f44d95658e935f61867934e366e0c2679b1
+- path: aws_robomaker_residential_Chandelier_01/meshes/aws_Chandelier_01.DAE
+  sha256: f4ca0c48abadf21ee136bcfd25938971781c825e02eac56b7576d63c9c327411
+- path: aws_robomaker_residential_Chandelier_01/meshes/aws_Chandelier_01_collision.DAE
+  sha256: 09bdf383d60196ef61cd495cf6e43a0ae7bd257473028f3776dea35c6b45581f
+- path: aws_robomaker_residential_Chandelier_01/meshes/aws_Chandelier_01_visual.DAE
+  sha256: a6ba4b70df288f8f37539034117d1fea9f8d5133d82c6f2dc530ed549fa53f85
+- path: aws_robomaker_residential_Chandelier_01/model.config
+  sha256: 626ad4cc4765442214f4db6355cd413c7f5146cc9853044a28d7f295b9a60fea
+- path: aws_robomaker_residential_Chandelier_01/model.sdf
+  sha256: 19c264eaef6902d0bd2926db676c7f1744f041cc5f114efb007306ebc6546c07
+- path: aws_robomaker_residential_CoffeeTable_01/materials/textures/aws_CoffeeTable_01.png
+  sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+- path: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_collision.DAE
+  sha256: 96d855fbd04032b9eb55f38ad66cf4d8e989fccc9d889eaa43943a75b6f62385
+- path: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_visual.DAE
+  sha256: a0fe0d5086613cd02f8f5a4f7b4cea12717cae5beebca25e5c9af850789570b1
+- path: aws_robomaker_residential_CoffeeTable_01/model.config
+  sha256: 04092669b049895f53f213c6cd559b1c4d299371985b3c9a2b86f0b6db6f8b10
+- path: aws_robomaker_residential_CoffeeTable_01/model.sdf
+  sha256: 0f097fc06b55a3fa22ffb2645a82d0e700b1a1db156b27b215ffdfc94c983bb1
+- path: aws_robomaker_residential_CookingBench_01/materials/textures/aws_CookingBench_01.png
+  sha256: bfde7283c1ce34d4f106acdc9fdd05fef9b3434ef97cb2ee8ec45f141b38d896
+- path: aws_robomaker_residential_CookingBench_01/meshes/aws_CookingBench_01.DAE
+  sha256: e4d9de79c4b5582a48633186b3b4704ae898c5701a378748f8cbfb298b696b22
+- path: aws_robomaker_residential_CookingBench_01/meshes/aws_CookingBench_01_collision.DAE
+  sha256: 094106327ad818bf79f338ce9aa0b29df481664bdb4d717f491da414074739c0
+- path: aws_robomaker_residential_CookingBench_01/meshes/aws_CookingBench_01_visual.DAE
+  sha256: 233ae0deffce4388639305be8611f5d4afeb68212a5b56120cca3b433520020a
+- path: aws_robomaker_residential_CookingBench_01/model.config
+  sha256: 056ca398bf0fea7e777cf85cfbe7ad815e8e6c92c3ab28efea81869114cf722c
+- path: aws_robomaker_residential_CookingBench_01/model.sdf
+  sha256: ced95a89fec4223ec3ea5863a577bc2b28d7d1f516cdfea3d9301c2eaebbf550
+- path: aws_robomaker_residential_Curtain_01/materials/textures/aws_Curtain_01.png
+  sha256: ef9b28f9db3906b481206613b2c32fc636acc5ac21a95a42bc555eb7a947183b
+- path: aws_robomaker_residential_Curtain_01/meshes/aws_Curtain_01_collision.DAE
+  sha256: f67d458a949a4a95f0453f3e28fb5ec897eb5caa9cb2d9ebeb1a43f0b5efbf0b
+- path: aws_robomaker_residential_Curtain_01/meshes/aws_Curtain_01_visual.DAE
+  sha256: 10ad9f31641eef2f048261a37556d5184b431c0de3b6ffe6ac92c10c82de1b2a
+- path: aws_robomaker_residential_Curtain_01/model.config
+  sha256: 20bda8c2f36a2e62205e4be6ee46fa18b0f08801d311b574304f2b5239f4efac
+- path: aws_robomaker_residential_Curtain_01/model.sdf
+  sha256: 38871934b30a018d0a9ff800cc7fe18229ada591714b5b945743cd8eacbbe407
+- path: aws_robomaker_residential_DeskPortraitA_01/materials/textures/aws_DeskPortraitA_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_DeskPortraitA_01/materials/textures/aws_DeskPortraitA_02.png
+  sha256: 4e1084cee358e086994c239b3ad5d8fb2cc9090f3fe6806a7469ea8784163f47
+- path: aws_robomaker_residential_DeskPortraitA_01/meshes/aws_DeskPortraitA_01_collision.DAE
+  sha256: 15623c054ecfc72a78bae6d2c219bcb196908e1671916472f6ec872348b42894
+- path: aws_robomaker_residential_DeskPortraitA_01/materials/textures/DeskPortraitA_01.jpg
+  sha256: 3b7397f2342e2b158453650370d2ed4b62302a689f0e09bbd67cdb24726983ab
+- path: aws_robomaker_residential_DeskPortraitA_01/meshes/aws_DeskPortraitA_01_visual.DAE
+  sha256: a4c6689138df7b3e894e9e82fe09c34b6406613cf1ac40df1b08cbc178343288
+- path: aws_robomaker_residential_DeskPortraitA_01/model.config
+  sha256: c1afbfaff2f55e95a4b2f6133dc2d6d9d381c5ae108d4a9bd3ce3b868829d80f
+- path: aws_robomaker_residential_DeskPortraitA_01/model.sdf
+  sha256: 5193c9c33299c5b7a5a5d775f1d4968ac896fec7555450640e2802f1d0e63885
+- path: aws_robomaker_residential_DeskPortraitA_02/materials/textures/aws_DeskPortraitA_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_DeskPortraitA_02/materials/textures/aws_DeskPortraitA_02.png
+  sha256: 9b3ea55d7956f719b11c9f0d1266ae47c3e2b8aab7282ae903e890af90feb018
+- path: aws_robomaker_residential_DeskPortraitA_02/meshes/aws_DeskPortraitA_01_collision.DAE
+  sha256: 15623c054ecfc72a78bae6d2c219bcb196908e1671916472f6ec872348b42894
+- path: aws_robomaker_residential_DeskPortraitA_02/materials/textures/DeskPortraitA_02.jpg
+  sha256: 2fcdccba1aedebf19e8bc3a1eb3b4f4578e72e221fbe2a61fd2241bef456d627
+- path: aws_robomaker_residential_DeskPortraitA_02/meshes/aws_DeskPortraitA_01_visual.DAE
+  sha256: ae98a40ec20259677e2390193703454db27fafaf28f87fc69c1706336e28c29a
+- path: aws_robomaker_residential_DeskPortraitA_02/model.config
+  sha256: 4c40c57037476a3b6c14223ca47123947a084d19a0498adaabf069ae6663b49b
+- path: aws_robomaker_residential_DeskPortraitA_02/model.sdf
+  sha256: 63e785f0e611023e92535d700a8d42227cef9aaa8118f883cddf5813247974fc
+- path: aws_robomaker_residential_DeskPortraitB_01/materials/textures/aws_DeskPortraitB_01.png
+  sha256: 09a17ad153e7fbee563bf3a9f2272652b1363b6c4c265dc5037a690de74367ee
+- path: aws_robomaker_residential_DeskPortraitB_01/materials/textures/aws_DeskPortraitB_02.png
+  sha256: 4f14d29cf822efbc77feaf1b6d0d9415720d05f8b9daf5dd52db7db365b7b1bd
+- path: aws_robomaker_residential_DeskPortraitB_01/meshes/aws_DeskPortraitB_01_collision.DAE
+  sha256: 12913e1bfa0272fc6aceccb36225e8a8e30733ca214f0158c6283b31f5768c3d
+- path: aws_robomaker_residential_DeskPortraitB_01/materials/textures/DeskPortraitB_01.jpg
+  sha256: f0bc13a8305c782d116adffa147af11f37d0fb4b54b1a068c73825e7ecd5c4b2
+- path: aws_robomaker_residential_DeskPortraitB_01/meshes/aws_DeskPortraitB_01_visual.DAE
+  sha256: db3aa86687b6823685f5b65191a05f6bea9fa43de0d3e8d17517813b525ddb9f
+- path: aws_robomaker_residential_DeskPortraitB_01/model.config
+  sha256: 827a3aa93f8576fb3829116f4932a765589d519d464795194142c207b88cab67
+- path: aws_robomaker_residential_DeskPortraitB_01/model.sdf
+  sha256: 0558782080105028cfef538010b7b608b03737b5d4d8cbd320b18efac9dad48c
+- path: aws_robomaker_residential_DeskPortraitB_02/materials/textures/aws_DeskPortraitB_01.png
+  sha256: 09a17ad153e7fbee563bf3a9f2272652b1363b6c4c265dc5037a690de74367ee
+- path: aws_robomaker_residential_DeskPortraitB_02/materials/textures/aws_DeskPortraitB_02.png
+  sha256: 2d6a8f146ef0b1c3430390a10029ee165946bde9afdba63b81db9b0ce2b798ec
+- path: aws_robomaker_residential_DeskPortraitB_02/meshes/aws_DeskPortraitB_01_collision.DAE
+  sha256: 12913e1bfa0272fc6aceccb36225e8a8e30733ca214f0158c6283b31f5768c3d
+- path: aws_robomaker_residential_DeskPortraitB_02/materials/textures/DeskPortraitA_02.jpg
+  sha256: 2fcdccba1aedebf19e8bc3a1eb3b4f4578e72e221fbe2a61fd2241bef456d627
+- path: aws_robomaker_residential_DeskPortraitB_02/meshes/aws_DeskPortraitB_01_visual.DAE
+  sha256: b9e70853ad3b96ffcec422d0864d39d606f53c4b82dab640ee8e6eb1fe67ea68
+- path: aws_robomaker_residential_DeskPortraitB_02/model.config
+  sha256: cd72c5091585bc0bb282863b192d7d0b29e8ea684080031dbd4cccdbcae61ad4
+- path: aws_robomaker_residential_DeskPortraitB_02/model.sdf
+  sha256: 49d1e2d8b8126ae5278d66473c2602f3820f6b1a1e8ac5551f46c172a2c8b798
+- path: aws_robomaker_residential_DeskPortraitC_01/materials/textures/aws_DeskPortraitC_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitC_01/materials/textures/aws_DeskPortraitC_02.png
+  sha256: 15ee356e34a188c9136122bd5354fa26a0c210b0204aa0a5b50145d7e0bfb2f7
+- path: aws_robomaker_residential_DeskPortraitC_01/meshes/aws_DeskPortraitC_01_collision.DAE
+  sha256: dadf3e39f67b424c289473d467de560e8e9b714933ed23308b0fc1c6d48fe555
+- path: aws_robomaker_residential_DeskPortraitC_01/meshes/aws_DeskPortraitC_01_visual.DAE
+  sha256: 4489ace7d3de4c9317c7623a30b91ed39b5303d1b35a3dcd1d40c960731c9c3a
+- path: aws_robomaker_residential_DeskPortraitC_01/model.config
+  sha256: f5ea0b56c10a919110b4985ff546336c7161ca1aeb22a03e0cbffb1f3cc88d34
+- path: aws_robomaker_residential_DeskPortraitC_01/model.sdf
+  sha256: 603ac9e16ebafe638888c7332341f72cbee98537a93bbf9b2c167790e4ce0e9f
+- path: aws_robomaker_residential_DeskPortraitC_02/materials/textures/aws_DeskPortraitC_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitC_02/materials/textures/aws_DeskPortraitC_02.png
+  sha256: 8fc278b5e69053d4c1ce9ac690419e60116976f195933162aecbdac01fe08f0a
+- path: aws_robomaker_residential_DeskPortraitC_02/meshes/aws_DeskPortraitC_01_collision.DAE
+  sha256: dadf3e39f67b424c289473d467de560e8e9b714933ed23308b0fc1c6d48fe555
+- path: aws_robomaker_residential_DeskPortraitC_02/materials/textures/DeskPortraitC_02.jpg
+  sha256: 8ea1d80a74f650d59517871da542049f0aba010a3c5dab339c58f2c2601af451
+- path: aws_robomaker_residential_DeskPortraitC_02/meshes/aws_DeskPortraitC_01_visual.DAE
+  sha256: 58a187365ca37094bfbbcbf4dc0380246c1ef802a484a478bbfce079999098fa
+- path: aws_robomaker_residential_DeskPortraitC_02/model.config
+  sha256: f5ea0b56c10a919110b4985ff546336c7161ca1aeb22a03e0cbffb1f3cc88d34
+- path: aws_robomaker_residential_DeskPortraitC_02/model.sdf
+  sha256: 2fe2cb039b52b4dd888f23dc49c651152370d88fa0cb0beaa7d05e7fc0e5e7d5
+- path: aws_robomaker_residential_DeskPortraitD_01/materials/textures/aws_DeskPortraitD_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitD_01/materials/textures/aws_DeskPortraitD_02.png
+  sha256: 36bfafb465de892e3ea00a03f9b825ff652f3d6cf4036a700a91a5caea7df862
+- path: aws_robomaker_residential_DeskPortraitD_01/meshes/aws_DeskPortraitD_01_collision.DAE
+  sha256: a8f503041861bd94df453015bff2d53dbfd83813fc3faa2d1951d9413496a6a9
+- path: aws_robomaker_residential_DeskPortraitD_01/materials/textures/DeskPortraitD_01.jpg
+  sha256: 61c94c6f3a89ee5d1ac7496a3b121f75e8a1f76e01aefc6373cfbb9d670be149
+- path: aws_robomaker_residential_DeskPortraitD_01/meshes/aws_DeskPortraitD_01_visual.DAE
+  sha256: c2c73d0030c46b5d7a4487f22877f2c01b4b5c7d27d0024af4d6ac9e99393be8
+- path: aws_robomaker_residential_DeskPortraitD_01/model.config
+  sha256: 54be2429104edac6bd5ae5b561014193676f55bd7c5650232e8ac73c5cc576d6
+- path: aws_robomaker_residential_DeskPortraitD_01/model.sdf
+  sha256: 287f6a8e560d1bfd4e3fc3f32b59b66e9091b72e30fd7a1bbd783729bf7a34d5
+- path: aws_robomaker_residential_DeskPortraitD_02/materials/textures/aws_DeskPortraitD_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitD_02/materials/textures/aws_DeskPortraitD_02.png
+  sha256: 4f46ade60e453ab20fe04319c0e9959fbd9fbeaa1d6b807b0e3e4a0bb1b4573e
+- path: aws_robomaker_residential_DeskPortraitD_02/meshes/aws_DeskPortraitD_01_collision.DAE
+  sha256: a8f503041861bd94df453015bff2d53dbfd83813fc3faa2d1951d9413496a6a9
+- path: aws_robomaker_residential_DeskPortraitD_02/materials/textures/DeskPortraitD_02.jpg
+  sha256: ce2763ee2246d1a38d5bc809d5ea138898fc788b92d45d719613ba1dc3d40cf0
+- path: aws_robomaker_residential_DeskPortraitD_02/meshes/aws_DeskPortraitD_01_visual.DAE
+  sha256: bd95447c8eb2f9182df725c7fe2accad65dc5ec91d3859414559049e4f2920e6
+- path: aws_robomaker_residential_DeskPortraitD_02/model.config
+  sha256: 9b91ebd8fc874db3d7769bbbacb71dcc4a9dad8fa40facc19046562c7e7edb1f
+- path: aws_robomaker_residential_DeskPortraitD_02/model.sdf
+  sha256: 0a741b6758eadef687feaf65f72c0e8910a971447d7506f74ba0013974739d53
+- path: aws_robomaker_residential_DeskPortraitD_03/materials/textures/aws_DeskPortraitD_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitD_03/materials/textures/aws_DeskPortraitD_02.png
+  sha256: c7ab37adda051d623d1e5be61a8bc29565b873d1678b51da941956b3fc6adf48
+- path: aws_robomaker_residential_DeskPortraitD_03/meshes/aws_DeskPortraitD_01_collision.DAE
+  sha256: a8f503041861bd94df453015bff2d53dbfd83813fc3faa2d1951d9413496a6a9
+- path: aws_robomaker_residential_DeskPortraitD_03/materials/textures/DeskPortraitD_03.jpg
+  sha256: f68bcc1f7a84b5873e9de36aa36e1225482a4c79028a16ffb065ed241ea9bdd1
+- path: aws_robomaker_residential_DeskPortraitD_03/meshes/aws_DeskPortraitD_01_visual.DAE
+  sha256: e674fa2c0e848c1af84b81ba1c2a620962339f3401c1a57fee7b7a08a27dda39
+- path: aws_robomaker_residential_DeskPortraitD_03/model.config
+  sha256: 54be2429104edac6bd5ae5b561014193676f55bd7c5650232e8ac73c5cc576d6
+- path: aws_robomaker_residential_DeskPortraitD_03/model.sdf
+  sha256: 8da6f1e0478af475c903beb2b60ccf012b0ce648e21c8be1bdc46e50a653cddc
+- path: aws_robomaker_residential_DeskPortraitD_04/materials/textures/aws_DeskPortraitD_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_DeskPortraitD_04/materials/textures/aws_DeskPortraitD_02.png
+  sha256: 37532587ab29a2bcfaab9813820d71755ac874b261030c31ea2703aa7ec8dd7b
+- path: aws_robomaker_residential_DeskPortraitD_04/meshes/aws_DeskPortraitD_01_collision.DAE
+  sha256: a8f503041861bd94df453015bff2d53dbfd83813fc3faa2d1951d9413496a6a9
+- path: aws_robomaker_residential_DeskPortraitD_04/materials/textures/DeskPortraitD_04.jpg
+  sha256: 492051563bd1f705e0fe4c8acb841a95c1a1355a3829068b860c726d477afaee
+- path: aws_robomaker_residential_DeskPortraitD_04/meshes/aws_DeskPortraitD_01_visual.DAE
+  sha256: 5b375d09110d16b2b8c4c8e7f9327b5932d845fce1490a56be0fbd90001b3a8f
+- path: aws_robomaker_residential_DeskPortraitD_04/model.config
+  sha256: a754668841278958116caa17d9e7899a74e5ef40a279a930d1ce4a7b26f49d87
+- path: aws_robomaker_residential_DeskPortraitD_04/model.sdf
+  sha256: bf8b0d82d0456d2a10d367713271af7bfbffe82864217f29a8d10b3b992a10b2
+- path: aws_robomaker_residential_Door_01/materials/textures/aws_Door_01.png
+  sha256: 2fbc8ead942bf580c7595db3644a986cdc7f28dbe303ac6d2de0145922c20bb8
+- path: aws_robomaker_residential_Door_01/meshes/aws_Door_01_collision.DAE
+  sha256: e88bde13dbcbfcdd16c15611a68ebfbb70baf8428b8ad3eff1104c62e4cd727b
+- path: aws_robomaker_residential_Door_01/meshes/aws_Door_01_visual.DAE
+  sha256: 066da88ca5aeed78ccd16610b88bb2c36af1111441ed365b829430406863aef1
+- path: aws_robomaker_residential_Door_01/model.config
+  sha256: 3a9b65612a5a668c02d9ea69c07e51628bd1fcbe8b2e84b406296eed831a68ae
+- path: aws_robomaker_residential_Door_01/model.sdf
+  sha256: 492ffa16c8c320e917072960f49a3f60e06382f164751069a2524d07a5826c9f
+- path: aws_robomaker_residential_Dumbbell_01/materials/textures/aws_Dumbbell_01.png
+  sha256: a1c8288c37167a8f7c2ed3be9158cd0ae5f7e6fea87782d4092bfa637f6c4e70
+- path: aws_robomaker_residential_Dumbbell_01/meshes/aws_Dumbbell_01_collision.DAE
+  sha256: 96588c7cec38bcf6abe8123a3d1899ac23a4d81f1a7902c5e02e179307dd88a5
+- path: aws_robomaker_residential_Dumbbell_01/meshes/aws_Dumbbell_01_visual.DAE
+  sha256: a8caf96348dc6053d2f4c43fc832febb8bc8d96fbe2ab5edfd06b6d79cb0b23e
+- path: aws_robomaker_residential_Dumbbell_01/model.config
+  sha256: 8424e8c71fca221b7c5317632ca5352d7f103a111f7a3baebe4f8e1e414bb139
+- path: aws_robomaker_residential_Dumbbell_01/model.sdf
+  sha256: bb6f3d0a78a9e525b7a27c870e6511e064795908e08cf67907a298b811c1afc7
+- path: aws_robomaker_residential_FitnessEquipment_01/materials/textures/aws_FitnessEquipment_01.png
+  sha256: 141f674c65afc5c14449e539a03e601c96c6e7ced708b3a7303f7225f0bf3efd
+- path: aws_robomaker_residential_FitnessEquipment_01/meshes/aws_FitnessEquipment_01_collision.DAE
+  sha256: 3deb8d43b411c0725894cddc358cf5d4e0917ffe5010e095790d9c0330c99f85
+- path: aws_robomaker_residential_FitnessEquipment_01/meshes/aws_FitnessEquipment_01_visual.DAE
+  sha256: 9304cde97224418129b68cc2ea2c6fbf2171afcf251a788b0a8d1c4903aaffb9
+- path: aws_robomaker_residential_FitnessEquipment_01/model.config
+  sha256: b12f15a5496cdf8b312bf969ad2bbdf684a3f64d5be8c3ac98516d01b846e554
+- path: aws_robomaker_residential_FitnessEquipment_01/model.sdf
+  sha256: 2dbd6f8867095556df549d521a743f1e28443a7186ef4f6caa483a5278193eec
+- path: aws_robomaker_residential_FloorB_01/materials/textures/aws_FloorB_01.png
+  sha256: 943cac901efdb091ddfb35028ceed2f4e71759ec76f699e11ba448cc1729ac92
+- path: aws_robomaker_residential_FloorB_01/meshes/aws_FloorB_01_collision.DAE
+  sha256: ed8283a0860e18b97b0607a5d8e92fd32bc985a925cdce62a548ee210db36c8d
+- path: aws_robomaker_residential_FloorB_01/meshes/aws_FloorB_01_visual.DAE
+  sha256: ca4e06835b4208982e14d64c9fe4b40a993b7b9aaddedb96d4620e2c9134b5a1
+- path: aws_robomaker_residential_FloorB_01/model.config
+  sha256: b5df975d4ac7fd2f212739de26e1cb8c1ffad8da5cf407d7a197d4fe0521dba5
+- path: aws_robomaker_residential_FloorB_01/model.sdf
+  sha256: ab2c536adaee6490efaf7e3c825b67312b772c80827310ee4143991405e22d8b
+- path: aws_robomaker_residential_FoldingDoor_01/materials/textures/aws_FoldingDoor_01.png
+  sha256: 7a577c2be79cd88afea14d39f68e10574f530a3756d081d2d4036a050bf92382
+- path: aws_robomaker_residential_FoldingDoor_01/meshes/aws_FoldingDoor_01_collision.DAE
+  sha256: cd3152a9dbea869d37efb013f4a040a94c70946919330d3b5196721fdae05e2e
+- path: aws_robomaker_residential_FoldingDoor_01/meshes/aws_FoldingDoor_01_visual.DAE
+  sha256: 7af47fa44c21a3a0a4ee1ccc3121cf7021bdb64cb481a9492bee35f099aa88f8
+- path: aws_robomaker_residential_FoldingDoor_01/model.config
+  sha256: 18c7a5a9e796c047928db20184dd4a6e63456f0fa59171e8d993ba240f0ee1eb
+- path: aws_robomaker_residential_FoldingDoor_01/model.sdf
+  sha256: 67f95e8735b0cfe8b86964d5599c26483627daa516ae4410e622e5295cbb50ad
+- path: aws_robomaker_residential_FoldingDoor_02/materials/textures/aws_FoldingDoor_02.png
+  sha256: 14aec04f881c52c415465269687f9205f97ee431d7e449da920a3e35c6dd70d4
+- path: aws_robomaker_residential_FoldingDoor_02/meshes/aws_FoldingDoor_02_collision.DAE
+  sha256: 5800c1ff33f973219eb830a9c63e274cbd41c759dea2c834b0fafa81b5dc9d93
+- path: aws_robomaker_residential_FoldingDoor_02/meshes/aws_FoldingDoor_02_visual.DAE
+  sha256: c092c9cce50eb8f8d67fa8feaa18affad0e1119dfe9fef62e33288c3bc3cbf56
+- path: aws_robomaker_residential_FoldingDoor_02/model.config
+  sha256: 5bec0bfd3c831358db55efb2f2329852adb36d242ef2e5c6529a464a8d1a1247
+- path: aws_robomaker_residential_FoldingDoor_02/model.sdf
+  sha256: 2a46e34a2886d96e444e698f4c7d45f9cc25e7c5e3947bd953a0ed835e6462e2
+- path: aws_robomaker_residential_Handle_01/materials/textures/aws_Handle_01.png
+  sha256: 83ba9204397262fb40773d02c8cb14caa1634f0423826787fd9bcf16d634e2ad
+- path: aws_robomaker_residential_Handle_01/meshes/aws_ handle_01_collision.DAE
+  sha256: e20eae4fd739c2eee10fdf53bcc9caa29697c75eb915c047ad25c584602f7b1d
+- path: aws_robomaker_residential_Handle_01/meshes/aws_Handle_01_collision.DAE
+  sha256: 58bf9f3bcb1d7aae36d41d1762dfdfdab8142b99d99b37d9dd12c4faed220c34
+- path: aws_robomaker_residential_Handle_01/meshes/aws_Handle_01_visual.DAE
+  sha256: e80939aaa438555e49ea710a99765410c404afa4333685a88ef3c52505a35559
+- path: aws_robomaker_residential_Handle_01/model.config
+  sha256: a80dce1fabef86b1f970ce2fb5c7e5a9ebb2f9942d9b2a9604507b88da654a36
+- path: aws_robomaker_residential_Handle_01/model.sdf
+  sha256: 753ad97063c29852465fe35e52896abd0d839199181065b09661741a467d3d6d
+- path: aws_robomaker_residential_HouseWallB_01/materials/textures/aws_HouseWallB_01.png
+  sha256: 9ac538643259e20e8f4dcdcda8d15a783f093e75fe3da06b0077f456ad47361e
+- path: aws_robomaker_residential_HouseWallB_01/meshes/aws_HouseWallB_01_collision.DAE
+  sha256: 206d5f29afce56beddd82d1ecf75c0494c090c12a8994b3bb5efc8cc1d709a39
+- path: aws_robomaker_residential_HouseWallB_01/meshes/aws_HouseWallB_01_visual.DAE
+  sha256: 06e90aaa93ccb48ae83f7b7dc5851ea30672b1b02977c20d3c1103a9231852d0
+- path: aws_robomaker_residential_HouseWallB_01/model.config
+  sha256: 7689d0df106ab877d24d98290d482f10351aa6bf75e945abf57b03443f2febaf
+- path: aws_robomaker_residential_HouseWallB_01/model.sdf
+  sha256: 30fd630ea6e671cb5699ca4701970c2bdb641a0fc698360cbabbca1f33d90f45
+- path: aws_robomaker_residential_KitchenCabinet_01/materials/textures/aws_KitchenCabinet_01.png
+  sha256: 68d0cc8e38a11adc0d9798dc4dfed92a5c45dbf342b26f7929fe57db05a46821
+- path: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_collision.DAE
+  sha256: 32357200643818e37dc1ea27f419dbb8d4acd6e0a4e485f2a93239365b18740f
+- path: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_visual.DAE
+  sha256: e55aab5c171aa80e262313acc8d50d6ba39f703981fd51f19f68ec4f83abf6f2
+- path: aws_robomaker_residential_KitchenCabinet_01/model.config
+  sha256: 1f0aa87f904ef9cfe96bcb5a75013ca5b032bbe853487787d7ff4a0ceaacd0d0
+- path: aws_robomaker_residential_KitchenCabinet_01/model.sdf
+  sha256: 215fe51f7a37c6f7980fe3fb9667b93a79b05624ca1fb321eeaf050d3a69654f
+- path: aws_robomaker_residential_KitchenTable_01/materials/textures/aws_KitchenTable_01.png
+  sha256: ffbe7df9f3d93969b0f8966c424d1156b020363ea40e7b9ff89a32725463a4e5
+- path: aws_robomaker_residential_KitchenTable_01/meshes/aws_KitchenTable_01_collision.DAE
+  sha256: 2bc587c03b78dcd9515bb2dde969a262bc9299d593c2e41f0e025b113705b949
+- path: aws_robomaker_residential_KitchenTable_01/meshes/aws_KitchenTable_01_visual.DAE
+  sha256: 59eeb77f0f9c54f8a46d045b71372d5b6c9cb8c25beff4aac9ba8db013b4c771
+- path: aws_robomaker_residential_KitchenTable_01/model.config
+  sha256: 114904f05490929e6b26ca8e7d1781c605a0718edcf931b2858714fc21686e8c
+- path: aws_robomaker_residential_KitchenTable_01/model.sdf
+  sha256: fba7b235381ef025b99a9853127c60211e93394d2267bbf45697d97b233fa2be
+- path: aws_robomaker_residential_KitchenUtensils_01/materials/textures/aws_KitchenUtensils_01.png
+  sha256: fa93c4f5b22e1e239a7f649fe3dfc46c9a50f11d83bb098b15ced52a9d57f7da
+- path: aws_robomaker_residential_KitchenUtensils_01/meshes/aws_KitchenUtensils_01_collision.DAE
+  sha256: 2ae42dd8221451228f2b51349221f87360a040ed7fa6f3da0a63acc148919948
+- path: aws_robomaker_residential_KitchenUtensils_01/meshes/aws_KitchenUtensils_01_visual.DAE
+  sha256: cf4b08458225038ef628aa6c589dde65eed4c1d9662ddcb9d92bae92e4694c85
+- path: aws_robomaker_residential_KitchenUtensils_01/model.config
+  sha256: d8abd3400a9ae54a9a23e34907ad01d9216162f809f687ebd330714a81e6f904
+- path: aws_robomaker_residential_KitchenUtensils_01/model.sdf
+  sha256: 6874c44e52a666174f450a0c7ba333e9370f3148a7b147d04ee2f7cfe165d6f8
+- path: aws_robomaker_residential_LightC_01/materials/textures/aws_LightC_01.png
+  sha256: 5306f4c52646d0faaba7b84c0e834dc19bc3e491a85063a3028f20928b5b7303
+- path: aws_robomaker_residential_LightC_01/meshes/aws_LightC_01_collision.DAE
+  sha256: 81170c680b9acac72b33faf39bdc8776ba989652d4f3efe1fab793bf1caaef5d
+- path: aws_robomaker_residential_LightC_01/meshes/aws_LightC_01_visual.DAE
+  sha256: 5e1b158ecd72212ef412358bb707057a7006d6600c9544f615d7e6b7a288abca
+- path: aws_robomaker_residential_LightC_01/model.config
+  sha256: 6d6a534b3e0e8b0f2c463a2560c9a5fae7712a78a5c72eb699b946447ad9e212
+- path: aws_robomaker_residential_LightC_01/model.sdf
+  sha256: 13aedde6d38bb69abddda5e96504f63aa5e077759dfa918000a62ae6ceeefab3
+- path: aws_robomaker_residential_NightStand_01/materials/textures/aws_NightStand_01.png
+  sha256: d9449ed06f2e58d3c01ab789ac274dcec7a6537960181e0aadeb0e699259d9b5
+- path: aws_robomaker_residential_NightStand_01/meshes/aws_NightStand_01_collision.DAE
+  sha256: 08411370aa61fa499c31e75963b01eea4a6c2d16746547ef8d4ada9cbeb2af34
+- path: aws_robomaker_residential_NightStand_01/meshes/aws_NightStand_01_visual.DAE
+  sha256: 37964f44ab1184ea1b2a104d1a437b76f4021daf3f3670d30c7373e5b7480960
+- path: aws_robomaker_residential_NightStand_01/model.config
+  sha256: e2f579831af2c25d3aa543fb04e4b362719645115191ddbf2c33f1f950cd1087
+- path: aws_robomaker_residential_NightStand_01/model.sdf
+  sha256: 8360355351ce5d93fbd84e7297fe1a10e70a532f1237806ed1cd6d45c697fe4b
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_02.png
+  sha256: a7d9217e72edcb4bca45a5c7eec6079a45aa3b6eda44345c3715169b24227794
+- path: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_collision.DAE
+  sha256: bbd1e639e1b858f9ada90d122410bb54954150a4121b98b5cc502ced9054ac9d
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg
+  sha256: b58f5fcd54b75e444cd910556a3c3edd03ad873604a4f8f68a4dec0f823d4c40
+- path: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE
+  sha256: 4abe4104eca9f4b39a07ee156f9d352174befe6c0e6408ed2cbab18c215ef5c0
+- path: aws_robomaker_residential_PortraitA_01/model.config
+  sha256: be4591181782387f4b1556fbe10c4720a0135609275189ed7d66824e5bf9d1a7
+- path: aws_robomaker_residential_PortraitA_01/model.sdf
+  sha256: 14f02d79e5ac6fda00a08760b705659feeec9109081e2dda32bb97b7f4e96d3c
+- path: aws_robomaker_residential_PortraitA_02/materials/textures/aws_PortraitA_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitA_02/materials/textures/aws_PortraitA_02.png
+  sha256: 088b5766780267a3000d63dd7e2ec32d96fa138885d85f03deccfe08fb5b53d8
+- path: aws_robomaker_residential_PortraitA_02/meshes/aws_PortraitA_01_collision.DAE
+  sha256: bbd1e639e1b858f9ada90d122410bb54954150a4121b98b5cc502ced9054ac9d
+- path: aws_robomaker_residential_PortraitA_02/materials/textures/PortraitA_02.jpg
+  sha256: e6f8e090d5cb480e521943bd6e72e0c71e4fa0b919481c9cee8872d7290e8cef
+- path: aws_robomaker_residential_PortraitA_02/meshes/aws_PortraitA_01_visual.DAE
+  sha256: 48c9cbf48c36e933576819f5a7851f19d8e398848a2dfc7bc40d2ee2de97f38c
+- path: aws_robomaker_residential_PortraitA_02/model.config
+  sha256: 121bfb29324225364e03954d09db65bb7a4974db7d4f728daeab0be1c51d6ad9
+- path: aws_robomaker_residential_PortraitA_02/model.sdf
+  sha256: f203d89e8cd626f3e55d0238a11d383546678806e0bcf9c22eb6cba9d59dc11b
+- path: aws_robomaker_residential_PortraitB_01/materials/textures/aws_PortraitB_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_PortraitB_01/materials/textures/aws_PortraitB_02.png
+  sha256: 5e6b14b18be32b836b24a0fda1624180ec4bf35bb3c0d0df40a1e349a7210650
+- path: aws_robomaker_residential_PortraitB_01/meshes/aws_PortraitB_01_collision.DAE
+  sha256: 3fe4bb9e27002eeb15506a9b88fea3f8b5bbfe24275c158271b4caef65db6cbe
+- path: aws_robomaker_residential_PortraitB_01/materials/textures/PortraitB_01.jpg
+  sha256: 84653073c5c2e490d0e37be6eb7d175a4ee31cd11140442cd498d01c5a8dd579
+- path: aws_robomaker_residential_PortraitB_01/meshes/aws_PortraitB_01_visual.DAE
+  sha256: b308651a344503b0dee66686f5c41ac8ecc4cbc6c00d28be6482b96794ca2542
+- path: aws_robomaker_residential_PortraitB_01/model.config
+  sha256: 1ad5e940df596824c192214aefe824e79ec871fcd6aa115b3a6381e69711a64e
+- path: aws_robomaker_residential_PortraitB_01/model.sdf
+  sha256: 9de440aa71a0a13ee2bfb29bb9dc8ace54e964de1e53defefe7256d43f6f7d30
+- path: aws_robomaker_residential_PortraitB_02/materials/textures/aws_PortraitB_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_PortraitB_02/materials/textures/aws_PortraitB_02.png
+  sha256: b0461c607144b6391aca8013e10f7eba5ae33977894ba22acfd3710ff28d42cc
+- path: aws_robomaker_residential_PortraitB_02/meshes/aws_PortraitB_01_collision.DAE
+  sha256: 3fe4bb9e27002eeb15506a9b88fea3f8b5bbfe24275c158271b4caef65db6cbe
+- path: aws_robomaker_residential_PortraitB_02/materials/textures/PortraitB_02.jpg
+  sha256: 5b5897013711879117bae1b60f21a532342214ef5d2706e19671ace4f2dc2428
+- path: aws_robomaker_residential_PortraitB_02/meshes/aws_PortraitB_01_visual.DAE
+  sha256: 833380b3b48b177742855e6f17b3b76a3feb4ad4a4d22caa9c5ba8d5185c7a58
+- path: aws_robomaker_residential_PortraitB_02/model.config
+  sha256: 701c798537288724268e25e5039ba70666eee903a36aa7163b3ce6a3f01e424c
+- path: aws_robomaker_residential_PortraitB_02/model.sdf
+  sha256: 069d2dad5e50feffa8b8bcef4c08a74df08403d5b4b63d0478a49fc656fcf45d
+- path: aws_robomaker_residential_PortraitB_03/materials/textures/aws_PortraitB_01.png
+  sha256: aa1efb1ad6c589f21632c379d48a50b44bc13191427b884db10ae9b6f02c8b8f
+- path: aws_robomaker_residential_PortraitB_03/materials/textures/aws_PortraitB_02.png
+  sha256: 7c0f17ec225b977730fbe7a3792c3fe7acd5cbb919276fdd8fe879509d648693
+- path: aws_robomaker_residential_PortraitB_03/meshes/aws_PortraitB_01_collision.DAE
+  sha256: 3fe4bb9e27002eeb15506a9b88fea3f8b5bbfe24275c158271b4caef65db6cbe
+- path: aws_robomaker_residential_PortraitB_03/materials/textures/PortraitB_03.jpg
+  sha256: 1d8fc78107cfab83986b1acb313d7d5fce3b1062baf239711695d8951565c03f
+- path: aws_robomaker_residential_PortraitB_03/meshes/aws_PortraitB_01_visual.DAE
+  sha256: 208c974229ad374917855fc1339a34105a08b24a443cace03fb20f3aafb1c976
+- path: aws_robomaker_residential_PortraitB_03/model.config
+  sha256: 795953687e59c2a39df93a1385ae9742794bd0f1b24ef5991b180a317ed39d10
+- path: aws_robomaker_residential_PortraitB_03/model.sdf
+  sha256: 19a60232648ed018337d748065454d2d206bfd8cb0f1c3a7815252575239c837
+- path: aws_robomaker_residential_PortraitC_01/materials/textures/aws_PortraitC_01.png
+  sha256: 0674ec4fd74e2870f0251579d4e1f2456018bcee4a186509d222e7a85f03c096
+- path: aws_robomaker_residential_PortraitC_01/materials/textures/aws_PortraitC_02.png
+  sha256: f347beebf0204fe9b10b44cc1540fa1cebeda7078e1bd1de76cf94b878a0a684
+- path: aws_robomaker_residential_PortraitC_01/meshes/aws_PortraitC_01_collision.DAE
+  sha256: b22c209c7240f796dde85de4192e482c0b901d4395d01160399e7abf503c09e0
+- path: aws_robomaker_residential_PortraitC_01/materials/textures/PortraitC_01.jpg
+  sha256: 3f71c34b7b77ed8b5bd331138c37fa5ba3ec20239c182aefec7ffebd95c119fe
+- path: aws_robomaker_residential_PortraitC_01/meshes/aws_PortraitC_01_visual.DAE
+  sha256: caa4cf90a1c30b353035b815c66d194cc8f10fdea788b7e53331c7fea229c544
+- path: aws_robomaker_residential_PortraitC_01/model.config
+  sha256: 6a874e83429dab2da5b4ac4aaa09ef5c0bc54a2529c70dd08431184ecf71624b
+- path: aws_robomaker_residential_PortraitC_01/model.sdf
+  sha256: 1f65d4a17fe64783f7fe5f3787b20b42ca87da1e26b5005561277d72438ca3a5
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_01.png
+  sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_02.png
+  sha256: ba85f5a4fb4f2c21a8059c49c0fde28b5c607b68e876ba0ffcf6a6cf03991bec
+- path: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_collision.DAE
+  sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg
+  sha256: 33b3c1cba2aed6dc9caba3f484e7a37afed6a452f223a9fcca6aa92d9776b161
+- path: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE
+  sha256: a935990e80d3cf888337b85d41896c384030b8751e2892939cd821664554f64c
+- path: aws_robomaker_residential_PortraitD_01/model.config
+  sha256: bcc1dccadb547a4d99339806d7e5724ae71f5fb1d24f9d74ce3fbcd75bd115ac
+- path: aws_robomaker_residential_PortraitD_01/model.sdf
+  sha256: c6f91b5f8db5bd6947be676af7d62f7809b2e6c2ee627710d60019cd51aece80
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_01.png
+  sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_02.png
+  sha256: ae4afbbb5d1c7b08a8c4ddc1cbdd7566cde6c428e230f792c94585898aa0e024
+- path: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_collision.DAE
+  sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg
+  sha256: 53d3ee814bb48c8f18ad920d2199c49251baf0554d398dbc26487a9a51c2bcd1
+- path: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE
+  sha256: 6e8e6e57a221ebdfebee096c783d9dfdf4969c108ddf3dcf70563d456cfb44f0
+- path: aws_robomaker_residential_PortraitD_02/model.config
+  sha256: d22bfca4b3812c92c72662c2c36dec2ed938b00b69bff4b6efb03409d3a92851
+- path: aws_robomaker_residential_PortraitD_02/model.sdf
+  sha256: 43b7d859fa6f6a26f0691346d54bdff47be4d3bd2d68d43dbac7e7c4e41e0836
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_02.png
+  sha256: 902b9f8853af05c871c4213b0ecf6bdc1004401d1e6125378c07dd1c065046c5
+- path: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_collision.DAE
+  sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg
+  sha256: d6ea7fd37beae074820d7100b1b49ee298bbddc4cb23510f71455b78dd2f7886
+- path: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE
+  sha256: 6464dde6887667039c88db340e0e07103776d84fe7be319d8d18246bcec849d0
+- path: aws_robomaker_residential_PortraitE_01/model.config
+  sha256: 15722be89804afb74604814ea6539d0dd8bd1485793c059a3a86c7ca4fd8ac90
+- path: aws_robomaker_residential_PortraitE_01/model.sdf
+  sha256: 1a724de26b45e80058d707bde670b4d50252b9c22f6a95938cfe3a9efb423556
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_02.png
+  sha256: 4e2e1926fca15510ff96150cca248e0cd982e7c007626553846d42093f8570d1
+- path: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_collision.DAE
+  sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg
+  sha256: 28d548cb1e9124907b09dc8bebdeaa1e81843fa9e8316737617cf2ada8901e6f
+- path: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE
+  sha256: 4fec20317b43c63c770fb63166aeabf5b366b311555dcb9be13aa6419a1b68f5
+- path: aws_robomaker_residential_PortraitE_02/model.config
+  sha256: 35a57595189edcbfa1dea091a896ba0777054ba5477c3e31cfcc912c99f4ebec
+- path: aws_robomaker_residential_PortraitE_02/model.sdf
+  sha256: 4fa0d31763fadf52dcd707c282f2c9de612013d87e8904815a7dc5f390c0f926
+- path: aws_robomaker_residential_Rangehood_01/materials/textures/aws_Rangehood_01.png
+  sha256: 04073649287995ad8a7461fc30a23adb3ddd8559b5d591dc2b7280d9d44674d5
+- path: aws_robomaker_residential_Rangehood_01/meshes/aws_Rangehood_01_collision.DAE
+  sha256: 7a38053ee97d3058b16e4361967d47f27048f4e50f4d8a98bef7cae1a0a158bc
+- path: aws_robomaker_residential_Rangehood_01/meshes/aws_Rangehood_01_visual.DAE
+  sha256: 92bcf53bf36b0dcf73ce14df820c335a902385b82300d66e3dc41d18a10d08fc
+- path: aws_robomaker_residential_Rangehood_01/model.config
+  sha256: 965ea1333c2a12a8be01748ef34187e576641a45284bd690e7e60174e2edc1c0
+- path: aws_robomaker_residential_Rangehood_01/model.sdf
+  sha256: 28a345bb27e227b40c4d18ed192869305e500681ae5a673dee3224f5978d35cc
+- path: aws_robomaker_residential_ReadingDesk_01/materials/textures/aws_ReadingDesk_01.png
+  sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+- path: aws_robomaker_residential_ReadingDesk_01/meshes/aws_ReadingDesk_01_collision.DAE
+  sha256: 2e07ecffd6748046f2ab44b13ec45a88c3a05a91f2d56c481b2d2113820dfe86
+- path: aws_robomaker_residential_ReadingDesk_01/meshes/aws_ReadingDesk_01_visual.DAE
+  sha256: 79611ea4e6e22ce28d95faaeede5979b9223691212eebe12dfb55966d015ebf0
+- path: aws_robomaker_residential_ReadingDesk_01/model.config
+  sha256: 7184f1af7b97b62461758cd200fd4ccb138a1697ffd160da67bc5f88aeda584d
+- path: aws_robomaker_residential_ReadingDesk_01/model.sdf
+  sha256: 6a8d0f772f7a14d7972c61a9ce85ee8f62954371fb7bab760755ec59b5145f36
+- path: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_01.png
+  sha256: 2f4973d07ab6a6e1de5e482900bd682d6cffddce471d78fc6d21a2acbefbaff4
+- path: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_02.png
+  sha256: 3c57cd595659b49acbc93f43125da8f4dcd8344485c1774e63ebbd69691e6be3
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01.DAE
+  sha256: 602b8a02b9019a57ad8de546bc05b75ee7141f622fc9a516a63ebf8c9a8c5ee6
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_collision.DAE
+  sha256: 5e77d4d3040da42f95c602e202fad7ac5e2ac19ab1da6a31ae66465074ba5bdb
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_visual.DAE
+  sha256: c83384318815644af331fc2dd332ce7ea35316bc58140a908a5d209d057055ae
+- path: aws_robomaker_residential_Refrigerator_01/model.config
+  sha256: 5d4e2f7dbef2d1c42ba4c895d42d5240a4aa8c64d13fae80455bd32bfefdfaef
+- path: aws_robomaker_residential_Refrigerator_01/model.sdf
+  sha256: 35d7e5f4a7ba1d2cf074ac91a41573e66fda6aa3d0847225f2d354aaf1560f98
+- path: aws_robomaker_residential_RoomWall_01/materials/textures/aws_RoomWall_01.png
+  sha256: 1a242b0f680a14381708e8f53f445aeca6a53d8f6cbce3914f1b0356123741aa
+- path: aws_robomaker_residential_RoomWall_01/meshes/aws_RoomWall_01_collision.DAE
+  sha256: 6e642ca1fdaa7ef795c89eb86d4630b123a5266541a30c6a656e92afe8271907
+- path: aws_robomaker_residential_RoomWall_01/meshes/aws_RoomWall_01_visual.DAE
+  sha256: e16a7f43dfe3bf68176a5fdb9f93512aa020d7765feef288d0bde7d06d60437b
+- path: aws_robomaker_residential_RoomWall_01/model.config
+  sha256: 42565e0d8f36a2d18be3cb12f25152cd57fbe9c6ec509c3913cb262e919e51cd
+- path: aws_robomaker_residential_RoomWall_01/model.sdf
+  sha256: 1f79d2d40832176b19fbb36d977b79a042972524c96fc4d614383ee57892e4e0
+- path: aws_robomaker_residential_RoomWindow_01/materials/textures/aws_RoomWindow_01.png
+  sha256: 2d234dca5c16d3fc9258c1da199b307e6df79cadfe79c40b13224d0070875820
+- path: aws_robomaker_residential_RoomWindow_01/meshes/aws_RoomWindow_01_collision.DAE
+  sha256: f5abe4a46b922e6f00c206ad2bdab23209a0c41b86ebb618368104d07f644fa1
+- path: aws_robomaker_residential_RoomWindow_01/meshes/aws_RoomWindow_01_visual.DAE
+  sha256: 71d3684994cd5fbf4d44537e7d8f111f59faf8215ee19b305e10245441168496
+- path: aws_robomaker_residential_RoomWindow_01/model.config
+  sha256: 61c472e603fde71c93f2295e490820ee350f024ec8cf40a0e381d54e7afcb186
+- path: aws_robomaker_residential_RoomWindow_01/model.sdf
+  sha256: 843d2c28d5fefa683bbacb5187c0f54c4857ee1875a5124a9a96b5e4564a5e6e
+- path: aws_robomaker_residential_SeasoningBox_01/materials/textures/aws_SeasoningBox_01.png
+  sha256: 518077673aefc5d0d9b4d419dd3a4b42d124d3c0e7fce464f5c5e3375695f734
+- path: aws_robomaker_residential_SeasoningBox_01/meshes/aws_SeasoningBox_01_collision.DAE
+  sha256: e286d937056dd5a146a54d70085d17fe1bb692f15fea4d5ab48cef9b4f6ac2ca
+- path: aws_robomaker_residential_SeasoningBox_01/meshes/aws_SeasoningBox_01_visual.DAE
+  sha256: bdd6d872a624388f64c9077a0c7d4f587d77d892a3860e2cda60494fae4b2903
+- path: aws_robomaker_residential_SeasoningBox_01/model.config
+  sha256: eb91ffc1d3d915e42770e928e4267140729a3c304e340531b26db3c0050863ee
+- path: aws_robomaker_residential_SeasoningBox_01/model.sdf
+  sha256: 1c021f3ca5e3476f7025205a4318a02d14080ffe92f7a0a665ca3edc99fa4fb4
+- path: aws_robomaker_residential_SecurityCamera_01/materials/textures/aws_SecurityCamera_01.png
+  sha256: d2852509c00eb15c0e9d47b3320ff14547d4bbc3756f635f70a0e800013fa632
+- path: aws_robomaker_residential_SecurityCamera_01/meshes/aws_SecurityCamera_01_collision.DAE
+  sha256: b1c1eab4ecd1c41824ef6b95224f5227bf2e30d73d04e2d7c271912dc143a900
+- path: aws_robomaker_residential_SecurityCamera_01/meshes/aws_SecurityCamera_01_visual.DAE
+  sha256: 56a226314816db6159501d95cf02ed951649a40274e7360e72df420003b47b61
+- path: aws_robomaker_residential_SecurityCamera_01/model.config
+  sha256: 9fb125f7278825e8e80d77a76c0db9928d3539f562548736063125456e58ae52
+- path: aws_robomaker_residential_SecurityCamera_01/model.sdf
+  sha256: a3780507cdb14ff00fec8a5ab8f929595141b33ece5ecf1c60151bd3f5438c71
+- path: aws_robomaker_residential_ShoeRack_01/materials/textures/aws_ShoeRack_01.png
+  sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+- path: aws_robomaker_residential_ShoeRack_01/meshes/aws_ShoeRack_01_collision.DAE
+  sha256: 85222bdf2247bd57e8f557c677e2e8f20e0d63d7175c6a6f23d78e568ef1953f
+- path: aws_robomaker_residential_ShoeRack_01/meshes/aws_ShoeRack_01_visual.DAE
+  sha256: c37f396170b296ce64a45a8137172f8f067e2c7c9c190a587d483f7fb4df0756
+- path: aws_robomaker_residential_ShoeRack_01/model.config
+  sha256: 1a105b1837c84cd64c21149719bb2308d8648ea0daaa7f4209ba2eb9f63ffe71
+- path: aws_robomaker_residential_ShoeRack_01/model.sdf
+  sha256: ff996b09be1ee9ffe403bb671e7113c63d20acec25899ff0c552817252d8858c
+- path: aws_robomaker_residential_SofaC_01/materials/textures/aws_SofaC_01.png
+  sha256: 6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236
+- path: aws_robomaker_residential_SofaC_01/meshes/aws_SofaC_01_collision.DAE
+  sha256: 74f3953205c9243c023692930e945ca5151a4264577487b12cae2c1300e0cc9d
+- path: aws_robomaker_residential_SofaC_01/meshes/aws_SofaC_01_visual.DAE
+  sha256: 928f013aafadb14a5675260a715ed03047c75f3f3f8306a9568c958094ea4d9e
+- path: aws_robomaker_residential_SofaC_01/model.config
+  sha256: c66b9a26c48e78c4091ab34cd4e5accd0f9b85bbad20907dabb4f73a6a8ef479
+- path: aws_robomaker_residential_SofaC_01/model.sdf
+  sha256: 030cf71ce4f3787e560836cc58856901eb7518d54bb5b4b24b8ec57f21e88613
+- path: aws_robomaker_residential_TVCabinet_01/materials/textures/aws_TVCabinet_01.png
+  sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+- path: aws_robomaker_residential_TVCabinet_01/meshes/aws_TVCabinet_01_collision.DAE
+  sha256: b0318e75b88dda614af95997dcc96608bc0804e6490ca81dc2fcfbbbbd3500f4
+- path: aws_robomaker_residential_TVCabinet_01/meshes/aws_TVCabinet_01_visual.DAE
+  sha256: 8cb4abef0131b980f37af918f1d15ab011d01eb626515f1c4ccf77ef27f96b31
+- path: aws_robomaker_residential_TVCabinet_01/model.config
+  sha256: ad413a60ed26ac1b561d1c2c6b97ead01c3b731acfa9ddbf62d697197f92a34c
+- path: aws_robomaker_residential_TVCabinet_01/model.sdf
+  sha256: 5555192a8cc8975d047184ab986d1b812bf9fa229eaaee504f6373fac1c78d12
+- path: aws_robomaker_residential_TV_01/materials/textures/aws_TV_01.png
+  sha256: 4aefc84a2cdab461269c5265308c2e224578e971cdeeb4c79e66af300b7c0efb
+- path: aws_robomaker_residential_TV_01/meshes/aws_TV_01_collision.DAE
+  sha256: b4701986e4d0e4091643c738a72ca4cf04b8f5a2f337dab7e1e1b25784e862d3
+- path: aws_robomaker_residential_TV_01/meshes/aws_TV_01_visual.DAE
+  sha256: 1135e68b89e0d2738f015f76647180526ffcd7bb90677817c827f939b45848c7
+- path: aws_robomaker_residential_TV_01/model.config
+  sha256: a1e9d6ef727d4e308da6249614077e92832722a59454c6833e970fa3043ebec4
+- path: aws_robomaker_residential_TV_01/model.sdf
+  sha256: 4f8d83d54e325b87d7601bff48d90a7426de4e902f0cd85421d59f2610e462b4
+- path: aws_robomaker_residential_TV_02/materials/textures/aws_TV_01.png
+  sha256: 73c98d8626ae76428a1ab9b78e3471b7e70ab586fbea7e4a0fb87799a188bbc5
+- path: aws_robomaker_residential_TV_02/meshes/aws_TV_01_collision.DAE
+  sha256: b4701986e4d0e4091643c738a72ca4cf04b8f5a2f337dab7e1e1b25784e862d3
+- path: aws_robomaker_residential_TV_02/meshes/aws_TV_01_visual.DAE
+  sha256: 1135e68b89e0d2738f015f76647180526ffcd7bb90677817c827f939b45848c7
+- path: aws_robomaker_residential_TV_02/model.config
+  sha256: 3866add90ce8d8447ad8b40b6052d38f4d5dff72c91d6a9095742d349a6bd56f
+- path: aws_robomaker_residential_TV_02/model.sdf
+  sha256: 294d01c9ea66a6976a3de683dfa7a457374c718f16dd414b4570f1dc10f094f5
+- path: aws_robomaker_residential_Tablet_01/materials/textures/aws_Tablet_01_nologo.png
+  sha256: 1af50e2f89d809a8dde2fdf7cfa7de3b5d706977ed52a1093a2608e45de8bba3
+- path: aws_robomaker_residential_Tablet_01/meshes/aws_Tablet_01_collision.DAE
+  sha256: 02f6b5210a5cfa6c0c418c80a32b0b8c80089af6c2debf6b523b7acc12621cd2
+- path: aws_robomaker_residential_Tablet_01/meshes/aws_Tablet_01_visual.DAE
+  sha256: 7093aadbce8f37c56335e469a5a67b3fbe2cd9da2c3d28e586db5a1aef3df46b
+- path: aws_robomaker_residential_Tablet_01/model.config
+  sha256: 4c8049daa11d679704bc1374c2c2d7fdd078cfff83fbeac36b660d7bc9247814
+- path: aws_robomaker_residential_Tablet_01/model.sdf
+  sha256: 0eda1a07db396654b43a84e07572ba668b07d32ff7eccd1396b26919c3e34832
+- path: aws_robomaker_residential_Tableware_01/materials/textures/aws_Tableware_01.png
+  sha256: 45bd2caf3a2b682c2e7b2a6bf425da43798b2125d78ad69dfba930649bd884ea
+- path: aws_robomaker_residential_Tableware_01/meshes/aws_Tableware_01_collision.DAE
+  sha256: 98b160d133bcada49bf069e11d9402926693c39543c74d7fa29d8f2f8e401e35
+- path: aws_robomaker_residential_Tableware_01/meshes/aws_Tableware_01_visual.DAE
+  sha256: 67951a95d24315f9fe5d51c51f44926d603399d5a16eb01b60ead3e5784de4a7
+- path: aws_robomaker_residential_Tableware_01/model.config
+  sha256: bb09a3b4c6d214168c1285f35f6ae887f3547412e46ebde86d11bef77ff4e118
+- path: aws_robomaker_residential_Tableware_01/model.sdf
+  sha256: f3dfbe5ee62902f45446875af3ab920a9b70755c8ca0b5772f2189b589385648
+- path: aws_robomaker_residential_Trash_01/materials/textures/aws_Trash_01.png
+  sha256: 54488551f566900f9279fb2341bcbad55bb071d153512fef1d29e27542096506
+- path: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_collision.DAE
+  sha256: ac7024fbbc1e1745c9385203285e5b5f0186a50d00fa8e3d82fd5d17265b6f52
+- path: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_visual.DAE
+  sha256: 6234e93167cb4ecd676a8a001b3b86f0e1714d94d4e25dfdb1ef6d48185ff89c
+- path: aws_robomaker_residential_Trash_01/model.config
+  sha256: 1df49e8d8203d5684efac86b46ca0420e8eb002c538ce6ecd7d43b15e7b2182c
+- path: aws_robomaker_residential_Trash_01/model.sdf
+  sha256: 12bcb2979814cf5b9df23f53801e1508f7ecf680de25da12460d2aa083c8b93b
+- path: aws_robomaker_residential_Vase_01/materials/textures/aws_Vase_01.png
+  sha256: 1c6b10ba237534b453e003b696fcae42d414aa5b57b41a9b52674223ff777967
+- path: aws_robomaker_residential_Vase_01/meshes/aws_Vase_01_collision.DAE
+  sha256: 3a1b268b56dc41cbe3c0ebfb8ae9bd2de1a1e5e359c74c5cc6abf1d5a0fb7577
+- path: aws_robomaker_residential_Vase_01/meshes/aws_Vase_01_visual.DAE
+  sha256: 888915aab7d7f3e9b02b24cc741c404b8278dd0a18888226c9f1abdbe258cc64
+- path: aws_robomaker_residential_Vase_01/model.config
+  sha256: 3531cbc3fa8dba34fcdb2a5735c41cc5ac379647db8b65f0899f0501b52b94e3
+- path: aws_robomaker_residential_Vase_01/model.sdf
+  sha256: 8b4b512b8bade1d5f59db59c60044a6fad50b320aee44eb10b86daa5a4f99923
+- path: aws_robomaker_residential_Wardrobe_01/materials/textures/aws_Wardrobe_01.png
+  sha256: ce7a1bdb9c4091ac802021a20a21d44a8de75d3cc57475c82489819a45a14b68
+- path: aws_robomaker_residential_Wardrobe_01/meshes/aws_Wardrobe_01_collision.DAE
+  sha256: d8951bbaac273ae27e5d258492de82fb892e1c1c9ba1d9706bc93210c935628a
+- path: aws_robomaker_residential_Wardrobe_01/meshes/aws_Wardrobe_01_visual.DAE
+  sha256: 50fba1ce304e8b5abf0b6cebaccd1b511aa3ca023870ec075a228d01b9a4d4c7
+- path: aws_robomaker_residential_Wardrobe_01/model.config
+  sha256: 37faa5735a4d56b434cf748ad918cfda15823ac67b7e612164f109af0f0f0324
+- path: aws_robomaker_residential_Wardrobe_01/model.sdf
+  sha256: f33876499121fc7c148832b3c2b22a892132eeee0040e09fd041a735e99a7a9c
+storage: vendored

@@ -2,6 +2,7 @@
 """Resolve managed scene inputs before any simulator or child node starts."""
 
 from dataclasses import dataclass
+import math
 from pathlib import Path
 
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, SetLaunchConfiguration
@@ -61,7 +62,9 @@ def selection_arguments(default_profile):
         DeclareLaunchArgument('ground_model_frame',default_value='',
                               description='Low-level ground basis override; managed scenes use their manifest'),
         DeclareLaunchArgument('debug_model_path',default_value='',
-                                  description='Explicit model roots for low-level raw-world debugging only')]
+                                  description='Explicit model roots for low-level raw-world debugging only'),
+        DeclareLaunchArgument('debug_spawn_pose', default_value='',
+                              description='Explicit x y z yaw for raw-world geometry/sensor inspection')]
 
 
 def _value(context, name):
@@ -82,6 +85,8 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             raise CatalogError('managed scene cannot override model_sdf')
         if _value(context,'debug_model_path'):
             raise CatalogError('managed scene cannot override debug_model_path')
+        if _value(context, 'debug_spawn_pose'):
+            raise CatalogError('managed scene cannot override debug_spawn_pose')
         if _value(context,'ground_model_frame'):
             raise CatalogError('managed scene cannot override ground_model_frame')
         catalog, _ = catalog_factory(px4_dir=px4_dir)
@@ -99,8 +104,19 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
         ground_frame=_value(context,'ground_model_frame') or 'odom'
         if ground_frame not in ('map','odom'):
             raise CatalogError('ground_model_frame must be map or odom')
+        pose = (0.0, 0.0, 0.83, 0.0)
+        debug_pose = _value(context, 'debug_spawn_pose')
+        if debug_pose:
+            if not world or not debug_roots:
+                raise CatalogError('debug_spawn_pose requires explicit world and debug_model_path')
+            try:
+                pose = tuple(float(value) for value in debug_pose.split())
+            except ValueError as error:
+                raise CatalogError('debug_spawn_pose requires four finite values: x y z yaw') from error
+            if len(pose) != 4 or not all(math.isfinite(value) for value in pose):
+                raise CatalogError('debug_spawn_pose requires four finite values: x y z yaw')
         result = SceneInputs(str(root / (world or default_world)), ':'.join(roots),
-                             _value(context, 'model_sdf') or default_model, (0.0, 0.0, 0.83), 0.0,ground_frame)
+                             _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame)
     values = dict(world=result.world, model_path=result.model_path, model_sdf=result.model_sdf,
                   x=str(result.position[0]), y=str(result.position[1]), z=str(result.position[2]),
                   yaw=str(result.yaw),ground_model_frame=result.ground_model_frame)

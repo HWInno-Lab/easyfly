@@ -81,3 +81,9 @@ coverage. EGO consumes process stop signals on its main thread and destroys its
 nodes before shutting down the ROS context. Native tests are separate from scene
 acceptance: current scene evidence must also show successful tasks and normal
 exit of every owned process.
+
+Draft scene sensor inspection can supply `debug_spawn_pose:="x y z yaw"` together
+with an explicit raw `world` and `debug_model_path`. The four values must be finite.
+Managed `scene` selection rejects this override; legacy defaults remain unchanged.
+`scene_sitl --bootstrap` uses this explicit route for geometry-reviewed draft
+spawns and forbids flight goals while collecting alignment and sensor evidence.

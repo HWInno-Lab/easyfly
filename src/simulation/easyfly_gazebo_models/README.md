@@ -35,3 +35,16 @@ MID360 传感器、IMU、质量和惯量保持原值；来源不清的外观 mes
 避免同时暴露完整 PX4 与系统同名模型。`storage: vendored` 标明本轮提取资源。
 整理脚本 `tools/scenes/prepare_runtime_assets.py` 核对指定 PX4 修订与原 mesh 指纹，
 拒绝覆盖已有整理目录。旧模型及旧清单的许可缺口继续保留。
+
+## S3 住宅与书店资源集
+
+`third_party/aws/house/` 与 `third_party/aws/bookstore/` 分别包含固定官方提交的
+63/26种MIT-0模型，布局中的多个实例复用同一模型目录。分类与场景任务在world包登记。
+对应`licenses/aws_house/`、`licenses/aws_bookstore/`保留原许可、原始world、逐文件
+上游/本地指纹与修改记录；可用`tools/scenes/import_aws_indoor.py`从固定本地归档复现。
+
+住宅补齐实际引用的18张源JPEG（19份模型内副本），调整COLLADA图像路径；
+图像字节与mesh几何数组保留。住宅world字节保留，所有布局实例保持static。
+书店修正SDF路径协议和Spotlight mesh文件名大小写；world只移除高度约343km的
+异常静态BookE_01_009，原始world与差异保留。未引用模型、照片及上游启动代码不安装。
+模型目录共约126MB；下载归档及完整诊断点云保存在安装目录外。

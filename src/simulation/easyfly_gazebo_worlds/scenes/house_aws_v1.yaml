@@ -1,0 +1,77 @@
+schema_version: 1
+id: house_aws_v1
+name: AWS 小型住宅
+status: draft
+category: indoor/residential
+tags:
+- house
+- navigation
+- static
+- occlusion
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/residential/house_aws_v1.world
+  sha256: 8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-small-house-world
+  revision: ff9631ca6d1db9c1ba656498151464b5ab74aafe
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_house/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_house/origins.json
+  note: Separate pinned source and collision geometry validation. World bytes retained,
+    including explicit static layout wrappers.
+asset_sets:
+- aws_house_v1
+required_plugins: []
+supported_profiles: []
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0.0
+  - 1.0
+  - 0.1
+  yaw: 0.0
+  basis: Native ODE collision grid selected a flat interior area; dense route rays
+    and actual resting pose are recorded separately before registration.
+navigation:
+  frame: odom
+  world_to_navigation: null
+  recommended_region: null
+  ground_model_frame: map
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: false
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/geometry-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/inspection-s3-initial.json

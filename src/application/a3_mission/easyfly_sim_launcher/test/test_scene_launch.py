@@ -262,3 +262,30 @@ def test_failed_preflight_never_reserves_or_starts_children(monkeypatch):
         preflight=[OpaqueFunction(function=reject)]))
     assert service.run() == 1
     assert reached == []
+
+
+@pytest.mark.parametrize('value', ['0 0 0.1', '0 0 nan 0', '0 0 inf 0', '0 0 0.1 yaw'])
+def test_raw_inspection_spawn_rejects_bad_pose(value, tmp_path):
+    context = LaunchContext()
+    context.launch_configurations.update(world='fixture.world', debug_model_path=str(tmp_path),
+                                         debug_spawn_pose=value)
+    with pytest.raises(CatalogError, match='four finite'):
+        simulation_preflight(context, px4_dir=Path('/tmp/unused'), default_world='empty.world',
+                             default_roots=[], default_model='unused.sdf', allowed_profiles=('base_sim',))
+
+
+def test_raw_inspection_spawn_is_explicit_and_cannot_override_managed_scene(tmp_path):
+    context = LaunchContext()
+    context.launch_configurations['debug_spawn_pose'] = '1.2 -2.3 0.1 0.4'
+    kwargs = dict(px4_dir=Path('/tmp/unused'), default_world='empty.world',
+                  default_roots=[], default_model='unused.sdf', allowed_profiles=('base_sim',))
+    with pytest.raises(CatalogError, match='requires explicit world and debug_model_path'):
+        simulation_preflight(context, **kwargs)
+    context.launch_configurations.update(world='fixture.world', debug_model_path=str(tmp_path))
+    for action in simulation_preflight(context, **kwargs):
+        action.execute(context)
+    assert [context.launch_configurations[PREFIX + name] for name in ['x','y','z','yaw']] == [
+        '1.2','-2.3','0.1','0.4']
+    context.launch_configurations.update(scene='test', world='', scene_profile='base_sim',debug_model_path='')
+    with pytest.raises(CatalogError, match='managed scene cannot override debug_spawn_pose'):
+        simulation_preflight(context, **kwargs)

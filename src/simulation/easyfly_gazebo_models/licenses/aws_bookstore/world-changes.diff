@@ -1,0 +1,15 @@
+--- upstream/bookstore.world
++++ bookstore_aws_v1.world
+@@ -105,12 +105,6 @@
+         <pose frame="">-5.315121 1.771952 0.955242 3.141243 -0.072268 -2.526906</pose>
+ 	</model>
+ 
+-	<model name="BookE_01_009">
+-        <include>
+-            <uri>model://aws_robomaker_retail_BookE_01</uri>
+-        </include>
+-        <pose frame="">1.170199 1.196251 343582.718718 0.002241 -0.001100 -0.623328</pose>
+-	</model>
+ 
+ 	<model name="BookE_01_010">
+         <include>

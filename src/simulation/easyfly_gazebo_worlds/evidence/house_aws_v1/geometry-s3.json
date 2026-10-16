@@ -1,0 +1,87 @@
+{
+  "scene": "house_aws_v1",
+  "scope": "Native Gazebo/ODE geometry only, without vehicle/ROS/PX4/flight; sampled route is not whole-scene flight acceptance.",
+  "passed": true,
+  "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+  "source_revision": "ff9631ca6d1db9c1ba656498151464b5ab74aafe",
+  "spawn_candidate_world": [
+    0,
+    1,
+    0.1
+  ],
+  "route_world": [
+    [
+      0,
+      1,
+      1.5
+    ],
+    [
+      1.5,
+      1,
+      1.5
+    ]
+  ],
+  "sample_step_m": 0.1,
+  "height_samples_above_floor": [
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2,
+    1.3,
+    1.4,
+    1.5,
+    1.6,
+    1.7,
+    1.8,
+    1.9,
+    2.0,
+    2.1
+  ],
+  "azimuths_per_height": 32,
+  "route_rays": 11458,
+  "minimum_sampled_horizontal_clearance_m": 1.31333,
+  "floor_height_m": [
+    0.0,
+    0.0
+  ],
+  "upward_hit_distances_m": [],
+  "existing_map_inflation_radius_m": 0.7,
+  "native_grid_rays": 154025,
+  "native_geometry_exit": 0,
+  "native_route_exit": 0,
+  "all_layout_instances_static": true,
+  "evidence": [
+    {
+      "path": "artifacts/scene-s3-20261016/house-geometry-5.csv",
+      "sha256": "7a497079916f400b493ec84b1e0e0f7f84461fe52ccef6b7bb404dd89a1a714e"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-geometry-5.log",
+      "sha256": "7bc5db3dde2e3b4390cc713ac89cc2a98d732ae524e151b74f46dee1590b91a2"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-2.csv",
+      "sha256": "b24d3d3727f45d0c405b853eb3656952791e5e9b286e5930c87d59d53aa3b8b7"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-2.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/geometry_probe.cpp",
+      "sha256": "88522de7b95721efbd0ef5424705b3fa961236250f7cfcb29fc7e723e89ae09b"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/route_probe.cpp",
+      "sha256": "b5cd3ea15d08240fc1457beec6454acd65a4655acfa684d9acb64d5be024d97b"
+    }
+  ]
+}
