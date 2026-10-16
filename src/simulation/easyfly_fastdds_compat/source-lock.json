@@ -6,6 +6,13 @@
   "declared_license": "Apache-2.0",
   "modified_file": "src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp",
   "original_sha256": "c98c42fd227b5e0e7bd7ce7a093a611e234c31e4d5e06b1ed88a1c2d83d41a1d",
-  "modified_sha256": "c347aca0b447b3e7ad45ece94500b52bc96628f751481b8cb8dfd2e1116d623c",
-  "change": "One reader-listener snapshot under the existing reader mutex; release before both callbacks and PDP status update. Existing endpoint traversal lock and DataReaderImpl retirement retain its inner listener."
+  "modified_sha256": "6efc6392bea2bba8c5a8f3b6a471e0c062f244ef28932f1d298b61746c7357e5",
+  "change": "Snapshot reader/writer listeners under their endpoint mutex before unmatch callbacks; synchronize writer setter. Release endpoint lock before callbacks/PDP updates. Existing endpoint traversal retains DDS owner.",
+  "additional_modified_files": [
+    {
+      "path": "include/fastdds/rtps/writer/RTPSWriter.h",
+      "original_sha256": "4414c565be56eb9240f54df7ad2ed77217ae9fccaa05fde7fce74a16aebcfde5",
+      "modified_sha256": "afe142d08866f61f842cb9b618ffb00d81d0ba7ffb45ca3216e5c100514f8a4d"
+    }
+  ]
 }

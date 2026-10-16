@@ -1,13 +1,14 @@
 # Managed simulation Fast DDS compatibility
 
-This package builds the complete upstream Fast DDS **v2.6.11**, with one checked
-change: snapshot the reader listener once under its existing recursive mutex, then
-release that mutex before both unmatch callbacks and PDP status updates.
+This package builds the complete upstream Fast DDS **v2.6.11**, with checked
+listener changes: snapshot reader and writer listeners under their existing
+endpoint mutex, then release it before both unmatch callbacks and PDP status updates.
+The private writer setter takes the same mutex; object layout is unchanged.
 `RTPSReader::setListener` uses the same mutex. The existing participant
 endpoint-list shared lock prevents native reader removal during traversal.
 The DDS inner listener is a member of DataReaderImpl, whose destructor removes
 the native reader before destroying its members, so its lifetime spans the
-traversal. No new reader/PDP lock ordering is introduced. No system library is overwritten and no DDS packet, QoS,
+traversal. No endpoint mutex is held across the PDP status update or user callback. No system library is overwritten and no DDS packet, QoS,
 transport, endpoint layout or safety policy is changed.
 
 A real warehouse shutdown core stopped at `EDP::unpairWriterProxy + 406`:
@@ -20,6 +21,18 @@ inner listener valid through both callbacks, and exits normally. A prior
 candidate held the reader mutex over callbacks; real shutdown exposed a
 reader/PDP lock inversion. That failed candidate is not shipped.
 The callback's bounded delay controls real concurrency; no fault is injected.
+
+The writer counterpart is independently reproduced with real RTPS endpoints:
+clearing the writer listener inside its first unmatch callback crashes the
+previous private library in `EDP::unpairReaderProxy`. Both unmatch callbacks now
+use one snapshot. A separate real DDS writer deletion test confirms that
+DataWriterImpl remains alive until traversal finishes. The writer setter is
+inline: the private library and native regression use the pinned patched header;
+no system header is replaced. These tests cover RMW's DDS API path, not an
+external application compiled to directly call the old RTPS inline setter.
+A warehouse MAVLink bridge exit also failed with SIGSEGV, but no native stack
+was retained for that run; it is not uniquely attributed to this writer race.
+
 
 The official Apache-2.0 source archive is SHA256-pinned in CMake. For offline
 builds, supply `-DEASYFLY_FASTDDS_ARCHIVE=/absolute/path/Fast-DDS-v2.6.11.tar.gz`.
