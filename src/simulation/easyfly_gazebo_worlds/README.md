@@ -1,4 +1,4 @@
-# 场景登记（S0–S3）
+# 场景登记（S0–S6）
 
 现有 `empty.world`、`perception_demo.world`、`precision_landing.world` 保留根路径。
 `scenes/` 是场景登记，`schemas/` 使用 JSON Schema Draft 7，兼容 Jammy 的 python3-jsonschema。
@@ -174,3 +174,55 @@ S4生成器与选定样本范围已完成；这里的通过仅覆盖上述有界
 363个住宅模型文件从缓存解析，四类传感器与地图输入有效，48个所属进程正常退出。
 这项S5验收覆盖资源准备和离线加载，没有发送飞行目标，也不增加导航飞行结论。
 现有场景的原始来源、几何、任务及S2～S4通过/失败证据保持不变。
+
+## S6 首个室外分类：AWS 白天赛道
+
+`racetrack_aws_day_v2`归到`outdoor/urban`，标签`racetrack/outdoor/static`。
+上游固定`ea90fdd9bac48344198f7cb3031dcb418a741064`，MIT-0原文与逐文件来源
+保存在model包`licenses/aws_racetrack/`。14个依赖模型、76个文件使用
+`aws_racetrack_day_v1`缓存资产；默认构建/安装不包含其网格、纹理或94MB归档。
+先显式准备，再选择场景：
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog fetch racetrack_aws_day_v2
+ros2 run easyfly_sim_launcher scene_catalog validate racetrack_aws_day_v2 --json
+ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene:=racetrack_aws_day_v2 headless:=true
+```
+
+这些命令要求source含当前场景的安装前缀及既有已审核运行库；PX4构建需含
+`mag_lpf_interval_v1`兼容特性。离线机器可将同一固定归档传给fetch的`--archive`，
+之后用`--offline`核验。缺缓存在启动任何子进程前拒绝，启动不自动下载。
+
+原始`racetrack_aws_day_v1`保留上游world全部字节并保持draft：它携带7212.321秒
+历史时钟，首次PX4启动未就绪。v2只移除state中四个保存时钟/计数字段，所有其他字节，
+包括保存的6盏灯光位置均保留。不能简单删除整个state；其中灯光位置与定义不同。
+`python3 tools/scenes/import_aws_racetrack.py <固定归档> --check`及
+`python3 tools/scenes/prepare_racetrack_cold_world.py --check`
+分别从固定本地归档和原world复核，不执行上游代码、不覆盖已有输出。
+
+内场出生点为world`(-8,-7,0.16)`，真实碰撞地面z约0.05929211m。
+17位置、0.1–4m高度、32方位的21,794条原生ODE射线，最小采样水平净距5.757m；
+v2交点与240个静态模型边界均与原v1一致。原点路线近护栏，未用于飞行。
+参考任务为odom中1.5m高度、1.5m往返；出生点与odom变换来自独立静止实测。
+该范围不覆盖整条赛道、竞速、夜间/空赛道、长时间运行或真实硬件。
+具体签收状态及原始失败见`scenes/`清单和逐场景`evidence/`。
+
+较重场景可显式登记`runtime.clock_rate_hz: 100`；未填写仍为上游默认10。
+两个Gazebo入口只配置原`libgazebo_ros_init.so`的`gazebo:publish_rate`，
+发布的仍为真实Gazebo仿真时间，不另建时钟或修改传感器时间戳。
+赛道v2配合原生5Hz心跳使用100Hz时钟，使ROS状态不再受10Hz时钟节流。
+显式raw检查的`debug_clock_rate_hz`仅允许10/100，`debug_heartbeat_rate_hz`仅允许1/5，
+二者均要求world和debug_model_path，managed禁止覆盖清单；原准入/新鲜度门限不变。
+普通colcon test只做离线检查，不启动这些任务。
+
+赛道v2还选择`runtime.battery_rate_hz: 5`：较慢仿真下，上游0.5Hz电池流会超过
+原有电池新鲜度门限；这里配置真实PX4 `BATTERY_STATUS`频率，并在检查中要求
+实际电池有效，保留任务状态机的原准入条件。旧的电池失效任务拒绝记录独立保留。
+
+2026-10-17正式签收：当前5Hz电池/5Hz心跳/100Hz时钟修订完成normal和symlink
+各一次断网受管冷启动，以及同一断网仿真的两轮参考任务；4个导航UUID均成功，
+最大到位误差0.093594m。两次落地恢复28.14/37.21墙秒，原120秒上限不变；
+三个正式运行各24正常退出，launch0、IO归零、无强制/异常/所属残留。
+当前冷启动证据为`calibration-s6-telemetry-v8.json`，任务为`mission-s6-final.json`；
+早期calibration-s6-final和各拒绝记录保留其当时配置，不代替当前矩阵。
+`evidence/scene-s6-racetrack-signoff.json`只签收首个新增分类，S6其他分类仍待逐项接入。

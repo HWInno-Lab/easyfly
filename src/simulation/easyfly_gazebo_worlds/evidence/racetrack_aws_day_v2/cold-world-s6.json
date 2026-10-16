@@ -1,0 +1,16 @@
+{
+  "scene": "racetrack_aws_day_v2",
+  "source": "worlds/outdoor/urban/racetrack_aws_day_v1.world",
+  "source_sha256": "38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c",
+  "destination": "worlds/outdoor/urban/racetrack_aws_day_v2.world",
+  "sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+  "removed_saved_fields": {
+    "sim_time": "7212 321000000",
+    "real_time": "744 496821786",
+    "wall_time": "1539228409 40882448",
+    "iterations": "742421"
+  },
+  "preserved": "Every other byte, including model geometry, poses, physics, sensor dependencies, world light definitions and saved light poses.",
+  "rationale": "Fresh PX4/SITL sessions must cold-start the simulator. The raw v1 started at the saved 7212.321-second clock and failed startup; v1 and its failed evidence remain separate.",
+  "scope": "World derivation only. Independent native and SITL evidence required."
+}

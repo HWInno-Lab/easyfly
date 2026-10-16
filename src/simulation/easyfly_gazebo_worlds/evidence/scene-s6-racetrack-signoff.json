@@ -1,0 +1,113 @@
+{
+  "stage": "S6",
+  "first_category_expansion_complete": true,
+  "S6_complete": false,
+  "scene": "racetrack_aws_day_v2",
+  "category": "outdoor/urban",
+  "scope": "First new outdoor category; bounded infield route only. Not all S6 categories or whole-track acceptance.",
+  "catalog": {
+    "total": 12,
+    "registered": 7,
+    "draft": 5
+  },
+  "asset": {
+    "id": "aws_racetrack_day_v1",
+    "storage": "cached",
+    "model_count": 14,
+    "locked_files": 76,
+    "revision": "ea90fdd9bac48344198f7cb3031dcb418a741064",
+    "declared_license": "MIT-0",
+    "source_url": "https://github.com/aws-robotics/aws-robomaker-racetrack-world",
+    "archive_sha256": "d788931a99d83fd0064559a7a97a505cca0694e0c8ab9b728c1ab5e4f3fb09ca",
+    "archive_bytes": 94353982,
+    "cache_lock": "0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb",
+    "payload_installed": false
+  },
+  "evidence": [
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/racetrack_aws_day_v2/cold-world-s6.json",
+      "sha256": "c928c95fb9ee153c9b1ab6122fc0298d85167ec804e9315ac3b7c03b1f66ef77"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/racetrack_aws_day_v2/geometry-s6.json",
+      "sha256": "69a7cfab07d4aae98bdfa4913d183da119bc75c6aadbe376daa0aa1b856997ee"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/racetrack_aws_day_v2/bootstrap-s6-qualified.json",
+      "sha256": "1b646283c62c2f04de4ecf3dbee7f3f3230b2c585f5badb8623a650250c95d2b"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/racetrack_aws_day_v2/calibration-s6-telemetry-v8.json",
+      "sha256": "7453cf829d2b7bdc814837b9d3cf7ee1b4efe77abdf76dd0f8f27077f706dad5"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/racetrack_aws_day_v2/mission-s6-final.json",
+      "sha256": "b3865eaec0b81c82e32ea6dda847d225ad8f7fdd3859d924e6c4f9c793745e82"
+    }
+  ],
+  "formal_matrix": {
+    "cold_starts": 2,
+    "installation_modes": [
+      "normal",
+      "symlink"
+    ],
+    "mission_runs": 1,
+    "mission_cycles": 2,
+    "parent_missions": 2,
+    "navigation_goals": 4,
+    "max_navigation_error_m": 0.09359307183487658,
+    "normal_exits": 72,
+    "all_runs_network_isolated": true,
+    "interfaces": [
+      "lo"
+    ],
+    "no_external_routes": true,
+    "forced_cleanup": false,
+    "leftovers": false
+  },
+  "runtime": {
+    "clock_rate_hz": 100,
+    "heartbeat_rate_hz": 5,
+    "battery_rate_hz": 5,
+    "clock_publisher": "native gazebo_ros_init",
+    "feedback_publisher": "native PX4/MAVROS",
+    "physics_and_sensor_configuration_unchanged": true,
+    "flight_admission_and_freshness_thresholds_unchanged": true,
+    "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "scene_probe_sha256": "0ebeab5a10919610253c53bcd9356d5ef9e3e975a617e0b4d8fb4f1cd2752466",
+    "required_px4_compatibility": [
+      "mag_lpf_interval_v1"
+    ]
+  },
+  "validation": {
+    "ordinary_test_results_each_mode": 290,
+    "errors": 0,
+    "failures": 0,
+    "installed_cli_checks_each_mode": 28,
+    "import_and_cold_world_reproduction": true,
+    "ordinary_tests_start_flight": false
+  },
+  "preserved_failures": [
+    "qualified-v1-draft: raw saved clock startup timeout",
+    "qualified-v2-draft: legacy raw heartbeat continuous stationary timeout",
+    "qualified-v3-draft: native 10Hz clock throttled state freshness",
+    "qualified-v5-normal-cold: draft rejected before child startup after signoff-helper field mismatch",
+    "qualified-v7-two-cycles: battery_valid false; mission rejected before arming"
+  ],
+  "deferred": {
+    "hospital": {
+      "source_url": "https://github.com/aws-robotics/aws-robomaker-hospital-world/tree/39969a9d250135835cf13b480865647d1a87b6f4",
+      "extra_fuel_models": 43,
+      "reason": "Each external model needs its own reviewed version/license/dependency lock; not imported."
+    },
+    "forest": "not yet imported",
+    "office": "not yet imported"
+  },
+  "limitations": [
+    "Selected infield takeoff/1.5m out-and-back/landing route only",
+    "Original raw v1 remains draft; no navigation acceptance inherited",
+    "Night and empty worlds not registered",
+    "No racing, whole-scene, long-duration, modern-Gazebo or hardware claim"
+  ],
+  "raw_artifacts": "artifacts/scene-s6-20261017"
+}

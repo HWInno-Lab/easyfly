@@ -1,0 +1,55 @@
+{
+  "passed": false,
+  "error": "TimeoutError: evidence deadline 60s; state={'source_ns': 23300000000, 'frame': 'odom', 'ros_now_ns': 23300000000, 'receipt': 8854.847515826, 'steady_now': 8854.894389288, 'armed': False, 'connected': True, 'mode': 2, 'mode_name': 'AUTO.LOITER', 'position': [-0.006493169814348221, 0.0008505043806508183, 0.04107666015625], 'velocity': [-0.0030557038262486458, 0.00129729975014925, -0.003243357175961137], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 16.200000762939453, 'battery_remaining': 1.0}",
+  "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "inspections": [
+    {
+      "index": 1,
+      "passed": false,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ]
+    }
+  ],
+  "normal_exits": [
+    "52862",
+    "52929",
+    "53760",
+    "53723",
+    "53719",
+    "53596",
+    "53662",
+    "53598",
+    "53721",
+    "53553",
+    "53581",
+    "53479",
+    "53568",
+    "53247",
+    "53507",
+    "53245",
+    "53505",
+    "53477",
+    "53758",
+    "53387",
+    "53391",
+    "53389",
+    "53243",
+    "52803"
+  ],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "forced": false,
+  "leftovers": [],
+  "actions": [],
+  "scope": "Rejected cold-world draft run with legacy raw 1Hz heartbeat. State became healthy but unchanged continuous stationary admission did not pass. Not navigation or sensor acceptance.",
+  "raw_result": "artifacts/scene-s6-20261017/qualified-v2-draft/result.json",
+  "raw_result_sha256": "16607bea661cb6c8d6f216d9571d944535a7e287aecaff0f3051502d4b97e2a9"
+}

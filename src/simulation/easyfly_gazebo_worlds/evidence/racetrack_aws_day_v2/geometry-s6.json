@@ -1,0 +1,41 @@
+{
+  "scene": "racetrack_aws_day_v2",
+  "passed": true,
+  "scope": "Native Gazebo/ODE geometry only; selected infield route, not a whole-track flight claim.",
+  "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+  "spawn": [
+    -8.0,
+    -7.0,
+    0.16
+  ],
+  "route_world_start": [
+    -8.0,
+    -7.0
+  ],
+  "route_world_end": [
+    -6.5,
+    -7.0
+  ],
+  "rays": 21794,
+  "positions": 17,
+  "height_range_world_m": [
+    0.1,
+    4.0
+  ],
+  "azimuth_samples": 32,
+  "min_horizontal_clearance_m": 5.7571306228637695,
+  "floor_world_z_m": 0.05929211080074309,
+  "upward_no_hit": true,
+  "upward_ray_length_m": 25,
+  "static_collision_models": 240,
+  "original_empty_dynamic_model": "ground_plane (no links/collision; not ground support)",
+  "probe_source": "tools/scenes/primitive_geometry_probe.cpp",
+  "probe_source_sha256": "b55914533ce62ae41507895b87979e3dd14f16a1a81c6481a030e47fde13f435",
+  "probe_sha256": "77c07615ff052271b2059190d83b4ffd8390e610edbf631036e7be318b1ea634",
+  "raw_rays": "artifacts/scene-s6-20261017/geometry-infield-v2.csv",
+  "raw_rays_sha256": "b38244c70eb3a59eea274f435f6f05d72c9bfb22a5cfff89b2405ea19437ff38",
+  "raw_models_sha256": "6308556316697f64e48e411e86ed66b0068c1c22a952e37a0b548f3a46246a3f",
+  "returncode": 0,
+  "all_ray_intersections_identical_to_raw_v1": true,
+  "all_240_static_model_bounds_identical_to_raw_v1": true
+}

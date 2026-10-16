@@ -440,6 +440,14 @@
             1,
             5
           ]
+        },
+        "clock_rate_hz": {
+          "type": "integer",
+          "enum": [10, 100]
+        },
+        "battery_rate_hz": {
+          "type": "integer",
+          "enum": [5]
         }
       },
       "required": [

@@ -1,0 +1,82 @@
+schema_version: 1
+id: racetrack_aws_day_v1
+name: AWS 白天室外赛道
+status: draft
+category: outdoor/urban
+tags:
+- racetrack
+- outdoor
+- static
+- navigation
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/outdoor/urban/racetrack_aws_day_v1.world
+  sha256: 38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-racetrack-world
+  revision: ea90fdd9bac48344198f7cb3031dcb418a741064
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_racetrack/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_racetrack/origins.json
+  note: Pinned official fourteen-model daytime closure. Only SDF resource URI prefixes
+    relocated; mesh, collision, texture and world bytes retained.
+asset_sets:
+- aws_racetrack_day_v1
+required_plugins: []
+supported_profiles: []
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - -8.0
+  - -7.0
+  - 0.16
+  yaw: 0.0
+  basis: 'Native ODE sampling: 17 route positions, 0.1-4m height, 32 azimuths; floor
+    z=0.05929211m, horizontal sampled clearance >=5.757m. Infield only; original geometry
+    retained.'
+navigation:
+  frame: odom
+  world_to_navigation: null
+  recommended_region: null
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+  heartbeat_rate_hz: 5
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: false
+  world_loaded: false
+  sensors_checked: false
+  navigation_tested: false
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/racetrack_aws_day_v1/geometry-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/racetrack_aws_day_v1/startup-rejected-s6.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

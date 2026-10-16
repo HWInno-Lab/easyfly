@@ -1,5 +1,5 @@
 # Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
-"""Configure only a launch-owned simulator's native heartbeat stream."""
+"""Configure only a launch-owned simulator's native feedback streams."""
 import hashlib
 import json
 import os
@@ -25,6 +25,11 @@ def process_identity(pid):
 
 def configured_heartbeat(status, streams, rate):
     """Require the actual offboard link and its configured native stream rate."""
+    return configured_stream(status, streams, rate, 'HEARTBEAT')
+
+
+def configured_stream(status, streams, rate, name):
+    """Match one named stream on the owned offboard instance, not a GCS link."""
     for instance, block in re.findall(r'(?ms)^instance #(\d+):\n(.*?)(?=^instance #|\Z)', status):
         if 'UDP (14580, remote port: 14540)' not in block:
             continue
@@ -32,16 +37,18 @@ def configured_heartbeat(status, streams, rate):
                 r'(?ms)^instance #(\d+):\n(.*?)(?=^instance #|\Z)', streams):
             if stream_instance != instance:
                 continue
-            match = re.search(r'(?m)^\s*HEARTBEAT\s+([0-9.]+)\s+\(([0-9.]+)\)', stream_block)
+            match = re.search(r'(?m)^\s*' + re.escape(name) + r'\s+([0-9.]+)\s+\(([0-9.]+)\)', stream_block)
             if match and float(match[1]) == rate and float(match[2]) == rate:
                 return True
     return False
 
 
-def configure_owned(pid, binary, rate, *, identity=process_identity, runner=subprocess.run):
+def configure_owned(pid, binary, rate, *, battery_rate_hz=0, identity=process_identity, runner=subprocess.run):
     """Use the pinned native client; neither ACK nor a fabricated state is feedback."""
     if rate != 5:
         raise ValueError('only the reviewed 5Hz simulator heartbeat is supported')
+    if battery_rate_hz not in (0, 5):
+        raise ValueError('optional native battery rate must be 5Hz')
     binary = Path(binary).resolve(strict=True)
     client = binary.parent/'px4-mavlink'
     if client.resolve(strict=True) != binary:
@@ -55,6 +62,9 @@ def configure_owned(pid, binary, rate, *, identity=process_identity, runner=subp
         [str(client), '--instance', '0', 'status'],
         [str(client), '--instance', '0', 'status', 'streams'],
     ]
+    if battery_rate_hz:
+        commands.insert(1, [str(client), '--instance', '0', 'stream', '-u', '14580',
+                            '-s', 'BATTERY_STATUS', '-r', str(battery_rate_hz)])
     outputs = []
     for command in commands:
         if identity(pid) != owned:
@@ -63,20 +73,25 @@ def configure_owned(pid, binary, rate, *, identity=process_identity, runner=subp
         if result.returncode != 0 or identity(pid) != owned:
             raise RuntimeError('native PX4 telemetry command failed or process changed')
         outputs.append(result.stdout + result.stderr)
-    deferred = not any(outputs[1:])
-    if not deferred and not configured_heartbeat(outputs[1], outputs[2], rate):
-        raise RuntimeError('native offboard HEARTBEAT rate not confirmed: ' + json.dumps(outputs))
+    status, streams = outputs[-2:]
+    deferred = not any((status, streams))
+    if not deferred and not (configured_heartbeat(status, streams, rate) and
+            (not battery_rate_hz or configured_stream(status, streams, battery_rate_hz, 'BATTERY_STATUS'))):
+        raise RuntimeError('native offboard telemetry rate not confirmed: ' + json.dumps(outputs))
     return dict(pid=pid, start_ticks=owned[2], rate_hz=rate, local_port=14580,
                 remote_port=14540, native_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
-                status=outputs[1], streams=outputs[2], native_output_deferred=deferred,
-                command_returncodes=[0, 0, 0])
+                status=status, streams=streams, native_output_deferred=deferred,
+                battery_rate_hz=battery_rate_hz, command_returncodes=[0] * len(commands))
 
 
 def heartbeat_configuration_action(target, tree):
     """Capture scene inputs in their launch scope before delayed process events."""
     def register(context):
         rate = int(scene_value('heartbeat_rate_hz').perform(context))
+        battery = int(scene_value('battery_rate_hz').perform(context))
         if rate == 1:
+            if battery:
+                raise ValueError('native battery override requires reviewed 5Hz heartbeat')
             return []  # Existing scenes and raw defaults keep upstream telemetry.
         if rate != 5:
             raise ValueError('unsupported managed simulator heartbeat rate')
@@ -96,7 +111,7 @@ def heartbeat_configuration_action(target, tree):
             if requested[0] is None:
                 if b'Startup script returned successfully' not in pending:
                     return []
-                report = configure_owned(event.pid, binary, rate)
+                report = configure_owned(event.pid, binary, rate, battery_rate_hz=battery)
                 requested[0] = report
                 pending.clear()
                 if report['native_output_deferred']:
@@ -106,7 +121,8 @@ def heartbeat_configuration_action(target, tree):
             else:
                 report = requested[0]
                 text = pending.decode(errors='replace')
-                if not configured_heartbeat(text, text, rate):
+                if not (configured_heartbeat(text, text, rate) and
+                        (not battery or configured_stream(text, text, battery, 'BATTERY_STATUS'))):
                     return []
                 if process_identity(event.pid) != (
                         str(binary.resolve(strict=True)), os.getpid(), report['start_ticks']):

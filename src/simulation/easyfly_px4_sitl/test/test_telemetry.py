@@ -6,7 +6,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from easyfly_px4_sitl.telemetry import configured_heartbeat, configure_owned
+from easyfly_px4_sitl.telemetry import configured_heartbeat, configured_stream, configure_owned
 
 STATUS = '\ninstance #0:\n transport protocol: UDP (18570, remote port: 14550)\n' + \
          '\ninstance #1:\n transport protocol: UDP (14580, remote port: 14540)\n'
@@ -73,3 +73,27 @@ def test_daemon_stdout_requires_deferred_verification(native_client):
     result = configure_owned(42, native_client, 5, identity=identity, runner=runner)
     assert result['native_output_deferred']
     assert not configured_heartbeat(result['status'], result['streams'], 5)
+
+
+@pytest.mark.parametrize('rate', [0.5, 5])
+def test_native_battery_rate_requires_actual_offboard_stream(native_client, rate):
+    identity = lambda pid: (str(native_client), os.getpid(), '100')
+    streams = STREAMS + f' BATTERY_STATUS {rate:.2f} ({rate:.3f}) 54\n'
+    runner = Mock(side_effect=[SimpleNamespace(returncode=0, stdout=s, stderr='')
+                              for s in ['', '', STATUS, streams]])
+    if rate == 5:
+        result = configure_owned(42, native_client, 5, battery_rate_hz=5, identity=identity, runner=runner)
+        assert result['battery_rate_hz']==5 and result['command_returncodes']==[0,0,0,0]
+        assert runner.call_args_list[1].args[0][-4:]==['-s','BATTERY_STATUS','-r','5']
+    else:
+        with pytest.raises(RuntimeError, match='not confirmed'):
+            configure_owned(42, native_client, 5, battery_rate_hz=5, identity=identity, runner=runner)
+    wrong_link=STREAMS.replace('instance #0:\n HEARTBEAT', 'instance #0:\n BATTERY_STATUS 5.00 (5.000) 54\n HEARTBEAT')
+    assert not configured_stream(STATUS,wrong_link,5,'BATTERY_STATUS')
+
+
+def test_unsupported_battery_rate_cannot_issue_native_command(native_client):
+    runner=Mock()
+    with pytest.raises(ValueError,match='battery rate'):
+        configure_owned(42,native_client,5,battery_rate_hz=1,runner=runner)
+    runner.assert_not_called()

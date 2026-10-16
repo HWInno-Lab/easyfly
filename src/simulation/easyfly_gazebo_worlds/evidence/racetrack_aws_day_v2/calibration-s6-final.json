@@ -1,0 +1,4593 @@
+{
+  "scene": "racetrack_aws_day_v2",
+  "passed": true,
+  "scope": "Two independent registered managed cold starts, normal and symlink, each in an isolated network namespace with only loopback. Flight qualified separately.",
+  "grid_footprint_mode": "observed_cells",
+  "spawn": {
+    "frame": "world",
+    "position": [
+      -8.0,
+      -7.0,
+      0.16
+    ],
+    "yaw": 0.0,
+    "basis": "Native ODE sampling: 17 route positions, 0.1-4m height, 32 azimuths; floor z=0.05929211m, horizontal sampled clearance >=5.757m. Infield only; original geometry retained."
+  },
+  "previous_reference": {
+    "translation": [
+      8.100900475499694,
+      6.88343900845521,
+      -0.08954608138020832
+    ],
+    "yaw": -0.014932992642998277
+  },
+  "world_to_navigation": {
+    "translation": [
+      8.106035448387171,
+      6.8708287813066455,
+      -0.06564064518229167
+    ],
+    "yaw": -0.015577206966146352
+  },
+  "pair_translation_difference_m": 0.014474091963145481,
+  "pair_yaw_difference_rad": 0.0013485432464830308,
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "runs": [
+    {
+      "px4_telemetry": {
+        "command_returncodes": [
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+        "pid": 57933,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "930224",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00 (1.521)  \n\tOBSTACLE_DISTANCE              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00 (1.521)  \n\tOBSTACLE_DISTANCE              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 5050000000,
+            "receipt": 9318.685308914,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5250000000,
+            "receipt": 9319.313774502,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5450000000,
+            "receipt": 9319.990509494,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5650000000,
+            "receipt": 9320.896457877,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5850000000,
+            "receipt": 9321.810803508,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 6050000000,
+            "receipt": 9323.207896425,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 1.3970929169990995
+      },
+      "gazebo_clock": {
+        "rate_hz": 100,
+        "publisher": "gazebo",
+        "samples": [
+          {
+            "stamp": 4960000000,
+            "receipt": 9318.280627767
+          },
+          {
+            "stamp": 4970000000,
+            "receipt": 9318.290619865
+          },
+          {
+            "stamp": 4980000000,
+            "receipt": 9318.402541111
+          },
+          {
+            "stamp": 4990000000,
+            "receipt": 9318.411554311
+          },
+          {
+            "stamp": 5000000000,
+            "receipt": 9318.623691971
+          },
+          {
+            "stamp": 5020000000,
+            "receipt": 9318.685227213
+          },
+          {
+            "stamp": 5030000000,
+            "receipt": 9318.686156405
+          },
+          {
+            "stamp": 5040000000,
+            "receipt": 9318.68686552
+          },
+          {
+            "stamp": 5050000000,
+            "receipt": 9318.687407987
+          },
+          {
+            "stamp": 5060000000,
+            "receipt": 9318.687703676
+          },
+          {
+            "stamp": 5070000000,
+            "receipt": 9318.693431877
+          },
+          {
+            "stamp": 5080000000,
+            "receipt": 9318.70382479
+          },
+          {
+            "stamp": 5090000000,
+            "receipt": 9318.71330469
+          },
+          {
+            "stamp": 5100000000,
+            "receipt": 9318.724123186
+          },
+          {
+            "stamp": 5110000000,
+            "receipt": 9319.001898771
+          },
+          {
+            "stamp": 5120000000,
+            "receipt": 9319.003418202
+          },
+          {
+            "stamp": 5130000000,
+            "receipt": 9319.004258373
+          },
+          {
+            "stamp": 5140000000,
+            "receipt": 9319.004805812
+          },
+          {
+            "stamp": 5150000000,
+            "receipt": 9319.005118903
+          },
+          {
+            "stamp": 5160000000,
+            "receipt": 9319.007381591
+          },
+          {
+            "stamp": 5170000000,
+            "receipt": 9319.017354973
+          },
+          {
+            "stamp": 5180000000,
+            "receipt": 9319.027280655
+          },
+          {
+            "stamp": 5190000000,
+            "receipt": 9319.03729177
+          },
+          {
+            "stamp": 5200000000,
+            "receipt": 9319.047358911
+          },
+          {
+            "stamp": 5210000000,
+            "receipt": 9319.313687223
+          },
+          {
+            "stamp": 5220000000,
+            "receipt": 9319.315713308
+          },
+          {
+            "stamp": 5230000000,
+            "receipt": 9319.316539198
+          },
+          {
+            "stamp": 5240000000,
+            "receipt": 9319.317069478
+          },
+          {
+            "stamp": 5250000000,
+            "receipt": 9319.317488972
+          },
+          {
+            "stamp": 5260000000,
+            "receipt": 9319.317818044
+          },
+          {
+            "stamp": 5270000000,
+            "receipt": 9319.325963823
+          },
+          {
+            "stamp": 5280000000,
+            "receipt": 9319.33591548
+          },
+          {
+            "stamp": 5290000000,
+            "receipt": 9319.346025882
+          },
+          {
+            "stamp": 5300000000,
+            "receipt": 9319.356108637
+          },
+          {
+            "stamp": 5320000000,
+            "receipt": 9319.637652709
+          },
+          {
+            "stamp": 5330000000,
+            "receipt": 9319.638689349
+          },
+          {
+            "stamp": 5340000000,
+            "receipt": 9319.639235346
+          },
+          {
+            "stamp": 5350000000,
+            "receipt": 9319.639561533
+          },
+          {
+            "stamp": 5360000000,
+            "receipt": 9319.639861717
+          },
+          {
+            "stamp": 5370000000,
+            "receipt": 9319.647349803
+          },
+          {
+            "stamp": 5380000000,
+            "receipt": 9319.657398187
+          },
+          {
+            "stamp": 5390000000,
+            "receipt": 9319.667454325
+          },
+          {
+            "stamp": 5400000000,
+            "receipt": 9319.677461475
+          },
+          {
+            "stamp": 5410000000,
+            "receipt": 9319.943723541
+          },
+          {
+            "stamp": 5420000000,
+            "receipt": 9319.990423748
+          },
+          {
+            "stamp": 5430000000,
+            "receipt": 9319.99207611
+          },
+          {
+            "stamp": 5440000000,
+            "receipt": 9319.992685717
+          },
+          {
+            "stamp": 5450000000,
+            "receipt": 9319.993004832
+          },
+          {
+            "stamp": 5460000000,
+            "receipt": 9319.993897943
+          },
+          {
+            "stamp": 5470000000,
+            "receipt": 9320.005211332
+          },
+          {
+            "stamp": 5480000000,
+            "receipt": 9320.013850586
+          },
+          {
+            "stamp": 5490000000,
+            "receipt": 9320.024288353
+          },
+          {
+            "stamp": 5500000000,
+            "receipt": 9320.034048761
+          },
+          {
+            "stamp": 5510000000,
+            "receipt": 9320.335268325
+          },
+          {
+            "stamp": 5540000000,
+            "receipt": 9320.411274874
+          },
+          {
+            "stamp": 5550000000,
+            "receipt": 9320.413830588
+          },
+          {
+            "stamp": 5560000000,
+            "receipt": 9320.414661239
+          },
+          {
+            "stamp": 5570000000,
+            "receipt": 9320.415919094
+          },
+          {
+            "stamp": 5580000000,
+            "receipt": 9320.416859215
+          },
+          {
+            "stamp": 5590000000,
+            "receipt": 9320.417320577
+          },
+          {
+            "stamp": 5600000000,
+            "receipt": 9320.425501824
+          },
+          {
+            "stamp": 5610000000,
+            "receipt": 9320.753351429
+          },
+          {
+            "stamp": 5620000000,
+            "receipt": 9320.816442064
+          },
+          {
+            "stamp": 5630000000,
+            "receipt": 9320.818851524
+          },
+          {
+            "stamp": 5640000000,
+            "receipt": 9320.819899486
+          },
+          {
+            "stamp": 5650000000,
+            "receipt": 9320.892211908
+          },
+          {
+            "stamp": 5660000000,
+            "receipt": 9320.902523756
+          },
+          {
+            "stamp": 5670000000,
+            "receipt": 9320.914180359
+          },
+          {
+            "stamp": 5680000000,
+            "receipt": 9321.022861429
+          },
+          {
+            "stamp": 5690000000,
+            "receipt": 9321.032742835
+          },
+          {
+            "stamp": 5700000000,
+            "receipt": 9321.043073815
+          },
+          {
+            "stamp": 5710000000,
+            "receipt": 9321.366252347
+          },
+          {
+            "stamp": 5720000000,
+            "receipt": 9321.408791841
+          },
+          {
+            "stamp": 5730000000,
+            "receipt": 9321.418780453
+          },
+          {
+            "stamp": 5740000000,
+            "receipt": 9321.428844193
+          },
+          {
+            "stamp": 5750000000,
+            "receipt": 9321.439054863
+          },
+          {
+            "stamp": 5760000000,
+            "receipt": 9321.448971629
+          },
+          {
+            "stamp": 5770000000,
+            "receipt": 9321.459008465
+          },
+          {
+            "stamp": 5780000000,
+            "receipt": 9321.469083791
+          },
+          {
+            "stamp": 5790000000,
+            "receipt": 9321.479322079
+          },
+          {
+            "stamp": 5800000000,
+            "receipt": 9321.489223581
+          },
+          {
+            "stamp": 5820000000,
+            "receipt": 9321.810717566
+          },
+          {
+            "stamp": 5830000000,
+            "receipt": 9321.81262682
+          },
+          {
+            "stamp": 5840000000,
+            "receipt": 9321.813351157
+          },
+          {
+            "stamp": 5850000000,
+            "receipt": 9321.813965252
+          },
+          {
+            "stamp": 5860000000,
+            "receipt": 9321.814715372
+          },
+          {
+            "stamp": 5870000000,
+            "receipt": 9321.815362126
+          },
+          {
+            "stamp": 5880000000,
+            "receipt": 9321.824453268
+          },
+          {
+            "stamp": 5890000000,
+            "receipt": 9321.834296297
+          },
+          {
+            "stamp": 5900000000,
+            "receipt": 9321.844827126
+          },
+          {
+            "stamp": 5920000000,
+            "receipt": 9322.140493045
+          },
+          {
+            "stamp": 5930000000,
+            "receipt": 9322.143565341
+          },
+          {
+            "stamp": 5940000000,
+            "receipt": 9322.145849601
+          },
+          {
+            "stamp": 5950000000,
+            "receipt": 9322.149245404
+          },
+          {
+            "stamp": 5960000000,
+            "receipt": 9322.150711877
+          },
+          {
+            "stamp": 5970000000,
+            "receipt": 9322.152764873
+          },
+          {
+            "stamp": 5980000000,
+            "receipt": 9322.153391563
+          },
+          {
+            "stamp": 5990000000,
+            "receipt": 9322.164725991
+          },
+          {
+            "stamp": 6000000000,
+            "receipt": 9322.173168978
+          },
+          {
+            "stamp": 6100000000,
+            "receipt": 9323.207832053
+          }
+        ],
+        "median_sim_interval_s": 0.01
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0036657152231782675,
+                -0.0028660879470407963,
+                0.0513916015625
+              ],
+              "yaw": -0.016348277124898183,
+              "translation": [
+                8.109698086304721,
+                6.865418110020945,
+                -0.062029398437499994
+              ],
+              "state": {
+                "source_ns": 14610000000,
+                "frame": "odom",
+                "ros_now_ns": 14800000000,
+                "receipt": 9357.397681035,
+                "steady_now": 9357.397918384,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0036657152231782675,
+                  -0.0028660879470407963,
+                  0.0513916015625
+                ],
+                "velocity": [
+                  -0.0019022219348698854,
+                  -0.0024600152391940355,
+                  0.001722913235425949
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 14600000000,
+                "frame": "odom",
+                "ros_now_ns": 14600000000,
+                "receipt": 9356.720661849,
+                "steady_now": 9356.840689884,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0036657152231782675,
+                  -0.0028660879470407963,
+                  0.0513916015625
+                ],
+                "velocity": [
+                  -0.0019022219348698854,
+                  -0.0024600152391940355,
+                  0.001722913235425949
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.003059591166675091,
+                -0.0028426614589989185,
+                0.0521240234375
+              ],
+              "yaw": -0.016279246695624264,
+              "translation": [
+                8.10983007042414,
+                6.866001589130242,
+                -0.061296976562499994
+              ],
+              "state": {
+                "source_ns": 14910000000,
+                "frame": "odom",
+                "ros_now_ns": 15100000000,
+                "receipt": 9358.507995221,
+                "steady_now": 9358.508114829,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.003059591166675091,
+                  -0.0028426614589989185,
+                  0.0521240234375
+                ],
+                "velocity": [
+                  -0.0008535851957276464,
+                  -0.0027916054241359234,
+                  0.0012529630912467837
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 14900000000,
+                "frame": "odom",
+                "ros_now_ns": 14900000000,
+                "receipt": 9357.820277254,
+                "steady_now": 9357.900830887,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.003059591166675091,
+                  -0.0028426614589989185,
+                  0.0521240234375
+                ],
+                "velocity": [
+                  -0.0008535851957276464,
+                  -0.0027916054241359234,
+                  0.0012529630912467837
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0022807903587818146,
+                -0.002837125211954117,
+                0.052459716796875
+              ],
+              "yaw": -0.01612691194747375,
+              "translation": [
+                8.109562413443728,
+                6.867242920677107,
+                -0.060961283203124994
+              ],
+              "state": {
+                "source_ns": 15250000000,
+                "frame": "odom",
+                "ros_now_ns": 15400000000,
+                "receipt": 9359.618914064,
+                "steady_now": 9359.619084967,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0022807903587818146,
+                  -0.002837125211954117,
+                  0.052459716796875
+                ],
+                "velocity": [
+                  -0.00019836891442537308,
+                  -0.0036435869988054037,
+                  0.0015910263173282146
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 15200000000,
+                "frame": "odom",
+                "ros_now_ns": 15200000000,
+                "receipt": 9358.970739045,
+                "steady_now": 9359.02083831,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.002386364620178938,
+                  -0.0028809017967432737,
+                  0.0523681640625
+                ],
+                "velocity": [
+                  -0.0003354481887072325,
+                  -0.0036560066509991884,
+                  0.0014705659123137593
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              8.109696856724197,
+              6.866220873276099,
+              -0.06142921940104166
+            ],
+            "yaw": -0.016251478589387868
+          },
+          "settled_preflight_state": {
+            "source_ns": 14600000000,
+            "frame": "odom",
+            "ros_now_ns": 14600000000,
+            "receipt": 9356.720661849,
+            "steady_now": 9356.840683889,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0036657152231782675,
+              -0.0028660879470407963,
+              0.0513916015625
+            ],
+            "velocity": [
+              -0.0019022219348698854,
+              -0.0024600152391940355,
+              0.001722913235425949
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 57806,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 57806,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 57806,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 58608,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 58610,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 58801,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-oeumlu8h/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-oeumlu8h/profiles.xml"
+        },
+        "loaded_pids": [
+          57806,
+          58254,
+          58256,
+          58258,
+          58400,
+          58402,
+          58404,
+          58489,
+          58491,
+          58519,
+          58521,
+          58567,
+          58582,
+          58596,
+          58608,
+          58610,
+          58639,
+          58750,
+          58752,
+          58754,
+          58799,
+          58801
+        ],
+        "child_profile_paths": {
+          "58752": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58754": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58254": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58639": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58256": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58258": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58519": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58521": "/tmp/easyfly-scene-dds-oeumlu8h/profiles.xml",
+          "58400": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58402": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58404": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58799": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58801": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58567": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "57806": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58582": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58596": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58608": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58610": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58489": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58491": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml",
+          "58750": "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-q33k6et3/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-oeumlu8h/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 152,
+          "first_source_ns": 290000000,
+          "last_source_ns": 15406000000,
+          "receipt": 9359.887278452,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.148530006408691,
+              -1.7831073999404907,
+              6.494922637939453
+            ],
+            [
+              12.108831405639648,
+              -7.764781475067139,
+              6.7039642333984375
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -28.81719970703125,
+              4.982774257659912,
+              13.899595260620117
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              7.835704803466797,
+              26.068166732788086,
+              12.09481143951416
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.15047836303711,
+              -1.4897385835647583,
+              4.828458786010742
+            ],
+            [
+              11.965510368347168,
+              -7.181079864501953,
+              4.732187271118164
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              7.884837627410889,
+              26.033714294433594,
+              8.756514549255371
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              1.609002709388733,
+              -18.207963943481445,
+              3.825324296951294
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              29.080724716186523,
+              -18.206960678100586,
+              3.7298734188079834
+            ],
+            [
+              10.741788864135742,
+              -18.20686149597168,
+              3.2506868839263916
+            ],
+            [
+              0.37409186363220215,
+              -5.91964054107666,
+              0.5526350736618042
+            ],
+            [
+              -2.2231802940368652,
+              -5.944584369659424,
+              0.8358407616615295
+            ],
+            [
+              -7.105408668518066,
+              -5.917062282562256,
+              0.9785242676734924
+            ],
+            [
+              -29.885944366455078,
+              -9.686893463134766,
+              3.233682632446289
+            ],
+            [
+              -29.150842666625977,
+              6.302635192871094,
+              3.748608112335205
+            ],
+            [
+              -29.99802589416504,
+              20.486289978027344,
+              2.786642074584961
+            ],
+            [
+              -14.31567668914795,
+              27.383363723754883,
+              3.887204647064209
+            ],
+            [
+              -0.28729555010795593,
+              5.730680465698242,
+              0.3474155366420746
+            ],
+            [
+              11.153096199035645,
+              27.38446044921875,
+              2.7469491958618164
+            ],
+            [
+              7.425406455993652,
+              6.259420871734619,
+              0.5309136509895325
+            ],
+            [
+              31.11610221862793,
+              9.43600082397461,
+              1.2610502243041992
+            ],
+            [
+              18.110170364379883,
+              -3.879178047180176,
+              0.9615023136138916
+            ],
+            [
+              8.106513023376465,
+              -5.917874813079834,
+              -0.07852717489004135
+            ],
+            [
+              2.905973196029663,
+              -5.89532470703125,
+              0.28242772817611694
+            ],
+            [
+              -0.05655572935938835,
+              -5.923777103424072,
+              -0.1357181966304779
+            ],
+            [
+              -2.815093755722046,
+              -5.950268745422363,
+              0.1528397500514984
+            ],
+            [
+              -8.359282493591309,
+              -5.9180450439453125,
+              -0.05999385192990303
+            ],
+            [
+              -17.531959533691406,
+              -3.9554994106292725,
+              -0.0647253468632698
+            ],
+            [
+              -23.357267379760742,
+              7.257093906402588,
+              0.5105854272842407
+            ],
+            [
+              -6.3638458251953125,
+              5.32666540145874,
+              -0.23070786893367767
+            ],
+            [
+              -2.995490550994873,
+              7.481685161590576,
+              0.23067055642604828
+            ],
+            [
+              0.3025098145008087,
+              5.658841133117676,
+              -0.23070789873600006
+            ],
+            [
+              3.866124153137207,
+              7.076273441314697,
+              0.018288569524884224
+            ],
+            [
+              4.648433685302734,
+              3.1165566444396973,
+              -0.23070788383483887
+            ],
+            [
+              4.682948589324951,
+              0.812252938747406,
+              -0.23070791363716125
+            ],
+            [
+              5.967238426208496,
+              -2.0302515029907227,
+              -0.23070786893367767
+            ],
+            [
+              1.7681169509887695,
+              -1.674950361251831,
+              -0.23070786893367767
+            ],
+            [
+              2.036921739578247,
+              -5.892254829406738,
+              -0.23070789873600006
+            ],
+            [
+              -0.29764142632484436,
+              -2.1215901374816895,
+              -0.23070788383483887
+            ],
+            [
+              -2.6074419021606445,
+              -4.023712635040283,
+              -0.23070789873600006
+            ],
+            [
+              -2.465355396270752,
+              -1.296536922454834,
+              -0.23070788383483887
+            ],
+            [
+              -3.4321587085723877,
+              -0.2812280058860779,
+              -0.23070788383483887
+            ],
+            [
+              -4.8198723793029785,
+              2.251641273498535,
+              -0.23070788383483887
+            ],
+            [
+              -1.8307764530181885,
+              2.0526535511016846,
+              -0.23070786893367767
+            ],
+            [
+              -1.3977010250091553,
+              5.73360013961792,
+              -0.12163009494543076
+            ],
+            [
+              0.5214372277259827,
+              2.5379951000213623,
+              -0.23070788383483887
+            ],
+            [
+              4.315609455108643,
+              5.687666416168213,
+              -0.23070788383483887
+            ],
+            [
+              2.606003999710083,
+              1.2235157489776611,
+              -0.23070789873600006
+            ],
+            [
+              3.2258188724517822,
+              0.0495489165186882,
+              -0.23070785403251648
+            ],
+            [
+              3.192791223526001,
+              -1.6670228242874146,
+              -0.23070789873600006
+            ],
+            [
+              1.26375412940979,
+              -1.6595152616500854,
+              -0.23070789873600006
+            ],
+            [
+              0.7938195466995239,
+              -4.4030442237854,
+              -0.23070788383483887
+            ],
+            [
+              -0.5765241384506226,
+              -1.8489598035812378,
+              -0.23070788383483887
+            ],
+            [
+              -3.110851764678955,
+              -3.4713644981384277,
+              -0.23070786893367767
+            ],
+            [
+              -2.494572401046753,
+              -0.8379656672477722,
+              -0.23070786893367767
+            ],
+            [
+              -4.102105617523193,
+              0.3077188730239868,
+              -0.23070789873600006
+            ],
+            [
+              -5.194887161254883,
+              3.4947688579559326,
+              -0.23070791363716125
+            ],
+            [
+              -2.0025830268859863,
+              3.1121699810028076,
+              -0.23070788383483887
+            ],
+            [
+              -1.7763721942901611,
+              19.94317054748535,
+              0.02090981975197792
+            ],
+            [
+              1.3824820518493652,
+              3.6976161003112793,
+              -0.23070789873600006
+            ],
+            [
+              6.604410648345947,
+              6.472034454345703,
+              0.05300561711192131
+            ],
+            [
+              5.391565322875977,
+              1.5939842462539673,
+              -0.23070789873600006
+            ],
+            [
+              12.322629928588867,
+              -1.5960564613342285,
+              -0.23070791363716125
+            ],
+            [
+              8.157171249389648,
+              -5.917835712432861,
+              -0.15972429513931274
+            ],
+            [
+              2.3900699615478516,
+              -4.301171779632568,
+              -0.23070788383483887
+            ],
+            [
+              0.22704990208148956,
+              -5.921051979064941,
+              0.039705790579319
+            ],
+            [
+              -1.9676364660263062,
+              -4.129315376281738,
+              -0.23070791363716125
+            ],
+            [
+              -6.927826404571533,
+              -5.916922569274902,
+              0.17487064003944397
+            ],
+            [
+              -13.065126419067383,
+              -2.451680898666382,
+              -0.23070789873600006
+            ],
+            [
+              -23.37209701538086,
+              4.776350975036621,
+              0.5314767360687256
+            ],
+            [
+              -7.00285005569458,
+              6.176015377044678,
+              0.34557756781578064
+            ],
+            [
+              -5.741353511810303,
+              11.865987777709961,
+              0.31472527980804443
+            ],
+            [
+              0.23434975743293762,
+              7.626720905303955,
+              0.6285465955734253
+            ],
+            [
+              3.641824960708618,
+              7.113687992095947,
+              0.2659780979156494
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              37.730430603027344,
+              6.781977653503418,
+              2.0848116874694824
+            ],
+            [
+              38.6474494934082,
+              -8.894051551818848,
+              3.2532055377960205
+            ],
+            [
+              6.613120079040527,
+              -5.919045448303223,
+              0.7344119548797607
+            ],
+            [
+              2.6112399101257324,
+              -5.898155212402344,
+              0.3938639163970947
+            ],
+            [
+              -0.3296770453453064,
+              -5.926399230957031,
+              0.6463072896003723
+            ],
+            [
+              -3.514024019241333,
+              -5.967296123504639,
+              0.41914135217666626
+            ],
+            [
+              -25.402660369873047,
+              -18.22544288635254,
+              3.9179043769836426
+            ],
+            [
+              -29.906675338745117,
+              -2.976595878601074,
+              2.777061939239502
+            ],
+            [
+              -29.952600479125977,
+              8.520919799804688,
+              4.112403392791748
+            ],
+            [
+              -5.486708641052246,
+              5.70551872253418,
+              1.1486259698867798
+            ],
+            [
+              -11.025303840637207,
+              27.384862899780273,
+              4.026025295257568
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              5.09515905380249,
+              -5.070320129394531,
+              1.4125945568084717
+            ],
+            [
+              7.219082832336426,
+              -18.20546531677246,
+              3.456102132797241
+            ],
+            [
+              -1.868302822113037,
+              -18.21286392211914,
+              4.071624755859375
+            ],
+            [
+              -11.629636764526367,
+              -18.217662811279297,
+              3.825777292251587
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              12.077879905700684,
+              -12.428633689880371,
+              5.3656792640686035
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.13739013671875,
+              -3.462007522583008,
+              5.325032711029053
+            ],
+            [
+              12.079014778137207,
+              -12.257412910461426,
+              7.394245147705078
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.140201568603516,
+              -3.0381476879119873,
+              7.062257766723633
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/camera/color/image_raw": {
+          "count": 523,
+          "first_source_ns": 291000000,
+          "last_source_ns": 15494000000,
+          "receipt": 9359.943449623,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 69
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 523,
+          "first_source_ns": 291000000,
+          "last_source_ns": 15494000000,
+          "receipt": 9359.945701694,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 197512,
+          "min_m": 0.46479278802871704,
+          "max_m": 19.977500915527344,
+          "non_increasing_stamps": 69
+        },
+        "/livox/imu": {
+          "count": 2103,
+          "first_source_ns": 314000000,
+          "last_source_ns": 15502000000,
+          "receipt": 9359.935358115,
+          "frame": "livox_frame",
+          "finite": true
+        }
+      },
+      "shutdown_seconds": 0.9151900580000074,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "scene_probe_sha256": "b194b5ff11dd6793bb9621ae529dd7c71269f23d383870012d8a9a21f3412929",
+      "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+      "settled_preflight_state": {
+        "source_ns": 14600000000,
+        "frame": "odom",
+        "ros_now_ns": 14600000000,
+        "receipt": 9356.720661849,
+        "steady_now": 9356.840683889,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0036657152231782675,
+          -0.0028660879470407963,
+          0.0513916015625
+        ],
+        "velocity": [
+          -0.0019022219348698854,
+          -0.0024600152391940355,
+          0.001722913235425949
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "raw_result": "artifacts/scene-s6-20261017/qualified-v6-normal-cold/result.json",
+      "raw_result_sha256": "742220c26ef39d28ec680fb9244722e4f0f805cc7dd8a43f94fae271017a5f8e",
+      "transform": {
+        "translation": [
+          8.109696856724197,
+          6.866220873276099,
+          -0.06142921940104166
+        ],
+        "yaw": -0.016251478589387868
+      },
+      "normal_exits": 24,
+      "mode": "normal",
+      "offline_network": {
+        "namespace": "net:[4026532958]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "cache": {
+        "passed": true,
+        "read_only": true,
+        "observer_sha256": "7551ed7ae5da91906c4ca971e65e50fc949e30f07c09a4ae11c5a16c42f69be8",
+        "asset_lock": {
+          "schema_version": 1,
+          "asset_set_id": "aws_racetrack_day_v1",
+          "revision": "ea90fdd9bac48344198f7cb3031dcb418a741064",
+          "lock_sha256": "0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb",
+          "archive_sha256": "d788931a99d83fd0064559a7a97a505cca0694e0c8ab9b728c1ab5e4f3fb09ca",
+          "archive_size_bytes": 94353982
+        },
+        "processes": [
+          {
+            "pid": 57806,
+            "identity": {
+              "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+              "start_ticks": "929623"
+            },
+            "model_paths": [
+              "/home/jia/.cache/easyfly/assets/aws_racetrack_day_v1/ea90fdd9bac48344198f7cb3031dcb418a741064/0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-20261017/normal/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models",
+              "/usr/share/gazebo-11/models"
+            ],
+            "asset_mode": "cache",
+            "cache_root": null
+          }
+        ]
+      }
+    },
+    {
+      "px4_telemetry": {
+        "command_returncodes": [
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+        "pid": 59213,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "937294",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00 (1.521)  \n\tOBSTACLE_DISTANCE              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\tno radio status.\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00 (1.521)  \n\tOBSTACLE_DISTANCE              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 5220000000,
+            "receipt": 9389.712338017,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5420000000,
+            "receipt": 9390.351022472,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5620000000,
+            "receipt": 9390.973636715,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 5820000000,
+            "receipt": 9392.211507005,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 6020000000,
+            "receipt": 9392.908395061,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 6220000000,
+            "receipt": 9393.965582411,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 1.237870290000501
+      },
+      "gazebo_clock": {
+        "rate_hz": 100,
+        "publisher": "gazebo",
+        "samples": [
+          {
+            "stamp": 5010000000,
+            "receipt": 9389.084750295
+          },
+          {
+            "stamp": 5020000000,
+            "receipt": 9389.085076473
+          },
+          {
+            "stamp": 5030000000,
+            "receipt": 9389.085380959
+          },
+          {
+            "stamp": 5040000000,
+            "receipt": 9389.088237855
+          },
+          {
+            "stamp": 5050000000,
+            "receipt": 9389.098334717
+          },
+          {
+            "stamp": 5060000000,
+            "receipt": 9389.108228177
+          },
+          {
+            "stamp": 5070000000,
+            "receipt": 9389.118531116
+          },
+          {
+            "stamp": 5080000000,
+            "receipt": 9389.128339891
+          },
+          {
+            "stamp": 5090000000,
+            "receipt": 9389.407645575
+          },
+          {
+            "stamp": 5100000000,
+            "receipt": 9389.409131494
+          },
+          {
+            "stamp": 5110000000,
+            "receipt": 9389.409713536
+          },
+          {
+            "stamp": 5120000000,
+            "receipt": 9389.410021768
+          },
+          {
+            "stamp": 5130000000,
+            "receipt": 9389.410335535
+          },
+          {
+            "stamp": 5140000000,
+            "receipt": 9389.412674523
+          },
+          {
+            "stamp": 5150000000,
+            "receipt": 9389.422722445
+          },
+          {
+            "stamp": 5160000000,
+            "receipt": 9389.432612564
+          },
+          {
+            "stamp": 5170000000,
+            "receipt": 9389.442704556
+          },
+          {
+            "stamp": 5180000000,
+            "receipt": 9389.452703675
+          },
+          {
+            "stamp": 5190000000,
+            "receipt": 9389.711210215
+          },
+          {
+            "stamp": 5200000000,
+            "receipt": 9389.712261069
+          },
+          {
+            "stamp": 5210000000,
+            "receipt": 9389.713283468
+          },
+          {
+            "stamp": 5220000000,
+            "receipt": 9389.71387896
+          },
+          {
+            "stamp": 5230000000,
+            "receipt": 9389.714446755
+          },
+          {
+            "stamp": 5240000000,
+            "receipt": 9389.722769344
+          },
+          {
+            "stamp": 5250000000,
+            "receipt": 9389.732849658
+          },
+          {
+            "stamp": 5260000000,
+            "receipt": 9389.742890614
+          },
+          {
+            "stamp": 5270000000,
+            "receipt": 9389.753254471
+          },
+          {
+            "stamp": 5280000000,
+            "receipt": 9389.762876939
+          },
+          {
+            "stamp": 5300000000,
+            "receipt": 9390.040399143
+          },
+          {
+            "stamp": 5310000000,
+            "receipt": 9390.041842617
+          },
+          {
+            "stamp": 5320000000,
+            "receipt": 9390.042561654
+          },
+          {
+            "stamp": 5330000000,
+            "receipt": 9390.043074865
+          },
+          {
+            "stamp": 5340000000,
+            "receipt": 9390.04337069
+          },
+          {
+            "stamp": 5350000000,
+            "receipt": 9390.046230775
+          },
+          {
+            "stamp": 5360000000,
+            "receipt": 9390.055874556
+          },
+          {
+            "stamp": 5370000000,
+            "receipt": 9390.066132398
+          },
+          {
+            "stamp": 5380000000,
+            "receipt": 9390.075995481
+          },
+          {
+            "stamp": 5390000000,
+            "receipt": 9390.350876247
+          },
+          {
+            "stamp": 5400000000,
+            "receipt": 9390.35296088
+          },
+          {
+            "stamp": 5410000000,
+            "receipt": 9390.354054937
+          },
+          {
+            "stamp": 5420000000,
+            "receipt": 9390.354590114
+          },
+          {
+            "stamp": 5430000000,
+            "receipt": 9390.355117639
+          },
+          {
+            "stamp": 5440000000,
+            "receipt": 9390.358174502
+          },
+          {
+            "stamp": 5450000000,
+            "receipt": 9390.368207188
+          },
+          {
+            "stamp": 5460000000,
+            "receipt": 9390.378376474
+          },
+          {
+            "stamp": 5470000000,
+            "receipt": 9390.388485203
+          },
+          {
+            "stamp": 5480000000,
+            "receipt": 9390.398311005
+          },
+          {
+            "stamp": 5500000000,
+            "receipt": 9390.666485149
+          },
+          {
+            "stamp": 5510000000,
+            "receipt": 9390.668358597
+          },
+          {
+            "stamp": 5520000000,
+            "receipt": 9390.669106653
+          },
+          {
+            "stamp": 5530000000,
+            "receipt": 9390.66943231
+          },
+          {
+            "stamp": 5540000000,
+            "receipt": 9390.669733584
+          },
+          {
+            "stamp": 5550000000,
+            "receipt": 9390.675547874
+          },
+          {
+            "stamp": 5560000000,
+            "receipt": 9390.685579502
+          },
+          {
+            "stamp": 5570000000,
+            "receipt": 9390.695660955
+          },
+          {
+            "stamp": 5580000000,
+            "receipt": 9390.705432678
+          },
+          {
+            "stamp": 5600000000,
+            "receipt": 9390.973467364
+          },
+          {
+            "stamp": 5610000000,
+            "receipt": 9390.975080659
+          },
+          {
+            "stamp": 5620000000,
+            "receipt": 9390.976067677
+          },
+          {
+            "stamp": 5630000000,
+            "receipt": 9390.976695261
+          },
+          {
+            "stamp": 5640000000,
+            "receipt": 9390.977200441
+          },
+          {
+            "stamp": 5650000000,
+            "receipt": 9390.983082322
+          },
+          {
+            "stamp": 5660000000,
+            "receipt": 9390.995689425
+          },
+          {
+            "stamp": 5670000000,
+            "receipt": 9391.003065704
+          },
+          {
+            "stamp": 5720000000,
+            "receipt": 9391.902555633
+          },
+          {
+            "stamp": 5730000000,
+            "receipt": 9391.905412515
+          },
+          {
+            "stamp": 5740000000,
+            "receipt": 9391.906736306
+          },
+          {
+            "stamp": 5750000000,
+            "receipt": 9391.907491827
+          },
+          {
+            "stamp": 5760000000,
+            "receipt": 9391.908423979
+          },
+          {
+            "stamp": 5770000000,
+            "receipt": 9391.90896446
+          },
+          {
+            "stamp": 5780000000,
+            "receipt": 9391.918205877
+          },
+          {
+            "stamp": 5810000000,
+            "receipt": 9392.211416208
+          },
+          {
+            "stamp": 5820000000,
+            "receipt": 9392.214502744
+          },
+          {
+            "stamp": 5830000000,
+            "receipt": 9392.215333839
+          },
+          {
+            "stamp": 5840000000,
+            "receipt": 9392.216104793
+          },
+          {
+            "stamp": 5850000000,
+            "receipt": 9392.216606291
+          },
+          {
+            "stamp": 5860000000,
+            "receipt": 9392.220043386
+          },
+          {
+            "stamp": 5870000000,
+            "receipt": 9392.23024836
+          },
+          {
+            "stamp": 5880000000,
+            "receipt": 9392.477211982
+          },
+          {
+            "stamp": 5890000000,
+            "receipt": 9392.480757623
+          },
+          {
+            "stamp": 5900000000,
+            "receipt": 9392.481502548
+          },
+          {
+            "stamp": 5910000000,
+            "receipt": 9392.481986409
+          },
+          {
+            "stamp": 5920000000,
+            "receipt": 9392.482923796
+          },
+          {
+            "stamp": 5930000000,
+            "receipt": 9392.489548051
+          },
+          {
+            "stamp": 5940000000,
+            "receipt": 9392.499549839
+          },
+          {
+            "stamp": 5950000000,
+            "receipt": 9392.609011879
+          },
+          {
+            "stamp": 5960000000,
+            "receipt": 9392.619292278
+          },
+          {
+            "stamp": 5970000000,
+            "receipt": 9392.628919332
+          },
+          {
+            "stamp": 5980000000,
+            "receipt": 9392.859372455
+          },
+          {
+            "stamp": 5990000000,
+            "receipt": 9392.905918329
+          },
+          {
+            "stamp": 6000000000,
+            "receipt": 9392.907741695
+          },
+          {
+            "stamp": 6010000000,
+            "receipt": 9392.90831129
+          },
+          {
+            "stamp": 6020000000,
+            "receipt": 9392.908700469
+          },
+          {
+            "stamp": 6030000000,
+            "receipt": 9392.909135478
+          },
+          {
+            "stamp": 6040000000,
+            "receipt": 9392.919690464
+          },
+          {
+            "stamp": 6050000000,
+            "receipt": 9392.929381869
+          },
+          {
+            "stamp": 6060000000,
+            "receipt": 9392.93946919
+          },
+          {
+            "stamp": 6070000000,
+            "receipt": 9392.949141615
+          },
+          {
+            "stamp": 6080000000,
+            "receipt": 9392.960949415
+          },
+          {
+            "stamp": 6240000000,
+            "receipt": 9393.965525201
+          }
+        ],
+        "median_sim_interval_s": 0.01
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0011196081759408116,
+                -0.004386811517179012,
+                0.04315185546875
+              ],
+              "yaw": -0.014961947185637486,
+              "translation": [
+                8.102714691807838,
+                6.875138581880711,
+                -0.07026914453125
+              ],
+              "state": {
+                "source_ns": 7190000000,
+                "frame": "odom",
+                "ros_now_ns": 7380000000,
+                "receipt": 9397.812952076,
+                "steady_now": 9397.813122656,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0011196081759408116,
+                  -0.004386811517179012,
+                  0.04315185546875
+                ],
+                "velocity": [
+                  -0.0010852612322196364,
+                  -0.002331784227862954,
+                  -9.206638424075209e-06
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 7080000000,
+                "frame": "odom",
+                "ros_now_ns": 7080000000,
+                "receipt": 9396.818963302,
+                "steady_now": 9397.086956853,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0010462008649483323,
+                  -0.0038016345351934433,
+                  0.0430908203125
+                ],
+                "velocity": [
+                  -0.0007861871272325516,
+                  -0.0020945267751812935,
+                  0.00025501492200419307
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0011065959697589278,
+                -0.00487941037863493,
+                0.043548583984375
+              ],
+              "yaw": -0.014879837932343503,
+              "translation": [
+                8.102162804003846,
+                6.875311359611061,
+                -0.069872416015625
+              ],
+              "state": {
+                "source_ns": 7500000000,
+                "frame": "odom",
+                "ros_now_ns": 7680000000,
+                "receipt": 9398.8395796,
+                "steady_now": 9398.839704316,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0011065959697589278,
+                  -0.00487941037863493,
+                  0.043548583984375
+                ],
+                "velocity": [
+                  -0.0010251612402498722,
+                  -0.0021509546786546707,
+                  0.0006055357516743243
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 7480000000,
+                "frame": "odom",
+                "ros_now_ns": 7480000000,
+                "receipt": 9398.168824237,
+                "steady_now": 9398.331130735,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0011065959697589278,
+                  -0.00487941037863493,
+                  0.043548583984375
+                ],
+                "velocity": [
+                  -0.0010251612402498722,
+                  -0.0021509546786546707,
+                  0.0006055357516743243
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -8.0,
+                -7.0,
+                0.113421,
+                0.0,
+                -0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0009365914156660438,
+                -0.004434502683579922,
+                0.04400634765625
+              ],
+              "yaw": -0.014867020910758004,
+              "translation": [
+                8.102244624338745,
+                6.875860126519799,
+                -0.06941465234375
+              ],
+              "state": {
+                "source_ns": 7800000000,
+                "frame": "odom",
+                "ros_now_ns": 7980000000,
+                "receipt": 9399.954560554,
+                "steady_now": 9399.954787587,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0009365914156660438,
+                  -0.004434502683579922,
+                  0.04400634765625
+                ],
+                "velocity": [
+                  -0.0007856502779759467,
+                  -0.001290865009650588,
+                  0.0013362278696149588
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 7780000000,
+                "frame": "odom",
+                "ros_now_ns": 7780000000,
+                "receipt": 9399.219081078,
+                "steady_now": 9399.351410951,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0009365914156660438,
+                  -0.004434502683579922,
+                  0.04400634765625
+                ],
+                "velocity": [
+                  -0.0007856502779759467,
+                  -0.001290865009650588,
+                  0.0013362278696149588
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              8.102374040050144,
+              6.875436689337191,
+              -0.06985207096354167
+            ],
+            "yaw": -0.014902935342904837
+          },
+          "settled_preflight_state": {
+            "source_ns": 7080000000,
+            "frame": "odom",
+            "ros_now_ns": 7080000000,
+            "receipt": 9396.818963302,
+            "steady_now": 9397.086951112,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0010462008649483323,
+              -0.0038016345351934433,
+              0.0430908203125
+            ],
+            "velocity": [
+              -0.0007861871272325516,
+              -0.0020945267751812935,
+              0.00025501492200419307
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 59087,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 59087,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 59087,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 59892,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 59894,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 59977,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-s8t5y361/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-s8t5y361/profiles.xml"
+        },
+        "loaded_pids": [
+          59087,
+          59533,
+          59535,
+          59537,
+          59677,
+          59679,
+          59681,
+          59766,
+          59768,
+          59795,
+          59797,
+          59852,
+          59865,
+          59877,
+          59892,
+          59894,
+          59923,
+          59936,
+          59938,
+          59940,
+          59975,
+          59977
+        ],
+        "child_profile_paths": {
+          "59533": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59535": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59537": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59795": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59923": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59797": "/tmp/easyfly-scene-dds-s8t5y361/profiles.xml",
+          "59677": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59679": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59936": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59681": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59938": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59940": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59975": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59977": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59852": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59087": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59865": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59877": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59892": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59766": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59894": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml",
+          "59768": "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-s8t5y361/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-61ibz7r7/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 78,
+          "first_source_ns": 269000000,
+          "last_source_ns": 7985000000,
+          "receipt": 9400.228279729,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.148530006408691,
+              -1.7831073999404907,
+              6.494922637939453
+            ],
+            [
+              12.108831405639648,
+              -7.764781475067139,
+              6.7039642333984375
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -28.81719970703125,
+              4.982774257659912,
+              13.899595260620117
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              7.835704803466797,
+              26.068166732788086,
+              12.09481143951416
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.15047836303711,
+              -1.4897385835647583,
+              4.828458786010742
+            ],
+            [
+              11.965510368347168,
+              -7.181079864501953,
+              4.732187271118164
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              7.884837627410889,
+              26.033714294433594,
+              8.756514549255371
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              1.609002709388733,
+              -18.207963943481445,
+              3.825324296951294
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              29.080724716186523,
+              -18.206960678100586,
+              3.7298734188079834
+            ],
+            [
+              10.741788864135742,
+              -18.20686149597168,
+              3.2506868839263916
+            ],
+            [
+              0.37409186363220215,
+              -5.91964054107666,
+              0.5526350736618042
+            ],
+            [
+              -2.2231802940368652,
+              -5.944584369659424,
+              0.8358407616615295
+            ],
+            [
+              -7.105408668518066,
+              -5.917062282562256,
+              0.9785242676734924
+            ],
+            [
+              -29.885944366455078,
+              -9.686893463134766,
+              3.233682632446289
+            ],
+            [
+              -29.150842666625977,
+              6.302635192871094,
+              3.748608112335205
+            ],
+            [
+              -29.99802589416504,
+              20.486289978027344,
+              2.786642074584961
+            ],
+            [
+              -14.31567668914795,
+              27.383363723754883,
+              3.887204647064209
+            ],
+            [
+              -0.28729555010795593,
+              5.730680465698242,
+              0.3474155366420746
+            ],
+            [
+              11.153096199035645,
+              27.38446044921875,
+              2.7469491958618164
+            ],
+            [
+              7.425406455993652,
+              6.259420871734619,
+              0.5309136509895325
+            ],
+            [
+              31.11610221862793,
+              9.43600082397461,
+              1.2610502243041992
+            ],
+            [
+              18.110170364379883,
+              -3.879178047180176,
+              0.9615023136138916
+            ],
+            [
+              8.106513023376465,
+              -5.917874813079834,
+              -0.07852717489004135
+            ],
+            [
+              2.905973196029663,
+              -5.89532470703125,
+              0.28242772817611694
+            ],
+            [
+              -0.05655572935938835,
+              -5.923777103424072,
+              -0.1357181966304779
+            ],
+            [
+              -2.815093755722046,
+              -5.950268745422363,
+              0.1528397500514984
+            ],
+            [
+              -8.359282493591309,
+              -5.9180450439453125,
+              -0.05999385192990303
+            ],
+            [
+              -17.531959533691406,
+              -3.9554994106292725,
+              -0.0647253468632698
+            ],
+            [
+              -23.357267379760742,
+              7.257093906402588,
+              0.5105854272842407
+            ],
+            [
+              -6.3638458251953125,
+              5.32666540145874,
+              -0.23070786893367767
+            ],
+            [
+              -2.995490550994873,
+              7.481685161590576,
+              0.23067055642604828
+            ],
+            [
+              0.3025098145008087,
+              5.658841133117676,
+              -0.23070789873600006
+            ],
+            [
+              3.866124153137207,
+              7.076273441314697,
+              0.018288569524884224
+            ],
+            [
+              4.648433685302734,
+              3.1165566444396973,
+              -0.23070788383483887
+            ],
+            [
+              4.682948589324951,
+              0.812252938747406,
+              -0.23070791363716125
+            ],
+            [
+              5.967238426208496,
+              -2.0302515029907227,
+              -0.23070786893367767
+            ],
+            [
+              1.7681169509887695,
+              -1.674950361251831,
+              -0.23070786893367767
+            ],
+            [
+              2.036921739578247,
+              -5.892254829406738,
+              -0.23070789873600006
+            ],
+            [
+              -0.29764142632484436,
+              -2.1215901374816895,
+              -0.23070788383483887
+            ],
+            [
+              -2.6074419021606445,
+              -4.023712635040283,
+              -0.23070789873600006
+            ],
+            [
+              -2.465355396270752,
+              -1.296536922454834,
+              -0.23070788383483887
+            ],
+            [
+              -3.4321587085723877,
+              -0.2812280058860779,
+              -0.23070788383483887
+            ],
+            [
+              -4.8198723793029785,
+              2.251641273498535,
+              -0.23070788383483887
+            ],
+            [
+              -1.8307764530181885,
+              2.0526535511016846,
+              -0.23070786893367767
+            ],
+            [
+              -1.3977010250091553,
+              5.73360013961792,
+              -0.12163009494543076
+            ],
+            [
+              0.5214372277259827,
+              2.5379951000213623,
+              -0.23070788383483887
+            ],
+            [
+              4.315609455108643,
+              5.687666416168213,
+              -0.23070788383483887
+            ],
+            [
+              2.606003999710083,
+              1.2235157489776611,
+              -0.23070789873600006
+            ],
+            [
+              3.2258188724517822,
+              0.0495489165186882,
+              -0.23070785403251648
+            ],
+            [
+              3.192791223526001,
+              -1.6670228242874146,
+              -0.23070789873600006
+            ],
+            [
+              1.26375412940979,
+              -1.6595152616500854,
+              -0.23070789873600006
+            ],
+            [
+              0.7938195466995239,
+              -4.4030442237854,
+              -0.23070788383483887
+            ],
+            [
+              -0.5765241384506226,
+              -1.8489598035812378,
+              -0.23070788383483887
+            ],
+            [
+              -3.110851764678955,
+              -3.4713644981384277,
+              -0.23070786893367767
+            ],
+            [
+              -2.494572401046753,
+              -0.8379656672477722,
+              -0.23070786893367767
+            ],
+            [
+              -4.102105617523193,
+              0.3077188730239868,
+              -0.23070789873600006
+            ],
+            [
+              -5.194887161254883,
+              3.4947688579559326,
+              -0.23070791363716125
+            ],
+            [
+              -2.0025830268859863,
+              3.1121699810028076,
+              -0.23070788383483887
+            ],
+            [
+              -1.7763721942901611,
+              19.94317054748535,
+              0.02090981975197792
+            ],
+            [
+              1.3824820518493652,
+              3.6976161003112793,
+              -0.23070789873600006
+            ],
+            [
+              6.604410648345947,
+              6.472034454345703,
+              0.05300561711192131
+            ],
+            [
+              5.391565322875977,
+              1.5939842462539673,
+              -0.23070789873600006
+            ],
+            [
+              12.322629928588867,
+              -1.5960564613342285,
+              -0.23070791363716125
+            ],
+            [
+              8.157171249389648,
+              -5.917835712432861,
+              -0.15972429513931274
+            ],
+            [
+              2.3900699615478516,
+              -4.301171779632568,
+              -0.23070788383483887
+            ],
+            [
+              0.22704990208148956,
+              -5.921051979064941,
+              0.039705790579319
+            ],
+            [
+              -1.9676364660263062,
+              -4.129315376281738,
+              -0.23070791363716125
+            ],
+            [
+              -6.927826404571533,
+              -5.916922569274902,
+              0.17487064003944397
+            ],
+            [
+              -13.065126419067383,
+              -2.451680898666382,
+              -0.23070789873600006
+            ],
+            [
+              -23.37209701538086,
+              4.776350975036621,
+              0.5314767360687256
+            ],
+            [
+              -7.00285005569458,
+              6.176015377044678,
+              0.34557756781578064
+            ],
+            [
+              -5.741353511810303,
+              11.865987777709961,
+              0.31472527980804443
+            ],
+            [
+              0.23434975743293762,
+              7.626720905303955,
+              0.6285465955734253
+            ],
+            [
+              3.641824960708618,
+              7.113687992095947,
+              0.2659780979156494
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              37.730430603027344,
+              6.781977653503418,
+              2.0848116874694824
+            ],
+            [
+              38.6474494934082,
+              -8.894051551818848,
+              3.2532055377960205
+            ],
+            [
+              6.613120079040527,
+              -5.919045448303223,
+              0.7344119548797607
+            ],
+            [
+              2.6112399101257324,
+              -5.898155212402344,
+              0.3938639163970947
+            ],
+            [
+              -0.3296770453453064,
+              -5.926399230957031,
+              0.6463072896003723
+            ],
+            [
+              -3.514024019241333,
+              -5.967296123504639,
+              0.41914135217666626
+            ],
+            [
+              -25.402660369873047,
+              -18.22544288635254,
+              3.9179043769836426
+            ],
+            [
+              -29.906675338745117,
+              -2.976595878601074,
+              2.777061939239502
+            ],
+            [
+              -29.952600479125977,
+              8.520919799804688,
+              4.112403392791748
+            ],
+            [
+              -5.486708641052246,
+              5.70551872253418,
+              1.1486259698867798
+            ],
+            [
+              -11.025303840637207,
+              27.384862899780273,
+              4.026025295257568
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              5.09515905380249,
+              -5.070320129394531,
+              1.4125945568084717
+            ],
+            [
+              7.219082832336426,
+              -18.20546531677246,
+              3.456102132797241
+            ],
+            [
+              -1.868302822113037,
+              -18.21286392211914,
+              4.071624755859375
+            ],
+            [
+              -11.629636764526367,
+              -18.217662811279297,
+              3.825777292251587
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              12.077879905700684,
+              -12.428633689880371,
+              5.3656792640686035
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.13739013671875,
+              -3.462007522583008,
+              5.325032711029053
+            ],
+            [
+              12.079014778137207,
+              -12.257412910461426,
+              7.394245147705078
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              12.140201568603516,
+              -3.0381476879119873,
+              7.062257766723633
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/camera/color/image_raw": {
+          "count": 264,
+          "first_source_ns": 270000000,
+          "last_source_ns": 8071000000,
+          "receipt": 9400.281055324,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 36
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 264,
+          "first_source_ns": 270000000,
+          "last_source_ns": 8071000000,
+          "receipt": 9400.281985689,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 197512,
+          "min_m": 0.46479278802871704,
+          "max_m": 19.977500915527344,
+          "non_increasing_stamps": 36
+        },
+        "/livox/imu": {
+          "count": 1073,
+          "first_source_ns": 298000000,
+          "last_source_ns": 8083000000,
+          "receipt": 9400.280496776,
+          "frame": "livox_frame",
+          "finite": true
+        }
+      },
+      "shutdown_seconds": 1.7167321680008172,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "scene_probe_sha256": "b194b5ff11dd6793bb9621ae529dd7c71269f23d383870012d8a9a21f3412929",
+      "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+      "settled_preflight_state": {
+        "source_ns": 7080000000,
+        "frame": "odom",
+        "ros_now_ns": 7080000000,
+        "receipt": 9396.818963302,
+        "steady_now": 9397.086951112,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0010462008649483323,
+          -0.0038016345351934433,
+          0.0430908203125
+        ],
+        "velocity": [
+          -0.0007861871272325516,
+          -0.0020945267751812935,
+          0.00025501492200419307
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "raw_result": "artifacts/scene-s6-20261017/qualified-v6-symlink-cold/result.json",
+      "raw_result_sha256": "1be3d3d8b26cd6612000d559906ed04879055f7c063a9ec8a640cb961e1bfc9c",
+      "transform": {
+        "translation": [
+          8.102374040050144,
+          6.875436689337191,
+          -0.06985207096354167
+        ],
+        "yaw": -0.014902935342904837
+      },
+      "normal_exits": 24,
+      "mode": "symlink",
+      "offline_network": {
+        "namespace": "net:[4026533026]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "cache": {
+        "passed": true,
+        "read_only": true,
+        "observer_sha256": "7551ed7ae5da91906c4ca971e65e50fc949e30f07c09a4ae11c5a16c42f69be8",
+        "asset_lock": {
+          "schema_version": 1,
+          "asset_set_id": "aws_racetrack_day_v1",
+          "revision": "ea90fdd9bac48344198f7cb3031dcb418a741064",
+          "lock_sha256": "0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb",
+          "archive_sha256": "d788931a99d83fd0064559a7a97a505cca0694e0c8ab9b728c1ab5e4f3fb09ca",
+          "archive_size_bytes": 94353982
+        },
+        "processes": [
+          {
+            "pid": 59087,
+            "identity": {
+              "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+              "start_ticks": "936693"
+            },
+            "model_paths": [
+              "/home/jia/.cache/easyfly/assets/aws_racetrack_day_v1/ea90fdd9bac48344198f7cb3031dcb418a741064/0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-20261017/symlink/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-20261017/symlink/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models",
+              "/usr/share/gazebo-11/models"
+            ],
+            "asset_mode": "cache",
+            "cache_root": null
+          }
+        ]
+      }
+    }
+  ]
+}

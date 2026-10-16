@@ -130,7 +130,35 @@ def test_scene_and_world_ambiguity_precedes_catalog(ready_catalog):
             catalog_factory=lambda **k:pytest.fail('catalog loaded before conflict rejection'))
 
 
-@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis','grid_mode'])
+@pytest.mark.parametrize('rate', ['1', '5', '0', '6', '-1', '5.0', 'NaN'])
+def test_raw_world_heartbeat_is_a_bounded_native_configuration(tmp_path, rate):
+    context = LaunchContext()
+    context.launch_configurations.update(world='inspection.world', debug_model_path=str(tmp_path),
+                                        debug_heartbeat_rate_hz=rate)
+    kwargs = dict(px4_dir=tmp_path, default_world='empty.world', default_roots=[],
+                  default_model='default.sdf', allowed_profiles=('base_sim',),
+                  catalog_factory=lambda **k:pytest.fail('raw world loaded managed catalog'))
+    if rate not in ('1', '5'):
+        with pytest.raises(CatalogError, match='must be 1 or 5'):
+            simulation_preflight(context, **kwargs)
+    else:
+        for action in simulation_preflight(context, **kwargs):
+            action.execute(context)
+        assert context.launch_configurations[PREFIX+'heartbeat_rate_hz'] == rate
+
+
+@pytest.mark.parametrize('missing', ['world', 'debug_model_path'])
+def test_raw_heartbeat_requires_explicit_inspection_inputs(tmp_path, missing):
+    context = LaunchContext()
+    context.launch_configurations.update(world='inspection.world', debug_model_path=str(tmp_path),
+                                        debug_heartbeat_rate_hz='5')
+    context.launch_configurations.pop(missing)
+    with pytest.raises(CatalogError, match='requires explicit world and debug_model_path'):
+        simulation_preflight(context, px4_dir=tmp_path, default_world='empty.world',
+                             default_roots=[], default_model='default.sdf', allowed_profiles=('base_sim',))
+
+
+@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis','grid_mode','heartbeat','clock','battery'])
 def test_managed_scene_rejects_override(ready_catalog, override):
     context = LaunchContext()
     context.launch_configurations.update(scene='test',scene_profile='base_sim')
@@ -142,6 +170,12 @@ def test_managed_scene_rejects_override(ready_catalog, override):
         context.launch_configurations['debug_model_path']='/tmp'
     elif override == 'grid_mode':
         context.launch_configurations['grid_footprint_mode']='observed_cells'
+    elif override == 'heartbeat':
+        context.launch_configurations['debug_heartbeat_rate_hz']='5'
+    elif override == 'clock':
+        context.launch_configurations['debug_clock_rate_hz']='100'
+    elif override == 'battery':
+        context.launch_configurations['debug_battery_rate_hz']='5'
     else:
         context.launch_configurations['ground_model_frame']='map'
     with pytest.raises(CatalogError):
@@ -163,6 +197,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
         ready_catalog.scenes['test']['navigation']['ground_model_frame']='map'
         ready_catalog.scenes['test']['navigation']['grid_footprint_mode']='observed_cells'
         ready_catalog.scenes['test']['runtime']['heartbeat_rate_hz']=5
+        ready_catalog.scenes['test']['runtime']['clock_rate_hz']=100
         context.launch_configurations.update(scene='test',scene_profile=profile)
     description = module.generate_launch_description()
     guard_index = None
@@ -184,7 +219,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
     spawn = next(cmd for cmd in commands if cmd[:2] == ['gz','model'])
     server = next(cmd for cmd in commands if '--verbose' in cmd)
     if managed:
-        assert server[-1] == str(ready_catalog.resolve(ready_catalog.scenes['test']['world']))
+        assert str(ready_catalog.resolve(ready_catalog.scenes['test']['world'])) in server
         assert spawn[spawn.index('-x')+1] == '1.25'
         assert spawn[spawn.index('-y')+1] == '-2.5'
         assert spawn[spawn.index('-z')+1] == '0.95'
@@ -192,13 +227,15 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
         assert any(v == '--spawn-file=' + str(ready_catalog.resolve(
             ready_catalog.scenes['test']['runtime']['entrypoint'])) for v in spawn)
     else:
-        assert server[-1].endswith('/empty.world' if profile == 'base_sim' else '/perception_demo.world')
+        assert any(v.endswith('/empty.world' if profile == 'base_sim' else '/perception_demo.world') for v in server)
         assert spawn[spawn.index('-z')+1] == '0.83'
         assert spawn[spawn.index('-Y')+1] == '0.0'
     assert context.launch_configurations[PREFIX+'model_path']
     assert context.launch_configurations[PREFIX+'ground_model_frame']==('map' if managed else 'odom')
     assert context.launch_configurations[PREFIX+'grid_footprint_mode']==('observed_cells' if managed else 'cluster_boxes')
     assert context.launch_configurations[PREFIX+'heartbeat_rate_hz']==('5' if managed else '1')
+    assert context.launch_configurations[PREFIX+'clock_rate_hz']==('100' if managed else '10')
+    assert server[-3:] == ['--ros-args','--param','gazebo:publish_rate:='+('100.0' if managed else '10.0')]
 
 
 def test_profile_scene_forwarding_and_headless(ready_catalog, monkeypatch):
@@ -295,3 +332,51 @@ def test_raw_inspection_spawn_is_explicit_and_cannot_override_managed_scene(tmp_
     context.launch_configurations.update(scene='test', world='', scene_profile='base_sim',debug_model_path='')
     with pytest.raises(CatalogError, match='managed scene cannot override debug_spawn_pose'):
         simulation_preflight(context, **kwargs)
+
+
+@pytest.mark.parametrize('rate', ['10', '100', '0', '100.0', 'NaN', '1000'])
+def test_raw_clock_is_native_and_requires_reviewed_rate(tmp_path, rate):
+    context = LaunchContext()
+    context.launch_configurations.update(world='inspection.world', debug_model_path=str(tmp_path),
+                                        debug_clock_rate_hz=rate)
+    kwargs = dict(px4_dir=tmp_path, default_world='empty.world', default_roots=[],
+                  default_model='default.sdf', allowed_profiles=('base_sim',))
+    if rate not in ('10', '100'):
+        with pytest.raises(CatalogError, match='must be 10 or 100'):
+            simulation_preflight(context, **kwargs)
+    else:
+        for action in simulation_preflight(context, **kwargs):
+            action.execute(context)
+        assert context.launch_configurations[PREFIX+'clock_rate_hz'] == rate
+
+
+@pytest.mark.parametrize('missing', ['world', 'debug_model_path'])
+def test_raw_clock_requires_explicit_inspection_inputs(tmp_path, missing):
+    context = LaunchContext()
+    context.launch_configurations.update(world='inspection.world', debug_model_path=str(tmp_path),
+                                        debug_clock_rate_hz='100')
+    context.launch_configurations.pop(missing)
+    with pytest.raises(CatalogError, match='requires explicit world and debug_model_path'):
+        simulation_preflight(context, px4_dir=tmp_path, default_world='empty.world',
+                             default_roots=[], default_model='default.sdf', allowed_profiles=('base_sim',))
+
+
+@pytest.mark.parametrize('rate,heartbeat', [('5','5'),('1','5'),('5','1')])
+def test_raw_battery_requires_reviewed_native_configuration(tmp_path,rate,heartbeat):
+    context=LaunchContext()
+    context.launch_configurations.update(world='inspection.world',debug_model_path=str(tmp_path),
+        debug_battery_rate_hz=rate,debug_heartbeat_rate_hz=heartbeat)
+    kwargs=dict(px4_dir=tmp_path,default_world='empty.world',default_roots=[],
+                default_model='default.sdf',allowed_profiles=('base_sim',))
+    if rate=='5' and heartbeat=='5':
+        for action in simulation_preflight(context,**kwargs):action.execute(context)
+        assert context.launch_configurations[PREFIX+'battery_rate_hz']=='5'
+    else:
+        with pytest.raises(CatalogError,match='debug_battery_rate_hz requires'):
+            simulation_preflight(context,**kwargs)
+
+
+def test_managed_battery_cannot_silently_keep_upstream_heartbeat(ready_catalog):
+    ready_catalog.scenes['test']['runtime']['battery_rate_hz']=5
+    with pytest.raises(CatalogError,match='requires reviewed 5Hz heartbeat'):
+        resolve_scene(ready_catalog,'test','base_sim')

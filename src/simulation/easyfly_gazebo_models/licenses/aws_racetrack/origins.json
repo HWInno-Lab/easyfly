@@ -1,0 +1,662 @@
+{
+  "source_url": "https://github.com/aws-robotics/aws-robomaker-racetrack-world",
+  "revision": "ea90fdd9bac48344198f7cb3031dcb418a741064",
+  "declared_license": "MIT-0",
+  "archive_sha256": "d788931a99d83fd0064559a7a97a505cca0694e0c8ab9b728c1ab5e4f3fb09ca",
+  "archive_bytes": 94353982,
+  "license_sha256": "fe7663528f22062fc0f323e894eb56817a91a7b749aaa2697f0fa75bc34ba3c1",
+  "license_declarations": [
+    "LICENSE"
+  ],
+  "selected_world": "worlds/racetrack_day.world",
+  "selected_models": [
+    "aws_robomaker_racetrack_Billboard_01",
+    "aws_robomaker_racetrack_CrashworthBucket_01",
+    "aws_robomaker_racetrack_FenceMesh_01",
+    "aws_robomaker_racetrack_Fence_01",
+    "aws_robomaker_racetrack_Fence_02",
+    "aws_robomaker_racetrack_Ground_01",
+    "aws_robomaker_racetrack_Light_01",
+    "aws_robomaker_racetrack_RaceStartLight_01",
+    "aws_robomaker_racetrack_StonePier_01",
+    "aws_robomaker_racetrack_StopSign_01",
+    "aws_robomaker_racetrack_Track_05",
+    "aws_robomaker_racetrack_Trackline_01",
+    "aws_robomaker_racetrack_TrafficCone_01",
+    "aws_robomaker_racetrack_Wall_01"
+  ],
+  "omitted_models": [
+    "aws_robomaker_racetrack_Archway_01",
+    "aws_robomaker_racetrack_Column_01",
+    "aws_robomaker_racetrack_Track_01",
+    "aws_robomaker_racetrack_Track_02",
+    "aws_robomaker_racetrack_Track_03",
+    "aws_robomaker_racetrack_Track_04"
+  ],
+  "scope": "Daytime world only. Night and empty variants are not registered. No upstream code or dynamic download scripts are executed.",
+  "files": [
+    {
+      "source": "models/aws_robomaker_racetrack_Billboard_01/materials/textures/aws_Billboard_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Billboard_01/materials/textures/aws_Billboard_01.png",
+      "source_sha256": "178c951c1cab78541bec805eb8ca22e9d53d795733266155e5fce95c5626e09a",
+      "sha256": "178c951c1cab78541bec805eb8ca22e9d53d795733266155e5fce95c5626e09a",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Billboard_01/meshes/aws_Billboard_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Billboard_01/meshes/aws_Billboard_01_collision.DAE",
+      "source_sha256": "96039dfa1c15d3aadd655fe4f9cf00e15155fc56f5576e0ac2d4f122a3118c56",
+      "sha256": "96039dfa1c15d3aadd655fe4f9cf00e15155fc56f5576e0ac2d4f122a3118c56",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Billboard_01/meshes/aws_Billboard_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Billboard_01/meshes/aws_Billboard_01_visual.DAE",
+      "source_sha256": "38f0ed10716cb279980a52bedff78b9d93511234bd6d547345d37918fd79cef6",
+      "sha256": "38f0ed10716cb279980a52bedff78b9d93511234bd6d547345d37918fd79cef6",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Billboard_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Billboard_01/model.config",
+      "source_sha256": "de54f1e450fa9dc09d1e4b90eeee25b63617b53a90dd261b7adabf8b56e50aac",
+      "sha256": "de54f1e450fa9dc09d1e4b90eeee25b63617b53a90dd261b7adabf8b56e50aac",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Billboard_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Billboard_01/model.sdf",
+      "source_sha256": "2de98c1d276c506f37a0600e2c7d59fa2721d27f1f1cb2aefe04923af4229197",
+      "sha256": "3e5e52a35a1d0ce26133eeba1d50727f6b9b5384f84852784ad27b2e96c0fa74",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_CrashworthBucket_01/materials/textures/aws_CrashworthBucket_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_CrashworthBucket_01/materials/textures/aws_CrashworthBucket_01.png",
+      "source_sha256": "70efcfe95ef7aff836163982fb2a222a5512f9c0cdaeb4b9f39139875bac99bd",
+      "sha256": "70efcfe95ef7aff836163982fb2a222a5512f9c0cdaeb4b9f39139875bac99bd",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_collision.DAE",
+      "source_sha256": "5e58c51fdad28ce4b93fff6dd46d979598ba05372a0397877bd338d04b260db8",
+      "sha256": "5e58c51fdad28ce4b93fff6dd46d979598ba05372a0397877bd338d04b260db8",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_CrashworthBucket_01/meshes/aws_CrashworthBucket_01_visual.DAE",
+      "source_sha256": "e53588fc912401eecfcd4a6029b477c4171cabb48f8793c077ccac72420cccad",
+      "sha256": "e53588fc912401eecfcd4a6029b477c4171cabb48f8793c077ccac72420cccad",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_CrashworthBucket_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_CrashworthBucket_01/model.config",
+      "source_sha256": "70973fa7f5868b2bc64c2ca48685af1a83a6c9916fd1132102362e86d38b2a3e",
+      "sha256": "70973fa7f5868b2bc64c2ca48685af1a83a6c9916fd1132102362e86d38b2a3e",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_CrashworthBucket_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_CrashworthBucket_01/model.sdf",
+      "source_sha256": "c5277f78d3078e610e707b443cb0d156f1b677e8e82b5ed9404ede4039657fe6",
+      "sha256": "2932f78e272af0fe460aae7a593e6411b605e269f267c1090a832c231d7d78bc",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_FenceMesh_01/materials/textures/aws_FenceMesh_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_FenceMesh_01/materials/textures/aws_FenceMesh_01.png",
+      "source_sha256": "0b528c69a261f57553ecbbace25c4aa7ec9b86ce4982f369428bb15cefceb4ea",
+      "sha256": "0b528c69a261f57553ecbbace25c4aa7ec9b86ce4982f369428bb15cefceb4ea",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_FenceMesh_01/meshes/aws_FenceMesh_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_FenceMesh_01/meshes/aws_FenceMesh_01_collision.DAE",
+      "source_sha256": "1272ffea08606789e6b9c00f677dac8d5fd260c1644028199b426cdf5238094f",
+      "sha256": "1272ffea08606789e6b9c00f677dac8d5fd260c1644028199b426cdf5238094f",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_FenceMesh_01/meshes/aws_FenceMesh_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_FenceMesh_01/meshes/aws_FenceMesh_01_visual.DAE",
+      "source_sha256": "ae6e36ebe70daec0067eb59a81b6709615e6fa6d0024aefba9a28966b6733ecb",
+      "sha256": "ae6e36ebe70daec0067eb59a81b6709615e6fa6d0024aefba9a28966b6733ecb",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_FenceMesh_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_FenceMesh_01/model.config",
+      "source_sha256": "b98b9ed600264835bf7c57f3e4481f7cc97b6bb8edaebe40af761833c9c88fd2",
+      "sha256": "b98b9ed600264835bf7c57f3e4481f7cc97b6bb8edaebe40af761833c9c88fd2",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_FenceMesh_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_FenceMesh_01/model.sdf",
+      "source_sha256": "adfcd167eae2d33cd23fa3b6d94220e1480c35c8d5ecdf75ae23f4870fca7b0f",
+      "sha256": "289785962154224863fdf30143b39f2406ccb337ac49b31b95b3ffd7340a56f3",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_01/materials/textures/aws_Fence_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_01/materials/textures/aws_Fence_01.png",
+      "source_sha256": "c0de1463e018fc1a96ac2d4905e8d0935ca1144daec8c8498b8c32bfa49e3f92",
+      "sha256": "c0de1463e018fc1a96ac2d4905e8d0935ca1144daec8c8498b8c32bfa49e3f92",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_01/meshes/aws_Fence_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_01/meshes/aws_Fence_01_collision.DAE",
+      "source_sha256": "499d3188e699785bff7d3baf15f7bcf402fdad3479bd1dc69392478bb3c619b9",
+      "sha256": "499d3188e699785bff7d3baf15f7bcf402fdad3479bd1dc69392478bb3c619b9",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_01/meshes/aws_Fence_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_01/meshes/aws_Fence_01_visual.DAE",
+      "source_sha256": "18d97774e57e7609252574eaf54b7dd9ee79cf878211100624df664d9f868b66",
+      "sha256": "18d97774e57e7609252574eaf54b7dd9ee79cf878211100624df664d9f868b66",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_01/model.config",
+      "source_sha256": "568319d15655492f449ec2805bc7cb9a90d4a8e9302b4265723bb5a28249164c",
+      "sha256": "568319d15655492f449ec2805bc7cb9a90d4a8e9302b4265723bb5a28249164c",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_01/model.sdf",
+      "source_sha256": "17c0fd535e7d5d2be50a06bee5aa8ac3a4f16d4a953b5da1726566342b1966e1",
+      "sha256": "c3c7cde6d732c1295cafd75bdf7906ea6349b831f5306b794cbbb71f2e1909fc",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_02/materials/textures/aws_Fence_02.png",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_02/materials/textures/aws_Fence_02.png",
+      "source_sha256": "31e9eeb11ab2841a7fcbb92a9ceacbe98db822f465c0ae20901721108602efb8",
+      "sha256": "31e9eeb11ab2841a7fcbb92a9ceacbe98db822f465c0ae20901721108602efb8",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_collision.DAE",
+      "source_sha256": "0fa02128dcbd696c8c42027042f64c9383e33192bed4a9a6b54237b2dfa57990",
+      "sha256": "0fa02128dcbd696c8c42027042f64c9383e33192bed4a9a6b54237b2dfa57990",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_02/meshes/aws_Fence_02_visual.DAE",
+      "source_sha256": "7cc8a5330e9711bf3b3dd4bd34f4eab2f2366792c5a1d94e0249da1a1f13a0fc",
+      "sha256": "7cc8a5330e9711bf3b3dd4bd34f4eab2f2366792c5a1d94e0249da1a1f13a0fc",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_02/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_02/model.config",
+      "source_sha256": "c84314aee3d57b43dd875f33c3b1bc361b4f6e84a430a031058421454346b091",
+      "sha256": "c84314aee3d57b43dd875f33c3b1bc361b4f6e84a430a031058421454346b091",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Fence_02/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Fence_02/model.sdf",
+      "source_sha256": "5cb04e7f645162c77f2e863e9beeecf400564cf42637b0209b99073974784475",
+      "sha256": "2fcabd58cfe0baeb7caa53ca7bfd84740bfb6e45f3e82fc1c274556f9c04a12a",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/materials/textures/aws_GroundN_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/materials/textures/aws_GroundN_01.png",
+      "source_sha256": "aafa07d298b34e7ac7a9cd9830368d424a4d38a562c881f55b0d7cacb5da64ec",
+      "sha256": "aafa07d298b34e7ac7a9cd9830368d424a4d38a562c881f55b0d7cacb5da64ec",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/materials/textures/aws_Ground_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/materials/textures/aws_Ground_01.png",
+      "source_sha256": "66ba97d60209db118f9e6db9a52c12233876ac8f0c6208b2b8e870f9b82b5a7a",
+      "sha256": "66ba97d60209db118f9e6db9a52c12233876ac8f0c6208b2b8e870f9b82b5a7a",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/meshes/aws_Ground_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/meshes/aws_Ground_01_collision.DAE",
+      "source_sha256": "09ddb83c702502c9b9254b65e939400df44b452f6f7cabca158171e5c325f28d",
+      "sha256": "09ddb83c702502c9b9254b65e939400df44b452f6f7cabca158171e5c325f28d",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/meshes/aws_Ground_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/meshes/aws_Ground_01_visual.DAE",
+      "source_sha256": "ebf7fb379665ecacf487af482a6dd40dda7b19c311b991c82f845bd2e749fc64",
+      "sha256": "ebf7fb379665ecacf487af482a6dd40dda7b19c311b991c82f845bd2e749fc64",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/model.config",
+      "source_sha256": "2fa6ab163f004ee9c4e50aa041eea3278436334560ad4efa776fb36592ebe50c",
+      "sha256": "2fa6ab163f004ee9c4e50aa041eea3278436334560ad4efa776fb36592ebe50c",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Ground_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Ground_01/model.sdf",
+      "source_sha256": "25822b628cd0a53d31f77bd53b3ef089cf26888d7c8cf355c07493c4bfeb7ac6",
+      "sha256": "c66f5b6e663613c522383d6eb66a1ab2d8f291891783db695628676720aa89c7",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Light_01/materials/textures/aws_Light_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Light_01/materials/textures/aws_Light_01.png",
+      "source_sha256": "189e927d5eb687febf1f622c149503e0359cd6ca159febff5a3ba4190036f5d3",
+      "sha256": "189e927d5eb687febf1f622c149503e0359cd6ca159febff5a3ba4190036f5d3",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Light_01/meshes/aws_Light_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Light_01/meshes/aws_Light_01_collision.DAE",
+      "source_sha256": "c52e7bc0fde168f720e97663c4129455c0d9e55253317d886844e587a84c57c6",
+      "sha256": "c52e7bc0fde168f720e97663c4129455c0d9e55253317d886844e587a84c57c6",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Light_01/meshes/aws_Light_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Light_01/meshes/aws_Light_01_visual.DAE",
+      "source_sha256": "fe09269c869e70931133269086f96f803a2a14e0abdf515f8a057ccb80503257",
+      "sha256": "fe09269c869e70931133269086f96f803a2a14e0abdf515f8a057ccb80503257",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Light_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Light_01/model.config",
+      "source_sha256": "10093960197fe0d65aed39b2b27fb4b014e12ba7fe8cb4e7b85fa767b672d737",
+      "sha256": "10093960197fe0d65aed39b2b27fb4b014e12ba7fe8cb4e7b85fa767b672d737",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Light_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Light_01/model.sdf",
+      "source_sha256": "5e779599fd8438dd6a9ad8b22593bab61abce58e019d5b461df572cd769a767f",
+      "sha256": "87e994691034e8c5f95b80f9f139680fbe9fe009f57bcbbb2dd8010b4dfd276e",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_RaceStartLight_01/materials/textures/aws_RaceStartLight_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_RaceStartLight_01/materials/textures/aws_RaceStartLight_01.png",
+      "source_sha256": "fd001b7f0cadd99884d524f4fe66613383d9cca20f0331ee28bb5a0ed1bcf857",
+      "sha256": "fd001b7f0cadd99884d524f4fe66613383d9cca20f0331ee28bb5a0ed1bcf857",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_RaceStartLight_01/meshes/aws_RaceStartLight_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_RaceStartLight_01/meshes/aws_RaceStartLight_01_collision.DAE",
+      "source_sha256": "856fd7e19b9d1c6aeecc946dac42180f3bb9be0dbc7fcdb23811e1c0bf716c06",
+      "sha256": "856fd7e19b9d1c6aeecc946dac42180f3bb9be0dbc7fcdb23811e1c0bf716c06",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_RaceStartLight_01/meshes/aws_RaceStartLight_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_RaceStartLight_01/meshes/aws_RaceStartLight_01_visual.DAE",
+      "source_sha256": "0a25e4981388aa7f4ffe7f9aea965721c80e7adbefb7f42b37136f5029481e34",
+      "sha256": "0a25e4981388aa7f4ffe7f9aea965721c80e7adbefb7f42b37136f5029481e34",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_RaceStartLight_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_RaceStartLight_01/model.config",
+      "source_sha256": "12dcecb91d79b306e7d69b102c78280a977b0f4d7ecbc34826c118cf598d3d87",
+      "sha256": "12dcecb91d79b306e7d69b102c78280a977b0f4d7ecbc34826c118cf598d3d87",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_RaceStartLight_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_RaceStartLight_01/model.sdf",
+      "source_sha256": "7bf7b44a2c84e04be12d2ca3f972f5d2c995814ed3bc3d68273d636bae5e66a4",
+      "sha256": "3d581c453c1b2185d51dc56cbd21915814481600e027455ec403026f6ca6ce83",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StonePier_01/materials/textures/aws_StonePier_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_StonePier_01/materials/textures/aws_StonePier_01.png",
+      "source_sha256": "adcc8754310ab553daae6eee17ab95717b98c02cc9ef9134f6507e1534836d59",
+      "sha256": "adcc8754310ab553daae6eee17ab95717b98c02cc9ef9134f6507e1534836d59",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_collision.DAE",
+      "source_sha256": "05672c9f940aeaf0d6d3d161766d5e1cd6f4b6cba0903d61add8fae1068e40e4",
+      "sha256": "05672c9f940aeaf0d6d3d161766d5e1cd6f4b6cba0903d61add8fae1068e40e4",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_StonePier_01/meshes/aws_StonePier_01_visual.DAE",
+      "source_sha256": "9a774e0f563192cb95bbcf5e97f41f8192b3c8cbb1b26239792768cc9123cf15",
+      "sha256": "9a774e0f563192cb95bbcf5e97f41f8192b3c8cbb1b26239792768cc9123cf15",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StonePier_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_StonePier_01/model.config",
+      "source_sha256": "ad1ad85edba771cd6fce5457a4bbabe9f977100011f4c3d4d6a278aab0bc6bce",
+      "sha256": "ad1ad85edba771cd6fce5457a4bbabe9f977100011f4c3d4d6a278aab0bc6bce",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StonePier_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_StonePier_01/model.sdf",
+      "source_sha256": "35d8ceef10a61538db8e06fd3b886f69edeb2d879ac39472ab088ce0a2f5920c",
+      "sha256": "85dbedf2b5dad236c3963b9ad2f0f73af45a45a6a78bc49fc2dd5f1c4cb1168e",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StopSign_01/materials/textures/aws_StopSign_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_StopSign_01/materials/textures/aws_StopSign_01.png",
+      "source_sha256": "8706952f34d116e60addaf7bf5cc35c2c0acde3888b6b40b1affbaaeb40a5d78",
+      "sha256": "8706952f34d116e60addaf7bf5cc35c2c0acde3888b6b40b1affbaaeb40a5d78",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StopSign_01/meshes/aws_StopSign_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_StopSign_01/meshes/aws_StopSign_01_collision.DAE",
+      "source_sha256": "7e8456cc5b7d30181c69a62e8084ea5cce86fb3b8ca186fbd38b0fb163e4e63e",
+      "sha256": "7e8456cc5b7d30181c69a62e8084ea5cce86fb3b8ca186fbd38b0fb163e4e63e",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StopSign_01/meshes/aws_StopSign_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_StopSign_01/meshes/aws_StopSign_01_visual.DAE",
+      "source_sha256": "8e2ee1043818ff9b8f09dfad224a0e5aec850e7c77d1295a9fca87602a276fe2",
+      "sha256": "8e2ee1043818ff9b8f09dfad224a0e5aec850e7c77d1295a9fca87602a276fe2",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StopSign_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_StopSign_01/model.config",
+      "source_sha256": "cca36686f207197352767a429e6837712d4c263a3b81174adb72d9dfa85e3daa",
+      "sha256": "cca36686f207197352767a429e6837712d4c263a3b81174adb72d9dfa85e3daa",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_StopSign_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_StopSign_01/model.sdf",
+      "source_sha256": "6c976282ab21933ad1ba88cfac25434bbc0cdc5e78ebdabb3cdd36328c44d335",
+      "sha256": "f5d272cacb78f923915c1adba1f0df93e2e4e81c76f2d4ef91d6deebea518acc",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05.png",
+      "source_sha256": "872204fb04297d73b30109f5911dbe321ba73e317b44d8667cf04f878be0ffde",
+      "sha256": "872204fb04297d73b30109f5911dbe321ba73e317b44d8667cf04f878be0ffde",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05B.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05B.png",
+      "source_sha256": "e03e9c1f22ab839483c99f83e5e4c66cf0a04de3b165a088b3a2e58722edeb4d",
+      "sha256": "e03e9c1f22ab839483c99f83e5e4c66cf0a04de3b165a088b3a2e58722edeb4d",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05C.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/aws_Track_05C.png",
+      "source_sha256": "00f23a3878eb2b0c36586e7a6544c7aca6acb58a7f63abf2fc52a5cda825bef9",
+      "sha256": "00f23a3878eb2b0c36586e7a6544c7aca6acb58a7f63abf2fc52a5cda825bef9",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05.png",
+      "source_sha256": "872204fb04297d73b30109f5911dbe321ba73e317b44d8667cf04f878be0ffde",
+      "sha256": "872204fb04297d73b30109f5911dbe321ba73e317b44d8667cf04f878be0ffde",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05B.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05B.png",
+      "source_sha256": "e03e9c1f22ab839483c99f83e5e4c66cf0a04de3b165a088b3a2e58722edeb4d",
+      "sha256": "e03e9c1f22ab839483c99f83e5e4c66cf0a04de3b165a088b3a2e58722edeb4d",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05C.png",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/materials/textures/aws_Track_05C.png",
+      "source_sha256": "00f23a3878eb2b0c36586e7a6544c7aca6acb58a7f63abf2fc52a5cda825bef9",
+      "sha256": "00f23a3878eb2b0c36586e7a6544c7aca6acb58a7f63abf2fc52a5cda825bef9",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/meshes/aws_Track_05_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/meshes/aws_Track_05_collision.DAE",
+      "source_sha256": "66ddaee3a7f734119ff3a15c3a23cdfe840a2defdb2281ef467bec9f0a98e786",
+      "sha256": "66ddaee3a7f734119ff3a15c3a23cdfe840a2defdb2281ef467bec9f0a98e786",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/meshes/aws_Track_05_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/meshes/aws_Track_05_visual.DAE",
+      "source_sha256": "fe617dd3fe6d7f4f69b1bfdddabb4e7fd111985440b6593e325cc99dd3f01efa",
+      "sha256": "fe617dd3fe6d7f4f69b1bfdddabb4e7fd111985440b6593e325cc99dd3f01efa",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/model.config",
+      "source_sha256": "231a9693d9941abaab8f6701fc19a4fac1283fefab274ee2f535bbc7a351a7ca",
+      "sha256": "231a9693d9941abaab8f6701fc19a4fac1283fefab274ee2f535bbc7a351a7ca",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Track_05/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Track_05/model.sdf",
+      "source_sha256": "64672d333065accb9db892c4568f5d384aa40616d927547c571288967ad4b1b5",
+      "sha256": "3233b266dbe80fd0b7595745b2a44c5a97ed7cb199953bb12d8c9205c7601fbe",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Trackline_01/materials/textures/aws_Trackline_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Trackline_01/materials/textures/aws_Trackline_01.png",
+      "source_sha256": "5cc883a1d2874971f6216569e8c3a925202978091d70e33f6129eb483bca0856",
+      "sha256": "5cc883a1d2874971f6216569e8c3a925202978091d70e33f6129eb483bca0856",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Trackline_01/meshes/aws_Trackline_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Trackline_01/meshes/aws_Trackline_01_collision.DAE",
+      "source_sha256": "4537ccb5d7fbae8eaf499f2a4cbf23a9656815ea8d1c3fc7d379edc91ca69a52",
+      "sha256": "4537ccb5d7fbae8eaf499f2a4cbf23a9656815ea8d1c3fc7d379edc91ca69a52",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Trackline_01/meshes/aws_Trackline_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Trackline_01/meshes/aws_Trackline_01_visual.DAE",
+      "source_sha256": "4db29591e812699d538be771aae659e2c16307cf184c1d0ee033ad02eb49aafa",
+      "sha256": "4db29591e812699d538be771aae659e2c16307cf184c1d0ee033ad02eb49aafa",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Trackline_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Trackline_01/model.config",
+      "source_sha256": "c64eb3e1495ac896ff232a141978a93e715bc20b4d91de435fb54e0522b89920",
+      "sha256": "c64eb3e1495ac896ff232a141978a93e715bc20b4d91de435fb54e0522b89920",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Trackline_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Trackline_01/model.sdf",
+      "source_sha256": "aeb9aac971ceddb0d9175d5d684177684066ec47b0f66e278b1bba44307b8a5e",
+      "sha256": "a5083748aabdb406a546e6b1ba64f88b68a7845cffcef4ee88a0e9e3f38a7038",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_TrafficCone_01/materials/textures/aws_TrafficCone_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_TrafficCone_01/materials/textures/aws_TrafficCone_01.png",
+      "source_sha256": "2cb46c20378a8543f65f75d5f29bc244b35358b944162e607c795dd7443d9a2d",
+      "sha256": "2cb46c20378a8543f65f75d5f29bc244b35358b944162e607c795dd7443d9a2d",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_TrafficCone_01/meshes/aws_TrafficCone_01_coliision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_TrafficCone_01/meshes/aws_TrafficCone_01_coliision.DAE",
+      "source_sha256": "956b7c2bb000a55448932f037c185b23d1a420c588ebda0e37a37bb8ecba3876",
+      "sha256": "956b7c2bb000a55448932f037c185b23d1a420c588ebda0e37a37bb8ecba3876",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_TrafficCone_01/meshes/aws_TrafficCone_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_TrafficCone_01/meshes/aws_TrafficCone_01_visual.DAE",
+      "source_sha256": "e95391dbd8faad86eef6e00b7a21aba86de0d2b213bf8c1260dea58f1cde5b77",
+      "sha256": "e95391dbd8faad86eef6e00b7a21aba86de0d2b213bf8c1260dea58f1cde5b77",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_TrafficCone_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_TrafficCone_01/model.config",
+      "source_sha256": "95b26e4dd38e71a16ec70f0031b786513eaee3983d771afcc707d3a86a98b5df",
+      "sha256": "95b26e4dd38e71a16ec70f0031b786513eaee3983d771afcc707d3a86a98b5df",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_TrafficCone_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_TrafficCone_01/model.sdf",
+      "source_sha256": "5916f5c7aba6817cb575aaae55f94b3e753c04ec100592057da785afda36321b",
+      "sha256": "bd8da6ace2b5e4e19dacfa8b191d6e66f3110f454534f526fe71a368fffde76a",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Wall_01/materials/textures/aws_Wall_01.png",
+      "target": "cache:models/aws_robomaker_racetrack_Wall_01/materials/textures/aws_Wall_01.png",
+      "source_sha256": "152a4e1b145c5c9baa427e8139d51d348b36601568af87b90c88eb3d9171a447",
+      "sha256": "152a4e1b145c5c9baa427e8139d51d348b36601568af87b90c88eb3d9171a447",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Wall_01/meshes/aws_Wall_01_collision.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Wall_01/meshes/aws_Wall_01_collision.DAE",
+      "source_sha256": "3f3667abd4ee09313a9db16dc21b035c4d7a29f069ff612020cfd0b8d0709c2f",
+      "sha256": "3f3667abd4ee09313a9db16dc21b035c4d7a29f069ff612020cfd0b8d0709c2f",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Wall_01/meshes/aws_Wall_01_visual.DAE",
+      "target": "cache:models/aws_robomaker_racetrack_Wall_01/meshes/aws_Wall_01_visual.DAE",
+      "source_sha256": "88e6680dd2d53f34cc1002151ab20036a15df00692db334e3df841c96f08f9aa",
+      "sha256": "88e6680dd2d53f34cc1002151ab20036a15df00692db334e3df841c96f08f9aa",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Wall_01/model.config",
+      "target": "cache:models/aws_robomaker_racetrack_Wall_01/model.config",
+      "source_sha256": "39686272e4413e3151e1004fa7d069b430ab7c6fdb4f8caa50458e4d86de3bb4",
+      "sha256": "39686272e4413e3151e1004fa7d069b430ab7c6fdb4f8caa50458e4d86de3bb4",
+      "replacements": []
+    },
+    {
+      "source": "models/aws_robomaker_racetrack_Wall_01/model.sdf",
+      "target": "cache:models/aws_robomaker_racetrack_Wall_01/model.sdf",
+      "source_sha256": "82744ca22c5ad388bb10be89341be12fea625437965906252a67024e8c67e345",
+      "sha256": "149c04738a14180cc16c98775899dd2b99e7ade83a38212227d44e025eb859b7",
+      "replacements": [
+        {
+          "old": "file://models/",
+          "new": "model://",
+          "count": 2
+        }
+      ]
+    },
+    {
+      "source": "worlds/racetrack_day.world",
+      "target": "worlds/outdoor/urban/racetrack_aws_day_v1.world",
+      "source_sha256": "38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c",
+      "sha256": "38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c",
+      "replacements": []
+    }
+  ]
+}

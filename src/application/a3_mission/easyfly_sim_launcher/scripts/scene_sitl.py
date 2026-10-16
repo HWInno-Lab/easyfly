@@ -8,6 +8,7 @@ import importlib.util
 import json
 import math
 import os
+import statistics
 from pathlib import Path
 import subprocess
 import sys
@@ -18,7 +19,8 @@ from easyfly_msgs.action import ExecuteMission
 from easyfly_px4_sitl.scene_environment import installed_catalog
 from rcl_interfaces.srv import GetParameters
 from mavros_msgs.msg import State as MavrosState
-from sensor_msgs.msg import Image, Imu, PointCloud2
+from sensor_msgs.msg import Image, Imu, PointCloud2, BatteryState
+from rosgraph_msgs.msg import Clock
 from livox_ros_driver2.msg import CustomMsg
 from rclpy.qos import qos_profile_sensor_data
 from rclpy.time import Time
@@ -79,14 +81,33 @@ class SceneProbe(navigation.Probe):
         self.tf_buffer=Buffer(node=self.node)
         self.tf_listener=TransformListener(self.tf_buffer,self.node)
         self.mavros_state_trace=[]
+        self.clock_trace=[]
+        def clock(msg):
+            stamp=msg.clock.sec*10**9+msg.clock.nanosec
+            if stamp>0:
+                self.clock_trace.append(dict(stamp=stamp,receipt=time.monotonic()))
+                self.clock_trace=self.clock_trace[-500:]
+        self.node.create_subscription(Clock,'/clock',clock,qos_profile_sensor_data)
         def heartbeat(msg):
             stamp=msg.header.stamp.sec*10**9+msg.header.stamp.nanosec
             self.mavros_state_trace.append(dict(stamp=stamp,receipt=time.monotonic(),armed=msg.armed,mode=msg.mode))
             self.mavros_state_trace=self.mavros_state_trace[-300:]
         self.node.create_subscription(MavrosState,'/mavros/state',heartbeat,10)
+        self.battery_trace=[]
+        def battery(msg):
+            self.battery_trace.append(dict(stamp=msg.header.stamp.sec*10**9+msg.header.stamp.nanosec,
+                receipt=time.monotonic(),voltage=msg.voltage,percentage=msg.percentage))
+            self.battery_trace=self.battery_trace[-300:]
+        if self.scene['runtime'].get('battery_rate_hz',0):
+            self.node.create_subscription(BatteryState,'/mavros/battery',battery,qos_profile_sensor_data)
         self.ground_cloud=None
         self.node.create_subscription(PointCloud2,'/pointcloud_filtered',
             lambda msg:setattr(self,'ground_cloud',msg),qos_profile_sensor_data)
+
+    def ready(self,armed):
+        return (super().ready(armed) and
+                (not self.scene['runtime'].get('battery_rate_hz',0) or
+                 self.latest['/uav_state'].battery_valid))
 
     def sensor(self,name,msg):
         now=time.monotonic()
@@ -145,8 +166,12 @@ class SceneProbe(navigation.Probe):
             command.extend(['world:='+str(self.catalog.resolve(self.scene['world'])),
                             'debug_model_path:='+':'.join(roots),
                             'debug_spawn_pose:='+' '.join(str(v) for v in [*spawn['position'],spawn['yaw']]),
+                            'debug_heartbeat_rate_hz:='+str(self.scene['runtime'].get('heartbeat_rate_hz',1)),
+                            'debug_clock_rate_hz:='+str(self.scene['runtime'].get('clock_rate_hz',10)),
                             'grid_footprint_mode:='+self.scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
                             'ground_model_frame:='+self.scene['navigation'].get('ground_model_frame','odom')])
+            if self.scene['runtime'].get('battery_rate_hz',0):
+                command.append('debug_battery_rate_hz:='+str(self.scene['runtime']['battery_rate_hz']))
             self.report['bootstrap_only_raw_debug_inputs']=True
         else:
             command.extend(['scene:='+self.args.scene,'scene_profile:=navigation_dev'])
@@ -206,15 +231,39 @@ class SceneProbe(navigation.Probe):
                         raise RuntimeError('loaded library differs from selected overlay: '+str(path))
                     loaded[path.name]=dict(pid=pid,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         self.report['loaded_libraries']=loaded
+        clock_rate=self.scene['runtime'].get('clock_rate_hz',10)
+        if clock_rate!=10:
+            client=self.node.create_client(GetParameters,'/gazebo/get_parameters')
+            try:
+                self.wait(client.service_is_ready,5)
+                response=client.call_async(GetParameters.Request(names=['publish_rate']))
+                self.wait(response.done,5)
+                values=response.result().values
+                if len(values)!=1 or values[0].type!=3 or values[0].double_value!=clock_rate:
+                    raise RuntimeError('native Gazebo clock publish_rate differs from scene')
+            finally:
+                self.node.destroy_client(client)
+            self.wait(lambda:len(self.clock_trace)>=100,10)
+            recent=self.clock_trace[-100:]
+            intervals=[(b['stamp']-a['stamp'])*1e-9 for a,b in zip(recent,recent[1:])]
+            publishers=self.node.get_publishers_info_by_topic('/clock')
+            if (len(publishers)!=1 or publishers[0].node_name!='gazebo' or
+                    min(intervals)<=0 or abs(statistics.median(intervals)-1./clock_rate)>.001):
+                raise RuntimeError('native Gazebo clock stream proof failed')
+            self.report['gazebo_clock']=dict(rate_hz=clock_rate,publisher='gazebo',
+                samples=recent,median_sim_interval_s=statistics.median(intervals))
         selected_rate=self.scene['runtime'].get('heartbeat_rate_hz',1)
-        if selected_rate!=1 and not (self.args.bootstrap and self.report.get('bootstrap_only_raw_debug_inputs')):
+        if selected_rate!=1:
             marker='EasyFly PX4 telemetry: '
             lines=[line.split(marker,1)[1] for line in (self.directory/'console.log').read_text(errors='replace').splitlines() if marker in line]
             if len(lines)!=1:
                 raise RuntimeError('managed PX4 heartbeat setup proof missing or duplicated')
             telemetry=json.JSONDecoder().raw_decode(lines[0])[0]
+            battery_rate=self.scene['runtime'].get('battery_rate_hz',0)
             if (telemetry['rate_hz']!=selected_rate or telemetry['pid'] not in self.owned or
-                telemetry['native_sha256']!=self.report['px4_sha256'] or telemetry['command_returncodes']!=[0,0,0]):
+                telemetry['native_sha256']!=self.report['px4_sha256'] or
+                telemetry.get('battery_rate_hz',0)!=battery_rate or
+                telemetry['command_returncodes']!=[0]*(4 if battery_rate else 3)):
                 raise RuntimeError('managed PX4 heartbeat setup proof differs from owned native runtime')
             self.wait(lambda:len(self.mavros_state_trace)>=6,10)
             recent=self.mavros_state_trace[-6:]
@@ -222,6 +271,14 @@ class SceneProbe(navigation.Probe):
             if (max(gaps)>2.0 or any(b['stamp']<=a['stamp'] for a,b in zip(recent,recent[1:]))):
                 raise RuntimeError('native heartbeat cadence too slow for unchanged arm confirmation gate')
             telemetry.update(observed_state_samples=recent,max_receipt_gap_seconds=max(gaps))
+            if battery_rate:
+                self.wait(lambda:len(self.battery_trace)>=6,10)
+                batteries=self.battery_trace[-6:]
+                gaps=[b['receipt']-a['receipt'] for a,b in zip(batteries,batteries[1:])]
+                if (max(gaps)>2 or any(b['stamp']<=a['stamp'] for a,b in zip(batteries,batteries[1:])) or
+                        any(not math.isfinite(v['voltage']) or v['voltage']<=0 for v in batteries)):
+                    raise RuntimeError('native battery feedback proof failed')
+                telemetry.update(observed_battery_samples=batteries,max_battery_receipt_gap_seconds=max(gaps))
             self.report['px4_telemetry']=telemetry
         parameter_client=self.node.create_client(GetParameters,'/easyfly_semantic_map/get_parameters')
         try:

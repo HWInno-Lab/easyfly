@@ -25,6 +25,8 @@ class SceneInputs:
     ground_model_frame: str = 'odom'
     grid_footprint_mode: str = 'cluster_boxes'
     heartbeat_rate_hz: int = 1
+    clock_rate_hz: int = 10
+    battery_rate_hz: int = 0
 
 
 def resolve_scene(catalog, scene_id, profile):
@@ -49,12 +51,16 @@ def resolve_scene(catalog, scene_id, profile):
             if name in seen and seen[name] != directory:
                 raise CatalogError(f'duplicate model name in search roots: {name}')
             seen[name] = directory
+    battery = scene['runtime'].get('battery_rate_hz',0)
+    if battery and scene['runtime'].get('heartbeat_rate_hz',1)!=5:
+        raise CatalogError('native battery rate requires reviewed 5Hz heartbeat configuration')
     return SceneInputs(str(catalog.resolve(scene['world'])), ':'.join(str(p) for p in roots),
                        str(catalog.resolve(scene['runtime']['entrypoint'])),
                        tuple(scene['spawn']['position']), scene['spawn']['yaw'],
                        scene['navigation'].get('ground_model_frame','odom'),
                        scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
-                       scene['runtime'].get('heartbeat_rate_hz',1))
+                       scene['runtime'].get('heartbeat_rate_hz',1),
+                       scene['runtime'].get('clock_rate_hz',10),battery)
 
 
 def selection_arguments(default_profile):
@@ -70,7 +76,13 @@ def selection_arguments(default_profile):
         DeclareLaunchArgument('debug_model_path',default_value='',
                                   description='Explicit model roots for low-level raw-world debugging only'),
         DeclareLaunchArgument('debug_spawn_pose', default_value='',
-                              description='Explicit x y z yaw for raw-world geometry/sensor inspection')]
+                              description='Explicit x y z yaw for raw-world geometry/sensor inspection'),
+        DeclareLaunchArgument('debug_heartbeat_rate_hz', default_value='',
+                              description='Reviewed native heartbeat rate (1 or 5) for explicit raw-world inspection'),
+        DeclareLaunchArgument('debug_clock_rate_hz', default_value='',
+                              description='Native Gazebo ROS clock rate (10 or 100) for explicit raw-world inspection'),
+        DeclareLaunchArgument('debug_battery_rate_hz', default_value='',
+                              description='Optional native 5Hz BATTERY_STATUS for explicit raw-world inspection')]
 
 
 def _value(context, name):
@@ -93,6 +105,12 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             raise CatalogError('managed scene cannot override debug_model_path')
         if _value(context, 'debug_spawn_pose'):
             raise CatalogError('managed scene cannot override debug_spawn_pose')
+        if _value(context, 'debug_heartbeat_rate_hz'):
+            raise CatalogError('managed scene cannot override debug_heartbeat_rate_hz')
+        if _value(context, 'debug_clock_rate_hz'):
+            raise CatalogError('managed scene cannot override debug_clock_rate_hz')
+        if _value(context, 'debug_battery_rate_hz'):
+            raise CatalogError('managed scene cannot override debug_battery_rate_hz')
         if _value(context,'grid_footprint_mode'):
             raise CatalogError('managed scene cannot override grid_footprint_mode')
         if _value(context,'ground_model_frame'):
@@ -109,6 +127,22 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             roots=debug_roots.split(':')
             if any(not Path(p).is_absolute() or not Path(p).is_dir() for p in roots):
                 raise CatalogError('debug_model_path requires existing absolute directories')
+        debug_rate = _value(context, 'debug_heartbeat_rate_hz')
+        if debug_rate:
+            if not world or not debug_roots:
+                raise CatalogError('debug_heartbeat_rate_hz requires explicit world and debug_model_path')
+            if debug_rate not in ('1', '5'):
+                raise CatalogError('debug_heartbeat_rate_hz must be 1 or 5')
+        debug_clock = _value(context, 'debug_clock_rate_hz')
+        if debug_clock:
+            if not world or not debug_roots:
+                raise CatalogError('debug_clock_rate_hz requires explicit world and debug_model_path')
+            if debug_clock not in ('10', '100'):
+                raise CatalogError('debug_clock_rate_hz must be 10 or 100')
+        debug_battery = _value(context, 'debug_battery_rate_hz')
+        if debug_battery:
+            if not world or not debug_roots or debug_battery!='5' or debug_rate!='5':
+                raise CatalogError('debug_battery_rate_hz requires rate 5, explicit world/model roots and 5Hz heartbeat')
         ground_frame=_value(context,'ground_model_frame') or 'odom'
         if ground_frame not in ('map','odom'):
             raise CatalogError('ground_model_frame must be map or odom')
@@ -127,12 +161,14 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             if len(pose) != 4 or not all(math.isfinite(value) for value in pose):
                 raise CatalogError('debug_spawn_pose requires four finite values: x y z yaw')
         result = SceneInputs(str(root / (world or default_world)), ':'.join(roots),
-                             _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame,grid_mode)
+                             _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame,grid_mode,
+                             int(debug_rate or '1'), int(debug_clock or '10'),int(debug_battery or '0'))
     values = dict(world=result.world, model_path=result.model_path, model_sdf=result.model_sdf,
                   x=str(result.position[0]), y=str(result.position[1]), z=str(result.position[2]),
                   yaw=str(result.yaw),ground_model_frame=result.ground_model_frame,
                   grid_footprint_mode=result.grid_footprint_mode,
-                  heartbeat_rate_hz=str(result.heartbeat_rate_hz))
+                  heartbeat_rate_hz=str(result.heartbeat_rate_hz),
+                  clock_rate_hz=str(result.clock_rate_hz),battery_rate_hz=str(result.battery_rate_hz))
     return [SetLaunchConfiguration(PREFIX + key, value) for key, value in values.items()]
 
 

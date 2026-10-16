@@ -1,0 +1,360 @@
+{
+  "passed": false,
+  "error": "RuntimeError: /execute_mission rejected",
+  "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "actions": [
+    {
+      "name": "/execute_mission",
+      "feedback": [],
+      "admission": "received",
+      "accepted": false,
+      "goal_uuid": "91a9652d5e4546eeb0a4a676c31521e1"
+    }
+  ],
+  "inspections": [
+    {
+      "index": 1,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            -8.0,
+            -7.0,
+            0.113421,
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -0.004147871397435665,
+            0.0019914808217436075,
+            0.113037109375
+          ],
+          "yaw": -0.01488429801352702,
+          "translation": [
+            8.099152214704967,
+            6.882146109503632,
+            -0.00038389062499999405
+          ],
+          "state": {
+            "source_ns": 7100000000,
+            "frame": "odom",
+            "ros_now_ns": 7290000000,
+            "receipt": 9456.447177495,
+            "steady_now": 9456.447401086,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.004147871397435665,
+              0.0019914808217436075,
+              0.113037109375
+            ],
+            "velocity": [
+              -0.0025582739617675543,
+              0.0024696527980268,
+              0.00015961533063091338
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 7090000000,
+            "frame": "odom",
+            "ros_now_ns": 7090000000,
+            "receipt": 9455.759640321,
+            "steady_now": 9455.907651126,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.004147871397435665,
+              0.0019914808217436075,
+              0.113037109375
+            ],
+            "velocity": [
+              -0.0025582739617675543,
+              0.0024696527980268,
+              0.00015961533063091338
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -8.0,
+            -7.0,
+            0.113421,
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -0.006203698460012674,
+            0.0035812747664749622,
+            0.110687255859375
+          ],
+          "yaw": -0.014840210557480542,
+          "translation": [
+            8.096793051252494,
+            6.884093150648133,
+            -0.002733744140624994
+          ],
+          "state": {
+            "source_ns": 7440000000,
+            "frame": "odom",
+            "ros_now_ns": 7590000000,
+            "receipt": 9457.452250642,
+            "steady_now": 9457.452416165,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.006203698460012674,
+              0.0035812747664749622,
+              0.110687255859375
+            ],
+            "velocity": [
+              -0.004163399804383516,
+              0.0036515407264232635,
+              0.0004981124657206237
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 7390000000,
+            "frame": "odom",
+            "ros_now_ns": 7390000000,
+            "receipt": 9456.809818575,
+            "steady_now": 9456.947860929,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.006225564517080784,
+              0.0035823467187583447,
+              0.11083984375
+            ],
+            "velocity": [
+              -0.003950123209506273,
+              0.0036371119786053896,
+              0.0005151197547093034
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -8.0,
+            -7.0,
+            0.113421,
+            0.0,
+            -0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -0.006403903942555189,
+            0.0040546804666519165,
+            0.109771728515625
+          ],
+          "yaw": -0.01474150037441617,
+          "translation": [
+            8.095913629707624,
+            6.885366371118724,
+            -0.003649271484374994
+          ],
+          "state": {
+            "source_ns": 7740000000,
+            "frame": "odom",
+            "ros_now_ns": 7810000000,
+            "receipt": 9458.452521316,
+            "steady_now": 9458.45261429,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.006403903942555189,
+              0.0040546804666519165,
+              0.109771728515625
+            ],
+            "velocity": [
+              -0.0036579170264303684,
+              0.0039247809909284115,
+              0.0010419182945042849
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 7690000000,
+            "frame": "odom",
+            "ros_now_ns": 7690000000,
+            "receipt": 9457.810165195,
+            "steady_now": 9457.967745355,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.006349691189825535,
+              0.003967971075326204,
+              0.10986328125
+            ],
+            "velocity": [
+              -0.003547768807038665,
+              0.0040672533214092255,
+              0.0009472279925830662
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          8.097286298555028,
+          6.883868543756829,
+          -0.0022556354166666606
+        ],
+        "yaw": -0.014822002981823129
+      },
+      "settled_preflight_state": {
+        "source_ns": 7090000000,
+        "frame": "odom",
+        "ros_now_ns": 7090000000,
+        "receipt": 9455.759640321,
+        "steady_now": 9455.907644066,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.004147871397435665,
+          0.0019914808217436075,
+          0.113037109375
+        ],
+        "velocity": [
+          -0.0025582739617675543,
+          0.0024696527980268,
+          0.00015961533063091338
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    }
+  ],
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          8.097286298555028,
+          6.883868543756829,
+          -0.0022556354166666606
+        ],
+        "yaw": -0.014822002981823129
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 7960000000,
+        "frame": "odom",
+        "ros_now_ns": 7970000000,
+        "receipt": 9458.859814441,
+        "steady_now": 9458.959994443,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.00578914862126112,
+          0.003728328738361597,
+          0.108642578125
+        ],
+        "velocity": [
+          -0.002937317593023181,
+          0.003527372609823942,
+          0.0011121549177914858
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": false,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    }
+  ],
+  "normal_exits": [
+    "60318",
+    "60385",
+    "61153",
+    "61116",
+    "61112",
+    "61088",
+    "61056",
+    "61044",
+    "61114",
+    "61058",
+    "61030",
+    "60969",
+    "60941",
+    "61015",
+    "60709",
+    "61151",
+    "60939",
+    "60707",
+    "60850",
+    "60854",
+    "60852",
+    "60967",
+    "60259",
+    "60705"
+  ],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "forced": false,
+  "leftovers": [],
+  "scope": "Mission rejected before arming; battery_valid=false in actual admission log. No successful flight claim.",
+  "raw_result": "artifacts/scene-s6-20261017/qualified-v7-two-cycles/result.json",
+  "raw_result_sha256": "eebfed2b69513bb5ed39a92f0901a70d591f7e842b6c4710fe9b993d4bafdeb1",
+  "admission_log": "mission_admission reject=state_not_ready, fresh=1 connected=1 pose_valid=1 battery_valid=0",
+  "native_battery_stream_hz": 0.5
+}

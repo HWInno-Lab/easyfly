@@ -94,7 +94,8 @@ def generate_launch_description():
     # ---- 2. gzserver ----
     # -s libgazebo_ros_init.so: 加载 ROS2 时钟插件(SystemPlugin, 发布 /clock), 必须用 -s 方式加载
     gzserver = ExecuteProcess(
-        cmd=[gazebo_server, "--verbose", "-s", "libgazebo_ros_init.so", world_file],
+        cmd=[gazebo_server, "--verbose", "-s", "libgazebo_ros_init.so", world_file,
+             "--ros-args", "--param", ["gazebo:publish_rate:=", scene_value('clock_rate_hz'), ".0"]],
         output="screen",
         name="gzserver",
     )

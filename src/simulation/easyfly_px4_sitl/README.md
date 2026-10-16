@@ -138,3 +138,16 @@ changes native feedback cadence, never the arm command, armed state, timestamps
 or the controller's three-wall-second confirmation deadline. The explicit probe
 also requires six distinct MAVROS states with receipt gaps at most two seconds
 before a goal. Raw disarmed draft inspection keeps upstream telemetry.
+
+### 按场景选择原生时钟频率
+
+场景`runtime.clock_rate_hz`可选10或100，默认10；Gazebo原生ROS插件直接使用
+`gazebo:publish_rate`发布真实仿真时间。较重场景可选100以减少ROS时钟节流，
+不更改传感器、物理步长或状态新鲜度门限。显式raw检查可用
+`debug_clock_rate_hz:=100`、`debug_heartbeat_rate_hz:=5`，必须同时指定world和
+`debug_model_path`；managed场景只使用清单。心跳仍由启动所属PX4原生命令配置。
+
+重场景还可选择`runtime.battery_rate_hz: 5`（需原生5Hz心跳）；只为所属PX4的
+14580→14540链路配置真实`BATTERY_STATUS`流，并检查native status/streams和实际MAVROS
+电池反馈。未填写时保持原上游电池流。raw检查对应`debug_battery_rate_hz:=5`，
+需要显式world/model roots和5Hz心跳；managed禁止覆盖。电池有效性和任务准入门限不改。
