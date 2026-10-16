@@ -138,7 +138,7 @@ class SceneProbe(navigation.Probe):
             self.report['bootstrap_registered_scene']=True
         elif self.args.bootstrap:
             sets=dict.fromkeys(self.scene['asset_sets']+self.scene['runtime']['asset_sets'])
-            roots=list(dict.fromkeys(str(self.catalog.resolve(self.catalog.assets[k]['model_root'])) for k in sets))
+            roots=list(dict.fromkeys(str(self.catalog.asset_root(k)) for k in sets))
             spawn=self.scene['spawn']
             if spawn['position'] is None or spawn['yaw'] is None:
                 raise ValueError('bootstrap requires a geometry-reviewed explicit spawn')

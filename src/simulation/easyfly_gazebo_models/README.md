@@ -48,3 +48,22 @@ MID360 传感器、IMU、质量和惯量保持原值；来源不清的外观 mes
 书店修正SDF路径协议和Spotlight mesh文件名大小写；world只移除高度约343km的
 异常静态BookE_01_009，原始world与差异保留。未引用模型、照片及上游启动代码不安装。
 模型目录共约126MB；下载归档及完整诊断点云保存在安装目录外。
+## Optional archive cache (S5)
+
+`manifests/aws_house_v1.yaml` also locks a data-only recipe for the original
+MIT-0 AWS house archive at revision `ff9631ca6d1db9c1ba656498151464b5ab74aafe`.
+The recipe reproduces all 363 reviewed model files, including the existing
+model-local portrait photo relocations. It does not change any model bytes,
+geometry, original license or the default vendored resource selection.
+
+Prepare it with `ros2 run easyfly_sim_launcher scene_catalog fetch house_aws_v1`.
+Select it with `EASYFLY_SCENE_ASSET_MODE=cache`; optionally set the absolute
+`EASYFLY_ASSET_CACHE_ROOT`. Cache storage is external, versioned and validated;
+it is not copied by this package's install rules. Future `storage: cached`
+assets can ship only a locked manifest and license evidence. Their payloads
+must be prepared explicitly before launch. See easyfly_sim_launcher/README.md
+for offline import, validation, interruption and version behavior.
+
+`tools/scenes/lock_aws_house_archive.py` is a maintainer's read-only-source recipe
+builder/checker against the already reviewed archive and origin records. Runtime
+fetch consumes its declarative output and never executes this or upstream code.

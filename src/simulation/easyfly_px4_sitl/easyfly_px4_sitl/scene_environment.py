@@ -21,7 +21,8 @@ def source_package(share, name):
     return source
 
 
-def installed_catalog(*, px4_dir=None, px4_models=None, gazebo_share=None, package_shares=None):
+def installed_catalog(*, px4_dir=None, px4_models=None, gazebo_share=None, package_shares=None,
+                      asset_cache_root=None, asset_mode=None):
     """Resolve only installed packages and explicit external roots; offline only.
 
     Missing optional PX4/Gazebo inputs become validation issues, so list works on
@@ -66,8 +67,14 @@ def installed_catalog(*, px4_dir=None, px4_models=None, gazebo_share=None, packa
             features = verified_features(px4_dir)
         except (OSError, RuntimeError, ValueError) as error:
             notes.append('PX4 qualification features unavailable: ' + str(error))
+    prefixes = [Path(get_package_prefix(name)) for name in names]
     catalog = SceneCatalog(shares, external_roots=roots, plugin_dirs=plugin_dirs,
-                           trusted_sources=sources, px4_compatibility=features)
+                           trusted_sources=sources, px4_compatibility=features,
+                           asset_cache_root=(asset_cache_root if asset_cache_root is not None else
+                                             os.environ.get('EASYFLY_ASSET_CACHE_ROOT') or None),
+                           asset_mode=(asset_mode if asset_mode is not None else
+                                       os.environ.get('EASYFLY_SCENE_ASSET_MODE', 'packaged')),
+                           protected_cache_roots=prefixes)
     def referenced_packages(value):
         if isinstance(value,dict):
             if 'package' in value and 'path' in value:

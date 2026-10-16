@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "passed": true,
+  "S5_complete": true,
+  "scope": "Explicit pinned asset preparation and offline resource/sensor startup. No additional navigation or hardware acceptance.",
+  "asset_set_id": "aws_house_v1",
+  "revision": "ff9631ca6d1db9c1ba656498151464b5ab74aafe",
+  "archive_sha256": "e459bd9d7bdabdfc40f8afc6770ceb1d774316e5da94a1048f036baa7388b2d9",
+  "archive_bytes": 85470980,
+  "selected_model_files": 363,
+  "original_manifest_without_archive_preserved": true,
+  "source_worlds_scenes_and_model_bytes_preserved": true,
+  "cache_lock_sha256": "5671b91cc7983d8bee763f679a7811a3ac4a57c831abb169aeff8e115fbe7953",
+  "declarative_recipe": "Source SHA256 + bounded literal relocations + existing output SHA256; no source scripts or builds executed.",
+  "default_mode": "packaged",
+  "cached_mode": "EASYFLY_SCENE_ASSET_MODE=cache; mandatory for storage:cached",
+  "publication": "Native per-asset flock; validated private staging; Linux renameat2 RENAME_NOREPLACE. No existing version is repaired or replaced.",
+  "network_fetch": {
+    "path": "artifacts/scene-s5-20261017/house-fetch-network.json",
+    "sha256": "f26e4570efe7939cc833daa690e2a196adbac1b9fb9e7728d2fbdc2a650fb654"
+  },
+  "offline_archive_import": {
+    "path": "artifacts/scene-s5-20261017/normal-offline-v2-import.json",
+    "sha256": "e43347a2964c87ce20f5a04a07a5cc77e0cbf97f067d21d13a473abab51711e0"
+  },
+  "ordinary_tests": {
+    "normal": {
+      "path": "artifacts/scene-s5-20261017/normal-results.log",
+      "sha256": "54dd13b7ef7e6b7368b583c24c71b2f7b503d5be9732902cc28ec8e95dacb56c",
+      "result_records": 258,
+      "errors": 0,
+      "failures": 0
+    },
+    "symlink": {
+      "path": "artifacts/scene-s5-20261017/symlink-results.log",
+      "sha256": "a0822c2d53a9d21b3618b6d80ddab0c60c8ac7a73e0a594967d57c89006102f1",
+      "result_records": 258,
+      "errors": 0,
+      "failures": 0
+    }
+  },
+  "cache_test_cases": 38,
+  "installed_cli_checks_per_mode": 20,
+  "cli": {
+    "normal": {
+      "path": "artifacts/scene-s5-20261017/normal-cli/summary.json",
+      "sha256": "b2aaf5e52fb5d9f4be25b3ed167716551a6c92410c3f034b01a726d9d25c1761"
+    },
+    "symlink": {
+      "path": "artifacts/scene-s5-20261017/symlink-cli/summary.json",
+      "sha256": "6699565c5c50657f2e14e1d685f98e54c7744b7dc2801acca3843f867cc8e19f"
+    }
+  },
+  "runs": [
+    {
+      "mode": "normal",
+      "raw_result": {
+        "path": "artifacts/scene-s5-20261017/normal-offline-v2/result.json",
+        "sha256": "b63a7725797d07efba2e3ff0ce3c50f3c7147891a13fe9e24f143c919078f232"
+      },
+      "network": {
+        "path": "artifacts/scene-s5-20261017/normal-offline-v2-network.json",
+        "sha256": "e76ffa84ef44628793b1c5fef0d48617b217d77356dee2e3fa715b5e852b17db"
+      },
+      "observed_environment": {
+        "path": "artifacts/scene-s5-20261017/normal-offline-v2/cache-process-environment.json",
+        "sha256": "24ae25b59e23bd18cd882aafa00b84b0e463dd6b80de836ff9eb0208bb9bc83f"
+      },
+      "namespace": "net:[4026532958]",
+      "interfaces": [
+        "lo"
+      ],
+      "external_routes": [],
+      "resolved_cached_model_files": 363,
+      "source_world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+      "scene_probe_sha256": "8bf5bd5571aecd3b9946ec39ef0de9eab32ab3e281b40ca3c5db5cd1e2dc8b7d",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "world_to_navigation": {
+        "translation": [
+          -1.0131115350210484,
+          -0.7831929154573108,
+          -0.029061755208333335
+        ],
+        "yaw": -0.013934565907340175
+      },
+      "sensors": {
+        "/livox/imu": {
+          "count": 1664,
+          "first_source_ns": 1922000000,
+          "last_source_ns": 13632000000,
+          "receipt": 7228.097383176,
+          "frame": "livox_frame",
+          "finite": true
+        },
+        "/livox/lidar": {
+          "count": 117,
+          "first_source_ns": 1918000000,
+          "last_source_ns": 13535000000,
+          "receipt": 7228.065397339,
+          "frame": "livox_frame",
+          "points": 20000
+        },
+        "/camera/color/image_raw": {
+          "count": 346,
+          "first_source_ns": 1918000000,
+          "last_source_ns": 13619000000,
+          "receipt": 7228.094425595,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 7
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 346,
+          "first_source_ns": 1918000000,
+          "last_source_ns": 13619000000,
+          "receipt": 7228.097027217,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 249705,
+          "min_m": 0.44635847210884094,
+          "max_m": 8.130851745605469,
+          "non_increasing_stamps": 7
+        }
+      },
+      "normal_exits": 24,
+      "transport_drained": true,
+      "flight_goals": 0
+    },
+    {
+      "mode": "symlink",
+      "raw_result": {
+        "path": "artifacts/scene-s5-20261017/symlink-offline-v2/result.json",
+        "sha256": "1313c12074e4f82bcf7d74d7e8e5fd6515f289bed7d93926ef3c0b0836a98239"
+      },
+      "network": {
+        "path": "artifacts/scene-s5-20261017/symlink-offline-v2-network.json",
+        "sha256": "8d4e4d76daba3ce1fa3c640336db66f37938dbe8dffd01ee9504d0cc352d9731"
+      },
+      "observed_environment": {
+        "path": "artifacts/scene-s5-20261017/symlink-offline-v2/cache-process-environment.json",
+        "sha256": "dd66162e4d6230ab5882f6d0e5aaa095bb75404aa271372d149d788383fb2215"
+      },
+      "namespace": "net:[4026533024]",
+      "interfaces": [
+        "lo"
+      ],
+      "external_routes": [],
+      "resolved_cached_model_files": 363,
+      "source_world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+      "scene_probe_sha256": "8bf5bd5571aecd3b9946ec39ef0de9eab32ab3e281b40ca3c5db5cd1e2dc8b7d",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "world_to_navigation": {
+        "translation": [
+          -1.0158846398677743,
+          -0.7872159273371523,
+          -0.03739305403645834
+        ],
+        "yaw": -0.013762750366127558
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 114,
+          "first_source_ns": 1933000000,
+          "last_source_ns": 13249000000,
+          "receipt": 7268.37541664,
+          "frame": "livox_frame",
+          "points": 20000
+        },
+        "/livox/imu": {
+          "count": 1594,
+          "first_source_ns": 1938000000,
+          "last_source_ns": 13252000000,
+          "receipt": 7268.32632546,
+          "frame": "livox_frame",
+          "finite": true
+        },
+        "/camera/color/image_raw": {
+          "count": 329,
+          "first_source_ns": 1934000000,
+          "last_source_ns": 13235000000,
+          "receipt": 7268.200303533,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 329,
+          "first_source_ns": 1934000000,
+          "last_source_ns": 13235000000,
+          "receipt": 7268.203754873,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 249705,
+          "min_m": 0.44635847210884094,
+          "max_m": 8.130851745605469
+        }
+      },
+      "normal_exits": 24,
+      "transport_drained": true,
+      "flight_goals": 0
+    }
+  ],
+  "total_normal_exits": 48,
+  "flight_goals": 0,
+  "source_files": [
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/asset_cache.py",
+      "sha256": "a4b22d5e22b4083173a27e23e850ea2c435d810266671efebfa1fdcb2724c913"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_catalog.py",
+      "sha256": "43499a4f6729c78e097e991d234a19cd0d92865c4c24963ec01fde6dee431e71"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_environment.py",
+      "sha256": "bb0d62233a747eb7ff0214f545cc5122c76e093d9d9997f4e549e4694d9e6026"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_inputs.py",
+      "sha256": "3c50044906d7848e85d7ad19c6f5cf99a8d2d6675c898df85542ec2b6a7c6702"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/easyfly_sim_launcher/scene_cli.py",
+      "sha256": "d2a9f4775f39e8bf48a0ec1da52c5800e8072c9e7c7ee01232e0553ff51124f3"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py",
+      "sha256": "8bf5bd5571aecd3b9946ec39ef0de9eab32ab3e281b40ca3c5db5cd1e2dc8b7d"
+    },
+    {
+      "path": "tools/scenes/lock_aws_house_archive.py",
+      "sha256": "99af86dea8d62815181bb540aa56061963c737bf99fd219f94fdd531455a9db2"
+    }
+  ],
+  "prior_observer_failure": {
+    "raw_result": {
+      "path": "artifacts/scene-s5-20261017/symlink-offline-bootstrap/result.json",
+      "sha256": "ff963d89b5eb91de0385972daf039b957bd08dbb9fcbbbe8f81ce7f78730a935"
+    },
+    "reason": "Observer initially matched gzserver only; actual project executable is easyfly_gzserver. Sensor/mapping gates and 24 normal exits succeeded, but overall failed observer assertion is preserved and excluded."
+  },
+  "limits": [
+    "S5 tests resources and offline startup only; no new flight qualification is inferred.",
+    "The existing vendored house payload is preserved for compatibility; future cache-only assets need not be installed.",
+    "A hard kill/power loss may leave unpublished staging; corruption is rejected, never silently repaired."
+  ]
+}

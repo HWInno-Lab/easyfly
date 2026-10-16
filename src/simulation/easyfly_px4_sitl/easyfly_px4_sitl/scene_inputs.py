@@ -39,7 +39,7 @@ def resolve_scene(catalog, scene_id, profile):
     if problems:
         raise CatalogError(f'scene {scene_id} refused before startup: ' + '; '.join(problems))
     sets = dict.fromkeys(scene['asset_sets'] + scene['runtime']['asset_sets'])
-    roots = list(dict.fromkeys(catalog.resolve(catalog.assets[key]['model_root']) for key in sets))
+    roots = list(dict.fromkeys(catalog.asset_root(key) for key in sets))
     # Check all directories exposed to Gazebo, not only model names in manifests.
     # Two distinct directories must never silently shadow one another.
     seen = {}

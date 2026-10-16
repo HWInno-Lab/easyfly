@@ -1,7 +1,7 @@
 # Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
-"""Offline scene inventory validation; no environment search, network or simulator.
+"""Offline scene inventory validation; no network or simulator.
 
-Callers explicitly supply trusted package shares, external roots and plugin dirs.
+Callers supply trusted package shares, external roots, cache policy and plugin dirs.
 The launcher and the low-level SITL entrypoints share this implementation.
 """
 
@@ -118,12 +118,19 @@ class SceneCatalog:
     """Load schema-v1 catalogs from explicitly trusted roots (including symlink installs)."""
 
     def __init__(self, package_shares, *, external_roots=None, plugin_dirs=(), trusted_sources=(),
-                 px4_compatibility=()):
+                 px4_compatibility=(), asset_cache_root=None, asset_mode='packaged', protected_cache_roots=()):
         self.packages = {k: Path(v).resolve(strict=True) for k, v in package_shares.items()}
         self.external = {k: Path(v).resolve(strict=True) for k, v in (external_roots or {}).items()}
         self.plugin_dirs = tuple(Path(p).resolve(strict=True) for p in plugin_dirs)
         self.trusted_sources = tuple(Path(p).resolve(strict=True) for p in trusted_sources)
         self.px4_compatibility = frozenset(px4_compatibility)
+        from .asset_cache import cache_root
+        if asset_mode not in ('packaged', 'cache'):
+            raise CatalogError('asset mode must be packaged or cache')
+        self.asset_mode = asset_mode
+        self.asset_cache_root = cache_root(asset_cache_root, (*self.packages.values(),
+                                                            *self.trusted_sources, *protected_cache_roots))
+        self._cached_models = {}
         worlds = self.packages['easyfly_gazebo_worlds']
         schemas = worlds / 'schemas'
         self.schemas = {}
@@ -158,6 +165,16 @@ class SceneCatalog:
         if name not in roots:
             raise CatalogError(f'unconfigured {key} root: {name}')
         return _inside(roots[name], location['path'], self.trusted_sources if key == 'package' else ())
+
+    def asset_root(self, asset_id):
+        """Resolve the selected source without fetching or falling back to another source."""
+        asset = self.assets[asset_id]
+        if asset['storage'] == 'cached' or (self.asset_mode == 'cache' and 'archive' in asset):
+            from .asset_cache import validate_cached
+            if asset_id not in self._cached_models:
+                self._cached_models[asset_id] = validate_cached(asset, self.asset_cache_root)
+            return self._cached_models[asset_id]
+        return self.resolve(asset['model_root'])
 
     def validate(self, scene_id):
         if scene_id not in self.scenes:
@@ -238,7 +255,7 @@ class _ResourceWalker:
             asset = catalog.assets[name]
             catalog._provenance(asset['provenance'], report, name)
             try:
-                root = catalog.resolve(asset['model_root'])
+                root = catalog.asset_root(name)
                 if root not in roots:
                     roots.append(root)
                 for model in asset['models']:

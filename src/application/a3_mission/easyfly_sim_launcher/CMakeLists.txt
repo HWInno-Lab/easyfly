@@ -24,6 +24,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_battery_sitl test/test_battery_sitl.py TIMEOUT 15)
   ament_add_pytest_test(test_scene_catalog test/test_scene_catalog.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
+  ament_add_pytest_test(test_asset_cache test/test_asset_cache.py TIMEOUT 60
+    APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_scene_launch test/test_scene_launch.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_indoor_scene test/test_indoor_scene.py TIMEOUT 30

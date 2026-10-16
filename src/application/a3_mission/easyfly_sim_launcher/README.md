@@ -200,3 +200,60 @@ is rejected without output. Neither inherits another layout's qualification.
 This completes S4's generator and selected sample scope, covering only the
 recorded routes and runtime; every new generated layout needs independent
 qualification.
+
+## S5 optional asset archives and cache
+
+`scene_catalog fetch` explicitly prepares only the archived asset sets named by
+a scene. It downloads a pinned HTTPS archive, checks its exact size and SHA256,
+then applies a locked data-only mapping to reproduce the existing per-file
+inventory. It never executes upstream scripts, builds code, launches simulation
+or sends flight goals. The first real archive is the reviewed AWS house snapshot
+(85,470,980 compressed bytes; 363 selected model files). Its original license is
+retained in both the package and prepared version.
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog fetch house_aws_v1 --json
+ros2 run easyfly_sim_launcher scene_catalog fetch house_aws_v1 --offline --json
+# A pinned local archive can prepare the same version without Internet:
+ros2 run easyfly_sim_launcher scene_catalog fetch house_aws_v1 \
+  --archive /path/to/small-house-ff9631ca6d1d.tar.gz --json
+ros2 run easyfly_sim_launcher scene_catalog validate house_aws_v1 --asset-mode cache --json
+```
+
+The default root is `$XDG_CACHE_HOME/easyfly/assets`, or
+`~/.cache/easyfly/assets` when XDG_CACHE_HOME is unset. `--cache-root /absolute/path`
+overrides it for CLI commands. Launch uses `EASYFLY_ASSET_CACHE_ROOT` for the same
+purpose; select cached archives with `EASYFLY_SCENE_ASSET_MODE=cache`:
+
+```bash
+export EASYFLY_SCENE_ASSET_MODE=cache
+export EASYFLY_ASSET_CACHE_ROOT=/home/jia/.cache/easyfly/assets
+ros2 launch easyfly_sim_launcher profile.launch.py \
+  profile:=navigation_dev scene:=house_aws_v1 headless:=true
+```
+
+The default `packaged` mode preserves current vendored scenes. Cache mode uses
+the cache for assets with an archive recipe and keeps runtime-only packaged
+assets unchanged. A missing or corrupt selected cache fails before startup;
+launch/list/validate do not fetch or silently switch sources. A cache-only asset
+can declare `storage: cached` with `model_root: {external: asset_cache, path: models}`;
+it requires its reviewed archive and always uses the cache in either mode.
+
+Versions live at `<root>/<asset_id>/<revision>/<manifest_sha256>/`, containing
+`models/`, the original `LICENSE`, `source.tar.gz`, and `receipt.json`.
+The whole manifest locks source revision, archive, literal relocations and output
+hashes; a changed revision or recipe receives a separate directory. Receipts and
+every actual file are rechecked. Concurrent fetches for one asset use a native
+file lock. Private staging is validated before Linux atomic no-replace publication,
+including refusal of a foreign empty destination. Existing valid versions are
+reused without network or writes; corrupt versions are preserved and rejected.
+Inspect and move aside the specific corrupt version before explicitly preparing
+it again. SIGINT/SIGTERM clean owned staging; a hard kill or power loss may leave
+unpublished staging, which is never selected as a prepared version.
+
+Cache roots inside source packages or build/install trees are rejected, and the
+cache gets `COLCON_IGNORE`. Archives and payloads remain outside package installation.
+Fetch success means asset preparation only; run `validate` separately for scene,
+runtime and license dependencies. It does not change navigation qualification.
+Ordinary tests use small local archives and loopback HTTP; real offline Gazebo
+inspection is an explicitly invoked, disarmed check outside `colcon test`.
