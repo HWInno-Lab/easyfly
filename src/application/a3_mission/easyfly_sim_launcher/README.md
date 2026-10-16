@@ -62,11 +62,11 @@ symlink-install 下，通过安装 package.xml 的源码链接和包名核对，
 ## 仓库检查（S2）
 
 新增 `warehouse_aws_v1` 与上游独立无屋顶版本 `warehouse_aws_no_roof_v1`。
-两者资源和许可检查通过。完整屋顶版本已登记支持 `navigation_dev`，连续可信地图与
-中央通道 1.5m 往返、降落已通过。无屋顶版本仍为 draft，validate 返回 1 并拒绝受管启动。
+两者资源和许可检查通过，均已登记支持 `navigation_dev`。S2 v10 分别完成两次独立冷启动、
+同一仿真内两轮中央通道 1.5m 往返与降落，每项24个进程正常退出，证据分别保存在场景目录。
 仓库用 SLAM map 系保存可信地面，导航/点云输出仍为 odom；旧默认入口保留原 odom 行为。
 仿真 LiDAR 使用原生 Gazebo 扫描时间，消费者仍拒绝时间戳重复/回退。
-旧 EGO 及无屋顶检查中的导航协调节点关闭 SIGSEGV 尚未定位，不能因为本轮正常退出而宣称修复。
+已复现的原生缺陷及回归记录见场景证据；历史未保留栈的退出异常不作唯一归因。
 
 完成构建并加载含本轮世界、语义地图、plan_env 和启动包的安装环境后：
 
@@ -88,8 +88,8 @@ ros2 run easyfly_sim_launcher scene_sitl --scene warehouse_aws_v1 --bootstrap \
   --output-dir "$PWD/artifacts/my-warehouse-bootstrap" --domain 128 --gazebo-port 11428
 ```
 
-bootstrap 使用低层 raw world 与显式 `debug_model_path` 进行诊断，所有飞行 Goal 被禁止；
-该参数不由公共 profile 转发，也不能与 scene 混用。检查分别记录资源/传感器观测、
+bootstrap 禁止所有飞行 Goal；已注册场景使用其受管入口，草稿检查才使用低层 raw world
+与显式 `debug_model_path`。该参数不由公共 profile 转发，也不能与 scene 混用。检查分别记录资源/传感器观测、
 连续地图、坐标及退出状态。`passed` 仅表示所选检查流程通过；必须另看
 `mapping_ready`，不能将未解锁检查通过当成导航通过。
 真实深度是 `/camera/aligned_depth_to_color/depth/image_raw`（32FC1），
@@ -107,7 +107,7 @@ twice in the same owned simulator. Every cycle requires two new real navigation
 UUIDs, successful terminal results within 0.15 m, closed sessions and released
 ownership. After landing, it waits for healthy disarmed state, speed ≤0.05 m/s,
 position within 0.15 m of the initial stationary position in the declared ground
-reference frame (map for these warehouses), and fresh occupancy and
+reference frame (map for the registered indoor scenes), and fresh occupancy and
 non-ground observations continuously for three wall seconds. This also applies
 to the default single cycle. The postlanding observation budget is 120 wall
 seconds; a recorded 60-second observation ended while the estimator was only
@@ -118,3 +118,35 @@ basis are retained alongside the transformed observation. No physical admission
 threshold is relaxed. Before cycle two, the
 scene's independent world/odom reference is checked again. A timeout prevents
 the next goal and fails acceptance. `--bootstrap` continues to forbid all goals.
+
+## S3 indoor scenes
+
+`house_aws_v1` (`indoor/residential`) and `bookstore_aws_v1`
+(`indoor/commercial`) use the same managed `navigation_dev` entry point.
+After building and sourcing the matching installation, inspect a scene with:
+
+```bash
+ros2 launch easyfly_sim_launcher profile.launch.py \
+  profile:=navigation_dev scene:=house_aws_v1 headless:=false
+```
+
+Replace the scene ID with `bookstore_aws_v1` for the bookstore. Opening a scene
+does not submit a flight mission. The reviewed missions are
+`missions/scenes/house_aws_v1/living_room_out_and_back.yaml` and
+`missions/scenes/bookstore_aws_v1/cross_aisle_out_and_back.yaml` in
+`easyfly_mission_scripts`. Each is a bounded 1.5m out-and-back in odom, with
+takeoff, hover and landing through the existing executor. The house route is in
+the living room; the bookstore route is in its north wide cross-aisle.
+Narrow shelves, door crossings and the full interiors need separate tasks.
+
+Both manifests explicitly select `observed_cells` occupancy footprints. The
+probe verifies the actual semantic-node parameter and loaded libraries before
+sending any goal. Independent cold-start and sequential mission evidence is
+stored per scene in `easyfly_gazebo_worlds/evidence`; historical rejected runs
+are retained alongside later acceptance records.
+
+The v7 matrix passed on 2026-10-17: each scene has two independent cold starts
+and two consecutive reference missions, with all 24 processes exiting normally
+in every run. These results cover the named routes and recorded runtime only.
+The scene README retains the separate unresolved historical Gazebo rendering
+startup fault; it is not attributed to the fixed DDS reader discovery race.

@@ -5,19 +5,19 @@
   "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
   "source_revision": "ff9631ca6d1db9c1ba656498151464b5ab74aafe",
   "spawn_candidate_world": [
-    0,
-    1,
+    1.0,
+    0.8,
     0.1
   ],
   "route_world": [
     [
-      0,
-      1,
+      1.0,
+      0.8,
       1.5
     ],
     [
-      1.5,
-      1,
+      2.5,
+      0.8,
       1.5
     ]
   ],
@@ -43,11 +43,30 @@
     1.8,
     1.9,
     2.0,
-    2.1
+    2.1,
+    2.2,
+    2.3,
+    2.4,
+    2.5,
+    2.6,
+    2.7,
+    2.8,
+    2.9,
+    3.0,
+    3.1,
+    3.2,
+    3.3,
+    3.4,
+    3.5,
+    3.6,
+    3.7,
+    3.8,
+    3.9,
+    4.0
   ],
   "azimuths_per_height": 32,
-  "route_rays": 11458,
-  "minimum_sampled_horizontal_clearance_m": 1.31333,
+  "route_rays": 21794,
+  "minimum_sampled_horizontal_clearance_m": 1.2,
   "floor_height_m": [
     0.0,
     0.0
@@ -82,6 +101,102 @@
     {
       "path": "artifacts/scene-s3-20261016/route_probe.cpp",
       "sha256": "b5cd3ea15d08240fc1457beec6454acd65a4655acfa684d9acb64d5be024d97b"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-v2-reviewed.csv",
+      "sha256": "7ebbab848eabc5b39fc5ced535e6df76cc3e3d71395cf6eead606db30c7b2e2a"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-v2-reviewed.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/route_probe_v2.cpp",
+      "sha256": "5a9aff8285251cdf7c6058c76f3dd85daaed474441e59ca137c905d250d4e8c9"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-v4-reviewed.csv",
+      "sha256": "7a9181731982c0136aec37cba47b2fddca0e7226f6c7e190022fcdceee95c4a9"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/house-route-v4-reviewed.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/route_probe_v4.cpp",
+      "sha256": "0281f7211adbf1fbfe816204dedafa7ec814e0f2caad47672a5ffbc690e6af3f"
     }
-  ]
+  ],
+  "previous_candidate": {
+    "spawn_candidate_world": [
+      0,
+      1,
+      0.1
+    ],
+    "route_world": [
+      [
+        0,
+        1,
+        1.5
+      ],
+      [
+        1.5,
+        1,
+        1.5
+      ]
+    ],
+    "minimum_sampled_horizontal_clearance_m": 1.31333
+  },
+  "spawn_revision_reason": "Observed return goal occupied by projected overhead structure near the prior start. New route is clear throughout all retained 250 real flight occupancy grids and native 0.1-4.0m height sampling, without modifying inflation.",
+  "previous_geometry_summary": {
+    "spawn_candidate_world": [
+      0.6,
+      1,
+      0.1
+    ],
+    "route_world": [
+      [
+        0.6,
+        1,
+        1.5
+      ],
+      [
+        2.1,
+        1,
+        1.5
+      ]
+    ],
+    "height_samples_above_floor": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      0.9,
+      1.0,
+      1.1,
+      1.2,
+      1.3,
+      1.4,
+      1.5,
+      1.6,
+      1.7,
+      1.8,
+      1.9,
+      2.0,
+      2.1
+    ],
+    "minimum_sampled_horizontal_clearance_m": 1.11095
+  },
+  "observed_grid_route_selection": {
+    "raw_directory": "artifacts/scene-s3-20261016/qualified-v3-house-two-cycles/grid-trace",
+    "index_sha256": "47391ed130b8500d37e51c7def558471f860664a7a605d714cf5a6229207189a",
+    "retained_grids": 250,
+    "positions_per_grid": 16,
+    "all_free": true,
+    "note": "Diagnostic selection only; requires new independent cold starts and formal flight."
+  }
 }

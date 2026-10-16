@@ -1,7 +1,7 @@
 schema_version: 1
 id: house_aws_v1
 name: AWS 小型住宅
-status: draft
+status: registered
 category: indoor/residential
 tags:
 - house
@@ -28,22 +28,38 @@ provenance:
 asset_sets:
 - aws_house_v1
 required_plugins: []
-supported_profiles: []
+supported_profiles:
+- navigation_dev
 legacy_profiles: []
 spawn:
   frame: world
   position:
-  - 0.0
   - 1.0
+  - 0.8
   - 0.1
   yaw: 0.0
-  basis: Native ODE collision grid selected a flat interior area; dense route rays
-    and actual resting pose are recorded separately before registration.
+  basis: Full 0.1-4.0m native ODE height sampling and 250 retained real flight occupancy
+    grids select a living-room route clear of projected overhead fixtures; independent
+    cold calibration recorded separately.
 navigation:
   frame: odom
-  world_to_navigation: null
-  recommended_region: null
+  world_to_navigation:
+    translation:
+    - -1.0151699321377485
+    - -0.7840459433590511
+    - -0.0343972451171875
+    yaw: -0.015186829090876822
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
   ground_model_frame: map
+  grid_footprint_mode: observed_cells
 runtime:
   entrypoint:
     package: easyfly_px4_sitl
@@ -63,15 +79,40 @@ runtime:
   - No full PX4 model root and no legacy scene model root are exposed.
   - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
     MAVLink; source timestamps and original control limits retained.
-recommended_missions: []
+  heartbeat_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/house_aws_v1/living_room_out_and_back.yaml
 map_products: []
 verification:
   resources_complete: true
   world_loaded: true
   sensors_checked: true
-  navigation_tested: false
+  navigation_tested: true
   evidence_refs:
   - package: easyfly_gazebo_worlds
     path: evidence/house_aws_v1/geometry-s3.json
   - package: easyfly_gazebo_worlds
     path: evidence/house_aws_v1/inspection-s3-initial.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/bootstrap-s3-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/mission-s3-rejected-v1.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/occupancy-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/calibration-s3-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/calibration-s3-before-observed.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/mission-s3-rejected-v3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/telemetry-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/calibration-s3-before-native-v7.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/house_aws_v1/mission-s3-final.json

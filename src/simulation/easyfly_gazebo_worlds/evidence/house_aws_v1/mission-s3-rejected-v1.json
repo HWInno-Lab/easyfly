@@ -1,0 +1,210 @@
+{
+  "scene": "house_aws_v1",
+  "passed": false,
+  "error": "RuntimeError: unexpected real terminal: {'name': '/execute_mission', 'admission': 'received', 'accepted': True, 'goal_uuid': '40672a067b3d47a5ad0a2a6e36ca510c', 'status': 6, 'success': False, 'message': 'step_failed:global route unavailable', 'terminal_state': {'source_ns': 20000000000, 'frame': 'odom', 'ros_now_ns': 20000000000, 'receipt': 12311.744677897, 'steady_now': 12312.042394416, 'armed': True, 'connected': True, 'mode': 3, 'mode_name': 'OFFBOARD', 'position': [-0.0013698693364858627, 0.00607988191768527, 1.165130615234375], 'velocity': [0.0011969474144279957, -0.0022548071574419737, 0.17022280395030975], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 15.961000442504883, 'battery_remaining': 0.8799999952316284}}",
+  "forced": false,
+  "normal_exits": [
+    "108554",
+    "108590",
+    "109361",
+    "109323",
+    "109272",
+    "109319",
+    "109303",
+    "109270",
+    "109256",
+    "109321",
+    "109151",
+    "108771",
+    "109227",
+    "109178",
+    "109149",
+    "109243",
+    "109058",
+    "109176",
+    "108769",
+    "109359",
+    "109060",
+    "109062",
+    "108457",
+    "108767"
+  ],
+  "abnormal_lines": [],
+  "leftovers": [],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          -0.015402294380244715,
+          -1.000554700773966,
+          -0.030282458333333335
+        ],
+        "yaw": -0.014140519890742545
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 11000000000,
+        "frame": "odom",
+        "ros_now_ns": 11000000000,
+        "receipt": 12285.244536447,
+        "steady_now": 12285.493146239,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.0003100801259279251,
+          0.0023556833621114492,
+          0.024627685546875
+        ],
+        "velocity": [
+          -0.0023617688566446304,
+          0.004176329355686903,
+          0.0030721407383680344
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "40672a067b3d47a5ad0a2a6e36ca510c"
+    }
+  ],
+  "action_status": {
+    "/navigate": {
+      "087c0660d1ac0d6887685b66db54da01": {
+        "history": [
+          {
+            "steady": 12312.024967288,
+            "status": 2
+          },
+          {
+            "steady": 12312.03514213,
+            "status": 6
+          }
+        ],
+        "status": 6,
+        "last_steady": 12312.035166119,
+        "first_terminal": {
+          "steady": 12312.035143204,
+          "state": {
+            "source_ns": 20000000000,
+            "frame": "odom",
+            "ros_now_ns": 20000000000,
+            "receipt": 12311.744677897,
+            "steady_now": 12312.035157835,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              -0.0013698693364858627,
+              0.00607988191768527,
+              1.165130615234375
+            ],
+            "velocity": [
+              0.0011969474144279957,
+              -0.0022548071574419737,
+              0.17022280395030975
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.961000442504883,
+            "battery_remaining": 0.8799999952316284
+          }
+        }
+      }
+    },
+    "/search_area": {},
+    "/follow_trajectory": {},
+    "/land": {},
+    "/takeoff": {
+      "ee3abe49f445bf1f00be453312e1f9ae": {
+        "history": [
+          {
+            "steady": 12285.504542124,
+            "status": 2
+          },
+          {
+            "steady": 12310.001326786,
+            "status": 4
+          }
+        ],
+        "status": 4,
+        "last_steady": 12310.001378067,
+        "first_terminal": {
+          "steady": 12310.001327973,
+          "state": {
+            "source_ns": 19400000000,
+            "frame": "odom",
+            "ros_now_ns": 19400000000,
+            "receipt": 12309.994306477,
+            "steady_now": 12310.001361352,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              -0.0021521064918488264,
+              0.005454382859170437,
+              1.02789306640625
+            ],
+            "velocity": [
+              0.002559005282819271,
+              -0.0011279657483100891,
+              0.2533583343029022
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.020999908447266,
+            "battery_remaining": 0.9200000166893005
+          }
+        }
+      }
+    },
+    "/goto_waypoint": {}
+  },
+  "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+  "loaded_libraries": {
+    "libeasyfly_imu_antialias.so": {
+      "pid": 108457,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+      "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+    },
+    "liblivox_laser_simulation.so": {
+      "pid": 108457,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+    },
+    "libgazebo_transport.so.11.10.2": {
+      "pid": 108457,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+      "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+    },
+    "libeasyfly_pointcloud_filter_nodes.so": {
+      "pid": 109270,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+      "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 109272,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "39f5f6eb8223a810055a0d8cd25a80f6d619006f5b3c9164d55f94a5e0265343"
+    },
+    "libplan_env.so": {
+      "pid": 109361,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+      "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+    }
+  },
+  "raw_result": "artifacts/scene-s3-20261016/qualified-v1-house-two-cycles/result.json",
+  "raw_result_sha256": "7502c8f474a1982371b48460db391284e1fc507424b631336f69e866c1446c86",
+  "decision": "Retain failure. No unchanged flight retry; move spawn only after native route verification, then repeat independent calibration.",
+  "scope": "Failed first S3 house reference mission; not flight acceptance."
+}

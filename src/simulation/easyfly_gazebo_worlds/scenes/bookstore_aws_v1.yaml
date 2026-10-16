@@ -1,7 +1,7 @@
 schema_version: 1
 id: bookstore_aws_v1
 name: AWS 书店
-status: draft
+status: registered
 category: indoor/commercial
 tags:
 - bookstore
@@ -28,7 +28,8 @@ provenance:
 asset_sets:
 - aws_bookstore_v1
 required_plugins: []
-supported_profiles: []
+supported_profiles:
+- navigation_dev
 legacy_profiles: []
 spawn:
   frame: world
@@ -41,9 +42,23 @@ spawn:
     and actual resting pose are recorded separately before registration.
 navigation:
   frame: odom
-  world_to_navigation: null
-  recommended_region: null
+  world_to_navigation:
+    translation:
+    - 2.917330404006493
+    - -5.450518539162445
+    - -0.015839516601562506
+    yaw: -0.015355173470541795
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
   ground_model_frame: map
+  grid_footprint_mode: observed_cells
 runtime:
   entrypoint:
     package: easyfly_px4_sitl
@@ -63,15 +78,40 @@ runtime:
   - No full PX4 model root and no legacy scene model root are exposed.
   - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
     MAVLink; source timestamps and original control limits retained.
-recommended_missions: []
+  heartbeat_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/bookstore_aws_v1/cross_aisle_out_and_back.yaml
 map_products: []
 verification:
   resources_complete: true
-  world_loaded: false
-  sensors_checked: false
-  navigation_tested: false
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
   evidence_refs:
   - package: easyfly_gazebo_worlds
     path: evidence/bookstore_aws_v1/geometry-s3.json
   - package: easyfly_gazebo_worlds
     path: evidence/bookstore_aws_v1/inspection-s3-initial.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/bootstrap-s3-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/occupancy-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/calibration-s3-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/calibration-s3-before-observed.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/mission-s3-rejected-v1.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/mission-s3-rejected-v3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/telemetry-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/calibration-s3-before-native-v7.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/bookstore_aws_v1/mission-s3-final.json

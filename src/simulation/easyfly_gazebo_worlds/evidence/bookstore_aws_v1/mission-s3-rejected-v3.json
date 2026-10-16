@@ -1,0 +1,167 @@
+{
+  "scene": "bookstore_aws_v1",
+  "passed": false,
+  "error": "RuntimeError: unexpected real terminal: {'name': '/execute_mission', 'admission': 'received', 'accepted': True, 'goal_uuid': '68afce6192f34f0b802784cf33a0a0c8', 'status': 6, 'success': False, 'message': 'step_failed:fresh armed feedback not confirmed; no automatic compensation', 'terminal_state': {'source_ns': 22100000000, 'frame': 'odom', 'ros_now_ns': 22100000000, 'receipt': 14104.308926101, 'steady_now': 14104.537192054, 'armed': False, 'connected': True, 'mode': 3, 'mode_name': 'OFFBOARD', 'position': [0.002212835941463709, -0.01005189586430788, 0.0096435546875], 'velocity': [-0.0006905884365551174, -0.0026230979710817337, -0.0030490898061543703], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 16.200000762939453, 'battery_remaining': 1.0}}",
+  "forced": false,
+  "normal_exits": [
+    "123641",
+    "123676",
+    "124474",
+    "124434",
+    "124430",
+    "124416",
+    "124384",
+    "124386",
+    "124432",
+    "124355",
+    "124261",
+    "124369",
+    "124289",
+    "124003",
+    "124259",
+    "124001",
+    "124337",
+    "124287",
+    "124167",
+    "124171",
+    "124169",
+    "124472",
+    "123547",
+    "123999"
+  ],
+  "abnormal_lines": [],
+  "leftovers": [],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          2.918129737186625,
+          -5.447471639171854,
+          -0.05660591471354167
+        ],
+        "yaw": -0.014877402178822073
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 20300000000,
+        "frame": "odom",
+        "ros_now_ns": 20300000000,
+        "receipt": 14098.10741874,
+        "steady_now": 14098.286861727,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.001276148366741836,
+          -0.006070415955036879,
+          0.008453369140625
+        ],
+        "velocity": [
+          -0.0028681557159870863,
+          -0.0032634229864925146,
+          -0.004190398380160332
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "68afce6192f34f0b802784cf33a0a0c8"
+    }
+  ],
+  "action_status": {
+    "/navigate": {},
+    "/search_area": {},
+    "/follow_trajectory": {},
+    "/land": {},
+    "/takeoff": {
+      "f10dee4ee4c7ea40815a3d057fad1d18": {
+        "history": [
+          {
+            "steady": 14098.297903419,
+            "status": 2
+          },
+          {
+            "steady": 14104.534369178,
+            "status": 6
+          }
+        ],
+        "status": 6,
+        "last_steady": 14104.534413156,
+        "first_terminal": {
+          "steady": 14104.534370388,
+          "state": {
+            "source_ns": 22100000000,
+            "frame": "odom",
+            "ros_now_ns": 22100000000,
+            "receipt": 14104.308926101,
+            "steady_now": 14104.53439692,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.002212835941463709,
+              -0.01005189586430788,
+              0.0096435546875
+            ],
+            "velocity": [
+              -0.0006905884365551174,
+              -0.0026230979710817337,
+              -0.0030490898061543703
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      }
+    },
+    "/goto_waypoint": {}
+  },
+  "world_sha256": "24c090cd7d9cc5fc4d4efaf87bff34230ccf2fa76f54c66eae8667a5843ef0fd",
+  "loaded_libraries": {
+    "libeasyfly_imu_antialias.so": {
+      "pid": 123547,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+      "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+    },
+    "liblivox_laser_simulation.so": {
+      "pid": 123547,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+    },
+    "libgazebo_transport.so.11.10.2": {
+      "pid": 123547,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+      "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+    },
+    "libeasyfly_pointcloud_filter_nodes.so": {
+      "pid": 124384,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+      "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 124386,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+    },
+    "libplan_env.so": {
+      "pid": 124474,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+      "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+    }
+  },
+  "grid_footprint_mode": "observed_cells",
+  "raw_result": "artifacts/scene-s3-20261016/qualified-v3-bookstore-two-cycles/result.json",
+  "raw_result_sha256": "1c1b16ff6aa8b4b5073540d4f14d21d14e5507abb0f4e5fe11d0297f8baedd58",
+  "decision": "Retain failure. Native PX4 armed at 1792151417.9 but no distinct armed heartbeat arrived before the unchanged 3s wall confirmation. Select explicit simulation-only native HEARTBEAT 5Hz on the owned offboard link; do not alter bridge, controller deadlines, arming or feedback stamps.",
+  "scope": "Failed S3 bookstore preparation; not acceptance."
+}
