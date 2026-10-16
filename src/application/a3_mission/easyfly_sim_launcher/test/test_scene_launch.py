@@ -162,6 +162,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
     if managed:
         ready_catalog.scenes['test']['navigation']['ground_model_frame']='map'
         ready_catalog.scenes['test']['navigation']['grid_footprint_mode']='observed_cells'
+        ready_catalog.scenes['test']['runtime']['heartbeat_rate_hz']=5
         context.launch_configurations.update(scene='test',scene_profile=profile)
     description = module.generate_launch_description()
     guard_index = None
@@ -197,6 +198,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
     assert context.launch_configurations[PREFIX+'model_path']
     assert context.launch_configurations[PREFIX+'ground_model_frame']==('map' if managed else 'odom')
     assert context.launch_configurations[PREFIX+'grid_footprint_mode']==('observed_cells' if managed else 'cluster_boxes')
+    assert context.launch_configurations[PREFIX+'heartbeat_rate_hz']==('5' if managed else '1')
 
 
 def test_profile_scene_forwarding_and_headless(ready_catalog, monkeypatch):

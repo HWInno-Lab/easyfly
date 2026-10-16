@@ -433,6 +433,13 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "heartbeat_rate_hz": {
+          "type": "integer",
+          "enum": [
+            1,
+            5
+          ]
         }
       },
       "required": [

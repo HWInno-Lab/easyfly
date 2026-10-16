@@ -38,6 +38,7 @@ from launch_ros.actions import Node
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
+from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
 
 
@@ -331,6 +332,7 @@ def generate_launch_description():
         local_planner_ceiling_arg,
         semantic_capture_arg,
         navigation_strategy_arg,
+        heartbeat_configuration_action(px4_sitl, px4_dir),
         gzserver,
         spawn_delayed,
         px4_delayed,

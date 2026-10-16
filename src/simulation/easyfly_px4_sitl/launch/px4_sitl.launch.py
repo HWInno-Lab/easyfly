@@ -31,6 +31,7 @@ from launch.conditions import IfCondition
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
+from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
 
 
@@ -161,6 +162,7 @@ def generate_launch_description():
         set_model_path,
         set_plugin_path,
         set_ld_library_path,
+        heartbeat_configuration_action(px4_sitl, px4_dir),
         gzserver,
         spawn_delayed,
         gui_and_px4,

@@ -17,6 +17,7 @@ from ament_index_python.packages import get_package_prefix
 from easyfly_msgs.action import ExecuteMission
 from easyfly_px4_sitl.scene_environment import installed_catalog
 from rcl_interfaces.srv import GetParameters
+from mavros_msgs.msg import State as MavrosState
 from sensor_msgs.msg import Image, Imu, PointCloud2
 from livox_ros_driver2.msg import CustomMsg
 from rclpy.qos import qos_profile_sensor_data
@@ -77,6 +78,12 @@ class SceneProbe(navigation.Probe):
             self.node.create_subscription(kind,topic,lambda msg,name=topic:self.sensor(name,msg),qos_profile_sensor_data)
         self.tf_buffer=Buffer(node=self.node)
         self.tf_listener=TransformListener(self.tf_buffer,self.node)
+        self.mavros_state_trace=[]
+        def heartbeat(msg):
+            stamp=msg.header.stamp.sec*10**9+msg.header.stamp.nanosec
+            self.mavros_state_trace.append(dict(stamp=stamp,receipt=time.monotonic(),armed=msg.armed,mode=msg.mode))
+            self.mavros_state_trace=self.mavros_state_trace[-300:]
+        self.node.create_subscription(MavrosState,'/mavros/state',heartbeat,10)
         self.ground_cloud=None
         self.node.create_subscription(PointCloud2,'/pointcloud_filtered',
             lambda msg:setattr(self,'ground_cloud',msg),qos_profile_sensor_data)
@@ -199,6 +206,23 @@ class SceneProbe(navigation.Probe):
                         raise RuntimeError('loaded library differs from selected overlay: '+str(path))
                     loaded[path.name]=dict(pid=pid,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         self.report['loaded_libraries']=loaded
+        selected_rate=self.scene['runtime'].get('heartbeat_rate_hz',1)
+        if selected_rate!=1 and not (self.args.bootstrap and self.report.get('bootstrap_only_raw_debug_inputs')):
+            marker='EasyFly PX4 telemetry: '
+            lines=[line.split(marker,1)[1] for line in (self.directory/'console.log').read_text(errors='replace').splitlines() if marker in line]
+            if len(lines)!=1:
+                raise RuntimeError('managed PX4 heartbeat setup proof missing or duplicated')
+            telemetry=json.JSONDecoder().raw_decode(lines[0])[0]
+            if (telemetry['rate_hz']!=selected_rate or telemetry['pid'] not in self.owned or
+                telemetry['native_sha256']!=self.report['px4_sha256'] or telemetry['command_returncodes']!=[0,0,0]):
+                raise RuntimeError('managed PX4 heartbeat setup proof differs from owned native runtime')
+            self.wait(lambda:len(self.mavros_state_trace)>=6,10)
+            recent=self.mavros_state_trace[-6:]
+            gaps=[b['receipt']-a['receipt'] for a,b in zip(recent,recent[1:])]
+            if (max(gaps)>2.0 or any(b['stamp']<=a['stamp'] for a,b in zip(recent,recent[1:]))):
+                raise RuntimeError('native heartbeat cadence too slow for unchanged arm confirmation gate')
+            telemetry.update(observed_state_samples=recent,max_receipt_gap_seconds=max(gaps))
+            self.report['px4_telemetry']=telemetry
         parameter_client=self.node.create_client(GetParameters,'/easyfly_semantic_map/get_parameters')
         try:
             self.wait(parameter_client.service_is_ready,5)

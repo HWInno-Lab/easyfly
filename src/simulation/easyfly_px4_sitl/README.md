@@ -93,3 +93,13 @@ Managed scenes may explicitly set `navigation.grid_footprint_mode` to
 `cluster_boxes`; CLI overrides of a managed scene are rejected before startup.
 The selection is passed to the semantic node and its actual value is checked by
 the explicit scene acceptance probe alongside the loaded library hashes.
+
+Dense scenes may explicitly select `runtime.heartbeat_rate_hz: 5` (default 1).
+After the owned, pinned PX4 process reports successful startup, the launch parent
+uses its native `px4-mavlink` client to configure only HEARTBEAT on the local
+14580 / remote 14540 offboard link. PID parent, executable, start ticks, command
+results and native stream status must match. Setup failure stops launch. This
+changes native feedback cadence, never the arm command, armed state, timestamps
+or the controller's three-wall-second confirmation deadline. The explicit probe
+also requires six distinct MAVROS states with receipt gaps at most two seconds
+before a goal. Raw disarmed draft inspection keeps upstream telemetry.

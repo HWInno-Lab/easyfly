@@ -24,6 +24,7 @@ class SceneInputs:
     yaw: float
     ground_model_frame: str = 'odom'
     grid_footprint_mode: str = 'cluster_boxes'
+    heartbeat_rate_hz: int = 1
 
 
 def resolve_scene(catalog, scene_id, profile):
@@ -52,7 +53,8 @@ def resolve_scene(catalog, scene_id, profile):
                        str(catalog.resolve(scene['runtime']['entrypoint'])),
                        tuple(scene['spawn']['position']), scene['spawn']['yaw'],
                        scene['navigation'].get('ground_model_frame','odom'),
-                       scene['navigation'].get('grid_footprint_mode','cluster_boxes'))
+                       scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
+                       scene['runtime'].get('heartbeat_rate_hz',1))
 
 
 def selection_arguments(default_profile):
@@ -129,7 +131,8 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
     values = dict(world=result.world, model_path=result.model_path, model_sdf=result.model_sdf,
                   x=str(result.position[0]), y=str(result.position[1]), z=str(result.position[2]),
                   yaw=str(result.yaw),ground_model_frame=result.ground_model_frame,
-                  grid_footprint_mode=result.grid_footprint_mode)
+                  grid_footprint_mode=result.grid_footprint_mode,
+                  heartbeat_rate_hz=str(result.heartbeat_rate_hz))
     return [SetLaunchConfiguration(PREFIX + key, value) for key, value in values.items()]
 
 
