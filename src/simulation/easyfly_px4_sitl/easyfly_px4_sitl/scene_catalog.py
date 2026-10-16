@@ -194,6 +194,9 @@ class SceneCatalog:
         region = scene['navigation']['recommended_region']
         if region and any(a >= b for a, b in zip(region['min'], region['max'])):
             report.add('registration', 'invalid recommended region bounds')
+        if scene['navigation'].get('alignment_check', 'world_origin') == 'recommended_region' and (
+                region is None or scene['navigation']['world_to_navigation'] is None):
+            report.add('registration', 'recommended-region alignment requires measured transform and region')
         for loc in scene['recommended_missions'] + scene['map_products'] + scene['verification']['evidence_refs']:
             try:
                 if not self.resolve(loc).is_file():

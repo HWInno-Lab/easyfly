@@ -332,6 +332,22 @@ def test_invalid_region(catalog_data):
     assert not save(catalog_data).validate('test').as_dict()['registration_complete']
 
 
+def test_region_alignment_policy_requires_measured_region(catalog_data):
+    _, data = catalog_data
+    data['navigation']['alignment_check'] = 'recommended_region'
+    assert not save(catalog_data).validate('test').as_dict()['registration_complete']
+    data['navigation']['recommended_region'] = dict(min=[-.3,-.3,.5], max=[1.8,.3,2.3])
+    assert save(catalog_data).validate('test').as_dict()['registration_complete']
+    data['navigation']['world_to_navigation'] = None
+    assert not save(catalog_data).validate('test').as_dict()['registration_complete']
+
+
+def test_unknown_alignment_policy_is_not_silently_defaulted(catalog_data):
+    _, data = catalog_data
+    data['navigation']['alignment_check'] = 'guess'
+    with pytest.raises(CatalogError):save(catalog_data)
+
+
 def test_missing_plugin(catalog_data):
     _, data = catalog_data
     data['required_plugins'] = ['absent.so']

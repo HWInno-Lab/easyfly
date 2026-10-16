@@ -1,0 +1,121 @@
+schema_version: 1
+id: office_willowgarage_v1
+name: Willow Garage 办公室
+status: registered
+category: indoor/office
+tags:
+- office
+- static
+- rooms
+- corridor
+- navigation
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/office/office_willowgarage_v1.world
+  sha256: 67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6
+provenance:
+  status: recorded
+  source_url: null
+  revision: willowgarage_wrapper_v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/import-source.json
+  note: Project-authored wrapper; unchanged OSRF Willow Garage model separately CC-BY-3.0.
+    No upstream ROS code or robot imported.
+asset_sets:
+- osrf_willowgarage_v1
+- gazebo_builtin_v1
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - -6.0
+  - 10.0
+  - 0.1
+  yaw: 0.0
+  basis: 'Native ODE primary-building open room: floor z=0, 21,794 rays, sampled horizontal
+    clearance >=6.466m. Survey at 12 route-capsule samples: all 32 wall rays enclosed,
+    sampled clearance >=6.176m. Original model geometry/pose retained.'
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 5.826866823203025
+    - -10.101613774910064
+    - -0.07057074772135416
+    yaw: -0.016972912529447978
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+  alignment_check: recommended_region
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+  heartbeat_rate_hz: 5
+  clock_rate_hz: 100
+  battery_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/office_willowgarage_v1/room_out_and_back.yaml
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/import-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/geometry-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/bootstrap-s6-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/calibration-s6-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/mission-rejected-s6-v1.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/calibration-s6-region-v2.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/resource-audit-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/alignment-region-check-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/office_willowgarage_v1/mission-s6-final.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

@@ -1,0 +1,236 @@
+{
+  "scene": "office_willowgarage_v1",
+  "passed": true,
+  "scope": "Native ODE primary-building open-room geometry only, bounded 1.5m route. No doorway, all-room or whole-AABB navigation claim.",
+  "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+  "spawn": [
+    -6.0,
+    10.0,
+    0.1
+  ],
+  "route_world_start": [
+    -6.0,
+    10.0
+  ],
+  "route_world_end": [
+    -4.5,
+    10.0
+  ],
+  "floor_world_z_m": 0.0,
+  "rays": 21794,
+  "positions": 17,
+  "height_range_world_m": [
+    0.1,
+    4.0
+  ],
+  "azimuth_samples": 32,
+  "min_horizontal_clearance_m": 6.46614408493042,
+  "upward_no_hit": true,
+  "upward_ray_length_m": 25.0,
+  "native_models": [
+    {
+      "name": "ground_plane",
+      "static": "1",
+      "x": "0",
+      "y": "0",
+      "z": "0",
+      "minx": "-inf",
+      "miny": "-inf",
+      "minz": "-inf",
+      "maxx": "inf",
+      "maxy": "inf",
+      "maxz": "0"
+    },
+    {
+      "name": "willowgarage",
+      "static": "1",
+      "x": "-20",
+      "y": "-20",
+      "z": "0",
+      "minx": "-19.982537500560284",
+      "miny": "-20.846934020519257",
+      "minz": "0",
+      "maxx": "751.051513671875",
+      "maxy": "53.260330200195312",
+      "maxz": "2.8447999954223633"
+    }
+  ],
+  "survey": {
+    "raw": "artifacts/scene-s6-office-20261017/geometry-survey-v4.csv",
+    "sha256": "0e7b02b517ce161c431ab93a6c9865d541e603eba5f6a93c76e54ddb0f31c90a",
+    "roi_world_xy": [
+      -20,
+      39,
+      -21,
+      25
+    ],
+    "grid_step_m": 0.5,
+    "points": 11067,
+    "enclosure_height_above_floor_m": 1.5,
+    "capsule_samples": [
+      {
+        "x": "-6",
+        "y": "9.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.4661440849304199",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-6",
+        "y": "10",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.4661440849304199",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-6",
+        "y": "10.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.176450252532959",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5.5",
+        "y": "9.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.9661436080932617",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5.5",
+        "y": "10",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.6764249801635742",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5.5",
+        "y": "10.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.1764249801635742",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5",
+        "y": "9.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "7.176398754119873",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5",
+        "y": "10",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.6763992309570312",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-5",
+        "y": "10.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.1763992309570312",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-4.5",
+        "y": "9.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "7.1763739585876465",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-4.5",
+        "y": "10",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.6763739585876465",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      },
+      {
+        "x": "-4.5",
+        "y": "10.5",
+        "floor_z": "0",
+        "floor_entity": "ground_plane::link::collision",
+        "clearance_m": "6.1763739585876465",
+        "enclosure_hits": "32",
+        "upward_distance_m": "1000",
+        "upward_entity": ""
+      }
+    ],
+    "minimum_capsule_sample_clearance_m": 6.1763739585876465,
+    "execution": {
+      "source_sha256": "0af9d769e80c162276cd3e4165730cbb5bf5ba56e38b69f3dffbbbd6d8fff6f6",
+      "binary_sha256": "7da73cd25bb4ab987b2d4d48f65c8ff1a1cb10a70da613e02644c61035e7b576",
+      "roi": [
+        -20,
+        39,
+        -21,
+        25
+      ],
+      "step_m": 0.5,
+      "returncode": 0
+    }
+  },
+  "probe_source": "tools/scenes/forest_geometry_probe.cpp",
+  "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+  "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+  "raw_rays": "artifacts/scene-s6-office-20261017/geometry-room.csv",
+  "raw_rays_sha256": "854d92efcad211d34e934b363b229d993de098a6b1c71c5179593894d17b803c",
+  "raw_models_sha256": "9d8d7866347b151585acad5cdb537b2ca7c3bfea23ee8dc3d0978a989fb30532",
+  "raw_links_sha256": "794a82ebab3b2c3167b3eb6205229ead14090eaa4091ef9bf8425f9befb96f36",
+  "returncode": 0,
+  "original_distant_geometry": {
+    "id": "ID635",
+    "type": "lines",
+    "vertices": 5,
+    "segments": 8,
+    "triangle_count": 0,
+    "world_x_range_m": [
+      750.949944,
+      751.051544
+    ],
+    "world_y_range_m": [
+      53.107931,
+      53.260331
+    ],
+    "retained": true,
+    "note": "Original distant line marker expands the native model AABB. Not removed, not used to infer indoor floor or whole-world navigation."
+  },
+  "limitations": [
+    "Ray/ROI sampling is not an exact continuous-distance proof for arbitrary paths.",
+    "Coincident z=0 floor returns builtin ground first; all samples retain actual entities.",
+    "No source visual/collision mesh, scale, unit or model pose changed."
+  ]
+}

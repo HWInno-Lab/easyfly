@@ -1,0 +1,18 @@
+{
+  "scene": "office_willowgarage_v1",
+  "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+  "wrapper_license": "Apache-2.0",
+  "asset_set": "osrf_willowgarage_v1",
+  "source_revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+  "model_files": 14,
+  "selected_payload_bytes": 3341870,
+  "source_model_pose": "-20 -20 0 0 0 0",
+  "source_model_files_changed": false,
+  "collision_mesh_sha256": "42975c9b73ba8c18f6a7b09fc50b6c2de100e72c5c7ab034e01aacd9c2a2fe11",
+  "visual_mesh_sha256": "fb6261f2d2d12b3dc03dbd1c15163a1e2018d72940c6c3c373c692ffb697fd31",
+  "changes": [
+    "New project-authored SDF 1.6 wrapper, builtin sun/ground, native 1ms ODE.",
+    "No upstream ROS package, robots, launch code, plugins, saved clock or map products imported."
+  ],
+  "limitations": "Geometry and native sensor/navigation qualification required independently; no model, prior forest or third-party office benchmark PASS inherited."
+}

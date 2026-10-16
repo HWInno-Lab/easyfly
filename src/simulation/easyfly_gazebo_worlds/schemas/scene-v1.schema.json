@@ -235,6 +235,11 @@
     "navigation": {
       "type": "object",
       "properties": {
+        "alignment_check": {
+          "type": "string",
+          "enum": ["world_origin", "recommended_region"],
+          "description": "Explicit qualification comparison domain; omitted preserves world-origin comparison."
+        },
         "frame": {
           "const": "odom"
         },

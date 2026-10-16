@@ -1,0 +1,146 @@
+{
+  "stage": "S6",
+  "office_category_expansion_complete": true,
+  "S6_complete": false,
+  "scene": "office_willowgarage_v1",
+  "category": "indoor/office",
+  "scope": "One unchanged OSRF office model in a project-authored wrapper; bounded primary-building open-room takeoff/1.5m out-and-back/landing only. Not doorways, narrow hallways, all rooms or whole-AABB navigation.",
+  "catalog": {
+    "total": 14,
+    "registered": 9,
+    "draft": 5
+  },
+  "asset": {
+    "id": "osrf_willowgarage_v1",
+    "manifest_sha256": "04568685387aaabb16702e1c11a992975cbd121b3a5983176c26c125b820283f",
+    "storage": "cached",
+    "model_count": 1,
+    "locked_files": 14,
+    "payload_bytes": 3341870,
+    "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+    "declared_license": "CC-BY-3.0",
+    "source_url": "https://github.com/osrf/gazebo_models",
+    "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+    "archive_bytes": 227118253,
+    "cache_lock": "00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0",
+    "payload_installed": false,
+    "all_fourteen_model_files_unchanged": true
+  },
+  "evidence": [
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/import-source.json",
+      "sha256": "532bdae62d26e34f6cc9f67eedd59b252cef5a1ef357749159b68b2650dd46ed"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/geometry-s6.json",
+      "sha256": "6764a11f16bd3b0692de3af70123a8b14c94a998054fc59ebc16087a3899b8f5"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/resource-audit-s6.json",
+      "sha256": "e0b20f5062fec391da492a4a2a32b3adcb38a1b36ae3fe0c63c9a86abe3d65c6"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/bootstrap-s6-qualified.json",
+      "sha256": "f659e4afb1699ce9849d2789eed0c0d3a4976c9654a63814591f7e42dbc84bb9"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/calibration-s6-region-v2.json",
+      "sha256": "37e52974ed031a27f95baf17d23f12506691e8e0981f478a9c3125ee2bf6478e"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/mission-rejected-s6-v1.json",
+      "sha256": "cd98c200730a16d7e30b4147d98fbe6177cac5a5336244c6a9cfbe69667168f8"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/alignment-region-check-s6.json",
+      "sha256": "3048efb4825397f1276514c474f4384732a4932407540f3ef66abd9a7095ed90"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/office_willowgarage_v1/mission-s6-final.json",
+      "sha256": "8f88ca50b5013ffea6b2e9139d478d98c882e7d3bd5205871cc6cbb7989c209c"
+    }
+  ],
+  "formal_matrix": {
+    "cold_starts": 2,
+    "installation_modes": [
+      "normal",
+      "symlink"
+    ],
+    "mission_runs": 1,
+    "mission_cycles": 2,
+    "parent_missions": 2,
+    "navigation_goals": 4,
+    "max_navigation_error_m": 0.09257999692989707,
+    "normal_exits": 72,
+    "all_runs_network_isolated": true,
+    "interfaces": [
+      "lo"
+    ],
+    "no_external_routes": true,
+    "forced_cleanup": false,
+    "leftovers": false,
+    "draft_disarmed_inspection_normal_exits": 24
+  },
+  "runtime": {
+    "clock_rate_hz": 100,
+    "heartbeat_rate_hz": 5,
+    "battery_rate_hz": 5,
+    "clock_publisher": "native gazebo_ros_init",
+    "feedback_publisher": "native PX4/MAVROS",
+    "physics_and_sensor_configuration_unchanged": true,
+    "flight_admission_and_freshness_thresholds_unchanged": true,
+    "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "scene_probe_sha256": "981f28efd333718c7b56817e2cda6d3ece48f3d08e86c5340306ee1dd063660d",
+    "required_px4_compatibility": [
+      "mag_lpf_interval_v1"
+    ],
+    "qualification_alignment_contract": {
+      "policy": "recommended_region",
+      "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+      "maximum_position_error_m": 0.2,
+      "maximum_yaw_error_rad": 0.1
+    }
+  },
+  "validation": {
+    "installations": [
+      {
+        "mode": "normal",
+        "ordinary_test_result_records": 324,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "installed_cli_checks": 44
+      },
+      {
+        "mode": "symlink",
+        "ordinary_test_result_records": 324,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "installed_cli_checks": 44
+      }
+    ],
+    "import_reproduction": true,
+    "ordinary_tests_start_flight": false
+  },
+  "preserved_audit_failures": [
+    "Clearpath fixed-version source audit deferred after git TLS failure; no assets imported.",
+    "Two standalone survey budget/cleanup failures, interrupted only owned probe processes; native survey rejection now drains.",
+    "v3 floor-owner filter rejected coincident z=0 ground support; actual entities and independent wall enclosure recorded in v4.",
+    "Original world-origin contract completed first mission then rejected the second before any goal; retained separately from explicit region-policy matrix."
+  ],
+  "deferred": {
+    "hospital": {
+      "extra_fuel_models": 43,
+      "reason": "Each external model needs a reviewed version/license/dependency lock; not imported."
+    },
+    "additional_office_routes": "not qualified; no doorway/whole-building acceptance inherited"
+  },
+  "limitations": [
+    "Original distant collision-mesh line marker ID635 retained; no asset geometry/pose/unit edits.",
+    "Ray/ROI sampling is not an exact continuous-distance proof for arbitrary paths.",
+    "Camera duplicate-stamp counters retained under existing gates; no all-frame camera monotonicity claim.",
+    "No long-duration, modern-Gazebo or hardware acceptance."
+  ],
+  "raw_artifacts": "artifacts/scene-s6-office-20261017"
+}

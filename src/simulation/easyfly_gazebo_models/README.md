@@ -89,3 +89,25 @@ reproduces the fixed asset manifest, notices, derived world and layout record
 from local source bytes. It neither executes upstream code nor overwrites files.
 The derived world preserves ETHZ's twenty original poses/scales but uses these
 separately licensed pine meshes; original TurboSquid tree assets are not imported.
+
+## S6 Willow Garage office cache asset
+
+`osrf_willowgarage_v1` selects fourteen unchanged `willowgarage` files from the
+same official Open Robotics snapshot, `8163eb4b5e7e21985c6591d1c0bfb56468c0093f`.
+The repository declares CC-BY-3.0; original author Nate Koenig, copyright notice,
+source and license links are retained under `licenses/osrf_willowgarage/`.
+Both visual/collision meshes, seven textures and every SDF version referenced by
+`model.config` are locked. No upstream ROS package or plugin is imported.
+
+Prepare it explicitly with `scene_catalog fetch office_willowgarage_v1`.
+The selected payload is 3,341,870 bytes. The 227,118,253-byte official archive,
+original license and extracted model stay in the external cache, outside ROS
+installation. `--archive` can reuse the same reviewed archive already used for
+the pine model, without another network download. Subsequent office layouts can
+reuse this one model asset. Missing/corrupt caches are rejected before startup.
+
+`tools/scenes/import_osrf_office.py <archive> --check` reproduces the asset lock,
+attribution, project-authored wrapper world and import record from local bytes.
+Original inch units, mesh transforms and model pose `(-20,-20,0)` remain intact.
+The collision DAE includes a distant line marker (`ID635`); it is retained and
+documented in the office geometry evidence, not silently removed or rescaled.

@@ -1,0 +1,770 @@
+{
+  "scene": "office_willowgarage_v1",
+  "error": "RuntimeError: current alignment differs from scene reference; no flight goal sent",
+  "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+  "scene_probe_sha256": "0ebeab5a10919610253c53bcd9356d5ef9e3e975a617e0b4d8fb4f1cd2752466",
+  "world_to_navigation": {
+    "translation": [
+      6.13492418707231,
+      -9.913270163500412,
+      -0.11659926822916666
+    ],
+    "yaw": 0.013460973825628143
+  },
+  "inspections": [
+    {
+      "index": 1,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            -6.0,
+            10.0,
+            0.054371,
+            0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -0.0016759777208790183,
+            -0.0016281410353258252,
+            0.008941650390625
+          ],
+          "yaw": -0.013267776959250648,
+          "translation": [
+            5.8651220513139615,
+            -10.080352310617155,
+            -0.045429349609375
+          ],
+          "state": {
+            "source_ns": 19230000000,
+            "frame": "odom",
+            "ros_now_ns": 19420000000,
+            "receipt": 15025.401040149,
+            "steady_now": 15025.401354725,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0016759777208790183,
+              -0.0016281410353258252,
+              0.008941650390625
+            ],
+            "velocity": [
+              -0.001097239670343697,
+              -0.0038250626530498266,
+              -0.0021596751175820827
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 19090000000,
+            "frame": "odom",
+            "ros_now_ns": 19090000000,
+            "receipt": 15024.873387653,
+            "steady_now": 15024.96190561,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0002820776426233351,
+              -0.0015850667841732502,
+              0.009185791015625
+            ],
+            "velocity": [
+              -0.0001234331721207127,
+              -0.004176950082182884,
+              -0.002133660251274705
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -6.0,
+            10.0,
+            0.054371,
+            -0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            -7.817678124411032e-05,
+            -0.0015839654952287674,
+            0.006195068359375
+          ],
+          "yaw": -0.013386115647453926,
+          "translation": [
+            5.865527108179937,
+            -10.081002333686692,
+            -0.048175931640625
+          ],
+          "state": {
+            "source_ns": 19970000000,
+            "frame": "odom",
+            "ros_now_ns": 20130000000,
+            "receipt": 15026.396331778,
+            "steady_now": 15026.396421853,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -7.817678124411032e-05,
+              -0.0015839654952287674,
+              0.006195068359375
+            ],
+            "velocity": [
+              -0.00022276470554061234,
+              -0.003819654695689678,
+              -0.0031089249532669783
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 19720000000,
+            "frame": "odom",
+            "ros_now_ns": 19730000000,
+            "receipt": 15025.820805376,
+            "steady_now": 15025.913335598,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0023570212069898844,
+              -0.0015905037289485335,
+              0.007171630859375
+            ],
+            "velocity": [
+              -0.0015527784125879407,
+              -0.004252398386597633,
+              -0.00270077190361917
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -6.0,
+            10.0,
+            0.054371,
+            -0.0,
+            0.0,
+            -0.0
+          ],
+          "odom_position": [
+            0.001086362637579441,
+            0.001576844952069223,
+            0.003204345703125
+          ],
+          "yaw": -0.013350272482072847,
+          "translation": [
+            5.867052922090332,
+            -10.077631274904473,
+            -0.051166654296875
+          ],
+          "state": {
+            "source_ns": 20730000000,
+            "frame": "odom",
+            "ros_now_ns": 20880000000,
+            "receipt": 15027.473300484,
+            "steady_now": 15027.4735369,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.001086362637579441,
+              0.001576844952069223,
+              0.003204345703125
+            ],
+            "velocity": [
+              -0.0013812690740451217,
+              -0.0013430762337520719,
+              -0.0037894458509981632
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 20490000000,
+            "frame": "odom",
+            "ros_now_ns": 20490000000,
+            "receipt": 15026.883183623,
+            "steady_now": 15026.901753832,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.0011941823177039623,
+              -0.001058011082932353,
+              0.00347900390625
+            ],
+            "velocity": [
+              -0.0007650199113413692,
+              -0.0025346516631543636,
+              -0.0035061673261225224
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          5.86590069386141,
+          -10.07966197306944,
+          -0.04825731184895834
+        ],
+        "yaw": -0.013334721696268058
+      },
+      "settled_preflight_state": {
+        "source_ns": 19090000000,
+        "frame": "odom",
+        "ros_now_ns": 19090000000,
+        "receipt": 15024.873387653,
+        "steady_now": 15024.961894182,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0002820776426233351,
+          -0.0015850667841732502,
+          0.009185791015625
+        ],
+        "velocity": [
+          -0.0001234331721207127,
+          -0.004176950082182884,
+          -0.002133660251274705
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    },
+    {
+      "index": 2,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            -5.97039,
+            10.026,
+            0.054791,
+            -0.000483,
+            -0.000405,
+            -1.34803
+          ],
+          "odom_position": [
+            0.03050672821700573,
+            0.033078309148550034,
+            -0.0728759765625
+          ],
+          "yaw": 0.013465209092110797,
+          "translation": [
+            6.135353591960899,
+            -9.911622667871137,
+            -0.1276669765625
+          ],
+          "state": {
+            "source_ns": 81240000000,
+            "frame": "odom",
+            "ros_now_ns": 81420000000,
+            "receipt": 15114.761297208,
+            "steady_now": 15114.761468478,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.03050672821700573,
+              0.033078309148550034,
+              -0.0728759765625
+            ],
+            "velocity": [
+              -0.002032014774158597,
+              -0.0007093913154676557,
+              -0.003593068802729249
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 81040000000,
+            "frame": "odom",
+            "ros_now_ns": 81080000000,
+            "receipt": 15114.278569273,
+            "steady_now": 15114.308074677,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.030634114518761635,
+              0.03480358421802521,
+              -0.076751708984375
+            ],
+            "velocity": [
+              -0.001699546235613525,
+              0.00034397433046251535,
+              -0.004878620617091656
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.97039,
+            10.026,
+            0.054791,
+            -0.000483,
+            -0.000405,
+            -1.34803
+          ],
+          "odom_position": [
+            0.0300796739757061,
+            0.030818575993180275,
+            -0.06146240234375
+          ],
+          "yaw": 0.013485485503503813,
+          "translation": [
+            6.135128179312825,
+            -9.91375861459572,
+            -0.11625340234375
+          ],
+          "state": {
+            "source_ns": 82030000000,
+            "frame": "odom",
+            "ros_now_ns": 82220000000,
+            "receipt": 15115.774580593,
+            "steady_now": 15115.774720701,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.0300796739757061,
+              0.030818575993180275,
+              -0.06146240234375
+            ],
+            "velocity": [
+              -0.0022979427594691515,
+              -0.0015928569482639432,
+              -0.00024012470385059714
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 81800000000,
+            "frame": "odom",
+            "ros_now_ns": 81820000000,
+            "receipt": 15115.227508864,
+            "steady_now": 15115.266249147,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.030002105981111526,
+              0.03089233674108982,
+              -0.065460205078125
+            ],
+            "velocity": [
+              -0.002365174237638712,
+              -0.001722036860883236,
+              -0.0014764344086870551
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            -5.97039,
+            10.026,
+            0.054791,
+            -0.000483,
+            -0.000405,
+            -1.34803
+          ],
+          "odom_position": [
+            0.029771927744150162,
+            0.030473114922642708,
+            -0.05108642578125
+          ],
+          "yaw": 0.013432226881268328,
+          "translation": [
+            6.134290789943208,
+            -9.914429208034377,
+            -0.10587742578125
+          ],
+          "state": {
+            "source_ns": 82780000000,
+            "frame": "odom",
+            "ros_now_ns": 82950000000,
+            "receipt": 15116.801997556,
+            "steady_now": 15116.802194237,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.029771927744150162,
+              0.030473114922642708,
+              -0.05108642578125
+            ],
+            "velocity": [
+              -0.002432470442727208,
+              -0.00263966410420835,
+              0.0019702871795743704
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 82510000000,
+            "frame": "odom",
+            "ros_now_ns": 82530000000,
+            "receipt": 15116.227586676,
+            "steady_now": 15116.275019935,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.02983236312866211,
+              0.030384378507733345,
+              -0.05474853515625
+            ],
+            "velocity": [
+              -0.0025690130423754454,
+              -0.0024089517537504435,
+              0.0013707451289519668
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          6.13492418707231,
+          -9.913270163500412,
+          -0.11659926822916666
+        ],
+        "yaw": 0.013460973825628143
+      },
+      "settled_preflight_state": {
+        "source_ns": 81040000000,
+        "frame": "odom",
+        "ros_now_ns": 81080000000,
+        "receipt": 15114.278569273,
+        "steady_now": 15114.308068204,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.030634114518761635,
+          0.03480358421802521,
+          -0.076751708984375
+        ],
+        "velocity": [
+          -0.001699546235613525,
+          0.00034397433046251535,
+          -0.004878620617091656
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    }
+  ],
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          5.86590069386141,
+          -10.07966197306944,
+          -0.04825731184895834
+        ],
+        "yaw": -0.013334721696268058
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 21230000000,
+        "frame": "odom",
+        "ros_now_ns": 21280000000,
+        "receipt": 15027.920313499,
+        "steady_now": 15027.985959939,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.0007560423109680414,
+          0.002795090898871422,
+          0.001190185546875
+        ],
+        "velocity": [
+          -0.0015929952496662736,
+          -0.001192255411297083,
+          -0.004142232704907656
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "0e5386355e0947309509321b15c2c93b",
+      "status": 4,
+      "navigation_uuids": [
+        "82886ad9d53caecf6a03c50526ae0b3d",
+        "9cc1553a4bdc02f4627fb969dd2186f8"
+      ],
+      "navigation_terminal_errors_m": [
+        0.09147577862636275,
+        0.08697387605316016
+      ],
+      "landed_state": {
+        "source_ns": 74100000000,
+        "frame": "odom",
+        "ros_now_ns": 74120000000,
+        "receipt": 15104.476857682,
+        "steady_now": 15104.515696863,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.027939260005950928,
+          0.03011852130293846,
+          -0.1490478515625
+        ],
+        "velocity": [
+          -0.008590294048190117,
+          -0.0011173441307619214,
+          -0.07919793576002121
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.5199999809265137
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map"
+      },
+      "recovery_seconds": 5.8119907780001085,
+      "recovered_state": {
+        "source_ns": 78430000000,
+        "frame": "odom",
+        "ros_now_ns": 78430000000,
+        "receipt": 15110.327406493,
+        "steady_now": 15110.327706107,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.03320440277457237,
+          0.03676029294729233,
+          -0.119293212890625
+        ],
+        "velocity": [
+          0.0003469621588010341,
+          0.003688322613015771,
+          -0.02288987673819065
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.9900000095367432
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.08195423686467435,
+          0.05365479152871177,
+          0.024588316236344387
+        ],
+        "basis": {
+          "source_ns": 78408995002,
+          "age_s": 0.021004998,
+          "translation": [
+            0.04842702141702608,
+            0.0173618976518893,
+            0.1439343418146075
+          ],
+          "quaternion_xyzw": [
+            -0.00017252773052268855,
+            0.0006025314621044612,
+            -0.0063870406576830374,
+            0.9999794062387767
+          ]
+        }
+      }
+    }
+  ],
+  "landing_reference_anchor": {
+    "frame": "map",
+    "position": [
+      0.03395466093732952,
+      0.03752824926796382,
+      0.004797562393749361
+    ],
+    "basis": {
+      "source_ns": 21206775001,
+      "age_s": 0.073224999,
+      "translation": [
+        0.033234414469187866,
+        0.03472374693045294,
+        0.003607316028939379
+      ],
+      "quaternion_xyzw": [
+        0.00015946843122199421,
+        0.0005636713992846527,
+        0.006632058663708988,
+        0.9999778360755074
+      ]
+    }
+  },
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "normal_exits": [
+    "84762",
+    "84803",
+    "85620",
+    "85577",
+    "85573",
+    "85516",
+    "85518",
+    "85503",
+    "85556",
+    "85469",
+    "85575",
+    "85490",
+    "85380",
+    "85133",
+    "85416",
+    "85378",
+    "85131",
+    "85414",
+    "85283",
+    "85618",
+    "85285",
+    "85287",
+    "84661",
+    "85129"
+  ],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "passed": false,
+  "scope": "Original world-origin alignment contract: first mission completed; second goal not sent after raw translation-component error 0.35178489m exceeded 0.2m. Rejected result remains rejected.",
+  "raw_result": "artifacts/scene-s6-office-20261017/qualified-two-cycles/result.json",
+  "raw_result_sha256": "ce451eb8996e39f229de31747af0c5bda750bd6e2475237e015fc4e7da0f499b",
+  "final_disarmed_state_recorded": false,
+  "settled_disarmed_before_rejection": {
+    "source_ns": 81040000000,
+    "frame": "odom",
+    "ros_now_ns": 81080000000,
+    "receipt": 15114.278569273,
+    "steady_now": 15114.308068204,
+    "armed": false,
+    "connected": true,
+    "mode": 3,
+    "mode_name": "OFFBOARD",
+    "position": [
+      0.030634114518761635,
+      0.03480358421802521,
+      -0.076751708984375
+    ],
+    "velocity": [
+      -0.001699546235613525,
+      0.00034397433046251535,
+      -0.004878620617091656
+    ],
+    "pose_valid": true,
+    "velocity_valid": true,
+    "battery_valid": true,
+    "battery_voltage": 16.200000762939453,
+    "battery_remaining": 1.0
+  },
+  "readonly_region_analysis": "artifacts/scene-s6-office-20261017/alignment-region-readonly-analysis.json"
+}

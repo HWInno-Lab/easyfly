@@ -1,0 +1,220 @@
+{
+  "scene": "office_willowgarage_v1",
+  "scope": "Explicit qualification comparison domain correction; original rejected run stays rejected. Independent native matrix still required.",
+  "legacy_policy": "world_origin (default unchanged)",
+  "selected_policy": "recommended_region",
+  "region": {
+    "min": [
+      -0.3,
+      -0.3,
+      0.5
+    ],
+    "max": [
+      1.8,
+      0.3,
+      2.3
+    ]
+  },
+  "unchanged_limits": {
+    "stationary_position_m": 0.15,
+    "cold_pair_position_m": 0.15,
+    "before_mission_position_m": 0.2,
+    "yaw_rad": 0.1
+  },
+  "original_rejection": {
+    "raw_result": "artifacts/scene-s6-office-20261017/qualified-two-cycles/result.json",
+    "raw_result_sha256": "ce451eb8996e39f229de31747af0c5bda750bd6e2475237e015fc4e7da0f499b",
+    "translation_component_error_m": 0.3517848855085429,
+    "max_region_error_m": 0.08551788076322273,
+    "reference": {
+      "translation": [
+        5.838792194730354,
+        -10.0926908604383,
+        -0.0544167763671875
+      ],
+      "yaw": -0.015715519834737887
+    },
+    "measured": {
+      "translation": [
+        6.13492418707231,
+        -9.913270163500412,
+        -0.11659926822916666
+      ],
+      "yaw": 0.013460973825628143
+    },
+    "corners": [
+      {
+        "reference_corner": [
+          -0.3,
+          -0.3,
+          0.5
+        ],
+        "world": [
+          -6.291925031032893,
+          9.695011258480099,
+          0.5544167763671874
+        ],
+        "measured_projection": [
+          -0.2869311626731035,
+          -0.3038301295993566,
+          0.4378175081380208
+        ],
+        "error_m": 0.06365631701559447
+      },
+      {
+        "reference_corner": [
+          -0.3,
+          -0.3,
+          2.3
+        ],
+        "world": [
+          -6.291925031032893,
+          9.695011258480099,
+          2.3544167763671875
+        ],
+        "measured_projection": [
+          -0.2869311626731035,
+          -0.3038301295993566,
+          2.2378175081380207
+        ],
+        "error_m": 0.06365631701559436
+      },
+      {
+        "reference_corner": [
+          -0.3,
+          0.3,
+          0.5
+        ],
+        "world": [
+          -6.301353954800448,
+          10.294937166735933,
+          0.5544167763671874
+        ],
+        "measured_projection": [
+          -0.3044345752741302,
+          0.29591450818185727,
+          0.4378175081380208
+        ],
+        "error_m": 0.06247414661620557
+      },
+      {
+        "reference_corner": [
+          -0.3,
+          0.3,
+          2.3
+        ],
+        "world": [
+          -6.301353954800448,
+          10.294937166735933,
+          2.3544167763671875
+        ],
+        "measured_projection": [
+          -0.3044345752741302,
+          0.29591450818185727,
+          2.2378175081380207
+        ],
+        "error_m": 0.062474146616205456
+      },
+      {
+        "reference_corner": [
+          1.8,
+          -0.3,
+          0.5
+        ],
+        "world": [
+          -4.192184352137479,
+          9.728012491666544,
+          0.5544167763671874
+        ],
+        "measured_projection": [
+          1.8121750695611398,
+          -0.2425681854957631,
+          0.4378175081380208
+        ],
+        "error_m": 0.08551788076322273
+      },
+      {
+        "reference_corner": [
+          1.8,
+          -0.3,
+          2.3
+        ],
+        "world": [
+          -4.192184352137479,
+          9.728012491666544,
+          2.3544167763671875
+        ],
+        "measured_projection": [
+          1.8121750695611398,
+          -0.2425681854957631,
+          2.2378175081380207
+        ],
+        "error_m": 0.08551788076322264
+      },
+      {
+        "reference_corner": [
+          1.8,
+          0.3,
+          0.5
+        ],
+        "world": [
+          -4.201613275905035,
+          10.327938399922377,
+          0.5544167763671874
+        ],
+        "measured_projection": [
+          1.794671656960114,
+          0.3571764522854508,
+          0.4378175081380208
+        ],
+        "error_m": 0.084641598695123
+      },
+      {
+        "reference_corner": [
+          1.8,
+          0.3,
+          2.3
+        ],
+        "world": [
+          -4.201613275905035,
+          10.327938399922377,
+          2.3544167763671875
+        ],
+        "measured_projection": [
+          1.794671656960114,
+          0.3571764522854508,
+          2.2378175081380207
+        ],
+        "error_m": 0.08464159869512292
+      }
+    ]
+  },
+  "invariant": "Evaluate both measured world-to-navigation transforms on the same fixed world points corresponding to the eight reference-navigation region corners. The affine error norm throughout the box is bounded by the corner maximum; world coordinate translation does not change it.",
+  "checks": [
+    "No default policy change for any existing scene.",
+    "Explicit measured transform and finite region required.",
+    "Actual navigate/takeoff targets must remain inside the checked region.",
+    "Raw origin-component errors retained as diagnostics.",
+    "Real position/yaw excess rejected before mission resolution/goals."
+  ],
+  "source_fingerprints": [
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_alignment.py",
+      "sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py",
+      "sha256": "981f28efd333718c7b56817e2cda6d3ece48f3d08e86c5340306ee1dd063660d"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/schemas/scene-v1.schema.json",
+      "sha256": "4b87b5a7862df6739a4c970b053ebff00ef0baef51be1beeb7b8ec475a82dc0a"
+    }
+  ],
+  "focused_tests": {
+    "result": "79 passed",
+    "raw": "artifacts/scene-s6-office-20261017/alignment-tests-final.log",
+    "sha256": "3b1615bbe9b2b3811e6d7f170b58458b8b715a921b425d666518192a4dd5feec"
+  },
+  "changes_to_estimator_control_physics_sensors_or_timestamps": false
+}

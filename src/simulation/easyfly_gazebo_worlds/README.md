@@ -261,3 +261,43 @@ ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene
 此前草稿检查另有24正常退出。证据为`calibration-s6-final.json`、
 `mission-s6-final.json`及`evidence/scene-s6-forest-signoff.json`。
 常规测试及两种安装各36个CLI检查通过。S6整体仍未完成，办公室和医院依赖待续。
+
+## S6 Willow Garage 办公室
+
+`office_willowgarage_v1`归类`indoor/office`，使用官方OSRF模型固定提交
+`8163eb4b5e7e21985c6591d1c0bfb56468c0093f`。14个模型文件保持原字节，
+原作者Nate Koenig、CC-BY-3.0 notice、许可链接及来源保存在model包
+`licenses/osrf_willowgarage/`。EasyFly只新建Apache-2.0包装world，
+不引入上游机器人、ROS1工程、插件或预生成导航地图。
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog fetch office_willowgarage_v1
+ros2 run easyfly_sim_launcher scene_catalog validate office_willowgarage_v1 --json
+ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene:=office_willowgarage_v1 headless:=true
+```
+
+需要source当前安装前缀及已审核运行库，并选择含`mag_lpf_interval_v1`的PX4构建。
+缓存资源`osrf_willowgarage_v1`须显式准备；也可用固定归档`--archive`离线导入。
+启动不自动下载、不解锁或发送任务，模型载荷与原归档不进入ROS安装目录。
+
+首轮范围为主体内开阔区域，world出生点`(-6,10,0.1)`，参考任务在odom中
+1.5m高度、1.5m往返，位于`missions/scenes/office_willowgarage_v1/room_out_and_back.yaml`。
+主体11,067点原生调查用于选择路线；另有21,794条ODE射线，最小采样水平净距6.466m，
+实际地面z=0，12个路线及两侧样本的32方位壁面均闭合。原模型位姿、单位、几何未改。
+原collision DAE还带远处线段标记ID635，撑大包围盒；该标记保留，未用于室内路线。
+不把所选开阔区域通过扩展为门洞、窄走廊、所有房间、完整包围盒或长时间导航通过。
+资格状态及当前运行时以scene清单和逐项证据为准。
+
+办公室显式选择`navigation.alignment_check: recommended_region`。验收将原先登记的
+推荐飞行区域8角点映射回固定world点，比较参考/实测变换在这些实际任务位置的差异，
+并保留原点平移分量差供诊断。这样改变world坐标原点不会改变区域内的对齐误差。
+静止/冷启动位置门限仍为0.15m，逐任务0.2m，航向0.1rad；任务的实际起飞/导航目标
+必须在所检查区域内。原先采用world原点分量时第二轮被拒绝的证据独立保留。
+该字段省略仍用既有`world_origin`策略，其他场景清单及其历史签收不改。
+
+2026-10-17签收：当前区域策略下，两种安装各一次独立断网受管冷启动及同仿真两轮
+参考任务通过。4个导航UUID成功，最大到位误差0.092580m；两次落地恢复5.66/5.45墙秒。
+正式矩阵72正常退出，无强制/异常/所属残留；两种安装各324常规测试结果及44项CLI通过。
+当前证据为`calibration-s6-region-v2.json`、`mission-s6-final.json`和
+`evidence/scene-s6-office-signoff.json`；原策略的拒绝与冷启动记录单独保留。
+当前目录14图、9 registered、5 draft。S6整体未完成，医院43个Fuel外部依赖仍待逐项审核。

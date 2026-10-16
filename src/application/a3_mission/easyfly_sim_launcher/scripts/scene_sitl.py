@@ -17,6 +17,7 @@ import time
 from ament_index_python.packages import get_package_prefix
 from easyfly_msgs.action import ExecuteMission
 from easyfly_px4_sitl.scene_environment import installed_catalog
+from easyfly_px4_sitl import scene_alignment
 from rcl_interfaces.srv import GetParameters
 from mavros_msgs.msg import State as MavrosState
 from sensor_msgs.msg import Image, Imu, PointCloud2, BatteryState
@@ -65,6 +66,10 @@ class SceneProbe(navigation.Probe):
         self.report.update(scene=args.scene,scene_audit=audit,bootstrap=args.bootstrap,
             world_sha256=self.scene['world']['sha256'],sensors={},alignment_samples=[],
             scene_probe_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest())
+        self.report['alignment_contract']=dict(
+            policy=self.scene['navigation'].get('alignment_check','world_origin'),
+            module_sha256=hashlib.sha256(Path(scene_alignment.__file__).read_bytes()).hexdigest(),
+            maximum_position_error_m=0.2,maximum_yaw_error_rad=0.1)
         if not args.bootstrap:
             mission=args.mission.resolve(strict=True)
             allowed=[self.catalog.resolve(loc) for loc in self.scene['recommended_missions']]
@@ -74,6 +79,9 @@ class SceneProbe(navigation.Probe):
             targets=[[step['x'],step['y'],step['z']] for step in data['steps'] if step['type']=='navigate']
             if data['frame_id']!='odom' or data['failure_policy']!='abort' or targets!=[[1.5,0,1.5],[0,0,1.5]]:
                 raise ValueError('this probe supports only the reviewed bounded aisle out-and-back mission')
+            if self.scene['navigation'].get('alignment_check','world_origin')=='recommended_region':
+                airborne=targets+[[0,0,step['altitude']] for step in data['steps'] if step['type']=='takeoff']
+                scene_alignment.validate_targets(self.scene['navigation']['recommended_region'],airborne)
         for topic,kind in [('/camera/color/image_raw',Image),
                            ('/camera/aligned_depth_to_color/depth/image_raw',Image),
                            ('/livox/imu',Imu),('/livox/lidar',CustomMsg)]:
@@ -405,8 +413,13 @@ class SceneProbe(navigation.Probe):
         translation=np.mean([s['translation'] for s in samples],axis=0).tolist()
         yaw=math.atan2(sum(math.sin(s['yaw']) for s in samples),sum(math.cos(s['yaw']) for s in samples))
         self.report['alignment_samples']=samples
-        if max(math.dist(s['translation'],translation) for s in samples)>0.15 or max(
-                abs(math.atan2(math.sin(s['yaw']-yaw),math.cos(s['yaw']-yaw))) for s in samples)>0.1:
+        sample_checks=[scene_alignment.compare_alignment(dict(translation=translation,yaw=yaw),
+            dict(translation=s['translation'],yaw=s['yaw']),
+            policy=self.scene['navigation'].get('alignment_check','world_origin'),
+            region=self.scene['navigation']['recommended_region']) for s in samples]
+        inspection['alignment_sample_checks']=sample_checks
+        if max(v['maximum_position_error_m'] for v in sample_checks)>0.15 or max(
+                v['yaw_error_rad'] for v in sample_checks)>0.1:
             raise RuntimeError('world/odom stationary alignment is unstable')
         self.report.update(alignment_samples=samples,world_to_navigation=dict(translation=translation,yaw=yaw),
                            loaded_and_sensors_observed=True,
@@ -432,9 +445,13 @@ class SceneProbe(navigation.Probe):
                 self.inspect()  # Fresh stationary alignment before another goal.
             registered=self.scene['navigation']['world_to_navigation']
             measured=self.report['world_to_navigation']
-            if registered is None or math.dist(registered['translation'],measured['translation'])>0.2 or abs(
-                    math.atan2(math.sin(registered['yaw']-measured['yaw']),
-                               math.cos(registered['yaw']-measured['yaw'])))>0.1:
+            if registered is None:
+                raise RuntimeError('current alignment differs from scene reference; no flight goal sent')
+            alignment=scene_alignment.compare_alignment(registered,measured,
+                policy=self.scene['navigation'].get('alignment_check','world_origin'),
+                region=self.scene['navigation']['recommended_region'])
+            self.report.setdefault('alignment_checks',[]).append(dict(cycle=cycle,**alignment))
+            if alignment['maximum_position_error_m']>0.2 or alignment['yaw_error_rad']>0.1:
                 raise RuntimeError('current alignment differs from scene reference; no flight goal sent')
             mission=self.args.mission.resolve(strict=True)
             self.report['mission_sha256']=hashlib.sha256(mission.read_bytes()).hexdigest()

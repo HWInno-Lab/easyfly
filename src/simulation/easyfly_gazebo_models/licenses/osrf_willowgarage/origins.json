@@ -1,0 +1,110 @@
+{
+  "source_url": "https://github.com/osrf/gazebo_models",
+  "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+  "declared_license": "CC-BY-3.0",
+  "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+  "archive_bytes": 227118253,
+  "selected_model": "willowgarage",
+  "selected_model_license_declarations": [],
+  "license_sha256": "776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e",
+  "files": [
+    {
+      "source": "willowgarage/materials/textures/Carpet_Berber_Pattern_Gray_.png",
+      "target": "cache:models/willowgarage/materials/textures/Carpet_Berber_Pattern_Gray_.png",
+      "source_sha256": "ca8638b2c98ea8974d5d4cbf5a1b9027d050e94f4cc3e7138f38855b2e714a15",
+      "sha256": "ca8638b2c98ea8974d5d4cbf5a1b9027d050e94f4cc3e7138f38855b2e714a15",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/Stone_Brushed_Khaki_.png",
+      "target": "cache:models/willowgarage/materials/textures/Stone_Brushed_Khaki_.png",
+      "source_sha256": "3b0c55a3768042d42218b6f8d962c82ee0c061d43636c7b82524fd39a737a275",
+      "sha256": "3b0c55a3768042d42218b6f8d962c82ee0c061d43636c7b82524fd39a737a275",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/Wood_Bamboo_Medium_.png",
+      "target": "cache:models/willowgarage/materials/textures/Wood_Bamboo_Medium_.png",
+      "source_sha256": "d4ec8e47116a6baaef360d18db6dfec744d55cdf7e74ed25b3a92bde50fc40b3",
+      "sha256": "d4ec8e47116a6baaef360d18db6dfec744d55cdf7e74ed25b3a92bde50fc40b3",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/Wood_Cherry_Original_.png",
+      "target": "cache:models/willowgarage/materials/textures/Wood_Cherry_Original_.png",
+      "source_sha256": "477a6a7d32399f0c813a080e850da9f6fb9ad91fc135c4214626fb4b907308fd",
+      "sha256": "477a6a7d32399f0c813a080e850da9f6fb9ad91fc135c4214626fb4b907308fd",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/__Wood_Bamboo_Medium_1.png",
+      "target": "cache:models/willowgarage/materials/textures/__Wood_Bamboo_Medium_1.png",
+      "source_sha256": "d4ec8e47116a6baaef360d18db6dfec744d55cdf7e74ed25b3a92bde50fc40b3",
+      "sha256": "d4ec8e47116a6baaef360d18db6dfec744d55cdf7e74ed25b3a92bde50fc40b3",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/__auto_12.png",
+      "target": "cache:models/willowgarage/materials/textures/__auto_12.png",
+      "source_sha256": "41d363fca0fe1794ee52f5bce7a56e24ae98a3af8e81c312f4eb4236a6109a5a",
+      "sha256": "41d363fca0fe1794ee52f5bce7a56e24ae98a3af8e81c312f4eb4236a6109a5a",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/materials/textures/__auto_2.png",
+      "target": "cache:models/willowgarage/materials/textures/__auto_2.png",
+      "source_sha256": "796a4564ff420a0eff9b90a059b99ed7e50784a31f94020ed303a1a4b67862b2",
+      "sha256": "796a4564ff420a0eff9b90a059b99ed7e50784a31f94020ed303a1a4b67862b2",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/meshes/willowgarage_collision.dae",
+      "target": "cache:models/willowgarage/meshes/willowgarage_collision.dae",
+      "source_sha256": "42975c9b73ba8c18f6a7b09fc50b6c2de100e72c5c7ab034e01aacd9c2a2fe11",
+      "sha256": "42975c9b73ba8c18f6a7b09fc50b6c2de100e72c5c7ab034e01aacd9c2a2fe11",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/meshes/willowgarage_visual.dae",
+      "target": "cache:models/willowgarage/meshes/willowgarage_visual.dae",
+      "source_sha256": "fb6261f2d2d12b3dc03dbd1c15163a1e2018d72940c6c3c373c692ffb697fd31",
+      "sha256": "fb6261f2d2d12b3dc03dbd1c15163a1e2018d72940c6c3c373c692ffb697fd31",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/model-1_2.sdf",
+      "target": "cache:models/willowgarage/model-1_2.sdf",
+      "source_sha256": "392d592302a50be67286d75ea80c820269b11c278dfa0d703c83439d2f83da65",
+      "sha256": "392d592302a50be67286d75ea80c820269b11c278dfa0d703c83439d2f83da65",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/model-1_3.sdf",
+      "target": "cache:models/willowgarage/model-1_3.sdf",
+      "source_sha256": "52ea8d250946f1649d80a5e5a839c5cb52bfe65e04402db7da3f717569a12551",
+      "sha256": "52ea8d250946f1649d80a5e5a839c5cb52bfe65e04402db7da3f717569a12551",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/model-1_4.sdf",
+      "target": "cache:models/willowgarage/model-1_4.sdf",
+      "source_sha256": "0e682f63d5e1e4dbfa6a7ea5e76406927fce0bf6a7483e97935501a26059a65e",
+      "sha256": "0e682f63d5e1e4dbfa6a7ea5e76406927fce0bf6a7483e97935501a26059a65e",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/model.config",
+      "target": "cache:models/willowgarage/model.config",
+      "source_sha256": "ee024bda3dd5ee19a92278226b9394094b4fa2ad93647e084ea42c54d207c09c",
+      "sha256": "ee024bda3dd5ee19a92278226b9394094b4fa2ad93647e084ea42c54d207c09c",
+      "changes": []
+    },
+    {
+      "source": "willowgarage/model.sdf",
+      "target": "cache:models/willowgarage/model.sdf",
+      "source_sha256": "fab14ef873a9765cfe4713a118dfc2a7a1b11aee7abdb0819f6f477b853bef16",
+      "sha256": "fab14ef873a9765cfe4713a118dfc2a7a1b11aee7abdb0819f6f477b853bef16",
+      "changes": []
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "scene": "office_willowgarage_v1",
+  "scope": "Source and standalone geometry-audit history only; not flight acceptance.",
+  "source": {
+    "url": "https://github.com/osrf/gazebo_models",
+    "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+    "declared_license": "CC-BY-3.0",
+    "model": "willowgarage",
+    "author": "Nate Koenig",
+    "unchanged_files": 14,
+    "payload_bytes": 3341870,
+    "cache_lock": "00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0"
+  },
+  "candidate_deferred": {
+    "url": "https://github.com/clearpathrobotics/cpr_gazebo",
+    "reason": "Package declares BSD, but fixed source/license closure not obtained after git TLS failure; no assets imported and no blanket unlicensed claim."
+  },
+  "geometry_history": [
+    "First whole-model survey exceeded unchanged 20,000-cell budget because source collision AABB includes distant ID635 line marker. Error exit did not drain transport; owned standalone process interrupted.",
+    "Instrumented second survey identified native bounds; owned standalone process interrupted. GDB attach was rejected by existing ptrace policy; no system policy changed.",
+    "Survey helper now uses explicit bounded primary-building ROI and drains on rejection. Final binary negative test exits 7 without output, not a flight failure.",
+    "v3 floor-owner filter was unsuitable for coincident z=0 floors: actual ray returns builtin ground first. v4 records real support entities and independent 32-direction wall enclosure; no flight goals sent during geometry review.",
+    "ID635 contains five vertices/eight lines, no triangles; earlier progress wording about a floor triangle patch corrected. All source geometry retained."
+  ],
+  "history_artifacts": [
+    {
+      "path": "artifacts/scene-s6-office-20261017/upstream/cpr-clone.log",
+      "sha256": "e042593c3ed495877ed98e6af9f76ac13878d1c78b2cd929bac3db98d21451d6"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/survey-v1-interrupt.json",
+      "sha256": "eeb9e438f7bff37662bd0de604c68bb38c88a3db15f392f4edbfff0aa94d4fb6"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/geometry-survey.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/geometry-survey-v2.log",
+      "sha256": "22fa65b33c8ad5fd67d0ad766ea8c1dd6f002032e2b730c653e78c7985547498"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/survey-loading-stack.txt",
+      "sha256": "3fe33d7d14e2cc613d76713aa03f4e2bfa3240cb1ecf4628313a3e2e90dde40c"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/survey-run-results.json",
+      "sha256": "770bc0fd61cbd5991518a3a1947e5426d83ee18448ff3e1515e4563b2a46e4fd"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/geometry-budget-final-rejected.json",
+      "sha256": "d1ad3698f85d308ec293a7daf57859bc58afb120d774531021bee1d17b5edff5"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/geometry-budget-final-rejected.log",
+      "sha256": "285e1568111e13daea72ed4efdd46a36a844f06d213e29f726940184534095a1"
+    },
+    {
+      "path": "artifacts/scene-s6-office-20261017/survey-v4-execution.json",
+      "sha256": "9d1295b4a05cb9562e22fbd5f516303de177ae9bd6b70e9aed981c565d92f059"
+    }
+  ],
+  "ordinary_test_results_each_mode": 324,
+  "ordinary_tests_start_flight": false,
+  "unchanged_runtime": [
+    "Iris model and sensors",
+    "PX4 mag interval compatibility binary",
+    "Planner/Server and patched native libraries/DDS",
+    "Flight admission/freshness/arrival/recovery thresholds"
+  ],
+  "limitations": [
+    "Only the selected primary-building open-room route is qualified separately.",
+    "Camera duplicate-stamp counters retained under existing gates; no all-frame camera monotonicity claim.",
+    "Original distant line marker expands native bounds; no whole-AABB navigation claim.",
+    "Historical Gazebo rendering startup fault remains separate and unresolved."
+  ],
+  "alignment_correction_evidence": "evidence/office_willowgarage_v1/alignment-region-check-s6.json",
+  "qualification_limits_note": "Numeric position/yaw limits unchanged; office explicitly compares the original recommended-region corners. Omitted policy preserves world-origin comparison for other scenes."
+}

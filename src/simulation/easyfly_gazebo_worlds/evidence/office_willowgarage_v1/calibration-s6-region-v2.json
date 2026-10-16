@@ -1,0 +1,5755 @@
+{
+  "scene": "office_willowgarage_v1",
+  "passed": true,
+  "scope": "Two independent registered managed cold starts, normal and symlink, each in an isolated network namespace with only loopback. Flight qualified separately.",
+  "grid_footprint_mode": "observed_cells",
+  "spawn": {
+    "frame": "world",
+    "position": [
+      -6.0,
+      10.0,
+      0.1
+    ],
+    "yaw": 0.0,
+    "basis": "Native ODE primary-building open room: floor z=0, 21,794 rays, sampled horizontal clearance >=6.466m. Survey at 12 route-capsule samples: all 32 wall rays enclosed, sampled clearance >=6.176m. Original model geometry/pose retained."
+  },
+  "previous_reference": {
+    "translation": [
+      5.838792194730354,
+      -10.0926908604383,
+      -0.0544167763671875
+    ],
+    "yaw": -0.015715519834737887
+  },
+  "world_to_navigation": {
+    "translation": [
+      5.826866823203025,
+      -10.101613774910064,
+      -0.07057074772135416
+    ],
+    "yaw": -0.016972912529447978
+  },
+  "pair_translation_difference_m": 0.06299401443148323,
+  "pair_alignment_check": {
+    "policy": "recommended_region",
+    "maximum_position_error_m": 0.011617738018293886,
+    "yaw_error_rad": 0.005499607662057162,
+    "translation_component_error_m": 0.06299401443148323,
+    "samples": [
+      {
+        "world_point": [
+          -6.292259519307805,
+          9.696691401317945,
+          0.572040677734375
+        ],
+        "reference_navigation": [
+          -0.3,
+          -0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          -0.2997800499542036,
+          -0.29912653274769063,
+          0.5029398600260416
+        ],
+        "error_m": 0.003074752028411427
+      },
+      {
+        "world_point": [
+          -6.292259519307805,
+          9.696691401317945,
+          2.372040677734375
+        ],
+        "reference_navigation": [
+          -0.3,
+          -0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          -0.2997800499542036,
+          -0.29912653274769063,
+          2.302939860026042
+        ],
+        "error_m": 0.0030747520284117452
+      },
+      {
+        "world_point": [
+          -6.3007930968008,
+          10.296630713294727,
+          0.572040677734375
+        ],
+        "reference_navigation": [
+          -0.3,
+          0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          -0.2964803019908837,
+          0.3008643935698512,
+          0.5029398600260416
+        ],
+        "error_m": 0.004666714828623521
+      },
+      {
+        "world_point": [
+          -6.3007930968008,
+          10.296630713294727,
+          2.372040677734375
+        ],
+        "reference_navigation": [
+          -0.3,
+          0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          -0.2964803019908837,
+          0.3008643935698512,
+          2.302939860026042
+        ],
+        "error_m": 0.004666714828623731
+      },
+      {
+        "world_point": [
+          -4.192471927389079,
+          9.726558922543425,
+          0.572040677734375
+        ],
+        "reference_navigation": [
+          1.8,
+          -0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          1.8001881921571834,
+          -0.31067565061930935,
+          0.5029398600260416
+        ],
+        "error_m": 0.011074642631087614
+      },
+      {
+        "world_point": [
+          -4.192471927389079,
+          9.726558922543425,
+          2.372040677734375
+        ],
+        "reference_navigation": [
+          1.8,
+          -0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          1.8001881921571834,
+          -0.31067565061930935,
+          2.302939860026042
+        ],
+        "error_m": 0.011074642631087702
+      },
+      {
+        "world_point": [
+          -4.201005504882073,
+          10.326498234520207,
+          0.572040677734375
+        ],
+        "reference_navigation": [
+          1.8,
+          0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          1.8034879401205024,
+          0.28931527569823245,
+          0.5029398600260416
+        ],
+        "error_m": 0.011617738018293801
+      },
+      {
+        "world_point": [
+          -4.201005504882073,
+          10.326498234520207,
+          2.372040677734375
+        ],
+        "reference_navigation": [
+          1.8,
+          0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          1.8034879401205024,
+          0.28931527569823245,
+          2.302939860026042
+        ],
+        "error_m": 0.011617738018293886
+      }
+    ]
+  },
+  "pair_yaw_difference_rad": 0.005499607662057162,
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "runs": [
+    {
+      "px4_telemetry": {
+        "battery_rate_hz": 5,
+        "command_returncodes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+        "pid": 87254,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "1552197",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 15880000000,
+            "receipt": 15541.681345064,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16080000000,
+            "receipt": 15541.931152858,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16270000000,
+            "receipt": 15542.255570593,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16480000000,
+            "receipt": 15542.677459196,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16680000000,
+            "receipt": 15542.940798205,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16880000000,
+            "receipt": 15543.992589979,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 1.0517917739998666,
+        "observed_battery_samples": [
+          {
+            "stamp": 15900000000,
+            "receipt": 15541.694225428,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16100000000,
+            "receipt": 15541.943134689,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16300000000,
+            "receipt": 15542.269023404,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16500000000,
+            "receipt": 15542.690860682,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16700000000,
+            "receipt": 15542.953593313,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16900000000,
+            "receipt": 15543.992701288,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          }
+        ],
+        "max_battery_receipt_gap_seconds": 1.039107975000661
+      },
+      "gazebo_clock": {
+        "rate_hz": 100,
+        "publisher": "gazebo",
+        "samples": [
+          {
+            "stamp": 15790000000,
+            "receipt": 15541.556968801
+          },
+          {
+            "stamp": 15800000000,
+            "receipt": 15541.567006909
+          },
+          {
+            "stamp": 15810000000,
+            "receipt": 15541.577321211
+          },
+          {
+            "stamp": 15820000000,
+            "receipt": 15541.613083347
+          },
+          {
+            "stamp": 15830000000,
+            "receipt": 15541.659325573
+          },
+          {
+            "stamp": 15840000000,
+            "receipt": 15541.660157952
+          },
+          {
+            "stamp": 15850000000,
+            "receipt": 15541.660681556
+          },
+          {
+            "stamp": 15860000000,
+            "receipt": 15541.661023668
+          },
+          {
+            "stamp": 15870000000,
+            "receipt": 15541.663128043
+          },
+          {
+            "stamp": 15880000000,
+            "receipt": 15541.673168867
+          },
+          {
+            "stamp": 15890000000,
+            "receipt": 15541.683106247
+          },
+          {
+            "stamp": 15900000000,
+            "receipt": 15541.693271509
+          },
+          {
+            "stamp": 15910000000,
+            "receipt": 15541.703105116
+          },
+          {
+            "stamp": 15920000000,
+            "receipt": 15541.787081428
+          },
+          {
+            "stamp": 15930000000,
+            "receipt": 15541.788771294
+          },
+          {
+            "stamp": 15940000000,
+            "receipt": 15541.789583968
+          },
+          {
+            "stamp": 15950000000,
+            "receipt": 15541.790138098
+          },
+          {
+            "stamp": 15960000000,
+            "receipt": 15541.790446739
+          },
+          {
+            "stamp": 15970000000,
+            "receipt": 15541.791591453
+          },
+          {
+            "stamp": 15980000000,
+            "receipt": 15541.801709675
+          },
+          {
+            "stamp": 15990000000,
+            "receipt": 15541.811640146
+          },
+          {
+            "stamp": 16000000000,
+            "receipt": 15541.82164642
+          },
+          {
+            "stamp": 16010000000,
+            "receipt": 15541.832405105
+          },
+          {
+            "stamp": 16020000000,
+            "receipt": 15541.862232783
+          },
+          {
+            "stamp": 16040000000,
+            "receipt": 15541.928132767
+          },
+          {
+            "stamp": 16050000000,
+            "receipt": 15541.929533475
+          },
+          {
+            "stamp": 16060000000,
+            "receipt": 15541.930340409
+          },
+          {
+            "stamp": 16070000000,
+            "receipt": 15541.931077837
+          },
+          {
+            "stamp": 16080000000,
+            "receipt": 15541.931669348
+          },
+          {
+            "stamp": 16090000000,
+            "receipt": 15541.932326266
+          },
+          {
+            "stamp": 16100000000,
+            "receipt": 15541.942361131
+          },
+          {
+            "stamp": 16110000000,
+            "receipt": 15541.953101488
+          },
+          {
+            "stamp": 16120000000,
+            "receipt": 15541.986353394
+          },
+          {
+            "stamp": 16130000000,
+            "receipt": 15542.035633865
+          },
+          {
+            "stamp": 16140000000,
+            "receipt": 15542.036957452
+          },
+          {
+            "stamp": 16150000000,
+            "receipt": 15542.038267545
+          },
+          {
+            "stamp": 16160000000,
+            "receipt": 15542.038579761
+          },
+          {
+            "stamp": 16170000000,
+            "receipt": 15542.038889681
+          },
+          {
+            "stamp": 16180000000,
+            "receipt": 15542.046429284
+          },
+          {
+            "stamp": 16190000000,
+            "receipt": 15542.056623377
+          },
+          {
+            "stamp": 16200000000,
+            "receipt": 15542.067535995
+          },
+          {
+            "stamp": 16210000000,
+            "receipt": 15542.077076999
+          },
+          {
+            "stamp": 16220000000,
+            "receipt": 15542.186981341
+          },
+          {
+            "stamp": 16230000000,
+            "receipt": 15542.196847357
+          },
+          {
+            "stamp": 16240000000,
+            "receipt": 15542.206925901
+          },
+          {
+            "stamp": 16250000000,
+            "receipt": 15542.21695564
+          },
+          {
+            "stamp": 16260000000,
+            "receipt": 15542.227018504
+          },
+          {
+            "stamp": 16270000000,
+            "receipt": 15542.238318332
+          },
+          {
+            "stamp": 16280000000,
+            "receipt": 15542.247598171
+          },
+          {
+            "stamp": 16290000000,
+            "receipt": 15542.257664728
+          },
+          {
+            "stamp": 16300000000,
+            "receipt": 15542.267593673
+          },
+          {
+            "stamp": 16310000000,
+            "receipt": 15542.27855997
+          },
+          {
+            "stamp": 16320000000,
+            "receipt": 15542.310728644
+          },
+          {
+            "stamp": 16340000000,
+            "receipt": 15542.376026393
+          },
+          {
+            "stamp": 16350000000,
+            "receipt": 15542.379103309
+          },
+          {
+            "stamp": 16360000000,
+            "receipt": 15542.379969547
+          },
+          {
+            "stamp": 16370000000,
+            "receipt": 15542.380720698
+          },
+          {
+            "stamp": 16380000000,
+            "receipt": 15542.381032596
+          },
+          {
+            "stamp": 16390000000,
+            "receipt": 15542.381338482
+          },
+          {
+            "stamp": 16400000000,
+            "receipt": 15542.390620779
+          },
+          {
+            "stamp": 16410000000,
+            "receipt": 15542.401411182
+          },
+          {
+            "stamp": 16420000000,
+            "receipt": 15542.509822222
+          },
+          {
+            "stamp": 16430000000,
+            "receipt": 15542.519638851
+          },
+          {
+            "stamp": 16440000000,
+            "receipt": 15542.529982182
+          },
+          {
+            "stamp": 16450000000,
+            "receipt": 15542.539767107
+          },
+          {
+            "stamp": 16460000000,
+            "receipt": 15542.549694082
+          },
+          {
+            "stamp": 16470000000,
+            "receipt": 15542.559683962
+          },
+          {
+            "stamp": 16480000000,
+            "receipt": 15542.66986262
+          },
+          {
+            "stamp": 16490000000,
+            "receipt": 15542.679255621
+          },
+          {
+            "stamp": 16500000000,
+            "receipt": 15542.690223069
+          },
+          {
+            "stamp": 16510000000,
+            "receipt": 15542.699416259
+          },
+          {
+            "stamp": 16520000000,
+            "receipt": 15542.740648652
+          },
+          {
+            "stamp": 16540000000,
+            "receipt": 15542.804151607
+          },
+          {
+            "stamp": 16550000000,
+            "receipt": 15542.807345544
+          },
+          {
+            "stamp": 16560000000,
+            "receipt": 15542.809309651
+          },
+          {
+            "stamp": 16570000000,
+            "receipt": 15542.810719018
+          },
+          {
+            "stamp": 16580000000,
+            "receipt": 15542.811747287
+          },
+          {
+            "stamp": 16590000000,
+            "receipt": 15542.812203977
+          },
+          {
+            "stamp": 16600000000,
+            "receipt": 15542.819866824
+          },
+          {
+            "stamp": 16610000000,
+            "receipt": 15542.830585263
+          },
+          {
+            "stamp": 16620000000,
+            "receipt": 15542.872563382
+          },
+          {
+            "stamp": 16630000000,
+            "receipt": 15542.923423039
+          },
+          {
+            "stamp": 16640000000,
+            "receipt": 15542.924377033
+          },
+          {
+            "stamp": 16650000000,
+            "receipt": 15542.924965841
+          },
+          {
+            "stamp": 16660000000,
+            "receipt": 15542.925291402
+          },
+          {
+            "stamp": 16670000000,
+            "receipt": 15542.925593448
+          },
+          {
+            "stamp": 16680000000,
+            "receipt": 15542.932520354
+          },
+          {
+            "stamp": 16690000000,
+            "receipt": 15542.942491531
+          },
+          {
+            "stamp": 16700000000,
+            "receipt": 15542.952702841
+          },
+          {
+            "stamp": 16710000000,
+            "receipt": 15542.965086827
+          },
+          {
+            "stamp": 16720000000,
+            "receipt": 15542.996511404
+          },
+          {
+            "stamp": 16730000000,
+            "receipt": 15543.047463653
+          },
+          {
+            "stamp": 16740000000,
+            "receipt": 15543.04923235
+          },
+          {
+            "stamp": 16750000000,
+            "receipt": 15543.050035137
+          },
+          {
+            "stamp": 16760000000,
+            "receipt": 15543.050574772
+          },
+          {
+            "stamp": 16770000000,
+            "receipt": 15543.050881327
+          },
+          {
+            "stamp": 16780000000,
+            "receipt": 15543.057051634
+          },
+          {
+            "stamp": 16790000000,
+            "receipt": 15543.068149472
+          },
+          {
+            "stamp": 16800000000,
+            "receipt": 15543.077004075
+          },
+          {
+            "stamp": 17320000000,
+            "receipt": 15543.992487569
+          }
+        ],
+        "median_sim_interval_s": 0.01
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_sample_checks": [
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.002112439207189581,
+              "yaw_error_rad": 3.9735066128353605e-05,
+              "translation_component_error_m": 0.00227923717987674,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.29912097809690863,
+                    -0.30033123393717354,
+                    0.50189208984375
+                  ],
+                  "error_m": 0.002112439207189581
+                },
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.29912097809690863,
+                    -0.30033123393717354,
+                    2.30189208984375
+                  ],
+                  "error_m": 0.002112439207189581
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.2991448191365791,
+                    0.2996687655891659,
+                    0.50189208984375
+                  ],
+                  "error_m": 0.002102630381427947
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.2991448191365791,
+                    0.2996687655891659,
+                    2.30189208984375
+                  ],
+                  "error_m": 0.002102630381427947
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8008790202452722,
+                    -0.30024779029832693,
+                    0.50189208984375
+                  ],
+                  "error_m": 0.0021009713468691698
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8008790202452722,
+                    -0.30024779029832693,
+                    2.30189208984375
+                  ],
+                  "error_m": 0.0021009713468691698
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8008551792056018,
+                    0.29975220922801427,
+                    0.50189208984375
+                  ],
+                  "error_m": 0.0020911087291666124
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8008551792056018,
+                    0.29975220922801427,
+                    2.30189208984375
+                  ],
+                  "error_m": 0.0020911087291666124
+                }
+              ]
+            },
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.0015044445149183616,
+              "yaw_error_rad": 1.0173535846310505e-05,
+              "translation_component_error_m": 0.0014269404148148379,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.298861883298013,
+                    -0.2999995625081855,
+                    0.5009765625
+                  ],
+                  "error_m": 0.0014996613401521968
+                },
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.298861883298013,
+                    -0.2999995625081855,
+                    2.3009765625
+                  ],
+                  "error_m": 0.0014996613401521968
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.2988557791765061,
+                    0.300000437460767,
+                    0.5009765625
+                  ],
+                  "error_m": 0.001504299106127256
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.2988557791765061,
+                    0.300000437460767,
+                    2.3009765625
+                  ],
+                  "error_m": 0.001504299106127256
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.801138116593311,
+                    -0.30002092693346327,
+                    0.5009765625
+                  ],
+                  "error_m": 0.0014998071985825247
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.801138116593311,
+                    -0.30002092693346327,
+                    2.3009765625
+                  ],
+                  "error_m": 0.0014998071985825247
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8011442207148178,
+                    0.299979073035491,
+                    0.5009765625
+                  ],
+                  "error_m": 0.0015044445149183616
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8011442207148178,
+                    0.299979073035491,
+                    2.3009765625
+                  ],
+                  "error_m": 0.0015044445149183616
+                }
+              ]
+            },
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.0035224140450693295,
+              "yaw_error_rad": 2.956153027607565e-05,
+              "translation_component_error_m": 0.0036838575491501086,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.3020171307398307,
+                    -0.2996692160614103,
+                    0.49713134765624994
+                  ],
+                  "error_m": 0.0035224140450693295
+                },
+                {
+                  "world_point": [
+                    -6.292259519307805,
+                    9.696691401317945,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.3020171307398307,
+                    -0.2996692160614103,
+                    2.29713134765625
+                  ],
+                  "error_m": 0.003522414045069284
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.3019993938216672,
+                    0.30033078367642574,
+                    0.49713134765624994
+                  ],
+                  "error_m": 0.003512286970623752
+                },
+                {
+                  "world_point": [
+                    -6.3007930968008,
+                    10.296630713294727,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.3019993938216672,
+                    0.30033078367642574,
+                    2.29713134765625
+                  ],
+                  "error_m": 0.0035122869706237063
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.797982868342591,
+                    -0.2997312952749809,
+                    0.49713134765624994
+                  ],
+                  "error_m": 0.0035171278938748297
+                },
+                {
+                  "world_point": [
+                    -4.192471927389079,
+                    9.726558922543425,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.797982868342591,
+                    -0.2997312952749809,
+                    2.29713134765625
+                  ],
+                  "error_m": 0.0035171278938747846
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    0.572040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.7980006052607544,
+                    0.30026870446285514,
+                    0.49713134765624994
+                  ],
+                  "error_m": 0.0035069855547156066
+                },
+                {
+                  "world_point": [
+                    -4.201005504882073,
+                    10.326498234520207,
+                    2.372040677734375
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.7980006052607544,
+                    0.30026870446285514,
+                    2.29713134765625
+                  ],
+                  "error_m": 0.003506985554715561
+                }
+              ]
+            }
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                -0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.002589059993624687,
+                -0.0011982297291979194,
+                -0.015777587890625
+              ],
+              "yaw": -0.014183373632291043,
+              "translation": [
+                5.8549784648935175,
+                -10.085289794733331,
+                -0.070148587890625
+              ],
+              "state": {
+                "source_ns": 19680000000,
+                "frame": "odom",
+                "ros_now_ns": 19860000000,
+                "receipt": 15547.739460329,
+                "steady_now": 15547.739567405,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.002589059993624687,
+                  -0.0011982297291979194,
+                  -0.015777587890625
+                ],
+                "velocity": [
+                  -0.001961828675121069,
+                  -0.0026215175166726112,
+                  -0.002624389249831438
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 19390000000,
+                "frame": "odom",
+                "ros_now_ns": 19420000000,
+                "receipt": 15547.061342022,
+                "steady_now": 15547.169090113,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0024301682133227587,
+                  -0.0009707235149107873,
+                  -0.01434326171875
+                ],
+                "velocity": [
+                  -0.0015889700734987855,
+                  -0.002059097634628415,
+                  -0.001876113354228437
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                -0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.002315036254003644,
+                -0.0008813581662252545,
+                -0.016693115234375
+              ],
+              "yaw": -0.014233282234265707,
+              "translation": [
+                5.854749198425939,
+                -10.085265253617305,
+                -0.071064115234375
+              ],
+              "state": {
+                "source_ns": 20390000000,
+                "frame": "odom",
+                "ros_now_ns": 20580000000,
+                "receipt": 15548.749269091,
+                "steady_now": 15548.749390966,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.002315036254003644,
+                  -0.0008813581662252545,
+                  -0.016693115234375
+                ],
+                "velocity": [
+                  -0.002552296733483672,
+                  -0.0012361619155853987,
+                  -0.002970980480313301
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 20220000000,
+                "frame": "odom",
+                "ros_now_ns": 20220000000,
+                "receipt": 15548.211736778,
+                "steady_now": 15548.289304768,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0022826436907052994,
+                  -0.0010681303683668375,
+                  -0.015472412109375
+                ],
+                "velocity": [
+                  -0.0024500233121216297,
+                  -0.0015764259733259678,
+                  -0.0029863135423511267
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                -0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.005464484449476004,
+                -0.0005567612242884934,
+                -0.020538330078125
+              ],
+              "yaw": -0.014252670228695473,
+              "translation": [
+                5.851404233150867,
+                -10.085054211508785,
+                -0.074909330078125
+              ],
+              "state": {
+                "source_ns": 21210000000,
+                "frame": "odom",
+                "ros_now_ns": 21380000000,
+                "receipt": 15549.767604466,
+                "steady_now": 15549.767765091,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.005464484449476004,
+                  -0.0005567612242884934,
+                  -0.020538330078125
+                ],
+                "velocity": [
+                  -0.004586671944707632,
+                  -0.001555607421323657,
+                  -0.0037606977857649326
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 20930000000,
+                "frame": "odom",
+                "ros_now_ns": 20970000000,
+                "receipt": 15549.24590669,
+                "steady_now": 15549.249446904,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0029530946630984545,
+                  -0.0005030952161177993,
+                  -0.0189208984375
+                ],
+                "velocity": [
+                  -0.0032905328553169966,
+                  -0.0014166865730658174,
+                  -0.0034453407861292362
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              5.853710632156774,
+              -10.085203086619806,
+              -0.072040677734375
+            ],
+            "yaw": -0.014223108698419397
+          },
+          "settled_preflight_state": {
+            "source_ns": 19390000000,
+            "frame": "odom",
+            "ros_now_ns": 19420000000,
+            "receipt": 15547.061342022,
+            "steady_now": 15547.169082727,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0024301682133227587,
+              -0.0009707235149107873,
+              -0.01434326171875
+            ],
+            "velocity": [
+              -0.0015889700734987855,
+              -0.002059097634628415,
+              -0.001876113354228437
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 87097,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 87097,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 87097,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 87991,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 87993,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 88082,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-j2whtj7e/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-j2whtj7e/profiles.xml"
+        },
+        "loaded_pids": [
+          87097,
+          87586,
+          87588,
+          87590,
+          87734,
+          87736,
+          87738,
+          87830,
+          87832,
+          87901,
+          87903,
+          87951,
+          87964,
+          87976,
+          87991,
+          87993,
+          88021,
+          88035,
+          88037,
+          88039,
+          88080,
+          88082
+        ],
+        "child_profile_paths": {
+          "87951": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "88080": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "88082": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87830": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87832": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87964": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87586": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87588": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87590": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87976": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87734": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87991": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87736": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87097": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87738": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87993": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "88021": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87901": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "87903": "/tmp/easyfly-scene-dds-j2whtj7e/profiles.xml",
+          "88035": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "88037": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml",
+          "88039": "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-j2whtj7e/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-3kzsyfc2/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 191,
+          "first_source_ns": 2699000000,
+          "last_source_ns": 21720000000,
+          "receipt": 15550.250300118,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.6538960933685303,
+              -7.86606502532959,
+              2.529670238494873
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.466144561767578,
+              1.046128749847412,
+              2.31132435798645
+            ],
+            [
+              -6.46614408493042,
+              3.8929355144500732,
+              2.3166046142578125
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.7677732110023499,
+              6.676490306854248,
+              1.951084017753601
+            ],
+            [
+              2.022067070007324,
+              6.676347732543945,
+              2.2456085681915283
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              9.255522727966309,
+              -5.484608173370361,
+              2.4241411685943604
+            ],
+            [
+              4.9881062507629395,
+              -7.866065979003906,
+              2.501858711242676
+            ],
+            [
+              0.6951090097427368,
+              -7.86606502532959,
+              1.6525872945785522
+            ],
+            [
+              -2.602975606918335,
+              -7.866065502166748,
+              2.047706127166748
+            ],
+            [
+              -6.466142654418945,
+              -5.736673355102539,
+              1.90986168384552
+            ],
+            [
+              -8.322782516479492,
+              -3.0983569622039795,
+              1.9449336528778076
+            ],
+            [
+              -6.46614408493042,
+              1.1157348155975342,
+              1.5744764804840088
+            ],
+            [
+              -6.466144561767578,
+              3.9873387813568115,
+              1.4679826498031616
+            ],
+            [
+              -3.9704205989837646,
+              6.676328659057617,
+              1.8588454723358154
+            ],
+            [
+              -0.678172767162323,
+              6.676486492156982,
+              1.1869257688522339
+            ],
+            [
+              2.222215414047241,
+              6.676335334777832,
+              1.4500089883804321
+            ],
+            [
+              7.052369594573975,
+              6.676092624664307,
+              1.6492631435394287
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              9.255522727966309,
+              -5.794729232788086,
+              1.1871068477630615
+            ],
+            [
+              4.640867233276367,
+              -7.8660664558410645,
+              1.4044221639633179
+            ],
+            [
+              0.4970962107181549,
+              -7.866064548492432,
+              0.7343457937240601
+            ],
+            [
+              -2.941783905029297,
+              -7.866065979003906,
+              1.1060115098953247
+            ],
+            [
+              -6.466144561767578,
+              -5.384712219238281,
+              0.8904877305030823
+            ],
+            [
+              -8.821615219116211,
+              -2.8593392372131348,
+              0.9545057415962219
+            ],
+            [
+              -6.466143608093262,
+              1.3980298042297363,
+              0.8315039277076721
+            ],
+            [
+              -6.466144561767578,
+              4.415867805480957,
+              0.6006672382354736
+            ],
+            [
+              -3.4903359413146973,
+              6.67639684677124,
+              0.9477477669715881
+            ],
+            [
+              -0.33471065759658813,
+              6.676469326019287,
+              0.40475279092788696
+            ],
+            [
+              2.719116449356079,
+              6.676311492919922,
+              0.6697041392326355
+            ],
+            [
+              7.919641494750977,
+              6.676047325134277,
+              0.5662512183189392
+            ],
+            [
+              9.302163124084473,
+              2.8208940029144287,
+              0.3769911229610443
+            ],
+            [
+              13.344250679016113,
+              -2.858323335647583,
+              0.70847088098526
+            ],
+            [
+              9.255523681640625,
+              -6.756669998168945,
+              -0.08965755999088287
+            ],
+            [
+              3.8774073123931885,
+              -7.86606502532959,
+              0.37684014439582825
+            ],
+            [
+              -0.07509920746088028,
+              -7.866063594818115,
+              -0.1802174299955368
+            ],
+            [
+              -3.721463680267334,
+              -7.866064548492432,
+              0.20204924046993256
+            ],
+            [
+              -6.46614408493042,
+              -4.577776908874512,
+              -0.04640696197748184
+            ],
+            [
+              -8.821615219116211,
+              -1.9903019666671753,
+              -0.0325680710375309
+            ],
+            [
+              -6.466144561767578,
+              2.009028673171997,
+              0.1413486897945404
+            ],
+            [
+              -6.344320297241211,
+              5.310321807861328,
+              -0.23000000417232513
+            ],
+            [
+              -2.6731178760528564,
+              6.676511287689209,
+              0.20584595203399658
+            ],
+            [
+              0.30158162117004395,
+              5.641477584838867,
+              -0.23000000417232513
+            ],
+            [
+              3.6475789546966553,
+              6.676263809204102,
+              0.017254749312996864
+            ],
+            [
+              4.6341705322265625,
+              3.106994152069092,
+              -0.23000000417232513
+            ],
+            [
+              4.6685791015625,
+              0.809760570526123,
+              -0.23000000417232513
+            ],
+            [
+              5.948929309844971,
+              -2.024022340774536,
+              -0.23000000417232513
+            ],
+            [
+              1.7626919746398926,
+              -1.6698111295700073,
+              -0.23000000417232513
+            ],
+            [
+              2.0306715965270996,
+              -5.874175548553467,
+              -0.23000000417232513
+            ],
+            [
+              -0.2967281639575958,
+              -2.1150803565979004,
+              -0.23000000417232513
+            ],
+            [
+              -2.5994410514831543,
+              -4.011366367340088,
+              -0.23000000417232513
+            ],
+            [
+              -2.4577908515930176,
+              -1.2925586700439453,
+              -0.23000000417232513
+            ],
+            [
+              -3.4216277599334717,
+              -0.28036510944366455,
+              -0.23000000417232513
+            ],
+            [
+              -4.805083274841309,
+              2.244732618331909,
+              -0.23000000417232513
+            ],
+            [
+              -1.8251591920852661,
+              2.0463554859161377,
+              -0.23000000417232513
+            ],
+            [
+              -2.5163419246673584,
+              10.322449684143066,
+              -0.2189759463071823
+            ],
+            [
+              0.5198372602462769,
+              2.530207633972168,
+              -0.23000000417232513
+            ],
+            [
+              4.302367687225342,
+              5.670214653015137,
+              -0.23000000417232513
+            ],
+            [
+              2.5980076789855957,
+              1.219761610031128,
+              -0.23000000417232513
+            ],
+            [
+              3.215921401977539,
+              0.04939689114689827,
+              -0.23000000417232513
+            ],
+            [
+              3.1829946041107178,
+              -1.6619077920913696,
+              -0.23000000417232513
+            ],
+            [
+              1.2598764896392822,
+              -1.6544232368469238,
+              -0.23000000417232513
+            ],
+            [
+              0.7913838028907776,
+              -4.3895344734191895,
+              -0.23000000417232513
+            ],
+            [
+              -0.5747551918029785,
+              -1.8432866334915161,
+              -0.23000000417232513
+            ],
+            [
+              -3.101306676864624,
+              -3.4607133865356445,
+              -0.23000000417232513
+            ],
+            [
+              -2.4869184494018555,
+              -0.835394561290741,
+              -0.23000000417232513
+            ],
+            [
+              -4.0895185470581055,
+              0.30677467584609985,
+              -0.23000000417232513
+            ],
+            [
+              -5.1789469718933105,
+              3.4840452671051025,
+              -0.23000000417232513
+            ],
+            [
+              -1.9964385032653809,
+              3.102621078491211,
+              -0.23000000417232513
+            ],
+            [
+              -0.5946854948997498,
+              6.676480770111084,
+              0.007000090554356575
+            ],
+            [
+              1.3782401084899902,
+              3.6862704753875732,
+              -0.23000000417232513
+            ],
+            [
+              6.812653064727783,
+              6.676103115081787,
+              0.054676927626132965
+            ],
+            [
+              5.375021934509277,
+              1.5890932083129883,
+              -0.23000000417232513
+            ],
+            [
+              12.284818649291992,
+              -1.5911591053009033,
+              -0.23000000417232513
+            ],
+            [
+              9.255523681640625,
+              -6.714663982391357,
+              -0.18123094737529755
+            ],
+            [
+              2.3827364444732666,
+              -4.2879743576049805,
+              -0.23000000417232513
+            ],
+            [
+              0.3016338348388672,
+              -7.866066932678223,
+              0.05274880304932594
+            ],
+            [
+              -1.9615988731384277,
+              -4.116644859313965,
+              -0.23000000417232513
+            ],
+            [
+              -6.46614408493042,
+              -5.522608757019043,
+              0.1632169634103775
+            ],
+            [
+              -8.821615219116211,
+              -1.6553828716278076,
+              -0.15577472746372223
+            ],
+            [
+              -6.466143608093262,
+              1.3214292526245117,
+              0.1470387876033783
+            ],
+            [
+              -6.466143608093262,
+              5.702678203582764,
+              0.31909212470054626
+            ],
+            [
+              -3.2303903102874756,
+              6.676434516906738,
+              0.1770811527967453
+            ],
+            [
+              0.2051500678062439,
+              6.676440715789795,
+              0.5502305030822754
+            ],
+            [
+              3.4178929328918457,
+              6.67627477645874,
+              0.2496233880519867
+            ],
+            [
+              8.468488693237305,
+              6.676018714904785,
+              1.043578863143921
+            ],
+            [
+              9.302165031433105,
+              1.6720476150512695,
+              0.5139952898025513
+            ],
+            [
+              12.420306205749512,
+              -2.8583219051361084,
+              1.0454974174499512
+            ],
+            [
+              8.788450241088867,
+              -7.866065502166748,
+              0.9759905934333801
+            ],
+            [
+              3.4824767112731934,
+              -7.866067409515381,
+              0.5252761244773865
+            ],
+            [
+              -0.4375779628753662,
+              -7.866066932678223,
+              0.857839047908783
+            ],
+            [
+              -4.632172107696533,
+              -7.86606502532959,
+              0.5525103807449341
+            ],
+            [
+              -6.4661431312561035,
+              -4.639211654663086,
+              0.9972864985466003
+            ],
+            [
+              -6.466143608093262,
+              -0.6435719132423401,
+              0.6004305481910706
+            ],
+            [
+              -6.46614408493042,
+              1.8394895792007446,
+              0.8877823948860168
+            ],
+            [
+              -6.419952392578125,
+              6.675980567932129,
+              1.343997836112976
+            ],
+            [
+              -2.6880011558532715,
+              6.676509380340576,
+              0.9815567135810852
+            ],
+            [
+              0.6946515440940857,
+              6.676414966583252,
+              1.2827764749526978
+            ],
+            [
+              3.9609146118164062,
+              6.676248073577881,
+              1.142518162727356
+            ],
+            [
+              9.302164077758789,
+              6.46517276763916,
+              2.3527681827545166
+            ],
+            [
+              9.302164077758789,
+              1.1223911046981812,
+              1.5786325931549072
+            ],
+            [
+              10.350518226623535,
+              -2.911348819732666,
+              2.1001391410827637
+            ],
+            [
+              7.904601097106934,
+              -7.866065979003906,
+              2.19149112701416
+            ],
+            [
+              3.119161367416382,
+              -7.866066932678223,
+              1.493283987045288
+            ],
+            [
+              -0.8069129586219788,
+              -7.866067409515381,
+              1.7585194110870361
+            ],
+            [
+              -5.021471977233887,
+              -7.866065979003906,
+              1.6519032716751099
+            ],
+            [
+              -6.466143608093262,
+              -4.266875267028809,
+              1.8490442037582397
+            ],
+            [
+              -6.46614408493042,
+              -0.40083327889442444,
+              1.3491930961608887
+            ],
+            [
+              -6.46614408493042,
+              2.0611231327056885,
+              1.6647119522094727
+            ],
+            [
+              -5.94396448135376,
+              6.676049709320068,
+              2.320695161819458
+            ],
+            [
+              -2.527529001235962,
+              6.763782024383545,
+              1.8015040159225464
+            ],
+            [
+              0.9216771125793457,
+              6.676402568817139,
+              2.0532100200653076
+            ],
+            [
+              4.1539764404296875,
+              6.676239490509033,
+              2.046415090560913
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              3.074761390686035,
+              -7.866065502166748,
+              2.422232151031494
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.46614408493042,
+              -0.37209951877593994,
+              2.086097002029419
+            ],
+            [
+              -6.466143608093262,
+              2.0810322761535645,
+              2.4296224117279053
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.527529239654541,
+              6.717262268066406,
+              2.598905086517334
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/livox/imu": {
+          "count": 2599,
+          "first_source_ns": 2704000000,
+          "last_source_ns": 21784000000,
+          "receipt": 15550.266359854,
+          "frame": "livox_frame",
+          "finite": true
+        },
+        "/camera/color/image_raw": {
+          "count": 560,
+          "first_source_ns": 2700000000,
+          "last_source_ns": 21770000000,
+          "receipt": 15550.263111531,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 26
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 560,
+          "first_source_ns": 2700000000,
+          "last_source_ns": 21770000000,
+          "receipt": 15550.264667618,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 210826,
+          "min_m": 0.45073533058166504,
+          "max_m": 19.882247924804688,
+          "non_increasing_stamps": 26
+        }
+      },
+      "shutdown_seconds": 1.4169299920013145,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "scene_probe_sha256": "981f28efd333718c7b56817e2cda6d3ece48f3d08e86c5340306ee1dd063660d",
+      "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+      "settled_preflight_state": {
+        "source_ns": 19390000000,
+        "frame": "odom",
+        "ros_now_ns": 19420000000,
+        "receipt": 15547.061342022,
+        "steady_now": 15547.169082727,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0024301682133227587,
+          -0.0009707235149107873,
+          -0.01434326171875
+        ],
+        "velocity": [
+          -0.0015889700734987855,
+          -0.002059097634628415,
+          -0.001876113354228437
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "alignment_contract": {
+        "policy": "recommended_region",
+        "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+        "maximum_position_error_m": 0.2,
+        "maximum_yaw_error_rad": 0.1
+      },
+      "raw_result": "artifacts/scene-s6-office-20261017/qualified-v2-normal-cold/result.json",
+      "raw_result_sha256": "952a28a46bc63b150e829c092ea7ad6515ca8c84494eef57f2d7b2872c34c696",
+      "transform": {
+        "translation": [
+          5.853710632156774,
+          -10.085203086619806,
+          -0.072040677734375
+        ],
+        "yaw": -0.014223108698419397
+      },
+      "normal_exits": 24,
+      "mode": "normal",
+      "offline_network": {
+        "namespace": "net:[4026532958]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "cache": {
+        "passed": true,
+        "read_only": true,
+        "observer_sha256": "84e54a4d1f73582648798576c771b8f00b8ab9e53683470aa17ea150d7e4ccd6",
+        "asset_lock": {
+          "schema_version": 1,
+          "asset_set_id": "osrf_willowgarage_v1",
+          "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+          "lock_sha256": "00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0",
+          "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+          "archive_size_bytes": 227118253
+        },
+        "processes": [
+          {
+            "pid": 87097,
+            "identity": {
+              "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+              "start_ticks": "1551597"
+            },
+            "model_paths": [
+              "/home/jia/.cache/easyfly/assets/osrf_willowgarage_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0/models",
+              "/usr/share/gazebo-11/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-office-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-office-20261017/normal/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models"
+            ],
+            "asset_mode": "cache",
+            "cache_root": null
+          }
+        ]
+      }
+    },
+    {
+      "px4_telemetry": {
+        "battery_rate_hz": 5,
+        "command_returncodes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "local_port": 14580,
+        "native_output_deferred": false,
+        "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+        "pid": 88422,
+        "rate_hz": 5,
+        "remote_port": 14540,
+        "start_ticks": "1559566",
+        "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+        "observed_state_samples": [
+          {
+            "stamp": 15910000000,
+            "receipt": 15614.67868628,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16110000000,
+            "receipt": 15614.938867029,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16310000000,
+            "receipt": 15615.19459577,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16510000000,
+            "receipt": 15615.446307624,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16710000000,
+            "receipt": 15615.688647403,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          },
+          {
+            "stamp": 16910000000,
+            "receipt": 15616.710538392,
+            "armed": false,
+            "mode": "AUTO.LOITER"
+          }
+        ],
+        "max_receipt_gap_seconds": 1.0218909890008945,
+        "observed_battery_samples": [
+          {
+            "stamp": 15910000000,
+            "receipt": 15614.68058663,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16110000000,
+            "receipt": 15614.941885905,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16310000000,
+            "receipt": 15615.198718581,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16510000000,
+            "receipt": 15615.450857606,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16710000000,
+            "receipt": 15615.692796467,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          },
+          {
+            "stamp": 16910000000,
+            "receipt": 15616.710647413,
+            "voltage": 16.200000762939453,
+            "percentage": 1.0
+          }
+        ],
+        "max_battery_receipt_gap_seconds": 1.0178509460001806
+      },
+      "gazebo_clock": {
+        "rate_hz": 100,
+        "publisher": "gazebo",
+        "samples": [
+          {
+            "stamp": 15670000000,
+            "receipt": 15614.387777228
+          },
+          {
+            "stamp": 15680000000,
+            "receipt": 15614.393448961
+          },
+          {
+            "stamp": 15690000000,
+            "receipt": 15614.402613366
+          },
+          {
+            "stamp": 15700000000,
+            "receipt": 15614.41262544
+          },
+          {
+            "stamp": 15710000000,
+            "receipt": 15614.422576182
+          },
+          {
+            "stamp": 15720000000,
+            "receipt": 15614.459524385
+          },
+          {
+            "stamp": 15770000000,
+            "receipt": 15614.55461603
+          },
+          {
+            "stamp": 15780000000,
+            "receipt": 15614.55920527
+          },
+          {
+            "stamp": 15790000000,
+            "receipt": 15614.560746733
+          },
+          {
+            "stamp": 15800000000,
+            "receipt": 15614.561544336
+          },
+          {
+            "stamp": 15810000000,
+            "receipt": 15614.562263182
+          },
+          {
+            "stamp": 15820000000,
+            "receipt": 15614.583608697
+          },
+          {
+            "stamp": 15830000000,
+            "receipt": 15614.635233739
+          },
+          {
+            "stamp": 15840000000,
+            "receipt": 15614.637006621
+          },
+          {
+            "stamp": 15850000000,
+            "receipt": 15614.637783477
+          },
+          {
+            "stamp": 15860000000,
+            "receipt": 15614.638344735
+          },
+          {
+            "stamp": 15870000000,
+            "receipt": 15614.638714468
+          },
+          {
+            "stamp": 15880000000,
+            "receipt": 15614.643941845
+          },
+          {
+            "stamp": 15890000000,
+            "receipt": 15614.653164442
+          },
+          {
+            "stamp": 15900000000,
+            "receipt": 15614.663115202
+          },
+          {
+            "stamp": 15910000000,
+            "receipt": 15614.673077401
+          },
+          {
+            "stamp": 15920000000,
+            "receipt": 15614.706203562
+          },
+          {
+            "stamp": 15930000000,
+            "receipt": 15614.764980924
+          },
+          {
+            "stamp": 15940000000,
+            "receipt": 15614.768766165
+          },
+          {
+            "stamp": 15950000000,
+            "receipt": 15614.770289434
+          },
+          {
+            "stamp": 15960000000,
+            "receipt": 15614.771040716
+          },
+          {
+            "stamp": 15970000000,
+            "receipt": 15614.771507396
+          },
+          {
+            "stamp": 15980000000,
+            "receipt": 15614.7719947
+          },
+          {
+            "stamp": 15990000000,
+            "receipt": 15614.776565151
+          },
+          {
+            "stamp": 16000000000,
+            "receipt": 15614.788203304
+          },
+          {
+            "stamp": 16010000000,
+            "receipt": 15614.797466512
+          },
+          {
+            "stamp": 16020000000,
+            "receipt": 15614.806552055
+          },
+          {
+            "stamp": 16040000000,
+            "receipt": 15614.908387055
+          },
+          {
+            "stamp": 16050000000,
+            "receipt": 15614.910141023
+          },
+          {
+            "stamp": 16060000000,
+            "receipt": 15614.911087823
+          },
+          {
+            "stamp": 16070000000,
+            "receipt": 15614.911687529
+          },
+          {
+            "stamp": 16080000000,
+            "receipt": 15614.912003498
+          },
+          {
+            "stamp": 16090000000,
+            "receipt": 15614.914461673
+          },
+          {
+            "stamp": 16100000000,
+            "receipt": 15614.924392918
+          },
+          {
+            "stamp": 16110000000,
+            "receipt": 15614.934457537
+          },
+          {
+            "stamp": 16120000000,
+            "receipt": 15614.974255686
+          },
+          {
+            "stamp": 16140000000,
+            "receipt": 15615.038732562
+          },
+          {
+            "stamp": 16150000000,
+            "receipt": 15615.041245492
+          },
+          {
+            "stamp": 16160000000,
+            "receipt": 15615.042090929
+          },
+          {
+            "stamp": 16170000000,
+            "receipt": 15615.04338085
+          },
+          {
+            "stamp": 16180000000,
+            "receipt": 15615.04501159
+          },
+          {
+            "stamp": 16190000000,
+            "receipt": 15615.045601799
+          },
+          {
+            "stamp": 16200000000,
+            "receipt": 15615.0539252
+          },
+          {
+            "stamp": 16210000000,
+            "receipt": 15615.064622175
+          },
+          {
+            "stamp": 16220000000,
+            "receipt": 15615.073875575
+          },
+          {
+            "stamp": 16240000000,
+            "receipt": 15615.16360293
+          },
+          {
+            "stamp": 16250000000,
+            "receipt": 15615.166271488
+          },
+          {
+            "stamp": 16260000000,
+            "receipt": 15615.167086519
+          },
+          {
+            "stamp": 16270000000,
+            "receipt": 15615.167609955
+          },
+          {
+            "stamp": 16280000000,
+            "receipt": 15615.167921869
+          },
+          {
+            "stamp": 16290000000,
+            "receipt": 15615.169691129
+          },
+          {
+            "stamp": 16300000000,
+            "receipt": 15615.179596313
+          },
+          {
+            "stamp": 16310000000,
+            "receipt": 15615.189898738
+          },
+          {
+            "stamp": 16320000000,
+            "receipt": 15615.228285077
+          },
+          {
+            "stamp": 16330000000,
+            "receipt": 15615.284161138
+          },
+          {
+            "stamp": 16340000000,
+            "receipt": 15615.287612583
+          },
+          {
+            "stamp": 16350000000,
+            "receipt": 15615.2890762
+          },
+          {
+            "stamp": 16360000000,
+            "receipt": 15615.289768797
+          },
+          {
+            "stamp": 16370000000,
+            "receipt": 15615.290122166
+          },
+          {
+            "stamp": 16380000000,
+            "receipt": 15615.290564987
+          },
+          {
+            "stamp": 16390000000,
+            "receipt": 15615.298251788
+          },
+          {
+            "stamp": 16400000000,
+            "receipt": 15615.30837399
+          },
+          {
+            "stamp": 16410000000,
+            "receipt": 15615.318199781
+          },
+          {
+            "stamp": 16420000000,
+            "receipt": 15615.328641944
+          },
+          {
+            "stamp": 16430000000,
+            "receipt": 15615.406061029
+          },
+          {
+            "stamp": 16440000000,
+            "receipt": 15615.408295371
+          },
+          {
+            "stamp": 16450000000,
+            "receipt": 15615.40936587
+          },
+          {
+            "stamp": 16460000000,
+            "receipt": 15615.409805754
+          },
+          {
+            "stamp": 16470000000,
+            "receipt": 15615.410435663
+          },
+          {
+            "stamp": 16480000000,
+            "receipt": 15615.413179684
+          },
+          {
+            "stamp": 16490000000,
+            "receipt": 15615.423007978
+          },
+          {
+            "stamp": 16500000000,
+            "receipt": 15615.433138327
+          },
+          {
+            "stamp": 16510000000,
+            "receipt": 15615.443553603
+          },
+          {
+            "stamp": 16520000000,
+            "receipt": 15615.453062365
+          },
+          {
+            "stamp": 16530000000,
+            "receipt": 15615.528008364
+          },
+          {
+            "stamp": 16540000000,
+            "receipt": 15615.52983303
+          },
+          {
+            "stamp": 16550000000,
+            "receipt": 15615.530381928
+          },
+          {
+            "stamp": 16560000000,
+            "receipt": 15615.530697028
+          },
+          {
+            "stamp": 16570000000,
+            "receipt": 15615.531011705
+          },
+          {
+            "stamp": 16580000000,
+            "receipt": 15615.53584912
+          },
+          {
+            "stamp": 16590000000,
+            "receipt": 15615.544945995
+          },
+          {
+            "stamp": 16600000000,
+            "receipt": 15615.556138921
+          },
+          {
+            "stamp": 16610000000,
+            "receipt": 15615.566625336
+          },
+          {
+            "stamp": 16620000000,
+            "receipt": 15615.576055202
+          },
+          {
+            "stamp": 16640000000,
+            "receipt": 15615.662315647
+          },
+          {
+            "stamp": 16650000000,
+            "receipt": 15615.664998312
+          },
+          {
+            "stamp": 16660000000,
+            "receipt": 15615.666030078
+          },
+          {
+            "stamp": 16670000000,
+            "receipt": 15615.666629197
+          },
+          {
+            "stamp": 16680000000,
+            "receipt": 15615.666935387
+          },
+          {
+            "stamp": 16690000000,
+            "receipt": 15615.667241349
+          },
+          {
+            "stamp": 16700000000,
+            "receipt": 15615.675768416
+          },
+          {
+            "stamp": 16710000000,
+            "receipt": 15615.685268316
+          },
+          {
+            "stamp": 16720000000,
+            "receipt": 15615.695629851
+          },
+          {
+            "stamp": 17250000000,
+            "receipt": 15616.642235271
+          },
+          {
+            "stamp": 17300000000,
+            "receipt": 15616.710440306
+          }
+        ],
+        "median_sim_interval_s": 0.01
+      },
+      "inspections": [
+        {
+          "index": 1,
+          "passed": true,
+          "loaded_components": [
+            "calib_tf_publisher",
+            "camera_info_checker",
+            "easyfly_multi_object_tracking",
+            "easyfly_object_detection",
+            "easyfly_pixel_to_3d",
+            "map_odom_tf",
+            "odom_tf_publisher"
+          ],
+          "alignment_sample_checks": [
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.0016222047514097726,
+              "yaw_error_rad": 3.964912012640112e-05,
+              "translation_component_error_m": 0.0017141611919435438,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.3000844991970455,
+                    -0.30011953231324817,
+                    0.5016072591145833
+                  ],
+                  "error_m": 0.0016139113822086885
+                },
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.3000844991970455,
+                    -0.30011953231324817,
+                    2.301607259114583
+                  ],
+                  "error_m": 0.0016139113822084676
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.3000607097249768,
+                    0.2998804672151376,
+                    0.5016072591145833
+                  ],
+                  "error_m": 0.0016128408535173815
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.3000607097249768,
+                    0.2998804672151376,
+                    2.301607259114583
+                  ],
+                  "error_m": 0.00161284085351716
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.799915499152298,
+                    -0.30020279546548956,
+                    0.5016072591145833
+                  ],
+                  "error_m": 0.0016222047514097726
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.799915499152298,
+                    -0.30020279546548956,
+                    2.301607259114583
+                  ],
+                  "error_m": 0.0016222047514095526
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.7999392886243681,
+                    0.2997972040628962,
+                    0.5016072591145833
+                  ],
+                  "error_m": 0.0016211396993004255
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.7999392886243681,
+                    0.2997972040628962,
+                    2.301607259114583
+                  ],
+                  "error_m": 0.0016211396993002054
+                }
+              ]
+            },
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.0003368404546088227,
+              "yaw_error_rad": 5.8123003503336705e-05,
+              "translation_component_error_m": 0.0008475163610356549,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.29991818673093285,
+                    -0.2998387250970307,
+                    0.4998372395833333
+                  ],
+                  "error_m": 0.00024329808580571028
+                },
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.29991818673093285,
+                    -0.2998387250970307,
+                    2.299837239583333
+                  ],
+                  "error_m": 0.00024329808580589594
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.2999530605330154,
+                    0.3001612738894863,
+                    0.4998372395833333
+                  ],
+                  "error_m": 0.00023388786677457354
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.2999530605330154,
+                    0.3001612738894863,
+                    2.299837239583333
+                  ],
+                  "error_m": 0.00023388786677476669
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8000818097218687,
+                    -0.29971666678974174,
+                    0.4998372395833333
+                  ],
+                  "error_m": 0.00033684045460868856
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8000818097218687,
+                    -0.29971666678974174,
+                    2.299837239583333
+                  ],
+                  "error_m": 0.0003368404546088227
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8000469359197862,
+                    0.3002833321967753,
+                    0.4998372395833333
+                  ],
+                  "error_m": 0.0003301076605127351
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8000469359197862,
+                    0.3002833321967753,
+                    2.299837239583333
+                  ],
+                  "error_m": 0.00033010766051287194
+                }
+              ]
+            },
+            {
+              "policy": "recommended_region",
+              "maximum_position_error_m": 0.0014468092731464099,
+              "yaw_error_rad": 1.8473883355643594e-05,
+              "translation_component_error_m": 0.0014636799106318853,
+              "samples": [
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.2999972979325154,
+                    -0.3000417685663592,
+                    0.4985555013020833
+                  ],
+                  "error_m": 0.0014451049797808448
+                },
+                {
+                  "world_point": [
+                    -6.292462200546257,
+                    9.695813766212058,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.2999972979325154,
+                    -0.3000417685663592,
+                    2.298555501302083
+                  ],
+                  "error_m": 0.0014451049797811223
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    -0.2999862136025033,
+                    0.29995823133125654,
+                    0.4985555013020833
+                  ],
+                  "error_m": 0.0014451682167580127
+                },
+                {
+                  "world_point": [
+                    -6.304295063192316,
+                    10.295697074332564,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    -0.3,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    -0.2999862136025033,
+                    0.29995823133125654,
+                    2.298555501302083
+                  ],
+                  "error_m": 0.0014451682167582903
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8000027017091358,
+                    -0.30008056372140146,
+                    0.4985555013020833
+                  ],
+                  "error_m": 0.001446746107899139
+                },
+                {
+                  "world_point": [
+                    -4.192870622124494,
+                    9.737228785473263,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    -0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8000027017091358,
+                    -0.30008056372140146,
+                    2.298555501302083
+                  ],
+                  "error_m": 0.001446746107899416
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    0.5691008177083333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    0.5
+                  ],
+                  "measured_navigation": [
+                    1.8000137860391479,
+                    0.29991943617621253,
+                    0.4985555013020833
+                  ],
+                  "error_m": 0.0014468092731461327
+                },
+                {
+                  "world_point": [
+                    -4.204703484770553,
+                    10.337112093593769,
+                    2.369100817708333
+                  ],
+                  "reference_navigation": [
+                    1.8,
+                    0.3,
+                    2.3
+                  ],
+                  "measured_navigation": [
+                    1.8000137860391479,
+                    0.29991943617621253,
+                    2.298555501302083
+                  ],
+                  "error_m": 0.0014468092731464099
+                }
+              ]
+            }
+          ],
+          "alignment_samples": [
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.00166835926938802,
+                -0.0017720654141157866,
+                -0.01312255859375
+              ],
+              "yaw": -0.01976236548060296,
+              "translation": [
+                5.799549234226209,
+                -10.118385848341541,
+                -0.06749355859375
+              ],
+              "state": {
+                "source_ns": 19690000000,
+                "frame": "odom",
+                "ros_now_ns": 19850000000,
+                "receipt": 15620.413865863,
+                "steady_now": 15620.414060839,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.00166835926938802,
+                  -0.0017720654141157866,
+                  -0.01312255859375
+                ],
+                "velocity": [
+                  -0.0019075452582910657,
+                  -0.0046002487652003765,
+                  -0.0003722699184436351
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 19480000000,
+                "frame": "odom",
+                "ros_now_ns": 19500000000,
+                "receipt": 15619.851976568,
+                "steady_now": 15619.870943407,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0017073196358978748,
+                  -0.0016826069913804531,
+                  -0.012908935546875
+                ],
+                "velocity": [
+                  -0.0017436613561585546,
+                  -0.005079636350274086,
+                  -0.00015836993406992406
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                -0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0015312182949855924,
+                -0.0014620828442275524,
+                -0.014892578125
+              ],
+              "yaw": -0.019664593356973223,
+              "translation": [
+                5.80067547028449,
+                -10.117508620054485,
+                -0.069263578125
+              ],
+              "state": {
+                "source_ns": 20460000000,
+                "frame": "odom",
+                "ros_now_ns": 20630000000,
+                "receipt": 15621.413078463,
+                "steady_now": 15621.41323904,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0015312182949855924,
+                  -0.0014620828442275524,
+                  -0.014892578125
+                ],
+                "velocity": [
+                  -0.003042088821530342,
+                  -0.004024659749120474,
+                  -0.000998619245365262
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 20220000000,
+                "frame": "odom",
+                "ros_now_ns": 20220000000,
+                "receipt": 15620.898097955,
+                "steady_now": 15620.944737792,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0014560542767867446,
+                  -0.0013910152483731508,
+                  -0.01507568359375
+                ],
+                "velocity": [
+                  -0.0028468577656894922,
+                  -0.003676946274936199,
+                  -0.0005908046732656658
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            },
+            {
+              "world_pose": [
+                -6.0,
+                10.0,
+                0.054371,
+                0.0,
+                0.0,
+                -0.0
+              ],
+              "odom_position": [
+                -0.0015874756500124931,
+                -0.0016879827016964555,
+                -0.01617431640625
+              ],
+              "yaw": -0.019741190243832203,
+              "translation": [
+                5.7998443382371345,
+                -10.118178921204933,
+                -0.07054531640625
+              ],
+              "state": {
+                "source_ns": 21120000000,
+                "frame": "odom",
+                "ros_now_ns": 21290000000,
+                "receipt": 15622.416908444,
+                "steady_now": 15622.417156379,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.0015874756500124931,
+                  -0.0016879827016964555,
+                  -0.01617431640625
+                ],
+                "velocity": [
+                  -0.00260851695202291,
+                  -0.003908392041921616,
+                  -0.0016587525606155396
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              },
+              "state_before": {
+                "source_ns": 20910000000,
+                "frame": "odom",
+                "ros_now_ns": 20930000000,
+                "receipt": 15621.848428498,
+                "steady_now": 15621.949491524,
+                "armed": false,
+                "connected": true,
+                "mode": 2,
+                "mode_name": "AUTO.LOITER",
+                "position": [
+                  -0.001719196210615337,
+                  -0.0019016320584341884,
+                  -0.015655517578125
+                ],
+                "velocity": [
+                  -0.002943183295428753,
+                  -0.0046888417564332485,
+                  -0.0010995273478329182
+                ],
+                "pose_valid": true,
+                "velocity_valid": true,
+                "battery_valid": true,
+                "battery_voltage": 16.200000762939453,
+                "battery_remaining": 1.0
+              }
+            }
+          ],
+          "world_to_navigation": {
+            "translation": [
+              5.800023014249277,
+              -10.11802446320032,
+              -0.06910081770833333
+            ],
+            "yaw": -0.01972271636047656
+          },
+          "settled_preflight_state": {
+            "source_ns": 19480000000,
+            "frame": "odom",
+            "ros_now_ns": 19500000000,
+            "receipt": 15619.851976568,
+            "steady_now": 15619.870933528,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              -0.0017073196358978748,
+              -0.0016826069913804531,
+              -0.012908935546875
+            ],
+            "velocity": [
+              -0.0017436613561585546,
+              -0.005079636350274086,
+              -0.00015836993406992406
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "loaded_libraries": {
+        "libeasyfly_imu_antialias.so": {
+          "pid": 88301,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+          "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+        },
+        "liblivox_laser_simulation.so": {
+          "pid": 88301,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+          "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+        },
+        "libgazebo_transport.so.11.10.2": {
+          "pid": 88301,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+          "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+        },
+        "libeasyfly_pointcloud_filter_nodes.so": {
+          "pid": 89098,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+          "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+        },
+        "libeasyfly_semantic_map_nodes.so": {
+          "pid": 89100,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+          "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+        },
+        "libplan_env.so": {
+          "pid": 89183,
+          "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+          "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+        }
+      },
+      "dds_compatibility": {
+        "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+        "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+        "implementation": "rmw_fastrtps_cpp",
+        "source_version": "2.6.11",
+        "fix": "reader_writer_listener_snapshot",
+        "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+        "profile_environment": {
+          "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-oy46h7tb/profiles.xml",
+          "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-oy46h7tb/profiles.xml"
+        },
+        "loaded_pids": [
+          88301,
+          88743,
+          88745,
+          88747,
+          88889,
+          88891,
+          88893,
+          88978,
+          88980,
+          89007,
+          89009,
+          89057,
+          89072,
+          89086,
+          89098,
+          89100,
+          89129,
+          89142,
+          89144,
+          89146,
+          89181,
+          89183
+        ],
+        "child_profile_paths": {
+          "89098": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89100": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88978": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88980": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88743": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88745": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89129": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88747": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89007": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89009": "/tmp/easyfly-scene-dds-oy46h7tb/profiles.xml",
+          "89142": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89144": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88889": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89146": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88891": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88893": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89181": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89183": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89057": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "88301": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89072": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml",
+          "89086": "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml"
+        },
+        "child_profiles": {
+          "/tmp/easyfly-scene-dds-oy46h7tb/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+          "/tmp/easyfly-scene-dds-7ze2uotw/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+        },
+        "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+      },
+      "sensors": {
+        "/livox/lidar": {
+          "count": 193,
+          "first_source_ns": 2404000000,
+          "last_source_ns": 21620000000,
+          "receipt": 15622.922217832,
+          "frame": "livox_frame",
+          "points": 20000,
+          "sample_xyz": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.6538960933685303,
+              -7.86606502532959,
+              2.529670238494873
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.466144561767578,
+              1.046128749847412,
+              2.31132435798645
+            ],
+            [
+              -6.46614408493042,
+              3.8929355144500732,
+              2.3166046142578125
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.7677732110023499,
+              6.676490306854248,
+              1.951084017753601
+            ],
+            [
+              2.022067070007324,
+              6.676347732543945,
+              2.2456085681915283
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              9.255522727966309,
+              -5.484608173370361,
+              2.4241411685943604
+            ],
+            [
+              4.9881062507629395,
+              -7.866065979003906,
+              2.501858711242676
+            ],
+            [
+              0.6951090097427368,
+              -7.86606502532959,
+              1.6525872945785522
+            ],
+            [
+              -2.602975606918335,
+              -7.866065502166748,
+              2.047706127166748
+            ],
+            [
+              -6.466142654418945,
+              -5.736673355102539,
+              1.90986168384552
+            ],
+            [
+              -8.322782516479492,
+              -3.0983569622039795,
+              1.9449336528778076
+            ],
+            [
+              -6.46614408493042,
+              1.1157348155975342,
+              1.5744764804840088
+            ],
+            [
+              -6.466144561767578,
+              3.9873387813568115,
+              1.4679826498031616
+            ],
+            [
+              -3.9704205989837646,
+              6.676328659057617,
+              1.8588454723358154
+            ],
+            [
+              -0.678172767162323,
+              6.676486492156982,
+              1.1869257688522339
+            ],
+            [
+              2.222215414047241,
+              6.676335334777832,
+              1.4500089883804321
+            ],
+            [
+              7.052369594573975,
+              6.676092624664307,
+              1.6492631435394287
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              9.255522727966309,
+              -5.794729232788086,
+              1.1871068477630615
+            ],
+            [
+              4.640867233276367,
+              -7.8660664558410645,
+              1.4044221639633179
+            ],
+            [
+              0.4970962107181549,
+              -7.866064548492432,
+              0.7343457937240601
+            ],
+            [
+              -2.941783905029297,
+              -7.866065979003906,
+              1.1060115098953247
+            ],
+            [
+              -6.466144561767578,
+              -5.384712219238281,
+              0.8904877305030823
+            ],
+            [
+              -8.821615219116211,
+              -2.8593392372131348,
+              0.9545057415962219
+            ],
+            [
+              -6.466143608093262,
+              1.3980298042297363,
+              0.8315039277076721
+            ],
+            [
+              -6.466144561767578,
+              4.415867805480957,
+              0.6006672382354736
+            ],
+            [
+              -3.4903359413146973,
+              6.67639684677124,
+              0.9477477669715881
+            ],
+            [
+              -0.33471065759658813,
+              6.676469326019287,
+              0.40475279092788696
+            ],
+            [
+              2.719116449356079,
+              6.676311492919922,
+              0.6697041392326355
+            ],
+            [
+              7.919641494750977,
+              6.676047325134277,
+              0.5662512183189392
+            ],
+            [
+              9.302163124084473,
+              2.8208940029144287,
+              0.3769911229610443
+            ],
+            [
+              13.344250679016113,
+              -2.858323335647583,
+              0.70847088098526
+            ],
+            [
+              9.255523681640625,
+              -6.756669998168945,
+              -0.08965755999088287
+            ],
+            [
+              3.8774073123931885,
+              -7.86606502532959,
+              0.37684014439582825
+            ],
+            [
+              -0.07509920746088028,
+              -7.866063594818115,
+              -0.1802174299955368
+            ],
+            [
+              -3.721463680267334,
+              -7.866064548492432,
+              0.20204924046993256
+            ],
+            [
+              -6.46614408493042,
+              -4.577776908874512,
+              -0.04640696197748184
+            ],
+            [
+              -8.821615219116211,
+              -1.9903019666671753,
+              -0.0325680710375309
+            ],
+            [
+              -6.466144561767578,
+              2.009028673171997,
+              0.1413486897945404
+            ],
+            [
+              -6.344320297241211,
+              5.310321807861328,
+              -0.23000000417232513
+            ],
+            [
+              -2.6731178760528564,
+              6.676511287689209,
+              0.20584595203399658
+            ],
+            [
+              0.30158162117004395,
+              5.641477584838867,
+              -0.23000000417232513
+            ],
+            [
+              3.6475789546966553,
+              6.676263809204102,
+              0.017254749312996864
+            ],
+            [
+              4.6341705322265625,
+              3.106994152069092,
+              -0.23000000417232513
+            ],
+            [
+              4.6685791015625,
+              0.809760570526123,
+              -0.23000000417232513
+            ],
+            [
+              5.948929309844971,
+              -2.024022340774536,
+              -0.23000000417232513
+            ],
+            [
+              1.7626919746398926,
+              -1.6698111295700073,
+              -0.23000000417232513
+            ],
+            [
+              2.0306715965270996,
+              -5.874175548553467,
+              -0.23000000417232513
+            ],
+            [
+              -0.2967281639575958,
+              -2.1150803565979004,
+              -0.23000000417232513
+            ],
+            [
+              -2.5994410514831543,
+              -4.011366367340088,
+              -0.23000000417232513
+            ],
+            [
+              -2.4577908515930176,
+              -1.2925586700439453,
+              -0.23000000417232513
+            ],
+            [
+              -3.4216277599334717,
+              -0.28036510944366455,
+              -0.23000000417232513
+            ],
+            [
+              -4.805083274841309,
+              2.244732618331909,
+              -0.23000000417232513
+            ],
+            [
+              -1.8251591920852661,
+              2.0463554859161377,
+              -0.23000000417232513
+            ],
+            [
+              -2.5163419246673584,
+              10.322449684143066,
+              -0.2189759463071823
+            ],
+            [
+              0.5198372602462769,
+              2.530207633972168,
+              -0.23000000417232513
+            ],
+            [
+              4.302367687225342,
+              5.670214653015137,
+              -0.23000000417232513
+            ],
+            [
+              2.5980076789855957,
+              1.219761610031128,
+              -0.23000000417232513
+            ],
+            [
+              3.215921401977539,
+              0.04939689114689827,
+              -0.23000000417232513
+            ],
+            [
+              3.1829946041107178,
+              -1.6619077920913696,
+              -0.23000000417232513
+            ],
+            [
+              1.2598764896392822,
+              -1.6544232368469238,
+              -0.23000000417232513
+            ],
+            [
+              0.7913838028907776,
+              -4.3895344734191895,
+              -0.23000000417232513
+            ],
+            [
+              -0.5747551918029785,
+              -1.8432866334915161,
+              -0.23000000417232513
+            ],
+            [
+              -3.101306676864624,
+              -3.4607133865356445,
+              -0.23000000417232513
+            ],
+            [
+              -2.4869184494018555,
+              -0.835394561290741,
+              -0.23000000417232513
+            ],
+            [
+              -4.0895185470581055,
+              0.30677467584609985,
+              -0.23000000417232513
+            ],
+            [
+              -5.1789469718933105,
+              3.4840452671051025,
+              -0.23000000417232513
+            ],
+            [
+              -1.9964385032653809,
+              3.102621078491211,
+              -0.23000000417232513
+            ],
+            [
+              -0.5946854948997498,
+              6.676480770111084,
+              0.007000090554356575
+            ],
+            [
+              1.3782401084899902,
+              3.6862704753875732,
+              -0.23000000417232513
+            ],
+            [
+              6.812653064727783,
+              6.676103115081787,
+              0.054676927626132965
+            ],
+            [
+              5.375021934509277,
+              1.5890932083129883,
+              -0.23000000417232513
+            ],
+            [
+              12.284818649291992,
+              -1.5911591053009033,
+              -0.23000000417232513
+            ],
+            [
+              9.255523681640625,
+              -6.714663982391357,
+              -0.18123094737529755
+            ],
+            [
+              2.3827364444732666,
+              -4.2879743576049805,
+              -0.23000000417232513
+            ],
+            [
+              0.3016338348388672,
+              -7.866066932678223,
+              0.05274880304932594
+            ],
+            [
+              -1.9615988731384277,
+              -4.116644859313965,
+              -0.23000000417232513
+            ],
+            [
+              -6.46614408493042,
+              -5.522608757019043,
+              0.1632169634103775
+            ],
+            [
+              -8.821615219116211,
+              -1.6553828716278076,
+              -0.15577472746372223
+            ],
+            [
+              -6.466143608093262,
+              1.3214292526245117,
+              0.1470387876033783
+            ],
+            [
+              -6.466143608093262,
+              5.702678203582764,
+              0.31909212470054626
+            ],
+            [
+              -3.2303903102874756,
+              6.676434516906738,
+              0.1770811527967453
+            ],
+            [
+              0.2051500678062439,
+              6.676440715789795,
+              0.5502305030822754
+            ],
+            [
+              3.4178929328918457,
+              6.67627477645874,
+              0.2496233880519867
+            ],
+            [
+              8.468488693237305,
+              6.676018714904785,
+              1.043578863143921
+            ],
+            [
+              9.302165031433105,
+              1.6720476150512695,
+              0.5139952898025513
+            ],
+            [
+              12.420306205749512,
+              -2.8583219051361084,
+              1.0454974174499512
+            ],
+            [
+              8.788450241088867,
+              -7.866065502166748,
+              0.9759905934333801
+            ],
+            [
+              3.4824767112731934,
+              -7.866067409515381,
+              0.5252761244773865
+            ],
+            [
+              -0.4375779628753662,
+              -7.866066932678223,
+              0.857839047908783
+            ],
+            [
+              -4.632172107696533,
+              -7.86606502532959,
+              0.5525103807449341
+            ],
+            [
+              -6.4661431312561035,
+              -4.639211654663086,
+              0.9972864985466003
+            ],
+            [
+              -6.466143608093262,
+              -0.6435719132423401,
+              0.6004305481910706
+            ],
+            [
+              -6.46614408493042,
+              1.8394895792007446,
+              0.8877823948860168
+            ],
+            [
+              -6.419952392578125,
+              6.675980567932129,
+              1.343997836112976
+            ],
+            [
+              -2.6880011558532715,
+              6.676509380340576,
+              0.9815567135810852
+            ],
+            [
+              0.6946515440940857,
+              6.676414966583252,
+              1.2827764749526978
+            ],
+            [
+              3.9609146118164062,
+              6.676248073577881,
+              1.142518162727356
+            ],
+            [
+              9.302164077758789,
+              6.46517276763916,
+              2.3527681827545166
+            ],
+            [
+              9.302164077758789,
+              1.1223911046981812,
+              1.5786325931549072
+            ],
+            [
+              10.350518226623535,
+              -2.911348819732666,
+              2.1001391410827637
+            ],
+            [
+              7.904601097106934,
+              -7.866065979003906,
+              2.19149112701416
+            ],
+            [
+              3.119161367416382,
+              -7.866066932678223,
+              1.493283987045288
+            ],
+            [
+              -0.8069129586219788,
+              -7.866067409515381,
+              1.7585194110870361
+            ],
+            [
+              -5.021471977233887,
+              -7.866065979003906,
+              1.6519032716751099
+            ],
+            [
+              -6.466143608093262,
+              -4.266875267028809,
+              1.8490442037582397
+            ],
+            [
+              -6.46614408493042,
+              -0.40083327889442444,
+              1.3491930961608887
+            ],
+            [
+              -6.46614408493042,
+              2.0611231327056885,
+              1.6647119522094727
+            ],
+            [
+              -5.94396448135376,
+              6.676049709320068,
+              2.320695161819458
+            ],
+            [
+              -2.527529001235962,
+              6.763782024383545,
+              1.8015040159225464
+            ],
+            [
+              0.9216771125793457,
+              6.676402568817139,
+              2.0532100200653076
+            ],
+            [
+              4.1539764404296875,
+              6.676239490509033,
+              2.046415090560913
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              3.074761390686035,
+              -7.866065502166748,
+              2.422232151031494
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -6.46614408493042,
+              -0.37209951877593994,
+              2.086097002029419
+            ],
+            [
+              -6.466143608093262,
+              2.0810322761535645,
+              2.4296224117279053
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -2.527529239654541,
+              6.717262268066406,
+              2.598905086517334
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              -0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ]
+        },
+        "/camera/color/image_raw": {
+          "count": 543,
+          "first_source_ns": 2405000000,
+          "last_source_ns": 21606000000,
+          "receipt": 15622.833582962,
+          "frame": "camera_color_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "rgb8",
+          "sample_saved": true,
+          "non_increasing_stamps": 6
+        },
+        "/camera/aligned_depth_to_color/depth/image_raw": {
+          "count": 543,
+          "first_source_ns": 2405000000,
+          "last_source_ns": 21606000000,
+          "receipt": 15622.835692599,
+          "frame": "camera_depth_optical_frame",
+          "width": 640,
+          "height": 480,
+          "encoding": "32FC1",
+          "finite_positive_pixels": 210826,
+          "min_m": 0.45073533058166504,
+          "max_m": 19.882247924804688,
+          "non_increasing_stamps": 6
+        },
+        "/livox/imu": {
+          "count": 2587,
+          "first_source_ns": 2409000000,
+          "last_source_ns": 21622000000,
+          "receipt": 15622.869650382,
+          "frame": "livox_frame",
+          "finite": true
+        }
+      },
+      "shutdown_seconds": 1.5170561759987322,
+      "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+      "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+      "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+      "scene_probe_sha256": "981f28efd333718c7b56817e2cda6d3ece48f3d08e86c5340306ee1dd063660d",
+      "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+      "settled_preflight_state": {
+        "source_ns": 19480000000,
+        "frame": "odom",
+        "ros_now_ns": 19500000000,
+        "receipt": 15619.851976568,
+        "steady_now": 15619.870933528,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0017073196358978748,
+          -0.0016826069913804531,
+          -0.012908935546875
+        ],
+        "velocity": [
+          -0.0017436613561585546,
+          -0.005079636350274086,
+          -0.00015836993406992406
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "alignment_contract": {
+        "policy": "recommended_region",
+        "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+        "maximum_position_error_m": 0.2,
+        "maximum_yaw_error_rad": 0.1
+      },
+      "raw_result": "artifacts/scene-s6-office-20261017/qualified-v2-symlink-cold/result.json",
+      "raw_result_sha256": "68ef97ded3822ad8dc4bcf581a39892659f3a73a20f1cabbc15af49d8913597b",
+      "transform": {
+        "translation": [
+          5.800023014249277,
+          -10.11802446320032,
+          -0.06910081770833333
+        ],
+        "yaw": -0.01972271636047656
+      },
+      "normal_exits": 24,
+      "mode": "symlink",
+      "offline_network": {
+        "namespace": "net:[4026532959]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "cache": {
+        "passed": true,
+        "read_only": true,
+        "observer_sha256": "84e54a4d1f73582648798576c771b8f00b8ab9e53683470aa17ea150d7e4ccd6",
+        "asset_lock": {
+          "schema_version": 1,
+          "asset_set_id": "osrf_willowgarage_v1",
+          "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+          "lock_sha256": "00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0",
+          "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+          "archive_size_bytes": 227118253
+        },
+        "processes": [
+          {
+            "pid": 88301,
+            "identity": {
+              "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+              "start_ticks": "1558966"
+            },
+            "model_paths": [
+              "/home/jia/.cache/easyfly/assets/osrf_willowgarage_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0/models",
+              "/usr/share/gazebo-11/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-office-20261017/symlink/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+              "/home/jia/easyfly_ws/artifacts/scene-s6-office-20261017/symlink/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models"
+            ],
+            "asset_mode": "cache",
+            "cache_root": null
+          }
+        ]
+      }
+    }
+  ]
+}

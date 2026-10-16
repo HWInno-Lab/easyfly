@@ -97,6 +97,30 @@ def scene_probe_module():
     return module
 
 
+@pytest.mark.parametrize('policy,translation,yaw,extent', [
+    ('world_origin',[.201,0,0],0.,1.8),
+    ('recommended_region',[.201,0,0],0.,1.8),
+    ('recommended_region',[0,0,0],.1001,1.8),
+    ('recommended_region',[0,0,0],.09,10.),
+])
+def test_scene_alignment_excess_rejects_before_any_mission(scene_probe_module, policy, translation, yaw, extent):
+    probe=scene_probe_module.SceneProbe.__new__(scene_probe_module.SceneProbe)
+    def forbidden(*args,**kwargs):
+        pytest.fail('alignment rejection must precede mission resolution or goals')
+    probe.args=SimpleNamespace(bootstrap=False,cycles=1,mission=SimpleNamespace(resolve=forbidden))
+    probe.scene={'navigation':dict(alignment_check=policy,
+        world_to_navigation=dict(translation=[0,0,0],yaw=0.),
+        recommended_region=dict(min=[-.3,-.3,.5],max=[extent,.3,2.3]))}
+    probe.report={'world_to_navigation':dict(translation=translation,yaw=yaw)}
+    probe.start=lambda:None;probe.inspect=lambda:None
+    probe.wait=lambda predicate,seconds:predicate()
+    probe.reference_position=lambda:dict(frame='map',position=[0,0,0])
+    probe.send=forbidden
+    with pytest.raises(RuntimeError,match='no flight goal sent'):probe.run()
+    assert probe.report['mission_cycles']==[]
+    assert len(probe.report['alignment_checks'])==1
+
+
 def test_postlanding_gate_rejects_motion_stale_maps_and_invalid_state(scene_probe_module):
     def valid(state,healthy,anchor,now,receipts):
         return scene_probe_module.recovery_sample_valid(state,healthy,anchor,now,receipts,
