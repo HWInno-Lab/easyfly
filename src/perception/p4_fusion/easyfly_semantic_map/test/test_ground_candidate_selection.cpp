@@ -1,9 +1,24 @@
-// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
-#include <gtest/gtest.h>
-#include <limits>
+// Copyright 2026 EasyFly Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/segmentation/sac_segmentation.h>
+
+#include <gtest/gtest.h>
+
+#include <limits>
 
 #include "easyfly_semantic_map/ground_candidate_selection.hpp"
 #include "easyfly_semantic_map/ground_plane_tracker.hpp"
@@ -17,7 +32,8 @@ GroundPlaneCandidate fitIndoorFrame(std::size_t floor_points, std::size_t ceilin
 {
   auto original = pcl::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
   for (std::size_t i = 0; i < floor_points + ceiling_points; ++i) {
-    original->push_back(pcl::PointXYZ(
+    original->push_back(
+      pcl::PointXYZ(
         static_cast<float>(i % 25) * 0.2f,
         static_cast<float>(i / 25) * 0.2f,
         i < floor_points ? 0.0f : 3.0f));
@@ -41,10 +57,13 @@ GroundPlaneCandidate fitIndoorFrame(std::size_t floor_points, std::size_t ceilin
   segmentation.segment(inliers, coefficients);
   candidate.inlier_count = inliers.indices.size();
   if (coefficients.values.size() == 4) {
-    candidate.model.normal = {coefficients.values[0], coefficients.values[1], coefficients.values[2]};
+    candidate.model.normal =
+    {coefficients.values[0], coefficients.values[1], coefficients.values[2]};
     candidate.model.offset = coefficients.values[3];
     if (candidate.model.normal[2] < 0) {
-      for (auto & component : candidate.model.normal) {component = -component;}
+      for (auto & component : candidate.model.normal) {
+        component = -component;
+      }
       candidate.model.offset = -candidate.model.offset;
     }
   }
@@ -70,7 +89,9 @@ TEST(GroundCandidateSelection, SparseFloorKeepsFullFrameConfidenceDenominator)
   GroundVehiclePose vehicle;
   vehicle.x = 0; vehicle.y = 0; vehicle.z = 1;
   vehicle.connected = true; vehicle.pose_valid = true; vehicle.state_age_s = 0;
-  for (int i = 0; i < 5; ++i) {tracker.update(candidate, vehicle);}
+  for (int i = 0; i < 5; ++i) {
+    tracker.update(candidate, vehicle);
+  }
   EXPECT_FALSE(tracker.initialized());
 }
 

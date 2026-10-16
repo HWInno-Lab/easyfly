@@ -23,6 +23,7 @@ class SceneInputs:
     position: tuple
     yaw: float
     ground_model_frame: str = 'odom'
+    grid_footprint_mode: str = 'cluster_boxes'
 
 
 def resolve_scene(catalog, scene_id, profile):
@@ -50,7 +51,8 @@ def resolve_scene(catalog, scene_id, profile):
     return SceneInputs(str(catalog.resolve(scene['world'])), ':'.join(str(p) for p in roots),
                        str(catalog.resolve(scene['runtime']['entrypoint'])),
                        tuple(scene['spawn']['position']), scene['spawn']['yaw'],
-                       scene['navigation'].get('ground_model_frame','odom'))
+                       scene['navigation'].get('ground_model_frame','odom'),
+                       scene['navigation'].get('grid_footprint_mode','cluster_boxes'))
 
 
 def selection_arguments(default_profile):
@@ -59,6 +61,8 @@ def selection_arguments(default_profile):
                                   description='Compatibility profile for an explicitly selected scene'),
             DeclareLaunchArgument('world', default_value='',
                                   description='Legacy relative world filename; mutually exclusive with scene'),
+        DeclareLaunchArgument('grid_footprint_mode',default_value='',
+                              description='Low-level occupancy footprint mode; managed scenes use their manifest'),
         DeclareLaunchArgument('ground_model_frame',default_value='',
                               description='Low-level ground basis override; managed scenes use their manifest'),
         DeclareLaunchArgument('debug_model_path',default_value='',
@@ -87,6 +91,8 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             raise CatalogError('managed scene cannot override debug_model_path')
         if _value(context, 'debug_spawn_pose'):
             raise CatalogError('managed scene cannot override debug_spawn_pose')
+        if _value(context,'grid_footprint_mode'):
+            raise CatalogError('managed scene cannot override grid_footprint_mode')
         if _value(context,'ground_model_frame'):
             raise CatalogError('managed scene cannot override ground_model_frame')
         catalog, _ = catalog_factory(px4_dir=px4_dir)
@@ -104,6 +110,9 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
         ground_frame=_value(context,'ground_model_frame') or 'odom'
         if ground_frame not in ('map','odom'):
             raise CatalogError('ground_model_frame must be map or odom')
+        grid_mode=_value(context,'grid_footprint_mode') or 'cluster_boxes'
+        if grid_mode not in ('cluster_boxes','observed_cells'):
+            raise CatalogError('grid_footprint_mode must be cluster_boxes or observed_cells')
         pose = (0.0, 0.0, 0.83, 0.0)
         debug_pose = _value(context, 'debug_spawn_pose')
         if debug_pose:
@@ -116,10 +125,11 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             if len(pose) != 4 or not all(math.isfinite(value) for value in pose):
                 raise CatalogError('debug_spawn_pose requires four finite values: x y z yaw')
         result = SceneInputs(str(root / (world or default_world)), ':'.join(roots),
-                             _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame)
+                             _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame,grid_mode)
     values = dict(world=result.world, model_path=result.model_path, model_sdf=result.model_sdf,
                   x=str(result.position[0]), y=str(result.position[1]), z=str(result.position[2]),
-                  yaw=str(result.yaw),ground_model_frame=result.ground_model_frame)
+                  yaw=str(result.yaw),ground_model_frame=result.ground_model_frame,
+                  grid_footprint_mode=result.grid_footprint_mode)
     return [SetLaunchConfiguration(PREFIX + key, value) for key, value in values.items()]
 
 

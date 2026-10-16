@@ -273,7 +273,8 @@ def generate_launch_description():
             get_package_share_directory("easyfly_semantic_map") + "/launch/semantic_map.launch.py"),
         launch_arguments={"capture_shutdown": LaunchConfiguration(
             "semantic_capture_shutdown"),
-            "ground_model_frame": scene_value('ground_model_frame')}.items())
+            "ground_model_frame": scene_value('ground_model_frame'),
+            "grid_footprint_mode": scene_value('grid_footprint_mode')}.items())
 
     spawn_delayed = TimerAction(period=3.0, actions=[spawn_model])
     px4_delayed = TimerAction(period=6.0, actions=[px4_sitl])

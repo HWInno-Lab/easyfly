@@ -87,3 +87,9 @@ with an explicit raw `world` and `debug_model_path`. The four values must be fin
 Managed `scene` selection rejects this override; legacy defaults remain unchanged.
 `scene_sitl --bootstrap` uses this explicit route for geometry-reviewed draft
 spawns and forbids flight goals while collecting alignment and sensor evidence.
+
+Managed scenes may explicitly set `navigation.grid_footprint_mode` to
+`observed_cells` for connected indoor environments. The default remains
+`cluster_boxes`; CLI overrides of a managed scene are rejected before startup.
+The selection is passed to the semantic node and its actual value is checked by
+the explicit scene acceptance probe alongside the loaded library hashes.

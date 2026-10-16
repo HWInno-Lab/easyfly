@@ -16,6 +16,7 @@ import time
 from ament_index_python.packages import get_package_prefix
 from easyfly_msgs.action import ExecuteMission
 from easyfly_px4_sitl.scene_environment import installed_catalog
+from rcl_interfaces.srv import GetParameters
 from sensor_msgs.msg import Image, Imu, PointCloud2
 from livox_ros_driver2.msg import CustomMsg
 from rclpy.qos import qos_profile_sensor_data
@@ -137,6 +138,7 @@ class SceneProbe(navigation.Probe):
             command.extend(['world:='+str(self.catalog.resolve(self.scene['world'])),
                             'debug_model_path:='+':'.join(roots),
                             'debug_spawn_pose:='+' '.join(str(v) for v in [*spawn['position'],spawn['yaw']]),
+                            'grid_footprint_mode:='+self.scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
                             'ground_model_frame:='+self.scene['navigation'].get('ground_model_frame','odom')])
             self.report['bootstrap_only_raw_debug_inputs']=True
         else:
@@ -197,6 +199,18 @@ class SceneProbe(navigation.Probe):
                         raise RuntimeError('loaded library differs from selected overlay: '+str(path))
                     loaded[path.name]=dict(pid=pid,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         self.report['loaded_libraries']=loaded
+        parameter_client=self.node.create_client(GetParameters,'/easyfly_semantic_map/get_parameters')
+        try:
+            self.wait(parameter_client.service_is_ready,5)
+            response=parameter_client.call_async(GetParameters.Request(names=['grid_footprint_mode']))
+            self.wait(response.done,5)
+            values=response.result().values
+            selected_mode=self.scene['navigation'].get('grid_footprint_mode','cluster_boxes')
+            if len(values)!=1 or values[0].type!=4 or values[0].string_value!=selected_mode:
+                raise RuntimeError('actual semantic grid mode differs from scene manifest')
+            self.report['grid_footprint_mode']=values[0].string_value
+        finally:
+            self.node.destroy_client(parameter_client)
         if not dds_loaded:
             raise RuntimeError('private DDS library not confirmed in owned processes')
         self.report['dds_compatibility']['loaded_pids']=sorted(set(dds_loaded))

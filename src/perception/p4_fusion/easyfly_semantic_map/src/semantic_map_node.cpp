@@ -81,6 +81,7 @@
 #include "easyfly_semantic_map/ground_spatial_support.hpp"
 #include "easyfly_semantic_map/ground_plane_transform.hpp"
 #include "easyfly_semantic_map/grid_inflation.hpp"
+#include "easyfly_semantic_map/observed_grid.hpp"
 #include "easyfly_semantic_map/map_validity.hpp"
 #include "easyfly_semantic_map/dynamic_obstacle_tracker.hpp"
 
@@ -108,6 +109,10 @@ public:
   : Node("easyfly_semantic_map", options)
   {
     loadParams();
+    grid_footprint_mode_ = declare_parameter<std::string>("grid_footprint_mode", "cluster_boxes");
+    if (grid_footprint_mode_ != "cluster_boxes" && grid_footprint_mode_ != "observed_cells") {
+      throw std::invalid_argument("grid_footprint_mode must be cluster_boxes or observed_cells");
+    }
     const auto ground_frame = declare_parameter<std::string>("ground_model_frame", "");
     if (!ground_frame.empty()) {params_.ground_model_frame = ground_frame;}
 
@@ -353,7 +358,8 @@ private:
     params_.service_name = p["service_name"].as<std::string>(params_.service_name);
     params_.world_frame = p["world_frame"].as<std::string>(params_.world_frame);
     params_.base_frame = p["base_frame"].as<std::string>(params_.base_frame);
-    params_.ground_model_frame = p["ground_model_frame"].as<std::string>(params_.ground_model_frame);
+    params_.ground_model_frame =
+      p["ground_model_frame"].as<std::string>(params_.ground_model_frame);
     params_.plane_distance_threshold =
       p["plane_distance_threshold"].as<double>(params_.plane_distance_threshold);
     params_.plane_max_tilt_rad =
@@ -785,7 +791,7 @@ private:
       invalid_published_ = false;
     }
     obstacles_pub_->publish(empty_obstacles);
-    publishGrid(header, {});
+    publishGrid(header, {}, nonground);
     publishMarkers(header, {});
     const rclcpp::Time stamp(header.stamp, get_clock()->get_clock_type());
     if (nonground != nullptr && !nonground->empty()) {
@@ -1046,8 +1052,10 @@ private:
         // reset or missing SLAM alignment invalidates the navigation cloud.
         auto tf = tf_buffer_->lookupTransform(
           params_.ground_model_frame, params_.world_frame, tf2::TimePointZero);
-        if (!groundBasisStampFresh(static_cast<double>(now_ns) / 1e9, rclcpp::Time(tf.header.stamp).seconds(),
-            params_.ground_init_state_timeout)) {
+        if (!groundBasisStampFresh(
+            static_cast<double>(now_ns) / 1e9, rclcpp::Time(tf.header.stamp).seconds(),
+            params_.ground_init_state_timeout))
+        {
           invalidateMap("地面模型坐标变换过期，清除 semantic_map");
           return;
         }
@@ -1072,7 +1080,8 @@ private:
       pcl::transformPointCloud(*cloud, *ground_cloud, world_to_ground.matrix());
       const Eigen::Vector3d position = world_to_ground *
         Eigen::Vector3d(vehicle_pose.x, vehicle_pose.y, vehicle_pose.z);
-      ground_vehicle.x = position.x(); ground_vehicle.y = position.y(); ground_vehicle.z = position.z();
+      ground_vehicle.x = position.x(); ground_vehicle.y = position.y();
+      ground_vehicle.z = position.z();
     }
     if (cloud->size() >= 100) {
       // ---- 本帧地面候选: RANSAC 只提供候选, 不能直接决定剔除 ----
@@ -1131,7 +1140,8 @@ private:
             seg.segment(strict_inliers, strict_coeff);
             if (strict_coeff.values.size() >= 4) {
               GroundPlaneCandidate strict_candidate;
-              double length = std::sqrt(strict_coeff.values[0] * strict_coeff.values[0] +
+              double length = std::sqrt(
+                strict_coeff.values[0] * strict_coeff.values[0] +
                 strict_coeff.values[1] * strict_coeff.values[1] +
                 strict_coeff.values[2] * strict_coeff.values[2]);
               if (std::isfinite(length) && length >= 1e-9) {
@@ -1154,10 +1164,12 @@ private:
           candidate_ground_z = candidate.model.zAt(ground_vehicle.x, ground_vehicle.y);
           plane_update = ground_tracker_.update(candidate, ground_vehicle);
           if (plane_update == GroundPlaneUpdate::kInitialized) {
-            RCLCPP_INFO(get_logger(),
+            RCLCPP_INFO(
+              get_logger(),
               "ground_initialized frame=%s method=%s global_inliers=%zu/%zu spatial_cells=%zu/%zu "
               "spatial_points=%zu clearance=%.3fm",
-              (params_.ground_model_frame.empty() ? params_.world_frame : params_.ground_model_frame).c_str(),
+              (params_.ground_model_frame.empty() ?
+              params_.world_frame : params_.ground_model_frame).c_str(),
               candidate.spatial_support.qualified() ? "spatial_support" : "global_ratio",
               candidate.inlier_count, candidate.sample_count, candidate.spatial_support.cells,
               candidate.spatial_support.eligible_cells, candidate.spatial_support.points,
@@ -1170,12 +1182,16 @@ private:
       if (std::isfinite(candidate_ground_z) && std::isfinite(ground_vehicle.z)) {
         const double candidate_clearance = ground_vehicle.z - candidate_ground_z;
         RCLCPP_WARN_THROTTLE(
-          get_logger(), *get_clock(), 5000,
+          get_logger(),
+          *get_clock(), 5000,
           "可信地面平面尚未初始化, 候选净空 %.3fm (要求 >= %.3fm), "
-          "inliers=%zu/%zu (要求 >= %.3f), state_age=%.3fs connected=%d pose_valid=%d armed=%d, 丢弃当前帧",
+          "inliers=%zu/%zu (要求 >= %.3f), state_age=%.3fs "
+          "connected=%d pose_valid=%d armed=%d, 丢弃当前帧",
           candidate_clearance, params_.ground_min_clearance,
-          ground_inliers->indices.size(), cloud->size(), params_.plane_min_inlier_ratio,
-          ground_vehicle.state_age_s, ground_vehicle.connected, ground_vehicle.pose_valid, ground_vehicle.armed);
+          ground_inliers->indices.size(),
+          cloud->size(), params_.plane_min_inlier_ratio,
+          ground_vehicle.state_age_s, ground_vehicle.connected, ground_vehicle.pose_valid,
+          ground_vehicle.armed);
       } else {
         RCLCPP_WARN_THROTTLE(
           get_logger(), *get_clock(), 5000,
@@ -1220,7 +1236,7 @@ private:
       const double ground_z = classification_ground.zAt(p.x, p.y);
       const double height = static_cast<double>(p.z) - ground_z;
       if (std::abs(classification_ground.signedDistance(p.x, p.y, p.z)) >
-          params_.plane_distance_threshold)
+        params_.plane_distance_threshold)
       {
         ++above_count;
         if (height > 0.05 && height < params_.obstacle_z_max) {
@@ -1333,7 +1349,8 @@ private:
     ObstacleInfoArray arr;
     arr.header.stamp = msg->header.stamp;
     arr.header.frame_id = params_.world_frame;
-    std::vector<std::array<double, 6>> boxes;      // x1,y1,z1,x2,y2,z2 (栅格/markers 共用)
+    // x1,y1,z1,x2,y2,z2 for semantic labels and the legacy grid.
+    std::vector<std::array<double, 6>> boxes;
     std::vector<DynamicObstacleObservation> observations;
     std::vector<std::int32_t> fallback_ids;
     boxes.reserve(clusters.size());
@@ -1578,7 +1595,33 @@ private:
       invalid_published_ = false;
     }
     obstacles_pub_->publish(arr);
-    publishGrid(arr.header, boxes);
+    if (grid_footprint_mode_ == "observed_cells") {
+      // Keep full compact dynamic envelopes, including each complete predicted footprint.
+      // Environmental cluster AABBs remain semantic labels, not filled room interiors.
+      std::vector<std::array<double, 6>> dynamic_boxes;
+      for (std::size_t i = 0; i < boxes.size(); ++i) {
+        if (arr.obstacles[i].is_dynamic) {dynamic_boxes.push_back(boxes[i]);}
+      }
+      constexpr auto footprint = DynamicObstacleTracker::kPredictionFootprintPoints;
+      for (std::size_t i = 0; i < published_prediction_points; i += footprint) {
+        const auto start = merged_nonground->size() - published_prediction_points + i;
+        const auto & p = merged_nonground->points[start];
+        std::array<double, 6> b{p.x, p.y, p.z, p.x, p.y, p.z};
+        for (std::size_t j = 1; j < footprint; ++j) {
+          const auto & v = merged_nonground->points[start + j];
+          b[0] = std::min(b[0], static_cast<double>(v.x)); b[1] = std::min(
+            b[1],
+            static_cast<double>(v.y));
+          b[3] = std::max(b[3], static_cast<double>(v.x)); b[4] = std::max(
+            b[4],
+            static_cast<double>(v.y));
+        }
+        dynamic_boxes.push_back(b);
+      }
+      publishGrid(arr.header, dynamic_boxes, merged_nonground.get());
+    } else {
+      publishGrid(arr.header, boxes);
+    }
     publishMarkers(arr.header, boxes);
   }
 
@@ -1588,7 +1631,8 @@ private:
   // 的栅格 (实测 A* 直线穿过 person, 最近 0.14m)。
   void publishGrid(
     const std_msgs::msg::Header & header,
-    const std::vector<std::array<double, 6>> & boxes)
+    const std::vector<std::array<double, 6>> & boxes,
+    const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr)
   {
     nav_msgs::msg::OccupancyGrid grid;
     grid.header = header;
@@ -1602,6 +1646,15 @@ private:
     grid.data.assign(n, 0);
 
     const double inf = params_.inflate_radius;
+    if (grid_footprint_mode_ == "observed_cells" && nonground != nullptr &&
+      !rasterizeObservedFootprints(
+        *nonground, grid.info.width, grid.info.height,
+        params_.grid_resolution, grid.info.origin.position.x, grid.info.origin.position.y,
+        inf + params_.nonground_voxel_size * 0.5, grid.data))
+    {
+      invalidateMap("observed occupancy geometry invalid");
+      return;
+    }
     for (const auto & b : boxes) {
       const int c1 = std::max(
         0, static_cast<int>(std::floor(
@@ -1745,6 +1798,7 @@ private:
   ObstacleInfoArray latest_;
   bool map_ready_{false};
   bool invalid_published_{false};
+  std::string grid_footprint_mode_;
   std::vector<int8_t> grid_persist_;    // 栅格持久化状态 (两段式)
   std::vector<uint32_t> grid_miss_;     // 连续未观测帧数
 

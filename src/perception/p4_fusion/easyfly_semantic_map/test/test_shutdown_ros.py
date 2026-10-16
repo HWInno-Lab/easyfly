@@ -118,7 +118,8 @@ def run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture, work
         transform = TransformStamped(header=header, child_frame_id='base_link')
         transform.transform.translation.z = 1.0
         transform.transform.rotation.w = 1.0
-        ground_basis = TransformStamped(header=Header(frame_id='map', stamp=stamp), child_frame_id='odom')
+        ground_basis = TransformStamped(
+            header=Header(frame_id='map', stamp=stamp), child_frame_id='odom')
         ground_basis.transform.rotation.w = 1.0
         broadcaster.sendTransform([ground_basis, transform])
         states.publish(UAVState(header=header, connected=True, pose_valid=True,

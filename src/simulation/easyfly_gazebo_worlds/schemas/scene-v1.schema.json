@@ -305,6 +305,13 @@
             "map",
             "odom"
           ]
+        },
+        "grid_footprint_mode": {
+          "type": "string",
+          "enum": [
+            "cluster_boxes",
+            "observed_cells"
+          ]
         }
       },
       "required": [

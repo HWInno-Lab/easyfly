@@ -1,0 +1,59 @@
+{
+  "scope": "Explicit indoor occupancy footprint mode. Independent real-node regression plus ordinary offline/lifecycle tests; simulator flight acceptance is separate.",
+  "cause": "Euclidean clusters can join nonconvex room walls and furniture; their filled AABB blocks an otherwise clear interior. Oversized clusters also cannot define safe geometric occupancy.",
+  "changes": [
+    "Default cluster_boxes remains unchanged for old scenes.",
+    "Only S3 house and bookstore manifests explicitly select observed_cells.",
+    "Rasterize all trusted nonground samples with unchanged 0.7m inflation plus half the 0.1m voxel width.",
+    "Retain current confirmed dynamic boxes, complete predicted footprint envelopes, occupancy persistence and invalidation.",
+    "Reject managed CLI mode override; inspect actual node parameter and loaded library before flight."
+  ],
+  "regression": {
+    "passed": true,
+    "semantic_result_records": 233,
+    "semantic_skipped_records": 18,
+    "launcher_result_records": 150,
+    "sitl_result_records": 26,
+    "failures": 0,
+    "actual_node_cases": [
+      "legacy compact room",
+      "observed compact room",
+      "observed oversized connected walls"
+    ],
+    "flight_performed": false
+  },
+  "evidence": [
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp",
+      "sha256": "6d759081e913bcb629c61a5535d3e7eeb47f2c836145b35562d8f573f0a8174d"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp",
+      "sha256": "38d6001b56c4e8b31368d8dfc51b59d1e6118396e5834f77a1021eec35f871d4"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid.cpp",
+      "sha256": "f1efc2ceebfe0b6f1202e8aa365359d9fcadd160796474bf45ea5f1511a1ead5"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid_ros.py",
+      "sha256": "aa907a628c2bbcb95d69b558d0fbeec189f573f1620e0ddfa5ea59c4fec461fa"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/observed-grid-final-semantic-results.log",
+      "sha256": "59656af690e04b74e209776a235e7130e8c52f79e59f865ef7308aa6071bbda4"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/observed-grid-final-launcher-results.log",
+      "sha256": "a6f2c6c1de9860468bbf12a25d512a043d856e69bb0ce75823ac1aa53ac9c9d3"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/observed-grid-final-sitl-results.log",
+      "sha256": "27e5c1994d5595cf613615a83fb25c872d98d4426a3a4b4fdfd732d10047994a"
+    },
+    {
+      "path": "artifacts/scene-s3-20261016/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "e0e5f4fdc503558b23e562bdb81a69a4c897aecdd83f691460d0f8a6166784eb"
+    }
+  ]
+}

@@ -42,3 +42,19 @@
 将地面变成障碍。缺失/过期的 TF 使地图无效；相邻参考变换平移超过 0.25m 或转角
 超过 0.10rad 时重置地面模型并清图，已解锁时不能重新初始化。不会用过期变换替代。
 `test_ground_plane_transform` 验证变换后的地面、低障碍、已解锁冻结及拒绝路径。
+
+## Explicit occupancy footprints for indoor environments
+
+`grid_footprint_mode` defaults to `cluster_boxes`, preserving existing maps and
+compact-obstacle behavior. A managed scene may explicitly select `observed_cells`.
+That mode projects every trusted nonground voxel, including samples outside usable
+semantic clusters, with the existing inflation radius plus half the voxel width.
+A connected U-shaped wall therefore blocks its observed walls without filling its
+room interior. Semantic obstacle messages and markers keep their cluster labels.
+Confirmed dynamic boxes and complete predicted footprints remain filled envelopes.
+The 20-frame occupancy persistence and all ground/TF/freshness invalidation gates
+are shared with the default mode; this does not turn unobserved space into a
+certified free-space map. The projection is bounded to 200000 points and 1000000
+grid cells and uses O(points + cells) work. Invalid mode selections fail startup.
+Scene selection rejects CLI overrides and records the actual ROS parameter and
+loaded semantic library before a mission.

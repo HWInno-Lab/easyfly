@@ -36,9 +36,14 @@ def generate_launch_description():
     capture_arg = DeclareLaunchArgument(
         'capture_shutdown', default_value='false',
         description='Opt-in semantic-only stack capture; changes timing, not a normal acceptance')
-    ground_arg = DeclareLaunchArgument('ground_model_frame', default_value='',
-        description='Ground model reference frame; empty preserves configured world-frame behavior')
-    return LaunchDescription([use_sim_time_arg, capture_arg, ground_arg, OpaqueFunction(function=_node)])
+    ground_arg = DeclareLaunchArgument(
+        'ground_model_frame', default_value='',
+        description='Ground model frame; empty preserves configured behavior')
+    grid_arg = DeclareLaunchArgument(
+        'grid_footprint_mode', default_value='cluster_boxes',
+        description='Occupancy geometry: cluster_boxes or observed_cells')
+    return LaunchDescription([
+        use_sim_time_arg, capture_arg, ground_arg, grid_arg, OpaqueFunction(function=_node)])
 
 
 def _node(context):
@@ -59,6 +64,8 @@ def _node(context):
         parameters=[
             {
                 "use_sim_time": LaunchConfiguration("use_sim_time"),
+                "grid_footprint_mode": ParameterValue(
+                    LaunchConfiguration("grid_footprint_mode"), value_type=str),
                 "ground_model_frame": ParameterValue(
                     LaunchConfiguration("ground_model_frame", default=''), value_type=str),
                 "config_file": os.path.join(

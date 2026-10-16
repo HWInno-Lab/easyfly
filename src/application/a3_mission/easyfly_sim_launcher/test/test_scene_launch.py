@@ -130,7 +130,7 @@ def test_scene_and_world_ambiguity_precedes_catalog(ready_catalog):
             catalog_factory=lambda **k:pytest.fail('catalog loaded before conflict rejection'))
 
 
-@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis'])
+@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis','grid_mode'])
 def test_managed_scene_rejects_override(ready_catalog, override):
     context = LaunchContext()
     context.launch_configurations.update(scene='test',scene_profile='base_sim')
@@ -140,6 +140,8 @@ def test_managed_scene_rejects_override(ready_catalog, override):
         context.launch_configurations['scene_profile'] = 'navigation_dev'
     elif override=='debug_roots':
         context.launch_configurations['debug_model_path']='/tmp'
+    elif override == 'grid_mode':
+        context.launch_configurations['grid_footprint_mode']='observed_cells'
     else:
         context.launch_configurations['ground_model_frame']='map'
     with pytest.raises(CatalogError):
@@ -159,6 +161,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
     context = LaunchContext()
     if managed:
         ready_catalog.scenes['test']['navigation']['ground_model_frame']='map'
+        ready_catalog.scenes['test']['navigation']['grid_footprint_mode']='observed_cells'
         context.launch_configurations.update(scene='test',scene_profile=profile)
     description = module.generate_launch_description()
     guard_index = None
@@ -193,6 +196,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
         assert spawn[spawn.index('-Y')+1] == '0.0'
     assert context.launch_configurations[PREFIX+'model_path']
     assert context.launch_configurations[PREFIX+'ground_model_frame']==('map' if managed else 'odom')
+    assert context.launch_configurations[PREFIX+'grid_footprint_mode']==('observed_cells' if managed else 'cluster_boxes')
 
 
 def test_profile_scene_forwarding_and_headless(ready_catalog, monkeypatch):

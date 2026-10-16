@@ -57,6 +57,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_classification test/test_classification.py)
+  ament_add_pytest_test(test_observed_grid_ros test/test_observed_grid_ros.py TIMEOUT 45
+    ENV ROS_DOMAIN_ID=187)
   ament_add_pytest_test(test_classification_ros test/test_classification_ros.py TIMEOUT 45
     ENV ROS_DOMAIN_ID=111 ROS_LOG_DIR=/tmp/easyfly_d4_classification)
   ament_add_pytest_test(test_shutdown_ros test/test_shutdown_ros.py TIMEOUT 100
@@ -85,6 +87,9 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_map_validity nav_msgs easyfly_msgs)
   ament_add_gtest(test_grid_inflation test/test_grid_inflation.cpp)
   target_include_directories(test_grid_inflation PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_observed_grid test/test_observed_grid.cpp)
+  target_include_directories(test_observed_grid PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_add_gtest(test_dynamic_obstacle_tracker test/test_dynamic_obstacle_tracker.cpp)
   target_include_directories(test_dynamic_obstacle_tracker PRIVATE
