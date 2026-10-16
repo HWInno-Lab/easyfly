@@ -165,6 +165,7 @@ class SceneProbe(navigation.Probe):
             raise RuntimeError('selected planner executable not confirmed in owned processes')
         self.report['planner_sha256']=hashlib.sha256(planner.read_bytes()).hexdigest()
         expected={
+            'libeasyfly_pointcloud_filter_nodes.so':Path(get_package_prefix('easyfly_pointcloud_filter'))/'lib/libeasyfly_pointcloud_filter_nodes.so',
             'libeasyfly_semantic_map_nodes.so':Path(get_package_prefix('easyfly_semantic_map'))/'lib/libeasyfly_semantic_map_nodes.so',
             'liblivox_laser_simulation.so':Path(get_package_prefix('easyfly_gazebo_plugins'))/'lib/liblivox_laser_simulation.so',
             'libplan_env.so':Path(get_package_prefix('plan_env'))/'lib/libplan_env.so',

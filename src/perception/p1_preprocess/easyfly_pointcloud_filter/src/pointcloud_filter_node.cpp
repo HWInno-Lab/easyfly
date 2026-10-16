@@ -9,7 +9,9 @@
 //
 // 消费方: easyfly_semantic_map (M4.0 聚类/栅格)、EGO-Planner (M4.3 grid_map/cloud)。
 #include <chrono>
+#include <cstdint>
 #include <cstring>
+#include <deque>
 #include <memory>
 #include <string>
 #include <vector>
@@ -49,7 +51,9 @@ public:
         // livox 插件/驱动发布为默认 reliable QoS (depth 5)
         sub_ = create_subscription<livox_ros_driver2::msg::CustomMsg>(
             params_.input_topic, 10,
-            [this](livox_ros_driver2::msg::CustomMsg::ConstSharedPtr msg) { onCloud(msg); });
+            [this](livox_ros_driver2::msg::CustomMsg::ConstSharedPtr msg) { enqueueCloud(msg); });
+        transform_timer_ = create_wall_timer(std::chrono::milliseconds(10),
+            [this] { flushPending(); });
 
         RCLCPP_INFO(get_logger(),
                     "点云滤波启动: %s → %s (范围 %.1f~%.1fm, 体素 %.2fm, 输出系: %s)",
@@ -86,25 +90,79 @@ private:
         params_.output_frame = p["output_frame"].as<std::string>(params_.output_frame);
     }
 
-    /// 与 pixel_to_3d 同款双路容错: 先按消息时间戳查, 静态链失败回退 latest
+    // A newer/older vehicle attitude cannot transform a scan at this stamp.
+    // Static transforms already work at arbitrary stamps; no latest fallback.
     bool lookupTransform(const std::string & target, const std::string & source,
                          const rclcpp::Time & stamp, Eigen::Isometry3d & out)
     {
         try {
-            auto tf = tf_buffer_->lookupTransform(target, source, stamp,
-                                                  rclcpp::Duration::from_seconds(0.05));
+            auto tf = tf_buffer_->lookupTransform(target, source, stamp);
             out = tf2::transformToEigen(tf);
             return true;
         } catch (const tf2::TransformException &) {
-            try {
-                auto tf = tf_buffer_->lookupTransform(target, source, tf2::TimePointZero);
-                out = tf2::transformToEigen(tf);
-                return true;
-            } catch (const tf2::TransformException & e2) {
-                RCLCPP_WARN_THROTTLE(get_logger(), *get_clock(), 5000,
-                                     "TF %s←%s 不可用: %s", target.c_str(), source.c_str(), e2.what());
-                return false;
+            return false;
+        }
+    }
+
+    using Cloud = livox_ros_driver2::msg::CustomMsg;
+    using SteadyClock = std::chrono::steady_clock;
+    struct PendingCloud {
+        Cloud::ConstSharedPtr cloud;
+        SteadyClock::time_point received;
+    };
+
+    int64_t sampleClock()
+    {
+        const auto current = now().nanoseconds();
+        if (current < last_clock_ns_) {
+            pending_.clear();
+            last_cloud_ns_ = 0;
+        }
+        last_clock_ns_ = current;
+        return current;
+    }
+
+    bool fresh(const Cloud & msg, int64_t current) const
+    {
+        const auto & stamp = msg.header.stamp;
+        if (current <= 0 || stamp.sec < 0 || stamp.nanosec >= 1000000000u ||
+            (stamp.sec == 0 && stamp.nanosec == 0) || msg.header.frame_id.empty()) return false;
+        const int64_t source = int64_t(stamp.sec) * 1000000000 + stamp.nanosec;
+        const double age = double(current - source) / 1e9;
+        return age >= -0.2 && age <= 1.0;
+    }
+
+    void enqueueCloud(const Cloud::ConstSharedPtr & msg)
+    {
+        const auto current = sampleClock();
+        if (!msg || !fresh(*msg, current)) return;
+        const auto source = rclcpp::Time(msg->header.stamp, get_clock()->get_clock_type()).nanoseconds();
+        if (source <= last_cloud_ns_) return;
+        last_cloud_ns_ = source;
+        if (pending_.size() == 10) pending_.pop_front();
+        pending_.push_back({msg, SteadyClock::now()});
+        flushPending();
+    }
+
+    void flushPending()
+    {
+        // Subscription and timer share the node's mutually exclusive callback group.
+        const auto current = sampleClock();
+        while (!pending_.empty()) {
+            const auto & next = pending_.front();
+            if (!fresh(*next.cloud, current) ||
+                SteadyClock::now() - next.received > std::chrono::seconds(1)) {
+                pending_.pop_front();
+                continue;
             }
+            const auto stamp = rclcpp::Time(next.cloud->header.stamp, get_clock()->get_clock_type());
+            if (!params_.output_frame.empty() && !tf_buffer_->canTransform(
+                params_.output_frame, next.cloud->header.frame_id, stamp)) return;
+            // Keep arrival order, and let the TF listener run while waiting.
+            // Neither a frozen ROS clock nor a missing transform blocks the executor.
+            auto msg = next.cloud;
+            pending_.pop_front();
+            onCloud(msg);
         }
     }
 
@@ -171,6 +229,10 @@ private:
     std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
     rclcpp::Subscription<livox_ros_driver2::msg::CustomMsg>::SharedPtr sub_;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_;
+    std::deque<PendingCloud> pending_;
+    int64_t last_clock_ns_{0};
+    int64_t last_cloud_ns_{0};
+    rclcpp::TimerBase::SharedPtr transform_timer_;
 };
 
 }  // namespace easyfly_pointcloud_filter

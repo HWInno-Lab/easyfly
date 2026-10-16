@@ -43,6 +43,7 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -51,6 +52,10 @@ if(BUILD_TESTING)
   ament_add_gtest(test_filter_core test/test_filter_core.cpp)
   target_include_directories(test_filter_core PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_transform_timing test/test_transform_timing.py
+    ENV "POINTCLOUD_FILTER_EXECUTABLE=$<TARGET_FILE:pointcloud_filter_node>"
+    TIMEOUT 45)
 endif()
 
 ament_export_include_directories(include)
