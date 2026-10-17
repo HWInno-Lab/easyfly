@@ -70,6 +70,25 @@ def test_unknown_scene(catalog_data):
         save(catalog_data).validate('../../test')
 
 
+@pytest.mark.parametrize('change', ['mode', 'alignment', 'region', 'reserve'])
+def test_bounded_grid_requires_a_measured_conservative_envelope(catalog_data, change):
+    _, data = catalog_data
+    data['navigation'].update(grid_footprint_mode='observed_cells', grid_height_limit_m=2.9,
+                              recommended_region=dict(min=[-.3, -.3, .5], max=[1.8, .3, 2.3]))
+    assert save(catalog_data).validate('test').as_dict()['registration_complete']
+    if change == 'mode':
+        data['navigation']['grid_footprint_mode'] = 'cluster_boxes'
+    elif change == 'alignment':
+        data['navigation']['world_to_navigation'] = None
+    elif change == 'region':
+        data['navigation']['recommended_region'] = None
+    else:
+        data['navigation']['grid_height_limit_m'] = 2.89
+    result = save(catalog_data).validate('test').as_dict()
+    assert not result['registration_complete']
+    assert any('0.6m vertical reserve' in i['message'] for i in result['issues'])
+
+
 @pytest.mark.parametrize('change', ['nan', 'unknown_field', 'wrong_type', 'absolute', 'traversal'])
 def test_invalid_schema_or_numbers(catalog_data, change):
     _, data = catalog_data

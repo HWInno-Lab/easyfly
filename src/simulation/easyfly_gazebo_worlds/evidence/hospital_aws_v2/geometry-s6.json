@@ -1,0 +1,559 @@
+{
+  "scene": "hospital_aws_v2",
+  "passed": true,
+  "scope": "Native ODE grounded-world audit and bounded northern open-area 1.5m +x route only. Not ward aisles, doorways, all hospital rooms or elevator/multi-floor navigation.",
+  "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+  "spawn": [
+    -0.5,
+    11.5,
+    0.1
+  ],
+  "yaw": 0.0,
+  "route_world_start": [
+    -0.5,
+    11.5
+  ],
+  "route_world_end": [
+    1.0,
+    11.5
+  ],
+  "floor_world_z_m": -2.5033950806774286e-07,
+  "native_ceiling_world_z_m": 3.00000057220459,
+  "ceiling_clearance_from_z_point_1_m": 2.90000057220459,
+  "survey_points": 5341,
+  "survey_roi_world_xy": [
+    -12,
+    12,
+    -34,
+    20
+  ],
+  "survey_step_m": 0.5,
+  "route_rays": 21794,
+  "qualified_horizontal_ray_subset": {
+    "count": 12512,
+    "world_height_band_m": [
+      0.1,
+      2.3
+    ],
+    "minimum_sampled_clearance_m": 3.831874370574951
+  },
+  "unclaimed_upper_height_samples": {
+    "count": 9248,
+    "height_band_m": [
+      2.4,
+      4.0
+    ],
+    "note": "Raw samples retained; horizontal free rays above a roof do not make that volume reachable."
+  },
+  "route_buffer": {
+    "criterion": "Before flight: maximize minimum native sampled clearance over an 18-point half-metre route buffer, 1.5m +x route; floor z approximately zero and ceiling clearance at least 2.8m from z=.1.",
+    "qualifying_candidates": 21,
+    "spawn": [
+      -0.5,
+      11.5,
+      0.1
+    ],
+    "yaw": 0.0,
+    "route_length_m": 1.5,
+    "min_buffer_clearance_m": 3.3099749088287354,
+    "buffer_samples": [
+      {
+        "x": "-1",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.4050238132476807",
+        "wall_hits": "26",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "-1",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.905024528503418",
+        "wall_hits": "24",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "-1",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.5217361450195312",
+        "wall_hits": "27",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "-0.5",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.4836516380310059",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "-0.5",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.9934470653533936",
+        "wall_hits": "24",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "-0.5",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "4.1411609649658203",
+        "wall_hits": "28",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.3099749088287354",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.8696248531341553",
+        "wall_hits": "24",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "4.1422700881958008",
+        "wall_hits": "28",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0.5",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.4167141914367676",
+        "wall_hits": "24",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0.5",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.9167141914367676",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "0.5",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "4.1410212516784668",
+        "wall_hits": "29",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.4836516380310059",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.9934470653533936",
+        "wall_hits": "23",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.5216171741485596",
+        "wall_hits": "27",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1.5",
+        "y": "11",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.9223783016204834",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1.5",
+        "y": "11.5",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.7342259883880615",
+        "wall_hits": "24",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      },
+      {
+        "x": "1.5",
+        "y": "12",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision",
+        "clearance_m": "3.5216512680053711",
+        "wall_hits": "25",
+        "upward_distance_m": "2.9000005722045898",
+        "upward_entity": "aws_robomaker_hospital_floor_01_ceiling_1::aws_robomaker_hospital_floor_01_ceiling::link::collision"
+      }
+    ]
+  },
+  "grounded_instance_collision_bounds": [
+    {
+      "name": "StorageRack_1",
+      "static": "1",
+      "x": "3.5527136788005009e-15",
+      "y": "0",
+      "z": "8.6736173798840355e-19",
+      "minx": "8.4409289944648744",
+      "miny": "-10.715412007045032",
+      "minz": "0.0019992855759859429",
+      "maxx": "9.6991710055351259",
+      "maxy": "-10.00098451295495",
+      "maxz": "1.7420007239572772"
+    },
+    {
+      "name": "WhiteChipChair_1",
+      "static": "1",
+      "x": "1.7763568394002505e-15",
+      "y": "0",
+      "z": "-2.7755575615628914e-17",
+      "minx": "-9.2018587561169927",
+      "miny": "8.3446449826431266",
+      "minz": "0.0011421091478645562",
+      "maxx": "-8.6052183682017986",
+      "maxy": "9.968616027660369",
+      "maxz": "0.87594889180087798"
+    },
+    {
+      "name": "TrolleyBed_1",
+      "static": "1",
+      "x": "0",
+      "y": "-1.7763568394002505e-15",
+      "z": "4.3368086899420177e-19",
+      "minx": "3.868761149855394",
+      "miny": "-5.2951800074958788",
+      "minz": "0.0019990094220042054",
+      "maxx": "5.849917995776635",
+      "maxy": "-4.4471759941959368",
+      "maxz": "0.85636896199785673"
+    }
+  ],
+  "all_native_models_static": true,
+  "native_model_count": 182,
+  "native_link_count": 182,
+  "executions": [
+    {
+      "command": [
+        "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+        "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v1.world",
+        "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/preplacement-native/survey.csv",
+        "0",
+        "0.5",
+        "-10",
+        "-9.5"
+      ],
+      "identity": {
+        "pid": 97408,
+        "exe": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+        "stat": "97408 (hospital_geomet) R 97351 97408 97408 0 -1 4194304 29 0 0 0 0 0 0 0 20 0 1 0 1885945 704512 40 18446744073709551615 105404070363136 105404070473621 140727276047312 0 0 0 0 0 0 0 0 0 17 17 0 0 0 0 0 105404070512424 105404070519856 105404814368768 140727276051862 140727276052166 140727276052166 140727276085150 0\n"
+      },
+      "returncode": 0,
+      "forced_stop": false,
+      "elapsed_s": 2.7227597419987433,
+      "world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+      "source_sha256": "c3abdcb908d03e7afb1ce161a438182b703c3e3d17c95791dd10a86913c0514e",
+      "binary_sha256": "e7ba52bedefe9e6604a8bb881b4877314072c5e870704f2d6332181e8c32b437",
+      "model_roots": [
+        "/home/jia/.cache/easyfly/assets/aws_hospital_repaired_v1/39969a9d250135835cf13b480865647d1a87b6f4/e45ecc08a6f33e4732237ca005ab3553be3244732d2ee8f107526b3cc27f5f70/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_adjtable_v4/4/a8fd39db987caa6a20b3d2dcdb5a05adf8be66b0547e6c580e60c1324adffad9/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_anesthesiamachine_v2/2/6261f7fb38735e2bb2c1c3cc79ae95371afeda60608368eda3309b943d2c088c/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bmwcart_v2/2/6b80158a1e023f942649f02be6b06c23e5943f33f6f059554365db944986302e/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bpcart_repaired_v1/2/8ade7c3dc40563cc848c9f9ef50b07281abcc94cf284292c247356007b43f435/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bedtable_repaired_v1/2/92afad6f4c63dd63d209b5eef00579988364a0cfe13536bccd6ecf545018dfb1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bedsidetable_v2/2/52c9d7ac0b94b50ed35b3a047d1c09dfa4e36b2643ebba91a12b495784f6951d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bloodpressuremonitor_v2/2/323136152de70b6b194582e158f069afebc18b59658a54e0d51391f09e5b96f1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_cgmclassic_v4/4/dc5892fa7a1709a6ab083cd938b656686e16d46b2ade0bfb35132fd2c1e5f256/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_chair_v3/3/fd478821ef469b99edddf2b556abce198e1c3eb3781de0423a1e4414d542cfc2/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_drawer_v2/2/92efc54517f79684b6c2cc5cd1c4222d9066de65e4a74786adf4ebc7b41e789d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_elderladypatient_v2/2/2f1b61ddb5d63b8d2631d0d8cd98a6f18fb727f63e57c397295218bffec9be33/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_eldermalepatient_v2/2/ed24ee8fecc9dc39debaf734a0d9d0568129c0b689c57ffb4183c0ae705937c1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitor_v2/2/85f55716f2d91df47e1cc5c68c3977c7a3908972c77971934ff6b2f7aef0b755/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitorsit_v2/2/efc57212de562d251f6dbebfaa593bca945388898d707a5f82772d59452b0d07/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_ivstand_v2/2/4d2579e24aa51abb21f00a8daf910a1b903dbc60d0d20f3597ce5f28252b3acf/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart1_v2/2/5827107d988d8e97d5ef4c1133918962bd355d52d9f3d9fc8b83a59aa482988e/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart2_v2/2/84faa81b115eaed2e3d8f1c21dbf8b4354a6b45f3995ec489323a79222ad54eb/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_kitchensink_v2/2/49afe23f7f2166914366c02d670deda6a1de7964118cf9b5cb9767c6975a15df/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malepatientbed_v2/2/ce52c81f34b51f1f60f0580775705b8b878cec36522aac664dd6c76a9a87c2d1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitoronphone_v2/2/8826ca17590f0fa6d98638b7842a13c728b2132f8745df94ca746455dca5d5d0/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitorsit_v2/2/f20c69ce59d1f3551b90ed13594e84046fce9fb561af5440d539ac9e8d796d92/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_metalcabinet_v2/2/6ee654ee1ef71344ed64b6b58b60461916a9329ef71c6755af705e2bf43e36ab/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_mopcart3_v2/2/3c3652bddefdb4d0c4fa3e05fb08855296c479d8f96865a97b3636540421ea88/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_officechairblack_v2/2/e977d61084cab923fec168d8b528baab3385e1588332d3fe8de99a5e1210e1c6/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymax_v3/3/46fae87f3ba26114688cf89d2f27b65e73966be22da0b591c07fd6f9b2a57b8f/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymin_v3/3/d2d4147ace2b598173f86923e9e5cd4a3fadd69285aaff376c1eeaee49af01fa/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_patientfsit_v2/2/aff54c06cc5c2a31b933f1a6f41512a0a74792394d99582fa64d5de9ad3bdad1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_patientwheelchair_v4/4/34a51c4445b154562b8b55d331166b173be4fe8228887bf9bdc414b58912bdc4/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_potatochipchair_v3/3/a3e0dfb9270c2da56d61d872127c496ccd747f8da7546c6a2e43c5341eb85213/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_scrubs_v2/2/4eedb48fef1b5dad2dc792858cffc79367d72d448fecca6e129923a4579dfd82/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_shower_v2/2/64abaa2d2bdb7da23741add7eb3391f1edb4e7ea4b90fb7dcc8b8cac88bd506d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerack_v2/2/2db1c13d8aa42d37d06a6edee810c9ed57cb7dd3b09c527d351f5003d831cf9c/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcoveropen_v2/2/9235db486dd01398bd89b43ec93dbf573d25828d5767bcd64fdfc23e65dc4586/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcovered_v2/2/456a852c456c5c58d3a7afebdb5c08ad7d0858e387a287af2e284e16513f8668/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolley_v2/2/5dca06c87146067aeb80a56df8b126fc8d6a4deb63ea10407c4e36618a2feaf1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolleymed_v2/2/e737e9f54406e7eebad734700e2a11c2ae9c175952faad8ef287d4c36602e84b/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_toilet_v2/2/f2915f55be2ffa8fb55884ba51e586026f73aac26dd4fe556ec0ad9caaac3bd0/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybed_v3/3/f319af18428b8a6355dfb2596d1c9f2a551ec231a6c4c5736a7b72af64113e90/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybedpatient_v3/3/30118eafa69dcf1f79e18498d738193d5ebace9efc5d45a4f974be8f6f0c3c6d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_vendingmachine_v3/3/d3c887274358ce87809a4f15dc173014f747f4d0004f8183ccd2813f2e6d2d8f/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_visitorkidsit_v2/2/f99ebcfc0340b53a08e692d60bfc8808823ea5c538bbde510d2f6634702f14e3/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_whitechipchair_v3/3/cc8863c58dda10125c4e05b3783142747a7c64de7d22ab3ee8532ead9fab4947/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_xraymachine_v2/2/ae03b6573deb1f47469cd783ad1e0ce62c22f2382949044f1567cbbed5401831/models",
+        "/usr/share/gazebo-11/models"
+      ],
+      "network_interfaces": [
+        {
+          "ifindex": 1,
+          "ifname": "lo",
+          "flags": [
+            "LOOPBACK",
+            "UP",
+            "LOWER_UP"
+          ],
+          "mtu": 65536,
+          "qdisc": "noqueue",
+          "operstate": "UNKNOWN",
+          "group": "default",
+          "txqlen": 1000,
+          "link_type": "loopback",
+          "address": "00:00:00:00:00:00",
+          "broadcast": "00:00:00:00:00:00",
+          "addr_info": [
+            {
+              "family": "inet",
+              "local": "127.0.0.1",
+              "prefixlen": 8,
+              "scope": "host",
+              "label": "lo",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            },
+            {
+              "family": "inet6",
+              "local": "::1",
+              "prefixlen": 128,
+              "scope": "host",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            }
+          ]
+        }
+      ],
+      "routes": [],
+      "flight_goals": 0
+    },
+    {
+      "command": [
+        "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+        "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v2.world",
+        "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/grounded-survey-native/survey.csv",
+        "-12",
+        "12",
+        "-34",
+        "20"
+      ],
+      "identity": {
+        "pid": 98035,
+        "exe": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+        "stat": "98035 (hospital_geomet) R 97979 98035 98035 0 -1 4194304 28 0 0 0 0 0 0 0 20 0 1 0 1897993 704512 40 18446744073709551615 110026686824448 110026686934933 140730562819504 0 0 0 0 0 0 0 0 0 17 13 0 0 0 0 0 110026686973736 110026686981168 110026973667328 140730562821524 140730562821830 140730562821830 140730562854814 0\n"
+      },
+      "returncode": 0,
+      "forced_stop": false,
+      "elapsed_s": 4.675176806998934,
+      "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+      "source_sha256": "c3abdcb908d03e7afb1ce161a438182b703c3e3d17c95791dd10a86913c0514e",
+      "binary_sha256": "e7ba52bedefe9e6604a8bb881b4877314072c5e870704f2d6332181e8c32b437",
+      "model_roots": [
+        "/home/jia/.cache/easyfly/assets/aws_hospital_repaired_v1/39969a9d250135835cf13b480865647d1a87b6f4/e45ecc08a6f33e4732237ca005ab3553be3244732d2ee8f107526b3cc27f5f70/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_adjtable_v4/4/a8fd39db987caa6a20b3d2dcdb5a05adf8be66b0547e6c580e60c1324adffad9/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_anesthesiamachine_v2/2/6261f7fb38735e2bb2c1c3cc79ae95371afeda60608368eda3309b943d2c088c/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bmwcart_v2/2/6b80158a1e023f942649f02be6b06c23e5943f33f6f059554365db944986302e/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bpcart_repaired_v1/2/8ade7c3dc40563cc848c9f9ef50b07281abcc94cf284292c247356007b43f435/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bedtable_repaired_v1/2/92afad6f4c63dd63d209b5eef00579988364a0cfe13536bccd6ecf545018dfb1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bedsidetable_v2/2/52c9d7ac0b94b50ed35b3a047d1c09dfa4e36b2643ebba91a12b495784f6951d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_bloodpressuremonitor_v2/2/323136152de70b6b194582e158f069afebc18b59658a54e0d51391f09e5b96f1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_cgmclassic_v4/4/dc5892fa7a1709a6ab083cd938b656686e16d46b2ade0bfb35132fd2c1e5f256/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_chair_v3/3/fd478821ef469b99edddf2b556abce198e1c3eb3781de0423a1e4414d542cfc2/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_drawer_v2/2/92efc54517f79684b6c2cc5cd1c4222d9066de65e4a74786adf4ebc7b41e789d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_elderladypatient_v2/2/2f1b61ddb5d63b8d2631d0d8cd98a6f18fb727f63e57c397295218bffec9be33/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_eldermalepatient_v2/2/ed24ee8fecc9dc39debaf734a0d9d0568129c0b689c57ffb4183c0ae705937c1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitor_v2/2/85f55716f2d91df47e1cc5c68c3977c7a3908972c77971934ff6b2f7aef0b755/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitorsit_v2/2/efc57212de562d251f6dbebfaa593bca945388898d707a5f82772d59452b0d07/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_ivstand_v2/2/4d2579e24aa51abb21f00a8daf910a1b903dbc60d0d20f3597ce5f28252b3acf/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart1_v2/2/5827107d988d8e97d5ef4c1133918962bd355d52d9f3d9fc8b83a59aa482988e/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart2_v2/2/84faa81b115eaed2e3d8f1c21dbf8b4354a6b45f3995ec489323a79222ad54eb/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_kitchensink_v2/2/49afe23f7f2166914366c02d670deda6a1de7964118cf9b5cb9767c6975a15df/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malepatientbed_v2/2/ce52c81f34b51f1f60f0580775705b8b878cec36522aac664dd6c76a9a87c2d1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitoronphone_v2/2/8826ca17590f0fa6d98638b7842a13c728b2132f8745df94ca746455dca5d5d0/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitorsit_v2/2/f20c69ce59d1f3551b90ed13594e84046fce9fb561af5440d539ac9e8d796d92/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_metalcabinet_v2/2/6ee654ee1ef71344ed64b6b58b60461916a9329ef71c6755af705e2bf43e36ab/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_mopcart3_v2/2/3c3652bddefdb4d0c4fa3e05fb08855296c479d8f96865a97b3636540421ea88/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_officechairblack_v2/2/e977d61084cab923fec168d8b528baab3385e1588332d3fe8de99a5e1210e1c6/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymax_v3/3/46fae87f3ba26114688cf89d2f27b65e73966be22da0b591c07fd6f9b2a57b8f/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymin_v3/3/d2d4147ace2b598173f86923e9e5cd4a3fadd69285aaff376c1eeaee49af01fa/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_patientfsit_v2/2/aff54c06cc5c2a31b933f1a6f41512a0a74792394d99582fa64d5de9ad3bdad1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_patientwheelchair_v4/4/34a51c4445b154562b8b55d331166b173be4fe8228887bf9bdc414b58912bdc4/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_potatochipchair_v3/3/a3e0dfb9270c2da56d61d872127c496ccd747f8da7546c6a2e43c5341eb85213/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_scrubs_v2/2/4eedb48fef1b5dad2dc792858cffc79367d72d448fecca6e129923a4579dfd82/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_shower_v2/2/64abaa2d2bdb7da23741add7eb3391f1edb4e7ea4b90fb7dcc8b8cac88bd506d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerack_v2/2/2db1c13d8aa42d37d06a6edee810c9ed57cb7dd3b09c527d351f5003d831cf9c/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcoveropen_v2/2/9235db486dd01398bd89b43ec93dbf573d25828d5767bcd64fdfc23e65dc4586/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcovered_v2/2/456a852c456c5c58d3a7afebdb5c08ad7d0858e387a287af2e284e16513f8668/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolley_v2/2/5dca06c87146067aeb80a56df8b126fc8d6a4deb63ea10407c4e36618a2feaf1/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolleymed_v2/2/e737e9f54406e7eebad734700e2a11c2ae9c175952faad8ef287d4c36602e84b/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_toilet_v2/2/f2915f55be2ffa8fb55884ba51e586026f73aac26dd4fe556ec0ad9caaac3bd0/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybed_v3/3/f319af18428b8a6355dfb2596d1c9f2a551ec231a6c4c5736a7b72af64113e90/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybedpatient_v3/3/30118eafa69dcf1f79e18498d738193d5ebace9efc5d45a4f974be8f6f0c3c6d/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_vendingmachine_v3/3/d3c887274358ce87809a4f15dc173014f747f4d0004f8183ccd2813f2e6d2d8f/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_visitorkidsit_v2/2/f99ebcfc0340b53a08e692d60bfc8808823ea5c538bbde510d2f6634702f14e3/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_whitechipchair_v3/3/cc8863c58dda10125c4e05b3783142747a7c64de7d22ab3ee8532ead9fab4947/models",
+        "/home/jia/.cache/easyfly/assets/fuel_hospital_xraymachine_v2/2/ae03b6573deb1f47469cd783ad1e0ce62c22f2382949044f1567cbbed5401831/models",
+        "/usr/share/gazebo-11/models"
+      ],
+      "network_interfaces": [
+        {
+          "ifindex": 1,
+          "ifname": "lo",
+          "flags": [
+            "LOOPBACK",
+            "UP",
+            "LOWER_UP"
+          ],
+          "mtu": 65536,
+          "qdisc": "noqueue",
+          "operstate": "UNKNOWN",
+          "group": "default",
+          "txqlen": 1000,
+          "link_type": "loopback",
+          "address": "00:00:00:00:00:00",
+          "broadcast": "00:00:00:00:00:00",
+          "addr_info": [
+            {
+              "family": "inet",
+              "local": "127.0.0.1",
+              "prefixlen": 8,
+              "scope": "host",
+              "label": "lo",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            },
+            {
+              "family": "inet6",
+              "local": "::1",
+              "prefixlen": 128,
+              "scope": "host",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            }
+          ]
+        }
+      ],
+      "routes": [],
+      "flight_goals": 0
+    },
+    {
+      "command": [
+        "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+        "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v2.world",
+        "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/route-native/route.csv",
+        "-0.5",
+        "11.5",
+        "1.5"
+      ],
+      "identity": {
+        "pid": 98181,
+        "exe": "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+        "stat": "98181 (forest_geometry) R 98126 98181 98181 0 -1 4194304 19 0 0 0 0 0 0 0 20 0 1 0 1907726 679936 40 18446744073709551615 102205525176320 102205525281861 140726157773472 0 0 0 0 0 0 0 0 0 17 12 0 0 0 0 0 102205525321800 102205525328936 102205696552960 140726157782455 140726157782738 140726157782738 140726157815722 0\n"
+      },
+      "returncode": 0,
+      "forced_stop": false,
+      "elapsed_s": 2.7714680880017113,
+      "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+      "source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+      "binary_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+      "flight_goals": 0
+    }
+  ],
+  "raw_files": [
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/route-native/route.csv",
+      "sha256": "827e9fc8067ce64aa5a45921748c14ebf13d9a37026e4213ee85a9dc5f95e1dc"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/route-native/route.csv.models",
+      "sha256": "19ed081b5825da6f2a520ec63670f9be5bd7ee1595df6541b6ca6d35a927680c"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/route-native/route.csv.links",
+      "sha256": "41ea5dcaf5147ffea7a278d044e8334f33e640e018c263e50a8de44c034801f2"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/grounded-survey-native/survey.csv",
+      "sha256": "7db6f2ca8b42f15915fcb4be38371036ac97f853360cb619be66e9ebaa02cefd"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/grounded-survey-native/survey.csv.models.csv",
+      "sha256": "19ed081b5825da6f2a520ec63670f9be5bd7ee1595df6541b6ca6d35a927680c"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/grounded-survey-native/survey.csv.links.csv",
+      "sha256": "41ea5dcaf5147ffea7a278d044e8334f33e640e018c263e50a8de44c034801f2"
+    }
+  ],
+  "limitations": [
+    "Discrete ray/grid samples are not an exact continuous distance proof.",
+    "Three static object groundings are explicit EasyFly edits; no claim of original intended heights.",
+    "No sensor/runtime or flight acceptance inherited from resource or geometry checks."
+  ]
+}

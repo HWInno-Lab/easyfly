@@ -1,0 +1,157 @@
+{
+  "scene": "hospital_aws_v2",
+  "passed": false,
+  "error": "RuntimeError: unexpected real terminal: {'name': '/execute_mission', 'admission': 'received', 'accepted': True, 'goal_uuid': 'ec6d06173d7b42c0b526270ea1dbb1f5', 'status': 6, 'success': False, 'message': 'step_failed:global route unavailable', 'terminal_state': {'source_ns': 18210000000, 'frame': 'odom', 'ros_now_ns': 18210000000, 'receipt': 19662.327454238, 'steady_now': 19662.385152743, 'armed': True, 'connected': True, 'mode': 3, 'mode_name': 'OFFBOARD', 'position': [-0.0005716377636417747, -0.0012977182632312179, 1.1578369140625], 'velocity': [-0.00047905376413837075, 0.000958686345256865, 0.16533060371875763], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 15.974000930786133, 'battery_remaining': 0.8899999856948853}}",
+  "actions": [
+    {
+      "name": "/execute_mission",
+      "admission": "received",
+      "accepted": true,
+      "goal_uuid": "ec6d06173d7b42c0b526270ea1dbb1f5",
+      "status": 6,
+      "success": false,
+      "message": "step_failed:global route unavailable",
+      "terminal_state": {
+        "source_ns": 18210000000,
+        "frame": "odom",
+        "ros_now_ns": 18210000000,
+        "receipt": 19662.327454238,
+        "steady_now": 19662.385152743,
+        "armed": true,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          -0.0005716377636417747,
+          -0.0012977182632312179,
+          1.1578369140625
+        ],
+        "velocity": [
+          -0.00047905376413837075,
+          0.000958686345256865,
+          0.16533060371875763
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.974000930786133,
+        "battery_remaining": 0.8899999856948853
+      }
+    }
+  ],
+  "navigation_status": {
+    "94eb4cb908627508748e17797c75f1f6": {
+      "history": [
+        {
+          "steady": 19662.344700562,
+          "status": 2
+        },
+        {
+          "steady": 19662.367431253,
+          "status": 6
+        }
+      ],
+      "status": 6,
+      "last_steady": 19662.36746573,
+      "first_terminal": {
+        "steady": 19662.367432402,
+        "state": {
+          "source_ns": 18210000000,
+          "frame": "odom",
+          "ros_now_ns": 18210000000,
+          "receipt": 19662.327454238,
+          "steady_now": 19662.367457666,
+          "armed": true,
+          "connected": true,
+          "mode": 3,
+          "mode_name": "OFFBOARD",
+          "position": [
+            -0.0005716377636417747,
+            -0.0012977182632312179,
+            1.1578369140625
+          ],
+          "velocity": [
+            -0.00047905376413837075,
+            0.000958686345256865,
+            0.16533060371875763
+          ],
+          "pose_valid": true,
+          "velocity_valid": true,
+          "battery_valid": true,
+          "battery_voltage": 15.974000930786133,
+          "battery_remaining": 0.8899999856948853
+        }
+      }
+    }
+  },
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          0.34834189534963045,
+          -11.504811036037216,
+          0.06271477473958333
+        ],
+        "yaw": -0.01314525050429188
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 10210000000,
+        "frame": "odom",
+        "ros_now_ns": 10210000000,
+        "receipt": 19637.177202908,
+        "steady_now": 19637.272922125,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.00040494967834092677,
+          0.0005554070812650025,
+          0.11273193359375
+        ],
+        "velocity": [
+          -0.0005324906669557095,
+          -0.0006173771107569337,
+          0.0011095511727035046
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "ec6d06173d7b42c0b526270ea1dbb1f5"
+    }
+  ],
+  "alignment_contract": {
+    "policy": "recommended_region",
+    "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+    "maximum_position_error_m": 0.2,
+    "maximum_yaw_error_rad": 0.1
+  },
+  "normal_exits": 24,
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "forced": false,
+  "leftovers": [],
+  "scene_probe_sha256": "981f28efd333718c7b56817e2cda6d3ece48f3d08e86c5340306ee1dd063660d",
+  "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+  "raw_result": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/qualified-two-cycles/result.json",
+  "raw_result_sha256": "dc108c54d81f797ca9ba64f9ef5bac44a3aba5ab240477c297c4180f586b4b02",
+  "diagnosis": {
+    "grid_frame": "odom",
+    "resolution_m": 0.2,
+    "start_cell": 0,
+    "goal_cell": 100,
+    "goal_footprint_points": 80,
+    "goal_footprint_z_range_m": [
+      3.0379042625427246,
+      3.0389676094055176
+    ],
+    "goal_footprint_points_below_2_7_m": 0,
+    "cause": "All-height 2D projection of real overhead ceiling samples; no scene layout/seed/route change."
+  },
+  "decision": "Preserve rejection. Opt-in ground-relative 2D projection envelope will retain complete 3D evidence and require independent requalification."
+}

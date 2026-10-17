@@ -42,8 +42,12 @@ def generate_launch_description():
     grid_arg = DeclareLaunchArgument(
         'grid_footprint_mode', default_value='cluster_boxes',
         description='Occupancy geometry: cluster_boxes or observed_cells')
+    height_arg = DeclareLaunchArgument(
+        'grid_height_limit_m', default_value='0.0',
+        description='Opt-in 2D projection height above trusted ground; zero keeps all heights')
     return LaunchDescription([
-        use_sim_time_arg, capture_arg, ground_arg, grid_arg, OpaqueFunction(function=_node)])
+        use_sim_time_arg, capture_arg, ground_arg, grid_arg, height_arg,
+        OpaqueFunction(function=_node)])
 
 
 def _node(context):
@@ -66,6 +70,8 @@ def _node(context):
                 "use_sim_time": LaunchConfiguration("use_sim_time"),
                 "grid_footprint_mode": ParameterValue(
                     LaunchConfiguration("grid_footprint_mode"), value_type=str),
+                "grid_height_limit_m": ParameterValue(
+                    LaunchConfiguration("grid_height_limit_m", default='0.0'), value_type=float),
                 "ground_model_frame": ParameterValue(
                     LaunchConfiguration("ground_model_frame", default=''), value_type=str),
                 "config_file": os.path.join(

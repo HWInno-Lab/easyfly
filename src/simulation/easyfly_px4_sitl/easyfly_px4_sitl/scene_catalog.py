@@ -194,6 +194,13 @@ class SceneCatalog:
         region = scene['navigation']['recommended_region']
         if region and any(a >= b for a, b in zip(region['min'], region['max'])):
             report.add('registration', 'invalid recommended region bounds')
+        height_limit = scene['navigation'].get('grid_height_limit_m', 0.0)
+        if height_limit > 0 and (
+                scene['navigation'].get('grid_footprint_mode', 'cluster_boxes') != 'observed_cells'
+                or scene['navigation']['world_to_navigation'] is None or region is None
+                or height_limit + 1e-9 < region['max'][2] + 0.6):
+            report.add('registration', 'bounded grid projection requires observed_cells, measured '
+                       'alignment and region with 0.6m vertical reserve')
         if scene['navigation'].get('alignment_check', 'world_origin') == 'recommended_region' and (
                 region is None or scene['navigation']['world_to_navigation'] is None):
             report.add('registration', 'recommended-region alignment requires measured transform and region')

@@ -317,6 +317,10 @@
             "cluster_boxes",
             "observed_cells"
           ]
+        },
+        "grid_height_limit_m": {
+          "type": "number",
+          "minimum": 0
         }
       },
       "required": [

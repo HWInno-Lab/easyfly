@@ -11,6 +11,12 @@
 安装包包含清单与轻量证据。复现入口为 `tools/scenes/import_aws_hospital.py`。
 场景分类、原 world 的异常高度和草稿状态见 world 包的医院登记。
 
+`aws_hospital_repaired_v1` 与两份 `fuel_hospital_*_repaired_v1` 是独立的派生缓存，
+修复五张原肖像图的模型内路径、两条原Normal PNG材质引用，并按独立CGMClassic v4
+来源补入同轮子图集的原法线TGA。原始707文件集合继续保留，新选择组合共713文件；
+图片像素和碰撞/UV几何不改。`licenses/hospital_repaired/` 保存逐项修改及来源署名，
+跨来源归档和各自声明在同一资产版本中完整保留，整体原子发布。资源完整仍不代表可飞行。
+
 保留现有模型根路径，新增 `manifests/` 记录资源集合，避免全目录安装缓存或开发产物。
 清单格式定义在 world 包的 `schemas/asset-set-v1.schema.json`。
 

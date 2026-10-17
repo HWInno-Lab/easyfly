@@ -1,0 +1,221 @@
+{
+  "source_world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+  "native_execution": {
+    "command": [
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v1.world",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/preplacement-native/survey.csv",
+      "0",
+      "0.5",
+      "-10",
+      "-9.5"
+    ],
+    "identity": {
+      "pid": 97408,
+      "exe": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/hospital_geometry_survey",
+      "stat": "97408 (hospital_geomet) R 97351 97408 97408 0 -1 4194304 29 0 0 0 0 0 0 0 20 0 1 0 1885945 704512 40 18446744073709551615 105404070363136 105404070473621 140727276047312 0 0 0 0 0 0 0 0 0 17 17 0 0 0 0 0 105404070512424 105404070519856 105404814368768 140727276051862 140727276052166 140727276052166 140727276085150 0\n"
+    },
+    "returncode": 0,
+    "forced_stop": false,
+    "elapsed_s": 2.7227597419987433,
+    "world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+    "source_sha256": "c3abdcb908d03e7afb1ce161a438182b703c3e3d17c95791dd10a86913c0514e",
+    "binary_sha256": "e7ba52bedefe9e6604a8bb881b4877314072c5e870704f2d6332181e8c32b437",
+    "model_roots": [
+      "/home/jia/.cache/easyfly/assets/aws_hospital_repaired_v1/39969a9d250135835cf13b480865647d1a87b6f4/e45ecc08a6f33e4732237ca005ab3553be3244732d2ee8f107526b3cc27f5f70/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_adjtable_v4/4/a8fd39db987caa6a20b3d2dcdb5a05adf8be66b0547e6c580e60c1324adffad9/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_anesthesiamachine_v2/2/6261f7fb38735e2bb2c1c3cc79ae95371afeda60608368eda3309b943d2c088c/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_bmwcart_v2/2/6b80158a1e023f942649f02be6b06c23e5943f33f6f059554365db944986302e/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_bpcart_repaired_v1/2/8ade7c3dc40563cc848c9f9ef50b07281abcc94cf284292c247356007b43f435/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_bedtable_repaired_v1/2/92afad6f4c63dd63d209b5eef00579988364a0cfe13536bccd6ecf545018dfb1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_bedsidetable_v2/2/52c9d7ac0b94b50ed35b3a047d1c09dfa4e36b2643ebba91a12b495784f6951d/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_bloodpressuremonitor_v2/2/323136152de70b6b194582e158f069afebc18b59658a54e0d51391f09e5b96f1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_cgmclassic_v4/4/dc5892fa7a1709a6ab083cd938b656686e16d46b2ade0bfb35132fd2c1e5f256/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_chair_v3/3/fd478821ef469b99edddf2b556abce198e1c3eb3781de0423a1e4414d542cfc2/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_drawer_v2/2/92efc54517f79684b6c2cc5cd1c4222d9066de65e4a74786adf4ebc7b41e789d/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_elderladypatient_v2/2/2f1b61ddb5d63b8d2631d0d8cd98a6f18fb727f63e57c397295218bffec9be33/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_eldermalepatient_v2/2/ed24ee8fecc9dc39debaf734a0d9d0568129c0b689c57ffb4183c0ae705937c1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitor_v2/2/85f55716f2d91df47e1cc5c68c3977c7a3908972c77971934ff6b2f7aef0b755/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_femalevisitorsit_v2/2/efc57212de562d251f6dbebfaa593bca945388898d707a5f82772d59452b0d07/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_ivstand_v2/2/4d2579e24aa51abb21f00a8daf910a1b903dbc60d0d20f3597ce5f28252b3acf/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart1_v2/2/5827107d988d8e97d5ef4c1133918962bd355d52d9f3d9fc8b83a59aa482988e/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_instrumentcart2_v2/2/84faa81b115eaed2e3d8f1c21dbf8b4354a6b45f3995ec489323a79222ad54eb/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_kitchensink_v2/2/49afe23f7f2166914366c02d670deda6a1de7964118cf9b5cb9767c6975a15df/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_malepatientbed_v2/2/ce52c81f34b51f1f60f0580775705b8b878cec36522aac664dd6c76a9a87c2d1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitoronphone_v2/2/8826ca17590f0fa6d98638b7842a13c728b2132f8745df94ca746455dca5d5d0/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_malevisitorsit_v2/2/f20c69ce59d1f3551b90ed13594e84046fce9fb561af5440d539ac9e8d796d92/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_metalcabinet_v2/2/6ee654ee1ef71344ed64b6b58b60461916a9329ef71c6755af705e2bf43e36ab/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_mopcart3_v2/2/3c3652bddefdb4d0c4fa3e05fb08855296c479d8f96865a97b3636540421ea88/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_officechairblack_v2/2/e977d61084cab923fec168d8b528baab3385e1588332d3fe8de99a5e1210e1c6/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymax_v3/3/46fae87f3ba26114688cf89d2f27b65e73966be22da0b591c07fd6f9b2a57b8f/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_parkingtrolleymin_v3/3/d2d4147ace2b598173f86923e9e5cd4a3fadd69285aaff376c1eeaee49af01fa/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_patientfsit_v2/2/aff54c06cc5c2a31b933f1a6f41512a0a74792394d99582fa64d5de9ad3bdad1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_patientwheelchair_v4/4/34a51c4445b154562b8b55d331166b173be4fe8228887bf9bdc414b58912bdc4/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_potatochipchair_v3/3/a3e0dfb9270c2da56d61d872127c496ccd747f8da7546c6a2e43c5341eb85213/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_scrubs_v2/2/4eedb48fef1b5dad2dc792858cffc79367d72d448fecca6e129923a4579dfd82/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_shower_v2/2/64abaa2d2bdb7da23741add7eb3391f1edb4e7ea4b90fb7dcc8b8cac88bd506d/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerack_v2/2/2db1c13d8aa42d37d06a6edee810c9ed57cb7dd3b09c527d351f5003d831cf9c/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcoveropen_v2/2/9235db486dd01398bd89b43ec93dbf573d25828d5767bcd64fdfc23e65dc4586/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_storagerackcovered_v2/2/456a852c456c5c58d3a7afebdb5c08ad7d0858e387a287af2e284e16513f8668/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolley_v2/2/5dca06c87146067aeb80a56df8b126fc8d6a4deb63ea10407c4e36618a2feaf1/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_surgicaltrolleymed_v2/2/e737e9f54406e7eebad734700e2a11c2ae9c175952faad8ef287d4c36602e84b/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_toilet_v2/2/f2915f55be2ffa8fb55884ba51e586026f73aac26dd4fe556ec0ad9caaac3bd0/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybed_v3/3/f319af18428b8a6355dfb2596d1c9f2a551ec231a6c4c5736a7b72af64113e90/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_trolleybedpatient_v3/3/30118eafa69dcf1f79e18498d738193d5ebace9efc5d45a4f974be8f6f0c3c6d/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_vendingmachine_v3/3/d3c887274358ce87809a4f15dc173014f747f4d0004f8183ccd2813f2e6d2d8f/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_visitorkidsit_v2/2/f99ebcfc0340b53a08e692d60bfc8808823ea5c538bbde510d2f6634702f14e3/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_whitechipchair_v3/3/cc8863c58dda10125c4e05b3783142747a7c64de7d22ab3ee8532ead9fab4947/models",
+      "/home/jia/.cache/easyfly/assets/fuel_hospital_xraymachine_v2/2/ae03b6573deb1f47469cd783ad1e0ce62c22f2382949044f1567cbbed5401831/models",
+      "/usr/share/gazebo-11/models"
+    ],
+    "network_interfaces": [
+      {
+        "ifindex": 1,
+        "ifname": "lo",
+        "flags": [
+          "LOOPBACK",
+          "UP",
+          "LOWER_UP"
+        ],
+        "mtu": 65536,
+        "qdisc": "noqueue",
+        "operstate": "UNKNOWN",
+        "group": "default",
+        "txqlen": 1000,
+        "link_type": "loopback",
+        "address": "00:00:00:00:00:00",
+        "broadcast": "00:00:00:00:00:00",
+        "addr_info": [
+          {
+            "family": "inet",
+            "local": "127.0.0.1",
+            "prefixlen": 8,
+            "scope": "host",
+            "label": "lo",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          },
+          {
+            "family": "inet6",
+            "local": "::1",
+            "prefixlen": 128,
+            "scope": "host",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          }
+        ]
+      }
+    ],
+    "routes": [],
+    "flight_goals": 0
+  },
+  "native_static_models": 182,
+  "native_static_links": 182,
+  "corrections": [
+    {
+      "instance": "StorageRack_1",
+      "original_pose": "9.07005 -10.3582 -7.57769e+08 -2e-06 0 0",
+      "native_original_collision_bounds": {
+        "name": "StorageRack_1",
+        "static": "1",
+        "x": "3.5527136788005009e-15",
+        "y": "1.2434497875801753e-13",
+        "z": "-1.1920928955078125e-07",
+        "minx": "8.4409289944648744",
+        "miny": "-10.71541200704435",
+        "minz": "-757769000.00000072",
+        "maxx": "9.6991710055351259",
+        "maxy": "-10.000984512954268",
+        "maxz": "-757768998.25999928"
+      },
+      "native_floor": {
+        "name": "StorageRack_1",
+        "x": "9.0700500000000002",
+        "y": "-10.3582",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision"
+      },
+      "collision_bottom_relative_to_include_z_m": -7.152557373046875e-07,
+      "floor_z_m": -2.5033950806774286e-07,
+      "new_include_z_m": 0.002,
+      "clearance_allowance_m": 0.001,
+      "quantization_m": 0.001,
+      "derivation": "ceil((native_floor_z - (native_AABB_min_z - original_include_z) + 0.001) * 1000) / 1000; preserve x/y/roll/pitch/yaw."
+    },
+    {
+      "instance": "WhiteChipChair_1",
+      "original_pose": "-8.87142 9.15707 -7.57769e+08 0 -0.152685 0",
+      "native_original_collision_bounds": {
+        "name": "WhiteChipChair_1",
+        "static": "1",
+        "x": "-3.9768224269209895e-09",
+        "y": "0",
+        "z": "0",
+        "minx": "-9.2018587527139655",
+        "miny": "8.3446449826431266",
+        "minz": "-757769000.03185809",
+        "maxx": "-8.6052183647987714",
+        "maxy": "9.968616027660369",
+        "maxz": "-757768999.15705121"
+      },
+      "native_floor": {
+        "name": "WhiteChipChair_1",
+        "x": "-8.8714200000000005",
+        "y": "9.1570699999999992",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision"
+      },
+      "collision_bottom_relative_to_include_z_m": -0.031858086585998535,
+      "floor_z_m": -2.5033950806774286e-07,
+      "new_include_z_m": 0.033,
+      "clearance_allowance_m": 0.001,
+      "quantization_m": 0.001,
+      "derivation": "ceil((native_floor_z - (native_AABB_min_z - original_include_z) + 0.001) * 1000) / 1000; preserve x/y/roll/pitch/yaw."
+    },
+    {
+      "instance": "TrolleyBed_1",
+      "original_pose": "4.85934 -4.87229 -7.57769e+08 0 -1e-06 0",
+      "native_original_collision_bounds": {
+        "name": "TrolleyBed_1",
+        "static": "1",
+        "x": "8.2600593032111647e-14",
+        "y": "-1.7763568394002505e-15",
+        "z": "-2.384185791015625e-07",
+        "minx": "3.8687611498552696",
+        "miny": "-5.2951800074958788",
+        "minz": "-757769000.00000072",
+        "maxx": "5.8499179957765106",
+        "maxy": "-4.4471759941959368",
+        "maxz": "-757768999.14563084"
+      },
+      "native_floor": {
+        "name": "TrolleyBed_1",
+        "x": "4.8593400000000004",
+        "y": "-4.8722899999999996",
+        "floor_z": "-2.5033950806774286e-07",
+        "floor_entity": "aws_robomaker_hospital_floor_01_floor_1::aws_robomaker_hospital_floor_01_floor::link::collision"
+      },
+      "collision_bottom_relative_to_include_z_m": -7.152557373046875e-07,
+      "floor_z_m": -2.5033950806774286e-07,
+      "new_include_z_m": 0.002,
+      "clearance_allowance_m": 0.001,
+      "quantization_m": 0.001,
+      "derivation": "ceil((native_floor_z - (native_AABB_min_z - original_include_z) + 0.001) * 1000) / 1000; preserve x/y/roll/pitch/yaw."
+    }
+  ],
+  "raw_files": [
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/preplacement-native/survey.csv.models.csv",
+      "sha256": "5a871a7b4f2e89f698e916ba33df132b5a63aaf75c50aaa77bf13593a8acc764"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/preplacement-native/survey.csv.links.csv",
+      "sha256": "60fa3a52c0a787dd9f2d4fbf938720aca7a64342256d41c5f8accaa03bb29878"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/preplacement-native/survey.csv.placements.csv",
+      "sha256": "ef142f1e7ff0c38875681016da6aaa6135f55939b5541076962f0ee224e58aec"
+    }
+  ],
+  "scope": "Explicit EasyFly grounding of three erroneous static object heights using native floor support and collision AABBs. This is a derived scene, not a reconstruction of unrecorded original author intent."
+}

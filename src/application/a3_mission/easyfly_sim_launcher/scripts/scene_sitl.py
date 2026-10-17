@@ -79,7 +79,8 @@ class SceneProbe(navigation.Probe):
             targets=[[step['x'],step['y'],step['z']] for step in data['steps'] if step['type']=='navigate']
             if data['frame_id']!='odom' or data['failure_policy']!='abort' or targets!=[[1.5,0,1.5],[0,0,1.5]]:
                 raise ValueError('this probe supports only the reviewed bounded aisle out-and-back mission')
-            if self.scene['navigation'].get('alignment_check','world_origin')=='recommended_region':
+            if (self.scene['navigation'].get('alignment_check','world_origin')=='recommended_region'
+                    or self.scene['navigation'].get('grid_height_limit_m',0.0)>0):
                 airborne=targets+[[0,0,step['altitude']] for step in data['steps'] if step['type']=='takeoff']
                 scene_alignment.validate_targets(self.scene['navigation']['recommended_region'],airborne)
         for topic,kind in [('/camera/color/image_raw',Image),
@@ -177,6 +178,7 @@ class SceneProbe(navigation.Probe):
                             'debug_heartbeat_rate_hz:='+str(self.scene['runtime'].get('heartbeat_rate_hz',1)),
                             'debug_clock_rate_hz:='+str(self.scene['runtime'].get('clock_rate_hz',10)),
                             'grid_footprint_mode:='+self.scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
+                            'grid_height_limit_m:='+str(self.scene['navigation'].get('grid_height_limit_m',0.0)),
                             'ground_model_frame:='+self.scene['navigation'].get('ground_model_frame','odom')])
             if self.scene['runtime'].get('battery_rate_hz',0):
                 command.append('debug_battery_rate_hz:='+str(self.scene['runtime']['battery_rate_hz']))
@@ -291,13 +293,17 @@ class SceneProbe(navigation.Probe):
         parameter_client=self.node.create_client(GetParameters,'/easyfly_semantic_map/get_parameters')
         try:
             self.wait(parameter_client.service_is_ready,5)
-            response=parameter_client.call_async(GetParameters.Request(names=['grid_footprint_mode']))
+            response=parameter_client.call_async(GetParameters.Request(
+                names=['grid_footprint_mode','grid_height_limit_m']))
             self.wait(response.done,5)
             values=response.result().values
             selected_mode=self.scene['navigation'].get('grid_footprint_mode','cluster_boxes')
-            if len(values)!=1 or values[0].type!=4 or values[0].string_value!=selected_mode:
+            height_limit=self.scene['navigation'].get('grid_height_limit_m',0.0)
+            if (len(values)!=2 or values[0].type!=4 or values[0].string_value!=selected_mode
+                    or values[1].type!=3 or abs(values[1].double_value-height_limit)>1e-9):
                 raise RuntimeError('actual semantic grid mode differs from scene manifest')
             self.report['grid_footprint_mode']=values[0].string_value
+            self.report['grid_height_limit_m']=values[1].double_value
         finally:
             self.node.destroy_client(parameter_client)
         if not dds_loaded:
@@ -390,24 +396,7 @@ class SceneProbe(navigation.Probe):
         self.report['settled_preflight_state']=self.state()
         samples=[]
         for index in range(3):
-            before=self.state()
-            result=subprocess.run(['gz','model','-m','easyfly_iris','-p'],
-                env=self.environment,capture_output=True,text=True,timeout=8)
-            (self.directory/f'gazebo-pose-{inspection["index"]}-{index}.txt').write_text(result.stdout+result.stderr)
-            if result.returncode!=0:
-                raise RuntimeError('private Gazebo model pose query failed')
-            lines=[line.strip() for line in result.stdout.splitlines() if line.strip()]
-            pose=[float(v) for v in lines[-1].split()]
-            if len(pose)!=6 or not all(math.isfinite(v) for v in pose):
-                raise RuntimeError('unexpected Gazebo model pose output')
-            self.wait(lambda:self.ready(False),3)
-            state=self.latest['/uav_state']
-            yaw=math.atan2(math.sin(state.yaw-pose[5]),math.cos(state.yaw-pose[5]))
-            c,s=math.cos(yaw),math.sin(yaw)
-            rotated=[c*pose[0]-s*pose[1],s*pose[0]+c*pose[1],pose[2]]
-            translation=[a-b for a,b in zip([state.position_x,state.position_y,state.position_z],rotated)]
-            samples.append(dict(world_pose=pose,odom_position=[state.position_x,state.position_y,state.position_z],
-                                yaw=yaw,translation=translation,state=self.state(),state_before=before))
+            samples.append(self.alignment_sample(f'{inspection["index"]}-{index}'))
             until=time.monotonic()+0.5
             self.wait(lambda:time.monotonic()>=until,3)
         translation=np.mean([s['translation'] for s in samples],axis=0).tolist()
@@ -428,6 +417,26 @@ class SceneProbe(navigation.Probe):
 
         inspection.update(passed=True,alignment_samples=samples,world_to_navigation=self.report['world_to_navigation'],
             settled_preflight_state=self.report['settled_preflight_state'])
+
+    def alignment_sample(self,label):
+        before=self.state()
+        result=subprocess.run(['gz','model','-m','easyfly_iris','-p'],
+            env=self.environment,capture_output=True,text=True,timeout=8)
+        (self.directory/f'gazebo-pose-{label}.txt').write_text(result.stdout+result.stderr)
+        if result.returncode!=0:
+            raise RuntimeError('private Gazebo model pose query failed')
+        lines=[line.strip() for line in result.stdout.splitlines() if line.strip()]
+        pose=[float(v) for v in lines[-1].split()] if lines else []
+        if len(pose)!=6 or not all(math.isfinite(v) for v in pose):
+            raise RuntimeError('unexpected Gazebo model pose output')
+        self.wait(lambda:self.ready(False),3)
+        state=self.latest['/uav_state']
+        yaw=math.atan2(math.sin(state.yaw-pose[5]),math.cos(state.yaw-pose[5]))
+        c,s=math.cos(yaw),math.sin(yaw)
+        rotated=[c*pose[0]-s*pose[1],s*pose[0]+c*pose[1],pose[2]]
+        translation=[a-b for a,b in zip([state.position_x,state.position_y,state.position_z],rotated)]
+        return dict(world_pose=pose,odom_position=[state.position_x,state.position_y,state.position_z],
+                    yaw=yaw,translation=translation,state=self.state(),state_before=before)
 
     def run(self):
         self.start()
@@ -491,15 +500,44 @@ class SceneProbe(navigation.Probe):
         began=time.monotonic()
         settled_since=None
         last_reference=None
+        next_alignment_query=began
         entry['recovery_limits']=dict(timeout_wall_s=120,continuous_wall_s=3,
-            speed_m_s=0.05,anchor_error_m=0.15,map_receipt_age_s=1.0,anchor_frame=anchor['frame'])
+            speed_m_s=0.05,anchor_error_m=0.15,map_receipt_age_s=1.0,anchor_frame=anchor['frame'],
+            alignment_position_error_m=0.2,alignment_yaw_error_rad=0.1,
+            alignment_query_min_interval_wall_s=1.0)
+        reference=self.scene['navigation']['world_to_navigation']
+        if reference is None:
+            raise RuntimeError('postlanding recovery requires the fixed scene alignment reference')
+        entry['recovery_alignment_samples']=[]
         def stationary():
-            nonlocal settled_since,last_reference
+            nonlocal settled_since,last_reference,next_alignment_query
             now=time.monotonic()
             state=self.state()
             last_reference=self.reference_position()
             valid=recovery_sample_valid(state,self.ready(False),anchor['position'],now,self.receipts,
                 last_reference['position'] if last_reference and last_reference['frame']==anchor['frame'] else None)
+            if valid:
+                # Drain live ROS observations between native pose queries.
+                # Only a fresh query can finish the continuous interval.
+                if now<next_alignment_query:
+                    return False
+                sample=self.alignment_sample(f'recovery-{entry.get("cycle",0)}-{len(entry["recovery_alignment_samples"])}')
+                alignment=scene_alignment.compare_alignment(reference,
+                    dict(translation=sample['translation'],yaw=sample['yaw']),
+                    policy=self.scene['navigation'].get('alignment_check','world_origin'),
+                    region=self.scene['navigation']['recommended_region'])
+                now=time.monotonic()
+                next_alignment_query=now+1.0
+                if now-began>120:
+                    raise RuntimeError('postlanding recovery exceeded the 120 second budget')
+                last_reference=self.reference_position()
+                valid=(alignment['maximum_position_error_m']<=0.2 and alignment['yaw_error_rad']<=0.1
+                    and recovery_sample_valid(self.state(),self.ready(False),anchor['position'],now,self.receipts,
+                        last_reference['position'] if last_reference and last_reference['frame']==anchor['frame'] else None))
+                entry['recovery_alignment_samples'].append(dict(sample=sample,alignment=alignment,
+                    seconds_since_landing=now-began,valid=valid,reference=last_reference,
+                    receipt_ages={topic:now-self.receipts.get(topic,float('-inf'))
+                        for topic in ['/occupancy_grid','/pointcloud_nonground']}))
             if not valid:
                 settled_since=None
             elif settled_since is None:

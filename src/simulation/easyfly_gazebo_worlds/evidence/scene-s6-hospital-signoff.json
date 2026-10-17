@@ -1,0 +1,226 @@
+{
+  "stage": "S6",
+  "scene": "hospital_aws_v2",
+  "category": "indoor/hospital",
+  "hospital_category_expansion_complete": true,
+  "S6_complete": false,
+  "scope": "One static single-floor AWS hospital, resource repairs and three measured placements. Bounded northern open-area takeoff/1.5m out-and-back/landing only. Not door crossing, narrow corridors, all rooms, multilevel or whole-hospital acceptance.",
+  "catalog": {
+    "total": 16,
+    "registered": 10,
+    "draft": 6
+  },
+  "assets": {
+    "asset_sets": 44,
+    "model_definitions": 69,
+    "locked_model_files": 713,
+    "aws_declared_license": "MIT-0",
+    "fuel_declared_license": "CC-BY-4.0",
+    "original_v1_preserved": true,
+    "repaired_asset_sets": [
+      "aws_hospital_repaired_v1",
+      "fuel_hospital_bedtable_repaired_v1",
+      "fuel_hospital_bpcart_repaired_v1"
+    ],
+    "independent_bpcart_donor_source": true,
+    "model_payload_in_ros_install": false
+  },
+  "formal_matrix": {
+    "cold_starts": 2,
+    "installation_modes": [
+      "normal",
+      "symlink"
+    ],
+    "mission_runs": 1,
+    "mission_cycles": 2,
+    "parent_missions": 2,
+    "navigation_goals": 4,
+    "max_navigation_error_m": 0.0907238284640069,
+    "normal_exits": 72,
+    "all_runs_network_isolated": true,
+    "interfaces": [
+      "lo"
+    ],
+    "no_external_routes": true,
+    "forced_cleanup": false,
+    "leftovers": false,
+    "pre_height_draft_and_matrix_preserved": true
+  },
+  "runtime": {
+    "grid_footprint_mode": "observed_cells",
+    "grid_height_limit_m": 2.6,
+    "declared_region_maximum_target_height_m": 2.0,
+    "maximum_vehicle_height_above_ground_m": 2.2,
+    "grid_height_reference": "current trusted ground plane",
+    "full_3d_cloud_and_local_planner_input_unchanged": true,
+    "clock_rate_hz": 100,
+    "heartbeat_rate_hz": 5,
+    "battery_rate_hz": 5,
+    "clock_publisher": "native gazebo_ros_init",
+    "feedback_publisher": "native PX4/MAVROS",
+    "physics_and_sensor_configuration_unchanged": true,
+    "flight_admission_and_freshness_thresholds_unchanged": true,
+    "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "scene_probe_sha256": "2fee33fe4ca3881551678c7dc62d65875bf0ef7c305d6efe7315fd53f6368727",
+    "semantic_binary_sha256": "b21619f86c57274254b4ee5954a17a3ce451e985e7319b54d628423e5a8be1dc",
+    "required_px4_compatibility": [
+      "mag_lpf_interval_v1"
+    ],
+    "qualification_alignment_contract": {
+      "policy": "recommended_region",
+      "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+      "maximum_position_error_m": 0.2,
+      "maximum_yaw_error_rad": 0.1
+    }
+  },
+  "validation": {
+    "installations": [
+      {
+        "mode": "normal",
+        "ordinary_test_result_records": 629,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "installed_cli_checks": 62,
+        "installed_byte_checks": 140,
+        "test_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-normal-responsive-v5.txt",
+          "sha256": "3b181d5ae4cb5069d7cb36a536472d83d66d9b4581240a4f6c5be235cd77e8a8"
+        },
+        "cli_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/normal-cli-final-envelope/summary.json",
+          "sha256": "9bf5932b64217de473bd7951c4086bdabd0aab47f364fdf1799f431e5b13c969"
+        },
+        "installed_byte_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/normal-installed-bytes-final.json",
+          "sha256": "3b6794a025d61d32eb7a7c2c95c61d211b076941908469e4016db3796c05a68d"
+        }
+      },
+      {
+        "mode": "symlink",
+        "ordinary_test_result_records": 629,
+        "errors": 0,
+        "failures": 0,
+        "skipped": 0,
+        "installed_cli_checks": 62,
+        "installed_byte_checks": 140,
+        "test_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-symlink-responsive-v5.txt",
+          "sha256": "3b181d5ae4cb5069d7cb36a536472d83d66d9b4581240a4f6c5be235cd77e8a8"
+        },
+        "cli_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/symlink-cli-final-envelope/summary.json",
+          "sha256": "6ccbcd7d801ad664b114b4d851744fe190698cd94fa489d7af556a7b864aaa5a"
+        },
+        "installed_byte_result": {
+          "path": "artifacts/scene-s6-hospital-repair-20261017/symlink-installed-bytes-final.json",
+          "sha256": "3eb75758eb04f75a2e9b61085adf990272dadbfe4c7711286af63d278d45d302"
+        }
+      }
+    ],
+    "import_reproduction": true,
+    "cppcheck_actual_version": "2.7",
+    "cppcheck_standard_library": "googletest",
+    "ordinary_tests_start_flight": false
+  },
+  "evidence": [
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/bootstrap-s6-qualified.json",
+      "sha256": "b5eca9c931e1973f877ecf90db8da7235981867625bc29f13e10b22eb072bb85"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-final.json",
+      "sha256": "fba3260beb6fb6b326afcccdd5a50546b7cd0fcde761e52bc34d3b7c8ac23626"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-height-band.json",
+      "sha256": "e4f0f45444172a281f8496498c131f9a122b61b82dca8b8f2e2b12b78ca2ed0e"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-height-envelope-v4.json",
+      "sha256": "6295c5c0df61cb43779647bdcaaec249a41bc93d255d9b1267664fe8a13b3889"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-recovery-v3.json",
+      "sha256": "0cfb96b010752e705eb62d3b6cd0401952e27a5eeeb21896be6b5cf8859639b0"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-responsive-v5.json",
+      "sha256": "d6562956bfb29965a1434901d509c944c06d4a462155aab4feeb963cbd756e81"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/geometry-s6.json",
+      "sha256": "a86d73d1a73d48d339976751cc155dfa1782ca00967d84b76870deb14f450fbb"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/height-envelope-s6-v2.json",
+      "sha256": "937eadcf3981d8d35fa17460a397796ebf5268d62b6de3068698e4274c3c3c5e"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/height-projection-s6.json",
+      "sha256": "089ce5abe0fac1be1efe40398b063313865b6b2a828ad38f249b99411688ea82"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/import-source.json",
+      "sha256": "e014d2ba655bb9731ef2732bb1586b73ce5873b90b25fe25d5308fef19ac8fa5"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v1.json",
+      "sha256": "27d277de6aa79235951425b6a7b72f92fa744481b77112d25a0fc8fa7d3a459c"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v2.json",
+      "sha256": "f4a0c81a658a4378919f5149916ffcc252858b7399db41413aedb0944fc99176"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v3.json",
+      "sha256": "9ca58c7e5ffc3bad44d383fe25424f0d0df39c20e12dda91886bf66aedbe8cb5"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v4.json",
+      "sha256": "62fdb5b8adaad750980a57e486c03c457f9bb3d06315dbec438fc3e50ec0fb50"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-s6-final.json",
+      "sha256": "2c334a323de7c1cc02ebfebe6b4120e0b137ddc7ef8c3cb9bb33912a9f03171d"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/placement-source-s6.json",
+      "sha256": "27d912d163a7cc8e493fe812c6509f61617df8f6240f450d6744c2381e93370d"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/recovery-alignment-s6.json",
+      "sha256": "e305d7c9e0dd6735ab7999a17a047404fa10860bb46996623b71e9420e43e382"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/recovery-query-cadence-s6.json",
+      "sha256": "6927683c19e67333aa26af7a1c6c7c28e09aa34acc1c16c3ac95414873808585"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/resource-audit-s6.json",
+      "sha256": "21007209c89b04124bc3a1f42121a9afccbbf501048de0654243bd4b7823c3c4"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/resource-repair-source.json",
+      "sha256": "7ac0ac33a08e03243fff6b8ed0b83b55b4eb7d2aea01ddb05b3ebacc71815608"
+    }
+  ],
+  "preserved_failures": [
+    "Original v1 still has eight resource references and three registration gaps; managed launch refuses.",
+    "First v2 mission rejected a real global route because the full-height 2D projection filled the goal with ceiling samples. No successful navigation or landing recovery is attributed to that run.",
+    "The first height-limited run completed one real out-and-back and landing recovery, then rejected the second parent before any goal at 0.209253m alignment error. The recovery predicate was strengthened within the unchanged 120-second budget; the static reference was frozen instead of recentered.",
+    "The subsequent 2.9m-cap run passed the outgoing navigation and rejected the first return while airborne; no recovery or second parent is attributed to it. The allowed target height was reduced from 2.3m to 2.0m, with cap 2.6m and unchanged 0.6m reserve, full 3D data and mission. That new height contract is qualified independently.",
+    "The first 2.6m-cap run passed one parent but timed out in recovery with 165 synchronous pose queries and intermittent TF freshness. The observer cadence was limited to at most one native query per wall second, preserving all freshness/continuity/budget conditions; the resulting current matrix is independent.",
+    "Height-v1 style failures/upstream static-analysis skips, and height-v2 GTest macro configuration and shared host ROS-domain failures remain in raw artifacts. Complete height-v3 suites pass without excluding source files or weakening assertions.",
+    "Native geometry report first rejected the built-in infinite ground AABB; only that built-in was explicitly exempted, all hospital instances retain finite bounds.",
+    "Calibration aggregation first rejected independent semantic binary hashes; each exact loaded binary and equal executable/data/unwind sections are now recorded, with the other five native libraries identical."
+  ],
+  "limitations": [
+    "Material references are explicit EasyFly derivative repairs, not a claim of original author intent or identical original rendering.",
+    "Sampled geometry is not a continuous clearance proof for arbitrary paths.",
+    "2D height projection is an opt-in contract for the declared region; full overhead 3D data remains present.",
+    "Camera duplicate-stamp counters retained under existing progress gates; no all-frame monotonicity claim.",
+    "No long-duration, dynamic-actor, modern-Gazebo or hardware acceptance."
+  ],
+  "raw_artifacts": "artifacts/scene-s6-hospital-repair-20261017"
+}

@@ -139,7 +139,8 @@ def test_postlanding_gate_rejects_motion_stale_maps_and_invalid_state(scene_prob
     assert not valid(state,True,[0.,0.,0.],10.,{'/occupancy_grid':10.})
 
 
-def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_module,monkeypatch):
+@pytest.mark.parametrize('alignment_interrupts', [False,True])
+def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_module,monkeypatch,alignment_interrupts):
     module=scene_probe_module
     probe=module.SceneProbe.__new__(module.SceneProbe)
     clock=[0.]
@@ -148,10 +149,12 @@ def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_mo
     probe.ready=lambda armed:True
     probe.receipts={}
     probe.reference_position=lambda:dict(frame='map',position=[0.,0.,0.])
+    probe.scene={'navigation':dict(world_to_navigation=dict(translation=[0.,0.,0.],yaw=0.),recommended_region=None)}
+    probe.alignment_sample=lambda label:dict(translation=[0.,0.,.21 if alignment_interrupts and clock[0]==5.5 else 0.],yaw=0.)
     observed=[]
     def wait(predicate,seconds):
         assert seconds==120
-        for moment in [0.,2.,2.5,3.,5.5,6.]:
+        for moment in ([0.,2.,2.5,3.,5.5,6.5,9.,10.] if alignment_interrupts else [0.,2.,2.5,3.,5.5,6.5]):
             clock[0]=moment
             # A single stale non-ground observation interrupts the interval.
             probe.receipts={'/occupancy_grid':moment,'/pointcloud_nonground':moment if moment!=2.5 else 0.}
@@ -159,8 +162,63 @@ def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_mo
     probe.wait=wait
     entry={}
     probe.recover_after_landing(dict(frame='map',position=[0.,0.,0.]),entry)
-    assert observed==[False,False,False,False,False,True]
-    assert entry['recovery_seconds']==6.
+    assert observed==([False]*7+[True] if alignment_interrupts else [False]*5+[True])
+    assert entry['recovery_seconds']==(10. if alignment_interrupts else 6.5)
+    assert entry['recovery_limits']['alignment_position_error_m']==.2
+    assert entry['recovery_limits']['alignment_yaw_error_rad']==.1
+
+
+def test_recovery_rate_limits_native_queries_and_requires_a_fresh_final_sample(scene_probe_module,monkeypatch):
+    module=scene_probe_module
+    probe=module.SceneProbe.__new__(module.SceneProbe)
+    clock=[0.]
+    monkeypatch.setattr(module.time,'monotonic',lambda:clock[0])
+    probe.state=lambda:dict(armed=False,position=[0.,0.,0.],velocity=[0.,0.,0.])
+    probe.ready=lambda armed:True
+    probe.reference_position=lambda:dict(frame='map',position=[0.,0.,0.])
+    probe.scene={'navigation':dict(world_to_navigation=dict(translation=[0.,0.,0.],yaw=0.),recommended_region=None)}
+    calls=[]
+    def sample(label):
+        calls.append(clock[0])
+        return dict(translation=[0.,0.,0.],yaw=0.)
+    probe.alignment_sample=sample
+    def wait(predicate,seconds):
+        assert seconds==120
+        for moment in [0.,.1,.5,.99,1.,1.01,2.,2.99,3.]:
+            clock[0]=moment
+            probe.receipts={'/occupancy_grid':moment,'/pointcloud_nonground':moment}
+            assert predicate()==(moment==3.)
+    probe.wait=wait
+    entry={}
+    probe.recover_after_landing(dict(frame='map',position=[0.,0.,0.]),entry)
+    assert calls==[0.,1.,2.,3.]
+    assert entry['recovery_seconds']==3.
+
+
+@pytest.mark.parametrize('translation,yaw', [([0.,0.,.201],0.),([0.,0.,0.],.101)])
+def test_recovery_never_admits_an_outside_alignment(scene_probe_module,monkeypatch,translation,yaw):
+    module=scene_probe_module
+    probe=module.SceneProbe.__new__(module.SceneProbe)
+    clock=[0.]
+    monkeypatch.setattr(module.time,'monotonic',lambda:clock[0])
+    probe.state=lambda:dict(armed=False,position=[0.,0.,0.],velocity=[0.,0.,0.])
+    probe.ready=lambda armed:True
+    probe.reference_position=lambda:dict(frame='map',position=[0.,0.,0.])
+    probe.scene={'navigation':dict(world_to_navigation=dict(translation=[0.,0.,0.],yaw=0.),recommended_region=None)}
+    probe.alignment_sample=lambda label:dict(translation=translation,yaw=yaw)
+    def wait(predicate,seconds):
+        assert seconds==120
+        for moment in [0.,3.,119.]:
+            clock[0]=moment
+            probe.receipts={'/occupancy_grid':moment,'/pointcloud_nonground':moment}
+            assert not predicate()
+        raise RuntimeError('unchanged recovery deadline')
+    probe.wait=wait
+    entry={}
+    with pytest.raises(RuntimeError,match='unchanged recovery deadline'):
+        probe.recover_after_landing(dict(frame='map',position=[0.,0.,0.]),entry)
+    assert len(entry['recovery_alignment_samples'])==3
+    assert not any(v['valid'] for v in entry['recovery_alignment_samples'])
 
 
 def test_recovery_compares_in_declared_ground_reference(scene_probe_module):

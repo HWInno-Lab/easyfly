@@ -1,0 +1,1757 @@
+schema_version: 1
+asset_set_id: aws_hospital_repaired_v1
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+  revision: 39969a9d250135835cf13b480865647d1a87b6f4
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/NOTICE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/origins.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_repaired/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_repaired/origins.json
+  note: AWS repository content only; does not license the 43 separately recorded Fuel
+    models.
+models:
+- name: aws_robomaker_hospital_curtain_closed_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_curtain_half_open_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_curtain_open_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_elevator_01_car
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_elevator_01_door
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_elevator_01_portal
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_floor_01_ceiling
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_floor_01_floor
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_floor_01_walls
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_nursesstation_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_hospital_ramp_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_Carpet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_CoffeeTable_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_KitchenCabinet_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_PortraitA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_PortraitD_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_PortraitD_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_PortraitE_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_PortraitE_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_Refrigerator_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_SofaB_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_Sofa_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_TV_02
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_residential_Trash_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_warehouse_ClutteringA_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+- name: aws_robomaker_warehouse_ClutteringC_01
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+    revision: 39969a9d250135835cf13b480865647d1a87b6f4
+    declared_license: MIT-0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/NOTICE
+    - package: easyfly_gazebo_models
+      path: licenses/aws_hospital/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: AWS repository content only; does not license the 43 separately recorded
+      Fuel models.
+files:
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_collision.dae
+  sha256: 333e7a6f7cb94c343ffd146efe6e7edacb41bcd2304b4f44ae1a1fb54ad57888
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low.png
+  sha256: aa1b82cf2b13ff2e03fa91a490c65e26687839571696516583e86b1338c96556
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low_normal.png
+  sha256: 0d40eb58e86673ab23b526d5818cc7324494fe2398db65bf2c45c6b15d9deeea
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.dae
+  sha256: b61f5632497967d159ed5e5123544b79c5f81d31773f89488a20fa8a54b3e6c6
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.png
+  sha256: 46beb32919da898614a000031092977f63855b7d69143e6ea47f56b13924bf08
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual_normal.png
+  sha256: 21fb66b33ce7683c8df29a8cedcaa8d9458d1023fb9d81da6504bddc60371bc2
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+  sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+  sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+  sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+- path: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+  sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+- path: aws_robomaker_hospital_curtain_closed_01/model.config
+  sha256: c3691c3ffb06f08761e0bf89f7e8fbe74fea0664f91be93252933d5cd7c0273b
+- path: aws_robomaker_hospital_curtain_closed_01/model.sdf
+  sha256: fb11e52b8b534abd55c01a75745c05e3f7a72d70d8e8bf80a0b66366fc137897
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_collision.dae
+  sha256: 284f52a3c4ee7b93bed81a7034b7bb255368c752101f74fe6cf99c91b319ad98
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low.png
+  sha256: 45d1443d3172b89eb0b9b9921945fa24a4a368cf87b02a8acaece13da4d04f94
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low_normal.png
+  sha256: 5a530fb4414f91e90cc67949efadfeb10c0de22f9c93b0b37c852221516d3854
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.dae
+  sha256: 1483ffe18fd3bf635809c278d95f0da7bc4e1510842a597b4bc4406689833c50
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.png
+  sha256: fae8e2fdd0e07de9011a71a6e2ed663a2fe87f1b0af184cda0549b6eff89d994
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual_normal.png
+  sha256: 659b78c17fe39afd36ef83da4bcc79ce570ef91afea2576cddad97eb8553efc8
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+  sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+  sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+  sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+- path: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+  sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+- path: aws_robomaker_hospital_curtain_half_open_01/model.config
+  sha256: b315ad7926bdf999f00100bef10e69cae9fd86923c5f07ddd898791e5536dbec
+- path: aws_robomaker_hospital_curtain_half_open_01/model.sdf
+  sha256: 7feb5086861eff6ef5ef294442c98ec6c89c445d1f16cace2def7fde569b77c6
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_collision.dae
+  sha256: 8b8dae060cc7d183a09b9ae330e1c81c94655776919df748549b6bccdd979a3c
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low.png
+  sha256: bff375abbcb31ddffa5e324f8701320382e80116c00290e531291cf6af2a713b
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low_normal.png
+  sha256: 4018f2b2a19d3ac1dd5cda02c83dcc9e6870e31112d14fe88c47d3ddbec24608
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.dae
+  sha256: 7aa457be706deb6554e51aad3b5a813845651f9900c2d2e023f7fe4f2cf90b85
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.png
+  sha256: 659db364ae6fb43f300302aad107f35dca117cd4d42d1f3dfc85e14f707393cb
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual_normal.png
+  sha256: f61b3ce8c560f89a4455bbb6f75b12f35ccb37c032ae75ee96681274a0bbc4b0
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+  sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+  sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+  sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+- path: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+  sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+- path: aws_robomaker_hospital_curtain_open_01/model.config
+  sha256: 898163d28d0b92f6319d26b90aee0a8359d6b2ae1c045f175544676ee9c86d58
+- path: aws_robomaker_hospital_curtain_open_01/model.sdf
+  sha256: 9f4ec8a59ed84268f4015b0eb92a25b98cb2d7bf0d638694f27e457da272ad54
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_collision.dae
+  sha256: 9567dc096021ebed13c455e985e26b1e6749e048430cc1d5893e67100615fa66
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_low.dae
+  sha256: 9fbc8155fb143fec4bbf22897dc213d6ba82fa0ff49d08f337cda99d7483f08f
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_visual.dae
+  sha256: f0f461a59383e4b6485f2153f3f9874ea84c66365f028074214c12f143fcab89
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low.png
+  sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+  sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual.png
+  sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+- path: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+  sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+- path: aws_robomaker_hospital_elevator_01_car/model.config
+  sha256: eae535a6cf94ab1885c1a537fb4ed73fbdd541a2925e204232b9c329d1a264dc
+- path: aws_robomaker_hospital_elevator_01_car/model.sdf
+  sha256: aec96138afdcafc667824cba48dade7833793ba9859f1aaffd4ee40ff4059539
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_collision.dae
+  sha256: b9119a6e5571294de5a61d3a449c7b104887115ea90e23817b08d6248c934735
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_low.dae
+  sha256: a662540a8a10dda1bbe9c91c56238e0ef72d8824e927110d450065dcb868afe1
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_visual.dae
+  sha256: 305d38b7aa8ab2ed4963050c1382c9234f7f29ad9377c5214f31d7e2c24a9719
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low.png
+  sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+  sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual.png
+  sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+- path: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+  sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+- path: aws_robomaker_hospital_elevator_01_door/model.config
+  sha256: ca25cb81dbad605810560e338cbeed5c5da48323b45d935056e83057a4ba9278
+- path: aws_robomaker_hospital_elevator_01_door/model.sdf
+  sha256: 4802a6a51723fadd48f647569da129fe618159a421cb7d6a32f63299da97f5dc
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low.png
+  sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+  sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_collision.dae
+  sha256: 3869546a2144504e8d98b252cb24ae7dac1e083e57cdc51e84621fe0599186d1
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_low.dae
+  sha256: 317fa40a0bdb4141b11b471676a5e23d11ae3c78332ced172c87257a60a9955b
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_visual.dae
+  sha256: 4bb289f4065545cef2c663daafe826a76ac706e9a592b0cb50aff7c2c156ea54
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual.png
+  sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+- path: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+  sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+- path: aws_robomaker_hospital_elevator_01_portal/model.config
+  sha256: 7cfa48d9ec031a8998b8ae6ed5756c1fe4b5247023a58f2699c971ed67507410
+- path: aws_robomaker_hospital_elevator_01_portal/model.sdf
+  sha256: 3f9f2ff42baab1f258b120b839aefbd8bc393e2cdbf04d49b7e8aa2daa80a47c
+- path: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling.png
+  sha256: 7613fe8c9a26ca0f05a0afc7990574d5c8e29d1c41521247e031933ac0e1a31e
+- path: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_collision.dae
+  sha256: 5d06ef3ff6d013d58d2011f1acbbf5ef68c528466bc645884943513b15cd2742
+- path: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_normal.png
+  sha256: d717e8c900596e0c9bbd00603efcaa642aa30bd32357043216e4d56529e027ce
+- path: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_visual.dae
+  sha256: 76b9f548a320912ca6b8d593faf90e5343607058e5d656c8bf622bec6ee8112c
+- path: aws_robomaker_hospital_floor_01_ceiling/model.config
+  sha256: 4cc82aec0a05b6d9c79f0cf0c2cd534202eb2409885309a8ef79e88ce7a5ba04
+- path: aws_robomaker_hospital_floor_01_ceiling/model.sdf
+  sha256: e66acb4ad1f1d1d290d25b9b3b2ad7c71738c939079c70350158d84461f513bf
+- path: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor.png
+  sha256: 67800bd1916ea1bbc49c00635a4e65933b0147d2006a6ba1913f753bdd44ba5f
+- path: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_collision.dae
+  sha256: b914dbb27d5a03f4175ff35b7b08f81f5ad851254fd179bd8af05285f0197fc7
+- path: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_normal.png
+  sha256: 84838dbb817663e58034282fc4a79098a8baf6b0c44e92de692f67fec543b2b1
+- path: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_visual.dae
+  sha256: 4106e0ac636431290285b5db81aa2ba98a8b2e34a1586966622033148367d9f8
+- path: aws_robomaker_hospital_floor_01_floor/model.config
+  sha256: a823d78a78a7a104fef95b0e13dd1315fbf97816d6455fe8e353439b1f486229
+- path: aws_robomaker_hospital_floor_01_floor/model.sdf
+  sha256: 18f9d6075f5b724fb05edc34009789e87df5be1914cebfd98d06e19ae5ec50e7
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_bumprail.png
+  sha256: 4994099470052f217a8309f96a20d2d22a763d43d03e9b55c5a0c3c20a6605e5
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_big.png
+  sha256: 04a3062f15b3a7082a6f037ce0a8202abd456935937ee4dca3e73cde54c480c1
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_small.png
+  sha256: b9a6266028d5b8e700907aac2464281a7442adce2e9b8438fa27d7bbaac2334a
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorsign.png
+  sha256: d6f467bc2ddb776fcc386b851304ab7edd870689a198bc2d893d89400e061137
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_handrail.png
+  sha256: f72eac5a0109277934fb66c1a3fe81e2e4bf1d618d4cc9bc562698aa4cd1ea44
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_stairs.png
+  sha256: d2f7179cc9adf44805ca2b42945d05a36deaf7c6bd3e1e9f6f14aed0b8d8e8aa
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls.png
+  sha256: 708e8a65f2f8bfa0a4d20799bed988c1357f456b6fd8738e5c168081b2729dcc
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_collision.dae
+  sha256: 233b75caa7eb94807427505d21e15522f3f5b15ce30f3b6a6f51b58eb901a523
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_visual.dae
+  sha256: 4d3deeaba184ace714dc9655dfebe3c5cfa588048d42ad29417be824624f81ce
+- path: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_windows.png
+  sha256: 368db4901ccd9b1f3944cf8e184dbb4491494288d4e09a6727277ec74d42da9f
+- path: aws_robomaker_hospital_floor_01_walls/model.config
+  sha256: b3c2b6a475b2d186eace015d47b3c1f916e3f0cde06509ce065eaac79f7620fe
+- path: aws_robomaker_hospital_floor_01_walls/model.sdf
+  sha256: ea1233686edd6b52c0d74927d403e331f0ab21709a22a1607b79a91112d82202
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_collision.dae
+  sha256: b0506c0958cc308caef525f62570260723efe66aea9cfbbed711e6265352a7c1
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.dae
+  sha256: 89f9a542aede647581f66d9eaf9a1f661e488004c2df9f74dddd3d156815184f
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.png
+  sha256: 1587d61e666bddcef3f2cad1a073211ab7d6ea747981d60d994577d870ff365e
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low_normal.png
+  sha256: 0197f30e872cefd6a92bfa4fd42e086652ae4b536dbdda8f4215bc96af28dff3
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.dae
+  sha256: d3d806a3ea3d679b6f93fb1f08eb8992cdbc76e80d17895a37339c8e7f9d94f7
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.png
+  sha256: 1d28e4b8b7f6a81a0cb49b591756676dbc24ef2504ce54b6d6c9b4da75cf143d
+- path: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual_normal.png
+  sha256: 1575d31af43f5db2fa9002ff2898a97e1d512d713fe7f38ab5458806d02ceb5f
+- path: aws_robomaker_hospital_nursesstation_01/model.config
+  sha256: aee34781c373ca67d011debb33aa77ab68c1e695e4b1b30814d58e1dc686f4c1
+- path: aws_robomaker_hospital_nursesstation_01/model.sdf
+  sha256: 5f244b8701bf807cfb174405dc39588664574052a7f11ffc010be64cd1e7889a
+- path: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01.png
+  sha256: 5a69926573d9cc39612a4e51d11df57e272f97b37f631a3b96119bee60255162
+- path: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_collision.dae
+  sha256: c6d1add1563ecc5fc3be8ce06b524254ccc8fe8bccde757754f4e251c9d63d56
+- path: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_normal.png
+  sha256: 4cbb85aaa155b19641c1cc8b70340aea18a97ec9d538b1c679c4b1422b8f085a
+- path: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_visual.dae
+  sha256: 3ed3f86d9ea371f8fad1fe456e29087895a11bab6717e402e0f7f357f0bd0afc
+- path: aws_robomaker_hospital_ramp_01/model.config
+  sha256: 511e04721ed3ef54187ff22522cc2e2652e924e3d478fe9b8beb5e964ba4c11d
+- path: aws_robomaker_hospital_ramp_01/model.sdf
+  sha256: c0634393592fbd4bd7a192d876c906d469abf4640291324b0baabcc33e3989b4
+- path: aws_robomaker_residential_Carpet_01/materials/textures/aws_Carpet_01.png
+  sha256: bebfa3305fb60e141249299e256b33b021a018f0835d14bc172c3eee86036f75
+- path: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_collision.DAE
+  sha256: 44f3ee9d4be182016f4e20a01cd18cd7f5e61c24d76e2e2ef181a281c5438d42
+- path: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_visual.DAE
+  sha256: 2c12d1a52d8027a37803a6abb6bb0342b6f79ae1e853c27bde83b0dcd5651169
+- path: aws_robomaker_residential_Carpet_01/model.config
+  sha256: feb070246f4a120937b361938438a66ad098e3b3b00c5fe9460edd24616f2e2c
+- path: aws_robomaker_residential_Carpet_01/model.sdf
+  sha256: 5a9f4e2fecc47755f63b7ec0f91f9405143c79fe6d37ca5039c5d0a91a955970
+- path: aws_robomaker_residential_CoffeeTable_01/materials/textures/aws_CoffeeTable_01.png
+  sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+- path: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_collision.DAE
+  sha256: 96d855fbd04032b9eb55f38ad66cf4d8e989fccc9d889eaa43943a75b6f62385
+- path: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_visual.DAE
+  sha256: a0fe0d5086613cd02f8f5a4f7b4cea12717cae5beebca25e5c9af850789570b1
+- path: aws_robomaker_residential_CoffeeTable_01/model.config
+  sha256: 04092669b049895f53f213c6cd559b1c4d299371985b3c9a2b86f0b6db6f8b10
+- path: aws_robomaker_residential_CoffeeTable_01/model.sdf
+  sha256: 0f097fc06b55a3fa22ffb2645a82d0e700b1a1db156b27b215ffdfc94c983bb1
+- path: aws_robomaker_residential_KitchenCabinet_01/materials/textures/aws_KitchenCabinet_01.png
+  sha256: 68d0cc8e38a11adc0d9798dc4dfed92a5c45dbf342b26f7929fe57db05a46821
+- path: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_collision.DAE
+  sha256: 32357200643818e37dc1ea27f419dbb8d4acd6e0a4e485f2a93239365b18740f
+- path: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_visual.DAE
+  sha256: e55aab5c171aa80e262313acc8d50d6ba39f703981fd51f19f68ec4f83abf6f2
+- path: aws_robomaker_residential_KitchenCabinet_01/model.config
+  sha256: 1f0aa87f904ef9cfe96bcb5a75013ca5b032bbe853487787d7ff4a0ceaacd0d0
+- path: aws_robomaker_residential_KitchenCabinet_01/model.sdf
+  sha256: 215fe51f7a37c6f7980fe3fb9667b93a79b05624ca1fb321eeaf050d3a69654f
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg
+  sha256: a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_02.png
+  sha256: a7d9217e72edcb4bca45a5c7eec6079a45aa3b6eda44345c3715169b24227794
+- path: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_collision.DAE
+  sha256: bbd1e639e1b858f9ada90d122410bb54954150a4121b98b5cc502ced9054ac9d
+- path: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE
+  sha256: 4abe4104eca9f4b39a07ee156f9d352174befe6c0e6408ed2cbab18c215ef5c0
+- path: aws_robomaker_residential_PortraitA_01/model.config
+  sha256: be4591181782387f4b1556fbe10c4720a0135609275189ed7d66824e5bf9d1a7
+- path: aws_robomaker_residential_PortraitA_01/model.sdf
+  sha256: 14f02d79e5ac6fda00a08760b705659feeec9109081e2dda32bb97b7f4e96d3c
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg
+  sha256: ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_01.png
+  sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+- path: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_02.png
+  sha256: ba85f5a4fb4f2c21a8059c49c0fde28b5c607b68e876ba0ffcf6a6cf03991bec
+- path: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_collision.DAE
+  sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+- path: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE
+  sha256: a935990e80d3cf888337b85d41896c384030b8751e2892939cd821664554f64c
+- path: aws_robomaker_residential_PortraitD_01/model.config
+  sha256: bcc1dccadb547a4d99339806d7e5724ae71f5fb1d24f9d74ce3fbcd75bd115ac
+- path: aws_robomaker_residential_PortraitD_01/model.sdf
+  sha256: c6f91b5f8db5bd6947be676af7d62f7809b2e6c2ee627710d60019cd51aece80
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg
+  sha256: ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_01.png
+  sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+- path: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_02.png
+  sha256: ae4afbbb5d1c7b08a8c4ddc1cbdd7566cde6c428e230f792c94585898aa0e024
+- path: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_collision.DAE
+  sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+- path: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE
+  sha256: 6e8e6e57a221ebdfebee096c783d9dfdf4969c108ddf3dcf70563d456cfb44f0
+- path: aws_robomaker_residential_PortraitD_02/model.config
+  sha256: d22bfca4b3812c92c72662c2c36dec2ed938b00b69bff4b6efb03409d3a92851
+- path: aws_robomaker_residential_PortraitD_02/model.sdf
+  sha256: 43b7d859fa6f6a26f0691346d54bdff47be4d3bd2d68d43dbac7e7c4e41e0836
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg
+  sha256: b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_02.png
+  sha256: 902b9f8853af05c871c4213b0ecf6bdc1004401d1e6125378c07dd1c065046c5
+- path: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_collision.DAE
+  sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+- path: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE
+  sha256: 6464dde6887667039c88db340e0e07103776d84fe7be319d8d18246bcec849d0
+- path: aws_robomaker_residential_PortraitE_01/model.config
+  sha256: 15722be89804afb74604814ea6539d0dd8bd1485793c059a3a86c7ca4fd8ac90
+- path: aws_robomaker_residential_PortraitE_01/model.sdf
+  sha256: 1a724de26b45e80058d707bde670b4d50252b9c22f6a95938cfe3a9efb423556
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg
+  sha256: 16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_01.png
+  sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+- path: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_02.png
+  sha256: 4e2e1926fca15510ff96150cca248e0cd982e7c007626553846d42093f8570d1
+- path: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_collision.DAE
+  sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+- path: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE
+  sha256: 4fec20317b43c63c770fb63166aeabf5b366b311555dcb9be13aa6419a1b68f5
+- path: aws_robomaker_residential_PortraitE_02/model.config
+  sha256: 35a57595189edcbfa1dea091a896ba0777054ba5477c3e31cfcc912c99f4ebec
+- path: aws_robomaker_residential_PortraitE_02/model.sdf
+  sha256: 4fa0d31763fadf52dcd707c282f2c9de612013d87e8904815a7dc5f390c0f926
+- path: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_01.png
+  sha256: 2f4973d07ab6a6e1de5e482900bd682d6cffddce471d78fc6d21a2acbefbaff4
+- path: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_02.png
+  sha256: 3c57cd595659b49acbc93f43125da8f4dcd8344485c1774e63ebbd69691e6be3
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01.DAE
+  sha256: 602b8a02b9019a57ad8de546bc05b75ee7141f622fc9a516a63ebf8c9a8c5ee6
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_collision.DAE
+  sha256: 5e77d4d3040da42f95c602e202fad7ac5e2ac19ab1da6a31ae66465074ba5bdb
+- path: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_visual.DAE
+  sha256: c83384318815644af331fc2dd332ce7ea35316bc58140a908a5d209d057055ae
+- path: aws_robomaker_residential_Refrigerator_01/model.config
+  sha256: 5d4e2f7dbef2d1c42ba4c895d42d5240a4aa8c64d13fae80455bd32bfefdfaef
+- path: aws_robomaker_residential_Refrigerator_01/model.sdf
+  sha256: 35d7e5f4a7ba1d2cf074ac91a41573e66fda6aa3d0847225f2d354aaf1560f98
+- path: aws_robomaker_residential_SofaB_01/materials/textures/aws_SofaB_01.png
+  sha256: 6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236
+- path: aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_collision.DAE
+  sha256: 195a3c2709ddbd15c9806d8a3c066ce5c79eaa5a4cfae9b2019986e4ec30c59b
+- path: aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_visual.DAE
+  sha256: 27782ce189cae323515658afa794b5511982810929d486558eed718382bc8fa3
+- path: aws_robomaker_residential_SofaB_01/model.config
+  sha256: 235254987a34a971363ad2f8a39a693f2b9517b5c50204f8646e113e1ba39dc0
+- path: aws_robomaker_residential_SofaB_01/model.sdf
+  sha256: 75babb14df18de680c125f37f41f46cbbc15def670e2f93c4b9c4f01f04c6025
+- path: aws_robomaker_residential_Sofa_01/materials/textures/aws_Sofa_01.png
+  sha256: 6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236
+- path: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01.DAE
+  sha256: 95f0de929b42bed6a45fc4dc23fb03c7c7abd71c687d424e64f0492063eb9347
+- path: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_collision.DAE
+  sha256: d48913dfce3db467b24f0f9703d48543860b3709d48b105e39030a93dc08f31e
+- path: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_visual.DAE
+  sha256: ac2e48edc30af80a296a42f7549b59d567ff3abf4248e5cfc165d9cba86a9d1e
+- path: aws_robomaker_residential_Sofa_01/model.config
+  sha256: a7487b6f3b054748ded52657761874607efcbb8c7c83f42f030448c82455b023
+- path: aws_robomaker_residential_Sofa_01/model.sdf
+  sha256: e127f19352ba2d12435fc24c88dcd86735c0b27c2e1128ded3b2958530fde04d
+- path: aws_robomaker_residential_TV_02/materials/textures/aws_TV_01.png
+  sha256: 73c98d8626ae76428a1ab9b78e3471b7e70ab586fbea7e4a0fb87799a188bbc5
+- path: aws_robomaker_residential_TV_02/meshes/aws_TV_01_collision.DAE
+  sha256: b4701986e4d0e4091643c738a72ca4cf04b8f5a2f337dab7e1e1b25784e862d3
+- path: aws_robomaker_residential_TV_02/meshes/aws_TV_01_visual.DAE
+  sha256: 1135e68b89e0d2738f015f76647180526ffcd7bb90677817c827f939b45848c7
+- path: aws_robomaker_residential_TV_02/model.config
+  sha256: 3866add90ce8d8447ad8b40b6052d38f4d5dff72c91d6a9095742d349a6bd56f
+- path: aws_robomaker_residential_TV_02/model.sdf
+  sha256: 294d01c9ea66a6976a3de683dfa7a457374c718f16dd414b4570f1dc10f094f5
+- path: aws_robomaker_residential_Trash_01/materials/textures/aws_Trash_01.png
+  sha256: 54488551f566900f9279fb2341bcbad55bb071d153512fef1d29e27542096506
+- path: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_collision.DAE
+  sha256: ac7024fbbc1e1745c9385203285e5b5f0186a50d00fa8e3d82fd5d17265b6f52
+- path: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_visual.DAE
+  sha256: 6234e93167cb4ecd676a8a001b3b86f0e1714d94d4e25dfdb1ef6d48185ff89c
+- path: aws_robomaker_residential_Trash_01/model.config
+  sha256: 1df49e8d8203d5684efac86b46ca0420e8eb002c538ce6ecd7d43b15e7b2182c
+- path: aws_robomaker_residential_Trash_01/model.sdf
+  sha256: 12bcb2979814cf5b9df23f53801e1508f7ecf680de25da12460d2aa083c8b93b
+- path: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png
+  sha256: d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f
+- path: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png
+  sha256: afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299
+- path: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png
+  sha256: fa11698ab9127aa550b3a8f79fce4f11fb8988d9e623f1b9e57ef53fef9198c1
+- path: aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE
+  sha256: f2e592215a2e3fef5161da3e0a53339f83c7ccc059a75bce6dfc52e23eafa024
+- path: aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE
+  sha256: ccf14ca50f55bc5db59b94d8947307a1c2729ffc4f2d36a6f26a0dbe1476c1d8
+- path: aws_robomaker_warehouse_ClutteringA_01/model.config
+  sha256: fbb0299646c69626661baca59503a266787ba09f4821029bd17a7c0e39c87506
+- path: aws_robomaker_warehouse_ClutteringA_01/model.sdf
+  sha256: 0160c32a3babc3c3dc07a84a433fa1f5c79a776cc78b58533e6fc9ab83c9bd6e
+- path: aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png
+  sha256: d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f
+- path: aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png
+  sha256: afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299
+- path: aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE
+  sha256: 17ea0446b4310bc2828ba9abe48a86bed674f410611c389ff60cd7ff199b2440
+- path: aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE
+  sha256: 0817b2b4b7155ce091bbbba1fe7039434e6698cea23730999571076e21d26154
+- path: aws_robomaker_warehouse_ClutteringC_01/model.config
+  sha256: f59a13a8638c9c5772c4eeeb1a400b4856271d26af999a6c72a0a0d093ec523d
+- path: aws_robomaker_warehouse_ClutteringC_01/model.sdf
+  sha256: daa324de15573e0b4b3c827b73f9aa58585469618f40b1a45b7fda3ce523f7d0
+storage: cached
+local_changes:
+- Escape bare ampersands in six model.config descriptions; no geometry changes.
+- Copy five original archive JPEGs into their owning models and relocate five DAE
+  image URIs; geometry arrays unchanged.
+inventory_note: Derived resource-only repairs; immutable original archives and each
+  source notice retained. No OBJ/collision geometry, SDF physics, texture pixels or
+  original asset versions modified.
+archive:
+  format: tar.gz
+  urls:
+  - https://codeload.github.com/aws-robotics/aws-robomaker-hospital-world/tar.gz/39969a9d250135835cf13b480865647d1a87b6f4
+  sha256: b352c63ca7d4eeaf8c2b7abac70f81ebe9ac575157033a09e14002520f2c64ca
+  size_bytes: 71043929
+  prefix: aws-robomaker-hospital-world-39969a9d250135835cf13b480865647d1a87b6f4
+  max_members: 418
+  max_unpacked_bytes: 83516250
+  license:
+    source: LICENSE
+    sha256: ddf9b5d9dd2fded18653e0ca4c5934008d4faea1161d754493b54a23c25eac14
+  members:
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_collision.dae
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_collision.dae
+    source_sha256: 333e7a6f7cb94c343ffd146efe6e7edacb41bcd2304b4f44ae1a1fb54ad57888
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low.png
+    source_sha256: aa1b82cf2b13ff2e03fa91a490c65e26687839571696516583e86b1338c96556
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low_normal.png
+    source_sha256: 0d40eb58e86673ab23b526d5818cc7324494fe2398db65bf2c45c6b15d9deeea
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.dae
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.dae
+    source_sha256: b61f5632497967d159ed5e5123544b79c5f81d31773f89488a20fa8a54b3e6c6
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.png
+    source_sha256: 46beb32919da898614a000031092977f63855b7d69143e6ea47f56b13924bf08
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual_normal.png
+    source_sha256: 21fb66b33ce7683c8df29a8cedcaa8d9458d1023fb9d81da6504bddc60371bc2
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    source_sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    source_sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    source_sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    source_sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_closed_01/model.config
+    target: aws_robomaker_hospital_curtain_closed_01/model.config
+    source_sha256: fb99ae577b9ac1f76d51499dd31f07dbaac3e4e46fb787bcfbf649f334b9e7b0
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_curtain_closed_01/model.sdf
+    target: aws_robomaker_hospital_curtain_closed_01/model.sdf
+    source_sha256: fb11e52b8b534abd55c01a75745c05e3f7a72d70d8e8bf80a0b66366fc137897
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_collision.dae
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_collision.dae
+    source_sha256: 284f52a3c4ee7b93bed81a7034b7bb255368c752101f74fe6cf99c91b319ad98
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low.png
+    source_sha256: 45d1443d3172b89eb0b9b9921945fa24a4a368cf87b02a8acaece13da4d04f94
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low_normal.png
+    source_sha256: 5a530fb4414f91e90cc67949efadfeb10c0de22f9c93b0b37c852221516d3854
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.dae
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.dae
+    source_sha256: 1483ffe18fd3bf635809c278d95f0da7bc4e1510842a597b4bc4406689833c50
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.png
+    source_sha256: fae8e2fdd0e07de9011a71a6e2ed663a2fe87f1b0af184cda0549b6eff89d994
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual_normal.png
+    source_sha256: 659b78c17fe39afd36ef83da4bcc79ce570ef91afea2576cddad97eb8553efc8
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    source_sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    source_sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    source_sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    source_sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/model.config
+    target: aws_robomaker_hospital_curtain_half_open_01/model.config
+    source_sha256: 9bd09ff65c1860d0af0ba4dafacb7052155ad91ec981fefd42a740950eb61a4c
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_curtain_half_open_01/model.sdf
+    target: aws_robomaker_hospital_curtain_half_open_01/model.sdf
+    source_sha256: 7feb5086861eff6ef5ef294442c98ec6c89c445d1f16cace2def7fde569b77c6
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_collision.dae
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_collision.dae
+    source_sha256: 8b8dae060cc7d183a09b9ae330e1c81c94655776919df748549b6bccdd979a3c
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low.png
+    source_sha256: bff375abbcb31ddffa5e324f8701320382e80116c00290e531291cf6af2a713b
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low_normal.png
+    source_sha256: 4018f2b2a19d3ac1dd5cda02c83dcc9e6870e31112d14fe88c47d3ddbec24608
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.dae
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.dae
+    source_sha256: 7aa457be706deb6554e51aad3b5a813845651f9900c2d2e023f7fe4f2cf90b85
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.png
+    source_sha256: 659db364ae6fb43f300302aad107f35dca117cd4d42d1f3dfc85e14f707393cb
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual_normal.png
+    source_sha256: f61b3ce8c560f89a4455bbb6f75b12f35ccb37c032ae75ee96681274a0bbc4b0
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png
+    source_sha256: 9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png
+    source_sha256: 23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png
+    source_sha256: a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    target: aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png
+    source_sha256: ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f
+    replacements: []
+  - source: models/aws_robomaker_hospital_curtain_open_01/model.config
+    target: aws_robomaker_hospital_curtain_open_01/model.config
+    source_sha256: d66d72693285473ecde7bdc02aa312da6eac60a2a7e48c3dcaa82aed2075bb0d
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_curtain_open_01/model.sdf
+    target: aws_robomaker_hospital_curtain_open_01/model.sdf
+    source_sha256: 9f4ec8a59ed84268f4015b0eb92a25b98cb2d7bf0d638694f27e457da272ad54
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_collision.dae
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_collision.dae
+    source_sha256: 9567dc096021ebed13c455e985e26b1e6749e048430cc1d5893e67100615fa66
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_low.dae
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_low.dae
+    source_sha256: 9fbc8155fb143fec4bbf22897dc213d6ba82fa0ff49d08f337cda99d7483f08f
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_visual.dae
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_visual.dae
+    source_sha256: f0f461a59383e4b6485f2153f3f9874ea84c66365f028074214c12f143fcab89
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low.png
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low.png
+    source_sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    source_sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    source_sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    target: aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    source_sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_car/model.config
+    target: aws_robomaker_hospital_elevator_01_car/model.config
+    source_sha256: 29136a9261f6be0e5a0290b639591bd492de06376b10fb143217d318d1c17097
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_elevator_01_car/model.sdf
+    target: aws_robomaker_hospital_elevator_01_car/model.sdf
+    source_sha256: aec96138afdcafc667824cba48dade7833793ba9859f1aaffd4ee40ff4059539
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_collision.dae
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_collision.dae
+    source_sha256: b9119a6e5571294de5a61d3a449c7b104887115ea90e23817b08d6248c934735
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_low.dae
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_low.dae
+    source_sha256: a662540a8a10dda1bbe9c91c56238e0ef72d8824e927110d450065dcb868afe1
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_visual.dae
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_visual.dae
+    source_sha256: 305d38b7aa8ab2ed4963050c1382c9234f7f29ad9377c5214f31d7e2c24a9719
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low.png
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low.png
+    source_sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    source_sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    source_sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    target: aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    source_sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_door/model.config
+    target: aws_robomaker_hospital_elevator_01_door/model.config
+    source_sha256: c7804aec908af4872b7d62b393f04451f107d2f99ebf1fa9def1c1af4245f5f8
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_elevator_01_door/model.sdf
+    target: aws_robomaker_hospital_elevator_01_door/model.sdf
+    source_sha256: 4802a6a51723fadd48f647569da129fe618159a421cb7d6a32f63299da97f5dc
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low.png
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low.png
+    source_sha256: c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low_normal.png
+    source_sha256: 9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_collision.dae
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_collision.dae
+    source_sha256: 3869546a2144504e8d98b252cb24ae7dac1e083e57cdc51e84621fe0599186d1
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_low.dae
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_low.dae
+    source_sha256: 317fa40a0bdb4141b11b471676a5e23d11ae3c78332ced172c87257a60a9955b
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_visual.dae
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_visual.dae
+    source_sha256: 4bb289f4065545cef2c663daafe826a76ac706e9a592b0cb50aff7c2c156ea54
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual.png
+    source_sha256: e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    target: aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png
+    source_sha256: 22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b
+    replacements: []
+  - source: models/aws_robomaker_hospital_elevator_01_portal/model.config
+    target: aws_robomaker_hospital_elevator_01_portal/model.config
+    source_sha256: ba092e82ff94374341726f29e443fc85781f9041f81b39a6b486fd497268405c
+    replacements:
+    - old: ' & '
+      new: ' &amp; '
+      count: 1
+  - source: models/aws_robomaker_hospital_elevator_01_portal/model.sdf
+    target: aws_robomaker_hospital_elevator_01_portal/model.sdf
+    source_sha256: 3f9f2ff42baab1f258b120b839aefbd8bc393e2cdbf04d49b7e8aa2daa80a47c
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling.png
+    target: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling.png
+    source_sha256: 7613fe8c9a26ca0f05a0afc7990574d5c8e29d1c41521247e031933ac0e1a31e
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_collision.dae
+    target: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_collision.dae
+    source_sha256: 5d06ef3ff6d013d58d2011f1acbbf5ef68c528466bc645884943513b15cd2742
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_normal.png
+    target: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_normal.png
+    source_sha256: d717e8c900596e0c9bbd00603efcaa642aa30bd32357043216e4d56529e027ce
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_visual.dae
+    target: aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_visual.dae
+    source_sha256: 76b9f548a320912ca6b8d593faf90e5343607058e5d656c8bf622bec6ee8112c
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/model.config
+    target: aws_robomaker_hospital_floor_01_ceiling/model.config
+    source_sha256: 4cc82aec0a05b6d9c79f0cf0c2cd534202eb2409885309a8ef79e88ce7a5ba04
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_ceiling/model.sdf
+    target: aws_robomaker_hospital_floor_01_ceiling/model.sdf
+    source_sha256: e66acb4ad1f1d1d290d25b9b3b2ad7c71738c939079c70350158d84461f513bf
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor.png
+    target: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor.png
+    source_sha256: 67800bd1916ea1bbc49c00635a4e65933b0147d2006a6ba1913f753bdd44ba5f
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_collision.dae
+    target: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_collision.dae
+    source_sha256: b914dbb27d5a03f4175ff35b7b08f81f5ad851254fd179bd8af05285f0197fc7
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_normal.png
+    target: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_normal.png
+    source_sha256: 84838dbb817663e58034282fc4a79098a8baf6b0c44e92de692f67fec543b2b1
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_visual.dae
+    target: aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_visual.dae
+    source_sha256: 4106e0ac636431290285b5db81aa2ba98a8b2e34a1586966622033148367d9f8
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/model.config
+    target: aws_robomaker_hospital_floor_01_floor/model.config
+    source_sha256: a823d78a78a7a104fef95b0e13dd1315fbf97816d6455fe8e353439b1f486229
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_floor/model.sdf
+    target: aws_robomaker_hospital_floor_01_floor/model.sdf
+    source_sha256: 18f9d6075f5b724fb05edc34009789e87df5be1914cebfd98d06e19ae5ec50e7
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_bumprail.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_bumprail.png
+    source_sha256: 4994099470052f217a8309f96a20d2d22a763d43d03e9b55c5a0c3c20a6605e5
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_big.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_big.png
+    source_sha256: 04a3062f15b3a7082a6f037ce0a8202abd456935937ee4dca3e73cde54c480c1
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_small.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_small.png
+    source_sha256: b9a6266028d5b8e700907aac2464281a7442adce2e9b8438fa27d7bbaac2334a
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorsign.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorsign.png
+    source_sha256: d6f467bc2ddb776fcc386b851304ab7edd870689a198bc2d893d89400e061137
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_handrail.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_handrail.png
+    source_sha256: f72eac5a0109277934fb66c1a3fe81e2e4bf1d618d4cc9bc562698aa4cd1ea44
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_stairs.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_stairs.png
+    source_sha256: d2f7179cc9adf44805ca2b42945d05a36deaf7c6bd3e1e9f6f14aed0b8d8e8aa
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls.png
+    source_sha256: 708e8a65f2f8bfa0a4d20799bed988c1357f456b6fd8738e5c168081b2729dcc
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_collision.dae
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_collision.dae
+    source_sha256: 233b75caa7eb94807427505d21e15522f3f5b15ce30f3b6a6f51b58eb901a523
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_visual.dae
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_visual.dae
+    source_sha256: 4d3deeaba184ace714dc9655dfebe3c5cfa588048d42ad29417be824624f81ce
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_windows.png
+    target: aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_windows.png
+    source_sha256: 368db4901ccd9b1f3944cf8e184dbb4491494288d4e09a6727277ec74d42da9f
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/model.config
+    target: aws_robomaker_hospital_floor_01_walls/model.config
+    source_sha256: b3c2b6a475b2d186eace015d47b3c1f916e3f0cde06509ce065eaac79f7620fe
+    replacements: []
+  - source: models/aws_robomaker_hospital_floor_01_walls/model.sdf
+    target: aws_robomaker_hospital_floor_01_walls/model.sdf
+    source_sha256: ea1233686edd6b52c0d74927d403e331f0ab21709a22a1607b79a91112d82202
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_collision.dae
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_collision.dae
+    source_sha256: b0506c0958cc308caef525f62570260723efe66aea9cfbbed711e6265352a7c1
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.dae
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.dae
+    source_sha256: 89f9a542aede647581f66d9eaf9a1f661e488004c2df9f74dddd3d156815184f
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.png
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.png
+    source_sha256: 1587d61e666bddcef3f2cad1a073211ab7d6ea747981d60d994577d870ff365e
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low_normal.png
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low_normal.png
+    source_sha256: 0197f30e872cefd6a92bfa4fd42e086652ae4b536dbdda8f4215bc96af28dff3
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.dae
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.dae
+    source_sha256: d3d806a3ea3d679b6f93fb1f08eb8992cdbc76e80d17895a37339c8e7f9d94f7
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.png
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.png
+    source_sha256: 1d28e4b8b7f6a81a0cb49b591756676dbc24ef2504ce54b6d6c9b4da75cf143d
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual_normal.png
+    target: aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual_normal.png
+    source_sha256: 1575d31af43f5db2fa9002ff2898a97e1d512d713fe7f38ab5458806d02ceb5f
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/model.config
+    target: aws_robomaker_hospital_nursesstation_01/model.config
+    source_sha256: aee34781c373ca67d011debb33aa77ab68c1e695e4b1b30814d58e1dc686f4c1
+    replacements: []
+  - source: models/aws_robomaker_hospital_nursesstation_01/model.sdf
+    target: aws_robomaker_hospital_nursesstation_01/model.sdf
+    source_sha256: 5f244b8701bf807cfb174405dc39588664574052a7f11ffc010be64cd1e7889a
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01.png
+    target: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01.png
+    source_sha256: 5a69926573d9cc39612a4e51d11df57e272f97b37f631a3b96119bee60255162
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_collision.dae
+    target: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_collision.dae
+    source_sha256: c6d1add1563ecc5fc3be8ce06b524254ccc8fe8bccde757754f4e251c9d63d56
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_normal.png
+    target: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_normal.png
+    source_sha256: 4cbb85aaa155b19641c1cc8b70340aea18a97ec9d538b1c679c4b1422b8f085a
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_visual.dae
+    target: aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_visual.dae
+    source_sha256: 3ed3f86d9ea371f8fad1fe456e29087895a11bab6717e402e0f7f357f0bd0afc
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/model.config
+    target: aws_robomaker_hospital_ramp_01/model.config
+    source_sha256: 511e04721ed3ef54187ff22522cc2e2652e924e3d478fe9b8beb5e964ba4c11d
+    replacements: []
+  - source: models/aws_robomaker_hospital_ramp_01/model.sdf
+    target: aws_robomaker_hospital_ramp_01/model.sdf
+    source_sha256: c0634393592fbd4bd7a192d876c906d469abf4640291324b0baabcc33e3989b4
+    replacements: []
+  - source: models/aws_robomaker_residential_Carpet_01/materials/textures/aws_Carpet_01.png
+    target: aws_robomaker_residential_Carpet_01/materials/textures/aws_Carpet_01.png
+    source_sha256: bebfa3305fb60e141249299e256b33b021a018f0835d14bc172c3eee86036f75
+    replacements: []
+  - source: models/aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_collision.DAE
+    target: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_collision.DAE
+    source_sha256: 44f3ee9d4be182016f4e20a01cd18cd7f5e61c24d76e2e2ef181a281c5438d42
+    replacements: []
+  - source: models/aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_visual.DAE
+    target: aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_visual.DAE
+    source_sha256: 2c12d1a52d8027a37803a6abb6bb0342b6f79ae1e853c27bde83b0dcd5651169
+    replacements: []
+  - source: models/aws_robomaker_residential_Carpet_01/model.config
+    target: aws_robomaker_residential_Carpet_01/model.config
+    source_sha256: feb070246f4a120937b361938438a66ad098e3b3b00c5fe9460edd24616f2e2c
+    replacements: []
+  - source: models/aws_robomaker_residential_Carpet_01/model.sdf
+    target: aws_robomaker_residential_Carpet_01/model.sdf
+    source_sha256: 5a9f4e2fecc47755f63b7ec0f91f9405143c79fe6d37ca5039c5d0a91a955970
+    replacements: []
+  - source: models/aws_robomaker_residential_CoffeeTable_01/materials/textures/aws_CoffeeTable_01.png
+    target: aws_robomaker_residential_CoffeeTable_01/materials/textures/aws_CoffeeTable_01.png
+    source_sha256: fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2
+    replacements: []
+  - source: models/aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_collision.DAE
+    target: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_collision.DAE
+    source_sha256: 96d855fbd04032b9eb55f38ad66cf4d8e989fccc9d889eaa43943a75b6f62385
+    replacements: []
+  - source: models/aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_visual.DAE
+    target: aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_visual.DAE
+    source_sha256: a0fe0d5086613cd02f8f5a4f7b4cea12717cae5beebca25e5c9af850789570b1
+    replacements: []
+  - source: models/aws_robomaker_residential_CoffeeTable_01/model.config
+    target: aws_robomaker_residential_CoffeeTable_01/model.config
+    source_sha256: 04092669b049895f53f213c6cd559b1c4d299371985b3c9a2b86f0b6db6f8b10
+    replacements: []
+  - source: models/aws_robomaker_residential_CoffeeTable_01/model.sdf
+    target: aws_robomaker_residential_CoffeeTable_01/model.sdf
+    source_sha256: 0f097fc06b55a3fa22ffb2645a82d0e700b1a1db156b27b215ffdfc94c983bb1
+    replacements: []
+  - source: models/aws_robomaker_residential_KitchenCabinet_01/materials/textures/aws_KitchenCabinet_01.png
+    target: aws_robomaker_residential_KitchenCabinet_01/materials/textures/aws_KitchenCabinet_01.png
+    source_sha256: 68d0cc8e38a11adc0d9798dc4dfed92a5c45dbf342b26f7929fe57db05a46821
+    replacements: []
+  - source: models/aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_collision.DAE
+    target: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_collision.DAE
+    source_sha256: 32357200643818e37dc1ea27f419dbb8d4acd6e0a4e485f2a93239365b18740f
+    replacements: []
+  - source: models/aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_visual.DAE
+    target: aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_visual.DAE
+    source_sha256: e55aab5c171aa80e262313acc8d50d6ba39f703981fd51f19f68ec4f83abf6f2
+    replacements: []
+  - source: models/aws_robomaker_residential_KitchenCabinet_01/model.config
+    target: aws_robomaker_residential_KitchenCabinet_01/model.config
+    source_sha256: 1f0aa87f904ef9cfe96bcb5a75013ca5b032bbe853487787d7ff4a0ceaacd0d0
+    replacements: []
+  - source: models/aws_robomaker_residential_KitchenCabinet_01/model.sdf
+    target: aws_robomaker_residential_KitchenCabinet_01/model.sdf
+    source_sha256: 215fe51f7a37c6f7980fe3fb9667b93a79b05624ca1fb321eeaf050d3a69654f
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_01.png
+    target: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_01.png
+    source_sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_02.png
+    target: aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_02.png
+    source_sha256: a7d9217e72edcb4bca45a5c7eec6079a45aa3b6eda44345c3715169b24227794
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_collision.DAE
+    target: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_collision.DAE
+    source_sha256: bbd1e639e1b858f9ada90d122410bb54954150a4121b98b5cc502ced9054ac9d
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE
+    target: aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE
+    source_sha256: fd0b0c6b53bdc6ad4908d1faf59df1a035508f913e3488cc5f5863e51450215d
+    replacements:
+    - old: ../../../../photos/PortraitA_01.jpg
+      new: ../materials/textures/PortraitA_01.jpg
+      count: 1
+  - source: models/aws_robomaker_residential_PortraitA_01/model.config
+    target: aws_robomaker_residential_PortraitA_01/model.config
+    source_sha256: be4591181782387f4b1556fbe10c4720a0135609275189ed7d66824e5bf9d1a7
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitA_01/model.sdf
+    target: aws_robomaker_residential_PortraitA_01/model.sdf
+    source_sha256: 14f02d79e5ac6fda00a08760b705659feeec9109081e2dda32bb97b7f4e96d3c
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_01.png
+    target: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_01.png
+    source_sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_02.png
+    target: aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_02.png
+    source_sha256: ba85f5a4fb4f2c21a8059c49c0fde28b5c607b68e876ba0ffcf6a6cf03991bec
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_collision.DAE
+    target: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_collision.DAE
+    source_sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE
+    target: aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE
+    source_sha256: 6a1eb9c8b7cfb5fb7ef25c0bb8f9349d8630603acf47cbdce0f528df84d3d28d
+    replacements:
+    - old: ../../../../photos/PortraitD_01.jpg
+      new: ../materials/textures/PortraitD_01.jpg
+      count: 1
+  - source: models/aws_robomaker_residential_PortraitD_01/model.config
+    target: aws_robomaker_residential_PortraitD_01/model.config
+    source_sha256: bcc1dccadb547a4d99339806d7e5724ae71f5fb1d24f9d74ce3fbcd75bd115ac
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_01/model.sdf
+    target: aws_robomaker_residential_PortraitD_01/model.sdf
+    source_sha256: c6f91b5f8db5bd6947be676af7d62f7809b2e6c2ee627710d60019cd51aece80
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_01.png
+    target: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_01.png
+    source_sha256: 1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_02.png
+    target: aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_02.png
+    source_sha256: ae4afbbb5d1c7b08a8c4ddc1cbdd7566cde6c428e230f792c94585898aa0e024
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_collision.DAE
+    target: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_collision.DAE
+    source_sha256: 0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE
+    target: aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE
+    source_sha256: fa9703b4cb34217222a7d57193735ffdca77092a67cb1bc2169283af26e22072
+    replacements:
+    - old: ../../../../photos/PortraitD_02.jpg
+      new: ../materials/textures/PortraitD_02.jpg
+      count: 1
+  - source: models/aws_robomaker_residential_PortraitD_02/model.config
+    target: aws_robomaker_residential_PortraitD_02/model.config
+    source_sha256: d22bfca4b3812c92c72662c2c36dec2ed938b00b69bff4b6efb03409d3a92851
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitD_02/model.sdf
+    target: aws_robomaker_residential_PortraitD_02/model.sdf
+    source_sha256: 43b7d859fa6f6a26f0691346d54bdff47be4d3bd2d68d43dbac7e7c4e41e0836
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_01.png
+    target: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_01.png
+    source_sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_02.png
+    target: aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_02.png
+    source_sha256: 902b9f8853af05c871c4213b0ecf6bdc1004401d1e6125378c07dd1c065046c5
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_collision.DAE
+    target: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_collision.DAE
+    source_sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE
+    target: aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE
+    source_sha256: e43d82a220a9da3f26ba9d709466b78e0697bc4a63671e9ee09914ae05f31efc
+    replacements:
+    - old: ../../../../photos/PortraitE_01.jpg
+      new: ../materials/textures/PortraitE_01.jpg
+      count: 1
+  - source: models/aws_robomaker_residential_PortraitE_01/model.config
+    target: aws_robomaker_residential_PortraitE_01/model.config
+    source_sha256: 15722be89804afb74604814ea6539d0dd8bd1485793c059a3a86c7ca4fd8ac90
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_01/model.sdf
+    target: aws_robomaker_residential_PortraitE_01/model.sdf
+    source_sha256: 1a724de26b45e80058d707bde670b4d50252b9c22f6a95938cfe3a9efb423556
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_01.png
+    target: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_01.png
+    source_sha256: 9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_02.png
+    target: aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_02.png
+    source_sha256: 4e2e1926fca15510ff96150cca248e0cd982e7c007626553846d42093f8570d1
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_collision.DAE
+    target: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_collision.DAE
+    source_sha256: 4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE
+    target: aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE
+    source_sha256: 4e3828d34ebafe9b45dd4f2e3ea788e714eb82c78159514b947f015d47be413e
+    replacements:
+    - old: ../../../../photos/PortraitE_02.jpg
+      new: ../materials/textures/PortraitE_02.jpg
+      count: 1
+  - source: models/aws_robomaker_residential_PortraitE_02/model.config
+    target: aws_robomaker_residential_PortraitE_02/model.config
+    source_sha256: 35a57595189edcbfa1dea091a896ba0777054ba5477c3e31cfcc912c99f4ebec
+    replacements: []
+  - source: models/aws_robomaker_residential_PortraitE_02/model.sdf
+    target: aws_robomaker_residential_PortraitE_02/model.sdf
+    source_sha256: 4fa0d31763fadf52dcd707c282f2c9de612013d87e8904815a7dc5f390c0f926
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_01.png
+    target: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_01.png
+    source_sha256: 2f4973d07ab6a6e1de5e482900bd682d6cffddce471d78fc6d21a2acbefbaff4
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_02.png
+    target: aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_02.png
+    source_sha256: 3c57cd595659b49acbc93f43125da8f4dcd8344485c1774e63ebbd69691e6be3
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01.DAE
+    target: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01.DAE
+    source_sha256: 602b8a02b9019a57ad8de546bc05b75ee7141f622fc9a516a63ebf8c9a8c5ee6
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_collision.DAE
+    target: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_collision.DAE
+    source_sha256: 5e77d4d3040da42f95c602e202fad7ac5e2ac19ab1da6a31ae66465074ba5bdb
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_visual.DAE
+    target: aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_visual.DAE
+    source_sha256: c83384318815644af331fc2dd332ce7ea35316bc58140a908a5d209d057055ae
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/model.config
+    target: aws_robomaker_residential_Refrigerator_01/model.config
+    source_sha256: 5d4e2f7dbef2d1c42ba4c895d42d5240a4aa8c64d13fae80455bd32bfefdfaef
+    replacements: []
+  - source: models/aws_robomaker_residential_Refrigerator_01/model.sdf
+    target: aws_robomaker_residential_Refrigerator_01/model.sdf
+    source_sha256: 35d7e5f4a7ba1d2cf074ac91a41573e66fda6aa3d0847225f2d354aaf1560f98
+    replacements: []
+  - source: models/aws_robomaker_residential_SofaB_01/materials/textures/aws_SofaB_01.png
+    target: aws_robomaker_residential_SofaB_01/materials/textures/aws_SofaB_01.png
+    source_sha256: 6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236
+    replacements: []
+  - source: models/aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_collision.DAE
+    target: aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_collision.DAE
+    source_sha256: 195a3c2709ddbd15c9806d8a3c066ce5c79eaa5a4cfae9b2019986e4ec30c59b
+    replacements: []
+  - source: models/aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_visual.DAE
+    target: aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_visual.DAE
+    source_sha256: 27782ce189cae323515658afa794b5511982810929d486558eed718382bc8fa3
+    replacements: []
+  - source: models/aws_robomaker_residential_SofaB_01/model.config
+    target: aws_robomaker_residential_SofaB_01/model.config
+    source_sha256: 235254987a34a971363ad2f8a39a693f2b9517b5c50204f8646e113e1ba39dc0
+    replacements: []
+  - source: models/aws_robomaker_residential_SofaB_01/model.sdf
+    target: aws_robomaker_residential_SofaB_01/model.sdf
+    source_sha256: 75babb14df18de680c125f37f41f46cbbc15def670e2f93c4b9c4f01f04c6025
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/materials/textures/aws_Sofa_01.png
+    target: aws_robomaker_residential_Sofa_01/materials/textures/aws_Sofa_01.png
+    source_sha256: 6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01.DAE
+    target: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01.DAE
+    source_sha256: 95f0de929b42bed6a45fc4dc23fb03c7c7abd71c687d424e64f0492063eb9347
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_collision.DAE
+    target: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_collision.DAE
+    source_sha256: d48913dfce3db467b24f0f9703d48543860b3709d48b105e39030a93dc08f31e
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_visual.DAE
+    target: aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_visual.DAE
+    source_sha256: ac2e48edc30af80a296a42f7549b59d567ff3abf4248e5cfc165d9cba86a9d1e
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/model.config
+    target: aws_robomaker_residential_Sofa_01/model.config
+    source_sha256: a7487b6f3b054748ded52657761874607efcbb8c7c83f42f030448c82455b023
+    replacements: []
+  - source: models/aws_robomaker_residential_Sofa_01/model.sdf
+    target: aws_robomaker_residential_Sofa_01/model.sdf
+    source_sha256: e127f19352ba2d12435fc24c88dcd86735c0b27c2e1128ded3b2958530fde04d
+    replacements: []
+  - source: models/aws_robomaker_residential_TV_02/materials/textures/aws_TV_01.png
+    target: aws_robomaker_residential_TV_02/materials/textures/aws_TV_01.png
+    source_sha256: 73c98d8626ae76428a1ab9b78e3471b7e70ab586fbea7e4a0fb87799a188bbc5
+    replacements: []
+  - source: models/aws_robomaker_residential_TV_02/meshes/aws_TV_01_collision.DAE
+    target: aws_robomaker_residential_TV_02/meshes/aws_TV_01_collision.DAE
+    source_sha256: b4701986e4d0e4091643c738a72ca4cf04b8f5a2f337dab7e1e1b25784e862d3
+    replacements: []
+  - source: models/aws_robomaker_residential_TV_02/meshes/aws_TV_01_visual.DAE
+    target: aws_robomaker_residential_TV_02/meshes/aws_TV_01_visual.DAE
+    source_sha256: 1135e68b89e0d2738f015f76647180526ffcd7bb90677817c827f939b45848c7
+    replacements: []
+  - source: models/aws_robomaker_residential_TV_02/model.config
+    target: aws_robomaker_residential_TV_02/model.config
+    source_sha256: 3866add90ce8d8447ad8b40b6052d38f4d5dff72c91d6a9095742d349a6bd56f
+    replacements: []
+  - source: models/aws_robomaker_residential_TV_02/model.sdf
+    target: aws_robomaker_residential_TV_02/model.sdf
+    source_sha256: 294d01c9ea66a6976a3de683dfa7a457374c718f16dd414b4570f1dc10f094f5
+    replacements: []
+  - source: models/aws_robomaker_residential_Trash_01/materials/textures/aws_Trash_01.png
+    target: aws_robomaker_residential_Trash_01/materials/textures/aws_Trash_01.png
+    source_sha256: 54488551f566900f9279fb2341bcbad55bb071d153512fef1d29e27542096506
+    replacements: []
+  - source: models/aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_collision.DAE
+    target: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_collision.DAE
+    source_sha256: ac7024fbbc1e1745c9385203285e5b5f0186a50d00fa8e3d82fd5d17265b6f52
+    replacements: []
+  - source: models/aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_visual.DAE
+    target: aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_visual.DAE
+    source_sha256: 6234e93167cb4ecd676a8a001b3b86f0e1714d94d4e25dfdb1ef6d48185ff89c
+    replacements: []
+  - source: models/aws_robomaker_residential_Trash_01/model.config
+    target: aws_robomaker_residential_Trash_01/model.config
+    source_sha256: 1df49e8d8203d5684efac86b46ca0420e8eb002c538ce6ecd7d43b15e7b2182c
+    replacements: []
+  - source: models/aws_robomaker_residential_Trash_01/model.sdf
+    target: aws_robomaker_residential_Trash_01/model.sdf
+    source_sha256: 12bcb2979814cf5b9df23f53801e1508f7ecf680de25da12460d2aa083c8b93b
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png
+    target: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png
+    source_sha256: d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png
+    target: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png
+    source_sha256: afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png
+    target: aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png
+    source_sha256: fa11698ab9127aa550b3a8f79fce4f11fb8988d9e623f1b9e57ef53fef9198c1
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE
+    target: aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE
+    source_sha256: f2e592215a2e3fef5161da3e0a53339f83c7ccc059a75bce6dfc52e23eafa024
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE
+    target: aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE
+    source_sha256: ccf14ca50f55bc5db59b94d8947307a1c2729ffc4f2d36a6f26a0dbe1476c1d8
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/model.config
+    target: aws_robomaker_warehouse_ClutteringA_01/model.config
+    source_sha256: fbb0299646c69626661baca59503a266787ba09f4821029bd17a7c0e39c87506
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringA_01/model.sdf
+    target: aws_robomaker_warehouse_ClutteringA_01/model.sdf
+    source_sha256: 0160c32a3babc3c3dc07a84a433fa1f5c79a776cc78b58533e6fc9ab83c9bd6e
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png
+    target: aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png
+    source_sha256: d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png
+    target: aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png
+    source_sha256: afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE
+    target: aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE
+    source_sha256: 17ea0446b4310bc2828ba9abe48a86bed674f410611c389ff60cd7ff199b2440
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE
+    target: aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE
+    source_sha256: 0817b2b4b7155ce091bbbba1fe7039434e6698cea23730999571076e21d26154
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/model.config
+    target: aws_robomaker_warehouse_ClutteringC_01/model.config
+    source_sha256: f59a13a8638c9c5772c4eeeb1a400b4856271d26af999a6c72a0a0d093ec523d
+    replacements: []
+  - source: models/aws_robomaker_warehouse_ClutteringC_01/model.sdf
+    target: aws_robomaker_warehouse_ClutteringC_01/model.sdf
+    source_sha256: daa324de15573e0b4b3c827b73f9aa58585469618f40b1a45b7fda3ce523f7d0
+    replacements: []
+  - source: photos/PortraitA_01.jpg
+    target: aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg
+    source_sha256: a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46
+    replacements: []
+  - source: photos/PortraitD_01.jpg
+    target: aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg
+    source_sha256: ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3
+    replacements: []
+  - source: photos/PortraitD_02.jpg
+    target: aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg
+    source_sha256: ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762
+    replacements: []
+  - source: photos/PortraitE_01.jpg
+    target: aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg
+    source_sha256: b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556
+    replacements: []
+  - source: photos/PortraitE_02.jpg
+    target: aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg
+    source_sha256: 16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c
+    replacements: []

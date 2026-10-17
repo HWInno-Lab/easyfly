@@ -1,0 +1,36 @@
+{
+  "scene": "hospital_aws_v2",
+  "source_scene": "hospital_aws_v1",
+  "source_url": "https://github.com/aws-robotics/aws-robomaker-hospital-world",
+  "source_revision": "39969a9d250135835cf13b480865647d1a87b6f4",
+  "declared_license": "MIT-0",
+  "source_world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+  "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+  "placement_evidence_sha256": "27d912d163a7cc8e493fe812c6509f61617df8f6240f450d6744c2381e93370d",
+  "model_instances": 181,
+  "removed_instances": 0,
+  "changes": [
+    {
+      "instance": "StorageRack_1",
+      "original_pose": "9.07005 -10.3582 -7.57769e+08 -2e-06 0 0",
+      "new_z_m": 0.002
+    },
+    {
+      "instance": "WhiteChipChair_1",
+      "original_pose": "-8.87142 9.15707 -7.57769e+08 0 -0.152685 0",
+      "new_z_m": 0.033
+    },
+    {
+      "instance": "TrolleyBed_1",
+      "original_pose": "4.85934 -4.87229 -7.57769e+08 0 -1e-06 0",
+      "new_z_m": 0.002
+    }
+  ],
+  "all_other_world_bytes_unchanged": true,
+  "geometry_or_texture_pixels_changed": false,
+  "resources": "Three separately versioned repaired asset sets; remaining 41 Fuel sets unchanged.",
+  "world_loaded": false,
+  "sensors_checked": false,
+  "navigation_tested": false,
+  "note": "Derived grounding and material repairs; not original author intent or inherited runtime acceptance."
+}

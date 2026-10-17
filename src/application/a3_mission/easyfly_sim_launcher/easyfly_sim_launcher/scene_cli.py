@@ -58,8 +58,8 @@ def main(argv=None, *, catalog_factory=installed_catalog):
             scene = catalog.scenes[args.scene]
             keys = list(dict.fromkeys(scene['asset_sets'] + scene['runtime']['asset_sets']))
             assets = [catalog.assets[k] for k in keys if 'archive' in catalog.assets[k]]
-            if args.archive is not None and len(assets) != 1:
-                raise CacheError('--archive requires exactly one archived asset set in this scene')
+            if args.archive is not None and (len(assets) != 1 or assets[0]['archive'].get('supplements')):
+                raise CacheError('--archive requires exactly one archived asset set with one source in this scene')
             licenses = ValidationReport(args.scene)
             for asset in assets:
                 catalog._provenance(asset['provenance'], licenses, asset['asset_set_id'])

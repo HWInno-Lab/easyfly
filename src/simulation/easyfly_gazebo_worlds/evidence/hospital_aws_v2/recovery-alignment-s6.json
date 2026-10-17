@@ -1,0 +1,56 @@
+{
+  "scene": "hospital_aws_v2",
+  "scope": "Read-only failure diagnosis and stronger recovery predicate. Native qualification recorded separately.",
+  "rejected_run": {
+    "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v2.json",
+    "sha256": "f4a0c81a658a4378919f5149916ffcc252858b7399db41413aedb0944fc99176"
+  },
+  "raw_estimator_summary": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/height-estimator-raw-summary.json",
+    "sha256": "8ce4f9ab9f82cca600f57aee1507c5e4b2d3f732c106a18843622f662f7f4760"
+  },
+  "original_harness": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/scene_sitl.height-v1.py",
+    "sha256": "2c2c68fbc28f11886e5c26c48a1ef70768b68b469b0be82b175c543cfc4ba591"
+  },
+  "fixed_reference": {
+    "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/calibration-s6-height-band.json",
+    "sha256": "e4f0f45444172a281f8496498c131f9a122b61b82dca8b8f2e2b12b78ca2ed0e"
+  },
+  "diagnosis": {
+    "observed": "Physical landed pose is static while native PX4/MAVROS height still converges. Map-frame anchor and low velocity passed before frozen world/odom alignment passed.",
+    "second_parent_sent": false,
+    "maximum_region_error_m": 0.20925306754218528,
+    "position_gate_m": 0.2,
+    "yaw_error_rad": 0.013337385929592598,
+    "yaw_gate_rad": 0.1,
+    "root_cause_scope": "Observed estimator settling and incomplete recovery predicate; no claim of a proven barometer/ground-effect/estimator source defect."
+  },
+  "change": {
+    "current_source": {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py",
+      "sha256": "4af2d0b20f01a07babe68f48eda99109ef054448eaa0055e04bbff4d8964f6d2"
+    },
+    "test_source": {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/test/test_warehouse_scene.py",
+      "sha256": "47ee6f8cdb145c193d41fe9c8a78d9e4df980e35f0b80c73e546ad185e1f49e5"
+    },
+    "unit_result": {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/recovery-unit-v1.raw",
+      "sha256": "aeecf27adc1a434609d5d96624f01cadd7a36fb9bcec1af2f675f33ddd1a8c99"
+    },
+    "unit_cases": 17,
+    "additional_recovery_checks": "Actual Gazebo pose / native odom alignment against the unchanged scene reference, sampled and retained at each eligible recovery observation.",
+    "continuous_wall_s": 3,
+    "timeout_wall_s": 120,
+    "position_gate_m": 0.2,
+    "yaw_gate_rad": 0.1,
+    "map_anchor_gate_m": 0.15,
+    "speed_gate_m_s": 0.05,
+    "map_freshness_wall_s": 1,
+    "independent_premission_check_retained": true,
+    "reference_recentered": false,
+    "state_or_measurement_modified": false,
+    "timeout_or_numeric_gates_relaxed": false
+  }
+}

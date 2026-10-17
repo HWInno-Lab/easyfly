@@ -113,6 +113,13 @@ public:
     if (grid_footprint_mode_ != "cluster_boxes" && grid_footprint_mode_ != "observed_cells") {
       throw std::invalid_argument("grid_footprint_mode must be cluster_boxes or observed_cells");
     }
+    grid_height_limit_m_ = declare_parameter<double>("grid_height_limit_m", 0.0);
+    if (!std::isfinite(grid_height_limit_m_) || grid_height_limit_m_ < 0.0 ||
+      (grid_height_limit_m_ > 0.0 && grid_footprint_mode_ != "observed_cells"))
+    {
+      throw std::invalid_argument(
+              "grid height limit requires finite nonnegative value and observed_cells");
+    }
     const auto ground_frame = declare_parameter<std::string>("ground_model_frame", "");
     if (!ground_frame.empty()) {params_.ground_model_frame = ground_frame;}
 
@@ -773,7 +780,8 @@ private:
 
   void publishReadyEmptyMap(
     const std_msgs::msg::Header & header,
-    const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr)
+    const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr,
+    const GroundPlaneModel * ground = nullptr)
   {
     // A trusted, complete window with no usable obstacle cluster is a
     // valid empty obstacle observation, not an invalid/reset map.  Keep
@@ -791,7 +799,7 @@ private:
       invalid_published_ = false;
     }
     obstacles_pub_->publish(empty_obstacles);
-    publishGrid(header, {}, nonground);
+    publishGrid(header, {}, nonground, ground);
     publishMarkers(header, {});
     const rclcpp::Time stamp(header.stamp, get_clock()->get_clock_type());
     if (nonground != nullptr && !nonground->empty()) {
@@ -1225,6 +1233,16 @@ private:
       invalidateMap("地面模型不能变换到导航坐标系");
       return;
     }
+    if (grid_height_limit_m_ > 0.0) {
+      const double height = vehicle_pose.z -
+        classification_ground.zAt(vehicle_pose.x, vehicle_pose.y);
+      // Preserve the existing 0.4m local-planner vertical reserve. Outside
+      // this declared envelope, never offer a falsely free global layer.
+      if (!std::isfinite(height) || height > grid_height_limit_m_ - 0.4) {
+        invalidateMap("UAV outside bounded grid height envelope");
+        return;
+      }
+    }
     // Classify against the trusted model, never against the rejected
     // candidate's inlier indices.  This is what prevents a sparse plane
     // at the aircraft height from deleting all low obstacles.
@@ -1303,7 +1321,7 @@ private:
       std_msgs::msg::Header empty_header;
       empty_header.stamp = msg->header.stamp;
       empty_header.frame_id = params_.world_frame;
-      publishReadyEmptyMap(empty_header, merged_nonground.get());
+      publishReadyEmptyMap(empty_header, merged_nonground.get(), &classification_ground);
       return;
     }
 
@@ -1578,7 +1596,7 @@ private:
     }
 
     if (arr.obstacles.empty()) {
-      publishReadyEmptyMap(arr.header, merged_nonground.get());
+      publishReadyEmptyMap(arr.header, merged_nonground.get(), &classification_ground);
       return;
     }
 
@@ -1618,7 +1636,7 @@ private:
         }
         dynamic_boxes.push_back(b);
       }
-      publishGrid(arr.header, dynamic_boxes, merged_nonground.get());
+      publishGrid(arr.header, dynamic_boxes, merged_nonground.get(), &classification_ground);
     } else {
       publishGrid(arr.header, boxes);
     }
@@ -1632,8 +1650,15 @@ private:
   void publishGrid(
     const std_msgs::msg::Header & header,
     const std::vector<std::array<double, 6>> & boxes,
-    const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr)
+    const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr,
+    const GroundPlaneModel * ground = nullptr)
   {
+    if (grid_height_limit_m_ > 0.0 &&
+      (nonground == nullptr || ground == nullptr || !ground->valid()))
+    {
+      invalidateMap("bounded grid requires trusted current ground and cloud");
+      return;
+    }
     nav_msgs::msg::OccupancyGrid grid;
     grid.header = header;
     grid.info.resolution = params_.grid_resolution;
@@ -1650,7 +1675,8 @@ private:
       !rasterizeObservedFootprints(
         *nonground, grid.info.width, grid.info.height,
         params_.grid_resolution, grid.info.origin.position.x, grid.info.origin.position.y,
-        inf + params_.nonground_voxel_size * 0.5, grid.data))
+        inf + params_.nonground_voxel_size * 0.5, grid.data,
+        ground, grid_height_limit_m_, params_.nonground_voxel_size * 0.5))
     {
       invalidateMap("observed occupancy geometry invalid");
       return;
@@ -1799,6 +1825,7 @@ private:
   bool map_ready_{false};
   bool invalid_published_{false};
   std::string grid_footprint_mode_;
+  double grid_height_limit_m_{0.0};
   std::vector<int8_t> grid_persist_;    // 栅格持久化状态 (两段式)
   std::vector<uint32_t> grid_miss_;     // 连续未观测帧数
 

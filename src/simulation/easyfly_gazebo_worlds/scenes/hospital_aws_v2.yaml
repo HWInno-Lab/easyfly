@@ -1,0 +1,194 @@
+schema_version: 1
+id: hospital_aws_v2
+name: AWS 医院（资源修复与地面落位）
+status: registered
+category: indoor/hospital
+tags:
+- hospital
+- medical
+- static
+- navigation
+- corridor
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/hospital/hospital_aws_v2.world
+  sha256: b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+  revision: 39969a9d250135835cf13b480865647d1a87b6f4_grounded_v2
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/origins.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/import-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/placement-source-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/resource-repair-source.json
+  note: 'Derived hospital world: only three anomalous include z tokens grounded using
+    recorded native floor/collision support. Eight resource references repaired through
+    three independent versioned asset sets; original v1 retained.'
+asset_sets:
+- aws_hospital_repaired_v1
+- fuel_hospital_adjtable_v4
+- fuel_hospital_anesthesiamachine_v2
+- fuel_hospital_bmwcart_v2
+- fuel_hospital_bpcart_repaired_v1
+- fuel_hospital_bedtable_repaired_v1
+- fuel_hospital_bedsidetable_v2
+- fuel_hospital_bloodpressuremonitor_v2
+- fuel_hospital_cgmclassic_v4
+- fuel_hospital_chair_v3
+- fuel_hospital_drawer_v2
+- fuel_hospital_elderladypatient_v2
+- fuel_hospital_eldermalepatient_v2
+- fuel_hospital_femalevisitor_v2
+- fuel_hospital_femalevisitorsit_v2
+- fuel_hospital_ivstand_v2
+- fuel_hospital_instrumentcart1_v2
+- fuel_hospital_instrumentcart2_v2
+- fuel_hospital_kitchensink_v2
+- fuel_hospital_malepatientbed_v2
+- fuel_hospital_malevisitoronphone_v2
+- fuel_hospital_malevisitorsit_v2
+- fuel_hospital_metalcabinet_v2
+- fuel_hospital_mopcart3_v2
+- fuel_hospital_officechairblack_v2
+- fuel_hospital_parkingtrolleymax_v3
+- fuel_hospital_parkingtrolleymin_v3
+- fuel_hospital_patientfsit_v2
+- fuel_hospital_patientwheelchair_v4
+- fuel_hospital_potatochipchair_v3
+- fuel_hospital_scrubs_v2
+- fuel_hospital_shower_v2
+- fuel_hospital_storagerack_v2
+- fuel_hospital_storagerackcoveropen_v2
+- fuel_hospital_storagerackcovered_v2
+- fuel_hospital_surgicaltrolley_v2
+- fuel_hospital_surgicaltrolleymed_v2
+- fuel_hospital_toilet_v2
+- fuel_hospital_trolleybed_v3
+- fuel_hospital_trolleybedpatient_v3
+- fuel_hospital_vendingmachine_v3
+- fuel_hospital_visitorkidsit_v2
+- fuel_hospital_whitechipchair_v3
+- fuel_hospital_xraymachine_v2
+- gazebo_builtin_v1
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - -0.5
+  - 11.5
+  - 0.1
+  yaw: 0.0
+  basis: 'Native ODE northern open area: 17 route positions, 0.1-2.3m flight-band
+    sampled clearance >=3.831m; 18 buffer samples >=3.309m; real floor z approximately
+    0 and ceiling z approximately 3m. All 181 original instances retained.'
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 0.31534057849453584
+    - -11.504427936076219
+    - 0.02313856217447916
+    yaw: -0.015707988055907795
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.0
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+  alignment_check: recommended_region
+  grid_height_limit_m: 2.6
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+  heartbeat_rate_hz: 5
+  clock_rate_hz: 100
+  battery_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/hospital_aws_v2/lobby_out_and_back.yaml
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/import-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/placement-source-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/resource-repair-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/geometry-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/bootstrap-s6-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/calibration-s6-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/mission-rejected-s6-v1.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/calibration-s6-height-band.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/resource-audit-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/height-projection-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/mission-rejected-s6-v2.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/recovery-alignment-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/calibration-s6-recovery-v3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/mission-rejected-s6-v3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/height-envelope-s6-v2.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/calibration-s6-height-envelope-v4.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/mission-rejected-s6-v4.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/recovery-query-cadence-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/calibration-s6-responsive-v5.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v2/mission-s6-final.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

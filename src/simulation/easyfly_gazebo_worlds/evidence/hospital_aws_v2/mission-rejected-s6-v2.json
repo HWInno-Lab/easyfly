@@ -1,0 +1,576 @@
+{
+  "error": "RuntimeError: current alignment differs from scene reference; no flight goal sent",
+  "actions": [
+    {
+      "name": "/execute_mission",
+      "admission": "received",
+      "accepted": true,
+      "goal_uuid": "9b5f4f9761584e5fab8c43d385ff2b23",
+      "status": 4,
+      "success": true,
+      "message": "mission complete",
+      "terminal_state": {
+        "source_ns": 64510000000,
+        "frame": "odom",
+        "ros_now_ns": 64520000000,
+        "receipt": 21367.18408841,
+        "steady_now": 21367.389982486,
+        "armed": true,
+        "connected": true,
+        "mode": 7,
+        "mode_name": "AUTO.LAND",
+        "position": [
+          0.046190593391656876,
+          -0.022081708535552025,
+          -0.16058349609375
+        ],
+        "velocity": [
+          -0.0032257488928735256,
+          0.003700638422742486,
+          -0.07830274105072021
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.30000114440918,
+        "battery_remaining": 0.5
+      },
+      "feedback_summary": {
+        "samples": 7513,
+        "full_feedback_in_raw_result": "artifacts/scene-s6-hospital-repair-20261017/qualified-height-two-cycles/result.json"
+      }
+    }
+  ],
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          0.283309656844897,
+          -11.506003085593058,
+          -0.05154303776041667
+        ],
+        "yaw": -0.018752200241674944
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 10910000000,
+        "frame": "odom",
+        "ros_now_ns": 10990000000,
+        "receipt": 21215.63184942,
+        "steady_now": 21215.846220618,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0006613280856981874,
+          0.0009725165436975658,
+          0.00140380859375
+        ],
+        "velocity": [
+          -0.0001303680764976889,
+          0.0012065452756360173,
+          -0.00033542586606927216
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "9b5f4f9761584e5fab8c43d385ff2b23",
+      "status": 4,
+      "navigation_uuids": [
+        "ad89f597d6dd533cb3c2ab15f58b3bce",
+        "db3de2c31cd933ef7e9469d77cacb4e0"
+      ],
+      "navigation_terminal_errors_m": [
+        0.09085586121741747,
+        0.09419165485921116
+      ],
+      "landed_state": {
+        "source_ns": 64560000000,
+        "frame": "odom",
+        "ros_now_ns": 64580000000,
+        "receipt": 21367.392593372,
+        "steady_now": 21367.410019779,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.04614546522498131,
+          -0.022596655413508415,
+          -0.161529541015625
+        ],
+        "velocity": [
+          -0.0031092113349586725,
+          0.0034370620269328356,
+          -0.07782557606697083
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.30000114440918,
+        "battery_remaining": 0.5
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map"
+      },
+      "recovery_seconds": 9.33905150999999,
+      "recovered_state": {
+        "source_ns": 67680000000,
+        "frame": "odom",
+        "ros_now_ns": 67690000000,
+        "receipt": 21376.734100851,
+        "steady_now": 21376.749093631,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.04552788659930229,
+          -0.022041000425815582,
+          -0.155426025390625
+        ],
+        "velocity": [
+          -0.0005557495169341564,
+          0.0018409609328955412,
+          -0.03625654801726341
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.9700000286102295
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.02663413698680813,
+          -0.11226051113149504,
+          -0.04335843120723623
+        ],
+        "basis": {
+          "source_ns": 67617989997,
+          "age_s": 0.072010003,
+          "translation": [
+            -0.019456173889692105,
+            -0.09142557019439332,
+            0.11206818172038305
+          ],
+          "quaternion_xyzw": [
+            -0.00011919847622759677,
+            6.219539291502714e-05,
+            0.013567191550106545,
+            0.9999079523820675
+          ]
+        }
+      }
+    }
+  ],
+  "alignment_checks": [
+    {
+      "cycle": 1,
+      "policy": "recommended_region",
+      "maximum_position_error_m": 0.07503563392713102,
+      "yaw_error_rad": 0.0030442121857671496,
+      "translation_component_error_m": 0.08127608754462491,
+      "samples": [
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.29791946702571,
+            -0.29975384207576994,
+            0.42531840006510413
+          ],
+          "error_m": 0.07471098031759862
+        },
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.29791946702571,
+            -0.29975384207576994,
+            2.225318400065104
+          ],
+          "error_m": 0.07471098031759874
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.29609294253538926,
+            0.30024337775802756,
+            0.42531840006510413
+          ],
+          "error_m": 0.0747841273239229
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.29609294253538926,
+            0.30024337775802756,
+            2.225318400065104
+          ],
+          "error_m": 0.074784127323923
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8020708023925807,
+            -0.306146677791892,
+            0.42531840006510413
+          ],
+          "error_m": 0.07496273233589004
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8020708023925807,
+            -0.306146677791892,
+            2.225318400065104
+          ],
+          "error_m": 0.07496273233589015
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8038973268829017,
+            0.2938505420419055,
+            0.42531840006510413
+          ],
+          "error_m": 0.0750356339271309
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8038973268829017,
+            0.2938505420419055,
+            2.225318400065104
+          ],
+          "error_m": 0.07503563392713102
+        }
+      ]
+    },
+    {
+      "cycle": 2,
+      "policy": "recommended_region",
+      "maximum_position_error_m": 0.20925306754218528,
+      "yaw_error_rad": 0.013337385929592598,
+      "translation_component_error_m": 0.2568954476295266,
+      "samples": [
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.3024918690712528,
+            -0.30301439435485733,
+            0.29313573730468745
+          ],
+          "error_m": 0.20690123045856962
+        },
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.3024918690712528,
+            -0.30301439435485733,
+            2.0931357373046873
+          ],
+          "error_m": 0.20690123045856962
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.2944896747646282,
+            0.2969322406771937,
+            0.29313573730468745
+          ],
+          "error_m": 0.20696037787928762
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.2944896747646282,
+            0.2969322406771937,
+            2.0931357373046873
+          ],
+          "error_m": 0.20696037787928762
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.7973213535409198,
+            -0.3310220744280432,
+            0.29313573730468745
+          ],
+          "error_m": 0.20919456835479042
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.7973213535409198,
+            -0.3310220744280432,
+            2.0931357373046873
+          ],
+          "error_m": 0.20919456835479042
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8053235478475445,
+            0.2689245606040078,
+            0.29313573730468745
+          ],
+          "error_m": 0.20925306754218528
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8053235478475445,
+            0.2689245606040078,
+            2.0931357373046873
+          ],
+          "error_m": 0.20925306754218528
+        }
+      ]
+    }
+  ],
+  "ownership": [
+    {
+      "service": "/mission/ownership",
+      "requested": "9b5f4f9761584e5fab8c43d385ff2b23",
+      "returned": "9b5f4f9761584e5fab8c43d385ff2b23",
+      "state": 2,
+      "steady": 21367.397015256
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "ad89f597d6dd533cb3c2ab15f58b3bce",
+      "returned": "ad89f597d6dd533cb3c2ab15f58b3bce",
+      "state": 2,
+      "steady": 21367.405929102
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "db3de2c31cd933ef7e9469d77cacb4e0",
+      "returned": "db3de2c31cd933ef7e9469d77cacb4e0",
+      "state": 2,
+      "steady": 21367.409130581
+    }
+  ],
+  "sessions": [
+    {
+      "steady": 21241.644891424,
+      "session_id": "ad89f597d6dd533cb3c2ab15f58b3bce:1",
+      "active": true
+    },
+    {
+      "steady": 21298.943755143,
+      "session_id": "ad89f597d6dd533cb3c2ab15f58b3bce:1",
+      "active": false
+    },
+    {
+      "steady": 21299.042561513,
+      "session_id": "db3de2c31cd933ef7e9469d77cacb4e0:1",
+      "active": true
+    },
+    {
+      "steady": 21349.741054219,
+      "session_id": "db3de2c31cd933ef7e9469d77cacb4e0:1",
+      "active": false
+    }
+  ],
+  "normal_exits": [
+    "118640",
+    "118682",
+    "119463",
+    "119413",
+    "119409",
+    "119396",
+    "119358",
+    "119356",
+    "119268",
+    "119329",
+    "119411",
+    "119343",
+    "119008",
+    "119240",
+    "119461",
+    "119238",
+    "119314",
+    "119006",
+    "119149",
+    "119266",
+    "119151",
+    "119153",
+    "119004",
+    "118547"
+  ],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "forced": false,
+  "leftovers": [],
+  "shutdown_seconds": 1.0159163079988502,
+  "scene_probe_sha256": "2c2c68fbc28f11886e5c26c48a1ef70768b68b469b0be82b175c543cfc4ba591",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "grid_height_limit_m": 2.9,
+  "scene": "hospital_aws_v2",
+  "passed": false,
+  "scope": "First real out-and-back and landing recovery passed; second parent rejected before any goal by unchanged alignment gate. Not a two-cycle qualification.",
+  "raw_result": "artifacts/scene-s6-hospital-repair-20261017/qualified-height-two-cycles/result.json",
+  "raw_result_sha256": "10e5ca69012059cd2df8be908de3d8f1a53650fb615f676c34050a15603294da",
+  "second_parent_sent": false,
+  "diagnostic_observation": "Vertical reference error dominates: translation z -0.1837257005 versus cold reference +0.0231385622; region max 0.2092530675 exceeds 0.2, yaw error 0.0133373859 remains below 0.1.",
+  "verbose_derived_copy": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/full-derived-mission-rejected-s6-v2.json",
+    "sha256": "678b314946cf22f5a8ee752b10a8a728745bc2bab6a238b8012f82f569d7886a"
+  }
+}

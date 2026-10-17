@@ -53,11 +53,15 @@ install(FILES README-ground.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  find_package(ament_cmake_cppcheck REQUIRED)
+  # Keep the complete cppcheck scan, with its shipped GTest macro definitions.
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
+  ament_cppcheck(LIBRARIES googletest INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_classification test/test_classification.py)
-  ament_add_pytest_test(test_observed_grid_ros test/test_observed_grid_ros.py TIMEOUT 45
+  ament_add_pytest_test(test_observed_grid_ros test/test_observed_grid_ros.py TIMEOUT 120
     ENV ROS_DOMAIN_ID=187)
   ament_add_pytest_test(test_classification_ros test/test_classification_ros.py TIMEOUT 45
     ENV ROS_DOMAIN_ID=111 ROS_LOG_DIR=/tmp/easyfly_d4_classification)

@@ -27,6 +27,7 @@ class SceneInputs:
     heartbeat_rate_hz: int = 1
     clock_rate_hz: int = 10
     battery_rate_hz: int = 0
+    grid_height_limit_m: float = 0.0
 
 
 def resolve_scene(catalog, scene_id, profile):
@@ -60,7 +61,8 @@ def resolve_scene(catalog, scene_id, profile):
                        scene['navigation'].get('ground_model_frame','odom'),
                        scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
                        scene['runtime'].get('heartbeat_rate_hz',1),
-                       scene['runtime'].get('clock_rate_hz',10),battery)
+                       scene['runtime'].get('clock_rate_hz',10),battery,
+                       scene['navigation'].get('grid_height_limit_m',0.0))
 
 
 def selection_arguments(default_profile):
@@ -73,6 +75,8 @@ def selection_arguments(default_profile):
                               description='Low-level occupancy footprint mode; managed scenes use their manifest'),
         DeclareLaunchArgument('ground_model_frame',default_value='',
                               description='Low-level ground basis override; managed scenes use their manifest'),
+        DeclareLaunchArgument('grid_height_limit_m',default_value='',
+                              description='Explicit bounded 2D projection; managed scenes use their manifest'),
         DeclareLaunchArgument('debug_model_path',default_value='',
                                   description='Explicit model roots for low-level raw-world debugging only'),
         DeclareLaunchArgument('debug_spawn_pose', default_value='',
@@ -115,6 +119,8 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             raise CatalogError('managed scene cannot override grid_footprint_mode')
         if _value(context,'ground_model_frame'):
             raise CatalogError('managed scene cannot override ground_model_frame')
+        if _value(context,'grid_height_limit_m'):
+            raise CatalogError('managed scene cannot override grid_height_limit_m')
         catalog, _ = catalog_factory(px4_dir=px4_dir)
         result = resolve_scene(catalog, scene, profile)
     else:
@@ -149,6 +155,15 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
         grid_mode=_value(context,'grid_footprint_mode') or 'cluster_boxes'
         if grid_mode not in ('cluster_boxes','observed_cells'):
             raise CatalogError('grid_footprint_mode must be cluster_boxes or observed_cells')
+        height_value=_value(context,'grid_height_limit_m')
+        try:
+            height_limit=float(height_value or '0.0')
+        except ValueError as error:
+            raise CatalogError('grid height limit requires a finite nonnegative number') from error
+        if not math.isfinite(height_limit) or height_limit<0:
+            raise CatalogError('grid height limit requires a finite nonnegative number')
+        if height_limit and (not world or not debug_roots or grid_mode!='observed_cells'):
+            raise CatalogError('bounded grid requires explicit world/model roots and observed_cells')
         pose = (0.0, 0.0, 0.83, 0.0)
         debug_pose = _value(context, 'debug_spawn_pose')
         if debug_pose:
@@ -162,11 +177,12 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
                 raise CatalogError('debug_spawn_pose requires four finite values: x y z yaw')
         result = SceneInputs(str(root / (world or default_world)), ':'.join(roots),
                              _value(context, 'model_sdf') or default_model, pose[:3], pose[3],ground_frame,grid_mode,
-                             int(debug_rate or '1'), int(debug_clock or '10'),int(debug_battery or '0'))
+                             int(debug_rate or '1'), int(debug_clock or '10'),int(debug_battery or '0'),height_limit)
     values = dict(world=result.world, model_path=result.model_path, model_sdf=result.model_sdf,
                   x=str(result.position[0]), y=str(result.position[1]), z=str(result.position[2]),
                   yaw=str(result.yaw),ground_model_frame=result.ground_model_frame,
                   grid_footprint_mode=result.grid_footprint_mode,
+                  grid_height_limit_m=str(result.grid_height_limit_m),
                   heartbeat_rate_hz=str(result.heartbeat_rate_hz),
                   clock_rate_hz=str(result.clock_rate_hz),battery_rate_hz=str(result.battery_rate_hz))
     return [SetLaunchConfiguration(PREFIX + key, value) for key, value in values.items()]

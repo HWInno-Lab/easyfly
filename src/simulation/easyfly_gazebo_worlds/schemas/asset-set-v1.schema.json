@@ -299,7 +299,10 @@
       "type": "object",
       "properties": {
         "format": {
-          "enum": ["tar.gz", "zip"]
+          "enum": [
+            "tar.gz",
+            "zip"
+          ]
         },
         "urls": {
           "type": "array",
@@ -351,7 +354,237 @@
           "required": [
             "sha256"
           ],
-          "oneOf": [{"required": ["source"]}, {"required": ["notice"]}],
+          "oneOf": [
+            {
+              "required": [
+                "source"
+              ]
+            },
+            {
+              "required": [
+                "notice"
+              ]
+            }
+          ],
+          "additionalProperties": false
+        },
+        "members": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "source": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+              },
+              "source_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "replacements": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "old": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "new": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  },
+                  "required": [
+                    "old",
+                    "new",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "source",
+              "target",
+              "source_sha256"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "supplements": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              },
+              "archive": {
+                "$ref": "#/definitions/archive-source"
+              }
+            },
+            "required": [
+              "id",
+              "archive"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "format": {
+                "const": "tar.gz"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "prefix": {
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ],
+      "required": [
+        "format",
+        "urls",
+        "sha256",
+        "size_bytes",
+        "prefix",
+        "max_members",
+        "max_unpacked_bytes",
+        "license",
+        "members"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "schema_version",
+    "asset_set_id",
+    "model_root",
+    "provenance",
+    "models",
+    "files",
+    "local_changes",
+    "storage",
+    "inventory_note"
+  ],
+  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "storage": {
+            "const": "cached"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "archive"
+        ],
+        "properties": {
+          "model_root": {
+            "const": {
+              "external": "asset_cache",
+              "path": "models"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "definitions": {
+    "archive-source": {
+      "type": "object",
+      "properties": {
+        "format": {
+          "enum": [
+            "tar.gz",
+            "zip"
+          ]
+        },
+        "urls": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^https://[^\\s]+$"
+          }
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "prefix": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).*$"
+        },
+        "max_members": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_unpacked_bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "license": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "notice": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 65536
+            }
+          },
+          "required": [
+            "sha256"
+          ],
+          "oneOf": [
+            {
+              "required": [
+                "source"
+              ]
+            },
+            {
+              "required": [
+                "notice"
+              ]
+            }
+          ],
           "additionalProperties": false
         },
         "members": {
@@ -409,8 +642,24 @@
           }
         }
       },
-      "allOf": [{"if": {"properties": {"format": {"const": "tar.gz"}}},
-                 "then": {"properties": {"prefix": {"minLength": 1}}}}],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "format": {
+                "const": "tar.gz"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "prefix": {
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ],
       "required": [
         "format",
         "urls",
@@ -424,42 +673,5 @@
       ],
       "additionalProperties": false
     }
-  },
-  "required": [
-    "schema_version",
-    "asset_set_id",
-    "model_root",
-    "provenance",
-    "models",
-    "files",
-    "local_changes",
-    "storage",
-    "inventory_note"
-  ],
-  "additionalProperties": false,
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "allOf": [
-    {
-      "if": {
-        "properties": {
-          "storage": {
-            "const": "cached"
-          }
-        }
-      },
-      "then": {
-        "required": [
-          "archive"
-        ],
-        "properties": {
-          "model_root": {
-            "const": {
-              "external": "asset_cache",
-              "path": "models"
-            }
-          }
-        }
-      }
-    }
-  ]
+  }
 }

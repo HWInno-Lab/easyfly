@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
+#include "easyfly_semantic_map/ground_plane_tracker.hpp"
 
 namespace easyfly_semantic_map
 {
@@ -30,12 +31,17 @@ template<typename Points>
 bool rasterizeObservedFootprints(
   const Points & points, std::size_t width, std::size_t height,
   double resolution, double origin_x, double origin_y, double radius,
-  std::vector<int8_t> & output)
+  std::vector<int8_t> & output,
+  const GroundPlaneModel * ground = nullptr, double height_limit = 0.0,
+  double voxel_half_width = 0.0)
 {
   if (!width || !height || width > 1000000 || height > 1000000 / width ||
     points.size() > 200000 || !std::isfinite(resolution) || resolution <= 0 ||
     !std::isfinite(origin_x) || !std::isfinite(origin_y) ||
-    !std::isfinite(radius) || radius < 0 || output.size() != width * height)
+    !std::isfinite(radius) || radius < 0 || output.size() != width * height ||
+    !std::isfinite(height_limit) || height_limit < 0 ||
+    !std::isfinite(voxel_half_width) || voxel_half_width < 0 ||
+    (height_limit > 0 && (ground == nullptr || !ground->valid())))
   {
     return false;
   }
@@ -47,6 +53,19 @@ bool rasterizeObservedFootprints(
   for (const auto & point : points) {
     if (!std::isfinite(point.x) || !std::isfinite(point.y) || !std::isfinite(point.z)) {
       return false;
+    }
+    if (height_limit > 0) {
+      // Only the explicitly bounded 2-D layer is clipped. The caller retains
+      // the complete 3-D cloud. Include every voxel intersecting the envelope,
+      // including its ground-height variation on a tilted trusted plane.
+      const double height = point.z - ground->zAt(point.x, point.y);
+      const double extent = voxel_half_width * (1.0 +
+        std::abs(ground->normal[0] / ground->normal[2]) +
+        std::abs(ground->normal[1] / ground->normal[2]));
+      const double lower_height = height - extent;
+      if (!std::isfinite(height) || !std::isfinite(extent) ||
+        !std::isfinite(lower_height)) {return false;}
+      if (lower_height > height_limit) {continue;}
     }
     const double x1 = static_cast<double>(point.x) - radius,
       x2 = static_cast<double>(point.x) + radius;

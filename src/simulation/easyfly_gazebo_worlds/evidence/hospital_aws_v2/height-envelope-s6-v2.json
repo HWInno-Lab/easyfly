@@ -1,0 +1,71 @@
+{
+  "scene": "hospital_aws_v2",
+  "scope": "Stricter allowed-height contract for the unchanged physical hospital and unchanged 1.5m mission. Requires independent new native qualification.",
+  "previous_contract": {
+    "grid_height_limit_m": 2.9,
+    "recommended_region": {
+      "min": [
+        -0.3,
+        -0.3,
+        0.5
+      ],
+      "max": [
+        1.8,
+        0.3,
+        2.3
+      ]
+    }
+  },
+  "new_contract": {
+    "grid_height_limit_m": 2.6,
+    "recommended_region": {
+      "min": [
+        -0.3,
+        -0.3,
+        0.5
+      ],
+      "max": [
+        1.8,
+        0.3,
+        2.0
+      ]
+    },
+    "maximum_vehicle_height_above_ground_m": 2.2
+  },
+  "unchanged_reserves": {
+    "local_vertical_reserve_m": 0.4,
+    "alignment_reserve_m": 0.2,
+    "total_above_target_region_m": 0.6,
+    "voxel_half_width_m": 0.05
+  },
+  "reason": "The previous upper target bound 2.3m plus 0.6m reserve yields a 2.9m projection cap only 0.1m below the native 3m ceiling. Real return-run ceiling samples around 2.98m and trusted-ground z around 0.03m expose insufficient allowance for voxel extent and plane/odometry uncertainty. Restrict the upper target height to 2.0m with a 2.6m cap; keep all overhead 3D points, low obstacles, intersecting voxels, dynamic envelopes and horizontal inflation.",
+  "raw_diagnosis": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/return-grid-diagnosis-v3.json",
+    "sha256": "0e31687df37cf5505cb344ee4f8793beb41996b38963cd4b9ff7cb83c848c3d1"
+  },
+  "fixed_world_to_navigation": {
+    "translation": [
+      0.31534057849453584,
+      -11.504427936076219,
+      0.02313856217447916
+    ],
+    "yaw": -0.015707988055907795
+  },
+  "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+  "spawn": {
+    "frame": "world",
+    "position": [
+      -0.5,
+      11.5,
+      0.1
+    ],
+    "yaw": 0.0,
+    "basis": "Native ODE northern open area: 17 route positions, 0.1-2.3m flight-band sampled clearance >=3.831m; 18 buffer samples >=3.309m; real floor z approximately 0 and ceiling z approximately 3m. All 181 original instances retained."
+  },
+  "mission_sha256": "9d0cd859f28decfe52374adfff71fa75ea99c36103b28d0ab8084e378e12fc16",
+  "world_geometry_route_seed_mission_and_reference_changed": false,
+  "admission_speed_position_yaw_freshness_and_timeout_gates_relaxed": false,
+  "upper_target_height_reduced_m": 0.3,
+  "upper_vehicle_height_reduced_m": 0.3,
+  "all_3d_obstacle_data_retained": true
+}

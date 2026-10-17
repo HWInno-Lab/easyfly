@@ -1,0 +1,167 @@
+{
+  "source_scene": "hospital_aws_v1",
+  "repaired_asset_sets": [
+    "aws_hospital_repaired_v1",
+    "fuel_hospital_bedtable_repaired_v1",
+    "fuel_hospital_bpcart_repaired_v1"
+  ],
+  "addressed_issues": 8,
+  "original_asset_versions_preserved": true,
+  "model_geometry_or_texture_pixels_changed": false,
+  "world_placements_changed": false,
+  "changes": [
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE",
+      "source_sha256": "fd0b0c6b53bdc6ad4908d1faf59df1a035508f913e3488cc5f5863e51450215d",
+      "sha256": "4abe4104eca9f4b39a07ee156f9d352174befe6c0e6408ed2cbab18c215ef5c0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitA_01.jpg",
+          "new": "../materials/textures/PortraitA_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitA_01.jpg",
+      "target": "aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg",
+      "source_sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46",
+      "sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE",
+      "source_sha256": "6a1eb9c8b7cfb5fb7ef25c0bb8f9349d8630603acf47cbdce0f528df84d3d28d",
+      "sha256": "a935990e80d3cf888337b85d41896c384030b8751e2892939cd821664554f64c",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitD_01.jpg",
+          "new": "../materials/textures/PortraitD_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitD_01.jpg",
+      "target": "aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg",
+      "source_sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3",
+      "sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE",
+      "source_sha256": "fa9703b4cb34217222a7d57193735ffdca77092a67cb1bc2169283af26e22072",
+      "sha256": "6e8e6e57a221ebdfebee096c783d9dfdf4969c108ddf3dcf70563d456cfb44f0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitD_02.jpg",
+          "new": "../materials/textures/PortraitD_02.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitD_02.jpg",
+      "target": "aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg",
+      "source_sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762",
+      "sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE",
+      "source_sha256": "e43d82a220a9da3f26ba9d709466b78e0697bc4a63671e9ee09914ae05f31efc",
+      "sha256": "6464dde6887667039c88db340e0e07103776d84fe7be319d8d18246bcec849d0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitE_01.jpg",
+          "new": "../materials/textures/PortraitE_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitE_01.jpg",
+      "target": "aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg",
+      "source_sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556",
+      "sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE",
+      "source_sha256": "4e3828d34ebafe9b45dd4f2e3ea788e714eb82c78159514b947f015d47be413e",
+      "sha256": "4fec20317b43c63c770fb63166aeabf5b366b311555dcb9be13aa6419a1b68f5",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitE_02.jpg",
+          "new": "../materials/textures/PortraitE_02.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitE_02.jpg",
+      "target": "aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg",
+      "source_sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c",
+      "sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c",
+      "replacements": []
+    },
+    {
+      "asset_set": "fuel_hospital_bedtable_repaired_v1",
+      "source": "meshes/BedTable.mtl",
+      "target": "BedTable/meshes/BedTable.mtl",
+      "source_sha256": "7111b807ee8120084d236805fd2e100741f33dc4a521a1213a7ccaaa547564aa",
+      "sha256": "a36680cfff4abe79ad269939a9973139aa096fa83e5e6363eb64ac7c3950d94e",
+      "replacements": [
+        {
+          "old": "BedTable_Normal_Normal_Bump.tga",
+          "new": "BedTable_Normal.png",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bpcart_repaired_v1",
+      "source": "meshes/Cart_BP.mtl",
+      "target": "BPCart/meshes/Cart_BP.mtl",
+      "source_sha256": "c79ca99c261c30bb5ac421b576b714e0408a033ec6e3744087f351f2322746f0",
+      "sha256": "79eb9230024d1865573d1a89507664d87a1806c58a8f4c6300a41fa560d3a2c1",
+      "replacements": [
+        {
+          "old": "BP_Normal_Normal_Bump.tga",
+          "new": "BP_BP_LP_Normal.png",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bpcart_repaired_v1",
+      "source_archive": "CGMClassic v4",
+      "archive_sha256": "2f8366ef6c5650457ee0f1357956098fa1f4afe8caee983cd2d9b5284b40f6b7",
+      "declared_license": "CC-BY-4.0",
+      "source": "meshes/Wheels_Normal_Normal_Bump.tga",
+      "target": "BPCart/meshes/Wheels_Normal_Normal_Bump.tga",
+      "source_sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2",
+      "sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2",
+      "replacements": [],
+      "wheel_diffuse_atlas_sha256": "09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984"
+    }
+  ],
+  "world_loaded": false,
+  "sensors_checked": false,
+  "navigation_tested": false
+}

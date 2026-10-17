@@ -1,0 +1,37 @@
+{
+  "scene": "hospital_aws_v2",
+  "scope": "Inspection scheduling change only; native qualification independent.",
+  "preserved_rejection": {
+    "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v4.json",
+    "sha256": "62fdb5b8adaad750980a57e486c03c457f9bb3d06315dbec438fc3e50ec0fb50"
+  },
+  "previous_harness": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/scene_sitl.envelope-v4.py",
+    "sha256": "4af2d0b20f01a07babe68f48eda99109ef054448eaa0055e04bbff4d8964f6d2"
+  },
+  "current_harness": {
+    "path": "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py",
+    "sha256": "2fee33fe4ca3881551678c7dc62d65875bf0ef7c305d6efe7315fd53f6368727"
+  },
+  "unit_result": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/recovery-unit-v2.raw",
+    "sha256": "bcf90c38b8f06841524d35285acb47f7aed3489961bfce3db8a78803833308e3"
+  },
+  "unit_cases": 18,
+  "observation": "Prior recovery made 165 synchronous native pose queries within 120 wall seconds. Late alignment samples were within 0.2m/0.1rad, but map TF freshness intermittently failed. Synchronous calls stop this probe executor from processing subscriptions; reducing query frequency leaves time to consume real ROS callbacks. No assertion that this is a defect in the underlying mapping producer.",
+  "change": "At most one native query per wall second; health, speed, anchor and map freshness still checked on every wait iteration. Only a fresh actual native query can finish the continuous interval. After-query reference and real receipt ages retained.",
+  "unaltered": {
+    "continuous_wall_s": 3,
+    "timeout_wall_s": 120,
+    "position_error_m": 0.2,
+    "yaw_error_rad": 0.1,
+    "map_anchor_error_m": 0.15,
+    "speed_m_s": 0.05,
+    "map_receipt_age_wall_s": 1
+  },
+  "timestamps_or_measurements_rewritten": false,
+  "source_publisher_rates_changed": false,
+  "reference_recentered": false,
+  "grid_height_limit_m": 2.6,
+  "declared_region_max_z_m": 2.0
+}

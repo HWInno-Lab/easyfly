@@ -1,0 +1,163 @@
+schema_version: 1
+asset_set_id: fuel_hospital_bedtable_repaired_v1
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/BedTable.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_repaired/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_repaired/origins.json
+  note: Derived resource repair. One MTL path changed; original license/author evidence
+    retained. See hospital_repaired attribution/origins.
+models:
+- name: BedTable
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/BedTable.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_repaired/origins.json
+    note: Derived resource repair. One MTL path changed; original license/author evidence
+      retained. See hospital_repaired attribution/origins.
+files:
+- path: BedTable/meshes/BedTable.mtl
+  sha256: a36680cfff4abe79ad269939a9973139aa096fa83e5e6363eb64ac7c3950d94e
+- path: BedTable/meshes/BedTable.obj
+  sha256: 7ad6f4c3dc9efd8176a3cfa1dfbb3c3588f6ef63df1c8eac7c131ca696c562c4
+- path: BedTable/meshes/BedTable.png
+  sha256: 1e9f1843d343b80a311845b2e5a80e14a1bb4a550f7a036b36ac41d9eea2bb87
+- path: BedTable/meshes/BedTable_Col.mtl
+  sha256: b233e482753d95960b5632348dc7f500fa17a91f8aa8ea3d655acdcc5bfe4c5a
+- path: BedTable/meshes/BedTable_Col.obj
+  sha256: 4aec40c2dc595c3ef3dd176a7e6398d50fb6e2c3ddcd638c86892597731fad1c
+- path: BedTable/meshes/BedTable_Diffuse.png
+  sha256: d8dd360a54f04313d8e14c2ccb95a6c733c606ed6b742af424550e0fdb74d099
+- path: BedTable/meshes/BedTable_Normal.png
+  sha256: 79cb1a78729bdbc48f5069091f611917695ccde97dd7bdb0d12ae4b9f2300cd7
+- path: BedTable/meshes/BedTable_SpecGloss.png
+  sha256: 94fad4b6c8d14faa79319090728927f6d7e870288a4ac6db57e16e24233605c8
+- path: BedTable/model.config
+  sha256: d12246ef82cf6c42e4f6fe0aae775b97c07b2e7e1d51f659bd294361b0367d77
+- path: BedTable/model.sdf
+  sha256: a2da3f9a520ceeb14488d8cae692875349d2443595cdf5d0a06ab40bd6ced86a
+- path: BedTable/thumbnails/1.png
+  sha256: 2efe73e703ee022ab72ac7822199a570daf64ae7c1a3ca8a7db58afc3d34eacb
+- path: BedTable/thumbnails/2.png
+  sha256: 0ec593c200b94cff9500b82de94c9a485478cc6acfa32f2ca5d9f882421964e6
+- path: BedTable/thumbnails/3.png
+  sha256: a9882679095a7afddc7212934b9f2646da17e4af3c9c8a2526397a3aa800a9f8
+- path: BedTable/thumbnails/4.png
+  sha256: 2634f19db095cde44bdb35548050ed4b177f57f59080a134e7078d26a9f2649d
+- path: BedTable/thumbnails/5.png
+  sha256: 3f370c0e79e2123e2595ecbe2c4f74c2e584eece2082c1dadd8b04dfb6a95cdc
+storage: cached
+local_changes:
+- Repair one MTL normal-map filename to the supplied same-model PNG; original image/OBJ/SDF
+  bytes retained.
+inventory_note: Derived resource-only repairs; immutable original archives and each
+  source notice retained. No OBJ/collision geometry, SDF physics, texture pixels or
+  original asset versions modified.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable/2/BedTable.zip
+  sha256: 3a8ec34d5014d096f9ad3ae4dbd4c95df7b3ed749acfdec1c5c314256cffd085
+  size_bytes: 1088303
+  prefix: ''
+  max_members: 17
+  max_unpacked_bytes: 1167271
+  license:
+    notice: '{"createdAt":"2020-05-21T05:53:52Z","updatedAt":"2026-10-16T21:33:53Z","name":"BedTable","owner":"OpenRobotics","description":"A
+      generic hospital bed table","likes":0,"downloads":14859,"filesize":1088303,"upload_date":"2020-05-21T05:53:49Z","modify_date":"2023-09-27T15:39:31Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/BedTable/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: de1ca2e33aa240a89d2532a63dbdc277e313d344d5f78bdda3548fab962c8ef6
+  members:
+  - source: meshes/BedTable.mtl
+    target: BedTable/meshes/BedTable.mtl
+    source_sha256: 7111b807ee8120084d236805fd2e100741f33dc4a521a1213a7ccaaa547564aa
+    replacements:
+    - old: BedTable_Normal_Normal_Bump.tga
+      new: BedTable_Normal.png
+      count: 1
+  - source: meshes/BedTable.obj
+    target: BedTable/meshes/BedTable.obj
+    source_sha256: 7ad6f4c3dc9efd8176a3cfa1dfbb3c3588f6ef63df1c8eac7c131ca696c562c4
+    replacements: []
+  - source: meshes/BedTable.png
+    target: BedTable/meshes/BedTable.png
+    source_sha256: 1e9f1843d343b80a311845b2e5a80e14a1bb4a550f7a036b36ac41d9eea2bb87
+    replacements: []
+  - source: meshes/BedTable_Col.mtl
+    target: BedTable/meshes/BedTable_Col.mtl
+    source_sha256: b233e482753d95960b5632348dc7f500fa17a91f8aa8ea3d655acdcc5bfe4c5a
+    replacements: []
+  - source: meshes/BedTable_Col.obj
+    target: BedTable/meshes/BedTable_Col.obj
+    source_sha256: 4aec40c2dc595c3ef3dd176a7e6398d50fb6e2c3ddcd638c86892597731fad1c
+    replacements: []
+  - source: meshes/BedTable_Diffuse.png
+    target: BedTable/meshes/BedTable_Diffuse.png
+    source_sha256: d8dd360a54f04313d8e14c2ccb95a6c733c606ed6b742af424550e0fdb74d099
+    replacements: []
+  - source: meshes/BedTable_Normal.png
+    target: BedTable/meshes/BedTable_Normal.png
+    source_sha256: 79cb1a78729bdbc48f5069091f611917695ccde97dd7bdb0d12ae4b9f2300cd7
+    replacements: []
+  - source: meshes/BedTable_SpecGloss.png
+    target: BedTable/meshes/BedTable_SpecGloss.png
+    source_sha256: 94fad4b6c8d14faa79319090728927f6d7e870288a4ac6db57e16e24233605c8
+    replacements: []
+  - source: model.config
+    target: BedTable/model.config
+    source_sha256: d12246ef82cf6c42e4f6fe0aae775b97c07b2e7e1d51f659bd294361b0367d77
+    replacements: []
+  - source: model.sdf
+    target: BedTable/model.sdf
+    source_sha256: a2da3f9a520ceeb14488d8cae692875349d2443595cdf5d0a06ab40bd6ced86a
+    replacements: []
+  - source: thumbnails/1.png
+    target: BedTable/thumbnails/1.png
+    source_sha256: 2efe73e703ee022ab72ac7822199a570daf64ae7c1a3ca8a7db58afc3d34eacb
+    replacements: []
+  - source: thumbnails/2.png
+    target: BedTable/thumbnails/2.png
+    source_sha256: 0ec593c200b94cff9500b82de94c9a485478cc6acfa32f2ca5d9f882421964e6
+    replacements: []
+  - source: thumbnails/3.png
+    target: BedTable/thumbnails/3.png
+    source_sha256: a9882679095a7afddc7212934b9f2646da17e4af3c9c8a2526397a3aa800a9f8
+    replacements: []
+  - source: thumbnails/4.png
+    target: BedTable/thumbnails/4.png
+    source_sha256: 2634f19db095cde44bdb35548050ed4b177f57f59080a134e7078d26a9f2649d
+    replacements: []
+  - source: thumbnails/5.png
+    target: BedTable/thumbnails/5.png
+    source_sha256: 3f370c0e79e2123e2595ecbe2c4f74c2e584eece2082c1dadd8b04dfb6a95cdc
+    replacements: []

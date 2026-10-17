@@ -1,0 +1,173 @@
+{
+  "scene": "hospital_aws_v2",
+  "scope": "Implementation and ordinary regression evidence; native calibration and flight qualified independently.",
+  "parameter": "navigation.grid_height_limit_m",
+  "default_m": 0.0,
+  "hospital_limit_m": 2.9,
+  "recommended_region_max_z_m": 2.3,
+  "registration_reserve_m": 0.6,
+  "vehicle_invalidation_above_ground_m": 2.5,
+  "voxel_intersection_included": true,
+  "ground_slope_margin_included": true,
+  "low_obstacles_retained": true,
+  "dynamic_envelopes_retained": true,
+  "full_nonground_cloud_unchanged": true,
+  "local_3d_planner_input_unchanged": true,
+  "invalid_evidence_invalidates_grid": true,
+  "world_route_spawn_and_numeric_flight_gates_unchanged": true,
+  "previous_rejected_mission": {
+    "path": "src/simulation/easyfly_gazebo_worlds/evidence/hospital_aws_v2/mission-rejected-s6-v1.json",
+    "sha256": "27d277de6aa79235951425b6a7b72f92fa744481b77112d25a0fc8fa7d3a459c"
+  },
+  "sources": [
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp",
+      "sha256": "eeea6dea60b9265f35ece6ad2066e19cd6fb1c4f2920a6837946cf3ee4b4e993"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp",
+      "sha256": "d431e0f60300419c0f997f0bb91fc4d02d7a0547732ad5dd9a4a5140692846cd"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid.cpp",
+      "sha256": "c1adfa687669b22139f0dcb567e8d20b57acef75c33545cefa9d20971164eca2"
+    },
+    {
+      "path": "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid_ros.py",
+      "sha256": "c01489e6ecefe8d9d462cd5db97809168d8398177006f4a421daf09ff23864d4"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_inputs.py",
+      "sha256": "dedd097c497736f29b51e61b3a814e9d31fcc749b979c622799296561c3bff21"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/scene_catalog.py",
+      "sha256": "bf88a9ef7b4e5e222e0ebe53c5869855379a1f7bf5e9d46955c981ccb4ff89be"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/scripts/scene_sitl.py",
+      "sha256": "2c2c68fbc28f11886e5c26c48a1ef70768b68b469b0be82b175c543cfc4ba591"
+    }
+  ],
+  "ordinary_checks": [
+    {
+      "mode": "normal",
+      "records": 625,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "result": {
+        "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-normal-height-v3.txt",
+        "sha256": "1e551eba527ae13007797c7e276af2e50f0c11953955fa3cf8acef7df7d1162c"
+      },
+      "cppcheck_actual_version": "2.7",
+      "cppcheck_allow_slow_versions": true,
+      "cppcheck_library": "googletest",
+      "network_interfaces": [
+        {
+          "ifindex": 1,
+          "ifname": "lo",
+          "flags": [
+            "LOOPBACK",
+            "UP",
+            "LOWER_UP"
+          ],
+          "mtu": 65536,
+          "qdisc": "noqueue",
+          "operstate": "UNKNOWN",
+          "group": "default",
+          "txqlen": 1000,
+          "link_type": "loopback",
+          "address": "00:00:00:00:00:00",
+          "broadcast": "00:00:00:00:00:00",
+          "addr_info": [
+            {
+              "family": "inet",
+              "local": "127.0.0.1",
+              "prefixlen": 8,
+              "scope": "host",
+              "label": "lo",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            },
+            {
+              "family": "inet6",
+              "local": "::1",
+              "prefixlen": 128,
+              "scope": "host",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "mode": "symlink",
+      "records": 625,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "result": {
+        "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-symlink-height-v3.txt",
+        "sha256": "1e551eba527ae13007797c7e276af2e50f0c11953955fa3cf8acef7df7d1162c"
+      },
+      "cppcheck_actual_version": "2.7",
+      "cppcheck_allow_slow_versions": true,
+      "cppcheck_library": "googletest",
+      "network_interfaces": [
+        {
+          "ifindex": 1,
+          "ifname": "lo",
+          "flags": [
+            "LOOPBACK",
+            "UP",
+            "LOWER_UP"
+          ],
+          "mtu": 65536,
+          "qdisc": "noqueue",
+          "operstate": "UNKNOWN",
+          "group": "default",
+          "txqlen": 1000,
+          "link_type": "loopback",
+          "address": "00:00:00:00:00:00",
+          "broadcast": "00:00:00:00:00:00",
+          "addr_info": [
+            {
+              "family": "inet",
+              "local": "127.0.0.1",
+              "prefixlen": 8,
+              "scope": "host",
+              "label": "lo",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            },
+            {
+              "family": "inet6",
+              "local": "::1",
+              "prefixlen": 128,
+              "scope": "host",
+              "valid_life_time": 4294967295,
+              "preferred_life_time": 4294967295
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "preserved_failed_regressions": [
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-normal-height-v1.txt",
+      "sha256": "3ad182efa836f2caba3c01a405bc773071371209eeb9bdb890e1350d9c29631b"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-normal-height-v2.txt",
+      "sha256": "98f10abac42476e481547efac5a68553f0e29bfd03e49498e9d904ba7c20f31c"
+    },
+    {
+      "path": "artifacts/scene-s6-hospital-repair-20261017/test-results-symlink-height-v2.txt",
+      "sha256": "d4d4bb0e211899b74cc8867176af07a31728457fb877870a5af8d8087e7e1594"
+    }
+  ],
+  "failure_explanation": "v1 functional checks passed with style failures and 18 upstream Cppcheck performance skips. v2 enabled real Cppcheck without GTest macro config, producing eight test macro syntax errors, and concurrent host-network ROS fixtures shared domain 186, producing TF/dynamic evidence failures. v3 loads the installed standard googletest.cfg and runs each complete suite in its own loopback-only network namespace, retaining all files, assertions and numerical safety limits."
+}

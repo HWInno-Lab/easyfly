@@ -269,6 +269,59 @@ source/output hashes and atomic publication. ZIP links, special files, encrypted
 entries, unsupported compression and corrupt CRCs are rejected. No archive uses
 `extractall`.
 
+A composed asset can declare up to sixteen flat `archive.supplements`, each
+with a unique `id` and a complete independent `archive` recipe. The combined
+member mappings must cover the output inventory exactly once, without target
+collisions. Every source has its own URL/hash/budgets and original license or
+locked publisher notice. Supplemental bytes and notices remain under
+`sources/<id>/source.zip` (or `source.tar.gz`) and `sources/<id>/LICENSE` in the
+versioned cache. All inputs and outputs are validated before one atomic publish;
+a failed later source leaves no partial prepared version. Old versions are
+preserved. Single-source manifests and receipts keep their original identities.
+
+For a composition, online fetch explicitly downloads every locked source.
+`--archive` rejects the ambiguity; maintainer APIs require the primary local
+file and **every** `supplement_paths` entry together, so a missing local donor
+never triggers an implicit download. Offline verification reads the complete
+prepared version without contacting a source or creating missing cache roots.
+
+Hospital resource repairs can be reproduced from the audited local snapshot:
+
+```bash
+python3 tools/scenes/repair_hospital_resources.py /absolute/path/to/upstream \
+  --check --prepare-cache
+python3 tools/scenes/prepare_hospital_world.py --check
+```
+
+The repair creates three new assets. BPCart retains its original ZIP and a
+separately attributed CGMClassic v4 donor ZIP for one original wheel normal map.
+The derived `hospital_aws_v2` world keeps all instances and changes only three
+erroneous height tokens using recorded native support. Qualification is recorded
+independently in its scene/evidence; the original v1 draft is preserved.
+
+`hospital_aws_v2` explicitly selects `navigation.grid_height_limit_m: 2.6` for
+the 2D `observed_cells` grid. Heights are measured above the current trusted
+ground plane. A voxel is omitted only when its entire vertical extent, including
+ground slope, lies above the limit. This leaves low obstacles and intersecting
+beams occupied with the existing horizontal inflation and persistence. Full
+nonground point clouds, semantic obstacle envelopes and local 3D planning still
+retain the ceiling. Missing trusted ground, missing current cloud or vehicle
+height above `limit - 0.4m` invalidates the grid. Registration requires a measured
+alignment and a recommended region at least 0.6m below the limit. Managed launch
+forbids overriding this value. The default `0.0` retains the previous full-height
+projection for every other scene.
+
+Postlanding recovery also measures the real Gazebo/odom alignment against the
+fixed scene reference. The existing 0.2m/0.1rad admission limits must hold with
+the existing health, speed, map freshness and map-anchor checks continuously
+for three wall seconds, within the same 120-second recovery budget. Low reported
+velocity alone does not establish that the landed height estimate has converged.
+This reads observations only; it does not correct the estimator or recenter the
+reference after a flight. The independent premission alignment check remains.
+Native recovery queries run at most once per wall second so the probe keeps
+processing real ROS subscriptions between queries. Only a fresh actual query can
+finish the continuous recovery interval; receipt/TF freshness limits are unchanged.
+
 `hospital_aws_v1` is a resource-audit draft with 44 independent archived assets:
 one fixed AWS tarball and 43 individually versioned Fuel ZIPs. Explicit online
 `scene_catalog fetch hospital_aws_v1` prepares them; `--offline` verifies them.

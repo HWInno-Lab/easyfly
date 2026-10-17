@@ -158,7 +158,7 @@ def test_raw_heartbeat_requires_explicit_inspection_inputs(tmp_path, missing):
                              default_roots=[], default_model='default.sdf', allowed_profiles=('base_sim',))
 
 
-@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis','grid_mode','heartbeat','clock','battery'])
+@pytest.mark.parametrize('override', ['model','entrypoint_profile','debug_roots','ground_basis','grid_mode','heartbeat','clock','battery','grid_height'])
 def test_managed_scene_rejects_override(ready_catalog, override):
     context = LaunchContext()
     context.launch_configurations.update(scene='test',scene_profile='base_sim')
@@ -170,6 +170,8 @@ def test_managed_scene_rejects_override(ready_catalog, override):
         context.launch_configurations['debug_model_path']='/tmp'
     elif override == 'grid_mode':
         context.launch_configurations['grid_footprint_mode']='observed_cells'
+    elif override == 'grid_height':
+        context.launch_configurations['grid_height_limit_m']='2.9'
     elif override == 'heartbeat':
         context.launch_configurations['debug_heartbeat_rate_hz']='5'
     elif override == 'clock':

@@ -1,0 +1,1173 @@
+{
+  "assets": [
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "provenance": {
+        "status": "recorded",
+        "source_url": "https://github.com/aws-robotics/aws-robomaker-hospital-world",
+        "revision": "39969a9d250135835cf13b480865647d1a87b6f4",
+        "declared_license": "MIT-0",
+        "evidence": [
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/aws_hospital/LICENSE"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/aws_hospital/NOTICE"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/aws_hospital/origins.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/ATTRIBUTION.md"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/origins.json"
+          }
+        ],
+        "note": "AWS repository content only; does not license the 43 separately recorded Fuel models."
+      },
+      "source_archive_sha256": "b352c63ca7d4eeaf8c2b7abac70f81ebe9ac575157033a09e14002520f2c64ca",
+      "changes": [
+        "Escape bare ampersands in six model.config descriptions; no geometry changes.",
+        "Copy five original archive JPEGs into their owning models and relocate five DAE image URIs; geometry arrays unchanged."
+      ],
+      "files": [
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_collision.dae",
+          "sha256": "333e7a6f7cb94c343ffd146efe6e7edacb41bcd2304b4f44ae1a1fb54ad57888"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low.png",
+          "sha256": "aa1b82cf2b13ff2e03fa91a490c65e26687839571696516583e86b1338c96556"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_low_normal.png",
+          "sha256": "0d40eb58e86673ab23b526d5818cc7324494fe2398db65bf2c45c6b15d9deeea"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.dae",
+          "sha256": "b61f5632497967d159ed5e5123544b79c5f81d31773f89488a20fa8a54b3e6c6"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual.png",
+          "sha256": "46beb32919da898614a000031092977f63855b7d69143e6ea47f56b13924bf08"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtain_closed_01_visual_normal.png",
+          "sha256": "21fb66b33ce7683c8df29a8cedcaa8d9458d1023fb9d81da6504bddc60371bc2"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png",
+          "sha256": "9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png",
+          "sha256": "23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png",
+          "sha256": "a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png",
+          "sha256": "ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/model.config",
+          "sha256": "c3691c3ffb06f08761e0bf89f7e8fbe74fea0664f91be93252933d5cd7c0273b"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_closed_01/model.sdf",
+          "sha256": "fb11e52b8b534abd55c01a75745c05e3f7a72d70d8e8bf80a0b66366fc137897"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_collision.dae",
+          "sha256": "284f52a3c4ee7b93bed81a7034b7bb255368c752101f74fe6cf99c91b319ad98"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low.png",
+          "sha256": "45d1443d3172b89eb0b9b9921945fa24a4a368cf87b02a8acaece13da4d04f94"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_low_normal.png",
+          "sha256": "5a530fb4414f91e90cc67949efadfeb10c0de22f9c93b0b37c852221516d3854"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.dae",
+          "sha256": "1483ffe18fd3bf635809c278d95f0da7bc4e1510842a597b4bc4406689833c50"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual.png",
+          "sha256": "fae8e2fdd0e07de9011a71a6e2ed663a2fe87f1b0af184cda0549b6eff89d994"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtain_half_open_01_visual_normal.png",
+          "sha256": "659b78c17fe39afd36ef83da4bcc79ce570ef91afea2576cddad97eb8553efc8"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png",
+          "sha256": "9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png",
+          "sha256": "23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png",
+          "sha256": "a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png",
+          "sha256": "ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/model.config",
+          "sha256": "b315ad7926bdf999f00100bef10e69cae9fd86923c5f07ddd898791e5536dbec"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_half_open_01/model.sdf",
+          "sha256": "7feb5086861eff6ef5ef294442c98ec6c89c445d1f16cace2def7fde569b77c6"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_collision.dae",
+          "sha256": "8b8dae060cc7d183a09b9ae330e1c81c94655776919df748549b6bccdd979a3c"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low.png",
+          "sha256": "bff375abbcb31ddffa5e324f8701320382e80116c00290e531291cf6af2a713b"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_low_normal.png",
+          "sha256": "4018f2b2a19d3ac1dd5cda02c83dcc9e6870e31112d14fe88c47d3ddbec24608"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.dae",
+          "sha256": "7aa457be706deb6554e51aad3b5a813845651f9900c2d2e023f7fe4f2cf90b85"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual.png",
+          "sha256": "659db364ae6fb43f300302aad107f35dca117cd4d42d1f3dfc85e14f707393cb"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtain_open_01_visual_normal.png",
+          "sha256": "f61b3ce8c560f89a4455bbb6f75b12f35ccb37c032ae75ee96681274a0bbc4b0"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low.png",
+          "sha256": "9dc5b68e02a27796fe7815f8c04cd483e39c4124b74a531a4fad3863577035a9"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_low_normal.png",
+          "sha256": "23f947bbb86c2fb0c66085471407d2df340f4cd7082b279ad444eb763f1615f1"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual.png",
+          "sha256": "a44175980a2d378e1625bc81a53f6131a43c16385b80f0adbe8308c9db6a09f0"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/meshes/aws_robomaker_hospital_curtainrail_01_visual_normal.png",
+          "sha256": "ee1d732c4af9cb379c58b85002b49d5491f7f26733d2fcfd2574e8f02ec64c0f"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/model.config",
+          "sha256": "898163d28d0b92f6319d26b90aee0a8359d6b2ae1c045f175544676ee9c86d58"
+        },
+        {
+          "path": "aws_robomaker_hospital_curtain_open_01/model.sdf",
+          "sha256": "9f4ec8a59ed84268f4015b0eb92a25b98cb2d7bf0d638694f27e457da272ad54"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_collision.dae",
+          "sha256": "9567dc096021ebed13c455e985e26b1e6749e048430cc1d5893e67100615fa66"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_low.dae",
+          "sha256": "9fbc8155fb143fec4bbf22897dc213d6ba82fa0ff49d08f337cda99d7483f08f"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_car_visual.dae",
+          "sha256": "f0f461a59383e4b6485f2153f3f9874ea84c66365f028074214c12f143fcab89"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low.png",
+          "sha256": "c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_low_normal.png",
+          "sha256": "9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual.png",
+          "sha256": "e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png",
+          "sha256": "22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/model.config",
+          "sha256": "eae535a6cf94ab1885c1a537fb4ed73fbdd541a2925e204232b9c329d1a264dc"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_car/model.sdf",
+          "sha256": "aec96138afdcafc667824cba48dade7833793ba9859f1aaffd4ee40ff4059539"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_collision.dae",
+          "sha256": "b9119a6e5571294de5a61d3a449c7b104887115ea90e23817b08d6248c934735"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_low.dae",
+          "sha256": "a662540a8a10dda1bbe9c91c56238e0ef72d8824e927110d450065dcb868afe1"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_door_visual.dae",
+          "sha256": "305d38b7aa8ab2ed4963050c1382c9234f7f29ad9377c5214f31d7e2c24a9719"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low.png",
+          "sha256": "c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_low_normal.png",
+          "sha256": "9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual.png",
+          "sha256": "e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png",
+          "sha256": "22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/model.config",
+          "sha256": "ca25cb81dbad605810560e338cbeed5c5da48323b45d935056e83057a4ba9278"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_door/model.sdf",
+          "sha256": "4802a6a51723fadd48f647569da129fe618159a421cb7d6a32f63299da97f5dc"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low.png",
+          "sha256": "c808a37ae2e83fb2ae34cb2dac4f9baaccbd9e9618c5aa0093b5cb05554ee2c6"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_low_normal.png",
+          "sha256": "9ce4ca9d8e003c80cc44b64a3da025364c2d22a57a76d64ae275d717c1c5ecd5"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_collision.dae",
+          "sha256": "3869546a2144504e8d98b252cb24ae7dac1e083e57cdc51e84621fe0599186d1"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_low.dae",
+          "sha256": "317fa40a0bdb4141b11b471676a5e23d11ae3c78332ced172c87257a60a9955b"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_portal_visual.dae",
+          "sha256": "4bb289f4065545cef2c663daafe826a76ac706e9a592b0cb50aff7c2c156ea54"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual.png",
+          "sha256": "e377ff8a6c2eae09f29c30626464adf06a50b5b304cf71bf80acf180296200fe"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/meshes/aws_robomaker_hospital_elevator_01_visual_normal.png",
+          "sha256": "22c14b8cea0a9d32ef538220ceb6861ec2aa3a9a0323efe2dab21535d99ddf0b"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/model.config",
+          "sha256": "7cfa48d9ec031a8998b8ae6ed5756c1fe4b5247023a58f2699c971ed67507410"
+        },
+        {
+          "path": "aws_robomaker_hospital_elevator_01_portal/model.sdf",
+          "sha256": "3f9f2ff42baab1f258b120b839aefbd8bc393e2cdbf04d49b7e8aa2daa80a47c"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling.png",
+          "sha256": "7613fe8c9a26ca0f05a0afc7990574d5c8e29d1c41521247e031933ac0e1a31e"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_collision.dae",
+          "sha256": "5d06ef3ff6d013d58d2011f1acbbf5ef68c528466bc645884943513b15cd2742"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_normal.png",
+          "sha256": "d717e8c900596e0c9bbd00603efcaa642aa30bd32357043216e4d56529e027ce"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/meshes/aws_robomaker_hospital_floor_01_ceiling_visual.dae",
+          "sha256": "76b9f548a320912ca6b8d593faf90e5343607058e5d656c8bf622bec6ee8112c"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/model.config",
+          "sha256": "4cc82aec0a05b6d9c79f0cf0c2cd534202eb2409885309a8ef79e88ce7a5ba04"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_ceiling/model.sdf",
+          "sha256": "e66acb4ad1f1d1d290d25b9b3b2ad7c71738c939079c70350158d84461f513bf"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor.png",
+          "sha256": "67800bd1916ea1bbc49c00635a4e65933b0147d2006a6ba1913f753bdd44ba5f"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_collision.dae",
+          "sha256": "b914dbb27d5a03f4175ff35b7b08f81f5ad851254fd179bd8af05285f0197fc7"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_normal.png",
+          "sha256": "84838dbb817663e58034282fc4a79098a8baf6b0c44e92de692f67fec543b2b1"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/meshes/aws_robomaker_hospital_floor_01_floor_visual.dae",
+          "sha256": "4106e0ac636431290285b5db81aa2ba98a8b2e34a1586966622033148367d9f8"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/model.config",
+          "sha256": "a823d78a78a7a104fef95b0e13dd1315fbf97816d6455fe8e353439b1f486229"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_floor/model.sdf",
+          "sha256": "18f9d6075f5b724fb05edc34009789e87df5be1914cebfd98d06e19ae5ec50e7"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_bumprail.png",
+          "sha256": "4994099470052f217a8309f96a20d2d22a763d43d03e9b55c5a0c3c20a6605e5"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_big.png",
+          "sha256": "04a3062f15b3a7082a6f037ce0a8202abd456935937ee4dca3e73cde54c480c1"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorframes_small.png",
+          "sha256": "b9a6266028d5b8e700907aac2464281a7442adce2e9b8438fa27d7bbaac2334a"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_doorsign.png",
+          "sha256": "d6f467bc2ddb776fcc386b851304ab7edd870689a198bc2d893d89400e061137"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_handrail.png",
+          "sha256": "f72eac5a0109277934fb66c1a3fe81e2e4bf1d618d4cc9bc562698aa4cd1ea44"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_stairs.png",
+          "sha256": "d2f7179cc9adf44805ca2b42945d05a36deaf7c6bd3e1e9f6f14aed0b8d8e8aa"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls.png",
+          "sha256": "708e8a65f2f8bfa0a4d20799bed988c1357f456b6fd8738e5c168081b2729dcc"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_collision.dae",
+          "sha256": "233b75caa7eb94807427505d21e15522f3f5b15ce30f3b6a6f51b58eb901a523"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_walls_visual.dae",
+          "sha256": "4d3deeaba184ace714dc9655dfebe3c5cfa588048d42ad29417be824624f81ce"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/meshes/aws_robomaker_hospital_floor_01_windows.png",
+          "sha256": "368db4901ccd9b1f3944cf8e184dbb4491494288d4e09a6727277ec74d42da9f"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/model.config",
+          "sha256": "b3c2b6a475b2d186eace015d47b3c1f916e3f0cde06509ce065eaac79f7620fe"
+        },
+        {
+          "path": "aws_robomaker_hospital_floor_01_walls/model.sdf",
+          "sha256": "ea1233686edd6b52c0d74927d403e331f0ab21709a22a1607b79a91112d82202"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_collision.dae",
+          "sha256": "b0506c0958cc308caef525f62570260723efe66aea9cfbbed711e6265352a7c1"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.dae",
+          "sha256": "89f9a542aede647581f66d9eaf9a1f661e488004c2df9f74dddd3d156815184f"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low.png",
+          "sha256": "1587d61e666bddcef3f2cad1a073211ab7d6ea747981d60d994577d870ff365e"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_low_normal.png",
+          "sha256": "0197f30e872cefd6a92bfa4fd42e086652ae4b536dbdda8f4215bc96af28dff3"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.dae",
+          "sha256": "d3d806a3ea3d679b6f93fb1f08eb8992cdbc76e80d17895a37339c8e7f9d94f7"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual.png",
+          "sha256": "1d28e4b8b7f6a81a0cb49b591756676dbc24ef2504ce54b6d6c9b4da75cf143d"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/meshes/aws_robomaker_hospital_nursesstation_01_visual_normal.png",
+          "sha256": "1575d31af43f5db2fa9002ff2898a97e1d512d713fe7f38ab5458806d02ceb5f"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/model.config",
+          "sha256": "aee34781c373ca67d011debb33aa77ab68c1e695e4b1b30814d58e1dc686f4c1"
+        },
+        {
+          "path": "aws_robomaker_hospital_nursesstation_01/model.sdf",
+          "sha256": "5f244b8701bf807cfb174405dc39588664574052a7f11ffc010be64cd1e7889a"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01.png",
+          "sha256": "5a69926573d9cc39612a4e51d11df57e272f97b37f631a3b96119bee60255162"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_collision.dae",
+          "sha256": "c6d1add1563ecc5fc3be8ce06b524254ccc8fe8bccde757754f4e251c9d63d56"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_normal.png",
+          "sha256": "4cbb85aaa155b19641c1cc8b70340aea18a97ec9d538b1c679c4b1422b8f085a"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/meshes/aws_robomaker_hospital_ramp_01_visual.dae",
+          "sha256": "3ed3f86d9ea371f8fad1fe456e29087895a11bab6717e402e0f7f357f0bd0afc"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/model.config",
+          "sha256": "511e04721ed3ef54187ff22522cc2e2652e924e3d478fe9b8beb5e964ba4c11d"
+        },
+        {
+          "path": "aws_robomaker_hospital_ramp_01/model.sdf",
+          "sha256": "c0634393592fbd4bd7a192d876c906d469abf4640291324b0baabcc33e3989b4"
+        },
+        {
+          "path": "aws_robomaker_residential_Carpet_01/materials/textures/aws_Carpet_01.png",
+          "sha256": "bebfa3305fb60e141249299e256b33b021a018f0835d14bc172c3eee86036f75"
+        },
+        {
+          "path": "aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_collision.DAE",
+          "sha256": "44f3ee9d4be182016f4e20a01cd18cd7f5e61c24d76e2e2ef181a281c5438d42"
+        },
+        {
+          "path": "aws_robomaker_residential_Carpet_01/meshes/aws_Carpet_01_visual.DAE",
+          "sha256": "2c12d1a52d8027a37803a6abb6bb0342b6f79ae1e853c27bde83b0dcd5651169"
+        },
+        {
+          "path": "aws_robomaker_residential_Carpet_01/model.config",
+          "sha256": "feb070246f4a120937b361938438a66ad098e3b3b00c5fe9460edd24616f2e2c"
+        },
+        {
+          "path": "aws_robomaker_residential_Carpet_01/model.sdf",
+          "sha256": "5a9f4e2fecc47755f63b7ec0f91f9405143c79fe6d37ca5039c5d0a91a955970"
+        },
+        {
+          "path": "aws_robomaker_residential_CoffeeTable_01/materials/textures/aws_CoffeeTable_01.png",
+          "sha256": "fc720fe6a63ab4483e668e986e80bc095429ea497bfc3a6ca96b121e52f0dfb2"
+        },
+        {
+          "path": "aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_collision.DAE",
+          "sha256": "96d855fbd04032b9eb55f38ad66cf4d8e989fccc9d889eaa43943a75b6f62385"
+        },
+        {
+          "path": "aws_robomaker_residential_CoffeeTable_01/meshes/aws_CoffeeTable_01_visual.DAE",
+          "sha256": "a0fe0d5086613cd02f8f5a4f7b4cea12717cae5beebca25e5c9af850789570b1"
+        },
+        {
+          "path": "aws_robomaker_residential_CoffeeTable_01/model.config",
+          "sha256": "04092669b049895f53f213c6cd559b1c4d299371985b3c9a2b86f0b6db6f8b10"
+        },
+        {
+          "path": "aws_robomaker_residential_CoffeeTable_01/model.sdf",
+          "sha256": "0f097fc06b55a3fa22ffb2645a82d0e700b1a1db156b27b215ffdfc94c983bb1"
+        },
+        {
+          "path": "aws_robomaker_residential_KitchenCabinet_01/materials/textures/aws_KitchenCabinet_01.png",
+          "sha256": "68d0cc8e38a11adc0d9798dc4dfed92a5c45dbf342b26f7929fe57db05a46821"
+        },
+        {
+          "path": "aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_collision.DAE",
+          "sha256": "32357200643818e37dc1ea27f419dbb8d4acd6e0a4e485f2a93239365b18740f"
+        },
+        {
+          "path": "aws_robomaker_residential_KitchenCabinet_01/meshes/aws_KitchenCabinet_01_visual.DAE",
+          "sha256": "e55aab5c171aa80e262313acc8d50d6ba39f703981fd51f19f68ec4f83abf6f2"
+        },
+        {
+          "path": "aws_robomaker_residential_KitchenCabinet_01/model.config",
+          "sha256": "1f0aa87f904ef9cfe96bcb5a75013ca5b032bbe853487787d7ff4a0ceaacd0d0"
+        },
+        {
+          "path": "aws_robomaker_residential_KitchenCabinet_01/model.sdf",
+          "sha256": "215fe51f7a37c6f7980fe3fb9667b93a79b05624ca1fb321eeaf050d3a69654f"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg",
+          "sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_01.png",
+          "sha256": "9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/materials/textures/aws_PortraitA_02.png",
+          "sha256": "a7d9217e72edcb4bca45a5c7eec6079a45aa3b6eda44345c3715169b24227794"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_collision.DAE",
+          "sha256": "bbd1e639e1b858f9ada90d122410bb54954150a4121b98b5cc502ced9054ac9d"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE",
+          "sha256": "4abe4104eca9f4b39a07ee156f9d352174befe6c0e6408ed2cbab18c215ef5c0"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/model.config",
+          "sha256": "be4591181782387f4b1556fbe10c4720a0135609275189ed7d66824e5bf9d1a7"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitA_01/model.sdf",
+          "sha256": "14f02d79e5ac6fda00a08760b705659feeec9109081e2dda32bb97b7f4e96d3c"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg",
+          "sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_01.png",
+          "sha256": "1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/materials/textures/aws_PortraitD_02.png",
+          "sha256": "ba85f5a4fb4f2c21a8059c49c0fde28b5c607b68e876ba0ffcf6a6cf03991bec"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_collision.DAE",
+          "sha256": "0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE",
+          "sha256": "a935990e80d3cf888337b85d41896c384030b8751e2892939cd821664554f64c"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/model.config",
+          "sha256": "bcc1dccadb547a4d99339806d7e5724ae71f5fb1d24f9d74ce3fbcd75bd115ac"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_01/model.sdf",
+          "sha256": "c6f91b5f8db5bd6947be676af7d62f7809b2e6c2ee627710d60019cd51aece80"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg",
+          "sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_01.png",
+          "sha256": "1feebcdbb8a61e55ddd3f1fba41c1f156599621e60f994649a88fd6cdc9d578a"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/materials/textures/aws_PortraitD_02.png",
+          "sha256": "ae4afbbb5d1c7b08a8c4ddc1cbdd7566cde6c428e230f792c94585898aa0e024"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_collision.DAE",
+          "sha256": "0ac6e26f0f3824fd59d9cba632753c22fda0c4b76d207c2a8a7e8a504a3dd9ba"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE",
+          "sha256": "6e8e6e57a221ebdfebee096c783d9dfdf4969c108ddf3dcf70563d456cfb44f0"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/model.config",
+          "sha256": "d22bfca4b3812c92c72662c2c36dec2ed938b00b69bff4b6efb03409d3a92851"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitD_02/model.sdf",
+          "sha256": "43b7d859fa6f6a26f0691346d54bdff47be4d3bd2d68d43dbac7e7c4e41e0836"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg",
+          "sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_01.png",
+          "sha256": "9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/materials/textures/aws_PortraitE_02.png",
+          "sha256": "902b9f8853af05c871c4213b0ecf6bdc1004401d1e6125378c07dd1c065046c5"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_collision.DAE",
+          "sha256": "4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE",
+          "sha256": "6464dde6887667039c88db340e0e07103776d84fe7be319d8d18246bcec849d0"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/model.config",
+          "sha256": "15722be89804afb74604814ea6539d0dd8bd1485793c059a3a86c7ca4fd8ac90"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_01/model.sdf",
+          "sha256": "1a724de26b45e80058d707bde670b4d50252b9c22f6a95938cfe3a9efb423556"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg",
+          "sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_01.png",
+          "sha256": "9b1aca736c997f972a0ae396395581b6feebd145ba4b5209f1898c929f76b0a9"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/materials/textures/aws_PortraitE_02.png",
+          "sha256": "4e2e1926fca15510ff96150cca248e0cd982e7c007626553846d42093f8570d1"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_collision.DAE",
+          "sha256": "4df38d5be895416e925f0f09664bc53e0ddfe889ff236dd22f6b3c7acb36d754"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE",
+          "sha256": "4fec20317b43c63c770fb63166aeabf5b366b311555dcb9be13aa6419a1b68f5"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/model.config",
+          "sha256": "35a57595189edcbfa1dea091a896ba0777054ba5477c3e31cfcc912c99f4ebec"
+        },
+        {
+          "path": "aws_robomaker_residential_PortraitE_02/model.sdf",
+          "sha256": "4fa0d31763fadf52dcd707c282f2c9de612013d87e8904815a7dc5f390c0f926"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_01.png",
+          "sha256": "2f4973d07ab6a6e1de5e482900bd682d6cffddce471d78fc6d21a2acbefbaff4"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/materials/textures/aws_Refrigerator_02.png",
+          "sha256": "3c57cd595659b49acbc93f43125da8f4dcd8344485c1774e63ebbd69691e6be3"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01.DAE",
+          "sha256": "602b8a02b9019a57ad8de546bc05b75ee7141f622fc9a516a63ebf8c9a8c5ee6"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_collision.DAE",
+          "sha256": "5e77d4d3040da42f95c602e202fad7ac5e2ac19ab1da6a31ae66465074ba5bdb"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/meshes/aws_Refrigerator_01_visual.DAE",
+          "sha256": "c83384318815644af331fc2dd332ce7ea35316bc58140a908a5d209d057055ae"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/model.config",
+          "sha256": "5d4e2f7dbef2d1c42ba4c895d42d5240a4aa8c64d13fae80455bd32bfefdfaef"
+        },
+        {
+          "path": "aws_robomaker_residential_Refrigerator_01/model.sdf",
+          "sha256": "35d7e5f4a7ba1d2cf074ac91a41573e66fda6aa3d0847225f2d354aaf1560f98"
+        },
+        {
+          "path": "aws_robomaker_residential_SofaB_01/materials/textures/aws_SofaB_01.png",
+          "sha256": "6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236"
+        },
+        {
+          "path": "aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_collision.DAE",
+          "sha256": "195a3c2709ddbd15c9806d8a3c066ce5c79eaa5a4cfae9b2019986e4ec30c59b"
+        },
+        {
+          "path": "aws_robomaker_residential_SofaB_01/meshes/aws_SofaB_01_visual.DAE",
+          "sha256": "27782ce189cae323515658afa794b5511982810929d486558eed718382bc8fa3"
+        },
+        {
+          "path": "aws_robomaker_residential_SofaB_01/model.config",
+          "sha256": "235254987a34a971363ad2f8a39a693f2b9517b5c50204f8646e113e1ba39dc0"
+        },
+        {
+          "path": "aws_robomaker_residential_SofaB_01/model.sdf",
+          "sha256": "75babb14df18de680c125f37f41f46cbbc15def670e2f93c4b9c4f01f04c6025"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/materials/textures/aws_Sofa_01.png",
+          "sha256": "6b58288bc4e42d58573f28cecb89215d3e561489660e07961b5a75795714a236"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01.DAE",
+          "sha256": "95f0de929b42bed6a45fc4dc23fb03c7c7abd71c687d424e64f0492063eb9347"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_collision.DAE",
+          "sha256": "d48913dfce3db467b24f0f9703d48543860b3709d48b105e39030a93dc08f31e"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/meshes/aws_Sofa_01_visual.DAE",
+          "sha256": "ac2e48edc30af80a296a42f7549b59d567ff3abf4248e5cfc165d9cba86a9d1e"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/model.config",
+          "sha256": "a7487b6f3b054748ded52657761874607efcbb8c7c83f42f030448c82455b023"
+        },
+        {
+          "path": "aws_robomaker_residential_Sofa_01/model.sdf",
+          "sha256": "e127f19352ba2d12435fc24c88dcd86735c0b27c2e1128ded3b2958530fde04d"
+        },
+        {
+          "path": "aws_robomaker_residential_TV_02/materials/textures/aws_TV_01.png",
+          "sha256": "73c98d8626ae76428a1ab9b78e3471b7e70ab586fbea7e4a0fb87799a188bbc5"
+        },
+        {
+          "path": "aws_robomaker_residential_TV_02/meshes/aws_TV_01_collision.DAE",
+          "sha256": "b4701986e4d0e4091643c738a72ca4cf04b8f5a2f337dab7e1e1b25784e862d3"
+        },
+        {
+          "path": "aws_robomaker_residential_TV_02/meshes/aws_TV_01_visual.DAE",
+          "sha256": "1135e68b89e0d2738f015f76647180526ffcd7bb90677817c827f939b45848c7"
+        },
+        {
+          "path": "aws_robomaker_residential_TV_02/model.config",
+          "sha256": "3866add90ce8d8447ad8b40b6052d38f4d5dff72c91d6a9095742d349a6bd56f"
+        },
+        {
+          "path": "aws_robomaker_residential_TV_02/model.sdf",
+          "sha256": "294d01c9ea66a6976a3de683dfa7a457374c718f16dd414b4570f1dc10f094f5"
+        },
+        {
+          "path": "aws_robomaker_residential_Trash_01/materials/textures/aws_Trash_01.png",
+          "sha256": "54488551f566900f9279fb2341bcbad55bb071d153512fef1d29e27542096506"
+        },
+        {
+          "path": "aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_collision.DAE",
+          "sha256": "ac7024fbbc1e1745c9385203285e5b5f0186a50d00fa8e3d82fd5d17265b6f52"
+        },
+        {
+          "path": "aws_robomaker_residential_Trash_01/meshes/aws_Trash_01_visual.DAE",
+          "sha256": "6234e93167cb4ecd676a8a001b3b86f0e1714d94d4e25dfdb1ef6d48185ff89c"
+        },
+        {
+          "path": "aws_robomaker_residential_Trash_01/model.config",
+          "sha256": "1df49e8d8203d5684efac86b46ca0420e8eb002c538ce6ecd7d43b15e7b2182c"
+        },
+        {
+          "path": "aws_robomaker_residential_Trash_01/model.sdf",
+          "sha256": "12bcb2979814cf5b9df23f53801e1508f7ecf680de25da12460d2aa083c8b93b"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_01.png",
+          "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_02.png",
+          "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/materials/textures/aws_robomaker_warehouse_ClutteringA_03.png",
+          "sha256": "fa11698ab9127aa550b3a8f79fce4f11fb8988d9e623f1b9e57ef53fef9198c1"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_collision.DAE",
+          "sha256": "f2e592215a2e3fef5161da3e0a53339f83c7ccc059a75bce6dfc52e23eafa024"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/meshes/aws_robomaker_warehouse_ClutteringA_01_visual.DAE",
+          "sha256": "ccf14ca50f55bc5db59b94d8947307a1c2729ffc4f2d36a6f26a0dbe1476c1d8"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/model.config",
+          "sha256": "fbb0299646c69626661baca59503a266787ba09f4821029bd17a7c0e39c87506"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringA_01/model.sdf",
+          "sha256": "0160c32a3babc3c3dc07a84a433fa1f5c79a776cc78b58533e6fc9ab83c9bd6e"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_01.png",
+          "sha256": "d09ed5c6fbd87c09f6b13acbdf8ddeb1f2f376fd7b73f37af43fc324378ce97f"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/materials/textures/aws_robomaker_warehouse_ClutteringC_02.png",
+          "sha256": "afa907ca2396e4afab8bcb235a6992f213a06618333dc228026dab513ece3299"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_collision.DAE",
+          "sha256": "17ea0446b4310bc2828ba9abe48a86bed674f410611c389ff60cd7ff199b2440"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/meshes/aws_robomaker_warehouse_ClutteringC_01_visual.DAE",
+          "sha256": "0817b2b4b7155ce091bbbba1fe7039434e6698cea23730999571076e21d26154"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/model.config",
+          "sha256": "f59a13a8638c9c5772c4eeeb1a400b4856271d26af999a6c72a0a0d093ec523d"
+        },
+        {
+          "path": "aws_robomaker_warehouse_ClutteringC_01/model.sdf",
+          "sha256": "daa324de15573e0b4b3c827b73f9aa58585469618f40b1a45b7fda3ce523f7d0"
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bedtable_repaired_v1",
+      "provenance": {
+        "status": "recorded",
+        "source_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable",
+        "revision": "2",
+        "declared_license": "CC-BY-4.0",
+        "evidence": [
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/metadata/BedTable.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/ATTRIBUTION.md"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/origins.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/ATTRIBUTION.md"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/origins.json"
+          }
+        ],
+        "note": "Derived resource repair. One MTL path changed; original license/author evidence retained. See hospital_repaired attribution/origins."
+      },
+      "source_archive_sha256": "3a8ec34d5014d096f9ad3ae4dbd4c95df7b3ed749acfdec1c5c314256cffd085",
+      "changes": [
+        "Repair one MTL normal-map filename to the supplied same-model PNG; original image/OBJ/SDF bytes retained."
+      ],
+      "files": [
+        {
+          "path": "BedTable/meshes/BedTable.mtl",
+          "sha256": "a36680cfff4abe79ad269939a9973139aa096fa83e5e6363eb64ac7c3950d94e"
+        },
+        {
+          "path": "BedTable/meshes/BedTable.obj",
+          "sha256": "7ad6f4c3dc9efd8176a3cfa1dfbb3c3588f6ef63df1c8eac7c131ca696c562c4"
+        },
+        {
+          "path": "BedTable/meshes/BedTable.png",
+          "sha256": "1e9f1843d343b80a311845b2e5a80e14a1bb4a550f7a036b36ac41d9eea2bb87"
+        },
+        {
+          "path": "BedTable/meshes/BedTable_Col.mtl",
+          "sha256": "b233e482753d95960b5632348dc7f500fa17a91f8aa8ea3d655acdcc5bfe4c5a"
+        },
+        {
+          "path": "BedTable/meshes/BedTable_Col.obj",
+          "sha256": "4aec40c2dc595c3ef3dd176a7e6398d50fb6e2c3ddcd638c86892597731fad1c"
+        },
+        {
+          "path": "BedTable/meshes/BedTable_Diffuse.png",
+          "sha256": "d8dd360a54f04313d8e14c2ccb95a6c733c606ed6b742af424550e0fdb74d099"
+        },
+        {
+          "path": "BedTable/meshes/BedTable_Normal.png",
+          "sha256": "79cb1a78729bdbc48f5069091f611917695ccde97dd7bdb0d12ae4b9f2300cd7"
+        },
+        {
+          "path": "BedTable/meshes/BedTable_SpecGloss.png",
+          "sha256": "94fad4b6c8d14faa79319090728927f6d7e870288a4ac6db57e16e24233605c8"
+        },
+        {
+          "path": "BedTable/model.config",
+          "sha256": "d12246ef82cf6c42e4f6fe0aae775b97c07b2e7e1d51f659bd294361b0367d77"
+        },
+        {
+          "path": "BedTable/model.sdf",
+          "sha256": "a2da3f9a520ceeb14488d8cae692875349d2443595cdf5d0a06ab40bd6ced86a"
+        },
+        {
+          "path": "BedTable/thumbnails/1.png",
+          "sha256": "2efe73e703ee022ab72ac7822199a570daf64ae7c1a3ca8a7db58afc3d34eacb"
+        },
+        {
+          "path": "BedTable/thumbnails/2.png",
+          "sha256": "0ec593c200b94cff9500b82de94c9a485478cc6acfa32f2ca5d9f882421964e6"
+        },
+        {
+          "path": "BedTable/thumbnails/3.png",
+          "sha256": "a9882679095a7afddc7212934b9f2646da17e4af3c9c8a2526397a3aa800a9f8"
+        },
+        {
+          "path": "BedTable/thumbnails/4.png",
+          "sha256": "2634f19db095cde44bdb35548050ed4b177f57f59080a134e7078d26a9f2649d"
+        },
+        {
+          "path": "BedTable/thumbnails/5.png",
+          "sha256": "3f370c0e79e2123e2595ecbe2c4f74c2e584eece2082c1dadd8b04dfb6a95cdc"
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bpcart_repaired_v1",
+      "provenance": {
+        "status": "recorded",
+        "source_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart",
+        "revision": "2",
+        "declared_license": "CC-BY-4.0",
+        "evidence": [
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/metadata/BPCart.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/ATTRIBUTION.md"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/origins.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_fuel/metadata/CGMClassic.json"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/ATTRIBUTION.md"
+          },
+          {
+            "package": "easyfly_gazebo_models",
+            "path": "licenses/hospital_repaired/origins.json"
+          }
+        ],
+        "note": "Derived resource repair. One MTL path changed; original license/author evidence retained. See hospital_repaired attribution/origins."
+      },
+      "source_archive_sha256": "68266a1e2d67e64c0e6aa4a6cd563d83d6751f2883b54b4b1f42a88bdfdae4cb",
+      "changes": [
+        "Repair one MTL normal-map filename to the supplied same-model PNG; original image/OBJ/SDF bytes retained.",
+        "Copy the exact wheel normal TGA from independently attributed CGMClassic v4; wheel diffuse atlas is byte-identical in both models."
+      ],
+      "files": [
+        {
+          "path": "BPCart/meshes/BP_BP_LP_Normal.png",
+          "sha256": "d13d5598fc148909e36b9c03f75191594c9469a0baf4b4207371626e30865658"
+        },
+        {
+          "path": "BPCart/meshes/BP_BP_LP_SpecularGloss.png",
+          "sha256": "3fb2b945d843634f3f15b161912fb3f238a4b145b584c496805f7bec7f901667"
+        },
+        {
+          "path": "BPCart/meshes/Cart_BP.mtl",
+          "sha256": "79eb9230024d1865573d1a89507664d87a1806c58a8f4c6300a41fa560d3a2c1"
+        },
+        {
+          "path": "BPCart/meshes/Cart_BP.obj",
+          "sha256": "a6a950e89952d0c67d5bcd12f2333e5d0b8feb69d000cef634bf57e124d3fea0"
+        },
+        {
+          "path": "BPCart/meshes/Cart_BP_Col.mtl",
+          "sha256": "8d3f0e6b40b17b2a761ec4b5a072931a202e8858c4d2204ab3edebea054c4ee9"
+        },
+        {
+          "path": "BPCart/meshes/Cart_BP_Col.obj",
+          "sha256": "b677df548237fcadcb3890100fc30d60abc7227f1d555d1b9fe1321e0b5035bb"
+        },
+        {
+          "path": "BPCart/meshes/Cart_BP_Diffuse.png",
+          "sha256": "29b96c6168cba84b45034167cda4ddf6f4bf0b38e91b77be9e776af03d6b3b83"
+        },
+        {
+          "path": "BPCart/meshes/Carts_Wheels_Diffuse.png",
+          "sha256": "09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984"
+        },
+        {
+          "path": "BPCart/meshes/Wheels_Normal_Normal_Bump.tga",
+          "sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2"
+        },
+        {
+          "path": "BPCart/model.config",
+          "sha256": "db0d2d9fda9f1dc1b5084103191319c153494f91f903f8175cb89fb9573014b5"
+        },
+        {
+          "path": "BPCart/model.sdf",
+          "sha256": "1d3f7068ac706e030027d940ec5100864adc0fadf3bc6a6d970ad8a68d9f2f28"
+        },
+        {
+          "path": "BPCart/thumbnails/1.png",
+          "sha256": "ccb96d58fd0cdcdbad184f3ce2c6986db5fee72e4f815fe642f14629abeca78d"
+        },
+        {
+          "path": "BPCart/thumbnails/2.png",
+          "sha256": "b8873501d430cec5bbb89ee29de3e2cdc255c5ba8ba5f2f6858533d6ab669d53"
+        },
+        {
+          "path": "BPCart/thumbnails/3.png",
+          "sha256": "718d690943d08603b97ef354cb9562ab5af6a3d7f52c2bfc0617a72e23cf244c"
+        },
+        {
+          "path": "BPCart/thumbnails/4.png",
+          "sha256": "9f6870c656a7386d33259b501bd4e78697dcd4d8243097e22fa0f47346c16c89"
+        },
+        {
+          "path": "BPCart/thumbnails/5.png",
+          "sha256": "0867f2985e3cbfa7a9428e04980b01ffa383c5d0310e4cf5619be595874dd3c2"
+        }
+      ]
+    }
+  ],
+  "resource_changes": [
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitA_01/meshes/aws_PortraitA_01_visual.DAE",
+      "source_sha256": "fd0b0c6b53bdc6ad4908d1faf59df1a035508f913e3488cc5f5863e51450215d",
+      "sha256": "4abe4104eca9f4b39a07ee156f9d352174befe6c0e6408ed2cbab18c215ef5c0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitA_01.jpg",
+          "new": "../materials/textures/PortraitA_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitA_01.jpg",
+      "target": "aws_robomaker_residential_PortraitA_01/materials/textures/PortraitA_01.jpg",
+      "source_sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46",
+      "sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitD_01/meshes/aws_PortraitD_01_visual.DAE",
+      "source_sha256": "6a1eb9c8b7cfb5fb7ef25c0bb8f9349d8630603acf47cbdce0f528df84d3d28d",
+      "sha256": "a935990e80d3cf888337b85d41896c384030b8751e2892939cd821664554f64c",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitD_01.jpg",
+          "new": "../materials/textures/PortraitD_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitD_01.jpg",
+      "target": "aws_robomaker_residential_PortraitD_01/materials/textures/PortraitD_01.jpg",
+      "source_sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3",
+      "sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitD_02/meshes/aws_PortraitD_01_visual.DAE",
+      "source_sha256": "fa9703b4cb34217222a7d57193735ffdca77092a67cb1bc2169283af26e22072",
+      "sha256": "6e8e6e57a221ebdfebee096c783d9dfdf4969c108ddf3dcf70563d456cfb44f0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitD_02.jpg",
+          "new": "../materials/textures/PortraitD_02.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitD_02.jpg",
+      "target": "aws_robomaker_residential_PortraitD_02/materials/textures/PortraitD_02.jpg",
+      "source_sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762",
+      "sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitE_01/meshes/aws_PortraitE_01_visual.DAE",
+      "source_sha256": "e43d82a220a9da3f26ba9d709466b78e0697bc4a63671e9ee09914ae05f31efc",
+      "sha256": "6464dde6887667039c88db340e0e07103776d84fe7be319d8d18246bcec849d0",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitE_01.jpg",
+          "new": "../materials/textures/PortraitE_01.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitE_01.jpg",
+      "target": "aws_robomaker_residential_PortraitE_01/materials/textures/PortraitE_01.jpg",
+      "source_sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556",
+      "sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556",
+      "replacements": []
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "models/aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE",
+      "target": "aws_robomaker_residential_PortraitE_02/meshes/aws_PortraitE_01_visual.DAE",
+      "source_sha256": "4e3828d34ebafe9b45dd4f2e3ea788e714eb82c78159514b947f015d47be413e",
+      "sha256": "4fec20317b43c63c770fb63166aeabf5b366b311555dcb9be13aa6419a1b68f5",
+      "replacements": [
+        {
+          "old": "../../../../photos/PortraitE_02.jpg",
+          "new": "../materials/textures/PortraitE_02.jpg",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "aws_hospital_repaired_v1",
+      "source": "photos/PortraitE_02.jpg",
+      "target": "aws_robomaker_residential_PortraitE_02/materials/textures/PortraitE_02.jpg",
+      "source_sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c",
+      "sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c",
+      "replacements": []
+    },
+    {
+      "asset_set": "fuel_hospital_bedtable_repaired_v1",
+      "source": "meshes/BedTable.mtl",
+      "target": "BedTable/meshes/BedTable.mtl",
+      "source_sha256": "7111b807ee8120084d236805fd2e100741f33dc4a521a1213a7ccaaa547564aa",
+      "sha256": "a36680cfff4abe79ad269939a9973139aa096fa83e5e6363eb64ac7c3950d94e",
+      "replacements": [
+        {
+          "old": "BedTable_Normal_Normal_Bump.tga",
+          "new": "BedTable_Normal.png",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bpcart_repaired_v1",
+      "source": "meshes/Cart_BP.mtl",
+      "target": "BPCart/meshes/Cart_BP.mtl",
+      "source_sha256": "c79ca99c261c30bb5ac421b576b714e0408a033ec6e3744087f351f2322746f0",
+      "sha256": "79eb9230024d1865573d1a89507664d87a1806c58a8f4c6300a41fa560d3a2c1",
+      "replacements": [
+        {
+          "old": "BP_Normal_Normal_Bump.tga",
+          "new": "BP_BP_LP_Normal.png",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "asset_set": "fuel_hospital_bpcart_repaired_v1",
+      "source_archive": "CGMClassic v4",
+      "archive_sha256": "2f8366ef6c5650457ee0f1357956098fa1f4afe8caee983cd2d9b5284b40f6b7",
+      "declared_license": "CC-BY-4.0",
+      "source": "meshes/Wheels_Normal_Normal_Bump.tga",
+      "target": "BPCart/meshes/Wheels_Normal_Normal_Bump.tga",
+      "source_sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2",
+      "sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2",
+      "replacements": [],
+      "wheel_diffuse_atlas_sha256": "09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984"
+    }
+  ],
+  "original_source_lock_sha256": "478604d8d8503bece046e81e1b4358326d1113bf9fd0e3ceed578e4d28e7a320"
+}

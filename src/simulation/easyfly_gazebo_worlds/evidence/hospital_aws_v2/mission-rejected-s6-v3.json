@@ -1,0 +1,540 @@
+{
+  "error": "RuntimeError: unexpected real terminal: {'name': '/execute_mission', 'admission': 'received', 'accepted': True, 'goal_uuid': 'f0e76aecbfe54e26b067e5f62e128e95', 'status': 6, 'success': False, 'message': 'step_failed:global route unavailable', 'terminal_state': {'source_ns': 49010000000, 'frame': 'odom', 'ros_now_ns': 49010000000, 'receipt': 22055.18882903, 'steady_now': 22055.258035692, 'armed': True, 'connected': True, 'mode': 3, 'mode_name': 'OFFBOARD', 'position': [0.7346377372741699, 0.0015570423565804958, 1.48809814453125], 'velocity': [-0.0812540128827095, 0.0033855161163955927, -0.0025750102940946817], 'pose_valid': True, 'velocity_valid': True, 'battery_valid': True, 'battery_voltage': 15.30000114440918, 'battery_remaining': 0.5}}",
+  "actions": [
+    {
+      "name": "/execute_mission",
+      "admission": "received",
+      "accepted": true,
+      "goal_uuid": "f0e76aecbfe54e26b067e5f62e128e95",
+      "status": 6,
+      "success": false,
+      "message": "step_failed:global route unavailable",
+      "terminal_state": {
+        "source_ns": 49010000000,
+        "frame": "odom",
+        "ros_now_ns": 49010000000,
+        "receipt": 22055.18882903,
+        "steady_now": 22055.258035692,
+        "armed": true,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.7346377372741699,
+          0.0015570423565804958,
+          1.48809814453125
+        ],
+        "velocity": [
+          -0.0812540128827095,
+          0.0033855161163955927,
+          -0.0025750102940946817
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.30000114440918,
+        "battery_remaining": 0.5
+      },
+      "feedback_summary": {
+        "samples": 5907,
+        "full_feedback_in_raw_result": "artifacts/scene-s6-hospital-repair-20261017/qualified-recovery-two-cycles/result.json"
+      }
+    }
+  ],
+  "action_status": {
+    "/navigate": {
+      "45d84f9bab53940f56de19afe0f33c68": {
+        "history": [
+          {
+            "steady": 21960.291240296,
+            "status": 2
+          },
+          {
+            "steady": 22022.149384676,
+            "status": 4
+          }
+        ],
+        "status": 4,
+        "last_steady": 22055.252032574,
+        "first_terminal": {
+          "steady": 22022.149385584,
+          "state": {
+            "source_ns": 37940000000,
+            "frame": "odom",
+            "ros_now_ns": 37950000000,
+            "receipt": 22022.035838785,
+            "steady_now": 22022.14939985,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              1.4107457399368286,
+              -0.0015546357026323676,
+              1.467254638671875
+            ],
+            "velocity": [
+              0.04850047454237938,
+              -0.009498510509729385,
+              0.013982408680021763
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.358000755310059,
+            "battery_remaining": 0.550000011920929
+          }
+        }
+      },
+      "e2d015c339f3b3512d18629c40979893": {
+        "history": [
+          {
+            "steady": 22022.158499313,
+            "status": 2
+          },
+          {
+            "steady": 22055.252035121,
+            "status": 6
+          }
+        ],
+        "status": 6,
+        "last_steady": 22055.25205809,
+        "first_terminal": {
+          "steady": 22055.252035854,
+          "state": {
+            "source_ns": 49010000000,
+            "frame": "odom",
+            "ros_now_ns": 49010000000,
+            "receipt": 22055.18882903,
+            "steady_now": 22055.252051375,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.7346377372741699,
+              0.0015570423565804958,
+              1.48809814453125
+            ],
+            "velocity": [
+              -0.0812540128827095,
+              0.0033855161163955927,
+              -0.0025750102940946817
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.30000114440918,
+            "battery_remaining": 0.5
+          }
+        }
+      }
+    },
+    "/search_area": {},
+    "/follow_trajectory": {
+      "ddec0e9fc3be707951e5e03728b7634a": {
+        "history": [
+          {
+            "steady": 21960.302399937,
+            "status": 2
+          },
+          {
+            "steady": 22022.068922843,
+            "status": 4
+          }
+        ],
+        "status": 4,
+        "last_steady": 22055.166410842,
+        "first_terminal": {
+          "steady": 22022.068924247,
+          "state": {
+            "source_ns": 37940000000,
+            "frame": "odom",
+            "ros_now_ns": 37940000000,
+            "receipt": 22022.035838785,
+            "steady_now": 22022.068929741,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              1.4107457399368286,
+              -0.0015546357026323676,
+              1.467254638671875
+            ],
+            "velocity": [
+              0.04850047454237938,
+              -0.009498510509729385,
+              0.013982408680021763
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.358000755310059,
+            "battery_remaining": 0.550000011920929
+          }
+        }
+      },
+      "4d6ad09abced9b3aae0cf942c8b433f6": {
+        "history": [
+          {
+            "steady": 22022.203586575,
+            "status": 2
+          },
+          {
+            "steady": 22055.166413316,
+            "status": 5
+          }
+        ],
+        "status": 5,
+        "last_steady": 22055.166428298,
+        "first_terminal": {
+          "steady": 22055.166414187,
+          "state": {
+            "source_ns": 48960000000,
+            "frame": "odom",
+            "ros_now_ns": 48990000000,
+            "receipt": 22055.165568152,
+            "steady_now": 22055.166421848,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.7396946549415588,
+              0.0005737306200899184,
+              1.488525390625
+            ],
+            "velocity": [
+              -0.08057675510644913,
+              0.00366586958989501,
+              -0.003469588700681925
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.30000114440918,
+            "battery_remaining": 0.5
+          }
+        }
+      }
+    },
+    "/land": {},
+    "/takeoff": {
+      "25033976b5addb52e310b6fcdefaea18": {
+        "history": [
+          {
+            "steady": 21936.131752887,
+            "status": 2
+          },
+          {
+            "steady": 21958.277808226,
+            "status": 4
+          }
+        ],
+        "status": 4,
+        "last_steady": 21958.277816142,
+        "first_terminal": {
+          "steady": 21958.277808766,
+          "state": {
+            "source_ns": 16740000000,
+            "frame": "odom",
+            "ros_now_ns": 16780000000,
+            "receipt": 21958.25907631,
+            "steady_now": 21958.277813341,
+            "armed": true,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.0019259267719462514,
+              0.011492526158690453,
+              1.006744384765625
+            ],
+            "velocity": [
+              -0.0024757457431405783,
+              -3.4103966754628345e-05,
+              0.24663573503494263
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 15.994000434875488,
+            "battery_remaining": 0.8999999761581421
+          }
+        }
+      }
+    },
+    "/goto_waypoint": {}
+  },
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          0.3197294163454475,
+          -11.502926050492968,
+          -0.016152819661458335
+        ],
+        "yaw": -0.015603036455832399
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 9510000000,
+        "frame": "odom",
+        "ros_now_ns": 9600000000,
+        "receipt": 21935.884432254,
+        "steady_now": 21936.116152765,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          -0.0008289969991892576,
+          0.006377095356583595,
+          0.036102294921875
+        ],
+        "velocity": [
+          -0.001050888909958303,
+          0.005587402731180191,
+          0.0007289234199561179
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "f0e76aecbfe54e26b067e5f62e128e95"
+    }
+  ],
+  "alignment_checks": [
+    {
+      "cycle": 1,
+      "policy": "recommended_region",
+      "maximum_position_error_m": 0.03945735967777553,
+      "yaw_error_rad": 0.00010495160007539632,
+      "translation_component_error_m": 0.03956425463172799,
+      "samples": [
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.2967870813978116,
+            -0.29856275710241675,
+            0.4607086181640625
+          ],
+          "error_m": 0.03944871607122823
+        },
+        {
+          "world_point": [
+            -0.7912564478048609,
+            11.19338030427245,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.2967870813978116,
+            -0.29856275710241675,
+            2.2607086181640623
+          ],
+          "error_m": 0.03944871607122823
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.2968500523577412,
+            0.30143723959313284,
+            0.4607086181640625
+          ],
+          "error_m": 0.039443637184905754
+        },
+        {
+          "world_point": [
+            -0.8006808530628938,
+            11.793306283527837,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.2968500523577412,
+            0.30143723959313284,
+            2.2607086181640623
+          ],
+          "error_m": 0.039443637184905754
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8032129070366079,
+            -0.2983423587426639,
+            0.4607086181640625
+          ],
+          "error_m": 0.03945735967777553
+        },
+        {
+          "world_point": [
+            1.3084844795889856,
+            11.226365722675565,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8032129070366079,
+            -0.2983423587426639,
+            2.2607086181640623
+          ],
+          "error_m": 0.03945735967777553
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            0.4768614378255208
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8031499360766783,
+            0.3016576379528857,
+            0.4607086181640625
+          ],
+          "error_m": 0.03945228190418706
+        },
+        {
+          "world_point": [
+            1.2990600743309528,
+            11.826291701930952,
+            2.2768614378255205
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8031499360766783,
+            0.3016576379528857,
+            2.2607086181640623
+          ],
+          "error_m": 0.03945228190418706
+        }
+      ]
+    }
+  ],
+  "ownership": [
+    {
+      "service": "/mission/ownership",
+      "requested": "f0e76aecbfe54e26b067e5f62e128e95",
+      "returned": "f0e76aecbfe54e26b067e5f62e128e95",
+      "state": 2,
+      "steady": 22055.260098678
+    }
+  ],
+  "sessions": [
+    {
+      "steady": 21960.305334703,
+      "session_id": "45d84f9bab53940f56de19afe0f33c68:1",
+      "active": true
+    },
+    {
+      "steady": 22022.099431886,
+      "session_id": "45d84f9bab53940f56de19afe0f33c68:1",
+      "active": false
+    },
+    {
+      "steady": 22022.204435179,
+      "session_id": "e2d015c339f3b3512d18629c40979893:1",
+      "active": true
+    },
+    {
+      "steady": 22055.166313612,
+      "session_id": "e2d015c339f3b3512d18629c40979893:1",
+      "active": false
+    }
+  ],
+  "normal_exits": [
+    "126119",
+    "126149",
+    "126912",
+    "126875",
+    "126871",
+    "126827",
+    "126858",
+    "126813",
+    "126786",
+    "126800",
+    "126873",
+    "126712",
+    "126740",
+    "126829",
+    "126341",
+    "126339",
+    "126621",
+    "126738",
+    "126710",
+    "126910",
+    "126625",
+    "126623",
+    "126337",
+    "126023"
+  ],
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "forced": false,
+  "leftovers": [],
+  "shutdown_seconds": 0.9655930959997931,
+  "scene_probe_sha256": "4af2d0b20f01a07babe68f48eda99109ef054448eaa0055e04bbff4d8964f6d2",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "grid_height_limit_m": 2.9,
+  "scene": "hospital_aws_v2",
+  "passed": false,
+  "scope": "One outgoing navigation passed, first return rejected while airborne. No successful parent, landing recovery or second parent is attributed to this run.",
+  "raw_result": "artifacts/scene-s6-hospital-repair-20261017/qualified-recovery-two-cycles/result.json",
+  "raw_result_sha256": "f2f26fb577acc4779dd30e02ce60a8593a172654040653178f72f8ab18445f75",
+  "verbose_derived_copy": {
+    "path": "artifacts/scene-s6-hospital-repair-20261017/full-derived-mission-rejected-s6-v3.json",
+    "sha256": "c3469fb6bb8c69f65f2610f66b2db7b50e8bc4e4d4bdb81693b1e29730af6d12"
+  }
+}

@@ -53,6 +53,30 @@ def archive_name(spec):
     return 'source.' + spec['format']
 
 
+def archive_sources(spec):
+    """Flat, independently locked inputs; the primary source keeps its old layout."""
+    result = [(None, spec)]
+    seen = set()
+    extras = spec.get('supplements', [])
+    if not isinstance(extras, list) or len(extras) > 16:
+        raise CacheError('at most sixteen supplemental archives required')
+    for item in extras:
+        if not isinstance(item, dict) or set(item) != {'id', 'archive'}:
+            raise CacheError('supplement requires exactly id and archive')
+        name, source = item['id'], item['archive']
+        if relative(name).name != name or name in seen:
+            raise CacheError('unique single-component supplemental archive ID required')
+        if not isinstance(source, dict) or 'supplements' in source:
+            raise CacheError('supplemental archives cannot nest')
+        seen.add(name)
+        result.append((name, source))
+    return result
+
+
+def _source_directory(stage, source_id):
+    return stage if source_id is None else stage / 'sources' / source_id
+
+
 def default_root():
     xdg = os.environ.get('XDG_CACHE_HOME', '').strip()
     base = Path(xdg).expanduser() if xdg else Path.home() / '.cache'
@@ -91,36 +115,44 @@ def identity(asset):
             raise CacheError('asset ID and revision must be single path components')
     if asset['provenance']['status'] != 'recorded' or not asset['provenance']['declared_license']:
         raise CacheError('recorded asset provenance and license required before fetch')
-    targets = [m['target'] for m in archive['members']]
+    sources = archive_sources(archive)
+    targets = [m['target'] for _, source in sources for m in source['members']]
     inventory = [f['path'] for f in asset['files']]
     if len(set(targets)) != len(targets) or len(set(inventory)) != len(inventory) or set(targets) != set(inventory):
         raise CacheError('archive mapping must cover the locked asset inventory exactly once')
-    for member in archive['members']:
-        relative(member['source']); relative(member['target'])
-    archive_name(archive)
-    if archive['prefix']:
-        relative(archive['prefix'])
-    elif archive['format'] != 'zip':
-        raise CacheError('tar archive requires a locked prefix')
-    license_spec = archive['license']
-    if set(license_spec) == {'source', 'sha256'}:
-        relative(license_spec['source'])
-    elif set(license_spec) == {'notice', 'sha256'}:
-        notice = license_spec['notice']
-        if (not isinstance(notice, str) or not notice or len(notice.encode()) > 65536
-                or hashlib.sha256(notice.encode()).hexdigest() != license_spec['sha256']):
-            raise CacheError('locked external license notice fingerprint/size mismatch')
-    else:
-        raise CacheError('exactly one archive license source or external notice required')
-    for url in archive['urls']:
-        parsed = urlsplit(url)
-        if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
-            raise CacheError('reviewed HTTPS archive URL required')
+    for _, source in sources:
+        for member in source['members']:
+            relative(member['source']); relative(member['target'])
+        archive_name(source)
+        if source['prefix']:
+            relative(source['prefix'])
+        elif source['format'] != 'zip':
+            raise CacheError('tar archive requires a locked prefix')
+        license_spec = source['license']
+        if set(license_spec) == {'source', 'sha256'}:
+            relative(license_spec['source'])
+        elif set(license_spec) == {'notice', 'sha256'}:
+            notice = license_spec['notice']
+            if (not isinstance(notice, str) or not notice or len(notice.encode()) > 65536
+                    or hashlib.sha256(notice.encode()).hexdigest() != license_spec['sha256']):
+                raise CacheError('locked external license notice fingerprint/size mismatch')
+        else:
+            raise CacheError('exactly one archive license source or external notice required')
+        for url in source['urls']:
+            parsed = urlsplit(url)
+            if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
+                raise CacheError('reviewed HTTPS archive URL required')
     lock = hashlib.sha256(canonical(asset)).hexdigest()
-    return Path(asset['asset_set_id']) / revision / lock, {
+    receipt = {
         'schema_version': 1, 'asset_set_id': asset['asset_set_id'], 'revision': revision,
         'lock_sha256': lock, 'archive_sha256': archive['sha256'],
         'archive_size_bytes': archive['size_bytes']}
+    if len(sources) > 1:
+        receipt['supplement_archives'] = [dict(id=name, format=spec['format'],
+                                             sha256=spec['sha256'], size_bytes=spec['size_bytes'],
+                                             license_sha256=spec['license']['sha256'])
+                                        for name, spec in sources[1:]]
+    return Path(asset['asset_set_id']) / revision / lock, receipt
 
 
 def _directory(path):
@@ -159,18 +191,24 @@ def _files(root, expected):
 
 def _validate_payload(asset, directory, receipt):
     archive = asset['archive']
-    source = directory / archive_name(archive)
-    expected = {'receipt.json', 'LICENSE', source.name} | {'models/' + f['path'] for f in asset['files']}
+    expected = {'receipt.json'} | {'models/' + f['path'] for f in asset['files']}
+    sources = archive_sources(archive)
+    for name, spec in sources:
+        parent = _source_directory(directory, name)
+        expected.update(str((parent / n).relative_to(directory)) for n in ('LICENSE', archive_name(spec)))
     if _files(directory, expected) != expected:
         raise CacheError(f'asset cache file inventory differs: {directory}; existing version is preserved')
     expected_receipt = canonical(receipt) + b'\n'
     if (directory / 'receipt.json').stat().st_size != len(expected_receipt) or \
             (directory / 'receipt.json').read_bytes() != expected_receipt:
         raise CacheError('asset cache receipt differs from the selected lock')
-    if source.stat().st_size != archive['size_bytes'] or digest(source) != archive['sha256']:
-        raise CacheError('cached source archive fingerprint mismatch; existing version is preserved')
-    if digest(directory / 'LICENSE') != archive['license']['sha256']:
-        raise CacheError('cached original license fingerprint mismatch')
+    for name, spec in sources:
+        parent = _source_directory(directory, name)
+        source = parent / archive_name(spec)
+        if source.stat().st_size != spec['size_bytes'] or digest(source) != spec['sha256']:
+            raise CacheError('cached source archive fingerprint mismatch; existing version is preserved')
+        if digest(parent / 'LICENSE') != spec['license']['sha256']:
+            raise CacheError('cached original license fingerprint mismatch')
     for item in asset['files']:
         if digest(directory / 'models' / item['path']) != item['sha256']:
             raise CacheError(f'cached asset fingerprint mismatch: {item["path"]}; existing version is preserved')
@@ -282,8 +320,7 @@ def _entries(spec, stage):
                 yield member.filename, member.file_size, member.is_dir(), lambda: archive.read(member)
 
 
-def _unpack(asset, stage):
-    spec = asset['archive']
+def _unpack_source(spec, stage, source_directory, outputs):
     mapping = {}
     for item in spec['members']:
         mapping.setdefault(item['source'], []).append(item)
@@ -291,14 +328,13 @@ def _unpack(asset, stage):
         license_record = dict(source=spec['license']['source'], target=None,
                               source_sha256=spec['license']['sha256'], replacements=[])
         mapping.setdefault(license_record['source'], []).append(license_record)
-    outputs = {f['path']: f['sha256'] for f in asset['files']}
     seen, written = set(), set()
     if 'notice' in spec['license']:
         # This notice is reviewed catalog evidence, explicitly NOT a file in the ZIP.
-        (stage / 'LICENSE').write_bytes(spec['license']['notice'].encode())
+        (source_directory / 'LICENSE').write_bytes(spec['license']['notice'].encode())
         written.add(None)
     total = 0
-    entries = _entries(spec, stage)
+    entries = _entries(spec, source_directory)
     try:
         for count, (raw_name, size, is_directory, read) in enumerate(entries, 1):
             # Tar directory names conventionally have a terminal slash.
@@ -333,7 +369,7 @@ def _unpack(asset, stage):
                 expected = outputs[target] if target is not None else spec['license']['sha256']
                 if hashlib.sha256(result).hexdigest() != expected:
                     raise CacheError(f'prepared asset fingerprint mismatch: {target}')
-                path = stage / 'models' / target if target is not None else stage / 'LICENSE'
+                path = stage / 'models' / target if target is not None else source_directory / 'LICENSE'
                 path.parent.mkdir(parents=True, exist_ok=True)
                 with path.open('xb') as stream:
                     stream.write(result)
@@ -342,11 +378,17 @@ def _unpack(asset, stage):
         raise CacheError(f'invalid locked archive: {error}') from error
     finally:
         entries.close()
-    if written != set(outputs) | {None}:
+    if written != {m['target'] for m in spec['members']} | {None}:
         raise CacheError('archive is missing mapped inventory/license members')
 
 
-def fetch_asset(asset, root, *, archive_path=None, offline=False, opener=None):
+def _unpack(asset, stage):
+    outputs = {f['path']: f['sha256'] for f in asset['files']}
+    for name, spec in archive_sources(asset['archive']):
+        _unpack_source(spec, stage, _source_directory(stage, name), outputs)
+
+
+def fetch_asset(asset, root, *, archive_path=None, supplement_paths=None, offline=False, opener=None):
     """Publish one complete version atomically; never repair/overwrite existing versions."""
     root = cache_root(root)
     location, receipt = identity(asset)
@@ -356,6 +398,12 @@ def fetch_asset(asset, root, *, archive_path=None, offline=False, opener=None):
         return dict(asset_set_id=asset['asset_set_id'], state='already_ready', model_root=str(models), lock_sha256=receipt['lock_sha256'])
     if offline:
         raise CacheError(f'asset cache missing: {asset["asset_set_id"]}; offline mode cannot prepare it')
+    sources = archive_sources(asset['archive'])
+    paths = {} if supplement_paths is None else dict(supplement_paths)
+    expected_paths = {name for name, _ in sources[1:]}
+    if (archive_path is not None and set(paths) != expected_paths) or (
+            archive_path is None and supplement_paths is not None):
+        raise CacheError('local preparation requires primary and every supplemental archive; no implicit download')
     with _locked(root, asset['asset_set_id']):
         if destination.exists() or destination.is_symlink():
             models = validate_cached(asset, root)
@@ -364,19 +412,24 @@ def fetch_asset(asset, root, *, archive_path=None, offline=False, opener=None):
         _mkdir(staging, root)
         with tempfile.TemporaryDirectory(prefix=asset['asset_set_id'] + '-', dir=staging) as temp:
             stage = Path(temp)
-            archive = stage / archive_name(asset['archive'])
-            source = None
-            if archive_path is not None:
-                local = Path(archive_path)
-                if local.stat().st_size != asset['archive']['size_bytes'] or digest(local) != asset['archive']['sha256']:
-                    raise CacheError('local archive size or SHA256 mismatch')
-                shutil.copyfile(local, archive)
-                source = str(local.resolve(strict=True))
-            else:
-                source = _download(asset['archive'], archive, opener)
-            # Check copied bytes as well: local archives may change during a copy.
-            if archive.stat().st_size != asset['archive']['size_bytes'] or digest(archive) != asset['archive']['sha256']:
-                raise CacheError('staged archive size or SHA256 mismatch')
+            origins = []
+            for name, spec in sources:
+                parent = _source_directory(stage, name)
+                parent.mkdir(parents=True, exist_ok=True)
+                archive = parent / archive_name(spec)
+                local_path = archive_path if name is None else paths.get(name)
+                if local_path is not None:
+                    local = Path(local_path)
+                    if local.stat().st_size != spec['size_bytes'] or digest(local) != spec['sha256']:
+                        raise CacheError('local archive size or SHA256 mismatch')
+                    shutil.copyfile(local, archive)
+                    origin = str(local.resolve(strict=True))
+                else:
+                    origin = _download(spec, archive, opener)
+                # Check copied bytes too: local archives may change during a copy.
+                if archive.stat().st_size != spec['size_bytes'] or digest(archive) != spec['sha256']:
+                    raise CacheError('staged archive size or SHA256 mismatch')
+                origins.append(dict(id=name, source=origin))
             _unpack(asset, stage)
             (stage / 'receipt.json').write_bytes(canonical(receipt) + b'\n')
             _validate_payload(asset, stage, receipt)
@@ -385,5 +438,8 @@ def fetch_asset(asset, root, *, archive_path=None, offline=False, opener=None):
             # Existing versions are checked under the asset lock and never replaced.
             _publish(stage, destination)
         models = validate_cached(asset, root)
-        return dict(asset_set_id=asset['asset_set_id'], state='prepared', source=source,
-                    model_root=str(models), lock_sha256=receipt['lock_sha256'])
+        result = dict(asset_set_id=asset['asset_set_id'], state='prepared', source=origins[0]['source'],
+                      model_root=str(models), lock_sha256=receipt['lock_sha256'])
+        if len(origins) > 1:
+            result['supplement_sources'] = origins[1:]
+        return result

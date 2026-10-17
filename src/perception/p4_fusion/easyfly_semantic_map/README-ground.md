@@ -58,3 +58,13 @@ certified free-space map. The projection is bounded to 200000 points and 1000000
 grid cells and uses O(points + cells) work. Invalid mode selections fail startup.
 Scene selection rejects CLI overrides and records the actual ROS parameter and
 loaded semantic library before a mission.
+
+An opt-in `grid_height_limit_m` (default `0.0`, unlimited) restricts only the
+`observed_cells` 2D projection to heights above the current trusted ground plane.
+Voxels intersecting the limit remain occupied, including half-width and ground
+slope margins. Low obstacles, horizontal inflation, persistence and full dynamic
+envelopes remain unchanged. Full nonground clouds, semantic messages and the
+local 3D planner retain overhead surfaces. Invalid ground/current-cloud evidence
+or vehicle height above `limit - 0.4m` invalidates the grid. Managed scenes must
+declare a measured recommended region with `max.z + 0.6m <= limit`; arbitrary
+mission heights outside that region require independent qualification.
