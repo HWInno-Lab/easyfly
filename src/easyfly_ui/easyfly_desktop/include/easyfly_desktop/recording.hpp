@@ -41,7 +41,14 @@ std::string recording_clock_end_reason(
   const RecordingPacket & packet,
   const ImageBinding & binding);
 enum class RecordingPhase {Idle, Starting, Recording, Stopping, Completed, Failed};
-struct RecordingEntry {std::string id, status, reason; uint64_t frames{0};};
+struct RecordingEntry
+{
+  std::string id, status, reason;
+  uint64_t frames{0};
+  QString started, source, execution;
+  double duration{-1};
+  QImage thumbnail;
+};
 struct RecordingState
 {
   RecordingPhase phase{RecordingPhase::Idle};

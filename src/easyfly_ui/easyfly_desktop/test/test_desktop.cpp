@@ -45,6 +45,7 @@
 #include <stdexcept>
 
 #include "easyfly_desktop/presentation.hpp"
+#include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_ui_bridge/camera_observations.hpp"
 #ifdef EASYFLY_ENABLE_MEDIA
 #include <opencv2/videoio.hpp>
@@ -75,6 +76,92 @@ protected:
   QString content(const char * name) {return widget<QLabel>(name)->text();}
   void click(const char * name) {widget<QPushButton>(name)->click();}
 };
+TEST_F(Desktop, ConnectionLobbyCreatesNoSourceAndWaitsForAnIntegratedFreshWorkspace)
+{
+  auto creations = std::make_shared<int>(0);
+  auto original = factory(state);
+  ui::SourceFactory guarded = [original, creations](
+    const b::BridgeConfig & config, std::shared_ptr<const b::UiSnapshot> history)
+    {
+      ++*creations;
+      return original(config, std::move(history));
+    };
+  window = std::make_unique<ui::MainWindow>(
+    b::BridgeConfig{}, guarded, nullptr, ui::default_tool_options(), ui::MissionOptions{},
+    ui::control_factory(), ui::ParameterOptions{}, ui::parameter_factory(), ui::ImportOptions{},
+    ui::import_factory(), ui::RvizOptions{}, ui::RecordingOptions{}, false);
+  auto * page = new QWidget(window.get());
+  window->set_connection_page(page, true); window->show();
+  auto * navigation = widget<QListWidget>("navigation");
+  ASSERT_NE(navigation, nullptr);
+  EXPECT_EQ(navigation->currentRow(), 0);
+  EXPECT_EQ(navigation->currentItem()->text(), QStringLiteral("连接与仿真"));
+  EXPECT_EQ(navigation->count(), 7);
+  const QStringList keys{"connection", "overview", "tasks", "perception", "space", "records",
+    "settings"};
+  for (int i = 0; i < navigation->count(); ++i) {
+    EXPECT_EQ(navigation->item(i)->data(Qt::UserRole).toString(), keys[i]);
+  }
+  for (const int i : {1, 3, 4}) {
+    EXPECT_FALSE(navigation->item(i)->flags() & Qt::ItemIsEnabled);
+  }
+  for (const int i : {2, 5, 6}) {
+    EXPECT_TRUE(navigation->item(i)->flags() & Qt::ItemIsEnabled);
+  }
+  EXPECT_FALSE(widget<QPushButton>("observerToggle")->isEnabled());
+  QJsonObject status{{"process_running", true}, {"workspace_fresh", true},
+    {"workspace", QJsonObject{{"connection_page", false}}}};
+  page->setProperty("connectionState", status);
+  QApplication::processEvents();
+  EXPECT_TRUE(window->isVisible());  // A legacy window is not the integrated handoff target.
+  status["workspace"] = QJsonObject{{"connection_page", true}, {"closing", true}};
+  page->setProperty("connectionState", status);
+  QApplication::processEvents(); EXPECT_TRUE(window->isVisible());
+  status["workspace"] = QJsonObject{{"connection_page", true}, {"closing", false}};
+  status["workspace_fresh"] = false;
+  page->setProperty("connectionState", status);
+  QApplication::processEvents(); EXPECT_TRUE(window->isVisible());
+  EXPECT_EQ(*creations, 0);
+  window->show_page("tasks"); widget<QTabWidget>("taskCenterTabs")->setCurrentIndex(1);
+  click("draftNew"); auto * editor = window->findChild<ui::MissionEditor *>();
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return editor->dirty() && !editor->busy() && widget<QPushButton>("draftAdd")->isEnabled();
+      }));
+  status["workspace_fresh"] = true;
+  page->setProperty("connectionState", status);
+  QApplication::processEvents(); EXPECT_TRUE(window->isVisible());
+  EXPECT_TRUE(editor->dirty()); EXPECT_EQ(*creations, 0);
+  QTemporaryDir drafts; editor->prepare_directory(drafts.path() + "/drafts");
+  ASSERT_TRUE(until([&] {return !editor->busy();})); editor->export_file("offline.yaml");
+  ASSERT_TRUE(until([&] {return !editor->dirty();}));
+  EXPECT_TRUE(QFile::exists(drafts.path() + "/drafts/offline.yaml"));
+  status["workspace_fresh"] = false; page->setProperty("connectionState", status);
+  status["workspace_fresh"] = true; page->setProperty("connectionState", status);
+  ASSERT_TRUE(until([&] {return window->cleanup_complete() && !window->isVisible();}));
+  EXPECT_EQ(*creations, 0); EXPECT_EQ(state->stop_calls, 0);
+}
+TEST_F(Desktop, ConnectionPageSharesNavigationWithoutRestartingObservation)
+{
+  open();
+  auto * page = new QWidget(window.get());
+  window->set_connection_page(page);
+  auto * navigation = widget<QListWidget>("navigation");
+  ASSERT_NE(navigation, nullptr);
+  EXPECT_EQ(navigation->currentRow(), 1);
+  EXPECT_TRUE(window->show_connection_page());
+  EXPECT_EQ(navigation->currentRow(), 0);
+  navigation->setCurrentRow(0);
+  page->setProperty("connectionRaiseRequested", 1);
+  EXPECT_EQ(navigation->currentRow(), 0);
+  EXPECT_TRUE(window->connection_status()["connection_page"].toBool());
+  EXPECT_EQ(state->stop_calls, 0);
+  EXPECT_TRUE(widget<QWidget>("configurationPanel")->isHidden());
+  EXPECT_EQ(window->findChildren<ui::RvizView *>().size(), ui::RvizView::available() ? 1 : 0);
+  EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 4);
+  EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->count(), 2);
+}
 TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
 {
   state->data = std::make_shared<b::UiSnapshot>(); state->data->running = true; open();
@@ -93,7 +180,7 @@ TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
 }
 TEST_F(Desktop, CameraControlsStayLeftAndIndependentCanvasUsesRightSpace)
 {
-  open(); widget<QListWidget>("navigation")->setCurrentRow(2);
+  open(); window->show_page("perception");
   auto * split = widget<QSplitter>("cameraPerceptionSplitter");
   auto * scroll = widget<QScrollArea>("cameraControlsScroll");
   auto * controls = widget<QWidget>("cameraControls");
@@ -120,15 +207,15 @@ TEST_F(Desktop, CameraControlsStayLeftAndIndependentCanvasUsesRightSpace)
     }
   }
 }
-TEST_F(Desktop, WhiteWorkspaceWithOnlyDarkMenuStripAndBlueAccents)
+TEST_F(Desktop, BlueGrayWorkspaceKeepsWhiteCardsAndClearActionHierarchy)
 {
   open(); QTest::qWait(50);
   auto * nav = widget<QListWidget>("navigation");
   const auto nav_pixels = nav->viewport()->grab().toImage();
-  EXPECT_EQ(nav_pixels.pixelColor(10, nav_pixels.height() - 8), QColor("#ffffff"));
-  EXPECT_EQ(nav_pixels.pixelColor(10, 20), QColor("#ffffff"));
+  EXPECT_EQ(nav_pixels.pixelColor(10, nav_pixels.height() - 8), QColor("#eaf0f8"));
+  EXPECT_EQ(nav_pixels.pixelColor(10, 20), QColor("#eaf0f8"));
   const auto content_pixels = widget<QWidget>("pageContent")->grab().toImage();
-  EXPECT_EQ(content_pixels.pixelColor(content_pixels.width() - 8, 8), QColor("#ffffff"));
+  EXPECT_EQ(content_pixels.pixelColor(content_pixels.width() - 8, 8), QColor("#f3f6fb"));
   EXPECT_EQ(widget<QWidget>("topBar")->grab().toImage().pixelColor(2, 2), QColor("#ffffff"));
   EXPECT_EQ(
     widget<QTableView>("parameterTable")->palette().color(QPalette::Base),
@@ -137,8 +224,8 @@ TEST_F(Desktop, WhiteWorkspaceWithOnlyDarkMenuStripAndBlueAccents)
   EXPECT_FALSE(primary->isEnabled());
   widget<QLineEdit>("executionId")->setText(QString(32, 'a')); EXPECT_TRUE(primary->isEnabled());
   QCoreApplication::processEvents();
-  const auto button_pixels = primary->grab().toImage();
-  EXPECT_EQ(button_pixels.pixelColor(8, 8), QColor("#1769df"));
+  EXPECT_TRUE(primary->isEnabled());
+  EXPECT_NE(primary->palette().color(QPalette::ButtonText), QColor("#ffffff"));
 }
 TEST_F(Desktop, ReferenceThemeTextContrastIsReadable)
 {
@@ -181,7 +268,7 @@ TEST_F(Desktop, LogoIsBundledAndOverviewContainsIndependentObservationPanels)
   EXPECT_FALSE(map->property("heading_valid").toBool());
   EXPECT_EQ(content("overviewAltitude"), "1.50");
   EXPECT_EQ(widget<QTabWidget>("overviewMapTabs")->count(), 2);
-  EXPECT_NE(widget<QLabel>("overviewRvizUnavailable"), nullptr);
+  EXPECT_NE(widget<QLabel>("overviewSpatialHint"), nullptr);
   for (int i = 0; i < widget<QListWidget>("navigation")->count(); ++i) {
     EXPECT_FALSE(widget<QListWidget>("navigation")->item(i)->icon().isNull());
   }
@@ -648,10 +735,19 @@ TEST_F(Desktop, AllStepTypesAndHistoricalPreviewStayReadonly)
 }
 TEST_F(Desktop, BoundedEventsAndSmallWindowPages)
 {
+  state->data->state.sdk.value.flight_mode_name = "AUTO.LOITER";
   for (int i = 0; i < 1005; ++i) {
     state->data->events.push_back({static_cast<double>(i), 0, "event", 101});
   }
   open(); window->resize(1024, 720); QTest::qWait(50);
+  auto * mode_label = widget<QLabel>("stateMode");
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return mode_label->fontMetrics().horizontalAdvance(mode_label->text()) <=
+        mode_label->contentsRect().width();
+      }));
+  EXPECT_EQ(mode_label->text(), "AUTO.LOITER");
   EXPECT_EQ(widget<QTableView>("eventTable")->model()->rowCount(), 1000);
   auto * nav = widget<QListWidget>("navigation"); ASSERT_EQ(nav->count(), 7);
   for (int i = 0; i < nav->count(); ++i) {
@@ -670,16 +766,20 @@ TEST_F(Desktop, ActualWidgetScreenshotsOfIsolatedFixture)
   static_cast<QVBoxLayout *>(window->centralWidget()->layout())->insertWidget(0, watermark);
   const auto output = QDir(QStringLiteral(EASYFLY_SCREENSHOT_DIRECTORY));
   ASSERT_TRUE(output.mkpath("."));
-  auto * nav = widget<QListWidget>("navigation");
   const QStringList files{"overview", "missions", "perception", "map", "diagnostics",
     "tools-boundary"};
+  const QStringList keys{"overview", "tasks", "perception", "space", "settings", "settings"};
   for (int i = 0; i < files.size(); ++i) {
-    state->data = sample(); nav->setCurrentRow(i); QTest::qWait(120);
+    state->data = sample(); window->show_page(keys[i]);
+    if (keys[i] == "settings") {
+      widget<QTabWidget>("settingsTabs")->setCurrentIndex(i == 5 ? 2 : 0);
+    }
+    QTest::qWait(120);
     ASSERT_TRUE(window->grab().save(output.filePath(files[i] + ".png")));
   }
   const auto detail_directory = QDir(output.filePath("../d6-4"));
   ASSERT_TRUE(detail_directory.mkpath("."));
-  nav->setCurrentRow(1); click("listMissions");
+  window->show_page("tasks"); click("listMissions");
   ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
   widget<QListWidget>("missionList")->setCurrentRow(0); click("inspectMission"); QTest::qWait(250);
   ASSERT_TRUE(window->grab().save(detail_directory.filePath("mission-details.png")));
@@ -687,7 +787,7 @@ TEST_F(Desktop, ActualWidgetScreenshotsOfIsolatedFixture)
   ASSERT_TRUE(window->grab().save(detail_directory.filePath("mission-content.png")));
   window->resize(1024, 720); state->data->clock.quality = b::Quality::ClockPaused;
   state->data->command_uncertain_observed = b::Event{1, 0, "fault", 101};
-  nav->setCurrentRow(0); QTest::qWait(120);
+  window->show_page("overview"); QTest::qWait(120);
   ASSERT_TRUE(window->grab().save(output.filePath("small-warning.png")));
 }
 TEST_F(Desktop, OverviewFreshAttitudeAndInvalidationScreenshots)

@@ -1,7 +1,8 @@
 # EasyFly desktop (read-only by default)
 
 Native C++17 / Qt5 Widgets desktop. Uses `easyfly_ui_bridge` to observe an
-already-running ROS graph; it never launches a backend. Optional independent
+already-running ROS graph. The standalone desktop never launches a backend; the
+optional integrated connection manager provides explicit simulation/communications startup. Optional independent
 viewing tools launch only after explicit user clicks. Managed simulation mission
 operations require separate explicit startup opt-in; no standalone flight buttons exist.
 
@@ -32,14 +33,23 @@ window does not change them. A domain is discovery isolation, not authentication
 
 Options: `--profile` (selection label only), `--front-topic`, `--down-topic`
 (empty disables that camera), `--system-time`, `--help`.
-Changing profile, topics or time source in the window requires disconnecting
-and completing local cleanup before reconnecting. Backend profile is confirmed
+In standalone mode, changing profile, topics or time source requires disconnecting
+and completing local cleanup before reconnecting. In a managed workspace, the first
+connection page owns editing and rebuilds the workspace with a frozen environment;
+diagnostics shows effective settings read-only. Backend profile is confirmed
 only by an explicit whitelisted read, not by selection or capabilities.
 
 ## Pages and boundaries
 
-The workspace, navigation, status bar, cards and camera letterboxing are white;
-only the narrow menu strip is dark slate. Blue icons, selection markers and
+Fixed navigation: **连接与仿真 → 运行总览 → 任务中心 → 相机与感知 → 空间视图 →
+记录与回放 → 诊断与设置**. The task center groups catalog, structured draft editor
+(with advanced YAML tab), import and execution/query. Diagnostics/settings contains
+advanced independent tools. With the optional manager installed, connection editing
+and QGC executable selection live on the first page. Before connection, local draft,
+record and settings pages remain usable without creating a ROS context.
+
+The light blue-gray workspace uses a pale blue sidebar, white cards and blue primary
+actions; only the narrow menu strip is dark slate. Blue icons, selection markers and
 primary actions provide accents; warnings retain readable amber text/borders.
 The supplied EasyFly logo is compiled into Qt resources, so runtime loading does
 not depend on the ignored docs directory or the original source location.
@@ -59,12 +69,11 @@ contract, never on the color of a field.
   ground clearance or height above the takeoff point. Independent validity,
   clock/receipt/source evidence and unbound global phase text are expandable;
   the event dock is available via View or the overview button, hidden initially.
-  With `--enable-rviz-embed`, the same single renderer can be manually opened
-  inside the overview map tab or on the full experimental page. Moving/hiding
-  it releases rendering; it never auto-reopens or creates a second ROS surface.
-  Without that flag/build, the overview explains the unavailable 3D entry and
-  links to the independent tool page. Local grid/XY is not a SLAM or satellite
-  basemap; RViz layers require actual publishers/TF and remain opt-in/read-only.
+  The 3D shortcut selects **空间视图 → 内嵌 RViz**, where the single renderer is
+  manually opened when the installed build supports it. Hiding the page releases
+  rendering; it never auto-reopens. The page remains present with an explanation
+  when embedding was not compiled. Local grid/XY is not a SLAM or satellite basemap;
+  RViz layers require actual publishers/TF and remain manually enabled/read-only.
 - Missions: list catalog basenames, static validation, inspect validated catalog
   content/steps/defaults, query an explicitly known 32-character service
   `execution_id`. No active-ID/history discovery, arbitrary file access,
@@ -615,7 +624,7 @@ Screenshots/logs are under ignored `docs/ui/d6-5/import/`.
 
 ## Experimental read-only RViz embedding (D6-5)
 
-Two independent opt-ins are required. CMake defaults to
+The installed build controls availability; renderer startup is always manual. CMake defaults to
 `EASYFLY_ENABLE_RVIZ_EMBED=OFF`: that binary does not link RViz/Ogre and rejects
 `--enable-rviz-embed` with exit2. Package metadata declares the superset of
 dependencies needed by the optional build. An enabled build requires the tested
@@ -627,7 +636,7 @@ source install/setup.bash
 ros2 run easyfly_desktop easyfly_desktop --enable-rviz-embed
 ```
 
-This adds `三维观测（实验）`, but creates no rendering surface or RViz node until
+The fixed `空间视图` page contains an embedded RViz tab, but creates no rendering surface or RViz node until
 the user clicks `打开只读三维`. Only X11/xcb is supported in this increment;
 unsupported platform, runtime version, plugin or foreign default ROS context
 refuses initialization. Keep standalone RViz and the local XY canvas as fallback.
@@ -747,9 +756,9 @@ Screenshots and diagnostics are under ignored `docs/ui/d6-5/rviz/`.
 
 ## Optional local camera recording (D6-6)
 
-Both gates are explicit: build with `-DEASYFLY_ENABLE_MEDIA=ON`, then launch with
-`--enable-recording`. Default builds/windows do not create a recorder, directory
-or camera recording. Requesting recording in a build without the backend exits
+Build with `-DEASYFLY_ENABLE_MEDIA=ON`; its fixed recording page requires no CLI
+opt-in. A directory and recording are created only after manual selection and Start.
+The legacy `--enable-recording` flag remains accepted. Requesting it in a build without the backend exits
 with code 2. No flight-control switch is needed to record observations.
 
 Select the camera on the perception page, enter a **new independent absolute

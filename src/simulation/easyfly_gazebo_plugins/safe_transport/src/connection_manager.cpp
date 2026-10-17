@@ -617,6 +617,10 @@ void ConnectionManager::GetTopicNamespaces(std::list<std::string> &_namespaces)
 //////////////////////////////////////////////////
 void ConnectionManager::Unsubscribe(const msgs::Subscribe &_sub)
 {
+  // Physics may release PublicationTransport after transport::fini has
+  // already shut down and released the master connection.
+  if (!this->masterConn)
+    return;
   // Inform the master that we want to unsubscribe from a topic.
   this->masterConn->EnqueueMsg(msgs::Package("unsubscribe", _sub), true);
 }
@@ -625,7 +629,7 @@ void ConnectionManager::Unsubscribe(const msgs::Subscribe &_sub)
 void ConnectionManager::Unsubscribe(const std::string &_topic,
                                      const std::string &_msgType)
 {
-  if (this->serverConn)
+  if (this->serverConn && this->masterConn)
   {
     msgs::Subscribe msg;
     msg.set_topic(_topic);

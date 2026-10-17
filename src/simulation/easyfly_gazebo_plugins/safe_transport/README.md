@@ -153,3 +153,18 @@ mutex. Lifecycle bool polling uses acquire/release builtins without changing the
 pinned class layout. This separate defect was reproduced independently; the
 captured bookstore core had an empty manager list and is attributed to the
 Publication cycle, not to this admission race.
+
+The UI's native Gazebo shutdown reproduced a separate null master connection:
+`Server::Run` finalizes transport, then `World::Fini` releases a remote
+`PublicationTransport`. Its destructor still calls `Unsubscribe` after
+`ConnectionManager::Fini` has reset `masterConn`. Both unsubscribe overloads now
+require the master connection before sending the notification. The native
+`test_transport_late_unsubscribe` retains a real TCP-backed PublicationTransport
+across transport finalization and releases it afterward. The unpatched fixture
+reproduces the same null-this SIGSEGV; the fixed fixture must still drain all
+transport owners. This does not claim concurrent Fini/API calls are supported.
+
+The real TCP `test_transport_incoming_shutdown` also checks subscription
+negotiation, delivery of an actual published message, and finalization with both
+an established peer and an incomplete header still open. This fixture does not
+reproduce every retained-owner observation from native GUI shutdown.

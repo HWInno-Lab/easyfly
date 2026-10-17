@@ -205,6 +205,10 @@ TEST(Recording, SegmentedReadbackMetadataIdentityAndIndex)
   ASSERT_TRUE(worker.scan(config.directory));
   ASSERT_TRUE(until([&] {return worker.state().index.size() == 1;}));
   EXPECT_EQ(worker.state().index[0].status, "verified");
+  EXPECT_FALSE(worker.state().index[0].thumbnail.isNull());
+  EXPECT_FALSE(worker.state().index[0].started.isEmpty());
+  EXPECT_FALSE(worker.state().index[0].source.isEmpty());
+  EXPECT_GE(worker.state().index[0].duration, 0);
   worker.stop(); ASSERT_TRUE(until([&] {return worker.state().stopped;}));
 }
 TEST(Recording, MetadataSnapshotBudgetProducesVisibleUnattributedGapWithoutReplay)
@@ -685,7 +689,7 @@ TEST(RecordingWindow, AsyncCloseFinalizesWithNoTaskControl)
       }
     }
   }
-  ASSERT_NE(nav, nullptr); nav->setCurrentRow(nav->count() - 1);
+  ASSERT_NE(nav, nullptr); window.show_page("records");
   auto * start = panel->findChild<QPushButton *>("recordingStart");
   ASSERT_TRUE(until([&] {return start->isEnabled();})); QTest::mouseClick(start, Qt::LeftButton);
   panel->findChild<QMessageBox *>("recordingConfirmation")->done(QMessageBox::Ok);

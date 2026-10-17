@@ -23,6 +23,9 @@ public:
   ManagerWindow(const QString & config_file, const QString & runtime, QWidget * parent = nullptr);
   ~ManagerWindow() override;
 
+protected:
+  void resizeEvent(QResizeEvent * event) override;
+
 private:
   struct Impl;
   std::unique_ptr<Impl> impl_;

@@ -236,7 +236,7 @@ TEST(MissionGeometryEditor, ActualScreenshotsAndClicksNeverUseTaskRpc)
   state->data = std::make_shared<easyfly_ui_bridge::UiSnapshot>(); state->data->running = true;
   ui::MainWindow window(easyfly_ui_bridge::BridgeConfig{}, desktop_test::factory(state));
   window.show();
-  window.findChild<QListWidget *>("navigation")->setCurrentRow(6);
+  window.show_page("tasks"); window.findChild<QTabWidget *>("taskCenterTabs")->setCurrentIndex(1);
   auto * editor = window.findChild<ui::MissionEditor *>();
   auto * body = window.findChild<QPlainTextEdit *>("draftBody");
   body->setPlainText(

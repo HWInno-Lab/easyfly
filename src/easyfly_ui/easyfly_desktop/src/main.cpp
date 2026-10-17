@@ -14,10 +14,13 @@
 #include <QApplication>
 #include <QAction>
 #include <QCommandLineParser>
+#include <QFileInfo>
 #include <QFont>
 #include <QJsonDocument>
 #include <QLocalSocket>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QProcess>
 #include <QTimer>
 #include <QUuid>
 
@@ -28,6 +31,7 @@
 #include <utility>
 
 #include "easyfly_desktop/main_window.hpp"
+#include "connection_page.hpp"
 namespace
 {
 volatile std::sig_atomic_t exit_requested = 0;
@@ -37,9 +41,10 @@ void request_exit(int) {exit_requested = 1;}
 class ManagedSession : public QObject
 {
 public:
-  explicit ManagedSession(easyfly_desktop::MainWindow * window)
+  explicit ManagedSession(easyfly_desktop::MainWindow * window, bool lobby = false)
   : QObject(window), window_(window)
   {
+    if (lobby) {return;}
     path_ = qEnvironmentVariable("EASYFLY_CONNECTION_SOCKET");
     session_ = qEnvironmentVariable("EASYFLY_CONNECTION_SESSION");
     token_ = qEnvironmentVariable("EASYFLY_CONNECTION_TOKEN");
@@ -47,8 +52,10 @@ public:
     window_->setWindowTitle(
       QStringLiteral("EasyFly · %1 · domain %2").arg(
         qEnvironmentVariable("EASYFLY_CONNECTION_NAME"), qEnvironmentVariable("ROS_DOMAIN_ID")));
-    auto * action = window_->menuBar()->addAction(QStringLiteral("返回连接管理"));
-    QObject::connect(action, &QAction::triggered, this, [this] {send("show_manager");});
+    if (!window_->property("connectionPageAvailable").toBool()) {
+      auto * action = window_->menuBar()->addAction(QStringLiteral("连接管理"));
+      QObject::connect(action, &QAction::triggered, this, [this] {send("show_manager");});
+    }
     QObject::connect(
       &socket_, &QLocalSocket::readyRead, this, [this] {
         input_.append(socket_.readAll());
@@ -58,7 +65,10 @@ public:
           const auto value = QJsonDocument::fromJson(input_.left(end)).object();
           input_.remove(0, end + 1);
           if (value["event"] == "close" && value["session"] == session_ &&
-          !window_->connection_status()["unresolved"].toBool(true)) {window_->close();}
+          !window_->connection_status()["unresolved"].toBool(true))
+          {
+            window_->close();
+          }
         }
       });
     QObject::connect(&socket_, &QLocalSocket::disconnected, this, [this] {input_.clear();});
@@ -74,6 +84,10 @@ public:
     timer_.stop();
     QObject::disconnect(&socket_, nullptr, this, nullptr);
     socket_.abort();
+  }
+  bool return_to_connections() const
+  {
+    return window_->property("connectionCloseReturnsToLobby").toBool();
   }
 
 private:
@@ -102,13 +116,16 @@ int main(int argc, char ** argv)
     QStringLiteral(
       "EasyFly 默认只读观测；受管仿真任务须显式启用及人工确认。不启动后端。"));
   parser.addHelpOption(); parser.addVersionOption();
+  parser.addOption({"connection-lobby", QStringLiteral("打开整合连接页，连接前不创建 ROS 观测器")});
+  parser.addOption({"connection-config", QStringLiteral("整合连接配置文件"), "path"});
+  parser.addOption({"connection-runtime", QStringLiteral("整合连接管理运行目录"), "path"});
   parser.addOption({"system-time", QStringLiteral("显式使用系统时间，默认模拟时钟")});
   parser.addOption(
     {"enable-recording", QStringLiteral(
-        "显式提供本地录像页（需媒体构建）；仍须选目录和人工开始，不自动录像")});
+        "兼容旧配置的录像标志（需媒体构建）；页面默认可见，仍须人工开始")});
   parser.addOption(
     {"enable-rviz-embed", QStringLiteral(
-        "显式提供实验性只读三维页；需要启用内嵌的构建，仍须手动打开")});
+        "兼容旧配置的三维标志（需内嵌构建）；空间页默认可见，仍须手动打开")});
   parser.addOption(
     {"enable-mission-control", QStringLiteral("显式提供受管仿真任务入口，仍需界面确认")});
   parser.addOption(
@@ -137,11 +154,21 @@ int main(int argc, char ** argv)
         "请求正常异步关闭；默认不"
         "自动退出"), "N"});
   parser.process(app);
+  const bool lobby = parser.isSet("connection-lobby");
+  if (lobby && (parser.isSet("enable-mission-control") || parser.isSet("enable-mission-import") ||
+    parser.isSet("enable-parameter-edit") || parser.isSet("enable-recording") ||
+    parser.isSet("enable-rviz-embed")))
+  {
+    std::fprintf(stderr, "The connection lobby does not create mutable or observation ports.\n");
+    return 2;
+  }
   if (qEnvironmentVariableIsSet("EASYFLY_CONNECTION_SESSION") &&
+    qEnvironmentVariable("EASYFLY_CONNECTION_OPERATIONS") != "configured" &&
     (parser.isSet("enable-mission-control") || parser.isSet("enable-mission-import") ||
     parser.isSet("enable-parameter-edit")))
   {
-    std::fprintf(stderr, "Managed connection sessions are observation-only in CM-1.\n"); return 2;
+    std::fprintf(stderr, "Managed maintenance/observation session rejects mutable flags.\n");
+    return 2;
   }
   easyfly_desktop::RecordingOptions recording;
   recording.enabled = parser.isSet("enable-recording");
@@ -211,23 +238,56 @@ int main(int argc, char ** argv)
       std::fprintf(stderr, "EasyFly import journal startup failed: %s\n", e.what()); return 2;
     }
   }
-  easyfly_desktop::MainWindow window(config, easyfly_desktop::bridge_factory(), nullptr, tools,
-    missions, controls, parameters, easyfly_desktop::parameter_factory(), imports, import_controls,
-    spatial, recording);
-  window.show();
-  ManagedSession managed_session(&window);
-  std::signal(SIGINT, request_exit); std::signal(SIGTERM, request_exit);
-  QTimer signal_timer;
-  QObject::connect(
-    &signal_timer, &QTimer::timeout, &window, [&window] {
-      if (exit_requested) {
-        exit_requested = 0;
-        window.close();
+  QString return_program;
+  QStringList return_arguments;
+  int result = 0;
+  {
+    easyfly_desktop::MainWindow window(config, easyfly_desktop::bridge_factory(), nullptr, tools,
+      missions, controls, parameters, easyfly_desktop::parameter_factory(), imports,
+      import_controls,
+      spatial, recording, !lobby);
+    easyfly_desktop::ConnectionPageHandle connection_page;
+    if (lobby || qEnvironmentVariableIsSet("EASYFLY_CONNECTION_SOCKET")) {
+      const auto runtime = lobby ? parser.value("connection-runtime") :
+        QFileInfo(qEnvironmentVariable("EASYFLY_CONNECTION_SOCKET")).absolutePath();
+      const auto file = lobby ? parser.value("connection-config") :
+        qEnvironmentVariable("EASYFLY_CONNECTION_CONFIG");
+      connection_page = easyfly_desktop::load_connection_page(&window, file, runtime, lobby);
+      if (!connection_page.widget && lobby) {
+        QMessageBox::critical(
+          nullptr, QStringLiteral("EasyFly 连接页不可用"), connection_page.error);
+        return 2;
       }
-    });
-  signal_timer.start(100);
-  if (duration) {
-    QTimer::singleShot(duration, &window, [&window] {window.close();});
+      if (!connection_page.error.isEmpty()) {
+        std::fprintf(stderr, "Connection page: %s\n", connection_page.error.toUtf8().constData());
+      }
+    }
+    window.show();
+    ManagedSession managed_session(&window, lobby);
+    std::signal(SIGINT, request_exit); std::signal(SIGTERM, request_exit);
+    QTimer signal_timer;
+    QObject::connect(
+      &signal_timer, &QTimer::timeout, &window, [&window] {
+        if (exit_requested) {
+          exit_requested = 0;
+          window.close();
+        }
+      });
+    signal_timer.start(100);
+    if (duration) {
+      QTimer::singleShot(duration, &window, [&window] {window.close();});
+    }
+    result = app.exec();
+    if (!lobby && managed_session.return_to_connections() && connection_page.widget &&
+      window.cleanup_complete())
+    {
+      return_program = connection_page.launcher;
+      return_arguments = QStringList{"--config-file", connection_page.config_file,
+        "--runtime-directory", connection_page.runtime};
+    }
   }
-  return app.exec();
+  if (!return_program.isEmpty() && !QProcess::startDetached(return_program, return_arguments)) {
+    std::fprintf(stderr, "Cannot return to the EasyFly connection page.\n");
+  }
+  return result;
 }

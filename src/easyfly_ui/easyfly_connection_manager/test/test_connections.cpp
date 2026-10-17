@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 
 #include <QCheckBox>
+#include <QComboBox>
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -22,6 +23,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLocalSocket>
+#include <QMenuBar>
 #include <QPushButton>
 #include <QSignalSpy>
 #include <QSpinBox>
@@ -111,13 +113,13 @@ TEST(ConnectionProfile, RejectsMissingAndIncompatibleDesktopProtocol)
   QFile protocol(share + "/easyfly_desktop/connection_protocol.json");
   ASSERT_TRUE(protocol.open(QIODevice::WriteOnly));
   protocol.write(
-    "{\"connection_protocol\":1,\"snapshot_abi\":2,"
+    "{\"connection_protocol\":2,\"snapshot_abi\":2,"
     "\"managed_default_read_only\":true}");
   protocol.close();
   EXPECT_THROW(cm::desktop_program(), std::runtime_error);
   ASSERT_TRUE(protocol.open(QIODevice::WriteOnly | QIODevice::Truncate));
   protocol.write(
-    "{\"connection_protocol\":1,\"snapshot_abi\":1,"
+    "{\"connection_protocol\":2,\"snapshot_abi\":1,"
     "\"managed_default_read_only\":true}");
   protocol.close();
   EXPECT_EQ(cm::desktop_program(), binary.fileName());
@@ -126,6 +128,7 @@ TEST(ConnectionProfile, RejectsMissingAndIncompatibleDesktopProtocol)
 TEST(ConnectionProfile, StrictRoundtripAndUnsupportedInputs)
 {
   const auto p = cm::Profile::create(QStringLiteral("中文连接 $(touch NEVER)"));
+  EXPECT_FALSE(p.gazebo_gui);
   EXPECT_EQ(cm::Profile::from_json(p.json()).hash(), p.hash());
   auto object = p.json();
   object["domain"] = 232;
@@ -154,6 +157,15 @@ TEST(ConnectionProfile, PrivateAtomicStorePreservesInvalidData)
   ASSERT_EQ(cm::read_profiles(path).size(), 1);
   EXPECT_EQ(cm::read_profiles(path)[0].hash(), p.hash());
   EXPECT_THROW(cm::write_profiles(path, {p, p}), std::runtime_error);
+  QVector<cm::Profile> large;
+  for (int i = 0; i < 32; ++i) {
+    auto value = cm::Profile::create("Large");
+    value.px4_directory = "/" + QString(4090, 'a');
+    value.qgc_path = "/" + QString(4090, 'b'); large.push_back(value);
+  }
+  EXPECT_THROW(cm::write_profiles(path, large), std::runtime_error);
+  ASSERT_EQ(cm::read_profiles(path).size(), 1);
+  EXPECT_EQ(cm::read_profiles(path)[0].hash(), p.hash());
   QFile file(path);
   ASSERT_TRUE(file.open(QIODevice::WriteOnly | QIODevice::Truncate));
   file.write("{broken"); file.close();
@@ -236,6 +248,7 @@ TEST(ConnectionManager, SavesWithoutConnectingAndReattachesToSameLiveWorkspace)
   const auto runtime = root.path() + "/runtime";
   cm::Supervisor supervisor(runtime, DESKTOP_BINARY_FROM_TEST);
   const auto config = root.path() + "/profiles.json";
+  cm::write_profiles(config, {cm::Profile::create("Existing platform")});
   auto manager = std::make_unique<cm::ManagerWindow>(config, runtime); manager->show();
   auto * save = manager->findChild<QPushButton *>("saveConnection");
   ASSERT_TRUE(until([&] {return save->isEnabled();}));
@@ -262,4 +275,71 @@ TEST(ConnectionManager, SavesWithoutConnectingAndReattachesToSameLiveWorkspace)
   }
   QTest::mouseClick(stop, Qt::LeftButton);
   ASSERT_TRUE(until([&] {return !supervisor.status()["process_running"].toBool();}));
+}
+
+TEST(ConnectionProfile, SimulationSerialAndMaintenanceContracts)
+{
+  auto p = cm::Profile::create("Simulation"); p.mode = "sitl";
+  EXPECT_EQ(cm::Profile::from_json(p.json()).hash(), p.hash());
+  p.gcs_enabled = true;
+  EXPECT_EQ(p.gcs_url(), "udp://127.0.0.1:14558@127.0.0.1:14560");
+  EXPECT_NO_THROW(p.validate());
+  p.mission_control = true; EXPECT_THROW(p.validate(), std::runtime_error);
+  p.mission_control = false; p.gcs_port = 14550; EXPECT_THROW(p.validate(), std::runtime_error);
+  p.gcs_port = 14560; p.mode = "communication"; p.transport = "serial";
+  EXPECT_EQ(p.fcu_url(), "/dev/ttyACM0:921600"); EXPECT_NO_THROW(p.validate());
+  auto value = p.json(), fcu = value["fcu"].toObject();
+  fcu["baud"] = 921600.5; value["fcu"] = fcu;
+  EXPECT_THROW(cm::Profile::from_json(value), std::runtime_error);
+  p.serial_device = "/dev/ttyUSB0;echo bad"; EXPECT_THROW(p.validate(), std::runtime_error);
+}
+
+TEST(ConnectionProfile, LegacyProfilesMigrateWithoutStartingOrOverwriting)
+{
+  QTemporaryDir root;
+  auto value = cm::Profile::create("Legacy DDS").json();
+  for (const auto & key : {"simulation", "fcu", "gcs", "features"}) {
+    value.remove(key);
+  }
+  QFile file(root.path() + "/connections.json"); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+  file.write(
+    QJsonDocument(
+      QJsonObject{{"schema_version", 1}, {"profiles",
+          QJsonArray{value}}}).toJson());
+  file.close(); file.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
+  const auto read = cm::read_profiles(file.fileName()); ASSERT_EQ(read.size(), 1);
+  EXPECT_EQ(read[0].mode, "observe"); EXPECT_FALSE(read[0].gcs_enabled);
+  EXPECT_FALSE(read[0].mission_control); EXPECT_FALSE(read[0].mission_import);
+  cm::write_profiles(file.fileName(), read); ASSERT_TRUE(file.open(QIODevice::ReadOnly));
+  EXPECT_EQ(QJsonDocument::fromJson(file.readAll()).object()["schema_version"], 2);
+}
+
+TEST(ConnectionManager, SimulationAndSerialCanBeConfiguredWithoutCommandLine)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  QMainWindow host;
+  cm::ManagerWindow manager(root.path() + "/profiles.json", root.path() + "/runtime", &host);
+  EXPECT_FALSE(manager.isWindow()); EXPECT_EQ(manager.window(), &host);
+  EXPECT_EQ(manager.menuWidget(), nullptr); EXPECT_EQ(host.menuBar()->actions().size(), 1);
+  auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}));
+  auto * mode = manager.findChild<QComboBox *>("connectionMode");
+  ASSERT_NE(mode, nullptr); EXPECT_EQ(mode->currentData(), "sitl");
+  EXPECT_TRUE(manager.findChild<QPushButton *>("startConnection")->text().contains("DDS"));
+  ASSERT_NE(manager.findChild<QPushButton *>("startQgc"), nullptr);
+  ASSERT_NE(manager.findChild<QPushButton *>("stopBackend"), nullptr);
+  mode->setCurrentIndex(mode->findData("communication"));
+  auto * transport = manager.findChild<QComboBox *>("connectionTransport");
+  transport->setCurrentIndex(transport->findData("serial"));
+  auto * device = manager.findChild<QComboBox *>("connectionSerialDevice");
+  EXPECT_TRUE(device->isEnabled()); device->setCurrentText("/dev/ttyUSB7");
+  manager.findChild<QComboBox *>("connectionBaud")->setCurrentText("57600");
+  QTest::mouseClick(save, Qt::LeftButton);
+  const auto saved = cm::read_profiles(root.path() + "/profiles.json"); ASSERT_EQ(saved.size(), 1);
+  EXPECT_EQ(saved[0].transport, "serial"); EXPECT_EQ(saved[0].baud, 57600);
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  if (qEnvironmentVariableIsSet("EASYFLY_CM_FORM_SCREENSHOT")) {
+    ASSERT_TRUE(manager.grab().save(qEnvironmentVariable("EASYFLY_CM_FORM_SCREENSHOT")));
+  }
 }

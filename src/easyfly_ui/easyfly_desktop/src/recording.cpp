@@ -538,7 +538,8 @@ std::vector<RecordingEntry> index_directory(
     const auto id = QUuid(str(name));
     if (id.isNull() || id.toString(QUuid::WithoutBraces).toStdString() != name) {continue;}
     require(entries.size() < 256, "index limit 256; choose a separate directory for more records");
-    RecordingEntry entry{name, "incomplete/corrupt", "not finalized or invalid manifest", 0};
+    RecordingEntry entry; entry.id = name; entry.status = "incomplete/corrupt";
+    entry.reason = "not finalized or invalid manifest";
     try {
       Fd dir(openat(root->value, name.c_str(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC));
       require(private_dir(dir.value), "unsafe session directory");
@@ -548,6 +549,8 @@ std::vector<RecordingEntry> index_directory(
         m["schema"].toInt() == 1 && m["id"].toString() == str(
           name), "manifest identity mismatch");
       const auto status = m["status"].toString();
+      QJsonObject settings;
+      QByteArray frame_metadata, event_metadata;
       for (const auto & file : {"config", "frames", "events"}) {
         const auto filename = std::string(file) +
           (std::string(file) == "config" ? ".json" : ".jsonl");
@@ -556,6 +559,9 @@ std::vector<RecordingEntry> index_directory(
         require(
           m[QString::fromLatin1(file) + "_sha256"].toString() == QString::fromLatin1(hash),
           "metadata integrity mismatch");
+        if (std::string(file) == "config") {settings = QJsonDocument::fromJson(bytes).object();}
+        if (std::string(file) == "frames") {frame_metadata = bytes;}
+        if (std::string(file) == "events") {event_metadata = bytes;}
         hash_bytes += bytes.size();
         require(hash_bytes <= 512ULL * 1024 * 1024, "index integrity byte budget exceeded");
       }
@@ -591,13 +597,52 @@ std::vector<RecordingEntry> index_directory(
           segment["frames"].toInt() > 0 && segment["frames"].toInt() <= 600,
           "invalid segment frame count");
         count += segment["frames"].toInt();
+#ifdef EASYFLY_ENABLE_MEDIA
+        if (i == 0 && status == "verified") {
+          try {
+            cv::VideoCapture preview("/proc/self/fd/" + std::to_string(video.value),
+              cv::CAP_OPENCV_MJPEG);
+            const auto width = preview.get(cv::CAP_PROP_FRAME_WIDTH);
+            const auto height = preview.get(cv::CAP_PROP_FRAME_HEIGHT);
+            if (width > 0 && width <= 1280 && height > 0 && height <= 720) {
+              cv::Mat image, rgb;
+              if (preview.read(image) && image.type() == CV_8UC3 && image.cols <= 1280 &&
+                image.rows <= 720)
+              {
+                cv::cvtColor(image, rgb, cv::COLOR_BGR2RGB);
+                entry.thumbnail =
+                  QImage(rgb.data, rgb.cols, rgb.rows, rgb.step, QImage::Format_RGB888)
+                  .scaled(96, 54, Qt::KeepAspectRatio, Qt::SmoothTransformation).copy();
+              }
+            }
+          } catch (const cv::Exception &) {
+            entry.thumbnail = {};
+          }
+        }
+#endif
       }
       if (status == "verified") {
         require(count == entry.frames && count > 0, "frame count mismatch");
       }
       entry.status = status.toStdString(); entry.reason = m["reason"].toString().toStdString();
+      entry.started = settings["written_utc"].toString();
+      entry.source = settings["source_topic"].toString();
+      const auto lines = frame_metadata.trimmed().split('\n');
+      if (!lines.isEmpty()) {
+        const auto first = QJsonDocument::fromJson(lines.first()).object();
+        const auto last = QJsonDocument::fromJson(lines.last()).object();
+        if (first["first_received_steady"].isDouble() && last["first_received_steady"].isDouble()) {
+          entry.duration = last["first_received_steady"].toDouble() -
+            first["first_received_steady"].toDouble();
+        }
+      }
+      for (const auto & line : event_metadata.split('\n')) {
+        const auto id = QJsonDocument::fromJson(line).object()["execution_id"].toString();
+        if (!id.isEmpty()) {entry.execution = id.left(64);}
+      }
     } catch (const std::exception & e) {
       entry.reason = e.what();
+      entry.thumbnail = {};
     }
     entries.push_back(std::move(entry));
   }

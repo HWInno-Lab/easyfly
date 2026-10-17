@@ -140,3 +140,20 @@ def test_nested_launch_effective_parameters(name):
             assert params["grid_map/max_trusted_cloud_points"] == 200000
         return
     pytest.fail(f"missing nested {wanted}")
+
+
+def test_graphical_connection_endpoints_are_forwarded_into_profile_scope():
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(profile='navigation_dev',
+        fcu_url='udp://127.0.0.1:14540@127.0.0.1:14555',
+        gcs_url='udp://127.0.0.1:14558@127.0.0.1:14560', target_system='7',
+        detection_use_gpu='false', headless='true', rviz='false')
+    actions = module._launch_profile(context)
+    group = next(action for action in actions if isinstance(action, GroupAction))
+    include = next(action for action in group.get_sub_entities() if isinstance(action, IncludeLaunchDescription))
+    arguments = dict(include.launch_arguments)
+    assert arguments['gcs_url'] == 'udp://127.0.0.1:14558@127.0.0.1:14560'
+    assert arguments['target_system'] == '7'
+    assert arguments['detection_use_gpu'] == 'false'
+    assert arguments['rviz'] == 'false'

@@ -26,6 +26,7 @@
 #include <QScrollArea>
 #include <QStatusBar>
 #include <QTemporaryDir>
+#include <QTabWidget>
 #include <QVBoxLayout>
 #include <functional>
 #include <memory>
@@ -164,8 +165,8 @@ TEST_F(MissionGui, DefaultWindowDoesNotCreateControllerOrControlButtons)
 TEST_F(MissionGui, OptInStillNeedsManualPermitAndConfirmationDefaultsToCancel)
 {
   open(); EXPECT_EQ(control->constructions, 1);
-  EXPECT_TRUE(widget<QLabel>("connectionSummary")->text().contains(QStringLiteral("受管仿真模式")));
-  EXPECT_TRUE(window->statusBar()->currentMessage().contains(QStringLiteral("显式启用")));
+  EXPECT_TRUE(widget<QLabel>("connectionSummary")->text().contains(QStringLiteral("受管仿真")));
+  EXPECT_TRUE(window->statusBar()->currentMessage().contains(QStringLiteral("仿真操作逐项确认")));
   EXPECT_FALSE(widget<QCheckBox>("managedSimulationPermit")->isChecked());
   EXPECT_FALSE(widget<QPushButton>("startMission")->isEnabled()); EXPECT_EQ(control->starts, 0);
   ASSERT_TRUE(prepare()); widget<QPushButton>("startMission")->click();
@@ -424,7 +425,8 @@ TEST_F(MissionGui, ManagedWidgetScreenshotsUseExplicitMockWatermark)
   watermark->setTextFormat(Qt::PlainText);
   watermark->setStyleSheet("color:#8a4b08; background:#fff5df; padding:6px;");
   static_cast<QVBoxLayout *>(window->centralWidget()->layout())->insertWidget(0, watermark);
-  widget<QListWidget>("navigation")->setCurrentRow(1);
+  window->show_page("tasks");
+  widget<QTabWidget>("taskCenterTabs")->setCurrentIndex(3);
   ASSERT_TRUE(prepare());
   const QDir output(QStringLiteral(EASYFLY_MANAGED_SCREENSHOT_DIRECTORY));
   ASSERT_TRUE(output.mkpath("."));

@@ -12,22 +12,45 @@ Catalog selection, static validation and a successful service reply do not
 prove execution success, readiness or ownership release.
 
 Explicit opt-ins: managed simulation missions, two non-flight metadata writes,
-private-directory mission import, experimental read-only embedded RViz, local
-single-camera recording and an independent local history viewer. The desktop
+private-directory mission import. Embedded read-only RViz and local single-camera
+recording have permanent pages when compiled in, with manual renderer/recording start;
+an independent local history viewer is also available. The desktop
 never starts a backend automatically. It has no standalone flight buttons.
-QGC integration remains offline-isolated preview, not connected read-only QGC.
+The standalone desktop tool remains offline-isolated QGC preview. The optional
+connection manager provides explicit bidirectional networked QGC maintenance;
+see its README for configuration and mutually exclusive mutable-operation rules.
+
+With the manager installed, the EasyFly application opens this same MainWindow on
+the first navigation item, connection/simulation. Navigation is fixed in this order:
+connection, overview, task center, camera/perception, spatial view, records/playback,
+diagnostics/settings. Before connecting, realtime observation pages remain disabled
+and no ROS context is created; local drafts, records and settings remain accessible. Starting a saved connection opens a workspace
+with the selected frozen DDS environment and closes the idle lobby after its fresh
+integrated heartbeat, provided the lobby has no unsaved draft. The connection page remains available in workspace navigation;
+no separate manager window is needed. Ending observation returns to the idle page
+after the existing draft/tool/recording close checks and preserves the backend.
+Ordinary window exit quits the UI. QGC remains its own external application.
+The page is loaded through an optional ABI1 Qt plugin, keeping the original standalone
+desktop package closure. Managed launches fall back to the legacy manager action if
+the plugin is unavailable; the integrated entry reports missing/incompatible plugins.
 
 ## Build and feature matrix
 
-The optional easyfly_connection_manager package provides a graphical existing-
-platform connection entry. Its installed easyfly_connections launcher loads its
-own installation environment; select a domain, localhost/LAN scope and time
-source, save, then connect. It opens this desktop as a new read-only process.
-Return to connection manager is available in that workspace's menu. The managed
-configuration is frozen; close the old workspace normally before selecting another.
-All default draft/close protections still apply. This initial entry does not
-start a backend, SITL, QGC, recording or mutable ports. Advanced network discovery
-presets and real two-machine qualification remain outside the initial batch.
+The optional easyfly_connection_manager package provides the graphical DDS,
+local communications and simulation entry. Its installed launcher loads its own
+recorded installation/underlays. Configure DDS, scene/PX4/display, UDP/TCP/serial
+(including baud), GCS forwarding and mutable operation permissions in its five tabs:
+environment, FCU link, DDS connection, QGC forwarding and operation permissions.
+It starts a complete workspace with one fixed environment. Default is read-only;
+selected local-simulation operations remain opt-in and individually confirmed.
+
+The manager can start the installed/validated simulator without terminal commands,
+and configure a separate networked QGC with private settings. It never labels that
+QGC read-only. Close owned QGC and the workspace normally before stopping the backend;
+fresh disarmed/on-ground observations and no unresolved operations are required.
+Closing just the manager preserves its objects. Advanced DDS presets, two-machine
+qualification, hardware and crash adoption remain separate acceptance. Follow the
+installed easyfly_connection_manager README/CONTRACT for the complete graphical flow.
 
 Graph-evidence snapshots require the versioned libeasyfly_ui_bridge.so.1 and the
 matching installed connection-protocol manifest. Rebuild linked consumers
@@ -83,7 +106,7 @@ executable; file presence alone is not proof of the current build configuration.
 | ON | ON | Both optional backends |
 
 ON builds retain linked optional shared-library dependencies even when their
-runtime page is disabled. Runtime opt-out is not a way to run an ON binary with
+renderer or recorder has not been started. Runtime opt-out is not a way to run an ON binary with
 missing shared libraries. Package metadata declares a dependency superset:
 `rosdep` may install optional dependencies even for an OFF build.
 The history executable is separate Qt/OpenCV code with no ROS linkage, nodes,
@@ -107,9 +130,9 @@ version check. Independent viewing-tool availability is checked on explicit use.
 
 | Startup option | Boundary |
 | --- | --- |
-| None | Read-only observation/local draft work; no mission start/cancel, parameter write, import, recording or embedded renderer |
-| `--enable-rviz-embed` | Requires RVIZ_EMBED build; manually open from the overview RViz tab or full experimental page; one shared renderer |
-| `--enable-recording` | Requires MEDIA build; select private root and manually confirm Start; never auto-record/resume |
+| None | Read-only observation/local draft work; compiled RViz/record pages visible but idle; no mission start/cancel, parameter write or import |
+| `--enable-rviz-embed` | Legacy compatibility flag; requires RVIZ_EMBED build. The spatial page is available without this flag; manually open its single renderer |
+| `--enable-recording` | Legacy compatibility flag; requires MEDIA build. The records page is available without this flag; select private root and manually confirm Start; never auto-record/resume |
 | `--enable-parameter-edit` | Only `operator_note` and `export_pretty`; each manual read/confirm/single write/readback |
 | `--enable-mission-import --import-journal /absolute/private/child` | Separately enabled server/private destination needed; new files only, no execution |
 | `--enable-mission-control --mission-journal /absolute/private/child` | Managed simulation only; human isolation permit, reviewed content and current profile/state checks; no hardware operation |
@@ -146,9 +169,9 @@ running. A down-camera subscription without its actual publisher is unavailable,
 not a synthetic substitute. Some viewing presets require actual odom/TF/map
 publishers; missing frames are not repaired with invented transforms.
 
-For the full `navigation_dev` simulation, explicitly add `--enable-rviz-embed`,
-choose the overview's **RViz 三维** tab, select **导航观测**, then manually open
-the renderer. This preset uses canonical `/odom` aircraft axes and fixed frame
+For the full `navigation_dev` simulation with RVIZ_EMBED compiled in, choose
+**空间视图 → 内嵌 RViz**, select **导航观测**, then manually open the renderer.
+The overview shortcut selects this same page; it does not create or reparent a second renderer. This preset uses canonical `/odom` aircraft axes and fixed frame
 `odom`; `/path` and `/cloud_registered` from FAST-LIO retain `camera_init` and
 must use the existing TF chain. Enable cloud/map/obstacle layers individually.
 The basic preset remains MAVROS `/mavros/local_position/odom` with its raw `map`
@@ -324,3 +347,24 @@ cross-platform delivery. Prediction/semantic/landing-specific displays, independ
 flight controls, recorded trajectory and rosbag replay remain outside this increment.
 The previously shelved production request-source issue is still unresolved.
 No hardware connection or earlier paused flight acceptance is resumed by this guide.
+
+## Workspace organization
+
+Task center groups catalog, draft editor, import and execution/query. Structured steps
+and parameters are the first editor tab; raw YAML is advanced. Camera/perception uses
+a large image with optional same-frame overlays and tabbed object details. Diagnostics
+shows effective configuration read-only in managed sessions; connection changes and the
+shared QGC executable path belong to the first page. Networked QGC maintenance and
+offline-isolated preview remain separate actions.
+
+The records index verifies existing private files/hashes on its worker thread before
+showing a thumbnail, UTC start, received-frame time span, camera source and any known
+execution ID. A missing/undecodable thumbnail does not change integrity status. No
+synthetic duration, task association or automatic recording is introduced. Legacy
+schema2 recording/rviz_embed values remain serializable for frozen-profile compatibility;
+they no longer hide pages provided by the installed build.
+
+Task and recording specifications are folded by default; expand their explanation
+buttons for technical details. Overview metric text fits the available card width.
+Recording IDs and source names use compact display values with full originals in
+tooltips; replay always uses the complete verified identity, never an abbreviated ID.

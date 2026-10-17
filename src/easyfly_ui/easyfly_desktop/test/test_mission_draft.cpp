@@ -385,7 +385,8 @@ TEST(DraftEditor, MainWindowOfflineDirtyExitRequiresDefaultStayAndNoRpc)
   window.show();
   auto * navigation = window.findChild<QListWidget *>("navigation"); ASSERT_EQ(
     navigation->count(), 7);
-  navigation->setCurrentRow(6); auto * editor = window.findChild<ui::MissionEditor *>(); ASSERT_NE(
+  window.show_page("tasks"); window.findChild<QTabWidget *>("taskCenterTabs")->setCurrentIndex(1);
+  auto * editor = window.findChild<ui::MissionEditor *>(); ASSERT_NE(
     editor, nullptr);
   window.findChild<QPushButton *>("draftNew")->click(); ASSERT_TRUE(
     desktop_test::until(
@@ -414,17 +415,20 @@ TEST(DraftEditor, MainWindowOfflineDirtyExitRequiresDefaultStayAndNoRpc)
   EXPECT_TRUE(
     window.grab().save(
       QString(EASYFLY_DRAFT_SCREENSHOT_DIRECTORY) + "/editor-export-offline.png"));
+  window.setProperty("connectionReturnRequested", true);
   window.close(); auto * prompt = window.findChild<QMessageBox *>("draftExitPrompt"); ASSERT_NE(
     prompt, nullptr);
   EXPECT_EQ(prompt->defaultButton(), prompt->button(QMessageBox::Cancel)); prompt->done(
     QMessageBox::Cancel);
   EXPECT_TRUE(window.isVisible()); EXPECT_TRUE(editor->dirty()); EXPECT_EQ(state->stop_calls, 0);
+  EXPECT_TRUE(window.property("connectionCloseReturnsToLobby").toBool());
   EXPECT_EQ(
     state->list_calls + state->validate_calls + state->query_calls + state->details_calls,
     0);
   window.close(); prompt = window.findChild<QMessageBox *>("draftExitPrompt"); ASSERT_NE(
     prompt,
     nullptr);
+  EXPECT_FALSE(window.property("connectionCloseReturnsToLobby").toBool());
   prompt->done(QMessageBox::Yes); EXPECT_TRUE(
     desktop_test::until(
       [&] {

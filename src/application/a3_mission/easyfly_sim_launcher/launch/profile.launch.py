@@ -27,6 +27,12 @@ def _launch_profile(context):
         if headless not in ('true', 'false'):
             raise ValueError('headless must be true or false')
         arguments['headless'] = headless
+    for key, default in [('fcu_url', 'udp://127.0.0.1:14540@127.0.0.1:14555'),
+                         ('gcs_url', ''), ('target_system', '1'),
+                         ('detection_use_gpu', 'auto')]:
+        arguments[key] = LaunchConfiguration(key, default=default).perform(context)
+    if profile['entrypoint'] != 'base':
+        arguments['rviz'] = LaunchConfiguration('rviz', default='true').perform(context)
     if scene:
         catalog, _ = installed_catalog()
         resolve_scene(catalog, scene, profile['name'])
@@ -60,5 +66,10 @@ def generate_launch_description():
         DeclareLaunchArgument('world', default_value='', description='Reserved; raw worlds require the low-level debug entrypoint'),
         DeclareLaunchArgument('headless', default_value='', choices=['', 'true', 'false'],
                               description='Display override; empty uses the profile default'),
+        DeclareLaunchArgument('fcu_url', default_value='udp://127.0.0.1:14540@127.0.0.1:14555'),
+        DeclareLaunchArgument('gcs_url', default_value=''),
+        DeclareLaunchArgument('target_system', default_value='1'),
+        DeclareLaunchArgument('detection_use_gpu', default_value='auto'),
+        DeclareLaunchArgument('rviz', default_value='true', choices=['true', 'false']),
         OpaqueFunction(function=_launch_profile),
     ])

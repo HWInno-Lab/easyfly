@@ -1,8 +1,11 @@
 [Desktop Entry]
 Type=Application
-Name=EasyFly Connections
-Name[zh_CN]=EasyFly 连接管理
-Comment=Connect to an existing EasyFly ROS platform
+Name=EasyFly
+Name[zh_CN]=EasyFly
+Comment=Start simulation, connect DDS and forward MAVLink to QGC
+Comment[zh_CN]=选择仿真场景，配置 DDS、飞控串口和 QGC 转发
+Icon=applications-science
+Keywords=EasyFly;DDS;SITL;PX4;Gazebo;QGC;MAVROS;
 Exec="@CMAKE_INSTALL_PREFIX@/lib/easyfly_connection_manager/easyfly_connections"
 Terminal=false
 Categories=Science;Engineering;

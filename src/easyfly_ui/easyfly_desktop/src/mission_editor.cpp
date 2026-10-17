@@ -105,10 +105,13 @@ struct MissionEditor::Impl
           });
         dialog->open();
       });
-    button(toolbar, "draftValidate", QStringLiteral("校验正文"), [this] {validate();});
+    button(toolbar, "draftValidate", QStringLiteral("校验任务"), [this] {validate();});
     toolbar->addStretch(); layout->addLayout(toolbar);
-    auto * split = new QSplitter(Qt::Horizontal, owner); layout->addWidget(split, 1);
-    auto * raw = new QGroupBox(QStringLiteral("YAML 正文 · 保留原文直至编辑"), split);
+    auto * editor_tabs = new QTabWidget(owner); editor_tabs->setObjectName("draftEditorTabs");
+    layout->addWidget(editor_tabs, 1);
+    auto * split = new QSplitter(Qt::Horizontal, editor_tabs);
+    editor_tabs->addTab(split, QStringLiteral("步骤与参数"));
+    auto * raw = new QGroupBox(QStringLiteral("YAML 正文 · 保留原文直至编辑"), editor_tabs);
     auto * raw_layout = new QVBoxLayout(raw); body = new QPlainTextEdit(raw);
     body->setObjectName("draftBody");
     body->setPlaceholderText(QStringLiteral("新建示例或打开本地文件；也可直接粘贴 v1 YAML。"));
@@ -196,8 +199,8 @@ struct MissionEditor::Impl
     auto * apply = new QHBoxLayout;
     button(apply, "draftApply", QStringLiteral("应用表单"), [this] {apply_form();}, true);
     button(apply, "draftResetForm", QStringLiteral("重置表单"), [this] {show_fields();}, true);
-    parameters_layout->addLayout(apply); split->setStretchFactor(0, 3);
-    split->setStretchFactor(1, 2);
+    parameters_layout->addLayout(apply); split->setStretchFactor(0, 1);
+    editor_tabs->addTab(raw, QStringLiteral("高级 YAML"));
     auto * export_box = new QGroupBox(QStringLiteral("独立草稿目录 · 非任务服务目录"), owner);
     auto * export_layout = new QVBoxLayout(export_box);
     auto * folder = new QHBoxLayout;

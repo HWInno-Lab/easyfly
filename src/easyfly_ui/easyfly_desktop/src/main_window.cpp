@@ -18,6 +18,7 @@
 #include <QCoreApplication>
 #include <QDockWidget>
 #include <QFormLayout>
+#include <QFontMetrics>
 #include <QFrame>
 #include <QGridLayout>
 #include <QGroupBox>
@@ -28,6 +29,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
+#include <QDynamicPropertyChangeEvent>
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -43,6 +45,7 @@
 #include <QTableView>
 #include <QTabWidget>
 #include <QTimer>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <algorithm>
@@ -152,12 +155,17 @@ struct MainWindow::Impl
   ImportFactory import_factory;
   RvizOptions spatial_options;
   RecordingOptions recording_options;
+  std::vector<std::string> storage_protected_paths;
   RecordingPanel * recording_panel{nullptr};
   std::shared_ptr<const ConvertedFrame> recording_frame;
   RvizView * rviz_view{nullptr};
   QWidget * rviz_full_page{nullptr}, *overview_rviz_host{nullptr};
   QVBoxLayout * rviz_full_layout{nullptr}, *overview_rviz_layout{nullptr};
   QTabWidget * overview_map_tabs{nullptr};
+  QTabWidget * task_tabs{nullptr}, *space_tabs{nullptr}, *settings_tabs{nullptr};
+  QWidget * execution_page{nullptr};
+  QVBoxLayout * execution_layout{nullptr};
+  QLabel * effective_configuration{nullptr};
   ImportPanel * import_panel{nullptr};
   QMessageBox * import_exit_prompt{nullptr};
   bool import_exit_confirmed{false};
@@ -184,6 +192,9 @@ struct MainWindow::Impl
   double event_tail{-1}; std::size_t event_count{0}; uint64_t event_session{0};
 
   QStackedWidget * pages{nullptr}; QListWidget * navigation{nullptr};
+  QWidget * connection_page{nullptr};
+  int connection_page_index{-1};
+  bool connection_lobby{false};
   MissionEditor * editor{nullptr};
   QMessageBox * draft_exit_prompt{nullptr};
   bool draft_exit_confirmed{false};
@@ -212,14 +223,21 @@ struct MainWindow::Impl
     const ToolOptions & tools, const MissionOptions & missions, ControlFactory controls,
     const ParameterOptions & parameters, ParameterFactory parameter_controls,
     const ImportOptions & imports, ImportFactory import_controls, const RvizOptions & spatial,
-    const RecordingOptions & recording)
+    const RecordingOptions & recording, bool auto_observe)
   : window(owner), config(options), factory(std::move(source_factory)), tool_options(tools),
     mission_options(missions), controls_factory(std::move(controls)), parameter_options(parameters),
     parameter_factory(std::move(parameter_controls)), import_options(imports),
     import_factory(std::move(import_controls)), spatial_options(spatial), recording_options(
       recording)
   {
-    build(); connect_source();
+    build();
+    if (auto_observe) {connect_source();} else {
+      released = true;
+      toggle->setEnabled(false);
+      connection->setText(QStringLiteral("尚未连接平台"));
+      clock->setText(QStringLiteral("请在连接与仿真页选择场景或连接方式"));
+      backend_profile->clear();
+    }
     timer = new QTimer(window); timer->setInterval(100);
     QObject::connect(timer, &QTimer::timeout, window, [this] {tick();}); timer->start();
     tick();
@@ -240,8 +258,12 @@ struct MainWindow::Impl
   {
     window->setWindowTitle(
       mission_options.enabled ? QStringLiteral("EasyFly · 受管仿真任务") :
-      import_options.enabled ? QStringLiteral("EasyFly · 飞行观测只读 / 任务导入启用") :
-      parameter_options.enabled ? QStringLiteral("EasyFly · 飞行观测只读 / 元数据编辑启用") :
+      import_options.enabled ? QStringLiteral(
+        "EasyFly · 飞行"
+        "观测只读 / 任务导入启用") :
+      parameter_options.enabled ? QStringLiteral(
+        "EasyFly · 飞行观"
+        "测只读 / 元数据编辑启用") :
       QStringLiteral("EasyFly · 只读平台观测")); window->resize(1440, 900);
     window->setMinimumSize(1024, 720);
     window->setPalette(theme::palette());
@@ -254,9 +276,9 @@ struct MainWindow::Impl
     auto * header = new QHBoxLayout(top_bar);
     header->setContentsMargins(8, 8, 12, 8);
     auto * brand = new QLabel(top_bar); brand->setObjectName("brand");
-    brand->setFixedSize(190, 66); brand->setAlignment(Qt::AlignCenter);
+    brand->setFixedSize(148, 46); brand->setAlignment(Qt::AlignCenter);
     const auto logo = brand_pixmap();
-    brand->setPixmap(logo.scaled(180, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    brand->setPixmap(logo.scaled(136, 44, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     brand->setAccessibleName(QStringLiteral("EasyFly Logo"));
     // Bound the X11 _NET_WM_ICON payload; do not send the full 2752x1536 source.
     window->setWindowIcon(
@@ -269,13 +291,18 @@ struct MainWindow::Impl
     connection = label(QStringLiteral("本地观测器启动中"), "connectionSummary", top_bar);
     clock = label({}, "clockSummary", top_bar);
     backend_profile = label({}, "backendProfile", top_bar);
-    status->addWidget(connection); status->addWidget(clock); status->addWidget(backend_profile);
+    status->addWidget(connection); status->addWidget(clock); backend_profile->hide();
     header->addLayout(status, 1);
     toggle = button(QStringLiteral("断开观测"), "observerToggle", top_bar);
     header->addWidget(toggle);
     QObject::connect(
       toggle, &QPushButton::clicked, window, [this] {
         if (disconnecting || closing) {return;}
+        if (connection_lobby) {return;}
+        if (connection_page) {
+          window->setProperty("connectionReturnRequested", true);
+          window->close(); return;
+        }
         if (source && current && !current->stopped) {stop_source(false);} else {connect_source();}
       });
     layout->addWidget(top_bar);
@@ -322,11 +349,14 @@ struct MainWindow::Impl
       // Source/install trees remain protected even if the package index is unavailable offline.
     }
     auto * draft_page = new QWidget(draft_scroll);
-    const auto recording_protected_paths = protected_paths;
+    storage_protected_paths = protected_paths;
     auto * draft_layout = new QVBoxLayout(draft_page);
     editor = new MissionEditor(
       draft_page, std::move(protected_paths), [this] {
         draft_exit_confirmed = false;
+        window->setProperty(
+          "connectionHandoffBlocked",
+          connection_lobby && editor && editor->dirty());
       });
     draft_layout->addWidget(editor);
     auto * import_box = new QGroupBox(QStringLiteral("受控导入（独立显式启用）"), draft_page);
@@ -336,40 +366,6 @@ struct MainWindow::Impl
       [this] {return editor->exported_draft();});
     import_layout->addWidget(import_panel); draft_layout->addWidget(import_box);
     draft_scroll->setWidget(draft_page); pages->addWidget(draft_scroll);
-    if (spatial_options.enabled) {
-      navigation->addItem(QStringLiteral("三维观测（实验）"));
-      navigation->item(navigation->count() - 1)->setIcon(dashboard_icon("map"));
-      rviz_full_page = new QWidget(pages); rviz_full_layout = new QVBoxLayout(rviz_full_page);
-      rviz_full_layout->setContentsMargins(0, 0, 0, 0);
-      rviz_view = new RvizView(rviz_full_page); rviz_view->setObjectName("embeddedRvizPage");
-      rviz_full_layout->addWidget(rviz_view);
-      pages->addWidget(rviz_full_page);
-      overview_rviz_host = new QWidget(overview_map_tabs);
-      overview_rviz_layout = new QVBoxLayout(overview_rviz_host);
-      overview_rviz_layout->setContentsMargins(0, 0, 0, 0);
-      overview_map_tabs->addTab(
-        overview_rviz_host, dashboard_icon("map"),
-        QStringLiteral("RViz 三维"));
-      QObject::connect(
-        overview_map_tabs, &QTabWidget::currentChanged, window, [this] {
-          mount_rviz();
-        });
-      QObject::connect(
-        navigation, &QListWidget::currentRowChanged, window, [this] {
-          mount_rviz();
-        });
-    }
-    if (recording_options.enabled && RecordingWorker::available()) {
-      auto protected_records = recording_protected_paths;
-      protected_records.push_back(mission_options.journal_directory);
-      protected_records.push_back(import_options.journal_directory);
-      navigation->addItem(QStringLiteral("录像与记录"));
-      auto * recording_scroll = new QScrollArea(pages);
-      recording_scroll->setWidgetResizable(true); recording_scroll->setFrameShape(QFrame::NoFrame);
-      recording_panel = new RecordingPanel(std::move(protected_records), recording_scroll);
-      recording_panel->setObjectName("recordingPage");
-      recording_scroll->setWidget(recording_panel); pages->addWidget(recording_scroll);
-    }
     navigation->setCurrentRow(0);
     request_note = label(
       QStringLiteral(
@@ -378,19 +374,27 @@ struct MainWindow::Impl
         "或写参数。"), "requestNote", root);
     layout->addWidget(request_note); window->setCentralWidget(root);
     if (mission_options.enabled) {
-      request_note->setText(QStringLiteral("查询仍只读；仿真任务启动/取消只走独立确认入口。"));
+      request_note->setText(
+        QStringLiteral(
+          "查询仍只读；仿真任务启动"
+          "/取消只走独立确认入口。"));
     }
     if (parameter_options.enabled) {
       request_note->setText(
         QStringLiteral(
-          "观察查询只读；两项元数据写入仅走独立确认入口，不开放飞行参数。"));
+          "观察查询只读；两项元数据写入仅"
+          "走独立确认入口，不开放飞行参数。"));
     }
     if (import_options.enabled) {
       request_note->setText(
         QStringLiteral(
-          "文件导入单独确认，不自动执行；查询只读，任务控制须另行启用。"));
+          "文件导入单独确认，不自动执行；"
+          "查询只读，任务控制须另行启用。"));
     }
-    auto * dock = new QDockWidget(QStringLiteral("本地会话事件（有界，非任务历史数据库）"), window);
+    auto * dock = new QDockWidget(
+      QStringLiteral(
+        "本地会话事件（有界"
+        "，非任务历史数据库）"), window);
     dock->setObjectName("eventDock");
     event_model =
       new TextTable(
@@ -406,6 +410,109 @@ struct MainWindow::Impl
     dock->hide();  // Keep the overview visual; the event log remains available from View.
     auto * exit = window->menuBar()->addAction(QStringLiteral("退出 EasyFly"));
     QObject::connect(exit, &QAction::triggered, window, [this] {window->close();});
+    organize_pages();
+  }
+  void organize_pages()
+  {
+    // Assemble the existing controllers into stable user-facing pages. Reparent widgets,
+    // never duplicate a source, editor, controller or rendering surface.
+    const auto old = [this](int index) {return pages->widget(index);};
+    auto * overview = old(0); auto * catalog = old(1); auto * perception = old(2);
+    auto * local = old(3); auto * diagnostic = old(4); auto * tools = old(5);
+    auto * draft = old(6);
+    task_tabs = new QTabWidget; task_tabs->setObjectName("taskCenterTabs");
+    task_tabs->addTab(catalog, QStringLiteral("任务库"));
+    task_tabs->addTab(draft, QStringLiteral("任务编辑"));
+    auto * import_box = import_panel->parentWidget();
+    auto * import_scroll = new QScrollArea; import_scroll->setWidgetResizable(true);
+    import_scroll->setWidget(import_box);
+    task_tabs->addTab(import_scroll, QStringLiteral("校验与导入"));
+    auto * execution_scroll = new QScrollArea; execution_scroll->setWidgetResizable(true);
+    execution_scroll->setWidget(execution_page);
+    task_tabs->addTab(execution_scroll, QStringLiteral("执行与查询"));
+    space_tabs = new QTabWidget; space_tabs->setObjectName("spaceViewTabs");
+    space_tabs->addTab(local, QStringLiteral("局部二维"));
+    if (!rviz_view && RvizView::available()) {
+      rviz_full_page = new QWidget; rviz_full_layout = new QVBoxLayout(rviz_full_page);
+      rviz_full_layout->setContentsMargins(0, 0, 0, 0);
+      rviz_view = new RvizView(rviz_full_page); rviz_view->setObjectName("embeddedRvizPage");
+      rviz_full_layout->addWidget(rviz_view);
+    }
+    if (rviz_view) {
+      space_tabs->addTab(rviz_full_page, QStringLiteral("三维 · RViz"));
+    } else {
+      space_tabs->addTab(
+        label(
+          QStringLiteral(
+            "当前安装未包含内嵌 RViz。独立 R"
+            "Viz 入口位于诊断与设置的高级工具。"),
+          "rvizBuildUnavailable", nullptr), QStringLiteral("三维 · RViz"));
+    }
+    if (overview_map_tabs->count() > 1) {
+      auto * previous = overview_map_tabs->widget(1); overview_map_tabs->removeTab(1);
+      previous->deleteLater();
+    }
+    auto * shortcut = new QWidget; auto * shortcut_layout = new QVBoxLayout(shortcut);
+    shortcut_layout->addStretch();
+    shortcut_layout->addWidget(
+      label(
+        QStringLiteral("点云、地图与三维图层集中在空间视图中。"),
+        "overviewSpatialHint", shortcut));
+    auto * open_space = button(QStringLiteral("打开三维空间视图"), "overviewOpenSpace", shortcut);
+    QObject::connect(
+      open_space, &QPushButton::clicked, window, [this] {
+        window->show_page("space"); space_tabs->setCurrentIndex(1);
+      });
+    shortcut_layout->addWidget(open_space); shortcut_layout->addStretch();
+    overview_map_tabs->addTab(shortcut, QStringLiteral("三维入口"));
+    QWidget * records = recording_panel;
+    if (!records && RecordingWorker::available()) {
+      auto paths = storage_protected_paths;
+      paths.push_back(mission_options.journal_directory);
+      paths.push_back(import_options.journal_directory);
+      recording_panel = new RecordingPanel(std::move(paths));
+      recording_panel->setObjectName("recordingPage"); records = recording_panel;
+    }
+    auto * records_scroll = new QScrollArea; records_scroll->setWidgetResizable(true);
+    records_scroll->setWidget(
+      records ? records : label(
+        QStringLiteral(
+          "当前安装未包含录像与回放组件"
+          "。安装媒体构建后可在这里使用。"),
+        "recordingBuildUnavailable", nullptr));
+    settings_tabs = new QTabWidget; settings_tabs->setObjectName("settingsTabs");
+    settings_tabs->addTab(diagnostic, QStringLiteral("状态与诊断"));
+    auto * preferences = new QWidget; auto * preference_layout = new QVBoxLayout(preferences);
+    effective_configuration = label(
+      QStringLiteral("当前使用独立观测配置。"),
+      "effectiveConnectionConfiguration", preferences);
+    preference_layout->addWidget(effective_configuration);
+    preference_layout->addWidget(configuration); preference_layout->addStretch();
+    settings_tabs->addTab(preferences, QStringLiteral("连接信息"));
+    settings_tabs->addTab(tools, QStringLiteral("高级工具"));
+    while (pages->count()) {pages->removeWidget(pages->widget(0));}
+    auto * placeholder = new QWidget; auto * placeholder_layout = new QVBoxLayout(placeholder);
+    placeholder_layout->addWidget(
+      label(
+        QStringLiteral(
+          "当前为独立观测入口。请通过 EasyFl"
+          "y 应用入口管理仿真、DDS 和 QGC。"),
+        "connectionUnavailable", placeholder)); placeholder_layout->addStretch();
+    const QList<QWidget *> ordered{placeholder, overview, task_tabs, perception,
+      space_tabs, records_scroll, settings_tabs};
+    navigation->clear();
+    const QStringList names{QStringLiteral("连接与仿真"), QStringLiteral("运行总览"),
+      QStringLiteral("任务中心"), QStringLiteral("相机与感知"), QStringLiteral("空间视图"),
+      QStringLiteral("记录与回放"), QStringLiteral("诊断与设置")};
+    const QStringList keys{"connection", "overview", "tasks", "perception", "space", "records",
+      "settings"};
+    const QStringList icons{"link", "overview", "tasks", "camera", "map", "edit", "diagnostics"};
+    for (int i = 0; i < ordered.size(); ++i) {
+      pages->addWidget(ordered[i]); navigation->addItem(names[i]);
+      navigation->item(i)->setData(Qt::UserRole, keys[i]);
+      navigation->item(i)->setIcon(dashboard_icon(icons[i]));
+    }
+    navigation->setCurrentRow(keys.indexOf("overview"));
   }
   void overview_page()
   {
@@ -453,25 +560,11 @@ struct MainWindow::Impl
     overview_map->setMinimumHeight(340); local_layout->addWidget(overview_map, 1);
     local_layout->addWidget(
       label(
-        QStringLiteral("局部位置 / 实际轨迹；不是卫星底图。SLAM 与点云请选 RViz 三维。"),
+        QStringLiteral(
+          "局部位置 / 实际轨迹；不是卫星底图。"
+          "SLAM 与点云请选 RViz 三维。"),
         "overviewMapHint", local));
     overview_map_tabs->addTab(local, dashboard_icon("map"), QStringLiteral("局部地图 · ENU"));
-    if (!spatial_options.enabled) {
-      auto * unavailable = new QWidget(overview_map_tabs);
-      auto * help = new QVBoxLayout(unavailable);
-      auto * notice = label(
-        RvizView::available() ? QStringLiteral(
-          "本次未启用三维入口。使用 --enable-rviz-embed 启动后，可在总览手动打开 RViz。") :
-        QStringLiteral("此构建未包含内嵌 RViz；可使用“工具边界”页的独立 RViz。"),
-        "overviewRvizUnavailable", unavailable);
-      notice->setMaximumHeight(120); help->addWidget(notice);
-      auto * tools = button(QStringLiteral("查看独立 RViz 入口"), "overviewRvizTools", unavailable);
-      help->addWidget(tools); help->addStretch();
-      QObject::connect(
-        tools, &QPushButton::clicked, window,
-        [this] {navigation->setCurrentRow(5);});
-      overview_map_tabs->addTab(unavailable, QStringLiteral("三维入口"));
-    }
     auto * side = new QWidget(split); side->setMinimumWidth(220); side->setMaximumWidth(380);
     auto * side_layout = new QVBoxLayout(side); side_layout->setContentsMargins(8, 0, 0, 0);
     auto * instrument_box = new QGroupBox(QStringLiteral("姿态与航向 · 只读"), side);
@@ -502,7 +595,10 @@ struct MainWindow::Impl
     form->addRow(QStringLiteral("独立有效性"), validity);
     form->addRow(QStringLiteral("时间证据"), state_age);
     evidence_layout->addWidget(state);
-    auto * phase = new QGroupBox(QStringLiteral("全局阶段观察（不关联目录任务）"), evidence_panel);
+    auto * phase = new QGroupBox(
+      QStringLiteral(
+        "全局阶段观察（"
+        "不关联目录任务）"), evidence_panel);
     auto * p = new QVBoxLayout(phase);
     global_overview = label({}, "globalPhaseOverview", phase); p->addWidget(global_overview);
     evidence_layout->addWidget(phase);
@@ -510,7 +606,8 @@ struct MainWindow::Impl
       label(
         QStringLiteral(
           "航向是局部 ENU 方位，不是真北或磁北；局部 Z 不是离地高度。"
-          "地图、姿态仪与相机分别判断有效性；缺少观测不填充演示数据。"), "overviewHint",
+          "地图、姿态仪与相机分别判断有"
+          "效性；缺少观测不填充演示数据。"), "overviewHint",
         evidence_panel));
     auto * actions = new QHBoxLayout;
     auto * expand = button(
@@ -535,41 +632,21 @@ struct MainWindow::Impl
   }
   void mount_rviz()
   {
-    if (!rviz_view) {return;}
-    const bool in_overview = navigation->currentRow() == 0 &&
-      overview_map_tabs->currentIndex() == 1;
-    // QTabWidget does not propagate the mounted page's minimum width. Keep
-    // both RViz splitter children inside the tab rather than overlapping them
-    // when the overview's instrument column reserves the remaining width.
-    overview_map_tabs->setMinimumWidth(
-      in_overview ? std::max(320, rviz_view->minimumSizeHint().width() + 4) : 320);
-    auto * host = in_overview ? overview_rviz_host : rviz_full_page;
-    if (rviz_view->parentWidget() == host) {return;}
-    // One surface only. Moving it releases the old renderer; never auto-reopen it.
-    rviz_view->stop();
-    rviz_full_layout->removeWidget(rviz_view); overview_rviz_layout->removeWidget(rviz_view);
-    rviz_view->setParent(host);
-    (in_overview ? overview_rviz_layout : rviz_full_layout)->addWidget(rviz_view);
-    rviz_view->show();
-    rviz_view->set_connection(
-      source && current && current->running && !current->stopped &&
-      !closing && !disconnecting && !released, config.use_sim_time);
+    if (rviz_view) {
+      rviz_view->set_connection(
+        source && current && current->running && !current->stopped &&
+        !closing && !disconnecting && !released, config.use_sim_time);
+    }
   }
   void mission_page()
   {
     auto * layout =
       page(
-      mission_options.enabled ? QStringLiteral("目录审阅 / 受管仿真任务") :
-      QStringLiteral("目录任务 / 已知执行查询"), mission_options.enabled ?
+      QStringLiteral("任务库"),
       QStringLiteral(
-        "查询仍只读；启动/取消须单独确认，仅使用本地登记身份。"
-        "手输 ID 始终只用于查询。") :
-      QStringLiteral(
-
-        "仅 list、validate、details、query"
-        "。服务 execution_id 不等"
-        "于 Action UUID；手输 ID"
-        "始终只用于查询。"));
+        "刷新目录，选择任务查看步骤与参数。"
+        "任务执行和进度查询位于“执行与查询”。"));
+    execution_page = new QWidget; execution_layout = new QVBoxLayout(execution_page);
     auto * refresh = button(QStringLiteral("刷新目录（只读）"), "listMissions", pages);
     layout->addWidget(refresh);
     QObject::connect(
@@ -637,19 +714,26 @@ struct MainWindow::Impl
     mission_content->setReadOnly(true); mission_content->setMinimumHeight(160);
     document_tabs->addTab(mission_content, QStringLiteral("原始正文（只读）"));
     layout->addWidget(document_tabs);
-    layout->addWidget(
-      label(
-        QStringLiteral(
-          "详情是读取时的已校验副本，不保证稍后目录内容未变；SHA-256不是 execution_id、"
-          "Action UUID 或飞行许可。任务文件没有 profile 字段，UI 选择不等于后端配置。"
-          "受管操作须启动参数显式启用；没有任意执行接管或完整历史列表。") +
-        (mission_options.enabled ? QString{} : QStringLiteral("默认没有启动/取消入口。")),
-        "missionLimit", pages));
+    auto * mission_limits = label(
+      QStringLiteral(
+        "详情是读取时的已校验副本，不保证稍后目录内容未变"
+        "；SHA-256不是 execution_id、"
+        "Action UUID 或飞行许可。任务文件没有"
+        " profile 字段，UI 选择不等于后端配置。"
+        "受管操作须启动参数显式启用；没"
+        "有任意执行接管或完整历史列表。") +
+      (mission_options.enabled ? QString{} : QStringLiteral("默认没有启动/取消入口。")),
+      "missionLimit", pages);
+    auto * mission_help = new QToolButton(pages);
+    mission_help->setText(QStringLiteral("展开任务使用说明")); mission_help->setCheckable(true);
+    mission_limits->hide(); layout->addWidget(mission_help); layout->addWidget(mission_limits);
+    QObject::connect(mission_help, &QToolButton::toggled, mission_limits, &QWidget::setVisible);
     if (mission_options.enabled) {
       mission_panel = new MissionPanel(
         mission_options, controls_factory, pages,
         [this](bridge::Key key, const std::string & name) {return review_read(key, name);});
-      mission_panel->setObjectName("managedMissionPanel"); layout->addWidget(mission_panel);
+      mission_panel->setObjectName("managedMissionPanel");
+      execution_layout->addWidget(mission_panel);
     }
     auto * query_row = new QHBoxLayout;
     execution_id = new QLineEdit(pages); execution_id->setObjectName("executionId");
@@ -666,7 +750,7 @@ struct MainWindow::Impl
     query = button(QStringLiteral("查询执行（只读）"), "queryMission", pages);
     query->setEnabled(false);
     query_row->addWidget(execution_id, 1); query_row->addWidget(query);
-    layout->addLayout(query_row);
+    execution_layout->addLayout(query_row);
     QObject::connect(execution_id, &QLineEdit::textChanged, window, [this] {update_buttons();});
     QObject::connect(
       query, &QPushButton::clicked, window, [this] {
@@ -681,8 +765,10 @@ struct MainWindow::Impl
         "尚无已知执行查询；目录为"
         "空也不证明没有正在执行的"
         "动作。"), "queryResult", pages);
-    layout->addWidget(query_result);
-    global_mission = label({}, "globalPhaseMission", pages); layout->addWidget(global_mission);
+    execution_layout->addWidget(query_result);
+    global_mission = label({}, "globalPhaseMission", pages); execution_layout->addWidget(
+      global_mission);
+    execution_layout->addStretch();
     layout->addStretch();
   }
   void perception_page()
@@ -720,7 +806,11 @@ struct MainWindow::Impl
     overlay_model = new TextTable(
       {"ID", QStringLiteral("类别"), QStringLiteral("置信度"),
         QStringLiteral("光轴深度 m"), QStringLiteral("深度关联")}, controls);
-    layout->addWidget(table(overlay_model, "cameraOverlayTable", controls));
+    auto * overlay_table = table(overlay_model, "cameraOverlayTable", controls);
+    overlay_table->hide(); layout->addWidget(overlay_table);
+    QObject::connect(
+      overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged), window,
+      [overlay_table](int index) {overlay_table->setVisible(index != 0);});
     QObject::connect(
       overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged), window, [this] {
         overlay_submitted_stamp = -1;
@@ -755,16 +845,20 @@ struct MainWindow::Impl
           "类型"), "X (m)", "Y (m)", "Z (m)", QStringLiteral("尺寸 X/Y/Z m"), QStringLiteral(
           "动态")}, controls);
     layout->addWidget(target_summary);
-    layout->addWidget(table(target_model, "targetTable", controls));
+    auto * objects = new QTabWidget(controls); objects->setObjectName("perceptionObjectTabs");
+    objects->addTab(table(target_model, "targetTable", controls), QStringLiteral("目标"));
     layout->addWidget(obstacle_summary);
-    layout->addWidget(table(obstacle_model, "obstacleTable", controls));
+    objects->addTab(table(obstacle_model, "obstacleTable", controls), QStringLiteral("障碍"));
+    layout->addWidget(objects);
     layout->addWidget(
       label(
         QStringLiteral(
-          "蓝框=检测；琥珀框=上游跟踪，可能包含预测框；SORT编号不是真实身份，"
+          "蓝框=检测；琥珀框=上游跟踪，可能包"
+          "含预测框；SORT编号不是真实身份，"
           "不与稳定ID或其他源互换。深度为上游融合光轴深度，不是斜距；"
           "需要同帧、唯一ID/类别和像素中心匹配，无效不填零。\n"
-          "上游未报告实际深度帧时间/TF回退；这里只核对事件关联，不证明RGB-D同步或定位精度。\n"
+          "上游未报告实际深度帧时间/TF回退；这里只核对"
+          "事件关联，不证明RGB-D同步或定位精度。\n"
           "标签/降落专用、预测与语义"
           "类别图层未接入；实测目标"
           "不能冒充这些来源。"), "perceptionLimit",
@@ -779,7 +873,8 @@ struct MainWindow::Impl
     auto * layout =
       page(
       QStringLiteral("局部二维 · odom/ENU"), QStringLiteral(
-        "仅观测实际轨迹、当前有效机位/目标/几何障碍。无点击发目标、无完整地图或飞行边界推断。"));
+        "仅观测实际轨迹、当前有效机位/目标/几何障"
+        "碍。无点击发目标、无完整地图或飞行边界推断。"));
     map = new MapCanvas(pages); map->setObjectName("spatialCanvas"); layout->addWidget(map, 1);
     layout->addWidget(
       label(
@@ -801,7 +896,10 @@ struct MainWindow::Impl
         "界面选择不是后端实际配置"
         "，也不会重启平台。详情全"
         "部为纯文本，可复制。"));
-    configuration = new QGroupBox(QStringLiteral("下次观测连接配置（先断开再修改）"), pages);
+    configuration = new QGroupBox(
+      QStringLiteral(
+        "下次观测连接配置"
+        "（先断开再修改）"), pages);
     configuration->setObjectName("configurationPanel");
     auto * form = new QFormLayout(configuration);
     selected_profile = new QComboBox(configuration); selected_profile->setObjectName(
@@ -873,7 +971,10 @@ struct MainWindow::Impl
       {QStringLiteral("参数"), QStringLiteral(
           "原 JSON 值"), QStringLiteral("类型"), QStringLiteral("查询质量/年龄")}, pages);
     layout->addWidget(table(parameter_model, "parameterTable", pages));
-    auto * local_edits = new QGroupBox(QStringLiteral("受限平台元数据编辑（独立显式启用）"), pages);
+    auto * local_edits = new QGroupBox(
+      QStringLiteral(
+        "受限平台元数据编"
+        "辑（独立显式启用）"), pages);
     auto * edit_layout = new QVBoxLayout(local_edits);
     parameter_panel = new ParameterPanel(parameter_options, parameter_factory, local_edits);
     parameter_panel->setObjectName("localParameterPanel"); edit_layout->addWidget(parameter_panel);
@@ -887,18 +988,26 @@ struct MainWindow::Impl
   {
     auto * layout = page(
       QStringLiteral("专业工具"), QStringLiteral(
-        "可选独立窗口；不会自动启动。进程运行不是已连接、可飞或控制权确认。"));
+        "可选独立窗口；不会自动启动。进程"
+        "运行不是已连接、可飞或控制权确认。"));
     layout->addWidget(
       label(
         QStringLiteral(
-          "RViz2：默认基础飞行预设以 map 显示 MAVROS 位姿坐标轴；导航/感知预设使用 odom，"
-          "需对应发布节点和真实 TF。继承本进程 ROS domain；启动时绑定当前观测"
-          "配置，并允许 DDS 访问 /dev/shm；这是可信 ROS 查看工具，不是强安全沙箱。"
+          "RViz2：默认基础飞行预设以 map 显示 MA"
+          "VROS 位姿坐标轴；导航/感知预设使用 odom，"
+          "需对应发布节点和真实 TF。继承本进程 "
+          "ROS domain；启动时绑定当前观测"
+          "配置，并允许 DDS 访问 /dev/shm"
+          "；这是可信 ROS 查看工具，不是强安全沙箱。"
           "所有 RViz 图层是最后收到的内容，不承诺新鲜度；模拟时钟"
-          "暂停时标记寿命也可能暂停。预测/语义副本尚无显示适配，不混入实测图层。"
-          "切换 UI 配置后请手动停止并重启 RViz。\n\nQGC：仅离线隔离预览，独立临时配置，"
-          "无主机网络/设备访问；缺少隔离条件就拒绝启动，无联网回退。QGC 本身不是只读"
-          "软件；本入口不管理用户从其他方式启动的 QGC，也不代表联网控制已验收。"),
+          "暂停时标记寿命也可能暂停。预测/语"
+          "义副本尚无显示适配，不混入实测图层。"
+          "切换 UI 配置后请手动停止并重启 RViz。"
+          "\n\nQGC：仅离线隔离预览，独立临时配置，"
+          "无主机网络/设备访问；缺少隔离条件就拒"
+          "绝启动，无联网回退。QGC 本身不是只读"
+          "软件；本入口不管理用户从其他方式启动"
+          "的 QGC，也不代表联网控制已验收。"),
         "toolsBoundary", pages));
     auto * form = new QFormLayout();
     rviz_path = new QLineEdit(tool_options.rviz_path, pages); rviz_path->setObjectName("rvizPath");
@@ -990,19 +1099,24 @@ struct MainWindow::Impl
     if (parameter_panel->busy()) {
       window->statusBar()->showMessage(
         QStringLiteral(
-          "请先关闭参数确认框或等待本次参数操作收尾；不自动撤销写入。"), 5000);
+          "请先关闭参数确认框或等待本次"
+          "参数操作收尾；不自动撤销写入。"), 5000);
       return;
     }
     if (editor->busy()) {
       window->statusBar()->showMessage(
-        QStringLiteral("请先完成或关闭本地草稿操作，再退出窗口。"), 5000); return;
+        QStringLiteral(
+          "请先完成或关闭本地草"
+          "稿操作，再退出窗口。"), 5000); return;
     }
     parameter_panel->exit_question(true);
     import_panel->exit_question(true);
     if (editor->dirty() && !draft_exit_confirmed) {
       draft_exit_prompt = new QMessageBox(
         QMessageBox::Warning, QStringLiteral("本地草稿尚未导出"),
-        QStringLiteral("退出会丢弃未导出的本地改动；不改原任务文件，不取消远端任务。是否仍退出？"),
+        QStringLiteral(
+          "退出会丢弃未导出的本地改动；不改原任"
+          "务文件，不取消远端任务。是否仍退出？"),
         QMessageBox::Yes | QMessageBox::Cancel, window);
       auto * p = draft_exit_prompt; p->setObjectName("draftExitPrompt"); p->setTextFormat(
         Qt::PlainText);
@@ -1022,8 +1136,10 @@ struct MainWindow::Impl
       import_exit_prompt = new QMessageBox(
         QMessageBox::Warning, QStringLiteral("任务导入结果未确认"),
         QStringLiteral(
-          "文件可能已导入，但本入口不执行任务。关闭只停止本地通信，不删除/回滚文件。\n"
-          "未决记录保留于：%1\n重启只查询原身份；实例变化仍保锁。是否知悉并退出？")
+          "文件可能已导入，但本入口不执行任务。关"
+          "闭只停止本地通信，不删除/回滚文件。\n"
+          "未决记录保留于：%1\n重启只查询原"
+          "身份；实例变化仍保锁。是否知悉并退出？")
         .arg(
           QString::fromStdString(
             import_options.journal_directory)), QMessageBox::Yes | QMessageBox::Cancel, window);
@@ -1043,8 +1159,10 @@ struct MainWindow::Impl
       parameter_exit_prompt = new QMessageBox(
         QMessageBox::Warning, QStringLiteral("参数写入结果未确认"),
         QStringLiteral(
-          "仅两项元数据，不影响飞行。关闭只停止本地通信，不证明远端未写入。\n"
-          "参数故障锁不跨重启恢复，旧写入不重放；请先人工核对后端。是否仍退出？"),
+          "仅两项元数据，不影响飞行。关闭只停"
+          "止本地通信，不证明远端未写入。\n"
+          "参数故障锁不跨重启恢复，旧写入不重"
+          "放；请先人工核对后端。是否仍退出？"),
         QMessageBox::Yes | QMessageBox::Cancel, window);
       auto * p = parameter_exit_prompt; p->setObjectName("parameterExitPrompt"); p->setTextFormat(
         Qt::PlainText);
@@ -1065,7 +1183,8 @@ struct MainWindow::Impl
         QMessageBox::Warning, QStringLiteral("控制/未决任务状态尚未完全确认"),
         QStringLiteral(
           "关闭只停止本地通信，不取消远端任务；任务可能继续执行。\n"
-          "未决记录保留在：%1\n重启只查询原身份，不重发、不清锁。是否仍关闭？")
+          "未决记录保留在：%1\n重启只查询"
+          "原身份，不重发、不清锁。是否仍关闭？")
         .arg(text(mission_options.journal_directory, 4096)),
         QMessageBox::Yes | QMessageBox::Cancel, window);
       mission_exit_prompt->setObjectName("missionExitPrompt");
@@ -1089,7 +1208,8 @@ struct MainWindow::Impl
       QMessageBox::Question, QStringLiteral("本次工具仍在运行"),
       QStringLiteral(
         "是否停止本次启动的 RViz/QGC 后关闭 EasyFly？\n"
-        "只停止本次受管进程，不关闭用户原有工具或平台节点。QGC 是离线预览。"),
+        "只停止本次受管进程，不关闭用户原有"
+        "工具或平台节点。QGC 是离线预览。"),
       QMessageBox::Yes | QMessageBox::Cancel, window);
     exit_prompt->setObjectName("toolExitPrompt"); exit_prompt->setTextFormat(Qt::PlainText);
     exit_prompt->setDefaultButton(QMessageBox::Cancel);
@@ -1283,6 +1403,7 @@ struct MainWindow::Impl
     state_connection->setToolTip(quality_text(q));
     armed->setText(live ? yes(v.sdk.value.armed) : unknown);
     mode->setText(live ? text(v.sdk.value.flight_mode_name, 256) : unknown);
+    mode->setToolTip(mode->text() + " · " + quality_text(q));
     position->setText(
       live &&
       v.position_valid ? QStringLiteral("%1 / %2 / %3 m").arg(
@@ -1294,7 +1415,9 @@ struct MainWindow::Impl
       flight.position_valid ? number(v.sdk.value.position_z) : QStringLiteral(
         "—"));
     altitude_metric->setToolTip(
-      QStringLiteral("局部原点以上 Z，不是离地/海拔高度；定位不可用时不显示数值。"));
+      QStringLiteral(
+        "局部原点以上 Z，不是离地/海"
+        "拔高度；定位不可用时不显示数值。"));
     instruments->snapshot(s, now);
     speed->setText(
       live && v.velocity_valid && v.speed_mps ? number(
@@ -1311,6 +1434,18 @@ struct MainWindow::Impl
         yes(live && v.battery_valid), yes(live && v.gps_valid), quality_text(q)));
     state_age->setText(ages(v.evidence, s, now));
     global_overview->setText(phase_event(s, now)); global_mission->setText(phase_event(s, now));
+    for (auto * value : {state_connection, mode, altitude_metric, speed, battery}) {
+      auto font = value->font(); int pixels = 24; font.setPixelSize(pixels);
+      while (pixels > 14 && QFontMetrics(font).horizontalAdvance(value->text()) >
+        value->contentsRect().width())
+      {
+        font.setPixelSize(--pixels);
+      }
+      if (value->property("metricPixels").toInt() != pixels) {
+        value->setProperty("metricPixels", pixels);
+        value->setStyleSheet(QString("font-size:%1px;").arg(pixels));
+      }
+    }
   }
   void mission_view(double now)
   {
@@ -1322,7 +1457,9 @@ struct MainWindow::Impl
       catalog_quality->setText(
         pending(
           bridge::Key::MissionList,
-          r.evidence.request_id) ? QStringLiteral("等待目录查询回复（不推断活动任务）") :
+          r.evidence.request_id) ? QStringLiteral(
+          "等待目录查询回复"
+          "（不推断活动任务）") :
         quality_text(
           display_quality(
             r.evidence, s, now, 2,
@@ -1403,7 +1540,9 @@ struct MainWindow::Impl
         text(details_name, 128), text(format), quality_text(quality),
         text(response->content_sha256, 64),
         format == "yaml_v1" ? QStringLiteral("schema v1；文件声明 odom / m / rad / s") :
-        QStringLiteral("legacy flat；odom / m / rad / s 为格式执行约定，非文件显式声明"),
+        QStringLiteral(
+          "legacy flat；odom / m / "
+          "rad / s 为格式执行约定，非文件显式声明"),
         text(config.selected_profile, 256)) + "\n" + ages(observation.evidence, *current, now) +
       QStringLiteral(" · 观测 session=%1/request=%2/epoch=%3")
       .arg(current->observation_session_id).arg(observation.evidence.request_id)
@@ -1544,7 +1683,10 @@ struct MainWindow::Impl
         "display_stamp_ns",
         QVariant::fromValue<qlonglong>(decoded->stamp_ns));
       overlay_model->replace({});
-      overlay_evidence->setText(QStringLiteral("实时原图；同帧感知为独立可选显示，不影响录像"));
+      overlay_evidence->setText(
+        QStringLiteral(
+          "实时原图；同帧感知为独"
+          "立可选显示，不影响录像"));
       return;
     }
     overlay_view(now, channel, binding);
@@ -1568,7 +1710,10 @@ struct MainWindow::Impl
     if (observations.binding.image_topic.empty() ||
       observations.binding.image_topic != binding.topic)
     {
-      fail(QStringLiteral("该相机没有明确感知绑定；不复用其他相机结果")); return;
+      fail(
+        QStringLiteral(
+          "该相机没有明确感知绑"
+          "定；不复用其他相机结果")); return;
     }
     if (!image.value || image_quality != bridge::Quality::ValidAtObservation ||
       q != bridge::Quality::ValidAtObservation)
@@ -1607,7 +1752,9 @@ struct MainWindow::Impl
     if (!overlay.matched) {fail(overlay.status); return;}
     const auto age = static_cast<double>(s.clock.now_ns - converted->stamp_ns) / 1e9;
     camera_canvas->frame(
-      converted->image, QStringLiteral("同帧感知 · 非最新原图 · 源年龄 %1s · stamp=%2")
+      converted->image, QStringLiteral(
+        "同帧感知 · 非最新原图 · 源"
+        "年龄 %1s · stamp=%2")
       .arg(number(age)).arg(converted->stamp_ns));
     camera_canvas->overlay(overlay);
     camera_canvas->setProperty(
@@ -1630,17 +1777,25 @@ struct MainWindow::Impl
     const auto & s = *current; QVector<QStringList> capabilities; QStringList details;
     details <<
       (mission_options.enabled ?
-    QStringLiteral("观测只读；受管仿真操作另行确认，不作为飞行许可。ROS_DOMAIN_ID=%1（非鉴权）") :
-    QStringLiteral("只读 UI，不作为飞行许可。ROS_DOMAIN_ID=%1（仅启动环境，非鉴权）")).arg(
+    QStringLiteral(
+      "观测只读；受管仿真操作另行确认，不作为飞行许"
+      "可。ROS_DOMAIN_ID=%1（非鉴权）") :
+    QStringLiteral(
+      "只读 UI，不作为飞行许可。ROS_DO"
+      "MAIN_ID=%1（仅启动环境，非鉴权）")).arg(
       qEnvironmentVariable(
         "ROS_DOMAIN_ID",
         "0"));
     details << QStringLiteral("会话 %1 / epoch %2").arg(s.observation_session_id).arg(s.time_epoch);
-    details << QStringLiteral("/uav_state 发布源 %1，其中类型匹配 %2；多个来源不合并")
+    details << QStringLiteral(
+      "/uav_state 发布源 %1"
+      "，其中类型匹配 %2；多个来源不合并")
       .arg(s.state_publishers).arg(s.state_matching_publishers);
     if (qEnvironmentVariableIsSet("EASYFLY_CONNECTION_SESSION")) {
       configuration->setEnabled(false);
-      details << QStringLiteral("受连接管理配置约束；修改请返回连接管理并重建工作会话。配置 ID：%1")
+      details << QStringLiteral(
+        "受连接管理配置约束；修改请返回连接"
+        "管理并重建工作会话。配置 ID：%1")
         .arg(qEnvironmentVariable("EASYFLY_CONNECTION_ID"));
     }
     details << text(s.local_error, 2048);
@@ -1675,17 +1830,16 @@ struct MainWindow::Impl
     }
     capability_model->replace(std::move(capabilities));
     connection->setText(
-      (mission_options.enabled ?
-      QStringLiteral("受管仿真模式 · %1 · 曾观测平台能力端点 %2/4（非当前可飞）") :
-      import_options.enabled ? QStringLiteral(
-        "飞行只读 / 任务导入启用 · %1 · 能力端点 %2/4（非当前可飞）") :
-      parameter_options.enabled ? QStringLiteral(
-        "飞行只读 / 元数据编辑启用 · %1 · 能力端点 %2/4（非当前可飞）") :
-      QStringLiteral("只读 · %1 · 曾观测平台能力端点 %2/4（非当前可飞）"))
+      QStringLiteral("DDS：%1 · 飞控：%2 · 权限：%3")
       .arg(
-        disconnecting ? QStringLiteral("本地资源清理中") :
-        s.running ? QStringLiteral("本地观测器运行中") :
-        QStringLiteral("本地观测已停止")).arg(observed));
+        disconnecting ? QStringLiteral("清理中") : s.running &&
+        !s.stopped ? QStringLiteral("观测中") : QStringLiteral("已断开"),
+        state_connection->text(),
+        mission_options.enabled ? QStringLiteral("受管仿真") : QStringLiteral("观测只读")));
+    connection->setToolTip(
+      QStringLiteral(
+        "曾观测能力端点 %1"
+        "/4，详细状态见诊断。").arg(observed));
     clock->setText(
       QStringLiteral("%1 · %2 · 界面快照年龄 %3s").arg(
         config.use_sim_time ? QStringLiteral(
@@ -1732,16 +1886,17 @@ struct MainWindow::Impl
     } else {warning->hide();}
     const auto stats = decoder ? decoder->stats() : ImageQueueStats{};
     window->statusBar()->showMessage(
-      QStringLiteral(
-        "只读请求 %1/8 · 超时 %2 ·"
-        " 图像丢弃 %3 · 转换 pendi"
-        "ng %4/1 · 无效样本 %5 · "
-        "%6")
+      QStringLiteral("%1 · domain %2 · %3").arg(
+        s.running && !s.stopped ? QStringLiteral("实时观测") : QStringLiteral("观测已停止"),
+        qEnvironmentVariable("ROS_DOMAIN_ID", "0"),
+        mission_options.enabled ? QStringLiteral("仿真操作逐项确认") :
+        QStringLiteral("飞行观测只读")));
+    diagnostics->setToolTip(
+      QStringLiteral("请求 %1/8 · 超时 %2 · 图像丢弃 %3 · 转换等待 %4 · 无效 %5")
       .arg(s.pending_queries).arg(s.counters.timed_out).arg(
         s.counters.dropped_images +
-        stats.dropped).arg(stats.pending).arg(s.counters.invalid_samples).arg(
-        mission_options.enabled ? QStringLiteral("受管仿真入口已显式启用；状态见任务页") :
-        QStringLiteral("不持有飞行操作")));
+        stats.dropped)
+      .arg(stats.pending).arg(s.counters.invalid_samples));
   }
   void events_view()
   {
@@ -1762,6 +1917,7 @@ struct MainWindow::Impl
   }
   void tick()
   {
+    window->setProperty("connectionHandoffBlocked", connection_lobby && editor->dirty());
     tools_tick();
     if (source) {current = source->snapshot();}
     if (rviz_view) {
@@ -1803,11 +1959,119 @@ MainWindow::MainWindow(
   const ToolOptions & tools, const MissionOptions & missions, ControlFactory controls,
   const ParameterOptions & parameters, ParameterFactory parameter_controls,
   const ImportOptions & imports, ImportFactory import_controls, const RvizOptions & spatial,
-  const RecordingOptions & recording)
+  const RecordingOptions & recording, bool auto_observe)
 : QMainWindow(parent), impl_(std::make_unique<Impl>(
       this, config, std::move(factory), tools, missions, std::move(controls), parameters,
-      std::move(parameter_controls), imports, std::move(import_controls), spatial, recording)) {}
+      std::move(parameter_controls), imports, std::move(import_controls), spatial, recording,
+      auto_observe)) {}
 MainWindow::~MainWindow() = default;
+void MainWindow::set_connection_page(QWidget * page, bool lobby)
+{
+  if (!page || impl_->connection_page) {return;}
+  auto * scroll = new QScrollArea(impl_->pages);
+  scroll->setWidgetResizable(true); scroll->setFrameShape(QFrame::NoFrame);
+  scroll->setObjectName("connectionPageScroll"); scroll->setWidget(page);
+  impl_->connection_page = page; impl_->connection_lobby = lobby;
+  impl_->connection_page_index = 0;
+  auto * previous = impl_->pages->widget(0); impl_->pages->removeWidget(previous);
+  previous->deleteLater(); impl_->pages->insertWidget(0, scroll);
+  setProperty("connectionPageAvailable", true);
+  impl_->configuration->hide();
+  impl_->qgc_path->setReadOnly(true);
+  if (auto * choose = findChild<QPushButton *>("selectQgc")) {choose->hide();}
+  impl_->qgc_path->setText(page->property("connectionQgcPath").toString());
+  impl_->qgc_path->setPlaceholderText(QStringLiteral("在连接与仿真的 QGC 页选择程序"));
+  impl_->effective_configuration->setText(
+    QStringLiteral(
+      "连接参数统一在连接与仿真页"
+      "维护；此处仅展示生效信息。"));
+  page->installEventFilter(this);
+  if (lobby) {
+    // Local drafts, record browsing and settings remain available without a ROS source.
+    for (const auto & key : {"overview", "perception", "space"}) {
+      for (int i = 0; i < impl_->navigation->count(); ++i) {
+        if (impl_->navigation->item(i)->data(Qt::UserRole) == key) {
+          impl_->navigation->item(i)->setFlags(
+            impl_->navigation->item(
+              i)->flags() & ~Qt::ItemIsEnabled);
+          impl_->navigation->item(i)->setToolTip(QStringLiteral("连接平台后可查看实时数据"));
+        }
+      }
+    }
+    setWindowTitle(QStringLiteral("EasyFly")); impl_->toggle->hide();
+    impl_->request_note->setText(
+      QStringLiteral(
+        "选择连接方式进入工作界面；本地"
+        "任务编辑与历史回放可离线使用。"));
+    show_connection_page();
+  } else {
+    impl_->toggle->setText(QStringLiteral("结束观测"));
+    impl_->toggle->setToolTip(
+      QStringLiteral(
+        "正常结束本次观测并返回"
+        "连接页，保留仿真后台。"));
+  }
+}
+bool MainWindow::show_page(const QString & key)
+{
+  for (int i = 0; i < impl_->navigation->count(); ++i) {
+    auto * item = impl_->navigation->item(i);
+    if (item->data(Qt::UserRole).toString() == key && (item->flags() & Qt::ItemIsEnabled)) {
+      impl_->navigation->setCurrentRow(i); return true;
+    }
+  }
+  return false;
+}
+bool MainWindow::show_connection_page()
+{
+  return impl_->connection_page && show_page("connection");
+}
+bool MainWindow::eventFilter(QObject * object, QEvent * event)
+{
+  if (object == impl_->connection_page && event->type() == QEvent::DynamicPropertyChange) {
+    const auto name = static_cast<QDynamicPropertyChangeEvent *>(event)->propertyName();
+    if (name == "connectionRaiseRequested") {
+      show_connection_page(); show(); raise(); activateWindow();
+    } else if (name == "connectionExitRequested") {
+      close();
+    } else if (name == "connectionQgcPath") {
+      if (!impl_->qgc_process.active()) {
+        impl_->qgc_path->setText(object->property("connectionQgcPath").toString());
+      }
+    } else if (name == "connectionState") {
+      const auto state = object->property("connectionState").value<QJsonObject>();
+      const auto active = state["profile"].toObject();
+      QString time_label = QStringLiteral("系统时间");
+      if (active["simulation_time"].toBool()) {time_label = QStringLiteral("模拟时间");}
+      impl_->effective_configuration->setText(
+        active.isEmpty() ? QStringLiteral(
+          "尚无生效连接。请在连"
+          "接与仿真页选择配置。") :
+        QStringLiteral(
+          "生效连接：%1\nROS domain：%2 · 时间源：%3\n运行方案"
+          " / 观测标签：%4\n前视：%5\n下视：%6\n"
+          "修改请前往连接与仿真。")
+        .arg(active["name"].toString()).arg(active["domain"].toInt())
+        .arg(
+          time_label,
+          active["selected_profile"].toString(), active["front_topic"].toString(),
+          active["down_topic"].toString()));
+      if (impl_->connection_lobby && !impl_->closing) {
+        const auto workspace = state["workspace"].toObject();
+        if (state["process_running"].toBool() && state["workspace_fresh"].toBool() &&
+          workspace["connection_page"].toBool() && !workspace["closing"].toBool() &&
+          !impl_->editor->dirty()) {close();} else {
+          impl_->connection->setText(
+            state["backend_running"].toBool() ?
+            QStringLiteral(
+              "后台会话保留中，可"
+              "连接并进入工作界面") : QStringLiteral("尚未连接平台"));
+        }
+      }
+    }
+  }
+  return QMainWindow::eventFilter(object, event);
+}
 bool MainWindow::cleanup_complete() const
 {
   return impl_->released && !impl_->tools_active() &&
@@ -1844,6 +2108,14 @@ QJsonObject MainWindow::connection_status() const
   const bool unresolved = (p.mission_panel && p.mission_panel->unresolved()) ||
     p.import_panel->unresolved() || p.parameter_panel->busy() || p.parameter_panel->fault();
   return {{"summary", summary}, {"unresolved", unresolved}, {"closing", p.closing},
+    {"connection_page", p.connection_page != nullptr},
+    {"page", p.navigation->currentItem()->data(Qt::UserRole).toString()},
+    {"rviz_available", p.rviz_view != nullptr},
+    {"rviz_running", p.rviz_view && p.rviz_view->snapshot().running},
+    {"rviz_frames", p.rviz_view ? static_cast<double>(p.rviz_view->snapshot().frames) : 0},
+    {"recording_available", p.recording_panel != nullptr},
+    {"connection_page_visible", p.connection_page &&
+      p.navigation->currentRow() == p.connection_page_index},
     {"draft_dirty", p.editor->dirty()},
     {"close_prompt", p.exit_prompt || p.draft_exit_prompt || p.mission_exit_prompt ||
       p.parameter_exit_prompt || p.import_exit_prompt},
@@ -1865,6 +2137,10 @@ QJsonObject MainWindow::connection_status() const
 }
 void MainWindow::closeEvent(QCloseEvent * event)
 {
+  if (!impl_->closing) {
+    setProperty("connectionCloseReturnsToLobby", property("connectionReturnRequested").toBool());
+    setProperty("connectionReturnRequested", false);
+  }
   if (impl_->closing && cleanup_complete()) {event->accept(); return;}
   event->ignore(); impl_->request_close();
 }

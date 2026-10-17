@@ -255,7 +255,11 @@ TEST_F(GuiRos, ActualButtonsAreReadonlyAndOtherContextSurvives)
       [&] {
         return label("stateConnection") == QStringLiteral("已连接");
       }, 8));
-  ASSERT_TRUE(until([&] {return label("connectionSummary").contains("4/4");}, 8));
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return widget<QLabel>("connectionSummary")->toolTip().contains("4/4");
+      }, 8));
   widget<QPushButton>("listMissions")->click();
   ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}, 5));
   widget<QListWidget>("missionList")->setCurrentRow(0); QTest::qWait(1050);
@@ -288,7 +292,11 @@ TEST_F(GuiRos, ActualButtonsAreReadonlyAndOtherContextSurvives)
 }
 TEST_F(GuiRos, DelayedServiceDoesNotBlockCloseOrRestart)
 {
-  open(); ASSERT_TRUE(until([&] {return label("connectionSummary").contains("4/4");}, 8));
+  open(); ASSERT_TRUE(
+    until(
+      [&] {
+        return widget<QLabel>("connectionSummary")->toolTip().contains("4/4");
+      }, 8));
   mission_delay_ms = 1300;
   int qt_ticks = 0; QTimer qt_timer;
   QObject::connect(&qt_timer, &QTimer::timeout, [&] {++qt_ticks;}); qt_timer.start(10);
@@ -299,7 +307,11 @@ TEST_F(GuiRos, DelayedServiceDoesNotBlockCloseOrRestart)
   ASSERT_TRUE(until([&] {return window->cleanup_complete();}));
   mission_delay_ms = 0; widget<QPushButton>("observerToggle")->click();
   ASSERT_TRUE(until([&] {return !window->cleanup_complete();}));
-  ASSERT_TRUE(until([&] {return label("connectionSummary").contains("4/4");}, 8));
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return widget<QLabel>("connectionSummary")->toolTip().contains("4/4");
+      }, 8));
   EXPECT_EQ(widget<QListWidget>("missionList")->count(), 0);
   ASSERT_TRUE(until([&] {return heartbeats > 10;})); EXPECT_TRUE(context->is_valid());
 }

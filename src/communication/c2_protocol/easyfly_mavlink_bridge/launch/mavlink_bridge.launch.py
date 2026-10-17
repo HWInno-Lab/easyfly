@@ -26,6 +26,12 @@ def generate_launch_description():
         default_value="udp://:14540@127.0.0.1:14555",
         description="MAVLink connection: udp://... for SITL, serial:///dev/... for real")
 
+    gcs_url_arg = DeclareLaunchArgument(
+        "gcs_url", default_value="",
+        description="Optional bidirectional MAVROS GCS forwarding endpoint")
+    target_system_arg = DeclareLaunchArgument(
+        "target_system", default_value="1", description="Expected FCU MAVLink system ID")
+
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time",
         default_value="false",
@@ -76,8 +82,8 @@ def generate_launch_description():
         parameters=[
             {
                 "fcu_url": fcu_url,
-                "gcs_url": "",
-                "tgt_system": 1,
+                "gcs_url": LaunchConfiguration("gcs_url"),
+                "tgt_system": ParameterValue(LaunchConfiguration("target_system"), value_type=int),
             },
             # MAVROS's wildcard config is required for /mavros/time and peers.
             mavros_use_sim_time_file,
@@ -114,6 +120,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         fcu_url_arg,
+        gcs_url_arg,
+        target_system_arg,
         use_sim_time_arg,
         start_bridge_arg,
         timesync_mode_arg,

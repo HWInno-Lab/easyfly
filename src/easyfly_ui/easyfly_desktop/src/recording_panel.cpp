@@ -13,6 +13,7 @@
 
 #include "easyfly_desktop/recording_panel.hpp"
 #include <QFileDialog>
+#include <QDateTime>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -22,6 +23,7 @@
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QTimer>
+#include <QToolButton>
 #include <QCoreApplication>
 #include <QProcess>
 #include <QVBoxLayout>
@@ -47,8 +49,13 @@ struct RecordingPanel::Impl
   {
     owner->setAttribute(Qt::WA_StyledBackground, true);
     auto * layout = new QVBoxLayout(p);
-    auto * title = new QLabel(QStringLiteral("录像与任务记录（本地）"), p);
+    auto * title = new QLabel(QStringLiteral("记录与回放"), p);
     title->setProperty("heading", true); layout->addWidget(title);
+    auto * summary = new QLabel(
+      QStringLiteral(
+        "录制当前选定相机，停止后刷新列表并选择记录回放。\n"
+        "录像是界面抽样数据；时钟或连接中断会自动收尾，恢复后需手动开始。"), p);
+    summary->setWordWrap(true); layout->addWidget(summary);
     auto * explanation = new QLabel(
       QStringLiteral(
         "仅记录开始时选定的相机，最多 10fps / 1280×720，MJPEG/AVI 分段（最多 600 帧）。\n"
@@ -59,7 +66,10 @@ struct RecordingPanel::Impl
         "只关联已知请求/执行/Action 身份；全局阶段单独标记未归属。"), p);
     explanation->setWordWrap(true);
     explanation->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    auto * details = new QToolButton(p); details->setText(QStringLiteral("展开录制规格与说明"));
+    details->setCheckable(true); explanation->hide(); layout->addWidget(details);
     layout->addWidget(explanation);
+    QObject::connect(details, &QToolButton::toggled, explanation, &QWidget::setVisible);
     auto * row = new QHBoxLayout;
     directory = new QLineEdit(p); directory->setObjectName("recordingDirectory");
     directory->setPlaceholderText(
@@ -84,19 +94,23 @@ struct RecordingPanel::Impl
     status->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     status->setTextInteractionFlags(Qt::TextSelectableByMouse); layout->addWidget(status);
     index = new QTableWidget(0, 4, p); index->setObjectName("recordingIndex");
+    index->setColumnCount(7); index->setIconSize(QSize(72, 40));
     index->setHorizontalHeaderLabels(
-      {"ID", QStringLiteral("状态"), QStringLiteral(
-          "帧数"), QStringLiteral("结束原因")});
+      {QStringLiteral("预览 / ID"), QStringLiteral("状态"),
+        QStringLiteral("帧数"), QStringLiteral("开始时间 UTC"), QStringLiteral("观测时长"),
+        QStringLiteral("来源 / 执行"), QStringLiteral("结束原因")});
     index->setEditTriggers(QAbstractItemView::NoEditTriggers);
     index->setMinimumHeight(120); owner->setMinimumHeight(580);
-    index->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    index->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    const int widths[]{140, 62, 44, 104, 66, 110, 86};
+    for (int col = 0; col < 7; ++col) {index->setColumnWidth(col, widths[col]);}
     index->horizontalHeader()->setStretchLastSection(true); layout->addWidget(index, 1);
     auto * replay_row = new QHBoxLayout;
     replay_row->addWidget(replay); replay_row->addStretch(); layout->addLayout(replay_row);
     layout->addWidget(
       new QLabel(
         QStringLiteral(
-          "索引只读，无删除。选择 verified 行后可打开独立本地历史窗口（不连接 ROS）。\n"
+          "索引只读，无删除。选择已校验的记录后可打开独立本地历史窗口（不连接 ROS）。\n"
           "独立窗口自行关闭，不随本窗口关闭；刷新校验最多 256 条/512MiB。"), p));
     QObject::connect(
       choose, &QPushButton::clicked, p, [this] {
@@ -242,12 +256,29 @@ struct RecordingPanel::Impl
     rendered_index = fingerprint; index->setRowCount(s.index.size());
     for (std::size_t row = 0; row < s.index.size(); ++row) {
       const auto & entry = s.index[row];
-      const QStringList values{QString::fromStdString(entry.id),
-        QString::fromStdString(entry.status),
-        QString::number(entry.frames), QString::fromStdString(entry.reason)};
-      for (int col = 0; col < 4; ++col) {
+      const auto started = QDateTime::fromString(entry.started, Qt::ISODateWithMs);
+      const auto status_text = entry.status == "verified" ? QStringLiteral("已校验") :
+        entry.status == "empty" ? QStringLiteral("无有效帧") :
+        entry.status == "failed" ? QStringLiteral("失败") : QStringLiteral("未完成/损坏");
+      const auto reason_text = entry.reason == "operator_stop" ? QStringLiteral("手动停止") :
+        QString::fromStdString(entry.reason);
+      const QStringList values{QString::fromStdString(entry.id).left(8), status_text,
+        QString::number(entry.frames), started.isValid() ?
+        started.toUTC().toString("yyyy-MM-dd\nHH:mm:ss") : entry.started,
+        entry.duration >= 0 ? QString::number(entry.duration, 'f', 1) + " s" : QStringLiteral("—"),
+        entry.source.section('/', -2) +
+        (entry.execution.isEmpty() ? QString{} : "\n" + entry.execution.left(8)), reason_text};
+      const QStringList details{QString::fromStdString(entry.id),
+        QString::fromStdString(entry.status), QString::number(entry.frames), entry.started,
+        values[4], entry.source + "\n" + entry.execution, QString::fromStdString(entry.reason)};
+      for (int col = 0; col < values.size(); ++col) {
         index->setItem(row, col, new QTableWidgetItem(values[col]));
+        index->item(row, col)->setToolTip(details[col]);
       }
+      if (!entry.thumbnail.isNull()) {
+        index->item(row, 0)->setIcon(QPixmap::fromImage(entry.thumbnail));
+      }
+      index->setRowHeight(row, 62);
     }
   }
 };

@@ -55,11 +55,16 @@ def generate_launch_description():
             get_package_share_directory("easyfly_mavlink_bridge"),
             "/launch/mavlink_bridge.launch.py",
         ]),
-        launch_arguments={"use_sim_time": "true"}.items(),
+        launch_arguments={"use_sim_time": "true", "fcu_url": LaunchConfiguration("fcu_url"),
+                          "gcs_url": LaunchConfiguration("gcs_url"),
+                          "target_system": LaunchConfiguration("target_system")}.items(),
     )
 
     return LaunchDescription([
         headless,
+        DeclareLaunchArgument('fcu_url', default_value='udp://127.0.0.1:14540@127.0.0.1:14555'),
+        DeclareLaunchArgument('gcs_url', default_value=''),
+        DeclareLaunchArgument('target_system', default_value='1'),
         DeclareLaunchArgument('scene', default_value=''),
         DeclareLaunchArgument('world', default_value=''),
         OpaqueFunction(function=_validate_scene),

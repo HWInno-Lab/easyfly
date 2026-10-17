@@ -1,27 +1,45 @@
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_connection_manager)
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+ament_python_install_package(${PROJECT_NAME})
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+# Record an installation default as JSON data, never as shell source.
+execute_process(COMMAND ${Python3_EXECUTABLE}
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/write_installation.py
+  ${CMAKE_CURRENT_BINARY_DIR}/installation.json COMMAND_ERROR_IS_FATAL ANY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/installation.json DESTINATION share/${PROJECT_NAME})
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
+find_package(X11 REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 add_library(connection_components STATIC
-  src/profile.cpp src/rpc.cpp src/supervisor.cpp src/manager_window.cpp
+  src/profile.cpp src/rpc.cpp src/supervisor.cpp src/manager_window.cpp src/native_window.cpp
   include/easyfly_connection_manager/rpc.hpp)
 target_include_directories(connection_components PUBLIC include)
-target_link_libraries(connection_components PUBLIC Qt5::Widgets Qt5::Network)
+target_link_libraries(connection_components PUBLIC Qt5::Widgets Qt5::Network ${X11_LIBRARIES})
+target_include_directories(connection_components PRIVATE ${X11_INCLUDE_DIR})
 target_compile_options(connection_components PRIVATE -Wall -Wextra -Wpedantic)
+set_target_properties(connection_components PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(easyfly_connection_page SHARED src/page_plugin.cpp)
+target_link_libraries(easyfly_connection_page connection_components)
+install(TARGETS easyfly_connection_page LIBRARY DESTINATION lib)
 add_executable(easyfly_connection_manager src/main.cpp)
 target_link_libraries(easyfly_connection_manager connection_components)
 add_executable(easyfly_connection_supervisor src/supervisor_main.cpp)
 target_link_libraries(easyfly_connection_supervisor connection_components)
 install(TARGETS easyfly_connection_manager easyfly_connection_supervisor
   DESTINATION lib/${PROJECT_NAME})
-install(PROGRAMS scripts/easyfly_connections DESTINATION lib/${PROJECT_NAME})
+install(PROGRAMS scripts/easyfly_connections scripts/easyfly_connection_backend
+  DESTINATION lib/${PROJECT_NAME})
 configure_file(assets/easyfly-connections.desktop.in easyfly-connections.desktop @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/easyfly-connections.desktop DESTINATION share/applications)
 install(FILES README.md CONTRACT.md DESTINATION share/${PROJECT_NAME})
 if(BUILD_TESTING)
+  configure_file(scripts/easyfly_connection_backend easyfly_connection_backend COPYONLY)
+  add_executable(capture_manager test/capture_manager.cpp)
+  target_link_libraries(capture_manager connection_components)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(Qt5 REQUIRED COMPONENTS Test)
   ament_add_gtest(test_connections test/test_connections.cpp test/qt_main.cpp
@@ -34,6 +52,7 @@ if(BUILD_TESTING)
   add_dependencies(test_connections fixture_workspace)
   set_tests_properties(test_connections PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_backend test/test_backend.py TIMEOUT 60)
   ament_add_pytest_test(test_live_session test/test_live_session.py TIMEOUT 120)
   set_tests_properties(test_live_session PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_LOCALHOST_ONLY=1" RUN_SERIAL TRUE)

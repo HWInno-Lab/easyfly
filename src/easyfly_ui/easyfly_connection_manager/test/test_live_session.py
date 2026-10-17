@@ -41,7 +41,10 @@ def test_real_sessions(tmp_path):
     runtime.mkdir(mode=0o700)
     root = Path(os.environ.get('EASYFLY_CM_EVIDENCE_ROOT', str(tmp_path)))
     root.mkdir(parents=True, exist_ok=True)
+    config = tmp_path / 'config'
+    config.mkdir(mode=0o700)
     env = dict(os.environ, QT_QPA_PLATFORM='offscreen', ROS_LOCALHOST_ONLY='1',
+               XDG_CONFIG_HOME=str(config),
                RMW_IMPLEMENTATION='rmw_fastrtps_cpp')
     for key in ('FASTRTPS_DEFAULT_PROFILES_FILE', 'FASTDDS_DEFAULT_PROFILES_FILE',
                 'ROS_DISCOVERY_SERVER', 'ROS_SUPER_CLIENT', 'CYCLONEDDS_URI'):

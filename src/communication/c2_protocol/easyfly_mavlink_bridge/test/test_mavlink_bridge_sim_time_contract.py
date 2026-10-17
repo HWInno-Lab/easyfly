@@ -9,15 +9,17 @@ through ``ros_arguments`` while EasyFly's override is a launch parameter file.
 """
 
 import importlib.util
+import inspect
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 import yaml
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchContext
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, OpaqueFunction, TimerAction
+from launch.actions import (
+    DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, OpaqueFunction, TimerAction,
+)
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterFile
 from launch.utilities import perform_substitutions
@@ -76,13 +78,15 @@ def _iter_launch_entities(entities):
         yield entity
         if isinstance(entity, TimerAction):
             yield from _iter_launch_entities(entity.actions)
+        elif isinstance(entity, GroupAction):
+            yield from _iter_launch_entities(entity.get_sub_entities())
         elif isinstance(entity, OpaqueFunction):
-            # The SITL reservation now precedes all real launch actions.
-            # Only materialize its description for this static clock-contract
-            # check: no lock, port probes, timers, or processes are executed.
-            with patch('easyfly_px4_sitl.session_guard.SessionReservation.acquire'):
-                returned = entity.execute(LaunchContext())
-            yield from _iter_launch_entities(returned or [])
+            # Inspect the guard's captured action list; never execute preflight,
+            # telemetry registration, resource checks, locks or process callbacks.
+            function = entity._OpaqueFunction__function
+            if function.__module__ == 'easyfly_px4_sitl.session_guard':
+                guarded = inspect.getclosurevars(function).nonlocals['actions']
+                yield from _iter_launch_entities(guarded)
 
 
 def _source_location(include):
@@ -112,13 +116,14 @@ def _assert_sim_time_bridge_include(test_case, launch_path, module_name):
     test_case.assertEqual(arguments.get("use_sim_time"), "true")
 
 
-def _evaluate_mavros_policy(use_sim_time):
+def _evaluate_mavros_policy(use_sim_time, **overrides):
     module = _load_launch_module()
     launch_description = module.generate_launch_description()
     context = LaunchContext()
     # Supplying this value emulates the command-line launch argument.  The
     # remaining defaults are then derived by the launch description itself.
     context.launch_configurations["use_sim_time"] = use_sim_time
+    context.launch_configurations.update(overrides)
     for action in launch_description.entities:
         if isinstance(action, DeclareLaunchArgument):
             action.execute(context)
@@ -154,12 +159,14 @@ def _evaluate_mavros_policy(use_sim_time):
     # px4_config.yaml is the first matching file; EasyFly's generated policy
     # must be the later one that actually wins parameter precedence.
     override_path = override_paths[-1]
-    return context, command, yaml.safe_load(override_path.read_text()), override_path
+    # Read generated files while their Node/ParameterFile owners are still alive.
+    records = [yaml.safe_load(Path(path).read_text()) for path in parameter_files]
+    return context, command, yaml.safe_load(override_path.read_text()), override_path, records
 
 
 class MavlinkBridgeSimTimeContractTest(unittest.TestCase):
     def test_simulation_defaults_override_px4_config(self):
-        _, command, params, override_path = _evaluate_mavros_policy("true")
+        _, command, params, override_path, _ = _evaluate_mavros_policy("true")
         time_params = params["/**/time"]["ros__parameters"]
         global_params = params["/**"]["ros__parameters"]
 
@@ -177,7 +184,7 @@ class MavlinkBridgeSimTimeContractTest(unittest.TestCase):
         )
 
     def test_real_hardware_defaults_remain_enabled(self):
-        _, _, params, _ = _evaluate_mavros_policy("false")
+        _, _, params, _, _ = _evaluate_mavros_policy("false")
         time_params = params["/**/time"]["ros__parameters"]
         global_params = params["/**"]["ros__parameters"]
 
@@ -212,6 +219,26 @@ class MavlinkBridgeSimTimeContractTest(unittest.TestCase):
         _assert_sim_time_bridge_include(
             self, perception_launch_path, "easyfly_perception_entrypoint"
         )
+
+
+class GcsForwardingContract(unittest.TestCase):
+    """The GUI endpoints reach real MAVROS parameters without changing clock policy."""
+
+    def test_fcu_gcs_and_target_system_parameters(self):
+        fcu = 'udp://127.0.0.1:14540@127.0.0.1:14580'
+        gcs = 'udp://127.0.0.1:14558@127.0.0.1:14560'
+        _, _, _, _, records = _evaluate_mavros_policy(
+            'true', fcu_url=fcu, gcs_url=gcs, target_system='7')
+        values = []
+        for data in records:
+            for node in data.values():
+                parameters = node.get('ros__parameters', {})
+                if 'gcs_url' in parameters:
+                    values.append(parameters)
+        self.assertEqual(len(values), 1)
+        self.assertEqual(values[0]['fcu_url'], fcu)
+        self.assertEqual(values[0]['gcs_url'], gcs)
+        self.assertEqual(values[0]['tgt_system'], 7)
 
 
 class BridgeOwnershipContract(unittest.TestCase):

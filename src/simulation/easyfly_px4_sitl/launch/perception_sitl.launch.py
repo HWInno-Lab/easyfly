@@ -50,6 +50,11 @@ def _resolve_px4_dir():
 def generate_launch_description():
     # 默认保持历史交互行为；G6 自动验收可使用 headless:=true，或分别
     # 设置 gzclient:=false rviz:=false debug_image:=false。
+    connection_args = [
+        DeclareLaunchArgument('fcu_url', default_value='udp://127.0.0.1:14540@127.0.0.1:14555'),
+        DeclareLaunchArgument('gcs_url', default_value=''),
+        DeclareLaunchArgument('target_system', default_value='1'),
+    ]
     headless_arg = DeclareLaunchArgument(
         "headless", default_value="false",
         description="无界面验收模式：关闭 gzclient、RViz 和 robot_state_publisher")
@@ -254,17 +259,23 @@ def generate_launch_description():
     mavlink_bridge = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_mavlink_bridge") + "/launch/mavlink_bridge.launch.py"),
-        launch_arguments={"use_sim_time": "true"}.items())
+        launch_arguments={"use_sim_time": "true", "fcu_url": LaunchConfiguration("fcu_url"),
+                          "gcs_url": LaunchConfiguration("gcs_url"),
+                          "target_system": LaunchConfiguration("target_system")}.items())
 
     # ---- E 执行层 (Q26): 飞控 + 任务状态机, 一键可飞 ----
     flight_control = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_flight_control") + "/launch/flight_control.launch.py"),
-        launch_arguments={"use_sim_time": "true"}.items())
+        launch_arguments={"use_sim_time": "true", "fcu_url": LaunchConfiguration("fcu_url"),
+                          "gcs_url": LaunchConfiguration("gcs_url"),
+                          "target_system": LaunchConfiguration("target_system")}.items())
     mission_fsm = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_mission_fsm") + "/launch/mission_fsm.launch.py"),
-        launch_arguments={"use_sim_time": "true"}.items())
+        launch_arguments={"use_sim_time": "true", "fcu_url": LaunchConfiguration("fcu_url"),
+                          "gcs_url": LaunchConfiguration("gcs_url"),
+                          "target_system": LaunchConfiguration("target_system")}.items())
 
     # ---- M4.0 规划基础设施: 点云滤波 (P1) + 障碍表征 (P4) ----
     pcf = IncludeLaunchDescription(
@@ -323,6 +334,7 @@ def generate_launch_description():
         set_model_path,
         set_plugin_path,
         set_ld_library_path,
+        *connection_args,
         headless_arg,
         gzclient_arg,
         rviz_arg,

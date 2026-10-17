@@ -38,14 +38,20 @@ public:
     ControlFactory controls = control_factory(), const ParameterOptions & parameters = {},
     ParameterFactory parameter_controls = parameter_factory(), const ImportOptions & imports = {},
     ImportFactory import_controls = import_factory(), const RvizOptions & spatial = {},
-    const RecordingOptions & recording = {});
+    const RecordingOptions & recording = {}, bool auto_observe = true);
   ~MainWindow() override;
   bool cleanup_complete() const;
   // Bounded read-only management status; no mission content, paths or control handles.
   QJsonObject connection_status() const;
+  // Optional Qt-only page; the connection lobby never creates a ROS source.
+  void set_connection_page(QWidget * page, bool lobby = false);
+  bool show_connection_page();
+  // Stable navigation keys, independent of optional build capabilities.
+  bool show_page(const QString & key);
 
 protected:
   void closeEvent(QCloseEvent * event) override;
+  bool eventFilter(QObject * object, QEvent * event) override;
 
 private:
   struct Impl;

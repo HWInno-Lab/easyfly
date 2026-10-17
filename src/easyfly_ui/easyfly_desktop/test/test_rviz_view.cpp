@@ -125,24 +125,28 @@ TEST(RvizView, LazyDisconnectedAndUnsupportedPlatformFailClosed)
   }
   view.stop(); EXPECT_FALSE(view.snapshot().running);
 }
-TEST(RvizView, MainWindowDefaultHasNoEmbeddedPageAndOptInIsLazy)
+TEST(RvizView, StableSpacePageIsAvailableWithoutLegacyOptInAndRemainsLazy)
 {
   auto state = std::make_shared<desktop_test::FakeState>();
   state->data = desktop_test::sample();
   ui::MainWindow default_window({}, desktop_test::factory(state));
-  EXPECT_FALSE(default_window.findChild<ui::RvizView *>());
+  EXPECT_EQ(default_window.findChild<ui::RvizView *>() != nullptr, ui::RvizView::available());
   EXPECT_EQ(default_window.findChild<QListWidget *>("navigation")->count(), 7);
   default_window.close(); ASSERT_TRUE(wait([&] {return default_window.cleanup_complete();}));
   ui::MainWindow window({}, desktop_test::factory(state), nullptr, ui::default_tool_options(),
     {}, ui::control_factory(), {}, ui::parameter_factory(), {}, ui::import_factory(), {true});
+  if (!ui::RvizView::available()) {
+    EXPECT_NE(window.findChild<QLabel *>("rvizBuildUnavailable"), nullptr);
+    window.close(); EXPECT_TRUE(wait([&] {return window.cleanup_complete();})); return;
+  }
   window.show(); auto * view = window.findChild<ui::RvizView *>(); ASSERT_NE(view, nullptr);
   EXPECT_FALSE(view->snapshot().running);
-  EXPECT_EQ(window.findChild<QListWidget *>("navigation")->count(), 8);
+  EXPECT_EQ(window.findChild<QListWidget *>("navigation")->count(), 7);
   auto * tabs = window.findChild<QTabWidget *>("overviewMapTabs"); ASSERT_NE(tabs, nullptr);
   tabs->setCurrentIndex(1);
-  EXPECT_TRUE(tabs->isAncestorOf(view)); EXPECT_FALSE(view->snapshot().running);
+  EXPECT_FALSE(tabs->isAncestorOf(view)); EXPECT_FALSE(view->snapshot().running);
   EXPECT_EQ(window.findChildren<ui::RvizView *>().size(), 1);
-  window.findChild<QListWidget *>("navigation")->setCurrentRow(7);
+  window.show_page("space"); window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
   EXPECT_FALSE(tabs->isAncestorOf(view)); EXPECT_FALSE(view->snapshot().running);
   window.close(); EXPECT_TRUE(wait([&] {return window.cleanup_complete();}));
 }
@@ -163,10 +167,12 @@ TEST(RvizView, CommandLineRequiresSupportedBuildAndNeverAutoStartsRenderer)
 }
 TEST(RvizView, LeftControlsRightCanvasAtSupportedWindowSizes)
 {
+  if (!ui::RvizView::available()) {GTEST_SKIP() << "RViz is not included in this build";}
   auto state = std::make_shared<desktop_test::FakeState>(); state->data = desktop_test::sample();
   ui::MainWindow window({}, desktop_test::factory(state), nullptr, ui::default_tool_options(),
     {}, ui::control_factory(), {}, ui::parameter_factory(), {}, ui::import_factory(), {true});
-  window.show(); window.findChild<QListWidget *>("navigation")->setCurrentRow(7);
+  window.show(); window.show_page("space");
+  window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
   auto * view = window.findChild<ui::RvizView *>(); ASSERT_NE(view, nullptr);
   for (const auto & size : {QSize(1024, 720), QSize(1440, 900)}) {
     window.resize(size); QTest::qWait(60); expect_side_by_side(*view);
@@ -437,17 +443,18 @@ TEST_F(RvizRender, IntegratedPageSwitchDisconnectReconnectAndClose)
   ui::MainWindow window({}, desktop_test::factory(state), nullptr, ui::default_tool_options(),
     {}, ui::control_factory(), {}, ui::parameter_factory(), {}, ui::import_factory(), {true});
   window.resize(1024, 720); window.show();
-  auto * navigation = window.findChild<QListWidget *>("navigation");
-  navigation->setCurrentRow(7); auto * view = window.findChild<ui::RvizView *>(); ASSERT_NE(
+  window.show_page("space"); window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
+  auto * view = window.findChild<ui::RvizView *>(); ASSERT_NE(
     view,
     nullptr);
   ASSERT_TRUE(wait([&] {return view->findChild<QPushButton *>("startEmbeddedRviz")->isEnabled();}));
   click(*view, "startEmbeddedRviz"); ASSERT_TRUE(view->snapshot().running);
   ASSERT_TRUE(wait([&] {send(); return view->snapshot().status.contains("messages received");}));
-  navigation->setCurrentRow(0); EXPECT_FALSE(view->snapshot().running);
+  window.show_page("overview"); EXPECT_FALSE(view->snapshot().running);
   auto * overview_tabs = window.findChild<QTabWidget *>("overviewMapTabs");
   overview_tabs->setCurrentIndex(1); EXPECT_FALSE(view->snapshot().running);
-  ASSERT_TRUE(overview_tabs->isAncestorOf(view));
+  ASSERT_FALSE(overview_tabs->isAncestorOf(view));
+  window.show_page("space"); window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
   ASSERT_TRUE(wait([&] {return view->findChild<QPushButton *>("startEmbeddedRviz")->isEnabled();}));
   click(*view, "startEmbeddedRviz"); ASSERT_TRUE(view->snapshot().running);
   ASSERT_TRUE(wait([&] {send(); return view->snapshot().frames >= 3;}));
@@ -463,8 +470,10 @@ TEST_F(RvizRender, IntegratedPageSwitchDisconnectReconnectAndClose)
     QApplication::primaryScreen()->grabWindow(window.winId()).save(
       overview_output.filePath("overview-rviz.png")));
   mark->hide(); window.resize(1024, 720);
+  window.show_page("overview");
   overview_tabs->setCurrentIndex(0); EXPECT_FALSE(view->snapshot().running);
-  navigation->setCurrentRow(7); EXPECT_FALSE(view->snapshot().running);
+  window.show_page("space"); window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
+  EXPECT_FALSE(view->snapshot().running);
   click(*view, "startEmbeddedRviz"); ASSERT_TRUE(view->snapshot().running);
   window.findChild<QPushButton *>("observerToggle")->click();
   EXPECT_TRUE(wait([&] {return !view->snapshot().running && state->stop_calls > 0;}));
