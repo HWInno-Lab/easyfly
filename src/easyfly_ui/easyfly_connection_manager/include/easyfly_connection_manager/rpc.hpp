@@ -31,6 +31,7 @@ public:
 
 signals:
   void ready();
+  void disconnected();
   void reply(const QJsonObject & object);
   void failure(const QString & reason);
 

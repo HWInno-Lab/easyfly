@@ -11,6 +11,7 @@ add_subdirectory(patrol_mover)
 
 # Filter native IMU samples before the existing 4:1 MAVLink decimator.
 add_subdirectory(imu_antialias)
+add_subdirectory(native_imu)
 
 # Independently named upstream camera with a fail-closed duplicate-node guard.
 add_subdirectory(safe_camera)

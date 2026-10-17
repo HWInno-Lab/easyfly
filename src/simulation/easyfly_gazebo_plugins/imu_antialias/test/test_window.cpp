@@ -46,9 +46,18 @@ TEST(ImuAntialias, InvalidSamplesAreNotFilledOrRetimestamped)
   EXPECT_FALSE(filter.Push(2,3000,{0,0,9.81,0,0,0}));
   EXPECT_FALSE(filter.Push(1,1000,{0,0,9.81,0,0,0}));
   EXPECT_FALSE(filter.Push(1,2500,{0,0,9.81,0,0,0}));
+  EXPECT_NE(filter.error().find("previous_usec=1000"), std::string::npos);
+  EXPECT_NE(filter.error().find("received_usec=2500"), std::string::npos);
   EXPECT_FALSE(filter.Push(1,2000,{NAN,0,9.81,0,0,0}));
   // Rejected input did not mutate the valid history.
   EXPECT_TRUE(filter.Push(1,2000,{0,0,9.81,0,0,0}));
+}
+TEST(ImuAntialias, Native64BitTimestampRemainsContinuousAcrossOriginalOverflowBoundary)
+{
+  Window filter;
+  for (int i=0;i<4000;++i) {
+    ASSERT_TRUE(filter.Push(i,2147000000LL+1000LL*i,{0,0,9.81,0,0,0}));
+  }
 }
 
 #include "easyfly_imu/accel_fifo.hpp"

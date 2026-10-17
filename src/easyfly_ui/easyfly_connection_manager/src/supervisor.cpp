@@ -12,6 +12,7 @@
 // limitations under the License.
 
 #include <QCoreApplication>
+#include <QCryptographicHash>
 #include <QDateTime>
 #include <QElapsedTimer>
 #include <QFile>
@@ -27,6 +28,7 @@
 #include <QPointer>
 #include <QProcess>
 #include <QSet>
+#include <QSaveFile>
 #include <QTimer>
 #include <QUuid>
 #include <fcntl.h>
@@ -82,6 +84,43 @@ bool same_user(QLocalSocket * socket)
     socket->socketDescriptor(), SOL_SOCKET, SO_PEERCRED,
     &credentials, &size) == 0 && credentials.uid == ::getuid();
 }
+QJsonObject process_identity(qint64 pid)
+{
+  if (pid <= 0) {return {};}
+  const auto root = QStringLiteral("/proc/%1").arg(pid);
+  struct stat info {};
+  if (::stat(QFile::encodeName(root).constData(), &info) || info.st_uid != ::getuid()) {return {};}
+  QFile file(root + "/stat"), boot("/proc/sys/kernel/random/boot_id");
+  if (!file.open(QIODevice::ReadOnly) || !boot.open(QIODevice::ReadOnly)) {return {};}
+  const auto bytes = file.read(8192);
+  const auto fields = bytes.mid(bytes.lastIndexOf(')') + 2).simplified().split(' ');
+  if (fields.size() < 20 || fields[0] == "Z") {return {};}
+  return {{"pid", pid}, {"start", QString::fromLatin1(fields[19])},
+    {"boot", QString::fromLatin1(boot.read(128).trimmed())}};
+}
+bool identity_alive(const QJsonObject & identity)
+{
+  return !identity.isEmpty() &&
+         process_identity(identity["pid"].toVariant().toLongLong()) == identity;
+}
+QJsonObject private_json(const QString & path)
+{
+  struct stat info {};
+  if (::lstat(QFile::encodeName(path).constData(), &info) != 0) {
+    if (errno == ENOENT) {return {};}
+    throw std::runtime_error("无法读取会话恢复记录");
+  }
+  if (!S_ISREG(info.st_mode) || info.st_uid != ::getuid() || (info.st_mode & 0077) ||
+    info.st_size > 65536) {throw std::runtime_error("会话恢复记录权限或大小无效");}
+  QFile file(path);
+  if (!file.open(QIODevice::ReadOnly)) {throw std::runtime_error("无法打开会话恢复记录");}
+  QJsonParseError error;
+  const auto value = QJsonDocument::fromJson(file.readAll(), &error);
+  if (error.error != QJsonParseError::NoError || !value.isObject()) {
+    throw std::runtime_error("会话恢复记录损坏；保留现场，不启动重复实例");
+  }
+  return value.object();
+}
 }  // namespace
 struct Supervisor::Impl
 {
@@ -106,6 +145,12 @@ struct Supervisor::Impl
   qint64 last_heartbeat{-1};
   int lock_fd{-1};
   bool close_pending{false};
+  QString backend_token, recovery_error;
+  QJsonObject backend_identity, workspace_identity;
+  bool recovered_backend{false}, workspace_pending{false}, recovery_blocked{false};
+  bool backend_poll_pending{false};
+  QTimer recovery_timer;
+  QByteArray persisted_record;
 
   Impl(Supervisor * parent, const QString & path, const QString & executable)
   : owner(parent), directory(private_directory(path)), desktop(executable)
@@ -144,6 +189,7 @@ struct Supervisor::Impl
       });
     QObject::connect(
       &process, &QProcess::started, owner, [this] {
+        workspace_identity = process_identity(process.processId()); persist();
         phase = "starting"; message = QStringLiteral(
           "工作进程已启动，等待实际观测状"
           "态");
@@ -152,7 +198,9 @@ struct Supervisor::Impl
       &process, &QProcess::errorOccurred, owner,
       [this](QProcess::ProcessError error) {
         message = process.errorString();
-        if (error == QProcess::FailedToStart) {phase = "failed";}
+        if (error == QProcess::FailedToStart) {
+          phase = "failed"; workspace_pending = false; workspace_identity = {}; persist();
+        }
       });
     QObject::connect(
       &process, QOverload<int, QProcess::ExitStatus>::of(
@@ -167,9 +215,11 @@ struct Supervisor::Impl
         if (active_profile["features"].toObject()["mission_control"].toBool() ||
         active_profile["features"].toObject()["mission_import"].toBool())
         {
-          unresolved = workspace["unresolved"].toBool(true);
+          unresolved = code != 0 || status != QProcess::NormalExit ||
+          workspace["unresolved"].toBool(true);
         }
         workspace = {}; worker.clear(); close_pending = false; last_heartbeat = -1;
+        workspace_pending = false; workspace_identity = {}; persist();
       });
     process.setProcessChannelMode(QProcess::MergedChannels);
     QObject::connect(
@@ -180,6 +230,8 @@ struct Supervisor::Impl
     backend_process.setProcessChannelMode(QProcess::SeparateChannels);
     QObject::connect(
       &backend_process, &QProcess::started, owner, [this] {
+        backend_identity = process_identity(backend_process.processId());
+        if (!persist()) {backend_process.closeWriteChannel(); return;}
         backend_process.write(
           QJsonDocument(active_profile).toJson(
             QJsonDocument
@@ -242,10 +294,17 @@ struct Supervisor::Impl
           }
         }
         backend_heartbeat = -1;
+        if (backend_state["process_running"] == false && backend_state.contains("exit_code")) {
+          backend_identity = {}; recovered_backend = false;
+        } else if (backend_state["phase"] != "stopped") {
+          recovered_backend = !backend_identity.isEmpty();
+        }
+        persist();
       });
     QObject::connect(
       &qgc_process, &QProcess::started, owner, [this] {
         qgc_group = qgc_process.processId();
+        persist();
       });
     qgc_process.setProcessChannelMode(QProcess::MergedChannels);
     QObject::connect(
@@ -263,10 +322,42 @@ struct Supervisor::Impl
         &QProcess::finished), owner,
       [this](int code, QProcess::ExitStatus) {
         qgc_message = QStringLiteral("本次 QGC 已退出，退出码 %1").arg(code);
+        if (!group_active(qgc_group)) {qgc_group = 0;}
+        persist();
       });
+    try {restore();} catch (const std::exception & error) {
+      recovery_blocked = true; recovery_error = QString::fromUtf8(error.what());
+      message = recovery_error;
+    }
+    recovery_timer.setInterval(500);
+    QObject::connect(
+      &recovery_timer, &QTimer::timeout, owner, [this] {
+        poll_backend();
+        if (process.state() == QProcess::NotRunning && !workspace_identity.isEmpty() &&
+        !identity_alive(workspace_identity))
+        {
+          workspace_identity = {}; workspace_pending = false; worker.clear();
+          if (active_profile["features"].toObject()["mission_control"].toBool() ||
+          active_profile["features"].toObject()["mission_import"].toBool()) {unresolved = true;}
+          workspace = {}; last_heartbeat = -1; close_pending = false;
+          phase = "stopped";
+          message = QStringLiteral("原工作进程已退出；未决记录与后台继续保留"); persist();
+        }
+        if (qgc_group > 0 && !group_active(qgc_group)) {qgc_group = 0; persist();}
+      });
+    recovery_timer.start();
   }
   ~Impl()
   {
+    recovery_timer.stop();
+    // Outgoing owner probes are children of Supervisor, whose QObject base
+    // outlives Impl. Retire their callbacks before Impl's state is destroyed.
+    for (auto * socket :
+      owner->findChildren<QLocalSocket *>(QString(), Qt::FindDirectChildrenOnly))
+    {
+      QObject::disconnect(socket, nullptr, owner, nullptr);
+      delete socket;
+    }
     // Never destroy a live workspace as a side effect of QObject/QProcess teardown.
     // The server only accepts exit when no workspace remains.
     QObject::disconnect(&process, nullptr, owner, nullptr);
@@ -282,17 +373,166 @@ struct Supervisor::Impl
     server.close();
     if (lock_fd >= 0) {::close(lock_fd);}
   }
+  bool workspace_active() const
+  {
+    return process.state() != QProcess::NotRunning || workspace_pending ||
+           identity_alive(workspace_identity);
+  }
+  bool backend_active() const
+  {
+    return backend_process.state() != QProcess::NotRunning || recovered_backend;
+  }
+  bool persist()
+  {
+    if (recovery_blocked || session.isEmpty()) {return !recovery_blocked;}
+    QJsonArray receipts;
+    for (auto it = results.cbegin(); it != results.cend(); ++it) {
+      auto reply = it.value().second; reply.remove("status");
+      receipts.append(
+        QJsonObject{{"id", it.key()}, {"digest", QString::fromLatin1(it.value().first.toHex())},
+          {"reply", reply}});
+    }
+    const QJsonObject record{{"schema", 1}, {"session", session}, {"profile", active_profile},
+      {"config_hash", config_hash}, {"manager_config", manager_config},
+      {"run_directory", run_directory},
+      {"backend_token", backend_token}, {"backend_identity", backend_identity},
+      {"workspace_token", token}, {"workspace_identity", workspace_identity},
+      {"workspace_pending", workspace_pending}, {"unresolved", unresolved},
+      {"qgc_group", qgc_group}, {"receipts", receipts},
+      {"boot", process_identity(::getpid())["boot"]}};
+    const auto bytes = QJsonDocument(record).toJson(QJsonDocument::Compact);
+    if (bytes == persisted_record) {return true;}
+    try {
+      if (bytes.size() > 65536) {throw std::runtime_error("会话恢复记录超出预算");}
+      private_json(directory + "/session.json");
+      QSaveFile file(directory + "/session.json");
+      if (!file.open(QIODevice::WriteOnly) ||
+        !file.setPermissions(QFile::ReadOwner | QFile::WriteOwner) ||
+        file.write(bytes) != bytes.size() || !file.commit())
+      {throw std::runtime_error("无法持久保存会话归属；保留现有进程并停止新操作");}
+      persisted_record = bytes; return true;
+    } catch (const std::exception & error) {
+      recovery_blocked = true; recovery_error = QString::fromUtf8(error.what());
+      message = recovery_error; return false;
+    }
+  }
+  void restore()
+  {
+    const auto record = private_json(directory + "/session.json");
+    if (record.isEmpty()) {return;}
+    if (record["schema"] != 1 || record["session"].toString().isEmpty()) {
+      throw std::runtime_error("无法识别会话恢复记录；保留现场");
+    }
+    const auto profile = Profile::from_json(record["profile"].toObject());
+    if (profile.hash() != record["config_hash"].toString()) {
+      throw std::runtime_error("冻结配置校验失败，拒绝接管");
+    }
+    active_profile = profile.json(); config_hash = profile.hash();
+    session = record["session"].toString(); manager_config = record["manager_config"].toString();
+    run_directory = record["run_directory"].toString();
+    if (!run_directory.isEmpty()) {private_directory(run_directory);}
+    backend_token = record["backend_token"].toString();
+    token = record["workspace_token"].toString();
+    backend_identity = record["backend_identity"].toObject();
+    workspace_identity = record["workspace_identity"].toObject();
+    workspace_pending = record["workspace_pending"].toBool();
+    unresolved = record["unresolved"].toBool(true);
+    if (workspace_pending && (profile.mission_control || profile.mission_import)) {
+      unresolved = true;
+    }
+    qgc_group = record["qgc_group"].toVariant().toLongLong();
+    if (record["boot"] != process_identity(::getpid())["boot"]) {qgc_group = 0;}
+    const auto receipts = record["receipts"].toArray();
+    if (receipts.size() > 64) {throw std::runtime_error("恢复请求回执超出预算");}
+    for (const auto & value : receipts) {
+      const auto row = value.toObject();
+      results.insert(
+        row["id"].toString(), {QByteArray::fromHex(row["digest"].toString().toLatin1()),
+          row["reply"].toObject()});
+    }
+    recovered_backend = !backend_identity.isEmpty();
+    phase = "recovering";
+    message = QStringLiteral("管理服务已恢复；正在验证原会话身份与新鲜状态，不重发启动或停止操作");
+  }
+  void receive_backend(const QJsonObject & value)
+  {
+    backend_state = value; backend_heartbeat = clock.elapsed();
+    if (value["process_running"] == false && value.contains("exit_code")) {
+      recovered_backend = false; backend_identity = {}; persist();
+    }
+    if (phase == "recovering") {
+      phase = "stopped";
+      message = QStringLiteral("已认证恢复原后台；可继续使用原配置，原工作窗口会自动重连");
+    }
+  }
+  void poll_backend(const QString & operation = "status")
+  {
+    if (backend_poll_pending || backend_token.isEmpty() || backend_identity.isEmpty()) {return;}
+    if (!identity_alive(backend_identity)) {
+      try {
+        const auto terminal = private_json(run_directory + "/terminal.json");
+        if (terminal["token"] == backend_token && terminal["session"] == session &&
+          terminal["owner"].toObject() == backend_identity &&
+          terminal["status"].toObject()["process_running"] == false)
+        {receive_backend(terminal["status"].toObject()); return;}
+      } catch (const std::exception &) {}  // Invalid receipt grants no permission.
+      if (recovered_backend) {
+        recovery_error = QStringLiteral(
+          "后端持有进程失联，无法认证恢复；"
+          "保留会话与日志，禁止重复启动或强停");
+      }
+      return;
+    }
+    backend_poll_pending = true;
+    auto * socket = new QLocalSocket(owner);
+    auto input = std::make_shared<QByteArray>();
+    QObject::connect(
+      socket, &QLocalSocket::connected, owner, [this, socket, operation] {
+        struct ucred credentials {};
+        socklen_t size = sizeof(credentials);
+        if (::getsockopt(
+          socket->socketDescriptor(), SOL_SOCKET, SO_PEERCRED, &credentials,
+          &size) ||
+        credentials.uid != ::getuid() || credentials.pid != backend_identity["pid"].toInt() ||
+        !identity_alive(backend_identity)) {socket->abort(); return;}
+        send(socket, {{"token", backend_token}, {"session", session}, {"op", operation}});
+      });
+    QObject::connect(
+      socket, &QLocalSocket::readyRead, owner, [this, socket, input] {
+        input->append(socket->readAll());
+        if (input->size() > 32768) {socket->abort(); return;}
+        if (!input->contains('\n')) {return;}
+        const auto reply = QJsonDocument::fromJson(input->left(input->indexOf('\n'))).object();
+        if (reply["session"] == session && reply["owner"].toObject() == backend_identity &&
+        reply["status"].isObject())
+        {
+          receive_backend(reply["status"].toObject());
+          recovery_error = reply["error"].toString();
+        }
+      });
+    QObject::connect(
+      socket, &QLocalSocket::disconnected, owner, [this, socket] {
+        backend_poll_pending = false; socket->deleteLater();
+      });
+    QTimer::singleShot(
+      1500, socket, [this, socket] {
+        backend_poll_pending = false; socket->abort(); socket->deleteLater();
+      });
+    socket->connectToServer(directory + "/backend.sock");
+  }
   QJsonObject status() const
   {
     auto actual = workspace;
-    const bool live = process.state() != QProcess::NotRunning;
+    const bool live = workspace_active();
     const bool fresh = worker &&
       worker->state() == QLocalSocket::ConnectedState &&
       last_heartbeat >= 0 && clock.elapsed() - last_heartbeat < 2500;
-    const bool backend_live = backend_process.state() != QProcess::NotRunning;
-    const bool backend_fresh = backend_live && backend_heartbeat >= 0 &&
-      clock.elapsed() - backend_heartbeat < 2500;
+    const bool backend_live = backend_active();
+    const bool backend_fresh = this->backend_fresh();
     return {{"protocol", 2}, {"backend_running", backend_live},
+      {"recovery_error", recovery_error}, {"recovery_blocked", recovery_blocked},
+      {"recovered_backend", recovered_backend},
+      {"session_directory", run_directory}, {"runtime_directory", directory},
       {"backend_fresh", backend_fresh},
       {"backend",
         backend_fresh ||
@@ -327,7 +567,7 @@ struct Supervisor::Impl
   }
   bool backend_fresh() const
   {
-    return backend_process.state() != QProcess::NotRunning &&
+    return backend_active() && identity_alive(backend_identity) &&
            backend_heartbeat >= 0 &&
            clock.elapsed() - backend_heartbeat < 2500;
   }
@@ -377,12 +617,16 @@ struct Supervisor::Impl
           root + "/imports");
       }
     }
+    workspace_pending = true;
+    unresolved = unresolved || profile.mission_control || profile.mission_import;
+    if (!persist()) {throw std::runtime_error("无法保存工作会话归属");}
     phase = "starting"; process.start(desktop, arguments);
   }
   void start_qgc()
   {
     if (!backend_fresh() || !backend_state["safe_to_stop"].toBool() ||
-      unresolved)
+      unresolved || backend_state["phase"] == "stopping" ||
+      backend_state["phase"] == "stop_unknown")
     {
       throw std::runtime_error(
               "需要新鲜、未解锁、在地面的后端"
@@ -505,14 +749,16 @@ struct Supervisor::Impl
       socket->abort(); return;
     }
     QJsonObject reply{{"v", 1}, {"id", id}, {"ok", true}};
-    const auto fingerprint = QJsonDocument(request).toJson(
-      QJsonDocument::Compact);
+    const auto fingerprint = QCryptographicHash::hash(
+      QJsonDocument(request).toJson(QJsonDocument::Compact), QCryptographicHash::Sha256);
     const bool mutation = op == "start" || op == "close" ||
       op == "exit_service" ||
       op == "stop_backend" || op == "start_qgc" || op == "stop_qgc";
     if (mutation && results.contains(id)) {
       const auto previous = results.value(id);
-      if (previous.first == fingerprint) {send(socket, previous.second);} else {
+      if (previous.first == fingerprint) {
+        auto receipt = previous.second; receipt["status"] = status(); send(socket, receipt);
+      } else {
         send(
           socket, {{"v", 1}, {"id", id}, {"ok", false}, {"error",
               "request ID reused"}});
@@ -522,6 +768,7 @@ struct Supervisor::Impl
     const bool backend_operation =
       QStringList{"stop_backend", "start_qgc", "stop_qgc"}.contains(op);
     try {
+      if (mutation && recovery_blocked) {throw std::runtime_error(recovery_error.toStdString());}
       if (op == "status" || op == "attach_manager") {
         if (op == "attach_manager") {
           const auto file = request["config_file"].toString();
@@ -534,7 +781,7 @@ struct Supervisor::Impl
           manager = socket;
         }
       } else if (op == "start") {
-        if (process.state() != QProcess::NotRunning || close_pending) {
+        if (workspace_active() || close_pending) {
           throw std::runtime_error("已有工作会话；请先正常关闭原工作窗口");
         }
         if (results.size() >= 64) {
@@ -546,6 +793,9 @@ struct Supervisor::Impl
           throw std::runtime_error("缺少连接配置");
         }
         const auto profile = Profile::from_json(request["profile"].toObject());
+        if (unresolved && profile.hash() != config_hash) {
+          throw std::runtime_error("请先按原连接重开窗口并核对未决记录，再切换配置");
+        }
         if (!QFileInfo(desktop).isAbsolute() ||
           !QFileInfo(desktop).isExecutable())
         {
@@ -570,9 +820,15 @@ struct Supervisor::Impl
                     "应构建");
           }
         }
-        if (backend_process.state() != QProcess::NotRunning) {
+        if (backend_active()) {
           if (profile.hash() != config_hash) {
             throw std::runtime_error("先停止原后台，再切换连接配置");
+          }
+          if (!backend_fresh()) {
+            throw std::runtime_error("原后端身份或新鲜状态尚未确认，请刷新诊断");
+          }
+          if (backend_state["phase"] == "stopping" || backend_state["phase"] == "stop_unknown") {
+            throw std::runtime_error("原后台仍在停止中；请等待退出并查看日志");
           }
           start_workspace(profile);
         } else {
@@ -594,9 +850,16 @@ struct Supervisor::Impl
               session_environment(
                 profile,
                 session));
+            backend_token = QString::fromLatin1(
+              QUuid::createUuid().toRfc4122().toHex() + QUuid::createUuid().toRfc4122().toHex());
+            auto env = backend_process.processEnvironment();
+            env.insert("EASYFLY_BACKEND_OWNER_TOKEN", backend_token);
+            backend_process.setProcessEnvironment(env);
+            backend_identity = {}; recovered_backend = false;
+            if (!persist()) {throw std::runtime_error("无法保存后台归属");}
             phase = "starting_backend";
             backend_process.start(
-              backend_program(), {"--directory", run_directory});
+              backend_program(), {"--directory", run_directory, "--control-directory", directory});
           }
         }
       } else if (backend_operation) {
@@ -612,7 +875,7 @@ struct Supervisor::Impl
           }
           qgc_message = QStringLiteral("已请求 QGC 正常关闭，如有确认请在其窗口完成；不会强制结束");
         } else {
-          if (process.state() != QProcess::NotRunning || unresolved) {
+          if (workspace_active() || unresolved) {
             throw std::runtime_error(
                     "请先处理未决操作并正常关闭工作"
                     "窗口，再停止后端");
@@ -620,18 +883,25 @@ struct Supervisor::Impl
           if (qgc_active()) {
             throw std::runtime_error("请先关闭本次联网 QGC");
           }
-          if (backend_process.state() == QProcess::NotRunning ||
-            (backend_fresh() &&
-            !backend_state["safe_to_stop"].toBool() &&
-            !backend_state["can_abort_startup"].toBool()))
+          if (!backend_active() || !backend_fresh() ||
+            (
+              !backend_state["safe_to_stop"].toBool() &&
+              !backend_state["can_abort_startup"].toBool()))
           {
             throw std::runtime_error("后端状态未知、已解锁或离地，拒绝停止");
           }
-          backend_process.write("{\"op\":\"stop\"}\n");
+          if (backend_process.state() != QProcess::NotRunning) {
+            backend_process.write("{\"op\":\"stop\"}\n");
+          } else {
+            if (!backend_fresh() || backend_poll_pending) {
+              throw std::runtime_error("后台恢复状态未就绪或正在查询，请稍后重新确认停止");
+            }
+            poll_backend("stop");
+          }
         }
       } else if (op == "close") {
         if (request["session"] != session ||
-          process.state() == QProcess::NotRunning)
+          !workspace_active())
         {
           throw std::runtime_error("工作会话已变化或没有可关闭的会话");
         }
@@ -650,10 +920,21 @@ struct Supervisor::Impl
           "在工作窗口完成");
       } else if (op == "workspace") {
         if (request["session"] != session || request["token"] != token ||
-          process.state() == QProcess::NotRunning ||
+          !workspace_active() ||
           !request["status"].isObject())
         {
           throw std::runtime_error("工作会话身份不匹配");
+        }
+        if (!identity_alive(workspace_identity)) {
+          throw std::runtime_error("工作进程的启动身份未确认；保留会话，不接管未知进程");
+        } else {
+          struct ucred credentials {};
+          socklen_t size = sizeof(credentials);
+          if (::getsockopt(
+              socket->socketDescriptor(), SOL_SOCKET, SO_PEERCRED, &credentials,
+              &size) ||
+            process_identity(credentials.pid) != workspace_identity)
+          {throw std::runtime_error("工作进程身份校验失败");}
         }
         const auto incoming = request["status"].toObject();
         if (QJsonDocument(incoming).toJson(QJsonDocument::Compact).size() >
@@ -663,10 +944,11 @@ struct Supervisor::Impl
         }
         worker = socket; last_heartbeat = clock.elapsed(); workspace = incoming;
         unresolved = workspace["unresolved"].toBool(true);
+        persist();
         if (close_pending && !workspace["closing"].toBool() &&
           !workspace["close_prompt"].toBool()) {close_pending = false;}
         if (!close_pending) {phase = "running";}
-        message = backend_process.state() == QProcess::NotRunning ?
+        message = !backend_active() ?
           QStringLiteral("已有平台 DDS 观测") : QStringLiteral(
           "本次仿真/通信与工作窗口由管理"
           "服务持有");
@@ -683,8 +965,7 @@ struct Supervisor::Impl
           }
         }
       } else if (op == "exit_service") {
-        if (process.state() != QProcess::NotRunning ||
-          backend_process.state() != QProcess::NotRunning ||
+        if (workspace_active() || backend_active() ||
           qgc_active())
         {
           throw std::runtime_error(
@@ -699,6 +980,7 @@ struct Supervisor::Impl
     reply["status"] = status();
     if (mutation && results.size() < 64) {
       results.insert(id, {fingerprint, reply});
+      if (!persist()) {reply["ok"] = false; reply["error"] = recovery_error;}
     }
     send(socket, reply);
   }

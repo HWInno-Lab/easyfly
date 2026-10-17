@@ -6,19 +6,30 @@
 #include <deque>
 #include <limits>
 #include <optional>
+#include <string>
 namespace easyfly_imu
 {
 class Window
 {
 public:
   using Values = std::array<double, 6>;
+  const std::string & error() const {return error_;}
   std::optional<Values> Push(std::int64_t sequence, std::int64_t usec, const Values & values)
   {
-    if (sequence < 0 || usec <= 0) {return std::nullopt;}
-    for (double v : values) {if (!std::isfinite(v)) {return std::nullopt;}}
+    error_.clear();
+    if (sequence < 0 || usec <= 0) {
+      error_ = "invalid native sequence/time";
+    }
+    for (double v : values) {if (!std::isfinite(v)) {error_ = "nonfinite native channel";}}
     if (initialized_ && (last_sequence_ == std::numeric_limits<std::int64_t>::max() ||
       sequence != last_sequence_ + 1 || usec <= last_usec_ || usec - last_usec_ != 1000))
     {
+      error_ = "native sequence/time discontinuity";
+    }
+    if (!error_.empty()) {
+      error_ += "; previous_seq=" + std::to_string(last_sequence_) +
+        " previous_usec=" + std::to_string(last_usec_) +
+        " received_seq=" + std::to_string(sequence) + " received_usec=" + std::to_string(usec);
       return std::nullopt;
     }
     initialized_ = true;
@@ -38,5 +49,6 @@ private:
   std::int64_t last_sequence_{0}, last_usec_{0};
   std::deque<Values> samples_;
   Values sum_{};
+  std::string error_;
 };
 }  // namespace easyfly_imu

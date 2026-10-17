@@ -507,6 +507,11 @@ void ConnectionManager::OnAccept(ConnectionPtr _newConnection)
 void ConnectionManager::OnRead(ConnectionPtr _connection,
                                const std::string &_data)
 {
+  // Stop must also fence incoming subscription callbacks before topic/node
+  // teardown; accepted sockets can finish a queued read after Run has joined.
+  boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
+  if (ReadFlag(this->stop) || !ReadFlag(this->initialized))
+    return;
   if (_data.empty())
   {
     gzerr << "Data was empty, try again\n";
@@ -525,6 +530,10 @@ void ConnectionManager::OnRead(ConnectionPtr _connection,
     msgs::Subscribe sub;
     sub.ParseFromString(packet.serialized_data());
 
+#ifdef EASYFLY_TRANSPORT_DIAGNOSTICS
+    gzmsg << "EasyFly accepted subscription: connection=" << _connection->GetId() <<
+      " topic=" << sub.topic() << "\n";
+#endif
     // Create a transport link for the publisher to the remote subscriber
     // via the connection
     SubscriptionTransportPtr subLink(new SubscriptionTransport());

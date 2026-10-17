@@ -168,3 +168,18 @@ The real TCP `test_transport_incoming_shutdown` also checks subscription
 negotiation, delivery of an actual published message, and finalization with both
 an established peer and an incomplete header still open. This fixture does not
 reproduce every retained-owner observation from native GUI shutdown.
+
+Native GUI `/gazebo/world/modify` exposed another cycle: the registered Node owns
+its Publisher, whose Node and Publication references keep the Node and remote
+SubscriptionTransport alive. Clearing TopicManager's tables alone never reaches
+Node::Fini. `src/topic_manager.cpp` snapshots registered nodes and finalizes them
+before clearing the topic table, without holding nodeMutex during reentrant Fini.
+The original upstream file remains unchanged. Incoming subscription callbacks
+also share Stop's admission mutex and refuse work after Stop.
+
+`test_transport_node_cycle` deliberately omits external node/publisher Fini.
+Before correction it reports publication_owners=4, connection_owners=1/live=1;
+after correction all weak owners expire and Finish drains normally. Separate
+actual empty-world/gzclient runs exercise the complete native window lifecycle.
+Enable `EASYFLY_TRANSPORT_DIAGNOSTICS` for weak ownership/topic diagnostics; it
+adds no strong owner and defaults off outside Debug builds.

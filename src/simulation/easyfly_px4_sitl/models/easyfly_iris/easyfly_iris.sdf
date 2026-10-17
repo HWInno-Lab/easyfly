@@ -670,7 +670,7 @@
       </control_channels>
     </plugin>
     <static>0</static>
-    <plugin name='rotors_gazebo_imu_plugin' filename='libgazebo_imu_plugin.so'>
+    <plugin name='rotors_gazebo_imu_plugin' filename='libeasyfly_native_imu.so'>
       <robotNamespace/>
       <linkName>/imu_link</linkName>
       <imuTopic>/imu_native</imuTopic>

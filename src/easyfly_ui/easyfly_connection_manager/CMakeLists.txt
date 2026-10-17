@@ -53,6 +53,7 @@ if(BUILD_TESTING)
   set_tests_properties(test_connections PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_backend test/test_backend.py TIMEOUT 60)
+  ament_add_pytest_test(test_ownership test/test_ownership.py TIMEOUT 30)
   ament_add_pytest_test(test_live_session test/test_live_session.py TIMEOUT 120)
   set_tests_properties(test_live_session PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_LOCALHOST_ONLY=1" RUN_SERIAL TRUE)

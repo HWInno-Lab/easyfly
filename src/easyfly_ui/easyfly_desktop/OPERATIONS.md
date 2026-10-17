@@ -49,7 +49,8 @@ and configure a separate networked QGC with private settings. It never labels th
 QGC read-only. Close owned QGC and the workspace normally before stopping the backend;
 fresh disarmed/on-ground observations and no unresolved operations are required.
 Closing just the manager preserves its objects. Advanced DDS presets, two-machine
-qualification, hardware and crash adoption remain separate acceptance. Follow the
+qualification and hardware remain separate acceptance. Managed service crash
+recovery now authenticates the original helper/workspace before accepting new status. Follow the
 installed easyfly_connection_manager README/CONTRACT for the complete graphical flow.
 
 Graph-evidence snapshots require the versioned libeasyfly_ui_bridge.so.1 and the

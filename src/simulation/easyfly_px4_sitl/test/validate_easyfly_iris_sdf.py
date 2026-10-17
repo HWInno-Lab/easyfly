@@ -144,7 +144,7 @@ class EasyflyIrisSdfTest(unittest.TestCase):
     def test_imu_angular_noise_uses_density_not_bandwidth_rms(self):
         imu = self.model.find("plugin[@name='rotors_gazebo_imu_plugin']")
         self.assertIsNotNone(imu)
-        self.assertEqual(imu.get("filename"), "libgazebo_imu_plugin.so")
+        self.assertEqual(imu.get("filename"), "libeasyfly_native_imu.so")
         self.assertEqual(imu.findtext("linkName"), "/imu_link")
         self.assertEqual(imu.findtext("imuTopic"), "/imu_native")
         densities = imu.findall("gyroscopeNoiseDensity")

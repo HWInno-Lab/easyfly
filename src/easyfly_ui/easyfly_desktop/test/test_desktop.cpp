@@ -227,6 +227,24 @@ TEST_F(Desktop, BlueGrayWorkspaceKeepsWhiteCardsAndClearActionHierarchy)
   EXPECT_TRUE(primary->isEnabled());
   EXPECT_NE(primary->palette().color(QPalette::ButtonText), QColor("#ffffff"));
 }
+TEST_F(Desktop, QueryReceiptTracksMatchingReplyAndNeverLabelsMissionExecutionSuccessful)
+{
+  open();
+  auto * input = widget<QLineEdit>("executionId");
+  input->setText(QString(32, 'a'));
+  state->answer = false;
+  click("queryMission");
+  ASSERT_TRUE(content("requestNote").contains(QStringLiteral("排队")));
+  const auto id = state->sequence;
+  auto & evidence = state->data->missions[b::Key::MissionQuery].evidence;
+  evidence.request_id = id - 1; evidence.quality = b::Quality::ValidAtObservation;
+  QTest::qWait(150); EXPECT_TRUE(content("requestNote").contains(QStringLiteral("排队")));
+  evidence.request_id = id; evidence.quality = b::Quality::Unavailable;
+  evidence.reason = "service response timed out";
+  ASSERT_TRUE(until([&] {return content("requestNote").contains("service response timed out");}));
+  EXPECT_TRUE(content("requestNote").contains(QStringLiteral("已结束")));
+  EXPECT_FALSE(content("requestNote").contains(QStringLiteral("执行成功")));
+}
 TEST_F(Desktop, ReferenceThemeTextContrastIsReadable)
 {
   open(); QTest::qWait(50);

@@ -129,17 +129,17 @@ def check(profile):
         raise ValueError('后端仅支持本机通信或本机仿真')
     fcu, gcs = urls(profile)
     if profile['mode'] == 'sitl':
-        if profile['simulation']['gazebo_gui']:
-            raise ValueError('Gazebo 原生窗口退出尚未通过验收；请关闭此选项，使用工作窗口的相机和三维视图')
         if not profile['simulation_time'] or profile['fcu']['transport'] != 'udp':
             raise ValueError('仿真必须使用模拟时间和 UDP')
         from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
+        from easyfly_px4_sitl.imu_compatibility import require_native_imu
         from easyfly_px4_sitl.scene_environment import installed_catalog
         from easyfly_px4_sitl.scene_inputs import resolve_scene
         from easyfly_params.configuration import load_profile, ensure_launchable
         selected = select_px4_directory(profile['simulation']['px4_directory'] or None)
         if (selected / 'easyfly_staging.json').exists():
             selected = Path(json.loads((selected / 'easyfly_staging.json').read_text())['source'])
+        require_native_imu(selected)
         catalog, _ = installed_catalog(px4_dir=selected)
         resolve_scene(catalog, profile['simulation']['scene'], profile['selected_profile'])
         ensure_launchable(load_profile(profile['selected_profile']))
@@ -236,6 +236,9 @@ class Backend:
         self.executor = None
         self.error = None
         self.action_states = {}
+        self.owner_channel = None
+        self.clock_ns = 0
+        self.clock_progress_at = None
 
     def start(self):
         # Activate only the installed, verified loader-reply compatibility policy.
@@ -245,6 +248,7 @@ class Backend:
                         profiles_file=dds['profile_environment']['FASTDDS_DEFAULT_PROFILES_FILE'],
                         sha256=dds['sha256'])
         environment = dict(os.environ)
+        environment.pop('EASYFLY_BACKEND_OWNER_TOKEN', None)
         environment['ROS_LOG_DIR'] = str(self.directory / 'ros')
         port = self.profile['simulation']['gazebo_port']
         environment['GAZEBO_MASTER_URI'] = f"http://127.0.0.1:{port}"
@@ -275,6 +279,8 @@ class Backend:
         self.node.create_subscription(ExtendedState, '/mavros/extended_state', self.on_landed,
                                       qos_profile_sensor_data)
         self.node.create_subscription(DiagnosticArray, '/diagnostics', self.on_diagnostics, 10)
+        from rosgraph_msgs.msg import Clock
+        self.node.create_subscription(Clock, '/clock', self.on_clock, qos_profile_sensor_data)
         status_qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
         actions = ('execute_mission', 'navigate', 'takeoff', 'land', 'search_area', 'track_target')
         for name in actions:
@@ -303,6 +309,12 @@ class Backend:
                                         stdout=self.log, stderr=subprocess.STDOUT,
                                         start_new_session=True)
         self.started = time.monotonic()
+
+    def on_clock(self, msg):
+        stamp = msg.clock.sec * 10**9 + msg.clock.nanosec
+        if stamp > 0 and stamp != self.clock_ns:
+            self.clock_progress_at = time.monotonic()
+        self.clock_ns = stamp
 
     def on_state(self, msg):
         self.ever_connected |= msg.connected or msg.armed
@@ -371,11 +383,40 @@ class Backend:
         fresh = now - self.state.get('state_at', -1e30) < 2.5
         code = self.process.returncode if stopped else None
         abort_startup = not self.ever_connected and not self.state['active_actions']
+        clock_age = (now - self.clock_progress_at
+                     if self.clock_progress_at is not None else None)
+        diagnosis = 'ready' if safe else 'waiting_fcu'
+        recovery = '等待真实飞控状态；可检查飞控地址、DDS domain 和串口配置'
+        if stopped:
+            diagnosis, recovery = 'exited', '日志已保留；确认原因后可重新启动'
+        elif self.stopping_at:
+            diagnosis = self.phase
+            recovery = '等待正常退出；停止超时请查看日志，进程归属继续保留'
+        elif self.profile['simulation_time'] and (clock_age is None or clock_age > 2.5):
+            diagnosis = 'clock_missing' if clock_age is None else 'clock_stalled'
+            recovery = '模拟时钟未收到或已停止；请检查 Gazebo 是否暂停，以及日志中的 IMU/PX4 错误'
+        elif not fresh and self.ever_connected:
+            diagnosis, recovery = 'fcu_stale', '飞控状态已过期；检查 MAVROS 和仿真日志，禁止按旧状态停机'
+        elif self.state.get('state_sources', 0) > 1 or self.state.get('landed_sources', 0) > 1:
+            diagnosis, recovery = 'multiple_sources', '发现重复状态源；请关闭重复实例，等待新的唯一状态'
+        elif fresh and self.state.get('connected') and not safe:
+            diagnosis, recovery = 'vehicle_active', '当前解锁、落地或任务条件不允许停止；等待真实的新鲜地面状态'
+        elif safe:
+            recovery = '可打开工作窗口；结束工作和 QGC 后可正常停止'
+        if not stopped and not self.stopping_at:
+            if diagnosis in ('clock_stalled', 'fcu_stale', 'multiple_sources'):
+                self.phase, self.message = 'degraded', recovery
+            elif diagnosis == 'vehicle_active':
+                self.phase, self.message = 'running', '飞控状态已收到，当前不允许停止后端'
         return dict(phase=self.phase, message=self.message, process_running=not stopped,
+                    error=getattr(self, 'error', None) or '',
+                    diagnosis=diagnosis, recovery=recovery, clock_ns=self.clock_ns,
+                    clock_age=clock_age,
                     dds=getattr(self, "dds", {}),
                     pid=self.process.pid if self.process else None,
                     fcu_url=self.result['fcu_url'], gcs_url=self.result['gcs_url'],
-                    connected=self.state.get('connected', False) and fresh,
+                    connected=(self.state.get('connected', False) and fresh and
+                               self.state.get('state_sources') == 1),
                     armed=self.state.get('armed'), landed=self.state.get('landed'),
                     safe_to_stop=safe, can_abort_startup=abort_startup,
                     gcs=self.gcs if now - self.gcs.get('at', -1e30) < 3 else {},
@@ -406,6 +447,8 @@ class Backend:
                     self.state.clear()
                     self.error = f'观测异常，保留后端: {exc}'
                     time.sleep(0.05)
+                if self.owner_channel:
+                    self.owner_channel.poll()
                 if selector.select(0):
                     chunk = os.read(sys.stdin.fileno(), 4096)
                     if not chunk:
@@ -437,7 +480,10 @@ class Backend:
                         self.error = f'状态编码异常，保留后端: {exc}'
                         emit(dict(phase='unknown', process_running=True, error=self.error))
                     next_report = time.monotonic() + 0.5
-            emit(self.status())
+            terminal = self.status()
+            if self.owner_channel:
+                self.owner_channel.finish(terminal)
+            emit(terminal)
             return 0 if self.phase == 'stopped' else 1
         finally:
             selector.close()
@@ -452,6 +498,8 @@ class Backend:
             self.node.destroy_node()
         if self.context:
             self.context.try_shutdown()
+        if self.owner_channel:
+            self.owner_channel.close()
         os.close(self.reservation)
         if hasattr(self, 'log'):
             self.log.close()
@@ -494,6 +542,7 @@ def main():
     parser.add_argument('--check', action='store_true')
     parser.add_argument('--px4-directory', default='')
     parser.add_argument('--directory', type=Path)
+    parser.add_argument('--control-directory', type=Path)
     args = parser.parse_args()
     worker = None
     try:
@@ -507,11 +556,22 @@ def main():
         emit(dict(phase='preflight', process_running=False, can_abort_startup=True,
                   message='正在校验场景、资源、兼容输入和飞控端口；尚未启动后端'))
         worker = Backend(profile, args.directory)
+        if args.control_directory:
+            from easyfly_connection_manager.ownership import OwnerChannel
+            worker.owner_channel = OwnerChannel(
+                private(args.control_directory), os.environ.get('EASYFLY_BACKEND_OWNER_TOKEN', ''),
+                os.environ.get('EASYFLY_CONNECTION_SESSION', ''), worker)
         worker.start()
         emit(worker.status())
         return run_owned(worker)
     except Cancelled:
-        emit(dict(phase='stopped', process_running=False, message='已取消启动，尚未创建后端'))
+        value = dict(phase='stopped', process_running=False, exit_code=0,
+                     message='已取消启动，尚未创建后端')
+        if args.control_directory:
+            from easyfly_connection_manager.ownership import save_terminal
+            save_terminal(private(args.directory), os.environ['EASYFLY_BACKEND_OWNER_TOKEN'],
+                          os.environ['EASYFLY_CONNECTION_SESSION'], value)
+        emit(value)
         return 0
     except Exception as exc:
         traceback.print_exc(file=sys.stderr)
@@ -519,7 +579,13 @@ def main():
             worker.error = f'观测异常，后端保留: {type(exc).__name__}: {exc}'
             worker.state.clear()
             return run_owned(worker)
-        emit(dict(phase='failed', process_running=False, error=f'{type(exc).__name__}: {exc}'))
+        value = dict(phase='failed', process_running=False, exit_code=2,
+                     error=f'{type(exc).__name__}: {exc}')
+        if args.control_directory:
+            from easyfly_connection_manager.ownership import save_terminal
+            save_terminal(private(args.directory), os.environ['EASYFLY_BACKEND_OWNER_TOKEN'],
+                          os.environ['EASYFLY_CONNECTION_SESSION'], value)
+        emit(value)
         return 2
     finally:
         if worker:

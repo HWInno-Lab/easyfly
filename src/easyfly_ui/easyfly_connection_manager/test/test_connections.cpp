@@ -23,6 +23,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLocalSocket>
+#include <QLocalServer>
 #include <QMenuBar>
 #include <QPushButton>
 #include <QSignalSpy>
@@ -242,6 +243,94 @@ TEST(ConnectionSupervisor, PrivateLockAndInvalidWorkerNeverStartDesktop)
   client.socket.write(QByteArray(40000, 'x'));
   ASSERT_TRUE(until([&] {return client.socket.state() == QLocalSocket::UnconnectedState;}));
 }
+TEST(ConnectionSupervisor, CorruptRecoveryRecordKeepsServiceReadableAndRejectsNewLaunch)
+{
+  QTemporaryDir root;
+  QFile record(root.path() + "/session.json");
+  ASSERT_TRUE(record.open(QIODevice::WriteOnly)); record.write("broken JSON"); record.close();
+  ASSERT_TRUE(record.setPermissions(QFile::ReadOwner | QFile::WriteOwner));
+  cm::Supervisor supervisor(root.path(), DESKTOP_BINARY_FROM_TEST);
+  Peer client(root.path());
+  const auto status = client.request({{"op", "status"}})["status"].toObject();
+  EXPECT_TRUE(status["recovery_blocked"].toBool());
+  EXPECT_FALSE(status["recovery_error"].toString().isEmpty());
+  EXPECT_FALSE(
+    client.request(
+      {{"op", "start"},
+        {"profile", cm::Profile::create("blocked").json()}})["ok"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+TEST(ConnectionSupervisor, CompletedMutationReceiptSurvivesIdleServiceRestart)
+{
+  QTemporaryDir root;
+  const auto profile = cm::Profile::create("durable receipt");
+  const QJsonObject request{{"op", "start"}, {"id", "durable-start"}, {"profile", profile.json()}};
+  QString session;
+  {
+    cm::Supervisor supervisor(root.path(), DESKTOP_BINARY_FROM_TEST);
+    Peer client(root.path());
+    ASSERT_TRUE(client.request(request)["ok"].toBool());
+    ASSERT_TRUE(until([&] {return supervisor.status()["workspace_fresh"].toBool();}));
+    session = supervisor.status()["session"].toString();
+    ASSERT_TRUE(client.request({{"op", "close"}, {"session", session}})["ok"].toBool());
+    ASSERT_TRUE(until([&] {return !supervisor.status()["process_running"].toBool();}));
+  }
+  cm::Supervisor restored(root.path(), DESKTOP_BINARY_FROM_TEST);
+  Peer client(root.path());
+  EXPECT_TRUE(client.request(request)["ok"].toBool());
+  EXPECT_EQ(restored.status()["session"].toString(), session);
+  EXPECT_FALSE(restored.status()["process_running"].toBool());
+}
+TEST(ConnectionSupervisor, UnresolvedRecoveryRequiresOriginalProfileAndKeepsJournalBytes)
+{
+  QTemporaryDir root;
+  struct RestoreDataHome
+  {
+    QByteArray old{qgetenv("XDG_DATA_HOME")};
+    ~RestoreDataHome()
+    {if (old.isNull()) {qunsetenv("XDG_DATA_HOME");} else {qputenv("XDG_DATA_HOME", old);}}
+  } restore;
+  qputenv("XDG_DATA_HOME", (root.path() + "/data").toUtf8());
+  const auto runtime = root.path() + "/runtime";
+  auto profile = cm::Profile::create("recover journal"); profile.mission_import = true;
+  {
+    cm::Supervisor service(runtime, DESKTOP_BINARY_FROM_TEST); Peer peer(runtime);
+    ASSERT_TRUE(peer.request({{"op", "start"}, {"profile", profile.json()}})["ok"].toBool());
+    ASSERT_TRUE(until([&] {return service.status()["workspace_fresh"].toBool();}));
+    ASSERT_TRUE(
+      peer.request(
+        {{"op", "close"},
+          {"session", service.status()["session"]}})["ok"].toBool());
+    ASSERT_TRUE(until([&] {return !service.status()["process_running"].toBool();}));
+  }
+  QFile record(runtime + "/session.json"); ASSERT_TRUE(record.open(QIODevice::ReadOnly));
+  auto data = QJsonDocument::fromJson(record.readAll()).object(); record.close();
+  data["unresolved"] = true;
+  ASSERT_TRUE(record.open(QIODevice::WriteOnly | QIODevice::Truncate));
+  record.write(QJsonDocument(data).toJson()); record.close();
+  QFile journal(root.path() + "/data/easyfly-connections/profiles/" + profile.id +
+    "/imports/proof");
+  ASSERT_TRUE(journal.open(QIODevice::WriteOnly)); journal.write("preserved unresolved evidence");
+  journal.close();
+  cm::Supervisor service(runtime, DESKTOP_BINARY_FROM_TEST); Peer peer(runtime);
+  EXPECT_TRUE(service.status()["unresolved"].toBool());
+  EXPECT_FALSE(
+    peer.request(
+      {{"op", "start"}, {"id", "reject-switch"},
+        {"profile", cm::Profile::create("other").json()}})["ok"].toBool());
+  ASSERT_TRUE(
+    peer.request(
+      {{"op", "start"}, {"id", "resume-original"},
+        {"profile", profile.json()}})["ok"].toBool());
+  ASSERT_TRUE(until([&] {return service.status()["workspace_fresh"].toBool();}));
+  ASSERT_TRUE(journal.open(QIODevice::ReadOnly));
+  EXPECT_EQ(journal.readAll(), QByteArray("preserved unresolved evidence")); journal.close();
+  ASSERT_TRUE(
+    peer.request(
+      {{"op", "close"}, {"id", "close-resumed-journal"},
+        {"session", service.status()["session"]}})["ok"].toBool());
+  ASSERT_TRUE(until([&] {return !service.status()["process_running"].toBool();}));
+}
 TEST(ConnectionManager, SavesWithoutConnectingAndReattachesToSameLiveWorkspace)
 {
   QTemporaryDir root;
@@ -342,4 +431,49 @@ TEST(ConnectionManager, SimulationAndSerialCanBeConfiguredWithoutCommandLine)
   if (qEnvironmentVariableIsSet("EASYFLY_CM_FORM_SCREENSHOT")) {
     ASSERT_TRUE(manager.grab().save(qEnvironmentVariable("EASYFLY_CM_FORM_SCREENSHOT")));
   }
+}
+TEST(ConnectionManager, RecoveredBackendReopensFrozenProfileWithoutOverwritingAnotherSavedProfile)
+{
+  QTemporaryDir root;
+  const auto runtime = cm::private_directory(root.path() + "/runtime");
+  const auto saved = cm::Profile::create("saved draft");
+  auto frozen = cm::Profile::create("recovered frozen"); frozen.mode = "sitl"; frozen.domain = 99;
+  const auto file = root.path() + "/profiles.json";
+  cm::write_profiles(file, {saved});
+  QLocalServer service;
+  ASSERT_TRUE(service.listen(runtime + "/control.sock"));
+  QJsonObject requested;
+  QObject::connect(
+    &service, &QLocalServer::newConnection, &service, [&] {
+      auto * peer = service.nextPendingConnection();
+      auto input = std::make_shared<QByteArray>();
+      QObject::connect(peer, &QLocalSocket::disconnected, peer, &QObject::deleteLater);
+      QObject::connect(
+        peer, &QLocalSocket::readyRead, peer, [&, peer, input] {
+          input->append(peer->readAll());
+          while (input->contains('\n')) {
+            const auto end = input->indexOf('\n');
+            const auto query = QJsonDocument::fromJson(input->left(end)).object();
+            input->remove(0, end + 1);
+            if (query["op"] == "start") {requested = query["profile"].toObject();}
+            const QJsonObject status{{"session", "recovered"}, {"backend_running", true},
+              {"backend_fresh", true}, {"profile", frozen.json()}, {"config_hash", frozen.hash()},
+              {"process_running", !requested.isEmpty()}};
+            peer->write(
+              QJsonDocument(
+                QJsonObject{{"id", query["id"]}, {"ok", true},
+                  {"status", status}}).toJson(QJsonDocument::Compact) + '\n');
+          }
+        });
+    });
+  cm::ManagerWindow manager(file, runtime);
+  auto * start = manager.findChild<QPushButton *>("startConnection");
+  ASSERT_TRUE(until([&] {return start->isEnabled();}));
+  EXPECT_EQ(manager.findChild<QLineEdit *>("connectionName")->text(), saved.name);
+  EXPECT_TRUE(
+    manager.findChild<QLabel *>("connectionEffectiveConfig")->text().contains(frozen.name));
+  QTest::mouseClick(start, Qt::LeftButton);
+  ASSERT_TRUE(until([&] {return !requested.isEmpty();}));
+  EXPECT_EQ(requested, frozen.json());
+  EXPECT_EQ(cm::read_profiles(file)[0].json(), saved.json());
 }

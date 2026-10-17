@@ -178,6 +178,8 @@ struct MainWindow::Impl
   uint64_t last_session{0}, last_epoch{0};
   int last_camera{-1}; int64_t submitted_stamp{-1};
   std::map<bridge::Key, uint64_t> expected;
+  std::optional<std::pair<bridge::Key, uint64_t>> request_note_pending;
+  uint64_t request_note_session{0}, request_note_epoch{0};
   std::string queried_id, validated_name;
   std::string details_name;
   uint64_t rendered_details{0}, rendered_details_session{0};
@@ -1260,6 +1262,9 @@ struct MainWindow::Impl
   {
     if (receipt.status == bridge::RequestStatus::Queued) {
       expected[key] = receipt.id;
+      request_note_pending = std::make_pair(key, receipt.id);
+      request_note_session = current ? current->observation_session_id : 0;
+      request_note_epoch = current ? current->time_epoch : 0;
       update_buttons();
       request_note->setText(
         QStringLiteral(
@@ -1274,7 +1279,38 @@ struct MainWindow::Impl
       QStringLiteral("受频率限制：每端点最多 1Hz") :
       receipt.status == bridge::RequestStatus::Invalid ?
       QStringLiteral("输入无效") : QStringLiteral("观测已关闭");
+    request_note_pending.reset();
     request_note->setText(status + QStringLiteral("；未发送新的请求。"));
+  }
+  void update_request_note()
+  {
+    if (!request_note_pending || !current) {return;}
+    const auto key = request_note_pending->first;
+    const auto id = request_note_pending->second;
+    if (current->observation_session_id != request_note_session ||
+      current->time_epoch != request_note_epoch)
+    {
+      request_note->setText(QStringLiteral("观测会话或时间已变化，原查询结果未确认；请重新查询。"));
+      request_note_pending.reset(); return;
+    }
+    const bridge::Evidence * evidence = nullptr;
+    auto find = [key, &evidence](const auto & rows) {
+        const auto item = rows.find(key);
+        if (item != rows.end()) {evidence = &item->second.evidence;}
+      };
+    find(current->capabilities); find(current->missions);
+    find(current->parameters); find(current->perception);
+    if (key == bridge::Key::MissionDetails) {evidence = &current->mission_details.evidence;}
+    if (evidence && evidence->request_id == id) {
+      request_note->setText(
+        QStringLiteral("只读查询 #%1 已结束：%2。%3")
+        .arg(id).arg(quality_text(evidence->quality), text(evidence->reason)));
+      request_note_pending.reset();
+    } else if (!available()) {
+      request_note->setText(
+        QStringLiteral("只读查询 #%1 观测已断开，结果未确认；可重新查询。").arg(id));
+      request_note_pending.reset();
+    }
   }
   bridge::RequestReceipt review_read(bridge::Key key, const std::string & name)
   {
@@ -1936,6 +1972,7 @@ struct MainWindow::Impl
     }
     if (disconnecting) {cleanup_tick();}
     if (!current) {return;}
+    update_request_note();
     const double now = bridge::detail::steady_seconds();
     if (source && current->stopped && !disconnecting && !released) {stop_source(false);}
     state_view(now); mission_view(now); geometry_view(bridge::Key::Targets, now);

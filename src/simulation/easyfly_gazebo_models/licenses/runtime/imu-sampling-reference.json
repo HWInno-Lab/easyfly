@@ -5,7 +5,7 @@
     "https://github.com/PX4/PX4-SITL_gazebo-classic/blob/70683dc759cbd3ebccfa78429b564f8b1fb5d149/src/mavlink_interface.cpp"
   ],
   "policy": "Retain native noisy 1000Hz producer; four-sample sliding mean before unchanged 250Hz latest-value decimator. Require native 1ms timestamps and consecutive seq, refuse gaps instead of interpolating. Preserve protobuf source metadata, orientation and covariance.",
-  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "model_sha256": "9d3abf68005ac841ff40d9189f5540687972ceddb628f4297911a7c0c9a269c6",
   "native_fixture": "artifacts/scene-s2-acceptance-20261015/imu-native-adc-contract/analysis.json",
   "native_fixture_sha256": "c874d9eed178692cdde317177dc284db452dca697484e3248ba071b989fa8000",
   "native_result": {
@@ -113,5 +113,12 @@
   },
   "adc_policy": "After linear averaging, saturate acceleration to the reviewed PX4 accel-0 signed 16-bit FIFO capacity at g/2048 scale, with one float ULP inward. Preserve FLU/FRD sign and existing driver clipping detection; raw producer topic remains unbounded and unchanged.",
   "adc_source_url": "https://github.com/PX4/PX4-Autopilot/blob/54f0455ffcd755534539a7cf33a09a20bf71d29d/src/modules/simulation/simulator_mavlink/SimulatorMavlink.cpp",
-  "adc_source_sha256": "82cc7fc774d6fe92328e444354da1f63b3fb197ea61a26aa27862ce76098d670"
+  "adc_source_sha256": "82cc7fc774d6fe92328e444354da1f63b3fb197ea61a26aa27862ce76098d670",
+  "timestamp_compatibility": {
+    "plugin": "libeasyfly_native_imu.so",
+    "previous_model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+    "policy": "Widen producer arithmetic before multiplying and adding; no relay retimestamping, noise or physics changes.",
+    "native_boundary_evidence": "artifacts/ui-reliability-phase12-20261017/native-stream-original.log",
+    "corrected_boundary_evidence": "artifacts/ui-reliability-phase12-20261017/build/easyfly_gazebo_plugins/test_results"
+  }
 }

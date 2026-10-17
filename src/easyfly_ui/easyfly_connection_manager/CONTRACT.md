@@ -47,9 +47,9 @@ reservation, scene preflight and verified private PX4 rootfs; draft/incompatible
 resources fail before simulator creation. An already-running external backend is observed
 through observe mode, never adopted or stopped by a matching name/port.
 
-The supported managed SITL path runs Gazebo in the background. Native Gazebo GUI
-shutdown retained a transport owner in actual tests; gazebo_gui=true is currently
-rejected before launch and disables the UI start action. New profiles default false.
+The managed SITL path defaults to background Gazebo. Optional native Gazebo GUI
+uses the corrected project-local transport, including registered-node finalization
+before clearing the topic table. New profiles still default gazebo_gui=false.
 Workspace camera/RViz views remain available independently of that native GUI option.
 
 Managed mutable flags require the configured session policy. Mission execution is
@@ -92,9 +92,19 @@ a new idle MainWindow only after cleanup. Draft/tool confirmation cancellation k
 the current workspace. Each new close attempt records its own return intent; ordinary
 window exit does not inherit a previously cancelled return-to-connections request.
 The embedded page's show_manager request selects and raises the existing MainWindow.
-Reopen queries the same running supervisor. Authenticated adoption after supervisor crash,
-advanced DDS discovery presets, hardware admission and long-duration qualification remain
-separate work; never trust a bare PID file or delete old journals to manufacture recovery.
+Reopen queries the same running supervisor. Private atomic session records preserve the
+frozen profile/hash, workspace credential, backend credential/identity, unresolved flag,
+owned QGC group and bounded mutation receipts. A replacement supervisor must authenticate
+the live helper with its credential, SO_PEERCRED user/PID and boot/start-time identity,
+then obtain fresh status. Workspace reconnection additionally checks its token and peer
+process identity. Cached telemetry never grants stop permission. A private authenticated
+terminal receipt covers helper exit between polls, including preflight failure/cancellation.
+Unknown/dead owners without a valid terminal receipt block duplicate startup and retain
+logs/journals; no bare-PID adoption, signal escalation or automatic mutation retry occurs.
+Recovery of a mutable workspace initially retains unresolved=true until its own fresh
+snapshot/journal recovery says otherwise. A surviving QGC still closes through its original
+group plus unique XDG_CONFIG_HOME window proof. Advanced discovery, hardware admission and
+long-duration qualification remain separate work.
 
 The first navigation item is connection/simulation, followed by overview, tasks,
 camera/perception, space, records/playback and diagnostics/settings. One renderer is

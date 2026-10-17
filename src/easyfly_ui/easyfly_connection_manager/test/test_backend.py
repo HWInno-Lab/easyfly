@@ -90,11 +90,10 @@ def test_bad_serial_is_rejected_before_any_launch():
         check(p)
 
 
-def test_unqualified_native_gazebo_window_is_rejected_before_launch():
+def test_native_gazebo_window_uses_normal_managed_launch():
     p = profile()
     p['simulation']['gazebo_gui'] = True
-    with pytest.raises(ValueError, match='原生窗口退出尚未通过验收'):
-        check(p)
+    assert 'headless:=false' in command(p)
 
 
 def test_draft_scene_cannot_launch_even_if_installed():
@@ -187,3 +186,36 @@ def test_two_managers_cannot_reserve_another_local_backend(tmp_path, monkeypatch
             reserve(p)
     finally:
         os.close(descriptor)
+
+
+def test_stalled_clock_and_stop_timeout_keep_owner_and_reject_stale_stop(tmp_path):
+    import time
+    from types import SimpleNamespace
+    from unittest.mock import Mock
+    from easyfly_connection_manager.backend import Backend
+    now = time.monotonic()
+    worker = Backend.__new__(Backend)
+    worker.profile, worker.directory = profile(), tmp_path
+    worker.node = None
+    worker.process = SimpleNamespace(poll=lambda: None, returncode=None, pid=123,
+                                     send_signal=Mock())
+    worker.state = dict(connected=True, armed=False, landed=1, state_sources=1,
+                        landed_sources=1, state_at=now - 5, landed_at=now - 5)
+    worker.action_states = {}
+    worker.ever_connected = True
+    worker.started, worker.stopping_at = now - 100, None
+    worker.phase, worker.message, worker.gcs = 'ready', '', {}
+    worker.result = dict(fcu_url='', gcs_url='')
+    worker.clock_ns, worker.clock_progress_at = 10**9, now - 5
+    value = worker.status()
+    assert value['diagnosis'] == 'clock_stalled'
+    assert not value['safe_to_stop'] and not value['can_abort_startup']
+    assert value['process_running']
+    with pytest.raises(RuntimeError, match='拒绝停止'):
+        worker.stop()
+    worker.process.send_signal.assert_not_called()
+    worker.stopping_at = now - 36
+    value = worker.status()
+    assert value['diagnosis'] == 'stop_unknown' and value['process_running']
+    worker.stop()
+    worker.process.send_signal.assert_not_called()

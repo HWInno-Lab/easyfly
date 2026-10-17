@@ -4,6 +4,7 @@ find_package(gazebo 11.10.2 EXACT REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(TBB REQUIRED)
+option(EASYFLY_TRANSPORT_DIAGNOSTICS "Retain weak connection ownership diagnostics" OFF)
 find_file(EASYFLY_IO_HEADER gazebo/transport/IOManager.hh
   PATHS ${GAZEBO_INCLUDE_DIRS} NO_DEFAULT_PATH REQUIRED)
 file(SHA256 "${EASYFLY_IO_HEADER}" EASYFLY_IO_HEADER_SHA)
@@ -26,12 +27,12 @@ add_library(easyfly_transport_compat SHARED src/io_manager.cpp
   upstream/CallbackHelper.cc src/connection.cpp src/connection_manager.cpp
   upstream/Node.cc upstream/Publication.cc upstream/PublicationTransport.cc
   src/publisher.cpp upstream/Subscriber.cc upstream/SubscriptionTransport.cc
-  upstream/TopicManager.cc upstream/TransportIface.cc)
+  src/topic_manager.cpp upstream/TransportIface.cc)
 target_compile_features(easyfly_transport_compat PUBLIC cxx_std_17)
 target_include_directories(easyfly_transport_compat PUBLIC include ${GAZEBO_INCLUDE_DIRS}
   PRIVATE "${EASYFLY_TRANSPORT_HEADERS}")
 target_compile_definitions(easyfly_transport_compat PRIVATE
-  $<$<CONFIG:Debug>:EASYFLY_TRANSPORT_DIAGNOSTICS>
+  $<$<OR:$<CONFIG:Debug>,$<BOOL:${EASYFLY_TRANSPORT_DIAGNOSTICS}>>:EASYFLY_TRANSPORT_DIAGNOSTICS>
   BUILDING_DLL_GZ_TRANSPORT GAZEBO_DEFAULT_MASTER_HOST="localhost"
   GAZEBO_DEFAULT_MASTER_PORT=11345)
 target_link_libraries(easyfly_transport_compat PUBLIC
@@ -55,6 +56,10 @@ install(FILES README.md ../safe_camera/LICENSE
 install(FILES upstream/SHA256SUMS DESTINATION share/${PROJECT_NAME}/safe_transport)
 
 if(BUILD_TESTING)
+  add_executable(test_transport_node_cycle test/test_node_cycle.cpp)
+  target_link_libraries(test_transport_node_cycle easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_transport_node_cycle COMMAND test_transport_node_cycle)
+  set_tests_properties(test_transport_node_cycle PROPERTIES TIMEOUT 15)
   add_executable(test_transport_incoming_shutdown test/test_incoming_shutdown.cpp)
   target_link_libraries(test_transport_incoming_shutdown easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
   add_test(NAME test_transport_incoming_shutdown COMMAND test_transport_incoming_shutdown)

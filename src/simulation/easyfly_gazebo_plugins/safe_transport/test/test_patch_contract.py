@@ -51,3 +51,13 @@ def test_both_sitl_entries_select_only_the_private_server():
         assert command.elts[0].id == 'gazebo_server'
         assert 'LD_PRELOAD' not in (folder / name).read_text()
         assert '/transport' not in (folder / name).read_text()
+
+
+def test_topic_manager_changes_only_registered_node_finalization():
+    original = (PATCH / 'upstream/TopicManager.cc').read_text()
+    corrected = (PATCH / 'src/topic_manager.cpp').read_text()
+    start = corrected.index('  // Node owns its publishers')
+    end = corrected.index('  PublicationPtr_M::iterator iter;', start)
+    assert 'retiring = this->nodes;' in corrected[start:end]
+    assert 'node->Fini();' in corrected[start:end]
+    assert corrected[:start] + corrected[end:] == original

@@ -37,6 +37,7 @@ from launch.substitutions import EnvironmentVariable, LaunchConfiguration, Pytho
 from launch_ros.actions import Node
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
+from easyfly_px4_sitl.imu_compatibility import require_native_imu
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
 from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
@@ -92,6 +93,7 @@ def generate_launch_description():
     gazebo_server = gazebo_plugins_lib + "/easyfly_gazebo_plugins/easyfly_gzserver"
 
     px4_dir = _resolve_px4_dir()
+    require_native_imu(px4_dir)
     px4_build = str(px4_dir / "build" / "px4_sitl_default")
     px4_bin   = str(px4_dir / "build" / "px4_sitl_default" / "bin" / "px4")
 

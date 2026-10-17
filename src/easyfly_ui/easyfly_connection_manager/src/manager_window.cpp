@@ -71,7 +71,7 @@ struct ManagerWindow::Impl
   QElapsedTimer response_clock;
   int selected{-1}, retries{0};
   bool healthy{true}, loading{false}, service_started{false}, queried{false};
-  QString poll_request, exit_request, close_request, connection_error;
+  QString poll_request, exit_request, close_request, connection_error, bound_session;
   QJsonObject actual;
   RpcClient rpc;
   QTimer timer;
@@ -313,8 +313,8 @@ struct ManagerWindow::Impl
         "Gazebo master 端口"), 1024, 65535);
     gazebo_gui = new QCheckBox(
       QStringLiteral(
-        "显示 Gazebo 原生窗口（暂不可用；"
-        "请使用工作窗口相机/三维）"), owner);
+        "显示 Gazebo 原生窗口（可选；"
+        "相机和内嵌三维仍在工作窗口）"), owner);
     gazebo_gui->setObjectName("connectionGazeboGui"); sim_form->addRow(
       gazebo_gui);
     auto * sim_hint = new QLabel(
@@ -503,9 +503,24 @@ struct ManagerWindow::Impl
     stop_qgc = button(QStringLiteral("关闭本次 QGC"), "stopQgc", tools);
     auto * logs =
       button(QStringLiteral("打开运行日志目录"), "openConnectionLogs", tools);
+    auto * recovery_tools = new QHBoxLayout; layout->addLayout(recovery_tools);
+    auto * recover = button(
+      QStringLiteral("重新连接 / 恢复会话"), "recoverConnection", recovery_tools);
+    recovery_tools->addStretch();
+    recover->setToolTip(
+      QStringLiteral(
+        "重新查询服务并认证恢复原会话；"
+        "不会重发启动、停止或飞行操作。"));
+    QObject::connect(
+      recover, &QPushButton::clicked, owner, [this] {
+        retries = 0; service_started = false; poll_request.clear();
+        if (rpc.connected()) {poll_request = rpc.send("status");} else {rpc.connect_to(runtime);}
+      });
     QObject::connect(
       logs, &QPushButton::clicked, owner, [this] {
-        const auto directory = actual["backend"].toObject()["directory"].toString();
+        auto directory = actual["backend"].toObject()["directory"].toString();
+        if (directory.isEmpty()) {directory = actual["session_directory"].toString();}
+        if (directory.isEmpty()) {directory = actual["runtime_directory"].toString();}
         if (!directory.isEmpty()) {
           QDesktopServices::openUrl(
             QUrl::fromLocalFile(
@@ -587,7 +602,7 @@ struct ManagerWindow::Impl
     effective = new QLabel(right); effective->setTextFormat(Qt::PlainText);
     effective->setObjectName("connectionEffectiveConfig");
     effective->setWordWrap(true);
-    layout->addWidget(effective);
+    layout->insertWidget(0, effective);
     diagnostics = new QPlainTextEdit(right); diagnostics->setObjectName(
       "connectionDiagnostics");
     diagnostics->setReadOnly(true); diagnostics->setMaximumBlockCount(200);
@@ -777,6 +792,13 @@ struct ManagerWindow::Impl
               "请先保存或导出本地草稿，再"
               "连接平台；当前内容已保留。")); return;
         }
+        if (actual["backend_running"].toBool() || actual["unresolved"].toBool()) {
+          if (dirty()) {
+            notice(QStringLiteral("请先保存当前配置编辑，再重开生效工作窗口。")); return;
+          }
+          start->setEnabled(false);
+          rpc.send("start", {{"profile", actual["profile"]}}); return;
+        }
         if (selected < 0) {return;}
         if (dirty() || persisted_hashes.value(profiles[selected].id) != profiles[selected].hash()) {
           save_current();
@@ -849,6 +871,16 @@ struct ManagerWindow::Impl
         if (!reply["ok"].toBool()) {notice(reply["error"].toString());}
         if (reply["status"].isObject()) {
           queried = true; actual = reply["status"].toObject();
+          const auto active = actual["profile"].toObject();
+          if (bound_session != actual["session"].toString()) {
+            bound_session = actual["session"].toString();
+            if (!dirty()) {
+              for (int row = 0; row < profiles.size(); ++row) {
+                if (profiles[row].id == active["id"].toString() &&
+                profiles[row].hash() == actual["config_hash"].toString()) {refresh(row); break;}
+              }
+            }
+          }
           owner->setProperty("connectionState", actual);
         }
         response_clock.restart();
@@ -857,6 +889,10 @@ struct ManagerWindow::Impl
     QObject::connect(
       &rpc, &RpcClient::failure, owner, [this](const QString & error) {
         queried = false; poll_request.clear(); connection_error = error; notice(error); update();
+      });
+    QObject::connect(
+      &rpc, &RpcClient::disconnected, owner, [this] {
+        retries = 0; service_started = false;
       });
     timer.setInterval(500);
     QObject::connect(
@@ -1054,8 +1090,11 @@ struct ManagerWindow::Impl
     }
     const auto live = actual["workspace"].toObject();
     const auto backend_phase = actual["backend"].toObject()["phase"].toString();
+    const bool backend_stopping = backend_phase == "stopping" || backend_phase == "stop_unknown";
     const bool backend_fault = backend_phase == "degraded" || backend_phase == "unknown" ||
-      backend_phase == "stop_unknown";
+      backend_phase == "stop_unknown" || actual["recovery_blocked"].toBool() ||
+      !actual["recovery_error"].toString().isEmpty() ||
+      (actual["backend_running"].toBool() && !actual["backend_fresh"].toBool());
     backend_card->setText(
       QStringLiteral("仿真 / 通信\n%1").arg(
         actual["backend_running"].toBool() ?
@@ -1158,7 +1197,9 @@ struct ManagerWindow::Impl
       sim ? QStringLiteral("启动仿真并连接 DDS") : comm ?
       QStringLiteral("启动通信并连接 DDS") : QStringLiteral("连接 DDS / 打开工作窗口"));
     if (actual["backend_running"].toBool()) {
-      start->setText(QStringLiteral("连接 DDS / 重开工作窗口"));
+      start->setText(QStringLiteral("重开生效工作窗口"));
+    } else if (actual["unresolved"].toBool()) {
+      start->setText(QStringLiteral("重开原窗口 / 核对未决"));
     }
     urls_label->setText(
       selected_mode == "observe" ? QStringLiteral(
@@ -1231,22 +1272,17 @@ struct ManagerWindow::Impl
           "此场景未登记或不支持当前运行配"
           "置，请选择匹配的已登记场景。"));
     }
-    if (sim && gazebo_gui->isChecked()) {
-      valid = false;
-      scene_note->setText(
-        QStringLiteral(
-          "Gazebo 原生窗口退出尚未通过验收，"
-          "请取消此选项；后台仿真可在工作窗"
-          "口查看相机和三维。"));
-    }
     const bool persisted = healthy && !dirty() && selected >= 0 &&
       persisted_hashes.value(profiles[selected].id) ==
       profiles[selected].hash();
     start->setEnabled(
       queried && rpc.connected() && !actual["process_running"].toBool() &&
-      !actual["close_pending"].toBool() && valid && healthy && selected >= 0 &&
-      (!actual["backend_running"].toBool() ||
-      form_profile().hash() == actual["config_hash"].toString()));
+      !actual["recovery_blocked"].toBool() && !backend_stopping &&
+      !actual["close_pending"].toBool() &&
+      (actual["backend_running"].toBool() ?
+      actual["backend_fresh"].toBool() && !actual["profile"].toObject().isEmpty() :
+      actual["unresolved"].toBool() ? !actual["profile"].toObject().isEmpty() :
+      valid && healthy && selected >= 0));
     if (!persisted && !actual["backend_running"].toBool()) {
       start->setText(
         sim ? QStringLiteral("保存并启动仿真 / DDS") : comm ?
@@ -1255,14 +1291,16 @@ struct ManagerWindow::Impl
     const auto backend = actual["backend"].toObject();
     stop_backend->setEnabled(
       queried && actual["backend_running"].toBool() &&
+      !actual["recovery_blocked"].toBool() &&
+      actual["backend_fresh"].toBool() && !backend_stopping &&
       !actual["process_running"].toBool() && !actual["qgc_running"].toBool() &&
-      (!actual["backend_fresh"].toBool() || backend["safe_to_stop"].toBool() ||
+      (backend["safe_to_stop"].toBool() ||
       backend["can_abort_startup"].toBool()) &&
       !actual["unresolved"].toBool());
     const auto active_config = actual["profile"].toObject();
     start_qgc->setEnabled(
       queried && actual["backend_running"].toBool() &&
-      actual["backend_fresh"].toBool() && backend["safe_to_stop"].toBool() &&
+      actual["backend_fresh"].toBool() && backend["safe_to_stop"].toBool() && !backend_stopping &&
       active_config["gcs"].toObject()["enabled"].toBool() &&
       !actual["qgc_running"].toBool());
     stop_qgc->setEnabled(queried && actual["qgc_running"].toBool());
@@ -1299,6 +1337,15 @@ struct ManagerWindow::Impl
       {
         state += QStringLiteral(" · 后台保留，可重开工作窗口或正常停止");
       }
+      if (!backend["recovery"].toString().isEmpty()) {
+        state += QStringLiteral("\n处理建议：") + backend["recovery"].toString();
+      }
+    }
+    if (!actual["recovery_error"].toString().isEmpty()) {
+      state += QStringLiteral("\n恢复诊断：") + actual["recovery_error"].toString();
+    }
+    if (actual["recovered_backend"].toBool() && actual["backend_fresh"].toBool()) {
+      state += QStringLiteral("\n原后台身份已认证，会话与生效配置保持不变。");
     }
     if (active_config["gcs"].toObject()["enabled"].toBool()) {
       const auto endpoint = backend["gcs"].toObject();
@@ -1326,15 +1373,20 @@ struct ManagerWindow::Impl
       details_toggle->isChecked() || backend_fault || actual["phase"] == "failed" ||
       actual["phase"] == "starting_backend" || !backend["error"].toString().isEmpty() ||
       (actual["process_running"].toBool() && !actual["workspace_fresh"].toBool()));
-    effective->setVisible(details_toggle->isChecked());
+    effective->setVisible(
+      details_toggle->isChecked() || actual["backend_running"].toBool() ||
+      actual["process_running"].toBool());
     const auto active = actual["profile"].toObject();
     effective->setText(
       active.isEmpty() ? QStringLiteral("当前无生效连接") :
-      QStringLiteral("生效连接：%1 · domain %2 · %3\n生效版本：%4")
+      QStringLiteral("生效连接：%1 · domain %2 · %3 · QGC 转发：%4\n生效版本：%5")
       .arg(active["name"].toString()).arg(active["domain"].toInt())
       .arg(
         active["simulation_time"].toBool() ? QStringLiteral(
           "模拟时间") : QStringLiteral("系统时间"))
+      .arg(
+        active["gcs"].toObject()["enabled"].toBool() ? QStringLiteral("启用（双向）") :
+        QStringLiteral("关闭"))
       .arg(actual["config_hash"].toString().left(12)));
     const auto text = QJsonDocument(actual).toJson(QJsonDocument::Indented);
     if (diagnostics->toPlainText() != QString::fromUtf8(text)) {

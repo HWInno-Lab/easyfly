@@ -9,7 +9,7 @@
   "accelerometer_noise_density": 0.0006864654999999999,
   "old_plugin_default": 0.00637,
   "old_default_issue": "100 Hz bandwidth RMS value used as a density",
-  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "model_sha256": "9d3abf68005ac841ff40d9189f5540687972ceddb628f4297911a7c0c9a269c6",
   "unchanged": [
     "gyroscopeNoiseDensity",
     "random walk",
@@ -19,5 +19,12 @@
     "GPS, barometer, lidar and camera configuration"
   ],
   "previous_model_sha256": "142e1a3ddb70f1388becd29cdfe0f3e4a0aba136bac23caeb8235d945c2970ef",
-  "native_sampling": "Original noisy 1000Hz IMU producer retained on /imu_native; project relay averages four native samples on /imu before unchanged 250Hz MAVLink decimation; source seq/time/orientation preserved."
+  "native_sampling": "Original noisy 1000Hz IMU producer retained on /imu_native; project relay averages four native samples on /imu before unchanged 250Hz MAVLink decimation; source seq/time/orientation preserved.",
+  "timestamp_compatibility": {
+    "plugin": "libeasyfly_native_imu.so",
+    "previous_model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+    "policy": "Widen producer arithmetic before multiplying and adding; no relay retimestamping, noise or physics changes.",
+    "native_boundary_evidence": "artifacts/ui-reliability-phase12-20261017/native-stream-original.log",
+    "corrected_boundary_evidence": "artifacts/ui-reliability-phase12-20261017/build/easyfly_gazebo_plugins/test_results"
+  }
 }

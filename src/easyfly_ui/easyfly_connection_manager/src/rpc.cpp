@@ -24,7 +24,8 @@ RpcClient::RpcClient(QObject * parent)
   connect(&socket_, &QLocalSocket::connected, this, &RpcClient::ready);
   connect(
     &socket_, &QLocalSocket::disconnected, this, [this] {
-      input_.clear(); emit failure(QStringLiteral("连接管理服务已断开；操作结果需重新查询"));
+      input_.clear(); emit disconnected();
+      emit failure(QStringLiteral("连接管理服务已断开；操作结果需重新查询"));
     });
   connect(
     &socket_, &QLocalSocket::errorOccurred, this, [this](QLocalSocket::LocalSocketError) {

@@ -86,7 +86,7 @@ private:
     }
     auto mean = window_.Push(reflection->GetInt64(*message, sequence_),
       reflection->GetInt64(*message, time_), values);
-    if (!mean) {Fail("nonfinite, skipped, repeated or non-1000Hz native sample"); return;}
+    if (!mean) {Fail(window_.error().c_str()); return;}
     for (double value : *mean) {
       if (!std::isfinite(value)) {Fail("nonfinite accumulated sample"); return;}
     }

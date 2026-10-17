@@ -23,6 +23,7 @@ import time
 import uuid
 
 from ament_index_python.packages import get_package_prefix
+from easyfly_connection_manager.ownership import identity
 
 
 def wait_for(predicate, timeout=12):
@@ -52,6 +53,7 @@ def test_real_sessions(tmp_path):
     processes = []
     snapshots = []
     supervisor = None
+    workspaces = []
 
     def launch(program, arguments, values, label):
         log = (root / (label + '.log')).open('w')
@@ -76,8 +78,15 @@ def test_real_sessions(tmp_path):
 
     def snapshot(label, predicate):
         def sample():
-            status = rpc('status')
+            try:
+                status = rpc('status')
+            except (ConnectionRefusedError, FileNotFoundError):
+                return None
             if predicate(status):
+                record = json.loads((runtime / 'session.json').read_text())
+                workspace = record.get('workspace_identity', {})
+                if workspace and workspace not in workspaces:
+                    workspaces.append(workspace)
                 snapshots.append(dict(label=label, status=status))
                 (root / 'live-snapshots.json').write_text(json.dumps(snapshots, indent=2))
                 return status
@@ -118,6 +127,18 @@ def test_real_sessions(tmp_path):
                         value['workspace_fresh'] and value['workspace'].get('state_fresh'))
         assert good['workspace']['domain'] == '97'
         assert good['workspace']['position_x'] == 1.25
+        record = json.loads((runtime / 'session.json').read_text())
+        original_session = good['session']
+        original_workspace = record['workspace_identity']
+        supervisor.kill()  # Only this fixture's supervisor; no vehicle is present.
+        assert supervisor.wait(timeout=5) != 0
+        supervisor = launch(executable, ['--runtime-directory', str(runtime)],
+                            env, 'supervisor-recovered')
+        recovered = snapshot('authenticated-workspace-recovered', lambda value:
+                             value['workspace_fresh'] and value['workspace'].get('state_fresh'))
+        assert recovered['session'] == original_session
+        assert (json.loads((runtime / 'session.json').read_text())['workspace_identity'] ==
+                original_workspace)
         close_session()
         rpc('start', profile=profile(98))
         wrong = snapshot('domain98-no-source', lambda value:
@@ -177,6 +198,17 @@ def test_real_sessions(tmp_path):
                 rpc('exit_service')
                 supervisor.wait(timeout=5)
             except (OSError, AssertionError, subprocess.TimeoutExpired):
+                pass
+        # A killed supervisor is already reaped, but its read-only desktop can
+        # survive. Close only recorded fixture identities, including that case.
+        for workspace in workspaces:
+            pid = workspace['pid']
+            try:
+                environment = (Path('/proc') / str(pid) / 'environ').read_bytes().split(b'\0')
+                proof = ('EASYFLY_CONNECTION_SOCKET=' + str(runtime / 'control.sock')).encode()
+                if identity(pid) == workspace and proof in environment:
+                    os.kill(pid, signal.SIGINT)
+            except (OSError, ValueError):
                 pass
         # These are private test process groups created above, not production discovery/cleanup.
         for process in reversed(processes):
