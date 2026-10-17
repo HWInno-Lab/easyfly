@@ -1,0 +1,132 @@
+schema_version: 1
+asset_set_id: fuel_hospital_patientwheelchair_v4
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientWheelChair
+  revision: '4'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/PatientWheelChair.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: PatientWheelChair
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientWheelChair
+    revision: '4'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/PatientWheelChair.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: PatientWheelChair/meshes/PatientWheelChair.mtl
+  sha256: 97c0a4251c889b480609af6c5e277210c533acec29bb0d3adaad5252d53e3e22
+- path: PatientWheelChair/meshes/PatientWheelChair.obj
+  sha256: 6c435a092f281bed8e1e3819f6b95031c4d1e9c1563c258715ba44f511577408
+- path: PatientWheelChair/meshes/PatientWheelChair_Col.mtl
+  sha256: ecbb1c53e7b955e193be67f7858773af49a18186e127615a023fbba642a1a971
+- path: PatientWheelChair/meshes/PatientWheelChair_Col.obj
+  sha256: 77cd5fed88aff830a91fdedf0f21745f856126243015da3d89270d2f7ec0e906
+- path: PatientWheelChair/meshes/PatientWheelChair_Diffuse.png
+  sha256: 1b809c7b6571b6e35990b05987bf6bff464dde72a5581f825e5988d9749687de
+- path: PatientWheelChair/model.config
+  sha256: 752166f59089095f54b348d6561bfe16b4be66ab2201dd7e1a603f8eec4ece21
+- path: PatientWheelChair/model.sdf
+  sha256: 6d81f6b06f225ab70591096e0a610ee8bc8339d2381b214366a0274ca005343a
+- path: PatientWheelChair/thumbnails/1.png
+  sha256: ef73eaa3f24e70a7626e37338c3c725d7633827cad63d3f7a5e18207a3a97b14
+- path: PatientWheelChair/thumbnails/2.png
+  sha256: f8e89f4dfd1f8063e092501b9a43247e4891725604963901cbe32e1edb7e3350
+- path: PatientWheelChair/thumbnails/3.png
+  sha256: 6c73b98948dddbb41b74a48f439540a07f8ae89f235aff1b6d66c6081a80b4ac
+- path: PatientWheelChair/thumbnails/4.png
+  sha256: 0125ca1d585c7c9993847414d347dcb204d151369c2882878558b85aa023b1ab
+- path: PatientWheelChair/thumbnails/5.png
+  sha256: 4fa3168b574e01afc32e9f2502e1df9a08f341f63c47fd4a4cc7b7b687a64a12
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientWheelChair/4/PatientWheelChair.zip
+  sha256: 52d1d43fc56b093ff8f44e151b42894dee11fc283ed19243f7a53129e9a90e76
+  size_bytes: 1175273
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 1565967
+  license:
+    notice: '{"createdAt":"2019-10-28T06:33:50Z","updatedAt":"2026-10-16T18:33:11Z","name":"PatientWheelChair","owner":"OpenRobotics","description":"Elderly
+      patient on a wheelchair","likes":0,"downloads":40786,"filesize":1175273,"upload_date":"2019-10-28T06:33:46Z","modify_date":"2023-09-27T16:20:17Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/PatientWheelChair/tip/files/thumbnails/1.png","version":4,"private":false,"tags":["person","hospital"]}
+
+      '
+    sha256: 23859ce69254aac9c1507cc33a66eb2628e85e188f0737341ef471b486b36f83
+  members:
+  - source: meshes/PatientWheelChair.mtl
+    target: PatientWheelChair/meshes/PatientWheelChair.mtl
+    source_sha256: 97c0a4251c889b480609af6c5e277210c533acec29bb0d3adaad5252d53e3e22
+    replacements: []
+  - source: meshes/PatientWheelChair.obj
+    target: PatientWheelChair/meshes/PatientWheelChair.obj
+    source_sha256: 6c435a092f281bed8e1e3819f6b95031c4d1e9c1563c258715ba44f511577408
+    replacements: []
+  - source: meshes/PatientWheelChair_Col.mtl
+    target: PatientWheelChair/meshes/PatientWheelChair_Col.mtl
+    source_sha256: ecbb1c53e7b955e193be67f7858773af49a18186e127615a023fbba642a1a971
+    replacements: []
+  - source: meshes/PatientWheelChair_Col.obj
+    target: PatientWheelChair/meshes/PatientWheelChair_Col.obj
+    source_sha256: 77cd5fed88aff830a91fdedf0f21745f856126243015da3d89270d2f7ec0e906
+    replacements: []
+  - source: meshes/PatientWheelChair_Diffuse.png
+    target: PatientWheelChair/meshes/PatientWheelChair_Diffuse.png
+    source_sha256: 1b809c7b6571b6e35990b05987bf6bff464dde72a5581f825e5988d9749687de
+    replacements: []
+  - source: model.config
+    target: PatientWheelChair/model.config
+    source_sha256: 752166f59089095f54b348d6561bfe16b4be66ab2201dd7e1a603f8eec4ece21
+    replacements: []
+  - source: model.sdf
+    target: PatientWheelChair/model.sdf
+    source_sha256: 6d81f6b06f225ab70591096e0a610ee8bc8339d2381b214366a0274ca005343a
+    replacements: []
+  - source: thumbnails/1.png
+    target: PatientWheelChair/thumbnails/1.png
+    source_sha256: ef73eaa3f24e70a7626e37338c3c725d7633827cad63d3f7a5e18207a3a97b14
+    replacements: []
+  - source: thumbnails/2.png
+    target: PatientWheelChair/thumbnails/2.png
+    source_sha256: f8e89f4dfd1f8063e092501b9a43247e4891725604963901cbe32e1edb7e3350
+    replacements: []
+  - source: thumbnails/3.png
+    target: PatientWheelChair/thumbnails/3.png
+    source_sha256: 6c73b98948dddbb41b74a48f439540a07f8ae89f235aff1b6d66c6081a80b4ac
+    replacements: []
+  - source: thumbnails/4.png
+    target: PatientWheelChair/thumbnails/4.png
+    source_sha256: 0125ca1d585c7c9993847414d347dcb204d151369c2882878558b85aa023b1ab
+    replacements: []
+  - source: thumbnails/5.png
+    target: PatientWheelChair/thumbnails/5.png
+    source_sha256: 4fa3168b574e01afc32e9f2502e1df9a08f341f63c47fd4a4cc7b7b687a64a12
+    replacements: []

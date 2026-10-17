@@ -1,0 +1,131 @@
+schema_version: 1
+asset_set_id: fuel_hospital_xraymachine_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/XRayMachine
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/XRayMachine.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: XRayMachine
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/XRayMachine
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/XRayMachine.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: XRayMachine/meshes/XRayMachine.mtl
+  sha256: 48bf3e917c99ecd970b4f1401348f1642b2cc44f054a642c5d3c4300eecb6b7f
+- path: XRayMachine/meshes/XRayMachine.obj
+  sha256: 18ffca02dbdd6f4d19acb9f9a3e021ff23ddd76aae8e0848fe2de34d207f5e51
+- path: XRayMachine/meshes/XRayMachine.png
+  sha256: 2ad2669ccac65258c7cfdc4dc3cc8182341412a62c67a353be974da001eff648
+- path: XRayMachine/meshes/XRayMachine_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: XRayMachine/meshes/XRayMachine_Col.obj
+  sha256: 32703d090f4c21c845861ebf56794c2c2038c127e4fa39d71389053b5efea07b
+- path: XRayMachine/model.config
+  sha256: e72b3724b0ed50b7d9b5130362386b77ba57b0723224859eafae90d4c5fbc1a5
+- path: XRayMachine/model.sdf
+  sha256: 3119b86df552aae545f363cf3188ddc1f825d16d5cbef5e14a62a134c1a4b272
+- path: XRayMachine/thumbnails/1.png
+  sha256: 583a910644febccaccdfe39bc63f228c6380db6eee0a26d9dc254aeea7f8960e
+- path: XRayMachine/thumbnails/2.png
+  sha256: 29e2db453b5070be2aafa3d4a1bc9314d9dd402400fadfdb6e466c7c28994ba0
+- path: XRayMachine/thumbnails/3.png
+  sha256: 6a9e923e2eced356dcd92dbcea0a0d1840e42409065e8082525a963b86128378
+- path: XRayMachine/thumbnails/4.png
+  sha256: e9d4079ca6d36bb179abc3cdfdf494421533744dfa5887332137e4423bbc2989
+- path: XRayMachine/thumbnails/5.png
+  sha256: 92a93dda245ae6f1975fbdb9b695f5e55e0acf151173809bb46504a5e5356d5a
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/XRayMachine/2/XRayMachine.zip
+  sha256: 353d10ac99d34ede865949fa09d0df73ff18deac53c39f35b9347ffe4ebd1f94
+  size_bytes: 345665
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 377296
+  license:
+    notice: '{"createdAt":"2020-08-06T11:41:57Z","updatedAt":"2026-10-16T15:29:17Z","name":"XRayMachine","owner":"OpenRobotics","description":"","likes":0,"downloads":7752,"filesize":345665,"upload_date":"2020-08-06T11:41:56Z","modify_date":"2023-09-27T15:22:20Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/XRayMachine/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["xray","machine","xraymachine"],"categories":["Electronics","Appliance"]}
+
+      '
+    sha256: 2ea8d563e40a1b980bd68be637b2fd0ddf3e2ff200919996d79063a9b2c0b82f
+  members:
+  - source: meshes/XRayMachine.mtl
+    target: XRayMachine/meshes/XRayMachine.mtl
+    source_sha256: 48bf3e917c99ecd970b4f1401348f1642b2cc44f054a642c5d3c4300eecb6b7f
+    replacements: []
+  - source: meshes/XRayMachine.obj
+    target: XRayMachine/meshes/XRayMachine.obj
+    source_sha256: 18ffca02dbdd6f4d19acb9f9a3e021ff23ddd76aae8e0848fe2de34d207f5e51
+    replacements: []
+  - source: meshes/XRayMachine.png
+    target: XRayMachine/meshes/XRayMachine.png
+    source_sha256: 2ad2669ccac65258c7cfdc4dc3cc8182341412a62c67a353be974da001eff648
+    replacements: []
+  - source: meshes/XRayMachine_Col.mtl
+    target: XRayMachine/meshes/XRayMachine_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/XRayMachine_Col.obj
+    target: XRayMachine/meshes/XRayMachine_Col.obj
+    source_sha256: 32703d090f4c21c845861ebf56794c2c2038c127e4fa39d71389053b5efea07b
+    replacements: []
+  - source: model.config
+    target: XRayMachine/model.config
+    source_sha256: e72b3724b0ed50b7d9b5130362386b77ba57b0723224859eafae90d4c5fbc1a5
+    replacements: []
+  - source: model.sdf
+    target: XRayMachine/model.sdf
+    source_sha256: 3119b86df552aae545f363cf3188ddc1f825d16d5cbef5e14a62a134c1a4b272
+    replacements: []
+  - source: thumbnails/1.png
+    target: XRayMachine/thumbnails/1.png
+    source_sha256: 583a910644febccaccdfe39bc63f228c6380db6eee0a26d9dc254aeea7f8960e
+    replacements: []
+  - source: thumbnails/2.png
+    target: XRayMachine/thumbnails/2.png
+    source_sha256: 29e2db453b5070be2aafa3d4a1bc9314d9dd402400fadfdb6e466c7c28994ba0
+    replacements: []
+  - source: thumbnails/3.png
+    target: XRayMachine/thumbnails/3.png
+    source_sha256: 6a9e923e2eced356dcd92dbcea0a0d1840e42409065e8082525a963b86128378
+    replacements: []
+  - source: thumbnails/4.png
+    target: XRayMachine/thumbnails/4.png
+    source_sha256: e9d4079ca6d36bb179abc3cdfdf494421533744dfa5887332137e4423bbc2989
+    replacements: []
+  - source: thumbnails/5.png
+    target: XRayMachine/thumbnails/5.png
+    source_sha256: 92a93dda245ae6f1975fbdb9b695f5e55e0acf151173809bb46504a5e5356d5a
+    replacements: []

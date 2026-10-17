@@ -1,0 +1,139 @@
+schema_version: 1
+asset_set_id: fuel_hospital_chair_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/Chair.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: Chair
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/Chair.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: Chair/meshes/Chair.mtl
+  sha256: b6cff293530c53d6fc9ce96a423bcf6f54f2ef44e7137378be4461e352080290
+- path: Chair/meshes/Chair.obj
+  sha256: c15bd054d3a54a82ebfd00a3dcf89a37046f6157c453040e834c0e06e749a763
+- path: Chair/meshes/Chair.png
+  sha256: 9302c9d08039537e19430206d9b0dc86c8e17e801f933cc24b4891112df7d951
+- path: Chair/meshes/Chair_Diffuse.png
+  sha256: 5841f94e06c2bc246f17bd55ce56a44f9c9a620a522413df473dc75049e7dd10
+- path: Chair/meshes/Chair_Normal.png
+  sha256: 668cc079c93d1477e51f0f3db31946ba51fae9e84a4099631f15cdbf1bf4deb3
+- path: Chair/meshes/Chair_SpecGloss.png
+  sha256: 563218bd3e6a214f0aaef564a34b604d0b6560a52d729bdf71685638dd0536e5
+- path: Chair/model.config
+  sha256: 70b823befc5c96877ae159c114288aae285d3fb2a24f935ad10b32299c6673a8
+- path: Chair/model.sdf
+  sha256: 163b511d1fe95cdeebbfcc09a6ce0da11570a3c0db5fcae0a532f9e4b5c5c4ad
+- path: Chair/thumbnails/1.png
+  sha256: 73020ab423b0a1913c304e2264a7aa8d8d6ba1a37a9b8bdb6ee6f061e2cbc09c
+- path: Chair/thumbnails/2.png
+  sha256: e049e58f64fe90673f18611fe33b964a5975b7b38542fd2235c54b00a7994630
+- path: Chair/thumbnails/3.png
+  sha256: e7f19e3aaa78770a31d94d5c85ac30a4a877efe0d34082a786fd488697b0a964
+- path: Chair/thumbnails/4.png
+  sha256: 421097640136b615542b86ae2ee73593f27992c032eedbf146189e22d0bbe231
+- path: Chair/thumbnails/5.png
+  sha256: 89ca823ee2e95de86ec3a0ff07cbf9522787a7299ed50e297f70bfa8edc1fe99
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair/3/Chair.zip
+  sha256: 5bcf90f8177efdd373cf8099209372e6c13179113320db0a24c6f5f573a11e33
+  size_bytes: 2741574
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 2801814
+  license:
+    notice: '{"createdAt":"2020-05-20T19:30:13Z","updatedAt":"2026-10-16T22:39:57Z","name":"Chair","owner":"OpenRobotics","description":"A
+      generic hospital chair","likes":2,"downloads":189255,"filesize":2741574,"upload_date":"2020-05-20T19:30:11Z","modify_date":"2023-09-27T15:40:33Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/Chair/tip/files/thumbnails/1.png","version":3,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: 22e703ff2082db42c7b29d9ce4dd398ef92a3cf1332a748eb62a97a7d42cfe83
+  members:
+  - source: meshes/Chair.mtl
+    target: Chair/meshes/Chair.mtl
+    source_sha256: b6cff293530c53d6fc9ce96a423bcf6f54f2ef44e7137378be4461e352080290
+    replacements: []
+  - source: meshes/Chair.obj
+    target: Chair/meshes/Chair.obj
+    source_sha256: c15bd054d3a54a82ebfd00a3dcf89a37046f6157c453040e834c0e06e749a763
+    replacements: []
+  - source: meshes/Chair.png
+    target: Chair/meshes/Chair.png
+    source_sha256: 9302c9d08039537e19430206d9b0dc86c8e17e801f933cc24b4891112df7d951
+    replacements: []
+  - source: meshes/Chair_Diffuse.png
+    target: Chair/meshes/Chair_Diffuse.png
+    source_sha256: 5841f94e06c2bc246f17bd55ce56a44f9c9a620a522413df473dc75049e7dd10
+    replacements: []
+  - source: meshes/Chair_Normal.png
+    target: Chair/meshes/Chair_Normal.png
+    source_sha256: 668cc079c93d1477e51f0f3db31946ba51fae9e84a4099631f15cdbf1bf4deb3
+    replacements: []
+  - source: meshes/Chair_SpecGloss.png
+    target: Chair/meshes/Chair_SpecGloss.png
+    source_sha256: 563218bd3e6a214f0aaef564a34b604d0b6560a52d729bdf71685638dd0536e5
+    replacements: []
+  - source: model.config
+    target: Chair/model.config
+    source_sha256: 70b823befc5c96877ae159c114288aae285d3fb2a24f935ad10b32299c6673a8
+    replacements: []
+  - source: model.sdf
+    target: Chair/model.sdf
+    source_sha256: 163b511d1fe95cdeebbfcc09a6ce0da11570a3c0db5fcae0a532f9e4b5c5c4ad
+    replacements: []
+  - source: thumbnails/1.png
+    target: Chair/thumbnails/1.png
+    source_sha256: 73020ab423b0a1913c304e2264a7aa8d8d6ba1a37a9b8bdb6ee6f061e2cbc09c
+    replacements: []
+  - source: thumbnails/2.png
+    target: Chair/thumbnails/2.png
+    source_sha256: e049e58f64fe90673f18611fe33b964a5975b7b38542fd2235c54b00a7994630
+    replacements: []
+  - source: thumbnails/3.png
+    target: Chair/thumbnails/3.png
+    source_sha256: e7f19e3aaa78770a31d94d5c85ac30a4a877efe0d34082a786fd488697b0a964
+    replacements: []
+  - source: thumbnails/4.png
+    target: Chair/thumbnails/4.png
+    source_sha256: 421097640136b615542b86ae2ee73593f27992c032eedbf146189e22d0bbe231
+    replacements: []
+  - source: thumbnails/5.png
+    target: Chair/thumbnails/5.png
+    source_sha256: 89ca823ee2e95de86ec3a0ff07cbf9522787a7299ed50e297f70bfa8edc1fe99
+    replacements: []

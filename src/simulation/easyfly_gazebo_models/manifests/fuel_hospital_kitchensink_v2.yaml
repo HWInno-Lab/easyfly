@@ -1,0 +1,115 @@
+schema_version: 1
+asset_set_id: fuel_hospital_kitchensink_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/KitchenSink
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/KitchenSink.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: KitchenSink
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/KitchenSink
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/KitchenSink.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: KitchenSink/meshes/kitchenSink.mtl
+  sha256: 4361637767d61dd294803876194a0bf2e46742e9c23c30d7d6316e628724e890
+- path: KitchenSink/meshes/kitchenSink.obj
+  sha256: 3bfa8213f60009c45c3bbef1178f16e44b1b3d63497d19b14ad032a497370343
+- path: KitchenSink/model.config
+  sha256: b83a7b1ccd8d3c265e6be41f793fd748f8caa0fb5cd8f1402d3ea3666d8141a3
+- path: KitchenSink/model.sdf
+  sha256: cd990804d16e7e313f68a29fa32abc685668aab7ed365a014b43a96e47d56936
+- path: KitchenSink/thumbnails/1.png
+  sha256: 23f9551cd0a384ab8457cae89c8ac66e419c4d617070f47a28b083ee49953bb8
+- path: KitchenSink/thumbnails/2.png
+  sha256: 4e7241ad5736c34ff9aa8602381179c99fa88815f9c46b5bcb4ca571f7598b0c
+- path: KitchenSink/thumbnails/3.png
+  sha256: 4ce2181cb062eeb9c289404915fdb0a0342a095a6356f2f16510b41dd9c69e45
+- path: KitchenSink/thumbnails/4.png
+  sha256: a376bd7f1ea69dfa9ecf11a5565a1433357d7a30f4491f238c16d80f66b742fc
+- path: KitchenSink/thumbnails/5.png
+  sha256: d3150e8e1a6d51a0a0ef0164a09b0f384b935a4c1f597680e74533bf41318a76
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/KitchenSink/2/KitchenSink.zip
+  sha256: f75f80b5a5295d73200c99ed6d64be7f84eeb5dbe3a62c12e182b1cf4c5dbdea
+  size_bytes: 41731
+  prefix: ''
+  max_members: 11
+  max_unpacked_bytes: 78079
+  license:
+    notice: '{"createdAt":"2020-06-22T08:38:48Z","updatedAt":"2026-10-16T22:24:11Z","name":"KitchenSink","owner":"OpenRobotics","description":"A
+      countertop with a kitchen sink","likes":1,"downloads":49285,"filesize":41731,"upload_date":"2020-06-22T08:38:47Z","modify_date":"2023-09-27T15:30:05Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/KitchenSink/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home","Kitchen"]}
+
+      '
+    sha256: 05da5f4741c3ae3f7461cd03f30827ea808a8b777403d2f9303103d4a9c7b9af
+  members:
+  - source: meshes/kitchenSink.mtl
+    target: KitchenSink/meshes/kitchenSink.mtl
+    source_sha256: 4361637767d61dd294803876194a0bf2e46742e9c23c30d7d6316e628724e890
+    replacements: []
+  - source: meshes/kitchenSink.obj
+    target: KitchenSink/meshes/kitchenSink.obj
+    source_sha256: 3bfa8213f60009c45c3bbef1178f16e44b1b3d63497d19b14ad032a497370343
+    replacements: []
+  - source: model.config
+    target: KitchenSink/model.config
+    source_sha256: b83a7b1ccd8d3c265e6be41f793fd748f8caa0fb5cd8f1402d3ea3666d8141a3
+    replacements: []
+  - source: model.sdf
+    target: KitchenSink/model.sdf
+    source_sha256: cd990804d16e7e313f68a29fa32abc685668aab7ed365a014b43a96e47d56936
+    replacements: []
+  - source: thumbnails/1.png
+    target: KitchenSink/thumbnails/1.png
+    source_sha256: 23f9551cd0a384ab8457cae89c8ac66e419c4d617070f47a28b083ee49953bb8
+    replacements: []
+  - source: thumbnails/2.png
+    target: KitchenSink/thumbnails/2.png
+    source_sha256: 4e7241ad5736c34ff9aa8602381179c99fa88815f9c46b5bcb4ca571f7598b0c
+    replacements: []
+  - source: thumbnails/3.png
+    target: KitchenSink/thumbnails/3.png
+    source_sha256: 4ce2181cb062eeb9c289404915fdb0a0342a095a6356f2f16510b41dd9c69e45
+    replacements: []
+  - source: thumbnails/4.png
+    target: KitchenSink/thumbnails/4.png
+    source_sha256: a376bd7f1ea69dfa9ecf11a5565a1433357d7a30f4491f238c16d80f66b742fc
+    replacements: []
+  - source: thumbnails/5.png
+    target: KitchenSink/thumbnails/5.png
+    source_sha256: d3150e8e1a6d51a0a0ef0164a09b0f384b935a4c1f597680e74533bf41318a76
+    replacements: []

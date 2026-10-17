@@ -1,0 +1,133 @@
+schema_version: 1
+asset_set_id: fuel_hospital_adjtable_v4
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/AdjTable
+  revision: '4'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/AdjTable.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: AdjTable
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/AdjTable
+    revision: '4'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/AdjTable.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: AdjTable/meshes/AdjTable.mtl
+  sha256: 12ab57f89b4442083465d67da7ebbf626804e3e0bd6ea11d7d9d4ea26c62cd32
+- path: AdjTable/meshes/AdjTable.obj
+  sha256: c5c0016b3f1f907b32986ba375a5132ce27f86bc6183ad2ba042dbec06095567
+- path: AdjTable/meshes/AdjTable_Col.mtl
+  sha256: e23b5279777ea3bcbaeb3a0c748f95a51d1dc3bcce1db8c035a9361512e73a66
+- path: AdjTable/meshes/AdjTable_Col.obj
+  sha256: acd738d40f678c9727c9362400173ff45eb48f7b4470ba89c85194a6db6e7bab
+- path: AdjTable/meshes/AdjTable_Diffuse.png
+  sha256: d97c03a2247728347f246720cb06ad8a4429d0f5c1e3d61c7930394cebf64aa2
+- path: AdjTable/model.config
+  sha256: 676a1e862cf429f7ad865bde0a1c73f6e7b9fc6b23b87540ef337fcb16320285
+- path: AdjTable/model.sdf
+  sha256: 0082d37b02c1e62c581fd0af745507c8c0d277b19b6984a0cc1cdfdb256e4ab5
+- path: AdjTable/thumbnails/1.png
+  sha256: 86c98a0b8b4cf83ba48b2871433d89efb13745e24cea2726e240a84db5873136
+- path: AdjTable/thumbnails/2.png
+  sha256: 3c6a15606b035eec5386fc0dbd63d55cf2a20b1e030775fed264307dd7a93712
+- path: AdjTable/thumbnails/3.png
+  sha256: 17bb62fdf6329ff9fd877765721e4ec8d412866e197967724d10fcd50d9682fd
+- path: AdjTable/thumbnails/4.png
+  sha256: e79599a1dcdc17ea1b254e67fa690a445db9ca1890c72eecb36df212b66f62c4
+- path: AdjTable/thumbnails/5.png
+  sha256: 22d5b3220a92c4421c4715e8829bfa7390ca58f39aca9014352d1d113872ca40
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/AdjTable/4/AdjTable.zip
+  sha256: f5c80739fb4fae8206344e0588a6a8d234ead1318ed8a06d6d1e8c82c92b4437
+  size_bytes: 4100585
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 4124338
+  license:
+    notice: '{"createdAt":"2020-06-09T12:06:50Z","updatedAt":"2026-10-16T18:32:42Z","name":"AdjTable","owner":"OpenRobotics","description":"Description
+      of the model","likes":1,"downloads":130563,"filesize":4100585,"upload_date":"2020-06-09T12:06:48Z","modify_date":"2023-09-27T15:33:59Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/AdjTable/tip/files/thumbnails/1.png","version":4,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: a4d61143a9123252c7e280aef307ce17a60951766df35d9bd3d22efd7920f579
+  members:
+  - source: meshes/AdjTable.mtl
+    target: AdjTable/meshes/AdjTable.mtl
+    source_sha256: 12ab57f89b4442083465d67da7ebbf626804e3e0bd6ea11d7d9d4ea26c62cd32
+    replacements: []
+  - source: meshes/AdjTable.obj
+    target: AdjTable/meshes/AdjTable.obj
+    source_sha256: c5c0016b3f1f907b32986ba375a5132ce27f86bc6183ad2ba042dbec06095567
+    replacements: []
+  - source: meshes/AdjTable_Col.mtl
+    target: AdjTable/meshes/AdjTable_Col.mtl
+    source_sha256: e23b5279777ea3bcbaeb3a0c748f95a51d1dc3bcce1db8c035a9361512e73a66
+    replacements: []
+  - source: meshes/AdjTable_Col.obj
+    target: AdjTable/meshes/AdjTable_Col.obj
+    source_sha256: acd738d40f678c9727c9362400173ff45eb48f7b4470ba89c85194a6db6e7bab
+    replacements: []
+  - source: meshes/AdjTable_Diffuse.png
+    target: AdjTable/meshes/AdjTable_Diffuse.png
+    source_sha256: d97c03a2247728347f246720cb06ad8a4429d0f5c1e3d61c7930394cebf64aa2
+    replacements: []
+  - source: model.config
+    target: AdjTable/model.config
+    source_sha256: 676a1e862cf429f7ad865bde0a1c73f6e7b9fc6b23b87540ef337fcb16320285
+    replacements: []
+  - source: model.sdf
+    target: AdjTable/model.sdf
+    source_sha256: 0082d37b02c1e62c581fd0af745507c8c0d277b19b6984a0cc1cdfdb256e4ab5
+    replacements: []
+  - source: thumbnails/1.png
+    target: AdjTable/thumbnails/1.png
+    source_sha256: 86c98a0b8b4cf83ba48b2871433d89efb13745e24cea2726e240a84db5873136
+    replacements: []
+  - source: thumbnails/2.png
+    target: AdjTable/thumbnails/2.png
+    source_sha256: 3c6a15606b035eec5386fc0dbd63d55cf2a20b1e030775fed264307dd7a93712
+    replacements: []
+  - source: thumbnails/3.png
+    target: AdjTable/thumbnails/3.png
+    source_sha256: 17bb62fdf6329ff9fd877765721e4ec8d412866e197967724d10fcd50d9682fd
+    replacements: []
+  - source: thumbnails/4.png
+    target: AdjTable/thumbnails/4.png
+    source_sha256: e79599a1dcdc17ea1b254e67fa690a445db9ca1890c72eecb36df212b66f62c4
+    replacements: []
+  - source: thumbnails/5.png
+    target: AdjTable/thumbnails/5.png
+    source_sha256: 22d5b3220a92c4421c4715e8829bfa7390ca58f39aca9014352d1d113872ca40
+    replacements: []

@@ -1,0 +1,132 @@
+schema_version: 1
+asset_set_id: fuel_hospital_parkingtrolleymin_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMin
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/ParkingTrolleyMin.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: ParkingTrolleyMin
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMin
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/ParkingTrolleyMin.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: ParkingTrolleyMin/meshes/bag.png
+  sha256: f056f8ee18b53270750b5fea8654a6f63fdb8b0091d71a6ff498ed1b62dd0d8e
+- path: ParkingTrolleyMin/meshes/potato.png
+  sha256: 107e3297cf5b185f04b4f8d3f5e7cd5dbf9c013bc188b0c6b8af41d0de428e08
+- path: ParkingTrolleyMin/meshes/texture.png
+  sha256: 1db496c2d0a9dda533f81dfd835272b7b1a2d7bd151b139ac399c8600376612a
+- path: ParkingTrolleyMin/meshes/trolleymin.mtl
+  sha256: 4208bd8000972d8740320024d8ccbeccdef6d157f2af13d7ad767672ea50d382
+- path: ParkingTrolleyMin/meshes/trolleymin.obj
+  sha256: 75bcb421a47e93d47a4e3a8ec6513ae0811b7791ce614f5e40496288027c37a4
+- path: ParkingTrolleyMin/model.config
+  sha256: 3385dbff9aba7a9075db831dda05214de5cf99e5fb8fb5aa5573b65e9558213a
+- path: ParkingTrolleyMin/model.sdf
+  sha256: 1746a4af096067a07a3300f78c3f6646fc2815fbe936082957d93ee7e1b98880
+- path: ParkingTrolleyMin/thumbnails/1.png
+  sha256: 06b2e1665cbb9d50ede3cc04c058481202d4eecdd6485b6312ddfe7aa45e33fd
+- path: ParkingTrolleyMin/thumbnails/2.png
+  sha256: b2fe94f293a37c630aed50c39bf34a50f1b90117cf1e69d08a914cc0d9d5db1a
+- path: ParkingTrolleyMin/thumbnails/3.png
+  sha256: 27e7dcaf1094339996b6022f75b580d4447504713e1ea31427116a0a763da2cb
+- path: ParkingTrolleyMin/thumbnails/4.png
+  sha256: 1019e710cbb937a248f2d61dc2d19018cc6761a83a4cdf10cc0ca694ca438b79
+- path: ParkingTrolleyMin/thumbnails/5.png
+  sha256: 465d4d0720c014770518f07ee1358452bd2e0557d9fd1234bf03015ba5242cb1
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMin/3/ParkingTrolleyMin.zip
+  sha256: 9f842baaf6977e11a5c413366d2ffa0fe0a5eb5a4a2ea42df72a70a6309c3073
+  size_bytes: 1946726
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 2076503
+  license:
+    notice: '{"createdAt":"2019-10-28T06:31:59Z","updatedAt":"2026-10-16T15:35:29Z","name":"ParkingTrolleyMin","owner":"OpenRobotics","description":"Trolley
+      and carts parking area with bags, this one has less bags","likes":0,"downloads":6519,"filesize":1946726,"upload_date":"2019-10-28T06:31:55Z","modify_date":"2023-09-27T16:20:24Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/ParkingTrolleyMin/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: 814c673fdd1331405bac8169b1fd52f65ba438d5be8454da776ca03ad7cf78e5
+  members:
+  - source: meshes/bag.png
+    target: ParkingTrolleyMin/meshes/bag.png
+    source_sha256: f056f8ee18b53270750b5fea8654a6f63fdb8b0091d71a6ff498ed1b62dd0d8e
+    replacements: []
+  - source: meshes/potato.png
+    target: ParkingTrolleyMin/meshes/potato.png
+    source_sha256: 107e3297cf5b185f04b4f8d3f5e7cd5dbf9c013bc188b0c6b8af41d0de428e08
+    replacements: []
+  - source: meshes/texture.png
+    target: ParkingTrolleyMin/meshes/texture.png
+    source_sha256: 1db496c2d0a9dda533f81dfd835272b7b1a2d7bd151b139ac399c8600376612a
+    replacements: []
+  - source: meshes/trolleymin.mtl
+    target: ParkingTrolleyMin/meshes/trolleymin.mtl
+    source_sha256: 4208bd8000972d8740320024d8ccbeccdef6d157f2af13d7ad767672ea50d382
+    replacements: []
+  - source: meshes/trolleymin.obj
+    target: ParkingTrolleyMin/meshes/trolleymin.obj
+    source_sha256: 75bcb421a47e93d47a4e3a8ec6513ae0811b7791ce614f5e40496288027c37a4
+    replacements: []
+  - source: model.config
+    target: ParkingTrolleyMin/model.config
+    source_sha256: 3385dbff9aba7a9075db831dda05214de5cf99e5fb8fb5aa5573b65e9558213a
+    replacements: []
+  - source: model.sdf
+    target: ParkingTrolleyMin/model.sdf
+    source_sha256: 1746a4af096067a07a3300f78c3f6646fc2815fbe936082957d93ee7e1b98880
+    replacements: []
+  - source: thumbnails/1.png
+    target: ParkingTrolleyMin/thumbnails/1.png
+    source_sha256: 06b2e1665cbb9d50ede3cc04c058481202d4eecdd6485b6312ddfe7aa45e33fd
+    replacements: []
+  - source: thumbnails/2.png
+    target: ParkingTrolleyMin/thumbnails/2.png
+    source_sha256: b2fe94f293a37c630aed50c39bf34a50f1b90117cf1e69d08a914cc0d9d5db1a
+    replacements: []
+  - source: thumbnails/3.png
+    target: ParkingTrolleyMin/thumbnails/3.png
+    source_sha256: 27e7dcaf1094339996b6022f75b580d4447504713e1ea31427116a0a763da2cb
+    replacements: []
+  - source: thumbnails/4.png
+    target: ParkingTrolleyMin/thumbnails/4.png
+    source_sha256: 1019e710cbb937a248f2d61dc2d19018cc6761a83a4cdf10cc0ca694ca438b79
+    replacements: []
+  - source: thumbnails/5.png
+    target: ParkingTrolleyMin/thumbnails/5.png
+    source_sha256: 465d4d0720c014770518f07ee1358452bd2e0557d9fd1234bf03015ba5242cb1
+    replacements: []

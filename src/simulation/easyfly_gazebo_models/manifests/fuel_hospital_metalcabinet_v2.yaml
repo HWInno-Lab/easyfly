@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_metalcabinet_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MetalCabinet
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/MetalCabinet.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: MetalCabinet
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MetalCabinet
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/MetalCabinet.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: MetalCabinet/meshes/MetalCabinet.mtl
+  sha256: a5b5d6ccfe3501d9af617f22e4bf9ec8a64acda4ed2a4b87b87903eec22c87e5
+- path: MetalCabinet/meshes/MetalCabinet.obj
+  sha256: 51b65111a0b7bdac000abcf3bceff78d5587ce74538564d78b79641413ee545c
+- path: MetalCabinet/meshes/MetalCabinet.png
+  sha256: 95529f7e73ac28d2dfbeae2d64e21a152f4a1952e4a3d2879c2f197d2913c454
+- path: MetalCabinet/model.config
+  sha256: b93441e0f92806c5399413b59f00e73b02651f0c431b6002f5443b1f80d5db79
+- path: MetalCabinet/model.sdf
+  sha256: d4a141d4b16ba2e859851c393e50a7fcf67d99fdff43946cbd48b0168e40dc5a
+- path: MetalCabinet/thumbnails/1.png
+  sha256: 4d548fd601480361fe446936266d55c9b56395d8fbca95fcfee4099931555c5f
+- path: MetalCabinet/thumbnails/2.png
+  sha256: 6d40cba4160cad98a092f3269b6636ab329672388bc64c8f1a8d1a55388039a2
+- path: MetalCabinet/thumbnails/3.png
+  sha256: 1c35246cd634797a6c555fc7736c43da4d35ecd348130ea51e0387c483cbd1e5
+- path: MetalCabinet/thumbnails/4.png
+  sha256: 1d81a33ab527a17bde473b720bc1ff4d722e4fab31d0c1797fa6944e2c1f8c08
+- path: MetalCabinet/thumbnails/5.png
+  sha256: 7bc0b58be7af3c8ab29e979804c0e17e6908819a7595ba1a0faf9c4ae363def2
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/MetalCabinet/2/MetalCabinet.zip
+  sha256: c2644af380a622d1cb3ef0fce40d69ad1dcd8ce49416bcae4d36d0274e9dbea5
+  size_bytes: 29065
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 48983
+  license:
+    notice: '{"createdAt":"2019-10-28T06:23:41Z","updatedAt":"2026-10-16T22:24:21Z","name":"MetalCabinet","owner":"OpenRobotics","description":"Tall
+      grey metal cabinet","likes":0,"downloads":62509,"filesize":29065,"upload_date":"2019-10-28T06:23:37Z","modify_date":"2023-09-27T16:20:57Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/MetalCabinet/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: 8c74d46b1da8cf9f83f51b7b7411cc260d6735fc44999959572ce43df8a6aa95
+  members:
+  - source: meshes/MetalCabinet.mtl
+    target: MetalCabinet/meshes/MetalCabinet.mtl
+    source_sha256: a5b5d6ccfe3501d9af617f22e4bf9ec8a64acda4ed2a4b87b87903eec22c87e5
+    replacements: []
+  - source: meshes/MetalCabinet.obj
+    target: MetalCabinet/meshes/MetalCabinet.obj
+    source_sha256: 51b65111a0b7bdac000abcf3bceff78d5587ce74538564d78b79641413ee545c
+    replacements: []
+  - source: meshes/MetalCabinet.png
+    target: MetalCabinet/meshes/MetalCabinet.png
+    source_sha256: 95529f7e73ac28d2dfbeae2d64e21a152f4a1952e4a3d2879c2f197d2913c454
+    replacements: []
+  - source: model.config
+    target: MetalCabinet/model.config
+    source_sha256: b93441e0f92806c5399413b59f00e73b02651f0c431b6002f5443b1f80d5db79
+    replacements: []
+  - source: model.sdf
+    target: MetalCabinet/model.sdf
+    source_sha256: d4a141d4b16ba2e859851c393e50a7fcf67d99fdff43946cbd48b0168e40dc5a
+    replacements: []
+  - source: thumbnails/1.png
+    target: MetalCabinet/thumbnails/1.png
+    source_sha256: 4d548fd601480361fe446936266d55c9b56395d8fbca95fcfee4099931555c5f
+    replacements: []
+  - source: thumbnails/2.png
+    target: MetalCabinet/thumbnails/2.png
+    source_sha256: 6d40cba4160cad98a092f3269b6636ab329672388bc64c8f1a8d1a55388039a2
+    replacements: []
+  - source: thumbnails/3.png
+    target: MetalCabinet/thumbnails/3.png
+    source_sha256: 1c35246cd634797a6c555fc7736c43da4d35ecd348130ea51e0387c483cbd1e5
+    replacements: []
+  - source: thumbnails/4.png
+    target: MetalCabinet/thumbnails/4.png
+    source_sha256: 1d81a33ab527a17bde473b720bc1ff4d722e4fab31d0c1797fa6944e2c1f8c08
+    replacements: []
+  - source: thumbnails/5.png
+    target: MetalCabinet/thumbnails/5.png
+    source_sha256: 7bc0b58be7af3c8ab29e979804c0e17e6908819a7595ba1a0faf9c4ae363def2
+    replacements: []

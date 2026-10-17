@@ -1,5 +1,13 @@
 # 场景登记（S0–S6）
 
+`hospital_aws_v1` 新增 `indoor/hospital` 分类草稿。保留固定上游单层医院 world
+原字节，锁定 26 个 AWS 模型和 43 个独立 Fuel 模型；在线显式 fetch 或离线维护工具
+准备外部缓存后可做资源闭包检查。原 world 中 StorageRack_1、WhiteChipChair_1、
+TrolleyBed_1 的 z 为 -7.57769e+08m，已逐项记录在
+`evidence/hospital_aws_v1/import-source.json`。出生点、标定和推荐任务尚未填写，
+受管启动必须拒绝。后续需要独立修订异常放置、原生几何/传感器检查和飞行验收；
+资源/许可记录完整不等于原场景可飞行，也不代表多层医院或电梯已支持。
+
 现有 `empty.world`、`perception_demo.world`、`precision_landing.world` 保留根路径。
 `scenes/` 是场景登记，`schemas/` 使用 JSON Schema Draft 7，兼容 Jammy 的 python3-jsonschema。
 YAML 是数据，不执行脚本；禁止重复键、锚点、别名和非有限数值。

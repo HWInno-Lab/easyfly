@@ -1,0 +1,126 @@
+schema_version: 1
+asset_set_id: fuel_hospital_trolleybedpatient_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBedPatient
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/TrolleyBedPatient.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: TrolleyBedPatient
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBedPatient
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/TrolleyBedPatient.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: TrolleyBedPatient/meshes/PatientF.png
+  sha256: 55aed507501b2e6c4b8b9ef6b9b585f2b93b18ef4124dcd151bc4028e3c7a5d5
+- path: TrolleyBedPatient/meshes/TrolleyBedPatient.mtl
+  sha256: 2b083974eea43bd170b1994d5ce22e544744233436f00726d8832da2a2451c9f
+- path: TrolleyBedPatient/meshes/TrolleyBedPatient.obj
+  sha256: 167300e5e9a5618d3442ab18450a5bbc7cb4f1311927869460ce6df0ad2c50d6
+- path: TrolleyBedPatient/meshes/TrolleyBed_Diffuse.png
+  sha256: 63dbff713bbec8f968d53c8b2df7db0f1dd5bbc7764ceb2cdf932d19ca06da92
+- path: TrolleyBedPatient/model.config
+  sha256: 075f96f2b575aa6c468e644504a9b1f53e9b4610ee927143d1f95e289296b26b
+- path: TrolleyBedPatient/model.sdf
+  sha256: e528abc1f2b5c47b462efc266d43f4bffe7f5a52c69529f7325e3159c55aaa27
+- path: TrolleyBedPatient/thumbnails/1.png
+  sha256: 5d2b7f50b3df3af1d991a7dd9ed8184651df08a4280e51d6aeddd82078fe426c
+- path: TrolleyBedPatient/thumbnails/2.png
+  sha256: 0e4053871816efd247c919ddf6270b2115ed2bef64936483fccc7a5b8ed882ba
+- path: TrolleyBedPatient/thumbnails/3.png
+  sha256: 1708a1911b7ad64f1f68dee8a2bfbba40bc0061645accc9963d2671e444e3763
+- path: TrolleyBedPatient/thumbnails/4.png
+  sha256: e5164dc8d10d5e06e3ad0e809e3aa8f77de0d10472ae80438898cd6ef30aafcb
+- path: TrolleyBedPatient/thumbnails/5.png
+  sha256: cd60d890c0ab6995d38f330a7322f51364b37080535fbefa4f9e6c6c1145c427
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBedPatient/3/TrolleyBedPatient.zip
+  sha256: 46ddf111c7698ce2f4096977181b18d6a8594f8c7873c7f38665ccf81b1d684b
+  size_bytes: 1479205
+  prefix: ''
+  max_members: 13
+  max_unpacked_bytes: 1875789
+  license:
+    notice: '{"createdAt":"2019-10-28T06:45:05Z","updatedAt":"2026-10-16T20:21:36Z","name":"TrolleyBedPatient","owner":"OpenRobotics","description":"Trolley
+      Bed with patient","likes":0,"downloads":7283,"filesize":1479205,"upload_date":"2019-10-28T06:45:01Z","modify_date":"2023-09-27T16:19:05Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/TrolleyBedPatient/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["person","hospital","furniture"]}
+
+      '
+    sha256: daaeb834aa48c439d7b50faccfe3a47ac427bf15cb5cf7cdf3c2735961136912
+  members:
+  - source: meshes/PatientF.png
+    target: TrolleyBedPatient/meshes/PatientF.png
+    source_sha256: 55aed507501b2e6c4b8b9ef6b9b585f2b93b18ef4124dcd151bc4028e3c7a5d5
+    replacements: []
+  - source: meshes/TrolleyBedPatient.mtl
+    target: TrolleyBedPatient/meshes/TrolleyBedPatient.mtl
+    source_sha256: 2b083974eea43bd170b1994d5ce22e544744233436f00726d8832da2a2451c9f
+    replacements: []
+  - source: meshes/TrolleyBedPatient.obj
+    target: TrolleyBedPatient/meshes/TrolleyBedPatient.obj
+    source_sha256: 167300e5e9a5618d3442ab18450a5bbc7cb4f1311927869460ce6df0ad2c50d6
+    replacements: []
+  - source: meshes/TrolleyBed_Diffuse.png
+    target: TrolleyBedPatient/meshes/TrolleyBed_Diffuse.png
+    source_sha256: 63dbff713bbec8f968d53c8b2df7db0f1dd5bbc7764ceb2cdf932d19ca06da92
+    replacements: []
+  - source: model.config
+    target: TrolleyBedPatient/model.config
+    source_sha256: 075f96f2b575aa6c468e644504a9b1f53e9b4610ee927143d1f95e289296b26b
+    replacements: []
+  - source: model.sdf
+    target: TrolleyBedPatient/model.sdf
+    source_sha256: e528abc1f2b5c47b462efc266d43f4bffe7f5a52c69529f7325e3159c55aaa27
+    replacements: []
+  - source: thumbnails/1.png
+    target: TrolleyBedPatient/thumbnails/1.png
+    source_sha256: 5d2b7f50b3df3af1d991a7dd9ed8184651df08a4280e51d6aeddd82078fe426c
+    replacements: []
+  - source: thumbnails/2.png
+    target: TrolleyBedPatient/thumbnails/2.png
+    source_sha256: 0e4053871816efd247c919ddf6270b2115ed2bef64936483fccc7a5b8ed882ba
+    replacements: []
+  - source: thumbnails/3.png
+    target: TrolleyBedPatient/thumbnails/3.png
+    source_sha256: 1708a1911b7ad64f1f68dee8a2bfbba40bc0061645accc9963d2671e444e3763
+    replacements: []
+  - source: thumbnails/4.png
+    target: TrolleyBedPatient/thumbnails/4.png
+    source_sha256: e5164dc8d10d5e06e3ad0e809e3aa8f77de0d10472ae80438898cd6ef30aafcb
+    replacements: []
+  - source: thumbnails/5.png
+    target: TrolleyBedPatient/thumbnails/5.png
+    source_sha256: cd60d890c0ab6995d38f330a7322f51364b37080535fbefa4f9e6c6c1145c427
+    replacements: []

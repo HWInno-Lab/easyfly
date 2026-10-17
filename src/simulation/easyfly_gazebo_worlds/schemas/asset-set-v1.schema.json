@@ -299,7 +299,7 @@
       "type": "object",
       "properties": {
         "format": {
-          "const": "tar.gz"
+          "enum": ["tar.gz", "zip"]
         },
         "urls": {
           "type": "array",
@@ -320,8 +320,7 @@
         },
         "prefix": {
           "type": "string",
-          "minLength": 1,
-          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).*$"
         },
         "max_members": {
           "type": "integer",
@@ -342,12 +341,17 @@
             "sha256": {
               "type": "string",
               "pattern": "^[0-9a-f]{64}$"
+            },
+            "notice": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 65536
             }
           },
           "required": [
-            "source",
             "sha256"
           ],
+          "oneOf": [{"required": ["source"]}, {"required": ["notice"]}],
           "additionalProperties": false
         },
         "members": {
@@ -405,6 +409,8 @@
           }
         }
       },
+      "allOf": [{"if": {"properties": {"format": {"const": "tar.gz"}}},
+                 "then": {"properties": {"prefix": {"minLength": 1}}}}],
       "required": [
         "format",
         "urls",

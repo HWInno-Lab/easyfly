@@ -1,0 +1,137 @@
+schema_version: 1
+asset_set_id: fuel_hospital_malevisitorsit_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorSit
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/MaleVisitorSit.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: MaleVisitorSit
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorSit
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/MaleVisitorSit.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: MaleVisitorSit/meshes/MaleVisitorSit.mtl
+  sha256: a93623b97c3f05ef24a81c5f9fd160cecd6db99cc5c5089f43154f83a32b240e
+- path: MaleVisitorSit/meshes/MaleVisitorSit.obj
+  sha256: 1d65be1669b43018b8e74a079283a6dff7dade56c7fb0cd5da23e7f1215d39aa
+- path: MaleVisitorSit/meshes/MaleVisitorSit.png
+  sha256: 55485115ff513563dc0e55e8c22b65b5b0f84474dff3d17d8d60d574f0c67468
+- path: MaleVisitorSit/meshes/MaleVisitorSit_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: MaleVisitorSit/meshes/MaleVisitorSit_Col.obj
+  sha256: 039662c53c0c2f7fe098214734f92522f51c4853a017a85cb01ef8e4a0f4babc
+- path: MaleVisitorSit/meshes/Phone.png
+  sha256: b60b4b932a7232d5449e846caed572f68c2755e0de3dc09da2e7dc622158bda9
+- path: MaleVisitorSit/model.config
+  sha256: b40922365f65de1b78dccea0fa2bf252f9470540f357c658e7a82cfb58662e5a
+- path: MaleVisitorSit/model.sdf
+  sha256: 6e11e492d043c6725aa740a281cccfe0a822da686ff052b57e879b78deb53e06
+- path: MaleVisitorSit/thumbnails/1.png
+  sha256: 8fb2823e4be12af8305a4c38a39fc239ea43e4e30310bdce1fa26962bfc87ec2
+- path: MaleVisitorSit/thumbnails/2.png
+  sha256: af9d99378b0500d57bd73207da2cd34306e9c5fc83ce8a0d1c91c1680d57c470
+- path: MaleVisitorSit/thumbnails/3.png
+  sha256: 0e019e6ab0de421d6e527f150006493bc9053f6a1631a47c2861130498cb5ca5
+- path: MaleVisitorSit/thumbnails/4.png
+  sha256: e033631b8e57a6e7660af0507bf5119bba449c8a21071578678883f1f3a1253b
+- path: MaleVisitorSit/thumbnails/5.png
+  sha256: 0063ff852efea2a8d8ab23902e3cbb47e4abfafd8ff25ae6c8f911734dab090f
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorSit/2/MaleVisitorSit.zip
+  sha256: 7bba6117aa8b1de518801c9b14a66600026adc28e531f3e58b6c758ca10914d3
+  size_bytes: 596416
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 732775
+  license:
+    notice: '{"createdAt":"2020-05-20T19:36:36Z","updatedAt":"2026-10-16T18:32:30Z","name":"MaleVisitorSit","owner":"OpenRobotics","description":"","likes":0,"downloads":67604,"filesize":596416,"upload_date":"2020-05-20T19:36:34Z","modify_date":"2023-09-27T15:40:10Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/MaleVisitorSit/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: d0a4fb3cf3657c2c9015a302e32a5ae07b5f0d6841e09caa451891b03998c135
+  members:
+  - source: meshes/MaleVisitorSit.mtl
+    target: MaleVisitorSit/meshes/MaleVisitorSit.mtl
+    source_sha256: a93623b97c3f05ef24a81c5f9fd160cecd6db99cc5c5089f43154f83a32b240e
+    replacements: []
+  - source: meshes/MaleVisitorSit.obj
+    target: MaleVisitorSit/meshes/MaleVisitorSit.obj
+    source_sha256: 1d65be1669b43018b8e74a079283a6dff7dade56c7fb0cd5da23e7f1215d39aa
+    replacements: []
+  - source: meshes/MaleVisitorSit.png
+    target: MaleVisitorSit/meshes/MaleVisitorSit.png
+    source_sha256: 55485115ff513563dc0e55e8c22b65b5b0f84474dff3d17d8d60d574f0c67468
+    replacements: []
+  - source: meshes/MaleVisitorSit_Col.mtl
+    target: MaleVisitorSit/meshes/MaleVisitorSit_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/MaleVisitorSit_Col.obj
+    target: MaleVisitorSit/meshes/MaleVisitorSit_Col.obj
+    source_sha256: 039662c53c0c2f7fe098214734f92522f51c4853a017a85cb01ef8e4a0f4babc
+    replacements: []
+  - source: meshes/Phone.png
+    target: MaleVisitorSit/meshes/Phone.png
+    source_sha256: b60b4b932a7232d5449e846caed572f68c2755e0de3dc09da2e7dc622158bda9
+    replacements: []
+  - source: model.config
+    target: MaleVisitorSit/model.config
+    source_sha256: b40922365f65de1b78dccea0fa2bf252f9470540f357c658e7a82cfb58662e5a
+    replacements: []
+  - source: model.sdf
+    target: MaleVisitorSit/model.sdf
+    source_sha256: 6e11e492d043c6725aa740a281cccfe0a822da686ff052b57e879b78deb53e06
+    replacements: []
+  - source: thumbnails/1.png
+    target: MaleVisitorSit/thumbnails/1.png
+    source_sha256: 8fb2823e4be12af8305a4c38a39fc239ea43e4e30310bdce1fa26962bfc87ec2
+    replacements: []
+  - source: thumbnails/2.png
+    target: MaleVisitorSit/thumbnails/2.png
+    source_sha256: af9d99378b0500d57bd73207da2cd34306e9c5fc83ce8a0d1c91c1680d57c470
+    replacements: []
+  - source: thumbnails/3.png
+    target: MaleVisitorSit/thumbnails/3.png
+    source_sha256: 0e019e6ab0de421d6e527f150006493bc9053f6a1631a47c2861130498cb5ca5
+    replacements: []
+  - source: thumbnails/4.png
+    target: MaleVisitorSit/thumbnails/4.png
+    source_sha256: e033631b8e57a6e7660af0507bf5119bba449c8a21071578678883f1f3a1253b
+    replacements: []
+  - source: thumbnails/5.png
+    target: MaleVisitorSit/thumbnails/5.png
+    source_sha256: 0063ff852efea2a8d8ab23902e3cbb47e4abfafd8ff25ae6c8f911734dab090f
+    replacements: []

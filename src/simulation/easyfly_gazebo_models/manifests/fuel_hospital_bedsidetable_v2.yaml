@@ -1,0 +1,151 @@
+schema_version: 1
+asset_set_id: fuel_hospital_bedsidetable_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedsideTable
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/BedsideTable.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: BedsideTable
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedsideTable
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/BedsideTable.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: BedsideTable/meshes/BedsideTable.mtl
+  sha256: 10a19a629d772784daeb5651ced070ef037f28ef3957e338aded0781cc931588
+- path: BedsideTable/meshes/BedsideTable.obj
+  sha256: 0353fed8339894ccc7dbe0f0bae68568c4b35d06fb5de8bee611393b9e95f0bb
+- path: BedsideTable/meshes/BedsideTable.png
+  sha256: c0dea7985fe676fe9a68d8753d02aa4b09b56e81a85fdb830ed1228b37ee879b
+- path: BedsideTable/meshes/BedsideTable_Col.mtl
+  sha256: b233e482753d95960b5632348dc7f500fa17a91f8aa8ea3d655acdcc5bfe4c5a
+- path: BedsideTable/meshes/BedsideTable_Col.obj
+  sha256: 15074b5656020c40d5f39bb6f02d1f7871876af6e613fb2ef66da7b7cd63a3ad
+- path: BedsideTable/meshes/BedsideTable_Diffuse.png
+  sha256: ad0b2c1d0b111d6ff0931094579f33d0160e14e8d351a86722039f97cfe8f26c
+- path: BedsideTable/meshes/BedsideTable_Normal.png
+  sha256: 0bafa0dc2d6f352affc3f0906922093fff35dd365757cbe5e7c0802848507b4c
+- path: BedsideTable/meshes/BedsideTable_SpecGloss.png
+  sha256: 2d4130d57606282432d34e52f3dfa99698c1f1b52fe964b704ac0a6597fc74e4
+- path: BedsideTable/model.config
+  sha256: 775801f51ea942d07e122d08d594593cf81ae19264ab3a2765cc9f40d3fcaaea
+- path: BedsideTable/model.sdf
+  sha256: 25007ee859486b40f2a861873686d0a9d863d2bc3f30d9df57f338056e60fbb3
+- path: BedsideTable/thumbnails/1.png
+  sha256: 5d4dc291db08765d32effb86393cc04255297ce3fdee09d42217c59ff474d603
+- path: BedsideTable/thumbnails/2.png
+  sha256: cd9fe3742e9cd29d384a9f3290935b0492e412df233ef75238991cf6a85a9984
+- path: BedsideTable/thumbnails/3.png
+  sha256: 695f472e3506b48e1eac06e016541d6002e657dce02095776dc45348032dacd2
+- path: BedsideTable/thumbnails/4.png
+  sha256: 27da4aabf2440b5954dc1eed3999a808a4462fd30f4df0ba95629cd9944d892a
+- path: BedsideTable/thumbnails/5.png
+  sha256: 74627e6cb9f29c0fc508a9e6c8d54546e33929319d69f539e813e0bcd24a65ba
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedsideTable/2/BedsideTable.zip
+  sha256: 3d73df3e65ba665f9ad44632d5fcedcb24ecca26b9f96cb1964374262b038bfb
+  size_bytes: 691910
+  prefix: ''
+  max_members: 17
+  max_unpacked_bytes: 747656
+  license:
+    notice: '{"createdAt":"2020-05-21T05:27:18Z","updatedAt":"2026-10-16T22:24:14Z","name":"BedsideTable","owner":"OpenRobotics","description":"A
+      generic hospital bedside table","likes":0,"downloads":44115,"filesize":691910,"upload_date":"2020-05-21T05:27:16Z","modify_date":"2023-09-27T15:39:43Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/BedsideTable/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: 887fb0fd44c8d637f6b178095e8798ee04e1391824e6722ff10d30a4807bd3ed
+  members:
+  - source: meshes/BedsideTable.mtl
+    target: BedsideTable/meshes/BedsideTable.mtl
+    source_sha256: 10a19a629d772784daeb5651ced070ef037f28ef3957e338aded0781cc931588
+    replacements: []
+  - source: meshes/BedsideTable.obj
+    target: BedsideTable/meshes/BedsideTable.obj
+    source_sha256: 0353fed8339894ccc7dbe0f0bae68568c4b35d06fb5de8bee611393b9e95f0bb
+    replacements: []
+  - source: meshes/BedsideTable.png
+    target: BedsideTable/meshes/BedsideTable.png
+    source_sha256: c0dea7985fe676fe9a68d8753d02aa4b09b56e81a85fdb830ed1228b37ee879b
+    replacements: []
+  - source: meshes/BedsideTable_Col.mtl
+    target: BedsideTable/meshes/BedsideTable_Col.mtl
+    source_sha256: b233e482753d95960b5632348dc7f500fa17a91f8aa8ea3d655acdcc5bfe4c5a
+    replacements: []
+  - source: meshes/BedsideTable_Col.obj
+    target: BedsideTable/meshes/BedsideTable_Col.obj
+    source_sha256: 15074b5656020c40d5f39bb6f02d1f7871876af6e613fb2ef66da7b7cd63a3ad
+    replacements: []
+  - source: meshes/BedsideTable_Diffuse.png
+    target: BedsideTable/meshes/BedsideTable_Diffuse.png
+    source_sha256: ad0b2c1d0b111d6ff0931094579f33d0160e14e8d351a86722039f97cfe8f26c
+    replacements: []
+  - source: meshes/BedsideTable_Normal.png
+    target: BedsideTable/meshes/BedsideTable_Normal.png
+    source_sha256: 0bafa0dc2d6f352affc3f0906922093fff35dd365757cbe5e7c0802848507b4c
+    replacements: []
+  - source: meshes/BedsideTable_SpecGloss.png
+    target: BedsideTable/meshes/BedsideTable_SpecGloss.png
+    source_sha256: 2d4130d57606282432d34e52f3dfa99698c1f1b52fe964b704ac0a6597fc74e4
+    replacements: []
+  - source: model.config
+    target: BedsideTable/model.config
+    source_sha256: 775801f51ea942d07e122d08d594593cf81ae19264ab3a2765cc9f40d3fcaaea
+    replacements: []
+  - source: model.sdf
+    target: BedsideTable/model.sdf
+    source_sha256: 25007ee859486b40f2a861873686d0a9d863d2bc3f30d9df57f338056e60fbb3
+    replacements: []
+  - source: thumbnails/1.png
+    target: BedsideTable/thumbnails/1.png
+    source_sha256: 5d4dc291db08765d32effb86393cc04255297ce3fdee09d42217c59ff474d603
+    replacements: []
+  - source: thumbnails/2.png
+    target: BedsideTable/thumbnails/2.png
+    source_sha256: cd9fe3742e9cd29d384a9f3290935b0492e412df233ef75238991cf6a85a9984
+    replacements: []
+  - source: thumbnails/3.png
+    target: BedsideTable/thumbnails/3.png
+    source_sha256: 695f472e3506b48e1eac06e016541d6002e657dce02095776dc45348032dacd2
+    replacements: []
+  - source: thumbnails/4.png
+    target: BedsideTable/thumbnails/4.png
+    source_sha256: 27da4aabf2440b5954dc1eed3999a808a4462fd30f4df0ba95629cd9944d892a
+    replacements: []
+  - source: thumbnails/5.png
+    target: BedsideTable/thumbnails/5.png
+    source_sha256: 74627e6cb9f29c0fc508a9e6c8d54546e33929319d69f539e813e0bcd24a65ba
+    replacements: []

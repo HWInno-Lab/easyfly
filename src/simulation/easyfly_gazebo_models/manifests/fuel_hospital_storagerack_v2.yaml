@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_storagerack_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRack
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/StorageRack.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: StorageRack
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRack
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/StorageRack.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: StorageRack/meshes/StorageRack.mtl
+  sha256: c251e61a0d42ac6873df48ccbe885b0dda7e982ec7b94e84326a990430d558c6
+- path: StorageRack/meshes/StorageRack.obj
+  sha256: 64fe6e69273fa6131f9688647ba8c48f2a2504ea357503930a7e330d984cb163
+- path: StorageRack/meshes/StorageRack.png
+  sha256: 8090d782b26c8973d5e88e2890ff8fb3ea2b5fa8a467aeaf933670594d406475
+- path: StorageRack/model.config
+  sha256: 637d101432c8dd08b011f8206cc81483012d1f0aaca669eb566db912c0a6bf9a
+- path: StorageRack/model.sdf
+  sha256: 223bfd75f6d5569736327fea8e6d1500660a9bcc6fc1853ba41ba22eb30832e6
+- path: StorageRack/thumbnails/1.png
+  sha256: 80abb708998c8d0b745f9d141ce7615a10a1d21d2869a0841bb206a60775b427
+- path: StorageRack/thumbnails/2.png
+  sha256: c4c89f595672ae892c888733f953a6f18750f45bfe7ccf12a6418122ba4fc27d
+- path: StorageRack/thumbnails/3.png
+  sha256: e88ff55b139e74f761b849bfefef690fe7e1fd7ccd72870a500cd8fa334c4cdc
+- path: StorageRack/thumbnails/4.png
+  sha256: d8da175649b93eb744348d5b61025d7ff568d8a5d98d530f886cf2fa510f3c7e
+- path: StorageRack/thumbnails/5.png
+  sha256: cdbaa63faae14ec7e95a6b271fd51da7497516f9f21becf11bb43a88375c52b2
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRack/2/StorageRack.zip
+  sha256: 8828cfa9ebbcc7652a71e9eb7ae8191190ccd3c0b76c75530b2d7e6abaae2e7e
+  size_bytes: 70905
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 107182
+  license:
+    notice: '{"createdAt":"2019-10-28T06:40:47Z","updatedAt":"2026-10-16T18:33:25Z","name":"StorageRack","owner":"OpenRobotics","description":"Empty
+      Grilled Storage Rack","likes":1,"downloads":96980,"filesize":70905,"upload_date":"2019-10-28T06:40:44Z","modify_date":"2023-09-27T16:19:50Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/StorageRack/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: 267b78e388030d2d13fcc095d051eb77d9439d00dac883c201aba664542618aa
+  members:
+  - source: meshes/StorageRack.mtl
+    target: StorageRack/meshes/StorageRack.mtl
+    source_sha256: c251e61a0d42ac6873df48ccbe885b0dda7e982ec7b94e84326a990430d558c6
+    replacements: []
+  - source: meshes/StorageRack.obj
+    target: StorageRack/meshes/StorageRack.obj
+    source_sha256: 64fe6e69273fa6131f9688647ba8c48f2a2504ea357503930a7e330d984cb163
+    replacements: []
+  - source: meshes/StorageRack.png
+    target: StorageRack/meshes/StorageRack.png
+    source_sha256: 8090d782b26c8973d5e88e2890ff8fb3ea2b5fa8a467aeaf933670594d406475
+    replacements: []
+  - source: model.config
+    target: StorageRack/model.config
+    source_sha256: 637d101432c8dd08b011f8206cc81483012d1f0aaca669eb566db912c0a6bf9a
+    replacements: []
+  - source: model.sdf
+    target: StorageRack/model.sdf
+    source_sha256: 223bfd75f6d5569736327fea8e6d1500660a9bcc6fc1853ba41ba22eb30832e6
+    replacements: []
+  - source: thumbnails/1.png
+    target: StorageRack/thumbnails/1.png
+    source_sha256: 80abb708998c8d0b745f9d141ce7615a10a1d21d2869a0841bb206a60775b427
+    replacements: []
+  - source: thumbnails/2.png
+    target: StorageRack/thumbnails/2.png
+    source_sha256: c4c89f595672ae892c888733f953a6f18750f45bfe7ccf12a6418122ba4fc27d
+    replacements: []
+  - source: thumbnails/3.png
+    target: StorageRack/thumbnails/3.png
+    source_sha256: e88ff55b139e74f761b849bfefef690fe7e1fd7ccd72870a500cd8fa334c4cdc
+    replacements: []
+  - source: thumbnails/4.png
+    target: StorageRack/thumbnails/4.png
+    source_sha256: d8da175649b93eb744348d5b61025d7ff568d8a5d98d530f886cf2fa510f3c7e
+    replacements: []
+  - source: thumbnails/5.png
+    target: StorageRack/thumbnails/5.png
+    source_sha256: cdbaa63faae14ec7e95a6b271fd51da7497516f9f21becf11bb43a88375c52b2
+    replacements: []

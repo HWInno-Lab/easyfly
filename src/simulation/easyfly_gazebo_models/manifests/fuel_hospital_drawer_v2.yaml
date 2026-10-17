@@ -1,0 +1,126 @@
+schema_version: 1
+asset_set_id: fuel_hospital_drawer_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Drawer
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/Drawer.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: Drawer
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Drawer
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/Drawer.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: Drawer/meshes/Drawer.mtl
+  sha256: ed1eeca18f4806759e1cec787619593d96935bf33cf91b906045e8836cff896b
+- path: Drawer/meshes/Drawer.obj
+  sha256: 517367014abeeb70e955b9c6d60883c149473ec0b406a632327bb371ba5b9ec3
+- path: Drawer/meshes/Drawer.png
+  sha256: f3d6cb02278c265b42df2c10ce108e4a9c3018b3eb9cd5b466d7e7508755130c
+- path: Drawer/meshes/Drawer_Col.obj
+  sha256: 79b7170147801f2f52a5431c73027c5bf13a867d13a4973fa8749d299effaef9
+- path: Drawer/model.config
+  sha256: 5fa2b11e4e0df4fd2b5e19d53b2ee6f3829e651b0d37158077bef4a71caf5eb4
+- path: Drawer/model.sdf
+  sha256: 13ff7a8cfd09a5598ffa240d39ab9982a30ec33b130cc94c8fcc2387915fad5e
+- path: Drawer/thumbnails/1.png
+  sha256: 622e8c3414c11846f732b0d49b9830e304718b18ca768adfd2de32e49c0c8f2a
+- path: Drawer/thumbnails/2.png
+  sha256: 16bbfb323fa9b13df756e98a95c0b964e91209f1161e1997acc899f8f0bf290d
+- path: Drawer/thumbnails/3.png
+  sha256: a230f1f8d6fed9c6b904f635013a0a9e4de7b6999fe162a1d9db4fb656d651b8
+- path: Drawer/thumbnails/4.png
+  sha256: 64ff14bc5f9e338a6298e04a6b172255369c5fbb7f2966b64b43d24e39f83fba
+- path: Drawer/thumbnails/5.png
+  sha256: c5f71534ae2af5ca7111d6c2cb4a55a6de261278482a8e41aee58c11dda944fa
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/Drawer/2/Drawer.zip
+  sha256: 5d53702e45435df493df51c05e559382c44d158b492f4ab5f992537a024e161d
+  size_bytes: 135520
+  prefix: ''
+  max_members: 13
+  max_unpacked_bytes: 151533
+  license:
+    notice: '{"createdAt":"2020-06-09T12:11:18Z","updatedAt":"2026-10-16T22:24:15Z","name":"Drawer","owner":"OpenRobotics","description":"","likes":1,"downloads":79812,"filesize":135520,"upload_date":"2020-06-09T12:11:16Z","modify_date":"2023-09-27T15:33:39Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/Drawer/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: 291858344a256fd1ed097306fc2d9430f54ac97e5e5bff9303a093772ef915de
+  members:
+  - source: meshes/Drawer.mtl
+    target: Drawer/meshes/Drawer.mtl
+    source_sha256: ed1eeca18f4806759e1cec787619593d96935bf33cf91b906045e8836cff896b
+    replacements: []
+  - source: meshes/Drawer.obj
+    target: Drawer/meshes/Drawer.obj
+    source_sha256: 517367014abeeb70e955b9c6d60883c149473ec0b406a632327bb371ba5b9ec3
+    replacements: []
+  - source: meshes/Drawer.png
+    target: Drawer/meshes/Drawer.png
+    source_sha256: f3d6cb02278c265b42df2c10ce108e4a9c3018b3eb9cd5b466d7e7508755130c
+    replacements: []
+  - source: meshes/Drawer_Col.obj
+    target: Drawer/meshes/Drawer_Col.obj
+    source_sha256: 79b7170147801f2f52a5431c73027c5bf13a867d13a4973fa8749d299effaef9
+    replacements: []
+  - source: model.config
+    target: Drawer/model.config
+    source_sha256: 5fa2b11e4e0df4fd2b5e19d53b2ee6f3829e651b0d37158077bef4a71caf5eb4
+    replacements: []
+  - source: model.sdf
+    target: Drawer/model.sdf
+    source_sha256: 13ff7a8cfd09a5598ffa240d39ab9982a30ec33b130cc94c8fcc2387915fad5e
+    replacements: []
+  - source: thumbnails/1.png
+    target: Drawer/thumbnails/1.png
+    source_sha256: 622e8c3414c11846f732b0d49b9830e304718b18ca768adfd2de32e49c0c8f2a
+    replacements: []
+  - source: thumbnails/2.png
+    target: Drawer/thumbnails/2.png
+    source_sha256: 16bbfb323fa9b13df756e98a95c0b964e91209f1161e1997acc899f8f0bf290d
+    replacements: []
+  - source: thumbnails/3.png
+    target: Drawer/thumbnails/3.png
+    source_sha256: a230f1f8d6fed9c6b904f635013a0a9e4de7b6999fe162a1d9db4fb656d651b8
+    replacements: []
+  - source: thumbnails/4.png
+    target: Drawer/thumbnails/4.png
+    source_sha256: 64ff14bc5f9e338a6298e04a6b172255369c5fbb7f2966b64b43d24e39f83fba
+    replacements: []
+  - source: thumbnails/5.png
+    target: Drawer/thumbnails/5.png
+    source_sha256: c5f71534ae2af5ca7111d6c2cb4a55a6de261278482a8e41aee58c11dda944fa
+    replacements: []

@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_parkingtrolleymax_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMax
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/ParkingTrolleyMax.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: ParkingTrolleyMax
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMax
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/ParkingTrolleyMax.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: ParkingTrolleyMax/meshes/ParkingTrolleyMax.mtl
+  sha256: ff157816b0c39fd6a18c5f88308e4c1e83a6d2e7d3f1f074257a92404a883140
+- path: ParkingTrolleyMax/meshes/ParkingTrolleyMax.obj
+  sha256: 3c58844d72ae38fbcd68bd3dc9dea638931423b110e0ac5a311149cf6559a2b2
+- path: ParkingTrolleyMax/meshes/ParkingTrolleyMax_Diffuse.png
+  sha256: b6bceabec272f16975c5dca33d6831b55368c97c666a91df2e9cce99d838c340
+- path: ParkingTrolleyMax/model.config
+  sha256: bd4c891b0b747a75bebf019c5110c24aea6b3420b14b8baeb5043193a42bd4ed
+- path: ParkingTrolleyMax/model.sdf
+  sha256: ce084217a916ce47e6b51f98c6ecc7220de3a13cb60faf26e0f2cab7ca3132a4
+- path: ParkingTrolleyMax/thumbnails/1.png
+  sha256: 04c6e5b84396121ace73ccc62d855dcb8c702ce3f8724d08deb07ece15165251
+- path: ParkingTrolleyMax/thumbnails/2.png
+  sha256: 354e19e78e038dbfe1e700c72f6d1720b7988d242164fd52da1004caf50641be
+- path: ParkingTrolleyMax/thumbnails/3.png
+  sha256: e51eb4726da37ddc6c4379fc8c8a64d55513ecceda62a579bc9278715ccdc497
+- path: ParkingTrolleyMax/thumbnails/4.png
+  sha256: 9053b5bb7a885fe8d61d409c33f38624db15703cf714db24b3cae3479523f2eb
+- path: ParkingTrolleyMax/thumbnails/5.png
+  sha256: e1074fd5e6b8b83850fc438a64406b40cd19fe05ad1a9e2909aa9e02aea1b084
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMax/3/ParkingTrolleyMax.zip
+  sha256: 807eaa4b6eeb05f4ff9085310f238f6ab3399ce5f29b83ee38db3ed9413ff411
+  size_bytes: 778398
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 966705
+  license:
+    notice: '{"createdAt":"2019-10-28T06:30:59Z","updatedAt":"2026-10-16T18:32:40Z","name":"ParkingTrolleyMax","owner":"OpenRobotics","description":"Trolley
+      and carts parking area with bags, this one has more bags","likes":0,"downloads":46671,"filesize":778398,"upload_date":"2019-10-28T06:30:55Z","modify_date":"2023-09-27T16:20:32Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/ParkingTrolleyMax/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: 10703fa8c586d1055c8c690747e5d70b6e9754035ef85811417d71d4228ab5a0
+  members:
+  - source: meshes/ParkingTrolleyMax.mtl
+    target: ParkingTrolleyMax/meshes/ParkingTrolleyMax.mtl
+    source_sha256: ff157816b0c39fd6a18c5f88308e4c1e83a6d2e7d3f1f074257a92404a883140
+    replacements: []
+  - source: meshes/ParkingTrolleyMax.obj
+    target: ParkingTrolleyMax/meshes/ParkingTrolleyMax.obj
+    source_sha256: 3c58844d72ae38fbcd68bd3dc9dea638931423b110e0ac5a311149cf6559a2b2
+    replacements: []
+  - source: meshes/ParkingTrolleyMax_Diffuse.png
+    target: ParkingTrolleyMax/meshes/ParkingTrolleyMax_Diffuse.png
+    source_sha256: b6bceabec272f16975c5dca33d6831b55368c97c666a91df2e9cce99d838c340
+    replacements: []
+  - source: model.config
+    target: ParkingTrolleyMax/model.config
+    source_sha256: bd4c891b0b747a75bebf019c5110c24aea6b3420b14b8baeb5043193a42bd4ed
+    replacements: []
+  - source: model.sdf
+    target: ParkingTrolleyMax/model.sdf
+    source_sha256: ce084217a916ce47e6b51f98c6ecc7220de3a13cb60faf26e0f2cab7ca3132a4
+    replacements: []
+  - source: thumbnails/1.png
+    target: ParkingTrolleyMax/thumbnails/1.png
+    source_sha256: 04c6e5b84396121ace73ccc62d855dcb8c702ce3f8724d08deb07ece15165251
+    replacements: []
+  - source: thumbnails/2.png
+    target: ParkingTrolleyMax/thumbnails/2.png
+    source_sha256: 354e19e78e038dbfe1e700c72f6d1720b7988d242164fd52da1004caf50641be
+    replacements: []
+  - source: thumbnails/3.png
+    target: ParkingTrolleyMax/thumbnails/3.png
+    source_sha256: e51eb4726da37ddc6c4379fc8c8a64d55513ecceda62a579bc9278715ccdc497
+    replacements: []
+  - source: thumbnails/4.png
+    target: ParkingTrolleyMax/thumbnails/4.png
+    source_sha256: 9053b5bb7a885fe8d61d409c33f38624db15703cf714db24b3cae3479523f2eb
+    replacements: []
+  - source: thumbnails/5.png
+    target: ParkingTrolleyMax/thumbnails/5.png
+    source_sha256: e1074fd5e6b8b83850fc438a64406b40cd19fe05ad1a9e2909aa9e02aea1b084
+    replacements: []

@@ -1,0 +1,133 @@
+schema_version: 1
+asset_set_id: fuel_hospital_elderladypatient_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderLadyPatient
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/ElderLadyPatient.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: ElderLadyPatient
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderLadyPatient
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/ElderLadyPatient.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: ElderLadyPatient/meshes/CGMVanguard_Diffuse.png
+  sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+- path: ElderLadyPatient/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: ElderLadyPatient/meshes/ElderFPatient_color.jpg
+  sha256: f322211e90f8e5253a57c0fbc0f691bdd43968b4f5c3489cef6096ae68e6ff6f
+- path: ElderLadyPatient/meshes/ElderFemale.mtl
+  sha256: 7c05fc4d36ec54e5da30f4924349a36a91e506e0a7c9fe1fd50694557d3e5d15
+- path: ElderLadyPatient/meshes/ElderFemale.obj
+  sha256: c3a2d34da174c7b204260b7464dfdbb7bc083db857146b819b2d399c58e7adc9
+- path: ElderLadyPatient/model.config
+  sha256: 1bfa97fe04352de9d402ecb6c1b5741fd769e06ac02b88253ea300851b5d3c4b
+- path: ElderLadyPatient/model.sdf
+  sha256: 16211fd23a0d8689468c85b752af1a90d573e659bb2299b0b4cc1a5fd2d1cc5b
+- path: ElderLadyPatient/thumbnails/1.png
+  sha256: 2c80c68091c61a9c9a9ce06f0ca285c0e40419c021af5529f6249a2bbf7e2d07
+- path: ElderLadyPatient/thumbnails/2.png
+  sha256: b4ab496d278c8b3b8452dd8ab432c0dc554819d274804eefa68fc397c65e71de
+- path: ElderLadyPatient/thumbnails/3.png
+  sha256: dd376d91999e5eef6bdad7109100b8a3190fe4e7943c5e20066a52590751a002
+- path: ElderLadyPatient/thumbnails/4.png
+  sha256: 7f4e7d8b3fcfc534f0fdce361a4af72a6c2adf289456ba7a704013ad4d3b432d
+- path: ElderLadyPatient/thumbnails/5.png
+  sha256: 58028ab912e9b03db712e3bb960af26fe13e521d6174b833f0460d2b2ef8b75f
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderLadyPatient/2/ElderLadyPatient.zip
+  sha256: 56ecd1c48b672484d5f7dc129a8e789e77a6d0524b4c16556ee00b1f6be410c2
+  size_bytes: 2731549
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 3294545
+  license:
+    notice: '{"createdAt":"2020-05-21T06:09:55Z","updatedAt":"2026-10-16T18:32:47Z","name":"ElderLadyPatient","owner":"OpenRobotics","description":"An
+      elder lady patient\nCharacter generated from Autodesk Character Generator -
+      https://charactergenerator.autodesk.com/\nPose from Mixamo - https://www.mixamo.com/","likes":0,"downloads":39763,"filesize":2731549,"upload_date":"2020-05-21T06:09:52Z","modify_date":"2023-09-27T15:39:19Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/ElderLadyPatient/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: ad9f758f9a8a4eff2a0a1b6091c1041da399deafec3d49d991194ca6be9cfda4
+  members:
+  - source: meshes/CGMVanguard_Diffuse.png
+    target: ElderLadyPatient/meshes/CGMVanguard_Diffuse.png
+    source_sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+    replacements: []
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: ElderLadyPatient/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: meshes/ElderFPatient_color.jpg
+    target: ElderLadyPatient/meshes/ElderFPatient_color.jpg
+    source_sha256: f322211e90f8e5253a57c0fbc0f691bdd43968b4f5c3489cef6096ae68e6ff6f
+    replacements: []
+  - source: meshes/ElderFemale.mtl
+    target: ElderLadyPatient/meshes/ElderFemale.mtl
+    source_sha256: 7c05fc4d36ec54e5da30f4924349a36a91e506e0a7c9fe1fd50694557d3e5d15
+    replacements: []
+  - source: meshes/ElderFemale.obj
+    target: ElderLadyPatient/meshes/ElderFemale.obj
+    source_sha256: c3a2d34da174c7b204260b7464dfdbb7bc083db857146b819b2d399c58e7adc9
+    replacements: []
+  - source: model.config
+    target: ElderLadyPatient/model.config
+    source_sha256: 1bfa97fe04352de9d402ecb6c1b5741fd769e06ac02b88253ea300851b5d3c4b
+    replacements: []
+  - source: model.sdf
+    target: ElderLadyPatient/model.sdf
+    source_sha256: 16211fd23a0d8689468c85b752af1a90d573e659bb2299b0b4cc1a5fd2d1cc5b
+    replacements: []
+  - source: thumbnails/1.png
+    target: ElderLadyPatient/thumbnails/1.png
+    source_sha256: 2c80c68091c61a9c9a9ce06f0ca285c0e40419c021af5529f6249a2bbf7e2d07
+    replacements: []
+  - source: thumbnails/2.png
+    target: ElderLadyPatient/thumbnails/2.png
+    source_sha256: b4ab496d278c8b3b8452dd8ab432c0dc554819d274804eefa68fc397c65e71de
+    replacements: []
+  - source: thumbnails/3.png
+    target: ElderLadyPatient/thumbnails/3.png
+    source_sha256: dd376d91999e5eef6bdad7109100b8a3190fe4e7943c5e20066a52590751a002
+    replacements: []
+  - source: thumbnails/4.png
+    target: ElderLadyPatient/thumbnails/4.png
+    source_sha256: 7f4e7d8b3fcfc534f0fdce361a4af72a6c2adf289456ba7a704013ad4d3b432d
+    replacements: []
+  - source: thumbnails/5.png
+    target: ElderLadyPatient/thumbnails/5.png
+    source_sha256: 58028ab912e9b03db712e3bb960af26fe13e521d6174b833f0460d2b2ef8b75f
+    replacements: []

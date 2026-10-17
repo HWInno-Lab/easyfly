@@ -1,0 +1,139 @@
+schema_version: 1
+asset_set_id: fuel_hospital_eldermalepatient_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderMalePatient
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/ElderMalePatient.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: ElderMalePatient
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderMalePatient
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/ElderMalePatient.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: ElderMalePatient/meshes/CGMVanguard_Diffuse.png
+  sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+- path: ElderMalePatient/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: ElderMalePatient/meshes/ElderMalePatient.mtl
+  sha256: a509739168c50ad623104bbcea92558cfc03509add5fc97b9ba2cad4dbb2ddcc
+- path: ElderMalePatient/meshes/ElderMalePatient.obj
+  sha256: 66d15a8a7bf46cc37a2b8405465a888f654033e55890ac0ad8b10fae432981dd
+- path: ElderMalePatient/meshes/ElderMale_color1.jpg
+  sha256: 95a9cd4977eea58e7a7a0e44db34e888ffe6e29da60f35c068019f0da50ef0f7
+- path: ElderMalePatient/meshes/towel1.jpg
+  sha256: e725a634bad53f51f858be45d1ccdf27d2b63cfe628b5a081911cbf992672e73
+- path: ElderMalePatient/model.config
+  sha256: e02cded65d1453ab6b9a0829c89dda83003a330944b72c2e295f80a87c5dbeb7
+- path: ElderMalePatient/model.sdf
+  sha256: f1eeb5376667d2cd524addff38335f5ee920627d45e081eb2d5b707aae6967f5
+- path: ElderMalePatient/thumbnails/1.png
+  sha256: 404aa3c10b56ba0da0d293d26fa7779a3d43d87476d6299e813718ac9cbfcea1
+- path: ElderMalePatient/thumbnails/2.png
+  sha256: 8646d03bf631755e11eb185786a3379feb39cc0572b2d718a48eeb9ed2c2d974
+- path: ElderMalePatient/thumbnails/3.png
+  sha256: da59d84276c4fadc0f9b30c9109b370c1f24803c6d039b3532ebfe0e95e7e3ad
+- path: ElderMalePatient/thumbnails/4.png
+  sha256: bc62e7371a230d25730fb8959b09af523c9e4b1d799e33873cc03e9f6c02bebf
+- path: ElderMalePatient/thumbnails/5.png
+  sha256: 4c9a53b9caedf4266e01f146ccc4ae983997d6c52014b643b791b358dfac13fd
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderMalePatient/2/ElderMalePatient.zip
+  sha256: db7e9d2235107aadfbf7b3360c2c286beeaf0b725b2144e87be56220db0af2aa
+  size_bytes: 2918271
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 3501629
+  license:
+    notice: '{"createdAt":"2020-05-21T06:13:26Z","updatedAt":"2026-10-16T18:32:37Z","name":"ElderMalePatient","owner":"OpenRobotics","description":"An
+      elder male patient lying down.\nCharacter generated from Autodesk Character
+      Generator - https://charactergenerator.autodesk.com/\nPose from Mixamo - https://www.mixamo.com/","likes":0,"downloads":39429,"filesize":2918271,"upload_date":"2020-05-21T06:13:24Z","modify_date":"2023-09-27T15:39:11Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/ElderMalePatient/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: 50c0db52726938148faf4c7eed5cf0d718bf17df8360ca386abd95f6e4ba859e
+  members:
+  - source: meshes/CGMVanguard_Diffuse.png
+    target: ElderMalePatient/meshes/CGMVanguard_Diffuse.png
+    source_sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+    replacements: []
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: ElderMalePatient/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: meshes/ElderMalePatient.mtl
+    target: ElderMalePatient/meshes/ElderMalePatient.mtl
+    source_sha256: a509739168c50ad623104bbcea92558cfc03509add5fc97b9ba2cad4dbb2ddcc
+    replacements: []
+  - source: meshes/ElderMalePatient.obj
+    target: ElderMalePatient/meshes/ElderMalePatient.obj
+    source_sha256: 66d15a8a7bf46cc37a2b8405465a888f654033e55890ac0ad8b10fae432981dd
+    replacements: []
+  - source: meshes/ElderMale_color1.jpg
+    target: ElderMalePatient/meshes/ElderMale_color1.jpg
+    source_sha256: 95a9cd4977eea58e7a7a0e44db34e888ffe6e29da60f35c068019f0da50ef0f7
+    replacements: []
+  - source: meshes/towel1.jpg
+    target: ElderMalePatient/meshes/towel1.jpg
+    source_sha256: e725a634bad53f51f858be45d1ccdf27d2b63cfe628b5a081911cbf992672e73
+    replacements: []
+  - source: model.config
+    target: ElderMalePatient/model.config
+    source_sha256: e02cded65d1453ab6b9a0829c89dda83003a330944b72c2e295f80a87c5dbeb7
+    replacements: []
+  - source: model.sdf
+    target: ElderMalePatient/model.sdf
+    source_sha256: f1eeb5376667d2cd524addff38335f5ee920627d45e081eb2d5b707aae6967f5
+    replacements: []
+  - source: thumbnails/1.png
+    target: ElderMalePatient/thumbnails/1.png
+    source_sha256: 404aa3c10b56ba0da0d293d26fa7779a3d43d87476d6299e813718ac9cbfcea1
+    replacements: []
+  - source: thumbnails/2.png
+    target: ElderMalePatient/thumbnails/2.png
+    source_sha256: 8646d03bf631755e11eb185786a3379feb39cc0572b2d718a48eeb9ed2c2d974
+    replacements: []
+  - source: thumbnails/3.png
+    target: ElderMalePatient/thumbnails/3.png
+    source_sha256: da59d84276c4fadc0f9b30c9109b370c1f24803c6d039b3532ebfe0e95e7e3ad
+    replacements: []
+  - source: thumbnails/4.png
+    target: ElderMalePatient/thumbnails/4.png
+    source_sha256: bc62e7371a230d25730fb8959b09af523c9e4b1d799e33873cc03e9f6c02bebf
+    replacements: []
+  - source: thumbnails/5.png
+    target: ElderMalePatient/thumbnails/5.png
+    source_sha256: 4c9a53b9caedf4266e01f146ccc4ae983997d6c52014b643b791b358dfac13fd
+    replacements: []

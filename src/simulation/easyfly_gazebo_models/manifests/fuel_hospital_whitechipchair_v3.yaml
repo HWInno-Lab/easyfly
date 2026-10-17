@@ -1,0 +1,132 @@
+schema_version: 1
+asset_set_id: fuel_hospital_whitechipchair_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/WhiteChipChair
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/WhiteChipChair.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: WhiteChipChair
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/WhiteChipChair
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/WhiteChipChair.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: WhiteChipChair/meshes/WhiteChipChair.mtl
+  sha256: ea35d255278c0d9709ea2deb1377171c2d4e216c438e005b684ac3c98b37fb68
+- path: WhiteChipChair/meshes/WhiteChipChair.obj
+  sha256: 1f793886802aaa54b6e861bc54a245bc7da4d7a45892ed412c1f81e07f7bb596
+- path: WhiteChipChair/meshes/WhiteChipChairDiffuse.png
+  sha256: 9a7f60742d36e75898a377df41d930c0287d80ad5e2b76641383d013b8db6609
+- path: WhiteChipChair/meshes/WhiteChipChair_Col.mtl
+  sha256: a6856f718ca1b61f2bcb555e1cfe6ac000e12c2cee97b3a26592e45d37434989
+- path: WhiteChipChair/meshes/WhiteChipChair_Col.obj
+  sha256: 69fd9c14b93c4f89a910303ac6eeb51b3f70cb7a1226002043e293008ba1feb3
+- path: WhiteChipChair/model.config
+  sha256: 1d09ad2eccfe08c4a2a1852435b0a5210630f9d9b3fb8f26a54f8805ff922090
+- path: WhiteChipChair/model.sdf
+  sha256: 56fcb2f602bb60646d484fb5b399d8a54e701dfa5022fcc4c6363faf404bdf68
+- path: WhiteChipChair/thumbnails/1.png
+  sha256: d4587255d51cbefbc74492776506b7049e77167e4c3d62b861458d4bd185d11f
+- path: WhiteChipChair/thumbnails/2.png
+  sha256: 1eba53397f8b7dc99b5d483fc6dbd6066236c5bb42dc6eab43e9d59c44bd0776
+- path: WhiteChipChair/thumbnails/3.png
+  sha256: 5fee7bb62a5e0a01cc54e2e3e1285bf0d05a32cc45c40b3bf452d8ffacb0e7cd
+- path: WhiteChipChair/thumbnails/4.png
+  sha256: c8f9f96d7641f37060484c3d098d7afb0bb4c0ea1b35da919ed14109a082c553
+- path: WhiteChipChair/thumbnails/5.png
+  sha256: ee7ffa2ff79a6f0af1510c916a1d89116b6b4a5e64e2f4eb12a04dfa1610d346
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/WhiteChipChair/3/WhiteChipChair.zip
+  sha256: a1f3ab975862ae39fbcb39b1722731a9cf41670b0db5b23cca6f43dc868d0e3c
+  size_bytes: 792333
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 853041
+  license:
+    notice: '{"createdAt":"2019-10-28T06:48:13Z","updatedAt":"2026-10-16T21:33:53Z","name":"WhiteChipChair","owner":"OpenRobotics","description":"White
+      row of seats","likes":0,"downloads":60790,"filesize":792333,"upload_date":"2019-10-28T06:48:10Z","modify_date":"2023-09-27T16:18:41Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/WhiteChipChair/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["hospital","furniture"]}
+
+      '
+    sha256: d79ec3162ade28a061979135de0fb46f778798e99b587394cb10429d85a0f8c7
+  members:
+  - source: meshes/WhiteChipChair.mtl
+    target: WhiteChipChair/meshes/WhiteChipChair.mtl
+    source_sha256: ea35d255278c0d9709ea2deb1377171c2d4e216c438e005b684ac3c98b37fb68
+    replacements: []
+  - source: meshes/WhiteChipChair.obj
+    target: WhiteChipChair/meshes/WhiteChipChair.obj
+    source_sha256: 1f793886802aaa54b6e861bc54a245bc7da4d7a45892ed412c1f81e07f7bb596
+    replacements: []
+  - source: meshes/WhiteChipChairDiffuse.png
+    target: WhiteChipChair/meshes/WhiteChipChairDiffuse.png
+    source_sha256: 9a7f60742d36e75898a377df41d930c0287d80ad5e2b76641383d013b8db6609
+    replacements: []
+  - source: meshes/WhiteChipChair_Col.mtl
+    target: WhiteChipChair/meshes/WhiteChipChair_Col.mtl
+    source_sha256: a6856f718ca1b61f2bcb555e1cfe6ac000e12c2cee97b3a26592e45d37434989
+    replacements: []
+  - source: meshes/WhiteChipChair_Col.obj
+    target: WhiteChipChair/meshes/WhiteChipChair_Col.obj
+    source_sha256: 69fd9c14b93c4f89a910303ac6eeb51b3f70cb7a1226002043e293008ba1feb3
+    replacements: []
+  - source: model.config
+    target: WhiteChipChair/model.config
+    source_sha256: 1d09ad2eccfe08c4a2a1852435b0a5210630f9d9b3fb8f26a54f8805ff922090
+    replacements: []
+  - source: model.sdf
+    target: WhiteChipChair/model.sdf
+    source_sha256: 56fcb2f602bb60646d484fb5b399d8a54e701dfa5022fcc4c6363faf404bdf68
+    replacements: []
+  - source: thumbnails/1.png
+    target: WhiteChipChair/thumbnails/1.png
+    source_sha256: d4587255d51cbefbc74492776506b7049e77167e4c3d62b861458d4bd185d11f
+    replacements: []
+  - source: thumbnails/2.png
+    target: WhiteChipChair/thumbnails/2.png
+    source_sha256: 1eba53397f8b7dc99b5d483fc6dbd6066236c5bb42dc6eab43e9d59c44bd0776
+    replacements: []
+  - source: thumbnails/3.png
+    target: WhiteChipChair/thumbnails/3.png
+    source_sha256: 5fee7bb62a5e0a01cc54e2e3e1285bf0d05a32cc45c40b3bf452d8ffacb0e7cd
+    replacements: []
+  - source: thumbnails/4.png
+    target: WhiteChipChair/thumbnails/4.png
+    source_sha256: c8f9f96d7641f37060484c3d098d7afb0bb4c0ea1b35da919ed14109a082c553
+    replacements: []
+  - source: thumbnails/5.png
+    target: WhiteChipChair/thumbnails/5.png
+    source_sha256: ee7ffa2ff79a6f0af1510c916a1d89116b6b4a5e64e2f4eb12a04dfa1610d346
+    replacements: []

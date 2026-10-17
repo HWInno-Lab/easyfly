@@ -1,0 +1,259 @@
+{
+  "stage": "S6 hospital dependency audit",
+  "scene": "hospital_aws_v1",
+  "category": "indoor/hospital",
+  "dependency_inventory_recorded": true,
+  "payload_cache_prepared_and_verified": true,
+  "resource_closure_complete": false,
+  "world_loaded": false,
+  "sensors_checked": false,
+  "navigation_tested": false,
+  "hospital_qualification_complete": false,
+  "S6_complete": false,
+  "catalog": {
+    "total": 15,
+    "registered": 9,
+    "draft": 6
+  },
+  "asset_summary": {
+    "aws_models": 26,
+    "fuel_models": 43,
+    "asset_sets": 44,
+    "locked_model_files": 707,
+    "aws_license": "MIT-0",
+    "fuel_declared_licenses": {
+      "CC-BY-4.0": 43
+    },
+    "fuel_versions": {
+      "2": 32,
+      "3": 8,
+      "4": 3
+    },
+    "fuel_archive_bytes": 48885215,
+    "all_original_fuel_files_unchanged": true,
+    "aws_description_xml_fixes": 6,
+    "model_payload_in_ros_install": false
+  },
+  "world": {
+    "sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+    "original_world_unchanged": true,
+    "anomalous_placements": [
+      {
+        "instance": "StorageRack_1",
+        "original_pose": "9.07005 -10.3582 -7.57769e+08 -2e-06 0 0",
+        "action": "Preserved in original draft world; correction requires a new revision."
+      },
+      {
+        "instance": "WhiteChipChair_1",
+        "original_pose": "-8.87142 9.15707 -7.57769e+08 0 -0.152685 0",
+        "action": "Preserved in original draft world; correction requires a new revision."
+      },
+      {
+        "instance": "TrolleyBed_1",
+        "original_pose": "4.85934 -4.87229 -7.57769e+08 0 -1e-06 0",
+        "action": "Preserved in original draft world; correction requires a new revision."
+      }
+    ]
+  },
+  "validation": {
+    "licenses_complete": true,
+    "runtime_resources_complete": true,
+    "scene_resources_complete": false,
+    "registration_complete": false,
+    "runtime_verified": false,
+    "scene_resource_issues": [
+      {
+        "scope": "scene_resources",
+        "message": "relative reference escapes model: ../../../../photos/PortraitA_01.jpg"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "relative reference escapes model: ../../../../photos/PortraitD_02.jpg"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "relative reference escapes model: ../../../../photos/PortraitE_01.jpg"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "BedTable.mtl: missing/ambiguous relative resource: BedTable_Normal_Normal_Bump.tga"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "relative reference escapes model: ../../../../photos/PortraitD_01.jpg"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "relative reference escapes model: ../../../../photos/PortraitE_02.jpg"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "Cart_BP.mtl: missing/ambiguous relative resource: BP_Normal_Normal_Bump.tga"
+      },
+      {
+        "scope": "scene_resources",
+        "message": "Cart_BP.mtl: missing/ambiguous relative resource: Wheels_Normal_Normal_Bump.tga"
+      }
+    ],
+    "expected_registration_issues": [
+      "draft scene; no newly verified profile compatibility",
+      "spawn not specified",
+      "world/odom alignment not measured"
+    ],
+    "scope": "Offline resource/provenance checks only; no simulation, sensor or flight acceptance."
+  },
+  "repair_candidates": [
+    {
+      "missing_reference": "../../../../photos/PortraitA_01.jpg",
+      "candidate_source_archive": "hospital.tar.gz",
+      "candidate_member": "photos/PortraitA_01.jpg",
+      "source_sha256": "a884e701f0b8649fc8301281431fbf0634e1e4ad1a949f33c5a3138ef317ac46",
+      "size_bytes": 3012933,
+      "declared_license": "MIT-0",
+      "required_work": "Explicit per-model copy and COLLADA relocation recipe; original image bytes retained."
+    },
+    {
+      "missing_reference": "../../../../photos/PortraitD_01.jpg",
+      "candidate_source_archive": "hospital.tar.gz",
+      "candidate_member": "photos/PortraitD_01.jpg",
+      "source_sha256": "ae8dc35426438d66dfd1a531c60488f430e7951b35c0b8665c344ef516c692e3",
+      "size_bytes": 127764,
+      "declared_license": "MIT-0",
+      "required_work": "Explicit per-model copy and COLLADA relocation recipe; original image bytes retained."
+    },
+    {
+      "missing_reference": "../../../../photos/PortraitD_02.jpg",
+      "candidate_source_archive": "hospital.tar.gz",
+      "candidate_member": "photos/PortraitD_02.jpg",
+      "source_sha256": "ec583e7351deac57ba1350e136e9a7d7b281c68ba77e2aebce5d377ebb197762",
+      "size_bytes": 127631,
+      "declared_license": "MIT-0",
+      "required_work": "Explicit per-model copy and COLLADA relocation recipe; original image bytes retained."
+    },
+    {
+      "missing_reference": "../../../../photos/PortraitE_01.jpg",
+      "candidate_source_archive": "hospital.tar.gz",
+      "candidate_member": "photos/PortraitE_01.jpg",
+      "source_sha256": "b567dd4bdaf15468f246ea4fce1b66657862429925f2a9b80018f17bfb950556",
+      "size_bytes": 61227,
+      "declared_license": "MIT-0",
+      "required_work": "Explicit per-model copy and COLLADA relocation recipe; original image bytes retained."
+    },
+    {
+      "missing_reference": "../../../../photos/PortraitE_02.jpg",
+      "candidate_source_archive": "hospital.tar.gz",
+      "candidate_member": "photos/PortraitE_02.jpg",
+      "source_sha256": "16a44f093b16352324aa8f05c4b7cc6872d01832f49bc7cc0875c874912f157c",
+      "size_bytes": 88908,
+      "declared_license": "MIT-0",
+      "required_work": "Explicit per-model copy and COLLADA relocation recipe; original image bytes retained."
+    },
+    {
+      "model": "BedTable",
+      "missing_reference": "BedTable_Normal_Normal_Bump.tga",
+      "candidate_source_archive": "BedTable-v2.zip",
+      "candidate_member": "meshes/BedTable_Normal.png",
+      "source_sha256": "79cb1a78729bdbc48f5069091f611917695ccde97dd7bdb0d12ae4b9f2300cd7",
+      "size_bytes": 304286,
+      "declared_license": "CC-BY-4.0",
+      "required_work": "Review visual semantics and record material repair; cross-model donor needs independently attributed immutable composition, not a path escape or unchecked cache edit."
+    },
+    {
+      "model": "BPCart",
+      "missing_reference": "BP_Normal_Normal_Bump.tga",
+      "candidate_source_archive": "BPCart-v2.zip",
+      "candidate_member": "meshes/BP_BP_LP_Normal.png",
+      "source_sha256": "d13d5598fc148909e36b9c03f75191594c9469a0baf4b4207371626e30865658",
+      "size_bytes": 386043,
+      "declared_license": "CC-BY-4.0",
+      "required_work": "Review visual semantics and record material repair; cross-model donor needs independently attributed immutable composition, not a path escape or unchecked cache edit."
+    },
+    {
+      "model": "BPCart",
+      "missing_reference": "Wheels_Normal_Normal_Bump.tga",
+      "candidate_source_archive": "CGMClassic-v4.zip",
+      "candidate_member": "meshes/Wheels_Normal_Normal_Bump.tga",
+      "source_sha256": "30bb0536bf00a044e545d4a1b588d269e9fa0079ee29b8e12e705f76dd7b77f2",
+      "size_bytes": 833442,
+      "declared_license": "CC-BY-4.0",
+      "required_work": "Review visual semantics and record material repair; cross-model donor needs independently attributed immutable composition, not a path escape or unchecked cache edit."
+    }
+  ],
+  "installation_checks": [
+    {
+      "installation": "normal",
+      "ordinary_test_result_records": 354,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "installed_cli_checks": 52,
+      "network_interfaces": [
+        "lo"
+      ],
+      "external_routes": [],
+      "no_simulation_started": true,
+      "flight_goals": 0
+    },
+    {
+      "installation": "symlink",
+      "ordinary_test_result_records": 354,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "installed_cli_checks": 52,
+      "network_interfaces": [
+        "lo"
+      ],
+      "external_routes": [],
+      "no_simulation_started": true,
+      "flight_goals": 0
+    }
+  ],
+  "source_install_byte_checks": 206,
+  "source_import_reproduced": true,
+  "code_fingerprints": [
+    {
+      "path": "tools/scenes/import_aws_hospital.py",
+      "sha256": "7da9977f1f345e1fa38143c3b37364d21f6f52941dd666905451194f15c48f85"
+    },
+    {
+      "path": "tools/scenes/hospital-source-lock.json",
+      "sha256": "478604d8d8503bece046e81e1b4358326d1113bf9fd0e3ceed578e4d28e7a320"
+    },
+    {
+      "path": "src/simulation/easyfly_px4_sitl/easyfly_px4_sitl/asset_cache.py",
+      "sha256": "cef1a315017c6aa30b48cc860c441b1739ffd507bf558f0f107a20b7da846ee5"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/schemas/asset-set-v1.schema.json",
+      "sha256": "78283a90758a6f9aaba48ba079aaf6203196e658ffc4ab51f0896ec53373aab3"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/test/test_asset_cache_zip.py",
+      "sha256": "2b06184e9a644294c5f547927d07b3ad796917574ef2f84d61ba7388048bf5dd"
+    },
+    {
+      "path": "src/application/a3_mission/easyfly_sim_launcher/CMakeLists.txt",
+      "sha256": "c9dea54570fb1fdbf160f3123d3bfbbf26ce02caac565f90cb40991d4a7c1579"
+    }
+  ],
+  "preserved_failures": [
+    "Initial permissive -m parsing attempted pip as a Fuel model; 404 retained and dependency inventory corrected against actual world URIs.",
+    "ZIP test fixture import omission: 25 setup errors in zip-tests.raw; fixed and all current tests pass.",
+    "Version-suffixed metadata requests and Creative Commons text download failed TLS; no disabled certificate validation or invented response.",
+    "First installed resource validation has eight real scene dependency gaps; these remain failures in every current installation/mode.",
+    "CLI audit v1 used json.loads on nonzero ros2 run output and rejected its appended runner exit message; raw outputs retained. v2 parses the leading JSON object and checks the actual exit code."
+  ],
+  "next_work": [
+    "Record model-local copies of five original AWS JPEGs and exact COLLADA URI relocations.",
+    "Review two same-model normal-map candidates and independently attributed CGMClassic wheel normal map; build a locked multi-source composition without modifying existing cache versions.",
+    "Only after resource closure, create a distinct derived world for the three anomalous placements and qualify native floor/collision/clearance, four sensors, two independent installation cold starts and bounded two-cycle mission."
+  ],
+  "limitations": [
+    "Only single-floor hospital.world dependency graph audited; other upstream worlds/models are excluded.",
+    "Per-model publisher license declarations and original author/third-party credits retained; AWS root license is not applied to Fuel.",
+    "No birth pose, alignment or mission has been declared; managed launch must refuse even with all source archives downloaded.",
+    "No whole-hospital, multi-floor, elevator, long-duration, hardware or modern Gazebo acceptance."
+  ],
+  "raw_artifacts": "artifacts/scene-s6-hospital-20261017"
+}

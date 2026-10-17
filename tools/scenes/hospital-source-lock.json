@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "source_repository": "https://github.com/aws-robotics/aws-robomaker-hospital-world",
+  "revision": "39969a9d250135835cf13b480865647d1a87b6f4",
+  "archive": {
+    "sha256": "b352c63ca7d4eeaf8c2b7abac70f81ebe9ac575157033a09e14002520f2c64ca",
+    "size_bytes": 71043929
+  },
+  "fuel_models": [
+    {
+      "name": "AdjTable",
+      "version": 4,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/AdjTable/4/AdjTable.zip",
+      "sha256": "f5c80739fb4fae8206344e0588a6a8d234ead1318ed8a06d6d1e8c82c92b4437",
+      "size_bytes": 4100585,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/AdjTable",
+      "metadata_sha256": "a4d61143a9123252c7e280aef307ce17a60951766df35d9bd3d22efd7920f579"
+    },
+    {
+      "name": "AnesthesiaMachine",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/AnesthesiaMachine/2/AnesthesiaMachine.zip",
+      "sha256": "a04a157ed5a93ac4d81519ab6ddeb4c8dd03f0ff76dfd36d5f215e67a928abe0",
+      "size_bytes": 541299,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/AnesthesiaMachine",
+      "metadata_sha256": "3aeab52929c1fafa03cbd4e3986b35aa987410efdea23eb642bb9ac2537fc98f"
+    },
+    {
+      "name": "BMWCart",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BMWCart/2/BMWCart.zip",
+      "sha256": "315dbb83a3d93904c67832c1cea9043ea9b1f6949cd6be9120b8c68647c1a0d8",
+      "size_bytes": 1607574,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BMWCart",
+      "metadata_sha256": "17c05c453671e1e7bca6a3e930ae1ae1698236a09230e91e9b4e5f1cc368d749"
+    },
+    {
+      "name": "BPCart",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart/2/BPCart.zip",
+      "sha256": "68266a1e2d67e64c0e6aa4a6cd563d83d6751f2883b54b4b1f42a88bdfdae4cb",
+      "size_bytes": 1659990,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart",
+      "metadata_sha256": "992227998b522b8a37c3364275e760a88ce6b594d47f7420dc8c47381856274e"
+    },
+    {
+      "name": "BedTable",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable/2/BedTable.zip",
+      "sha256": "3a8ec34d5014d096f9ad3ae4dbd4c95df7b3ed749acfdec1c5c314256cffd085",
+      "size_bytes": 1088303,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedTable",
+      "metadata_sha256": "de1ca2e33aa240a89d2532a63dbdc277e313d344d5f78bdda3548fab962c8ef6"
+    },
+    {
+      "name": "BedsideTable",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedsideTable/2/BedsideTable.zip",
+      "sha256": "3d73df3e65ba665f9ad44632d5fcedcb24ecca26b9f96cb1964374262b038bfb",
+      "size_bytes": 691910,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BedsideTable",
+      "metadata_sha256": "887fb0fd44c8d637f6b178095e8798ee04e1391824e6722ff10d30a4807bd3ed"
+    },
+    {
+      "name": "BloodPressureMonitor",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BloodPressureMonitor/2/BloodPressureMonitor.zip",
+      "sha256": "1d8d49997fccca39e1bc992634d9f2a68500bf799ccca271c477d65e9475ba23",
+      "size_bytes": 237020,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/BloodPressureMonitor",
+      "metadata_sha256": "585347874299b931093a7fb21259b8ec3e35cf2af197c707575242b0942f81fb"
+    },
+    {
+      "name": "CGMClassic",
+      "version": 4,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/CGMClassic/4/CGMClassic.zip",
+      "sha256": "2f8366ef6c5650457ee0f1357956098fa1f4afe8caee983cd2d9b5284b40f6b7",
+      "size_bytes": 1597545,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/CGMClassic",
+      "metadata_sha256": "4926ba408ee2fba174c7eeec4ba9c9845a37ed14f4c7cb80cf79646a904c3d16"
+    },
+    {
+      "name": "Chair",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair/3/Chair.zip",
+      "sha256": "5bcf90f8177efdd373cf8099209372e6c13179113320db0a24c6f5f573a11e33",
+      "size_bytes": 2741574,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Chair",
+      "metadata_sha256": "22e703ff2082db42c7b29d9ce4dd398ef92a3cf1332a748eb62a97a7d42cfe83"
+    },
+    {
+      "name": "Drawer",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Drawer/2/Drawer.zip",
+      "sha256": "5d53702e45435df493df51c05e559382c44d158b492f4ab5f992537a024e161d",
+      "size_bytes": 135520,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Drawer",
+      "metadata_sha256": "291858344a256fd1ed097306fc2d9430f54ac97e5e5bff9303a093772ef915de"
+    },
+    {
+      "name": "ElderLadyPatient",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderLadyPatient/2/ElderLadyPatient.zip",
+      "sha256": "56ecd1c48b672484d5f7dc129a8e789e77a6d0524b4c16556ee00b1f6be410c2",
+      "size_bytes": 2731549,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderLadyPatient",
+      "metadata_sha256": "ad9f758f9a8a4eff2a0a1b6091c1041da399deafec3d49d991194ca6be9cfda4"
+    },
+    {
+      "name": "ElderMalePatient",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderMalePatient/2/ElderMalePatient.zip",
+      "sha256": "db7e9d2235107aadfbf7b3360c2c286beeaf0b725b2144e87be56220db0af2aa",
+      "size_bytes": 2918271,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ElderMalePatient",
+      "metadata_sha256": "50c0db52726938148faf4c7eed5cf0d718bf17df8360ca386abd95f6e4ba859e"
+    },
+    {
+      "name": "FemaleVisitor",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor/2/FemaleVisitor.zip",
+      "sha256": "5454b3bf1ac579851b9874179dcb0c30f6115996be8ad28290f5d0416c88f95e",
+      "size_bytes": 685516,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor",
+      "metadata_sha256": "10424dcbcec71c2b47fb5ce1f2a487d1cc2008ec063d45d3077e64ccf564fd7c"
+    },
+    {
+      "name": "FemaleVisitorSit",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitorSit/2/FemaleVisitorSit.zip",
+      "sha256": "84d2a9c65c6e8841d9671e9cb871d2c3834ae303a0086d55f5d9e37a9579d1fd",
+      "size_bytes": 669884,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitorSit",
+      "metadata_sha256": "ece3b71d76b22520fb0bae6006bcfd71b0c23c13e2789ee386a8f15edf4ce9dd"
+    },
+    {
+      "name": "IVStand",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/IVStand/2/IVStand.zip",
+      "sha256": "874383744f719ac95892f980fbd774fa31ef79c29cbe10252a234cbc8f25f848",
+      "size_bytes": 774855,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/IVStand",
+      "metadata_sha256": "ebb9dcd7e3d999ec0b0ce7e2b67e35b7fcc6dd4e4ddd433cd4742a13d3f160b1"
+    },
+    {
+      "name": "InstrumentCart1",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart1/2/InstrumentCart1.zip",
+      "sha256": "70b5ebb40b11a0cd702fe671d3708ca45f2dde6a3211603a2a69260039e7bb64",
+      "size_bytes": 135677,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart1",
+      "metadata_sha256": "082e619e29e1da3825968e1c0b522cd7b785e91a30c06ce3c052a6798871a60a"
+    },
+    {
+      "name": "InstrumentCart2",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart2/2/InstrumentCart2.zip",
+      "sha256": "b62a40f8a05386f365713d132cab2deb74b07da5168fb4c769531f602f981d70",
+      "size_bytes": 702606,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart2",
+      "metadata_sha256": "b86d668edf41246cfc2cc76c6aa993daef34daaf180dae76843a437d88752ec7"
+    },
+    {
+      "name": "KitchenSink",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/KitchenSink/2/KitchenSink.zip",
+      "sha256": "f75f80b5a5295d73200c99ed6d64be7f84eeb5dbe3a62c12e182b1cf4c5dbdea",
+      "size_bytes": 41731,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/KitchenSink",
+      "metadata_sha256": "05da5f4741c3ae3f7461cd03f30827ea808a8b777403d2f9303103d4a9c7b9af"
+    },
+    {
+      "name": "MalePatientBed",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MalePatientBed/2/MalePatientBed.zip",
+      "sha256": "4ac3f758e9f9400b45caf73747eceb4c7f682c5dc6478d7a9ee05707a729ea54",
+      "size_bytes": 2087725,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MalePatientBed",
+      "metadata_sha256": "278689c7ccd18d4f4c147cb84d43f650207abdd5e4bcda4593583b67e75e6774"
+    },
+    {
+      "name": "MaleVisitorOnPhone",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorOnPhone/2/MaleVisitorOnPhone.zip",
+      "sha256": "b9d7538433569ddb9e62f21034490ff933a1db6d81a7895fff1a8a7d40742d22",
+      "size_bytes": 1394258,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorOnPhone",
+      "metadata_sha256": "00a4134b46453178013322403edc30eac230a2551d61d3b5c63a7d5758da8d04"
+    },
+    {
+      "name": "MaleVisitorSit",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorSit/2/MaleVisitorSit.zip",
+      "sha256": "7bba6117aa8b1de518801c9b14a66600026adc28e531f3e58b6c758ca10914d3",
+      "size_bytes": 596416,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorSit",
+      "metadata_sha256": "d0a4fb3cf3657c2c9015a302e32a5ae07b5f0d6841e09caa451891b03998c135"
+    },
+    {
+      "name": "MetalCabinet",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MetalCabinet/2/MetalCabinet.zip",
+      "sha256": "c2644af380a622d1cb3ef0fce40d69ad1dcd8ce49416bcae4d36d0274e9dbea5",
+      "size_bytes": 29065,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MetalCabinet",
+      "metadata_sha256": "8c74d46b1da8cf9f83f51b7b7411cc260d6735fc44999959572ce43df8a6aa95"
+    },
+    {
+      "name": "MopCart3",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MopCart3/2/MopCart3.zip",
+      "sha256": "54e9e9db2d1a32d342709b540df5d5d290d04f474ad2ef72c78adb60dcfe2821",
+      "size_bytes": 5787981,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/MopCart3",
+      "metadata_sha256": "8addb35dbac40b1d5c69e17cf7ba2f724d73c998ccfe65e945b3b8e488a656c6"
+    },
+    {
+      "name": "OfficeChairBlack",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlack/2/OfficeChairBlack.zip",
+      "sha256": "c1984e58808c4a3660d597c8d3fc34126d7812fb2f3b3f905de2a73897ea7eae",
+      "size_bytes": 793096,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlack",
+      "metadata_sha256": "5842b9aab3878a37f6d53b8bb4e49a0edc9026e13e17ffa2edf626ecabb60c26"
+    },
+    {
+      "name": "ParkingTrolleyMax",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMax/3/ParkingTrolleyMax.zip",
+      "sha256": "807eaa4b6eeb05f4ff9085310f238f6ab3399ce5f29b83ee38db3ed9413ff411",
+      "size_bytes": 778398,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMax",
+      "metadata_sha256": "10703fa8c586d1055c8c690747e5d70b6e9754035ef85811417d71d4228ab5a0"
+    },
+    {
+      "name": "ParkingTrolleyMin",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMin/3/ParkingTrolleyMin.zip",
+      "sha256": "9f842baaf6977e11a5c413366d2ffa0fe0a5eb5a4a2ea42df72a70a6309c3073",
+      "size_bytes": 1946726,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/ParkingTrolleyMin",
+      "metadata_sha256": "814c673fdd1331405bac8169b1fd52f65ba438d5be8454da776ca03ad7cf78e5"
+    },
+    {
+      "name": "PatientFSit",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientFSit/2/PatientFSit.zip",
+      "sha256": "23c94538b01818d163e5df4d93aef8e88fd2201e57dbf08a85d9a4a3fcc7aefa",
+      "size_bytes": 657045,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientFSit",
+      "metadata_sha256": "140191e1a406b1ce073c6af4aafdda866fc4efb15ee80a8d02ad47cac77d2986"
+    },
+    {
+      "name": "PatientWheelChair",
+      "version": 4,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientWheelChair/4/PatientWheelChair.zip",
+      "sha256": "52d1d43fc56b093ff8f44e151b42894dee11fc283ed19243f7a53129e9a90e76",
+      "size_bytes": 1175273,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientWheelChair",
+      "metadata_sha256": "23859ce69254aac9c1507cc33a66eb2628e85e188f0737341ef471b486b36f83"
+    },
+    {
+      "name": "PotatoChipChair",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PotatoChipChair/3/PotatoChipChair.zip",
+      "sha256": "97ea8b33161f6ca424e45065d01af8f54aea0c1f2db544b27e5203313e675fbd",
+      "size_bytes": 824743,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/PotatoChipChair",
+      "metadata_sha256": "4b766f14f889dfd7659d155afaa7ddb6d998322602ec22816ce7b243eef6c69b"
+    },
+    {
+      "name": "Scrubs",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Scrubs/2/Scrubs.zip",
+      "sha256": "1e4a5fbdfc8d02c688290d1c4e39430ec872bf3f976c5fc720cf6e98c740aea7",
+      "size_bytes": 1028421,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Scrubs",
+      "metadata_sha256": "a24643b155fd4c89247f532480046f38d273a3c426ec0d8068fa40696ca1217d"
+    },
+    {
+      "name": "Shower",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Shower/2/Shower.zip",
+      "sha256": "cac1b4f5986ec9e20e8c14a35a9f6a0b61a754c4c84b79d9d5465f104d88bdb7",
+      "size_bytes": 568856,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Shower",
+      "metadata_sha256": "714bdc8039abb99a2d5219d3efcf4a68ad2dd20bafb757bf1d748b32495f807f"
+    },
+    {
+      "name": "StorageRack",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRack/2/StorageRack.zip",
+      "sha256": "8828cfa9ebbcc7652a71e9eb7ae8191190ccd3c0b76c75530b2d7e6abaae2e7e",
+      "size_bytes": 70905,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRack",
+      "metadata_sha256": "267b78e388030d2d13fcc095d051eb77d9439d00dac883c201aba664542618aa"
+    },
+    {
+      "name": "StorageRackCoverOpen",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCoverOpen/2/StorageRackCoverOpen.zip",
+      "sha256": "5dbaa6e783b1c4e24e62101db6dca0e0074138ce2eb50479fb86eb29efa5c710",
+      "size_bytes": 635216,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCoverOpen",
+      "metadata_sha256": "c9f0cc882a88095ea7b7aa8ea49373ee9ca5eca27053d1823fba41f8e98e4771"
+    },
+    {
+      "name": "StorageRackCovered",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCovered/2/StorageRackCovered.zip",
+      "sha256": "fc94bfaf762d7c39e8a2ed27aa2f2172717d2a005cd416b172357a78fc995426",
+      "size_bytes": 536807,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCovered",
+      "metadata_sha256": "0015fcd26ac62d71f71140fb4c4983b55c7f51c985fc4ab2cc1460797c0c8c4b"
+    },
+    {
+      "name": "SurgicalTrolley",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolley/2/SurgicalTrolley.zip",
+      "sha256": "651f5553c160be33395eb3e7e40520e8d38c74d350cc649ca9e6870d48b8d5b7",
+      "size_bytes": 849805,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolley",
+      "metadata_sha256": "a21eaeaaa19d8d048a56524fc3f3555616a5418318a70ce85233558859caaf52"
+    },
+    {
+      "name": "SurgicalTrolleyMed",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolleyMed/2/SurgicalTrolleyMed.zip",
+      "sha256": "f4c29738dfe4af280dcfbed0f9fa1e1affa1e60792d6a936fa386ba1b48b5519",
+      "size_bytes": 860176,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolleyMed",
+      "metadata_sha256": "7812e97bffd5431330d7f70b63ba1eea2b1560fee57fcc83aa3ae6643937172b"
+    },
+    {
+      "name": "Toilet",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Toilet/2/Toilet.zip",
+      "sha256": "27f2bf063764bf8ff7f0e0d1599457902daa87c03d58e7b2a6e1e5b4fec18d86",
+      "size_bytes": 205503,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/Toilet",
+      "metadata_sha256": "ddc5981a39e7ed453948aef2e6bc5b88ffc940977060e89cffbdad29749fa801"
+    },
+    {
+      "name": "TrolleyBed",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBed/3/TrolleyBed.zip",
+      "sha256": "7eaa8144f09b715ed8ff6768c80de6cc4b44447cc6a0449f18549c509f701cd7",
+      "size_bytes": 1015682,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBed",
+      "metadata_sha256": "5bf8788e67e7a8d87cfc93735111a599e6c8cf5732e4222c1db6603fc53d9bb1"
+    },
+    {
+      "name": "TrolleyBedPatient",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBedPatient/3/TrolleyBedPatient.zip",
+      "sha256": "46ddf111c7698ce2f4096977181b18d6a8594f8c7873c7f38665ccf81b1d684b",
+      "size_bytes": 1479205,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBedPatient",
+      "metadata_sha256": "daaeb834aa48c439d7b50faccfe3a47ac427bf15cb5cf7cdf3c2735961136912"
+    },
+    {
+      "name": "VendingMachine",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine/3/VendingMachine.zip",
+      "sha256": "ef8c9b5f62b815dbc3866d6439556de82819b4bb7363248cf2f5df94fc4d9c5c",
+      "size_bytes": 619550,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine",
+      "metadata_sha256": "29d793ea0436e1ce71f3aa320b1ae6625c409c7f67e60200fc52fdbce5287633"
+    },
+    {
+      "name": "VisitorKidSit",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorKidSit/2/VisitorKidSit.zip",
+      "sha256": "c913b16f720e9e044ee8f524ba14676a25807ca76f98f2f1bd0d2a15c1362122",
+      "size_bytes": 744956,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorKidSit",
+      "metadata_sha256": "970c5fa25638be8a9573fb3120c2aa02f326efeb973112fd28b1c6b7828ee793"
+    },
+    {
+      "name": "WhiteChipChair",
+      "version": 3,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/WhiteChipChair/3/WhiteChipChair.zip",
+      "sha256": "a1f3ab975862ae39fbcb39b1722731a9cf41670b0db5b23cca6f43dc868d0e3c",
+      "size_bytes": 792333,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/WhiteChipChair",
+      "metadata_sha256": "d79ec3162ade28a061979135de0fb46f778798e99b587394cb10429d85a0f8c7"
+    },
+    {
+      "name": "XRayMachine",
+      "version": 2,
+      "url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/XRayMachine/2/XRayMachine.zip",
+      "sha256": "353d10ac99d34ede865949fa09d0df73ff18deac53c39f35b9347ffe4ebd1f94",
+      "size_bytes": 345665,
+      "metadata_url": "https://fuel.gazebosim.org/1.0/OpenRobotics/models/XRayMachine",
+      "metadata_sha256": "2ea8d563e40a1b980bd68be637b2fd0ddf3e2ff200919996d79063a9b2c0b82f"
+    }
+  ]
+}

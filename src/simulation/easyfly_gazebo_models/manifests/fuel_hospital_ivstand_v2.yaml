@@ -1,0 +1,126 @@
+schema_version: 1
+asset_set_id: fuel_hospital_ivstand_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/IVStand
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/IVStand.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: IVStand
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/IVStand
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/IVStand.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: IVStand/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: IVStand/meshes/IVStand.mtl
+  sha256: b3cdc20c014a9c6596d2ccbb6e03476618c683f4b3e649b415efe42ed7cc2004
+- path: IVStand/meshes/IVStand.obj
+  sha256: dd65e59c2d97a4236e75e4d4a51b2cea479016b70b3b8124ca5cb91878025f63
+- path: IVStand/meshes/IVStand_Diffuse.png
+  sha256: 35acd0a82aeca6f925e14d4d00f8855f9e287f320444a7b9644b44d61f4bb337
+- path: IVStand/model.config
+  sha256: 8104b55a7eeab93a56a591b2208369976089a9db8d4f80e6f8b3293d3fb95106
+- path: IVStand/model.sdf
+  sha256: 4755b990afc6c6c057a2a810aee4f0a4ade52fbde45465cad646dc51ee89d81b
+- path: IVStand/thumbnails/1.png
+  sha256: 183aa0a28460be510bc3337e2f067550c7e05b0c0a2d0d9a7f84a769e65f89f0
+- path: IVStand/thumbnails/2.png
+  sha256: 5b06ff2ed8025f461a224e7c9fa1787a5b7af976fd6954c5d095b99a249da0dd
+- path: IVStand/thumbnails/3.png
+  sha256: 900575a8d2ee3966f3b8988f78e9d7d69314f681e8126aaface5c103f09c4277
+- path: IVStand/thumbnails/4.png
+  sha256: 76a8e2c8b57257a14cbcd59e27fb11b1fc7f6d5e68f125714dd8343af4f03305
+- path: IVStand/thumbnails/5.png
+  sha256: 01fa0bb7dae824ac93cc0fde65ab32b5823d1620c31e5c3dfaf24e78ce88f6ea
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/IVStand/2/IVStand.zip
+  sha256: 874383744f719ac95892f980fbd774fa31ef79c29cbe10252a234cbc8f25f848
+  size_bytes: 774855
+  prefix: ''
+  max_members: 13
+  max_unpacked_bytes: 872680
+  license:
+    notice: '{"createdAt":"2020-08-06T11:26:29Z","updatedAt":"2026-10-16T20:21:38Z","name":"IVStand","owner":"OpenRobotics","description":"A
+      generic hospital IV stand","likes":0,"downloads":40656,"filesize":774855,"upload_date":"2020-08-06T11:26:28Z","modify_date":"2023-09-27T15:23:16Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/IVStand/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["stand","IV","IVStand"],"categories":["Appliance"]}
+
+      '
+    sha256: ebb9dcd7e3d999ec0b0ce7e2b67e35b7fcc6dd4e4ddd433cd4742a13d3f160b1
+  members:
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: IVStand/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: meshes/IVStand.mtl
+    target: IVStand/meshes/IVStand.mtl
+    source_sha256: b3cdc20c014a9c6596d2ccbb6e03476618c683f4b3e649b415efe42ed7cc2004
+    replacements: []
+  - source: meshes/IVStand.obj
+    target: IVStand/meshes/IVStand.obj
+    source_sha256: dd65e59c2d97a4236e75e4d4a51b2cea479016b70b3b8124ca5cb91878025f63
+    replacements: []
+  - source: meshes/IVStand_Diffuse.png
+    target: IVStand/meshes/IVStand_Diffuse.png
+    source_sha256: 35acd0a82aeca6f925e14d4d00f8855f9e287f320444a7b9644b44d61f4bb337
+    replacements: []
+  - source: model.config
+    target: IVStand/model.config
+    source_sha256: 8104b55a7eeab93a56a591b2208369976089a9db8d4f80e6f8b3293d3fb95106
+    replacements: []
+  - source: model.sdf
+    target: IVStand/model.sdf
+    source_sha256: 4755b990afc6c6c057a2a810aee4f0a4ade52fbde45465cad646dc51ee89d81b
+    replacements: []
+  - source: thumbnails/1.png
+    target: IVStand/thumbnails/1.png
+    source_sha256: 183aa0a28460be510bc3337e2f067550c7e05b0c0a2d0d9a7f84a769e65f89f0
+    replacements: []
+  - source: thumbnails/2.png
+    target: IVStand/thumbnails/2.png
+    source_sha256: 5b06ff2ed8025f461a224e7c9fa1787a5b7af976fd6954c5d095b99a249da0dd
+    replacements: []
+  - source: thumbnails/3.png
+    target: IVStand/thumbnails/3.png
+    source_sha256: 900575a8d2ee3966f3b8988f78e9d7d69314f681e8126aaface5c103f09c4277
+    replacements: []
+  - source: thumbnails/4.png
+    target: IVStand/thumbnails/4.png
+    source_sha256: 76a8e2c8b57257a14cbcd59e27fb11b1fc7f6d5e68f125714dd8343af4f03305
+    replacements: []
+  - source: thumbnails/5.png
+    target: IVStand/thumbnails/5.png
+    source_sha256: 01fa0bb7dae824ac93cc0fde65ab32b5823d1620c31e5c3dfaf24e78ce88f6ea
+    replacements: []

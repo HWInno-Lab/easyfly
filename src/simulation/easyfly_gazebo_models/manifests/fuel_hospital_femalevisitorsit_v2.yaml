@@ -1,0 +1,137 @@
+schema_version: 1
+asset_set_id: fuel_hospital_femalevisitorsit_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitorSit
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/FemaleVisitorSit.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: FemaleVisitorSit
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitorSit
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/FemaleVisitorSit.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: FemaleVisitorSit/meshes/FemaleVisitorSit.mtl
+  sha256: 29aad0dbebec56de87910f941a5f83d40b636f1bce54a892b3d7a9c95e31c4ea
+- path: FemaleVisitorSit/meshes/FemaleVisitorSit.obj
+  sha256: 78bb2be8adb66f3bc71369ce774bb6b843978f9144e5f66431282947078c0a71
+- path: FemaleVisitorSit/meshes/FemaleVisitorSit.png
+  sha256: b0b65915771ceeba654d38ae6e9b434de31e3f3f7e70567daf9bb16d6298a6a1
+- path: FemaleVisitorSit/meshes/FemaleVisitorSit_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: FemaleVisitorSit/meshes/FemaleVisitorSit_Col.obj
+  sha256: 191f35980f3b64bed31afa28f6386d0b4849947b958449d321bb46fc87e428aa
+- path: FemaleVisitorSit/meshes/HandbagBlack.png
+  sha256: ab96a55400279cbda6fee4d88630d1b1efd4ea177da32e7ed55cba0586f1a8dc
+- path: FemaleVisitorSit/model.config
+  sha256: 78a9aee2df7ec960681b7685eecd5c2ece8160e113b51bfa4b430d405f368448
+- path: FemaleVisitorSit/model.sdf
+  sha256: 6205ab4af430248a3149507a5254ce6a74c27ad2cd9224a7d6a14313f935e8f2
+- path: FemaleVisitorSit/thumbnails/1.png
+  sha256: a7de16dc025924203f8678dfc456322422da4a933796d6b31e4f7ffb9fe87dd5
+- path: FemaleVisitorSit/thumbnails/2.png
+  sha256: 38162e69078c98b6faa00097c4200aa2edd78f83a1fe173859d3820b62ee0f8b
+- path: FemaleVisitorSit/thumbnails/3.png
+  sha256: 9a1e918fb0f6d2db05ddeeb3619b22213127adb8c5f4af99f181401af040a088
+- path: FemaleVisitorSit/thumbnails/4.png
+  sha256: cdf14021d02d9e0c21413372c6649baeda9860983ee2ba189720a84c11d82332
+- path: FemaleVisitorSit/thumbnails/5.png
+  sha256: 18917053958e30dce5b5a22fab571c7c1d6f55b01d8128a5bb2f01ec67eca830
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitorSit/2/FemaleVisitorSit.zip
+  sha256: 84d2a9c65c6e8841d9671e9cb871d2c3834ae303a0086d55f5d9e37a9579d1fd
+  size_bytes: 669884
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 839166
+  license:
+    notice: '{"createdAt":"2020-05-20T19:34:41Z","updatedAt":"2026-10-16T18:33:08Z","name":"FemaleVisitorSit","owner":"OpenRobotics","description":"","likes":0,"downloads":77698,"filesize":669884,"upload_date":"2020-05-20T19:34:39Z","modify_date":"2023-09-27T15:40:21Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/FemaleVisitorSit/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: ece3b71d76b22520fb0bae6006bcfd71b0c23c13e2789ee386a8f15edf4ce9dd
+  members:
+  - source: meshes/FemaleVisitorSit.mtl
+    target: FemaleVisitorSit/meshes/FemaleVisitorSit.mtl
+    source_sha256: 29aad0dbebec56de87910f941a5f83d40b636f1bce54a892b3d7a9c95e31c4ea
+    replacements: []
+  - source: meshes/FemaleVisitorSit.obj
+    target: FemaleVisitorSit/meshes/FemaleVisitorSit.obj
+    source_sha256: 78bb2be8adb66f3bc71369ce774bb6b843978f9144e5f66431282947078c0a71
+    replacements: []
+  - source: meshes/FemaleVisitorSit.png
+    target: FemaleVisitorSit/meshes/FemaleVisitorSit.png
+    source_sha256: b0b65915771ceeba654d38ae6e9b434de31e3f3f7e70567daf9bb16d6298a6a1
+    replacements: []
+  - source: meshes/FemaleVisitorSit_Col.mtl
+    target: FemaleVisitorSit/meshes/FemaleVisitorSit_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/FemaleVisitorSit_Col.obj
+    target: FemaleVisitorSit/meshes/FemaleVisitorSit_Col.obj
+    source_sha256: 191f35980f3b64bed31afa28f6386d0b4849947b958449d321bb46fc87e428aa
+    replacements: []
+  - source: meshes/HandbagBlack.png
+    target: FemaleVisitorSit/meshes/HandbagBlack.png
+    source_sha256: ab96a55400279cbda6fee4d88630d1b1efd4ea177da32e7ed55cba0586f1a8dc
+    replacements: []
+  - source: model.config
+    target: FemaleVisitorSit/model.config
+    source_sha256: 78a9aee2df7ec960681b7685eecd5c2ece8160e113b51bfa4b430d405f368448
+    replacements: []
+  - source: model.sdf
+    target: FemaleVisitorSit/model.sdf
+    source_sha256: 6205ab4af430248a3149507a5254ce6a74c27ad2cd9224a7d6a14313f935e8f2
+    replacements: []
+  - source: thumbnails/1.png
+    target: FemaleVisitorSit/thumbnails/1.png
+    source_sha256: a7de16dc025924203f8678dfc456322422da4a933796d6b31e4f7ffb9fe87dd5
+    replacements: []
+  - source: thumbnails/2.png
+    target: FemaleVisitorSit/thumbnails/2.png
+    source_sha256: 38162e69078c98b6faa00097c4200aa2edd78f83a1fe173859d3820b62ee0f8b
+    replacements: []
+  - source: thumbnails/3.png
+    target: FemaleVisitorSit/thumbnails/3.png
+    source_sha256: 9a1e918fb0f6d2db05ddeeb3619b22213127adb8c5f4af99f181401af040a088
+    replacements: []
+  - source: thumbnails/4.png
+    target: FemaleVisitorSit/thumbnails/4.png
+    source_sha256: cdf14021d02d9e0c21413372c6649baeda9860983ee2ba189720a84c11d82332
+    replacements: []
+  - source: thumbnails/5.png
+    target: FemaleVisitorSit/thumbnails/5.png
+    source_sha256: 18917053958e30dce5b5a22fab571c7c1d6f55b01d8128a5bb2f01ec67eca830
+    replacements: []

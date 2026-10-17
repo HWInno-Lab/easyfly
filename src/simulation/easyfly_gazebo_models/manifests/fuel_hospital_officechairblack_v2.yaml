@@ -1,0 +1,163 @@
+schema_version: 1
+asset_set_id: fuel_hospital_officechairblack_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlack
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/OfficeChairBlack.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: OfficeChairBlack
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlack
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/OfficeChairBlack.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: OfficeChairBlack/meshes/OfficeChairBlack.mtl
+  sha256: 7131fb08a4c61d09d1145b586b1d6095f27c791eb078f9975d84b16218d72948
+- path: OfficeChairBlack/meshes/OfficeChairBlack.obj
+  sha256: 34a1b004902d10391cdcdafb7f6050a4dae81a93e90cea982b3d2a8c0bb2c9b1
+- path: OfficeChairBlack/meshes/OfficeChairBlack.png
+  sha256: 5ceb246d18e59e6f60720cb5351bb8c47a49cd11b05b56ab628154abcf329f74
+- path: OfficeChairBlack/meshes/OfficeChairBlack_Col.mtl
+  sha256: e23b5279777ea3bcbaeb3a0c748f95a51d1dc3bcce1db8c035a9361512e73a66
+- path: OfficeChairBlack/meshes/OfficeChairBlack_Col.obj
+  sha256: d79c430ce4f3a296efcb820d58b83bf769d881fa2616d7b07c649450085448cf
+- path: OfficeChairBlack/model.config
+  sha256: 4b155cce685b9cbde1fc979993ae6dd30cf28611ae4d66f83e3aa5abdd413f94
+- path: OfficeChairBlack/model.sdf
+  sha256: 9df6c75f6049ae70325b056777a783f51eed36fb89137a540f8b67a7dd1e46ac
+- path: OfficeChairBlack/thumbnails/1.png
+  sha256: 4a3465679917efeac00b90078e8b3ce95e6c25b1aaa064d81c5f8b65afc43bfd
+- path: OfficeChairBlack/thumbnails/2.png
+  sha256: 741bb2bca4ac07aede4f3731646e05c09587c3bfd67c9290910fd6e02cad3232
+- path: OfficeChairBlack/thumbnails/3.png
+  sha256: c7f2bde1e5fe86fc112a652e306459b4295cda53adf1e7e3a5cafc25837fb0c0
+- path: OfficeChairBlack/thumbnails/4.png
+  sha256: 4bbd0851ff4707d172594ee5e4a2d9bff9225452e1edc5c99d17dbd6aef14caf
+- path: OfficeChairBlack/thumbnails/5.png
+  sha256: c4f3fc099f130a43cabace2b794a58f182b4085190cc03493ab0e5d51d71062e
+- path: OfficeChairBlack/thumbnails/meta/1.png
+  sha256: a0d0b5599025e81eac7fb1b66686843db0767f1b88448464292d8455b40a3601
+- path: OfficeChairBlack/thumbnails/meta/2.png
+  sha256: b63ee9a58ccd490a70237ad17ffb1d91b86061f4b70fb9ccbd2ae8790c4f0f87
+- path: OfficeChairBlack/thumbnails/meta/3.png
+  sha256: 76e335dcd3c6840b40c95a3eaf408a775fb98bd17a31e14c586f7c4662b65201
+- path: OfficeChairBlack/thumbnails/meta/4.png
+  sha256: 93940b92349606cf01b525bc61a5e166911da05b888167a684c9e85331691ec4
+- path: OfficeChairBlack/thumbnails/meta/5.png
+  sha256: dcdbc7586bded5c87382e05f0c6e457c3ce9003af9acdaef637d51887f92b827
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/OfficeChairBlack/2/OfficeChairBlack.zip
+  sha256: c1984e58808c4a3660d597c8d3fc34126d7812fb2f3b3f905de2a73897ea7eae
+  size_bytes: 793096
+  prefix: ''
+  max_members: 20
+  max_unpacked_bytes: 837715
+  license:
+    notice: '{"createdAt":"2020-06-09T12:12:56Z","updatedAt":"2026-10-16T21:33:56Z","name":"OfficeChairBlack","owner":"OpenRobotics","description":"Chair
+      from meeting room.","likes":1,"downloads":118440,"filesize":793096,"upload_date":"2020-06-09T12:12:54Z","modify_date":"2023-09-27T15:33:27Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/OfficeChairBlack/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: 5842b9aab3878a37f6d53b8bb4e49a0edc9026e13e17ffa2edf626ecabb60c26
+  members:
+  - source: meshes/OfficeChairBlack.mtl
+    target: OfficeChairBlack/meshes/OfficeChairBlack.mtl
+    source_sha256: 7131fb08a4c61d09d1145b586b1d6095f27c791eb078f9975d84b16218d72948
+    replacements: []
+  - source: meshes/OfficeChairBlack.obj
+    target: OfficeChairBlack/meshes/OfficeChairBlack.obj
+    source_sha256: 34a1b004902d10391cdcdafb7f6050a4dae81a93e90cea982b3d2a8c0bb2c9b1
+    replacements: []
+  - source: meshes/OfficeChairBlack.png
+    target: OfficeChairBlack/meshes/OfficeChairBlack.png
+    source_sha256: 5ceb246d18e59e6f60720cb5351bb8c47a49cd11b05b56ab628154abcf329f74
+    replacements: []
+  - source: meshes/OfficeChairBlack_Col.mtl
+    target: OfficeChairBlack/meshes/OfficeChairBlack_Col.mtl
+    source_sha256: e23b5279777ea3bcbaeb3a0c748f95a51d1dc3bcce1db8c035a9361512e73a66
+    replacements: []
+  - source: meshes/OfficeChairBlack_Col.obj
+    target: OfficeChairBlack/meshes/OfficeChairBlack_Col.obj
+    source_sha256: d79c430ce4f3a296efcb820d58b83bf769d881fa2616d7b07c649450085448cf
+    replacements: []
+  - source: model.config
+    target: OfficeChairBlack/model.config
+    source_sha256: 4b155cce685b9cbde1fc979993ae6dd30cf28611ae4d66f83e3aa5abdd413f94
+    replacements: []
+  - source: model.sdf
+    target: OfficeChairBlack/model.sdf
+    source_sha256: 9df6c75f6049ae70325b056777a783f51eed36fb89137a540f8b67a7dd1e46ac
+    replacements: []
+  - source: thumbnails/1.png
+    target: OfficeChairBlack/thumbnails/1.png
+    source_sha256: 4a3465679917efeac00b90078e8b3ce95e6c25b1aaa064d81c5f8b65afc43bfd
+    replacements: []
+  - source: thumbnails/2.png
+    target: OfficeChairBlack/thumbnails/2.png
+    source_sha256: 741bb2bca4ac07aede4f3731646e05c09587c3bfd67c9290910fd6e02cad3232
+    replacements: []
+  - source: thumbnails/3.png
+    target: OfficeChairBlack/thumbnails/3.png
+    source_sha256: c7f2bde1e5fe86fc112a652e306459b4295cda53adf1e7e3a5cafc25837fb0c0
+    replacements: []
+  - source: thumbnails/4.png
+    target: OfficeChairBlack/thumbnails/4.png
+    source_sha256: 4bbd0851ff4707d172594ee5e4a2d9bff9225452e1edc5c99d17dbd6aef14caf
+    replacements: []
+  - source: thumbnails/5.png
+    target: OfficeChairBlack/thumbnails/5.png
+    source_sha256: c4f3fc099f130a43cabace2b794a58f182b4085190cc03493ab0e5d51d71062e
+    replacements: []
+  - source: thumbnails/meta/1.png
+    target: OfficeChairBlack/thumbnails/meta/1.png
+    source_sha256: a0d0b5599025e81eac7fb1b66686843db0767f1b88448464292d8455b40a3601
+    replacements: []
+  - source: thumbnails/meta/2.png
+    target: OfficeChairBlack/thumbnails/meta/2.png
+    source_sha256: b63ee9a58ccd490a70237ad17ffb1d91b86061f4b70fb9ccbd2ae8790c4f0f87
+    replacements: []
+  - source: thumbnails/meta/3.png
+    target: OfficeChairBlack/thumbnails/meta/3.png
+    source_sha256: 76e335dcd3c6840b40c95a3eaf408a775fb98bd17a31e14c586f7c4662b65201
+    replacements: []
+  - source: thumbnails/meta/4.png
+    target: OfficeChairBlack/thumbnails/meta/4.png
+    source_sha256: 93940b92349606cf01b525bc61a5e166911da05b888167a684c9e85331691ec4
+    replacements: []
+  - source: thumbnails/meta/5.png
+    target: OfficeChairBlack/thumbnails/meta/5.png
+    source_sha256: dcdbc7586bded5c87382e05f0c6e457c3ce9003af9acdaef637d51887f92b827
+    replacements: []

@@ -1,0 +1,139 @@
+schema_version: 1
+asset_set_id: fuel_hospital_malevisitoronphone_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorOnPhone
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/MaleVisitorOnPhone.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: MaleVisitorOnPhone
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorOnPhone
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/MaleVisitorOnPhone.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: MaleVisitorOnPhone/meshes/MaleVisitor.png
+  sha256: 664169d68e9f792beedb9c5fb90f65f47d3bfb674605f37d54679e3fcb6d3b3d
+- path: MaleVisitorOnPhone/meshes/MaleVisitorStatic.mtl
+  sha256: 859499b3eebd371fecb18f4d8d1c6db0630341ab461aa22a566991f841d2b80a
+- path: MaleVisitorOnPhone/meshes/MaleVisitorStatic.obj
+  sha256: 5a5508f4adf0b69df858727b8dbce97fc6e735f35c72da9aaf0fc7b364e20db3
+- path: MaleVisitorOnPhone/meshes/MaleVisitorStatic_Col.mtl
+  sha256: 5ea6cd44f150bbb4fff10386acdf556c56113d5d8d79af3b1fff2d6199b32200
+- path: MaleVisitorOnPhone/meshes/MaleVisitorStatic_Col.obj
+  sha256: feded16115d772d51b75be16941e5ee376cd92bf1aee6b84f4d21fac4dc47878
+- path: MaleVisitorOnPhone/meshes/Phone.png
+  sha256: b60b4b932a7232d5449e846caed572f68c2755e0de3dc09da2e7dc622158bda9
+- path: MaleVisitorOnPhone/model.config
+  sha256: e3c8edaa7c1cb0fd73af43386f83c2571553cfcf1975ca86e0ecb540df6448a2
+- path: MaleVisitorOnPhone/model.sdf
+  sha256: b64d94f5cb6b227dec44fd367516960123d14974d3a150dc51fa0a0f2858cdd3
+- path: MaleVisitorOnPhone/thumbnails/1.png
+  sha256: 6ea241f8abf5d9ccde57b220afa9bd18a7c749a7f3a7778faf45e7bd8c8c55ec
+- path: MaleVisitorOnPhone/thumbnails/2.png
+  sha256: c97af6c0b7563f950114402aae9e073a98ec36e58da35496d6aeb00a69662c83
+- path: MaleVisitorOnPhone/thumbnails/3.png
+  sha256: abb9cd0e6c0d43c27846094a34e3551663def8a836b3d7315e9d689b36bf2965
+- path: MaleVisitorOnPhone/thumbnails/4.png
+  sha256: c31d17917c64f2d2f139fb85a174bb6f27fe3000f25776c2174b572adbe55d11
+- path: MaleVisitorOnPhone/thumbnails/5.png
+  sha256: 03a19ae04e9066f81647c8e7c47fe035998d690430b66432be00a3a3b5801c41
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/MaleVisitorOnPhone/2/MaleVisitorOnPhone.zip
+  sha256: b9d7538433569ddb9e62f21034490ff933a1db6d81a7895fff1a8a7d40742d22
+  size_bytes: 1394258
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 1521173
+  license:
+    notice: '{"createdAt":"2020-06-25T10:13:35Z","updatedAt":"2026-10-16T22:39:59Z","name":"MaleVisitorOnPhone","owner":"OpenRobotics","description":"A
+      man wearing purple shirt, looking at his phone","likes":0,"downloads":84363,"filesize":1394258,"upload_date":"2020-06-25T10:13:33Z","modify_date":"2023-09-27T15:28:15Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/MaleVisitorOnPhone/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People","Tablet
+      and Smartphone"]}
+
+      '
+    sha256: 00a4134b46453178013322403edc30eac230a2551d61d3b5c63a7d5758da8d04
+  members:
+  - source: meshes/MaleVisitor.png
+    target: MaleVisitorOnPhone/meshes/MaleVisitor.png
+    source_sha256: 664169d68e9f792beedb9c5fb90f65f47d3bfb674605f37d54679e3fcb6d3b3d
+    replacements: []
+  - source: meshes/MaleVisitorStatic.mtl
+    target: MaleVisitorOnPhone/meshes/MaleVisitorStatic.mtl
+    source_sha256: 859499b3eebd371fecb18f4d8d1c6db0630341ab461aa22a566991f841d2b80a
+    replacements: []
+  - source: meshes/MaleVisitorStatic.obj
+    target: MaleVisitorOnPhone/meshes/MaleVisitorStatic.obj
+    source_sha256: 5a5508f4adf0b69df858727b8dbce97fc6e735f35c72da9aaf0fc7b364e20db3
+    replacements: []
+  - source: meshes/MaleVisitorStatic_Col.mtl
+    target: MaleVisitorOnPhone/meshes/MaleVisitorStatic_Col.mtl
+    source_sha256: 5ea6cd44f150bbb4fff10386acdf556c56113d5d8d79af3b1fff2d6199b32200
+    replacements: []
+  - source: meshes/MaleVisitorStatic_Col.obj
+    target: MaleVisitorOnPhone/meshes/MaleVisitorStatic_Col.obj
+    source_sha256: feded16115d772d51b75be16941e5ee376cd92bf1aee6b84f4d21fac4dc47878
+    replacements: []
+  - source: meshes/Phone.png
+    target: MaleVisitorOnPhone/meshes/Phone.png
+    source_sha256: b60b4b932a7232d5449e846caed572f68c2755e0de3dc09da2e7dc622158bda9
+    replacements: []
+  - source: model.config
+    target: MaleVisitorOnPhone/model.config
+    source_sha256: e3c8edaa7c1cb0fd73af43386f83c2571553cfcf1975ca86e0ecb540df6448a2
+    replacements: []
+  - source: model.sdf
+    target: MaleVisitorOnPhone/model.sdf
+    source_sha256: b64d94f5cb6b227dec44fd367516960123d14974d3a150dc51fa0a0f2858cdd3
+    replacements: []
+  - source: thumbnails/1.png
+    target: MaleVisitorOnPhone/thumbnails/1.png
+    source_sha256: 6ea241f8abf5d9ccde57b220afa9bd18a7c749a7f3a7778faf45e7bd8c8c55ec
+    replacements: []
+  - source: thumbnails/2.png
+    target: MaleVisitorOnPhone/thumbnails/2.png
+    source_sha256: c97af6c0b7563f950114402aae9e073a98ec36e58da35496d6aeb00a69662c83
+    replacements: []
+  - source: thumbnails/3.png
+    target: MaleVisitorOnPhone/thumbnails/3.png
+    source_sha256: abb9cd0e6c0d43c27846094a34e3551663def8a836b3d7315e9d689b36bf2965
+    replacements: []
+  - source: thumbnails/4.png
+    target: MaleVisitorOnPhone/thumbnails/4.png
+    source_sha256: c31d17917c64f2d2f139fb85a174bb6f27fe3000f25776c2174b572adbe55d11
+    replacements: []
+  - source: thumbnails/5.png
+    target: MaleVisitorOnPhone/thumbnails/5.png
+    source_sha256: 03a19ae04e9066f81647c8e7c47fe035998d690430b66432be00a3a3b5801c41
+    replacements: []

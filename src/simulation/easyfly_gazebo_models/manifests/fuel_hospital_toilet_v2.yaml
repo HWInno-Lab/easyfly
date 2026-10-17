@@ -1,0 +1,115 @@
+schema_version: 1
+asset_set_id: fuel_hospital_toilet_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Toilet
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/Toilet.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: Toilet
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Toilet
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/Toilet.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: Toilet/meshes/toilet.mtl
+  sha256: bab9b5d48fcc98e0bbeb9ad230ca5e8b2e59f82ac855aae6a69876c751e7488c
+- path: Toilet/meshes/toilet.obj
+  sha256: 739d0b36f38496f79a819547bb35403f8e76df0e10890b8ad626c42554a5e4b5
+- path: Toilet/model.config
+  sha256: 0f5c56295d18fecd78459178aa1a7cee03317da1022e3c2652825c5bbf50fcf9
+- path: Toilet/model.sdf
+  sha256: d17cf1c2ff4c8d9653282871e38e2ed61f3c6117007f42d49126b98d29678a3a
+- path: Toilet/thumbnails/1.png
+  sha256: 3404a9ae60865afcfafb0fef76b5e7c46736259f836bad6089b5c06f8c8b658c
+- path: Toilet/thumbnails/2.png
+  sha256: d7f2dfffaf3032038c0610d57258f276abe09b91172dbe5af310c90adc700117
+- path: Toilet/thumbnails/3.png
+  sha256: 92470e3a6b3e6e6624c68f663c82b5230d26e90985278629140fbe327debd3c2
+- path: Toilet/thumbnails/4.png
+  sha256: 2b0708e74b250f0319f88d06e2995dc41f0b9db31fe3eaccb44f73a856d1bbdc
+- path: Toilet/thumbnails/5.png
+  sha256: 478854f9771d245e597e2220d766f5f11fec723b6a52e82a46f8ae2f0a590bfa
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/Toilet/2/Toilet.zip
+  sha256: 27f2bf063764bf8ff7f0e0d1599457902daa87c03d58e7b2a6e1e5b4fec18d86
+  size_bytes: 205503
+  prefix: ''
+  max_members: 11
+  max_unpacked_bytes: 255543
+  license:
+    notice: '{"createdAt":"2020-06-25T10:18:48Z","updatedAt":"2026-10-16T21:34:01Z","name":"Toilet","owner":"OpenRobotics","description":"A
+      generic toilet","likes":0,"downloads":118940,"filesize":205503,"upload_date":"2020-06-25T10:18:46Z","modify_date":"2023-09-27T15:27:37Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/Toilet/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: ddc5981a39e7ed453948aef2e6bc5b88ffc940977060e89cffbdad29749fa801
+  members:
+  - source: meshes/toilet.mtl
+    target: Toilet/meshes/toilet.mtl
+    source_sha256: bab9b5d48fcc98e0bbeb9ad230ca5e8b2e59f82ac855aae6a69876c751e7488c
+    replacements: []
+  - source: meshes/toilet.obj
+    target: Toilet/meshes/toilet.obj
+    source_sha256: 739d0b36f38496f79a819547bb35403f8e76df0e10890b8ad626c42554a5e4b5
+    replacements: []
+  - source: model.config
+    target: Toilet/model.config
+    source_sha256: 0f5c56295d18fecd78459178aa1a7cee03317da1022e3c2652825c5bbf50fcf9
+    replacements: []
+  - source: model.sdf
+    target: Toilet/model.sdf
+    source_sha256: d17cf1c2ff4c8d9653282871e38e2ed61f3c6117007f42d49126b98d29678a3a
+    replacements: []
+  - source: thumbnails/1.png
+    target: Toilet/thumbnails/1.png
+    source_sha256: 3404a9ae60865afcfafb0fef76b5e7c46736259f836bad6089b5c06f8c8b658c
+    replacements: []
+  - source: thumbnails/2.png
+    target: Toilet/thumbnails/2.png
+    source_sha256: d7f2dfffaf3032038c0610d57258f276abe09b91172dbe5af310c90adc700117
+    replacements: []
+  - source: thumbnails/3.png
+    target: Toilet/thumbnails/3.png
+    source_sha256: 92470e3a6b3e6e6624c68f663c82b5230d26e90985278629140fbe327debd3c2
+    replacements: []
+  - source: thumbnails/4.png
+    target: Toilet/thumbnails/4.png
+    source_sha256: 2b0708e74b250f0319f88d06e2995dc41f0b9db31fe3eaccb44f73a856d1bbdc
+    replacements: []
+  - source: thumbnails/5.png
+    target: Toilet/thumbnails/5.png
+    source_sha256: 478854f9771d245e597e2220d766f5f11fec723b6a52e82a46f8ae2f0a590bfa
+    replacements: []

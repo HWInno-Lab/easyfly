@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_trolleybed_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBed
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/TrolleyBed.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: TrolleyBed
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBed
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/TrolleyBed.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: TrolleyBed/meshes/TrolleyBed.mtl
+  sha256: 8e01612bd23ea8fbc164e299bdb3528fddde5e51c1b6a31de34d9177ad6bcb02
+- path: TrolleyBed/meshes/TrolleyBed.obj
+  sha256: 54ff785ef2cf78d2591f20da35403f630b28d0cc3420d5da583db8adba4423c6
+- path: TrolleyBed/meshes/TrolleyBed_Diffuse.png
+  sha256: 63dbff713bbec8f968d53c8b2df7db0f1dd5bbc7764ceb2cdf932d19ca06da92
+- path: TrolleyBed/model.config
+  sha256: dea649aa3ebfc4e082055ff7bc9892909f63d2ad02c3083e9feafcfd5205b8bb
+- path: TrolleyBed/model.sdf
+  sha256: af256ab8e668bf00de9320935b4152ed032f7de0387b43975b20b0e52133144a
+- path: TrolleyBed/thumbnails/1.png
+  sha256: 92a8b9cfc9f4bd48e684a94c313d159455afaa3d3b2bdadeeb87e0565890a4e8
+- path: TrolleyBed/thumbnails/2.png
+  sha256: b12169e9b131eea340100fba31116684662f0434e5bd9e55661e590806526d0a
+- path: TrolleyBed/thumbnails/3.png
+  sha256: 1fe18296fab2ced89b6ecb39c3dd58597b0cf343810eb632edd82827d08e0482
+- path: TrolleyBed/thumbnails/4.png
+  sha256: 312d58790d48b55976c8205697b4c1bd76e68bd8aaf33b82163dfdf7a785b7f2
+- path: TrolleyBed/thumbnails/5.png
+  sha256: ad35c9ea4566ec620b3e73cce716d57cdc5251c967cddba57cbedc0ef4030350
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/TrolleyBed/3/TrolleyBed.zip
+  sha256: 7eaa8144f09b715ed8ff6768c80de6cc4b44447cc6a0449f18549c509f701cd7
+  size_bytes: 1015682
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 1265821
+  license:
+    notice: '{"createdAt":"2019-10-25T09:22:08Z","updatedAt":"2026-10-16T15:31:16Z","name":"TrolleyBed","owner":"OpenRobotics","description":"Bed
+      to transport patients.","likes":0,"downloads":7691,"filesize":1015682,"upload_date":"2019-10-25T09:22:04Z","modify_date":"2023-09-27T16:23:11Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/TrolleyBed/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["static","hospital","bed"]}
+
+      '
+    sha256: 5bf8788e67e7a8d87cfc93735111a599e6c8cf5732e4222c1db6603fc53d9bb1
+  members:
+  - source: meshes/TrolleyBed.mtl
+    target: TrolleyBed/meshes/TrolleyBed.mtl
+    source_sha256: 8e01612bd23ea8fbc164e299bdb3528fddde5e51c1b6a31de34d9177ad6bcb02
+    replacements: []
+  - source: meshes/TrolleyBed.obj
+    target: TrolleyBed/meshes/TrolleyBed.obj
+    source_sha256: 54ff785ef2cf78d2591f20da35403f630b28d0cc3420d5da583db8adba4423c6
+    replacements: []
+  - source: meshes/TrolleyBed_Diffuse.png
+    target: TrolleyBed/meshes/TrolleyBed_Diffuse.png
+    source_sha256: 63dbff713bbec8f968d53c8b2df7db0f1dd5bbc7764ceb2cdf932d19ca06da92
+    replacements: []
+  - source: model.config
+    target: TrolleyBed/model.config
+    source_sha256: dea649aa3ebfc4e082055ff7bc9892909f63d2ad02c3083e9feafcfd5205b8bb
+    replacements: []
+  - source: model.sdf
+    target: TrolleyBed/model.sdf
+    source_sha256: af256ab8e668bf00de9320935b4152ed032f7de0387b43975b20b0e52133144a
+    replacements: []
+  - source: thumbnails/1.png
+    target: TrolleyBed/thumbnails/1.png
+    source_sha256: 92a8b9cfc9f4bd48e684a94c313d159455afaa3d3b2bdadeeb87e0565890a4e8
+    replacements: []
+  - source: thumbnails/2.png
+    target: TrolleyBed/thumbnails/2.png
+    source_sha256: b12169e9b131eea340100fba31116684662f0434e5bd9e55661e590806526d0a
+    replacements: []
+  - source: thumbnails/3.png
+    target: TrolleyBed/thumbnails/3.png
+    source_sha256: 1fe18296fab2ced89b6ecb39c3dd58597b0cf343810eb632edd82827d08e0482
+    replacements: []
+  - source: thumbnails/4.png
+    target: TrolleyBed/thumbnails/4.png
+    source_sha256: 312d58790d48b55976c8205697b4c1bd76e68bd8aaf33b82163dfdf7a785b7f2
+    replacements: []
+  - source: thumbnails/5.png
+    target: TrolleyBed/thumbnails/5.png
+    source_sha256: ad35c9ea4566ec620b3e73cce716d57cdc5251c967cddba57cbedc0ef4030350
+    replacements: []

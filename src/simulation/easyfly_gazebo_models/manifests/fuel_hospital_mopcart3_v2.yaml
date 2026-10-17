@@ -1,0 +1,180 @@
+schema_version: 1
+asset_set_id: fuel_hospital_mopcart3_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MopCart3
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/MopCart3.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: MopCart3
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MopCart3
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/MopCart3.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: MopCart3/meshes/Blue.png
+  sha256: 6636c32efab9834f90ed607ea8bdfc0733b648969520d8a01e0b4fe01fe915da
+- path: MopCart3/meshes/Cart.png
+  sha256: 54effe30642e95314da99f445bdc973dc6e44942f78c7cd5741122e448ad1280
+- path: MopCart3/meshes/Cloth.png
+  sha256: d3d9ede4175fc1196bff44c7a3724a11b1990c3040b3f1918bd330754897e489
+- path: MopCart3/meshes/Duster.png
+  sha256: f6cefd224ff65d640d7a3ebd409d251c189f8e564c0c526661d3cd219c8da09c
+- path: MopCart3/meshes/Glove.png
+  sha256: 085950ec45d17ffd337f80e58c2be7991fa4c9751786e2dd6eb4ed6df218dc82
+- path: MopCart3/meshes/Mop.png
+  sha256: 92b47894e66a25578c4bef2c1be7b82f709aa85f2dd09ba6aca9ec877477cebc
+- path: MopCart3/meshes/MopCart3.mtl
+  sha256: 51d810499e3e7a49ee54a2ce8bb3424aa903d66c295256086b9a66737e4b55c9
+- path: MopCart3/meshes/MopCart3.obj
+  sha256: 5320888957464ec810ed8e87100b4d58446b41b7b875544db8eb2eef180e2ea1
+- path: MopCart3/meshes/Parcel.png
+  sha256: 6ea6b1c1bd5c4fbbf4c6bffb72391200947c2169116fff9cf4c78c2977f65a0d
+- path: MopCart3/meshes/Plastic.png
+  sha256: a12a52684a0eb61486d8185c7c0d16648fb6f6a2e883fea7f67f774607459e84
+- path: MopCart3/meshes/Red.png
+  sha256: d177d486f9bea02ef1bc9d5d7bb4b8a6a4c0259da9bc462265c6254824d69f7c
+- path: MopCart3/meshes/Sign.png
+  sha256: 195db8963cf0f122d0b24464c78c88dff3ff2ec4565f2c47fe698cf6d21d01d1
+- path: MopCart3/meshes/Spray.png
+  sha256: 2550a17d895ce0e15793e5eb16d891dd8dad6e5747df45a51f074b7e4ef0e878
+- path: MopCart3/model.config
+  sha256: d1ae8c0338465a33409c91f9459dcf27686acb084f44edc32910d315487e96d7
+- path: MopCart3/model.sdf
+  sha256: 3c90112dc1d7ab8d82d225baaa3307c138741596055b6f4df60f9aeb756ce4e9
+- path: MopCart3/thumbnails/1.png
+  sha256: 8822f264bbb774849f85d5a02bffa338b4d25bcd24ac6a6a17dfeeb917c197eb
+- path: MopCart3/thumbnails/2.png
+  sha256: 52a1aa081414bfa1f657f2e8a959bcf8ac11810350e038e73bbf0285be7b35ef
+- path: MopCart3/thumbnails/3.png
+  sha256: 7416494834096c27f1a85710175323efd3b4b5eaf83bd0230e308df803e63fa6
+- path: MopCart3/thumbnails/4.png
+  sha256: 4524f98dfd858f7dd08d6c7176f9b6ab87a2d4a7bf6018f2588646b88a0730ad
+- path: MopCart3/thumbnails/5.png
+  sha256: 6b9e5898e7d06316c65f1810c8c66a7fbe7414943273c46e6995df43b436d847
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/MopCart3/2/MopCart3.zip
+  sha256: 54e9e9db2d1a32d342709b540df5d5d290d04f474ad2ef72c78adb60dcfe2821
+  size_bytes: 5787981
+  prefix: ''
+  max_members: 22
+  max_unpacked_bytes: 6333541
+  license:
+    notice: '{"createdAt":"2020-06-22T08:41:13Z","updatedAt":"2026-10-16T18:33:19Z","name":"MopCart3","owner":"OpenRobotics","description":"Last
+      version of another mop cart","likes":0,"downloads":48035,"filesize":5787981,"upload_date":"2020-06-22T08:41:10Z","modify_date":"2023-09-27T15:29:40Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/MopCart3/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Appliance"]}
+
+      '
+    sha256: 8addb35dbac40b1d5c69e17cf7ba2f724d73c998ccfe65e945b3b8e488a656c6
+  members:
+  - source: meshes/Blue.png
+    target: MopCart3/meshes/Blue.png
+    source_sha256: 6636c32efab9834f90ed607ea8bdfc0733b648969520d8a01e0b4fe01fe915da
+    replacements: []
+  - source: meshes/Cart.png
+    target: MopCart3/meshes/Cart.png
+    source_sha256: 54effe30642e95314da99f445bdc973dc6e44942f78c7cd5741122e448ad1280
+    replacements: []
+  - source: meshes/Cloth.png
+    target: MopCart3/meshes/Cloth.png
+    source_sha256: d3d9ede4175fc1196bff44c7a3724a11b1990c3040b3f1918bd330754897e489
+    replacements: []
+  - source: meshes/Duster.png
+    target: MopCart3/meshes/Duster.png
+    source_sha256: f6cefd224ff65d640d7a3ebd409d251c189f8e564c0c526661d3cd219c8da09c
+    replacements: []
+  - source: meshes/Glove.png
+    target: MopCart3/meshes/Glove.png
+    source_sha256: 085950ec45d17ffd337f80e58c2be7991fa4c9751786e2dd6eb4ed6df218dc82
+    replacements: []
+  - source: meshes/Mop.png
+    target: MopCart3/meshes/Mop.png
+    source_sha256: 92b47894e66a25578c4bef2c1be7b82f709aa85f2dd09ba6aca9ec877477cebc
+    replacements: []
+  - source: meshes/MopCart3.mtl
+    target: MopCart3/meshes/MopCart3.mtl
+    source_sha256: 51d810499e3e7a49ee54a2ce8bb3424aa903d66c295256086b9a66737e4b55c9
+    replacements: []
+  - source: meshes/MopCart3.obj
+    target: MopCart3/meshes/MopCart3.obj
+    source_sha256: 5320888957464ec810ed8e87100b4d58446b41b7b875544db8eb2eef180e2ea1
+    replacements: []
+  - source: meshes/Parcel.png
+    target: MopCart3/meshes/Parcel.png
+    source_sha256: 6ea6b1c1bd5c4fbbf4c6bffb72391200947c2169116fff9cf4c78c2977f65a0d
+    replacements: []
+  - source: meshes/Plastic.png
+    target: MopCart3/meshes/Plastic.png
+    source_sha256: a12a52684a0eb61486d8185c7c0d16648fb6f6a2e883fea7f67f774607459e84
+    replacements: []
+  - source: meshes/Red.png
+    target: MopCart3/meshes/Red.png
+    source_sha256: d177d486f9bea02ef1bc9d5d7bb4b8a6a4c0259da9bc462265c6254824d69f7c
+    replacements: []
+  - source: meshes/Sign.png
+    target: MopCart3/meshes/Sign.png
+    source_sha256: 195db8963cf0f122d0b24464c78c88dff3ff2ec4565f2c47fe698cf6d21d01d1
+    replacements: []
+  - source: meshes/Spray.png
+    target: MopCart3/meshes/Spray.png
+    source_sha256: 2550a17d895ce0e15793e5eb16d891dd8dad6e5747df45a51f074b7e4ef0e878
+    replacements: []
+  - source: model.config
+    target: MopCart3/model.config
+    source_sha256: d1ae8c0338465a33409c91f9459dcf27686acb084f44edc32910d315487e96d7
+    replacements: []
+  - source: model.sdf
+    target: MopCart3/model.sdf
+    source_sha256: 3c90112dc1d7ab8d82d225baaa3307c138741596055b6f4df60f9aeb756ce4e9
+    replacements: []
+  - source: thumbnails/1.png
+    target: MopCart3/thumbnails/1.png
+    source_sha256: 8822f264bbb774849f85d5a02bffa338b4d25bcd24ac6a6a17dfeeb917c197eb
+    replacements: []
+  - source: thumbnails/2.png
+    target: MopCart3/thumbnails/2.png
+    source_sha256: 52a1aa081414bfa1f657f2e8a959bcf8ac11810350e038e73bbf0285be7b35ef
+    replacements: []
+  - source: thumbnails/3.png
+    target: MopCart3/thumbnails/3.png
+    source_sha256: 7416494834096c27f1a85710175323efd3b4b5eaf83bd0230e308df803e63fa6
+    replacements: []
+  - source: thumbnails/4.png
+    target: MopCart3/thumbnails/4.png
+    source_sha256: 4524f98dfd858f7dd08d6c7176f9b6ab87a2d4a7bf6018f2588646b88a0730ad
+    replacements: []
+  - source: thumbnails/5.png
+    target: MopCart3/thumbnails/5.png
+    source_sha256: 6b9e5898e7d06316c65f1810c8c66a7fbe7414943273c46e6995df43b436d847
+    replacements: []

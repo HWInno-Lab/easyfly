@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_surgicaltrolley_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolley
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/SurgicalTrolley.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: SurgicalTrolley
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolley
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/SurgicalTrolley.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: SurgicalTrolley/meshes/texture.png
+  sha256: c68acbe6ee71e8991999387b3bfe2f9c1b21eb552a947b7905227cd0a1ac61ae
+- path: SurgicalTrolley/meshes/trolley.mtl
+  sha256: 5f809b912b7bbc1559a2c11719989e2be1fa01f936e9b5b7d7c31dcd30f5a017
+- path: SurgicalTrolley/meshes/trolley.obj
+  sha256: dbccdb21418d07298f830205667bb3f9e63d56d632f4edf19978250418c34fa6
+- path: SurgicalTrolley/model.config
+  sha256: fd9d527b245bf8433ddea99a321554ed47d717d967b238a0b6da53249372537d
+- path: SurgicalTrolley/model.sdf
+  sha256: 72fbec4e00691075fe51b18e6c05b7f9345e6c7eb5c1e8ce061570d0bc11ebed
+- path: SurgicalTrolley/thumbnails/1.png
+  sha256: f6d45ba0b8ce81731ea8e3f8983e332d9e06d54bc9ee84acedac7bbb65b10632
+- path: SurgicalTrolley/thumbnails/2.png
+  sha256: 9fdae3a67cd0efbf3148348339b8c9daaea4cae6cc73085e35ca08d984642a92
+- path: SurgicalTrolley/thumbnails/3.png
+  sha256: 92074e86e6efcedceed82818475266c9439aa7f980c370415e2d21288f3c0856
+- path: SurgicalTrolley/thumbnails/4.png
+  sha256: 435256e7b3a1d56d2936504e9b376951319f04ec959618300b74765d44a5042d
+- path: SurgicalTrolley/thumbnails/5.png
+  sha256: 279252b0981534fd0df3418fa2a44711e046862fcbe35f58cbf364c20d1cd503
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/SurgicalTrolley/2/SurgicalTrolley.zip
+  sha256: 651f5553c160be33395eb3e7e40520e8d38c74d350cc649ca9e6870d48b8d5b7
+  size_bytes: 849805
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 919879
+  license:
+    notice: '{"createdAt":"2019-10-28T06:43:28Z","updatedAt":"2026-10-16T15:31:29Z","name":"SurgicalTrolley","owner":"OpenRobotics","description":"Surgical
+      supply trolley","likes":0,"downloads":6886,"filesize":849805,"upload_date":"2019-10-28T06:43:25Z","modify_date":"2023-09-27T16:19:23Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/SurgicalTrolley/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: a21eaeaaa19d8d048a56524fc3f3555616a5418318a70ce85233558859caaf52
+  members:
+  - source: meshes/texture.png
+    target: SurgicalTrolley/meshes/texture.png
+    source_sha256: c68acbe6ee71e8991999387b3bfe2f9c1b21eb552a947b7905227cd0a1ac61ae
+    replacements: []
+  - source: meshes/trolley.mtl
+    target: SurgicalTrolley/meshes/trolley.mtl
+    source_sha256: 5f809b912b7bbc1559a2c11719989e2be1fa01f936e9b5b7d7c31dcd30f5a017
+    replacements: []
+  - source: meshes/trolley.obj
+    target: SurgicalTrolley/meshes/trolley.obj
+    source_sha256: dbccdb21418d07298f830205667bb3f9e63d56d632f4edf19978250418c34fa6
+    replacements: []
+  - source: model.config
+    target: SurgicalTrolley/model.config
+    source_sha256: fd9d527b245bf8433ddea99a321554ed47d717d967b238a0b6da53249372537d
+    replacements: []
+  - source: model.sdf
+    target: SurgicalTrolley/model.sdf
+    source_sha256: 72fbec4e00691075fe51b18e6c05b7f9345e6c7eb5c1e8ce061570d0bc11ebed
+    replacements: []
+  - source: thumbnails/1.png
+    target: SurgicalTrolley/thumbnails/1.png
+    source_sha256: f6d45ba0b8ce81731ea8e3f8983e332d9e06d54bc9ee84acedac7bbb65b10632
+    replacements: []
+  - source: thumbnails/2.png
+    target: SurgicalTrolley/thumbnails/2.png
+    source_sha256: 9fdae3a67cd0efbf3148348339b8c9daaea4cae6cc73085e35ca08d984642a92
+    replacements: []
+  - source: thumbnails/3.png
+    target: SurgicalTrolley/thumbnails/3.png
+    source_sha256: 92074e86e6efcedceed82818475266c9439aa7f980c370415e2d21288f3c0856
+    replacements: []
+  - source: thumbnails/4.png
+    target: SurgicalTrolley/thumbnails/4.png
+    source_sha256: 435256e7b3a1d56d2936504e9b376951319f04ec959618300b74765d44a5042d
+    replacements: []
+  - source: thumbnails/5.png
+    target: SurgicalTrolley/thumbnails/5.png
+    source_sha256: 279252b0981534fd0df3418fa2a44711e046862fcbe35f58cbf364c20d1cd503
+    replacements: []

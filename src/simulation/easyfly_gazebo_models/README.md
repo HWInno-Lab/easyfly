@@ -1,5 +1,16 @@
 # 现有模型与资产快照（S0）
 
+医院资源草稿 `aws_hospital_v1` 选择固定 AWS 提交中的 26 个模型，按 MIT-0
+单独记录。43 个 Fuel 模型各有独立的缓存清单、版本、归档和逐文件 SHA256；
+逐项 API 原文均声明 CC-BY-4.0，保存在 `licenses/hospital_fuel/metadata/`。
+`ATTRIBUTION.md` 与 `origins.json` 保留原作者、描述和第三方来源署名。
+这 43 份 ZIP 中没有 LICENSE，缓存 `LICENSE` 保存显式锁定的外部发布者声明，
+不套用 AWS 许可或旧下载脚本生成的 CC-BY-3.0 数据库声明。
+6 份 AWS model.config 仅转义描述中的裸 `&`，原始/本地哈希和替换计数均锁定；
+几何、纹理和全部 Fuel 文件字节不变。707 份模型文件只进入外部缓存，
+安装包包含清单与轻量证据。复现入口为 `tools/scenes/import_aws_hospital.py`。
+场景分类、原 world 的异常高度和草稿状态见 world 包的医院登记。
+
 保留现有模型根路径，新增 `manifests/` 记录资源集合，避免全目录安装缓存或开发产物。
 清单格式定义在 world 包的 `schemas/asset-set-v1.schema.json`。
 

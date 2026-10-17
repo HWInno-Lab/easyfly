@@ -1,0 +1,131 @@
+schema_version: 1
+asset_set_id: fuel_hospital_patientfsit_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientFSit
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/PatientFSit.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: PatientFSit
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientFSit
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/PatientFSit.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: PatientFSit/meshes/PatientFPurple.png
+  sha256: b5655f495cdf27dd6d70dbcb0f945a264c4e2c9734adf53ee4bf4bd4b1d87bed
+- path: PatientFSit/meshes/PatientFSit.mtl
+  sha256: a95a722846eabf75af5d7f9b1e1b5a25bb6860a6f6e710cd1687e984df9437e8
+- path: PatientFSit/meshes/PatientFSit.obj
+  sha256: c4b2f7755f0868494d016610f55d23c7ce5fd7ac6521fff10fa8b049bf53cabc
+- path: PatientFSit/meshes/PatientFSit_Col.mtl
+  sha256: ba8975fff618ff010193dbfd75dbb7b4212e2ea22088ae6c25bac9cc2a491191
+- path: PatientFSit/meshes/PatientFSit_Col.obj
+  sha256: 66d792e13a34f92c964b3b639e58a0104c0849e0dbb5dfb37380410a437bda58
+- path: PatientFSit/model.config
+  sha256: 732b6d7a64c4fbe2de374ff8dcb86d167f5b47624caf820740faf885e4448ad6
+- path: PatientFSit/model.sdf
+  sha256: 99033e0ebdd4c265af038a69ebfdbd0361d3c7e8e37c5a2ce5ff62fed5b4ea65
+- path: PatientFSit/thumbnails/1.png
+  sha256: 6177621159fff1c863bd810713563c0b8da02fc6f9feed8a3e6e2fbe3d556019
+- path: PatientFSit/thumbnails/2.png
+  sha256: 5b5241c12860e1ffa6ec77ab5b07d0b53a4eaaa434622be8d8fca2bae2bd18d5
+- path: PatientFSit/thumbnails/3.png
+  sha256: 6734ffa0206ad53ab854f93c3bcef37e8691d984bd708b23ef0ebac8137af08f
+- path: PatientFSit/thumbnails/4.png
+  sha256: 38b5dcb01cac3b42f652fa2be6c9eb6d6f36b1cd80bff32371982721a0e0672b
+- path: PatientFSit/thumbnails/5.png
+  sha256: 3db4e7cf59374398cb9b8f9b710f50486e684bee86c5305f967d6ac2a14d02cb
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/PatientFSit/2/PatientFSit.zip
+  sha256: 23c94538b01818d163e5df4d93aef8e88fd2201e57dbf08a85d9a4a3fcc7aefa
+  size_bytes: 657045
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 801013
+  license:
+    notice: '{"createdAt":"2020-06-25T10:17:29Z","updatedAt":"2026-10-16T18:33:09Z","name":"PatientFSit","owner":"OpenRobotics","description":"","likes":0,"downloads":39420,"filesize":657045,"upload_date":"2020-06-25T10:17:27Z","modify_date":"2023-09-27T15:27:47Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/PatientFSit/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: 140191e1a406b1ce073c6af4aafdda866fc4efb15ee80a8d02ad47cac77d2986
+  members:
+  - source: meshes/PatientFPurple.png
+    target: PatientFSit/meshes/PatientFPurple.png
+    source_sha256: b5655f495cdf27dd6d70dbcb0f945a264c4e2c9734adf53ee4bf4bd4b1d87bed
+    replacements: []
+  - source: meshes/PatientFSit.mtl
+    target: PatientFSit/meshes/PatientFSit.mtl
+    source_sha256: a95a722846eabf75af5d7f9b1e1b5a25bb6860a6f6e710cd1687e984df9437e8
+    replacements: []
+  - source: meshes/PatientFSit.obj
+    target: PatientFSit/meshes/PatientFSit.obj
+    source_sha256: c4b2f7755f0868494d016610f55d23c7ce5fd7ac6521fff10fa8b049bf53cabc
+    replacements: []
+  - source: meshes/PatientFSit_Col.mtl
+    target: PatientFSit/meshes/PatientFSit_Col.mtl
+    source_sha256: ba8975fff618ff010193dbfd75dbb7b4212e2ea22088ae6c25bac9cc2a491191
+    replacements: []
+  - source: meshes/PatientFSit_Col.obj
+    target: PatientFSit/meshes/PatientFSit_Col.obj
+    source_sha256: 66d792e13a34f92c964b3b639e58a0104c0849e0dbb5dfb37380410a437bda58
+    replacements: []
+  - source: model.config
+    target: PatientFSit/model.config
+    source_sha256: 732b6d7a64c4fbe2de374ff8dcb86d167f5b47624caf820740faf885e4448ad6
+    replacements: []
+  - source: model.sdf
+    target: PatientFSit/model.sdf
+    source_sha256: 99033e0ebdd4c265af038a69ebfdbd0361d3c7e8e37c5a2ce5ff62fed5b4ea65
+    replacements: []
+  - source: thumbnails/1.png
+    target: PatientFSit/thumbnails/1.png
+    source_sha256: 6177621159fff1c863bd810713563c0b8da02fc6f9feed8a3e6e2fbe3d556019
+    replacements: []
+  - source: thumbnails/2.png
+    target: PatientFSit/thumbnails/2.png
+    source_sha256: 5b5241c12860e1ffa6ec77ab5b07d0b53a4eaaa434622be8d8fca2bae2bd18d5
+    replacements: []
+  - source: thumbnails/3.png
+    target: PatientFSit/thumbnails/3.png
+    source_sha256: 6734ffa0206ad53ab854f93c3bcef37e8691d984bd708b23ef0ebac8137af08f
+    replacements: []
+  - source: thumbnails/4.png
+    target: PatientFSit/thumbnails/4.png
+    source_sha256: 38b5dcb01cac3b42f652fa2be6c9eb6d6f36b1cd80bff32371982721a0e0672b
+    replacements: []
+  - source: thumbnails/5.png
+    target: PatientFSit/thumbnails/5.png
+    source_sha256: 3db4e7cf59374398cb9b8f9b710f50486e684bee86c5305f967d6ac2a14d02cb
+    replacements: []

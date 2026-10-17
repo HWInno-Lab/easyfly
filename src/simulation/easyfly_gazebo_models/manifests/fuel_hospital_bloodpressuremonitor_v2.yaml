@@ -1,0 +1,131 @@
+schema_version: 1
+asset_set_id: fuel_hospital_bloodpressuremonitor_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BloodPressureMonitor
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/BloodPressureMonitor.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: BloodPressureMonitor
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BloodPressureMonitor
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/BloodPressureMonitor.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: BloodPressureMonitor/meshes/BloodPressureMonitor.mtl
+  sha256: 6c7c5216d41945474155fd60b2504f3fabc79f8d2467f673744a7dcc24da17d9
+- path: BloodPressureMonitor/meshes/BloodPressureMonitor.obj
+  sha256: 09df36eba5358980ca222e18be59f977e958ba0483b7a441739dcff155b09664
+- path: BloodPressureMonitor/meshes/BloodPressureMonitor.png
+  sha256: fc5ecf3dd01e94ffe4b99b5e3e942054c9f3cf27344a62b9108983424a75ebd5
+- path: BloodPressureMonitor/meshes/BloodPressureMonitor_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: BloodPressureMonitor/meshes/BloodPressureMonitor_Col.obj
+  sha256: d09ead9910161551664c801d30165f65ac248636f97b1704a0be87c91d4a4d13
+- path: BloodPressureMonitor/model.config
+  sha256: 2829f4cde798fafc9da2d6b1d096597c1608819f3d22c046483d90a4ebe1928b
+- path: BloodPressureMonitor/model.sdf
+  sha256: a4092fe786a4c542533d9981b7bb27ed195da151bbcac03cea036b8e498cd354
+- path: BloodPressureMonitor/thumbnails/1.png
+  sha256: 08ef8cd1c3c7a119008a5b4a72257415e643b95e12ddd9f3403097bf34193f67
+- path: BloodPressureMonitor/thumbnails/2.png
+  sha256: 12b978a38c0544299303528ce55482af741021586f02b5a7acb833720c7196c0
+- path: BloodPressureMonitor/thumbnails/3.png
+  sha256: 5e5db79ed7a5df1481fd1807ce36d8a42840cc500bdb448f8a2654b116d56785
+- path: BloodPressureMonitor/thumbnails/4.png
+  sha256: 17d149723be5ab17e9607e0e3276fa6e423f3c0d0892f8e7285f73203c01cda5
+- path: BloodPressureMonitor/thumbnails/5.png
+  sha256: 16421974b28a27fc51e8ac0484445818a4e642f6e4ac72ca66b9968eedbc008b
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/BloodPressureMonitor/2/BloodPressureMonitor.zip
+  sha256: 1d8d49997fccca39e1bc992634d9f2a68500bf799ccca271c477d65e9475ba23
+  size_bytes: 237020
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 274153
+  license:
+    notice: '{"createdAt":"2020-08-06T11:21:27Z","updatedAt":"2026-10-16T15:29:34Z","name":"BloodPressureMonitor","owner":"OpenRobotics","description":"","likes":0,"downloads":8098,"filesize":237020,"upload_date":"2020-08-06T11:21:26Z","modify_date":"2023-09-27T15:23:44Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/BloodPressureMonitor/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["monitor","bloodpressure","blood","bloodpressuremonitor"],"categories":["Appliance"]}
+
+      '
+    sha256: 585347874299b931093a7fb21259b8ec3e35cf2af197c707575242b0942f81fb
+  members:
+  - source: meshes/BloodPressureMonitor.mtl
+    target: BloodPressureMonitor/meshes/BloodPressureMonitor.mtl
+    source_sha256: 6c7c5216d41945474155fd60b2504f3fabc79f8d2467f673744a7dcc24da17d9
+    replacements: []
+  - source: meshes/BloodPressureMonitor.obj
+    target: BloodPressureMonitor/meshes/BloodPressureMonitor.obj
+    source_sha256: 09df36eba5358980ca222e18be59f977e958ba0483b7a441739dcff155b09664
+    replacements: []
+  - source: meshes/BloodPressureMonitor.png
+    target: BloodPressureMonitor/meshes/BloodPressureMonitor.png
+    source_sha256: fc5ecf3dd01e94ffe4b99b5e3e942054c9f3cf27344a62b9108983424a75ebd5
+    replacements: []
+  - source: meshes/BloodPressureMonitor_Col.mtl
+    target: BloodPressureMonitor/meshes/BloodPressureMonitor_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/BloodPressureMonitor_Col.obj
+    target: BloodPressureMonitor/meshes/BloodPressureMonitor_Col.obj
+    source_sha256: d09ead9910161551664c801d30165f65ac248636f97b1704a0be87c91d4a4d13
+    replacements: []
+  - source: model.config
+    target: BloodPressureMonitor/model.config
+    source_sha256: 2829f4cde798fafc9da2d6b1d096597c1608819f3d22c046483d90a4ebe1928b
+    replacements: []
+  - source: model.sdf
+    target: BloodPressureMonitor/model.sdf
+    source_sha256: a4092fe786a4c542533d9981b7bb27ed195da151bbcac03cea036b8e498cd354
+    replacements: []
+  - source: thumbnails/1.png
+    target: BloodPressureMonitor/thumbnails/1.png
+    source_sha256: 08ef8cd1c3c7a119008a5b4a72257415e643b95e12ddd9f3403097bf34193f67
+    replacements: []
+  - source: thumbnails/2.png
+    target: BloodPressureMonitor/thumbnails/2.png
+    source_sha256: 12b978a38c0544299303528ce55482af741021586f02b5a7acb833720c7196c0
+    replacements: []
+  - source: thumbnails/3.png
+    target: BloodPressureMonitor/thumbnails/3.png
+    source_sha256: 5e5db79ed7a5df1481fd1807ce36d8a42840cc500bdb448f8a2654b116d56785
+    replacements: []
+  - source: thumbnails/4.png
+    target: BloodPressureMonitor/thumbnails/4.png
+    source_sha256: 17d149723be5ab17e9607e0e3276fa6e423f3c0d0892f8e7285f73203c01cda5
+    replacements: []
+  - source: thumbnails/5.png
+    target: BloodPressureMonitor/thumbnails/5.png
+    source_sha256: 16421974b28a27fc51e8ac0484445818a4e642f6e4ac72ca66b9968eedbc008b
+    replacements: []

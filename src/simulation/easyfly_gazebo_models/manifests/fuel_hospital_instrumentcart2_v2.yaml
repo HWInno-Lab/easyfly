@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_instrumentcart2_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart2
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/InstrumentCart2.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: InstrumentCart2
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart2
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/InstrumentCart2.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: InstrumentCart2/meshes/InstrumentCart2.mtl
+  sha256: 1b75169a257ee1b2ad64d947be7de2d596fc2881dc413d367a4273bd19d637e6
+- path: InstrumentCart2/meshes/InstrumentCart2.obj
+  sha256: b6a9739bc59f4dc6c4cc105744c8dccf179c58cef61b48d02b28eafc0e4463d2
+- path: InstrumentCart2/meshes/texture.png
+  sha256: 510c6bad98a246fe3b5e338551ff5e89cc229ce29a347db79d0a7161d4650251
+- path: InstrumentCart2/model.config
+  sha256: f8b51de0df9097dfd75dbe526a48b910dd6b5373371972789393c566d5555938
+- path: InstrumentCart2/model.sdf
+  sha256: b5af94b981e623fafdf220b1c694dbc30e2a51a263673b195c7fa75484f8e27b
+- path: InstrumentCart2/thumbnails/1.png
+  sha256: ed2de1baac8c76c0e2c855333000f3f388885f1f7285c35b80fbdb32f9f506c7
+- path: InstrumentCart2/thumbnails/2.png
+  sha256: 3936b1c894687872dc2926c9a8eb170e564bef447bb9b5f501a61f4a011564bf
+- path: InstrumentCart2/thumbnails/3.png
+  sha256: dcd9d58e8557e582661bd6ed59a81f6fc46cb2c44c716b6f7474569bc1fde96a
+- path: InstrumentCart2/thumbnails/4.png
+  sha256: 53ca4872eced903828488bd8b817e27a687e4985336e19e472a8cd2767c3b3f8
+- path: InstrumentCart2/thumbnails/5.png
+  sha256: 055399465defd15291b626bfb8ed292624f48505bfcc218d86eec09f45b4497d
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/InstrumentCart2/2/InstrumentCart2.zip
+  sha256: b62a40f8a05386f365713d132cab2deb74b07da5168fb4c769531f602f981d70
+  size_bytes: 702606
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 768154
+  license:
+    notice: '{"createdAt":"2019-10-28T06:19:44Z","updatedAt":"2026-10-16T15:33:38Z","name":"InstrumentCart2","owner":"OpenRobotics","description":"Description
+      of the model","likes":0,"downloads":6649,"filesize":702606,"upload_date":"2019-10-28T06:19:41Z","modify_date":"2023-09-27T16:21:17Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/InstrumentCart2/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: b86d668edf41246cfc2cc76c6aa993daef34daaf180dae76843a437d88752ec7
+  members:
+  - source: meshes/InstrumentCart2.mtl
+    target: InstrumentCart2/meshes/InstrumentCart2.mtl
+    source_sha256: 1b75169a257ee1b2ad64d947be7de2d596fc2881dc413d367a4273bd19d637e6
+    replacements: []
+  - source: meshes/InstrumentCart2.obj
+    target: InstrumentCart2/meshes/InstrumentCart2.obj
+    source_sha256: b6a9739bc59f4dc6c4cc105744c8dccf179c58cef61b48d02b28eafc0e4463d2
+    replacements: []
+  - source: meshes/texture.png
+    target: InstrumentCart2/meshes/texture.png
+    source_sha256: 510c6bad98a246fe3b5e338551ff5e89cc229ce29a347db79d0a7161d4650251
+    replacements: []
+  - source: model.config
+    target: InstrumentCart2/model.config
+    source_sha256: f8b51de0df9097dfd75dbe526a48b910dd6b5373371972789393c566d5555938
+    replacements: []
+  - source: model.sdf
+    target: InstrumentCart2/model.sdf
+    source_sha256: b5af94b981e623fafdf220b1c694dbc30e2a51a263673b195c7fa75484f8e27b
+    replacements: []
+  - source: thumbnails/1.png
+    target: InstrumentCart2/thumbnails/1.png
+    source_sha256: ed2de1baac8c76c0e2c855333000f3f388885f1f7285c35b80fbdb32f9f506c7
+    replacements: []
+  - source: thumbnails/2.png
+    target: InstrumentCart2/thumbnails/2.png
+    source_sha256: 3936b1c894687872dc2926c9a8eb170e564bef447bb9b5f501a61f4a011564bf
+    replacements: []
+  - source: thumbnails/3.png
+    target: InstrumentCart2/thumbnails/3.png
+    source_sha256: dcd9d58e8557e582661bd6ed59a81f6fc46cb2c44c716b6f7474569bc1fde96a
+    replacements: []
+  - source: thumbnails/4.png
+    target: InstrumentCart2/thumbnails/4.png
+    source_sha256: 53ca4872eced903828488bd8b817e27a687e4985336e19e472a8cd2767c3b3f8
+    replacements: []
+  - source: thumbnails/5.png
+    target: InstrumentCart2/thumbnails/5.png
+    source_sha256: 055399465defd15291b626bfb8ed292624f48505bfcc218d86eec09f45b4497d
+    replacements: []

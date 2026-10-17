@@ -1,0 +1,146 @@
+schema_version: 1
+asset_set_id: fuel_hospital_malepatientbed_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MalePatientBed
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/MalePatientBed.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: MalePatientBed
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/MalePatientBed
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/MalePatientBed.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: MalePatientBed/meshes/CGMVanguard_Diffuse.png
+  sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+- path: MalePatientBed/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: MalePatientBed/meshes/MalePatientBed.mtl
+  sha256: a193a8fca2f307ba4759aaf57fe00158670cd60325183354657107dd553c133b
+- path: MalePatientBed/meshes/MalePatientBed.obj
+  sha256: 3e37ba092a06d7b1e3afd47c09d7687ad1a7cdfe3526462905b17e617751a934
+- path: MalePatientBed/meshes/PatientM.png
+  sha256: 4cab77bf5953d9bc695f922856b8d3c13f76921715977aa8a1ed091e6d5b961b
+- path: MalePatientBed/meshes/texture.png
+  sha256: e85db084f9d96fd17c54a240330188a3cc4cca8b2581f9d7e947987c9dea14f8
+- path: MalePatientBed/meshes/towel1.jpg
+  sha256: e725a634bad53f51f858be45d1ccdf27d2b63cfe628b5a081911cbf992672e73
+- path: MalePatientBed/model.config
+  sha256: 01e6d538cdea1e6d205dfd8f4ced491e162b5ae2b8a1d708e9ff6ff697d0bf3a
+- path: MalePatientBed/model.sdf
+  sha256: ea9d718e5579474a97c631a97665ed99fa00b0c2b40caa990d3622157dcc3875
+- path: MalePatientBed/thumbnails/1.png
+  sha256: 4f72d863c637e37ff67734decafcaa958bab972d045ac8ab2df39d9c44c3ab6c
+- path: MalePatientBed/thumbnails/2.png
+  sha256: 04dc39746f7e23b7a371a8d0e52e0729941cb7d8e295ab32bb46b71144831e72
+- path: MalePatientBed/thumbnails/3.png
+  sha256: 943a56e9cc2058bdeda30647018e2e37886f0fcb5c66904d41f4947839aa61b3
+- path: MalePatientBed/thumbnails/4.png
+  sha256: 3c7b9a924ac9e0c7acc08a9a53fd70bb03d78ea18b4cce6f84e20a75981304b3
+- path: MalePatientBed/thumbnails/5.png
+  sha256: 7ba5b9eaeb0357027a90ebe94137ff72d74f78d48d03eb8b38fd13da5ad68f79
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/MalePatientBed/2/MalePatientBed.zip
+  sha256: 4ac3f758e9f9400b45caf73747eceb4c7f682c5dc6478d7a9ee05707a729ea54
+  size_bytes: 2087725
+  prefix: ''
+  max_members: 16
+  max_unpacked_bytes: 2400874
+  license:
+    notice: '{"createdAt":"2020-06-25T10:12:27Z","updatedAt":"2026-10-16T15:36:13Z","name":"MalePatientBed","owner":"OpenRobotics","description":"A
+      male patient lying down on a hospital bed.\nCharacter generated from Autodesk
+      Character Generator - https://charactergenerator.autodesk.com/\nPose from Mixamo
+      - https://www.mixamo.com/\nBed from Cole Biesemeyer.","likes":0,"downloads":7865,"filesize":2087725,"upload_date":"2020-06-25T10:12:25Z","modify_date":"2023-09-27T15:28:21Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/MalePatientBed/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: 278689c7ccd18d4f4c147cb84d43f650207abdd5e4bcda4593583b67e75e6774
+  members:
+  - source: meshes/CGMVanguard_Diffuse.png
+    target: MalePatientBed/meshes/CGMVanguard_Diffuse.png
+    source_sha256: 692bf0e3453bc761cdd9ea645e803a54bc8151ddd53a9465b3187212b8a06833
+    replacements: []
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: MalePatientBed/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: meshes/MalePatientBed.mtl
+    target: MalePatientBed/meshes/MalePatientBed.mtl
+    source_sha256: a193a8fca2f307ba4759aaf57fe00158670cd60325183354657107dd553c133b
+    replacements: []
+  - source: meshes/MalePatientBed.obj
+    target: MalePatientBed/meshes/MalePatientBed.obj
+    source_sha256: 3e37ba092a06d7b1e3afd47c09d7687ad1a7cdfe3526462905b17e617751a934
+    replacements: []
+  - source: meshes/PatientM.png
+    target: MalePatientBed/meshes/PatientM.png
+    source_sha256: 4cab77bf5953d9bc695f922856b8d3c13f76921715977aa8a1ed091e6d5b961b
+    replacements: []
+  - source: meshes/texture.png
+    target: MalePatientBed/meshes/texture.png
+    source_sha256: e85db084f9d96fd17c54a240330188a3cc4cca8b2581f9d7e947987c9dea14f8
+    replacements: []
+  - source: meshes/towel1.jpg
+    target: MalePatientBed/meshes/towel1.jpg
+    source_sha256: e725a634bad53f51f858be45d1ccdf27d2b63cfe628b5a081911cbf992672e73
+    replacements: []
+  - source: model.config
+    target: MalePatientBed/model.config
+    source_sha256: 01e6d538cdea1e6d205dfd8f4ced491e162b5ae2b8a1d708e9ff6ff697d0bf3a
+    replacements: []
+  - source: model.sdf
+    target: MalePatientBed/model.sdf
+    source_sha256: ea9d718e5579474a97c631a97665ed99fa00b0c2b40caa990d3622157dcc3875
+    replacements: []
+  - source: thumbnails/1.png
+    target: MalePatientBed/thumbnails/1.png
+    source_sha256: 4f72d863c637e37ff67734decafcaa958bab972d045ac8ab2df39d9c44c3ab6c
+    replacements: []
+  - source: thumbnails/2.png
+    target: MalePatientBed/thumbnails/2.png
+    source_sha256: 04dc39746f7e23b7a371a8d0e52e0729941cb7d8e295ab32bb46b71144831e72
+    replacements: []
+  - source: thumbnails/3.png
+    target: MalePatientBed/thumbnails/3.png
+    source_sha256: 943a56e9cc2058bdeda30647018e2e37886f0fcb5c66904d41f4947839aa61b3
+    replacements: []
+  - source: thumbnails/4.png
+    target: MalePatientBed/thumbnails/4.png
+    source_sha256: 3c7b9a924ac9e0c7acc08a9a53fd70bb03d78ea18b4cce6f84e20a75981304b3
+    replacements: []
+  - source: thumbnails/5.png
+    target: MalePatientBed/thumbnails/5.png
+    source_sha256: 7ba5b9eaeb0357027a90ebe94137ff72d74f78d48d03eb8b38fd13da5ad68f79
+    replacements: []

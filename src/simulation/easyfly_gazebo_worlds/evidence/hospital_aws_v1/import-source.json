@@ -1,0 +1,63 @@
+{
+  "scene": "hospital_aws_v1",
+  "source_revision": "39969a9d250135835cf13b480865647d1a87b6f4",
+  "world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+  "world_changed": false,
+  "source_model_instances": 181,
+  "builtin_models": [
+    "sun",
+    "ground_plane"
+  ],
+  "aws_model_count": 26,
+  "fuel_model_count": 43,
+  "asset_sets": 44,
+  "aws_locked_files": 188,
+  "fuel_locked_files": 519,
+  "fuel_archive_bytes": 48885215,
+  "aws_license": "MIT-0",
+  "fuel_licenses": {
+    "CC-BY-4.0": 43
+  },
+  "fuel_versions": {
+    "2": 32,
+    "3": 8,
+    "4": 3
+  },
+  "xml_description_fixes": [
+    "models/aws_robomaker_hospital_curtain_closed_01/model.config",
+    "models/aws_robomaker_hospital_curtain_half_open_01/model.config",
+    "models/aws_robomaker_hospital_curtain_open_01/model.config",
+    "models/aws_robomaker_hospital_elevator_01_car/model.config",
+    "models/aws_robomaker_hospital_elevator_01_door/model.config",
+    "models/aws_robomaker_hospital_elevator_01_portal/model.config"
+  ],
+  "anomalous_placements": [
+    {
+      "instance": "StorageRack_1",
+      "original_pose": "9.07005 -10.3582 -7.57769e+08 -2e-06 0 0",
+      "action": "Preserved in original draft world; correction requires a new revision."
+    },
+    {
+      "instance": "WhiteChipChair_1",
+      "original_pose": "-8.87142 9.15707 -7.57769e+08 0 -0.152685 0",
+      "action": "Preserved in original draft world; correction requires a new revision."
+    },
+    {
+      "instance": "TrolleyBed_1",
+      "original_pose": "4.85934 -4.87229 -7.57769e+08 0 -1e-06 0",
+      "action": "Preserved in original draft world; correction requires a new revision."
+    }
+  ],
+  "geometry_changed": false,
+  "world_loaded": false,
+  "sensors_checked": false,
+  "navigation_tested": false,
+  "status": "draft",
+  "geometry_qualification_pending": true,
+  "limitations": [
+    "Only the single-floor hospital.world dependency graph selected.",
+    "No multi-floor/elevator behavior or whole-building flight acceptance.",
+    "License declarations recorded from publisher, not inferred from AWS root license.",
+    "Publisher metadata names its current version; immutable ZIP bytes and the matching X-Ign-Resource-Version response were independently recorded during source retrieval."
+  ]
+}

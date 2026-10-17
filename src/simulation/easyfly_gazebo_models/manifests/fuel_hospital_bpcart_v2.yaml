@@ -1,0 +1,150 @@
+schema_version: 1
+asset_set_id: fuel_hospital_bpcart_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/BPCart.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: BPCart
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/BPCart.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: BPCart/meshes/BP_BP_LP_Normal.png
+  sha256: d13d5598fc148909e36b9c03f75191594c9469a0baf4b4207371626e30865658
+- path: BPCart/meshes/BP_BP_LP_SpecularGloss.png
+  sha256: 3fb2b945d843634f3f15b161912fb3f238a4b145b584c496805f7bec7f901667
+- path: BPCart/meshes/Cart_BP.mtl
+  sha256: c79ca99c261c30bb5ac421b576b714e0408a033ec6e3744087f351f2322746f0
+- path: BPCart/meshes/Cart_BP.obj
+  sha256: a6a950e89952d0c67d5bcd12f2333e5d0b8feb69d000cef634bf57e124d3fea0
+- path: BPCart/meshes/Cart_BP_Col.mtl
+  sha256: 8d3f0e6b40b17b2a761ec4b5a072931a202e8858c4d2204ab3edebea054c4ee9
+- path: BPCart/meshes/Cart_BP_Col.obj
+  sha256: b677df548237fcadcb3890100fc30d60abc7227f1d555d1b9fe1321e0b5035bb
+- path: BPCart/meshes/Cart_BP_Diffuse.png
+  sha256: 29b96c6168cba84b45034167cda4ddf6f4bf0b38e91b77be9e776af03d6b3b83
+- path: BPCart/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: BPCart/model.config
+  sha256: db0d2d9fda9f1dc1b5084103191319c153494f91f903f8175cb89fb9573014b5
+- path: BPCart/model.sdf
+  sha256: 1d3f7068ac706e030027d940ec5100864adc0fadf3bc6a6d970ad8a68d9f2f28
+- path: BPCart/thumbnails/1.png
+  sha256: ccb96d58fd0cdcdbad184f3ce2c6986db5fee72e4f815fe642f14629abeca78d
+- path: BPCart/thumbnails/2.png
+  sha256: b8873501d430cec5bbb89ee29de3e2cdc255c5ba8ba5f2f6858533d6ab669d53
+- path: BPCart/thumbnails/3.png
+  sha256: 718d690943d08603b97ef354cb9562ab5af6a3d7f52c2bfc0617a72e23cf244c
+- path: BPCart/thumbnails/4.png
+  sha256: 9f6870c656a7386d33259b501bd4e78697dcd4d8243097e22fa0f47346c16c89
+- path: BPCart/thumbnails/5.png
+  sha256: 0867f2985e3cbfa7a9428e04980b01ffa383c5d0310e4cf5619be595874dd3c2
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/BPCart/2/BPCart.zip
+  sha256: 68266a1e2d67e64c0e6aa4a6cd563d83d6751f2883b54b4b1f42a88bdfdae4cb
+  size_bytes: 1659990
+  prefix: ''
+  max_members: 17
+  max_unpacked_bytes: 1807273
+  license:
+    notice: '{"createdAt":"2020-08-06T11:22:38Z","updatedAt":"2026-10-16T20:21:40Z","name":"BPCart","owner":"OpenRobotics","description":"A
+      generic hospital cart","likes":0,"downloads":8903,"filesize":1659990,"upload_date":"2020-08-06T11:22:35Z","modify_date":"2023-09-27T15:23:37Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/BPCart/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["bp","cart","bpcart"],"categories":["Appliance"]}
+
+      '
+    sha256: 992227998b522b8a37c3364275e760a88ce6b594d47f7420dc8c47381856274e
+  members:
+  - source: meshes/BP_BP_LP_Normal.png
+    target: BPCart/meshes/BP_BP_LP_Normal.png
+    source_sha256: d13d5598fc148909e36b9c03f75191594c9469a0baf4b4207371626e30865658
+    replacements: []
+  - source: meshes/BP_BP_LP_SpecularGloss.png
+    target: BPCart/meshes/BP_BP_LP_SpecularGloss.png
+    source_sha256: 3fb2b945d843634f3f15b161912fb3f238a4b145b584c496805f7bec7f901667
+    replacements: []
+  - source: meshes/Cart_BP.mtl
+    target: BPCart/meshes/Cart_BP.mtl
+    source_sha256: c79ca99c261c30bb5ac421b576b714e0408a033ec6e3744087f351f2322746f0
+    replacements: []
+  - source: meshes/Cart_BP.obj
+    target: BPCart/meshes/Cart_BP.obj
+    source_sha256: a6a950e89952d0c67d5bcd12f2333e5d0b8feb69d000cef634bf57e124d3fea0
+    replacements: []
+  - source: meshes/Cart_BP_Col.mtl
+    target: BPCart/meshes/Cart_BP_Col.mtl
+    source_sha256: 8d3f0e6b40b17b2a761ec4b5a072931a202e8858c4d2204ab3edebea054c4ee9
+    replacements: []
+  - source: meshes/Cart_BP_Col.obj
+    target: BPCart/meshes/Cart_BP_Col.obj
+    source_sha256: b677df548237fcadcb3890100fc30d60abc7227f1d555d1b9fe1321e0b5035bb
+    replacements: []
+  - source: meshes/Cart_BP_Diffuse.png
+    target: BPCart/meshes/Cart_BP_Diffuse.png
+    source_sha256: 29b96c6168cba84b45034167cda4ddf6f4bf0b38e91b77be9e776af03d6b3b83
+    replacements: []
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: BPCart/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: model.config
+    target: BPCart/model.config
+    source_sha256: db0d2d9fda9f1dc1b5084103191319c153494f91f903f8175cb89fb9573014b5
+    replacements: []
+  - source: model.sdf
+    target: BPCart/model.sdf
+    source_sha256: 1d3f7068ac706e030027d940ec5100864adc0fadf3bc6a6d970ad8a68d9f2f28
+    replacements: []
+  - source: thumbnails/1.png
+    target: BPCart/thumbnails/1.png
+    source_sha256: ccb96d58fd0cdcdbad184f3ce2c6986db5fee72e4f815fe642f14629abeca78d
+    replacements: []
+  - source: thumbnails/2.png
+    target: BPCart/thumbnails/2.png
+    source_sha256: b8873501d430cec5bbb89ee29de3e2cdc255c5ba8ba5f2f6858533d6ab669d53
+    replacements: []
+  - source: thumbnails/3.png
+    target: BPCart/thumbnails/3.png
+    source_sha256: 718d690943d08603b97ef354cb9562ab5af6a3d7f52c2bfc0617a72e23cf244c
+    replacements: []
+  - source: thumbnails/4.png
+    target: BPCart/thumbnails/4.png
+    source_sha256: 9f6870c656a7386d33259b501bd4e78697dcd4d8243097e22fa0f47346c16c89
+    replacements: []
+  - source: thumbnails/5.png
+    target: BPCart/thumbnails/5.png
+    source_sha256: 0867f2985e3cbfa7a9428e04980b01ffa383c5d0310e4cf5619be595874dd3c2
+    replacements: []

@@ -1,0 +1,121 @@
+schema_version: 1
+asset_set_id: fuel_hospital_shower_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Shower
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/Shower.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: Shower
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Shower
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/Shower.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: Shower/meshes/Shower.mtl
+  sha256: a3ef17e01d8579a27bfd4ec94be143b4332a732aec120557a53e07fda2e8ed79
+- path: Shower/meshes/Shower.obj
+  sha256: 272bf32e0d84523c545474dd4762d101da4221a9ccc5df11b6193735ccf5480c
+- path: Shower/meshes/ShowerDiffuse.png
+  sha256: 4f7aade671a3dda66698d73dc42245042e5e1ead04c878b090a12d1647645268
+- path: Shower/model.config
+  sha256: ebf77813a8746948f07f13b33ef42d623f3e3b3e3e52da1f28c9e43c2fc6e9da
+- path: Shower/model.sdf
+  sha256: a52c64fb95c625b0cef5aed85c3d1d676004d6c7548c9db9bd412947d9d5e29a
+- path: Shower/thumbnails/1.png
+  sha256: 6014985f618dbc64b14a40ec99261179f3841d2d69f29f59335d6eff996a4e30
+- path: Shower/thumbnails/2.png
+  sha256: 1f5c4f51256148f72ec50e5dae4ba4aada72fba7ab9853045e2d3a67fd2d3de8
+- path: Shower/thumbnails/3.png
+  sha256: 728c4a7f1f780b5f24ed671145a0774623a8c7b3a2b03cf15f0818eb84a33be6
+- path: Shower/thumbnails/4.png
+  sha256: c7ec7884cb9ab94eeb2a7ae7c0f97599b2bfbb675fbc2681ae7661d77d480e72
+- path: Shower/thumbnails/5.png
+  sha256: babb968a5fa02f258b77360da5cce343aacf1024af9fb3826c4a1f251c8d0535
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/Shower/2/Shower.zip
+  sha256: cac1b4f5986ec9e20e8c14a35a9f6a0b61a754c4c84b79d9d5465f104d88bdb7
+  size_bytes: 568856
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 618121
+  license:
+    notice: '{"createdAt":"2020-06-25T10:18:19Z","updatedAt":"2026-10-16T22:24:18Z","name":"Shower","owner":"OpenRobotics","description":"A
+      generic shower","likes":1,"downloads":49395,"filesize":568856,"upload_date":"2020-06-25T10:18:17Z","modify_date":"2023-09-27T15:27:42Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/Shower/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Furniture
+      and Home"]}
+
+      '
+    sha256: 714bdc8039abb99a2d5219d3efcf4a68ad2dd20bafb757bf1d748b32495f807f
+  members:
+  - source: meshes/Shower.mtl
+    target: Shower/meshes/Shower.mtl
+    source_sha256: a3ef17e01d8579a27bfd4ec94be143b4332a732aec120557a53e07fda2e8ed79
+    replacements: []
+  - source: meshes/Shower.obj
+    target: Shower/meshes/Shower.obj
+    source_sha256: 272bf32e0d84523c545474dd4762d101da4221a9ccc5df11b6193735ccf5480c
+    replacements: []
+  - source: meshes/ShowerDiffuse.png
+    target: Shower/meshes/ShowerDiffuse.png
+    source_sha256: 4f7aade671a3dda66698d73dc42245042e5e1ead04c878b090a12d1647645268
+    replacements: []
+  - source: model.config
+    target: Shower/model.config
+    source_sha256: ebf77813a8746948f07f13b33ef42d623f3e3b3e3e52da1f28c9e43c2fc6e9da
+    replacements: []
+  - source: model.sdf
+    target: Shower/model.sdf
+    source_sha256: a52c64fb95c625b0cef5aed85c3d1d676004d6c7548c9db9bd412947d9d5e29a
+    replacements: []
+  - source: thumbnails/1.png
+    target: Shower/thumbnails/1.png
+    source_sha256: 6014985f618dbc64b14a40ec99261179f3841d2d69f29f59335d6eff996a4e30
+    replacements: []
+  - source: thumbnails/2.png
+    target: Shower/thumbnails/2.png
+    source_sha256: 1f5c4f51256148f72ec50e5dae4ba4aada72fba7ab9853045e2d3a67fd2d3de8
+    replacements: []
+  - source: thumbnails/3.png
+    target: Shower/thumbnails/3.png
+    source_sha256: 728c4a7f1f780b5f24ed671145a0774623a8c7b3a2b03cf15f0818eb84a33be6
+    replacements: []
+  - source: thumbnails/4.png
+    target: Shower/thumbnails/4.png
+    source_sha256: c7ec7884cb9ab94eeb2a7ae7c0f97599b2bfbb675fbc2681ae7661d77d480e72
+    replacements: []
+  - source: thumbnails/5.png
+    target: Shower/thumbnails/5.png
+    source_sha256: babb968a5fa02f258b77360da5cce343aacf1024af9fb3826c4a1f251c8d0535
+    replacements: []

@@ -1,0 +1,132 @@
+schema_version: 1
+asset_set_id: fuel_hospital_scrubs_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Scrubs
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/Scrubs.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: Scrubs
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/Scrubs
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/Scrubs.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: Scrubs/meshes/ScrubsFemaleDiffuse.png
+  sha256: f530f863a1ef0561e88d2186a8993db9eb27171c6aa6e5f31cd13f3c6bd02fc1
+- path: Scrubs/meshes/Scrubs_Col.mtl
+  sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+- path: Scrubs/meshes/Scrubs_Col.obj
+  sha256: eeb35ffba1ae10f0eddd752f460da07c71241a9dcd7e7a90347420da60cb507a
+- path: Scrubs/meshes/scrubs.mtl
+  sha256: 091700af6b66b9fa6f2aa35c577545ce5dbbd871e49f1b7fc8e722badc1b1fd1
+- path: Scrubs/meshes/scrubs.obj
+  sha256: 075f6d58f7b379187460651a76738baafdb8fc6070b669e69b42496ffd603e3c
+- path: Scrubs/model.config
+  sha256: 0c85f55b9bba425500662ae9653da10a0523419bcd003848d5de0762474c6819
+- path: Scrubs/model.sdf
+  sha256: 2c49caeb40ab4467990151faae6e5d09d570d8e5538b4b6ad26dd1ca3992ced7
+- path: Scrubs/thumbnails/1.png
+  sha256: 1feacaf8734370735719b32a4e6f59cc838d05d42e8d3bbbbd9fd88c6b42ec3f
+- path: Scrubs/thumbnails/2.png
+  sha256: ca10fcf9da768f4acd6ae7d41d1ff5d042ad3393838c41fba1896fb808b7bc7a
+- path: Scrubs/thumbnails/3.png
+  sha256: 97c27b16b62cc89eec926b4d2bcfce0bf7aa304de73f260d7d09aec8d0e60c93
+- path: Scrubs/thumbnails/4.png
+  sha256: 1d8150b442469eedd0d3ce3c9ff5f927a9a10be36577e53d3e00fd11301bce17
+- path: Scrubs/thumbnails/5.png
+  sha256: 1d1d5c8a7d8a79383be77f8575ba96d9d78864284a804eb50269cc379ea2936b
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/Scrubs/2/Scrubs.zip
+  sha256: 1e4a5fbdfc8d02c688290d1c4e39430ec872bf3f976c5fc720cf6e98c740aea7
+  size_bytes: 1028421
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 1205591
+  license:
+    notice: '{"createdAt":"2020-07-06T10:19:54Z","updatedAt":"2026-10-16T18:32:56Z","name":"Scrubs","owner":"OpenRobotics","description":"A
+      person in scrubs.","likes":0,"downloads":41188,"filesize":1028421,"upload_date":"2020-07-06T10:19:52Z","modify_date":"2023-09-27T15:26:25Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/Scrubs/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: a24643b155fd4c89247f532480046f38d273a3c426ec0d8068fa40696ca1217d
+  members:
+  - source: meshes/ScrubsFemaleDiffuse.png
+    target: Scrubs/meshes/ScrubsFemaleDiffuse.png
+    source_sha256: f530f863a1ef0561e88d2186a8993db9eb27171c6aa6e5f31cd13f3c6bd02fc1
+    replacements: []
+  - source: meshes/Scrubs_Col.mtl
+    target: Scrubs/meshes/Scrubs_Col.mtl
+    source_sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+    replacements: []
+  - source: meshes/Scrubs_Col.obj
+    target: Scrubs/meshes/Scrubs_Col.obj
+    source_sha256: eeb35ffba1ae10f0eddd752f460da07c71241a9dcd7e7a90347420da60cb507a
+    replacements: []
+  - source: meshes/scrubs.mtl
+    target: Scrubs/meshes/scrubs.mtl
+    source_sha256: 091700af6b66b9fa6f2aa35c577545ce5dbbd871e49f1b7fc8e722badc1b1fd1
+    replacements: []
+  - source: meshes/scrubs.obj
+    target: Scrubs/meshes/scrubs.obj
+    source_sha256: 075f6d58f7b379187460651a76738baafdb8fc6070b669e69b42496ffd603e3c
+    replacements: []
+  - source: model.config
+    target: Scrubs/model.config
+    source_sha256: 0c85f55b9bba425500662ae9653da10a0523419bcd003848d5de0762474c6819
+    replacements: []
+  - source: model.sdf
+    target: Scrubs/model.sdf
+    source_sha256: 2c49caeb40ab4467990151faae6e5d09d570d8e5538b4b6ad26dd1ca3992ced7
+    replacements: []
+  - source: thumbnails/1.png
+    target: Scrubs/thumbnails/1.png
+    source_sha256: 1feacaf8734370735719b32a4e6f59cc838d05d42e8d3bbbbd9fd88c6b42ec3f
+    replacements: []
+  - source: thumbnails/2.png
+    target: Scrubs/thumbnails/2.png
+    source_sha256: ca10fcf9da768f4acd6ae7d41d1ff5d042ad3393838c41fba1896fb808b7bc7a
+    replacements: []
+  - source: thumbnails/3.png
+    target: Scrubs/thumbnails/3.png
+    source_sha256: 97c27b16b62cc89eec926b4d2bcfce0bf7aa304de73f260d7d09aec8d0e60c93
+    replacements: []
+  - source: thumbnails/4.png
+    target: Scrubs/thumbnails/4.png
+    source_sha256: 1d8150b442469eedd0d3ce3c9ff5f927a9a10be36577e53d3e00fd11301bce17
+    replacements: []
+  - source: thumbnails/5.png
+    target: Scrubs/thumbnails/5.png
+    source_sha256: 1d1d5c8a7d8a79383be77f8575ba96d9d78864284a804eb50269cc379ea2936b
+    replacements: []

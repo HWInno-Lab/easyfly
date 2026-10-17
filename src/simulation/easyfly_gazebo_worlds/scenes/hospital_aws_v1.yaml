@@ -1,0 +1,121 @@
+schema_version: 1
+id: hospital_aws_v1
+name: AWS 医院（上游原始草稿）
+status: draft
+category: indoor/hospital
+tags:
+- hospital
+- medical
+- static
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/indoor/hospital/hospital_aws_v1.world
+  sha256: 70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b
+provenance:
+  status: recorded
+  source_url: https://github.com/aws-robotics/aws-robomaker-hospital-world
+  revision: 39969a9d250135835cf13b480865647d1a87b6f4
+  declared_license: MIT-0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/aws_hospital/origins.json
+  note: Original hospital.world unchanged. Fuel dependencies have separate CC-BY-4.0
+    declarations. Three anomalous source heights retained for review; draft cannot
+    launch.
+asset_sets:
+- aws_hospital_v1
+- fuel_hospital_adjtable_v4
+- fuel_hospital_anesthesiamachine_v2
+- fuel_hospital_bmwcart_v2
+- fuel_hospital_bpcart_v2
+- fuel_hospital_bedtable_v2
+- fuel_hospital_bedsidetable_v2
+- fuel_hospital_bloodpressuremonitor_v2
+- fuel_hospital_cgmclassic_v4
+- fuel_hospital_chair_v3
+- fuel_hospital_drawer_v2
+- fuel_hospital_elderladypatient_v2
+- fuel_hospital_eldermalepatient_v2
+- fuel_hospital_femalevisitor_v2
+- fuel_hospital_femalevisitorsit_v2
+- fuel_hospital_ivstand_v2
+- fuel_hospital_instrumentcart1_v2
+- fuel_hospital_instrumentcart2_v2
+- fuel_hospital_kitchensink_v2
+- fuel_hospital_malepatientbed_v2
+- fuel_hospital_malevisitoronphone_v2
+- fuel_hospital_malevisitorsit_v2
+- fuel_hospital_metalcabinet_v2
+- fuel_hospital_mopcart3_v2
+- fuel_hospital_officechairblack_v2
+- fuel_hospital_parkingtrolleymax_v3
+- fuel_hospital_parkingtrolleymin_v3
+- fuel_hospital_patientfsit_v2
+- fuel_hospital_patientwheelchair_v4
+- fuel_hospital_potatochipchair_v3
+- fuel_hospital_scrubs_v2
+- fuel_hospital_shower_v2
+- fuel_hospital_storagerack_v2
+- fuel_hospital_storagerackcoveropen_v2
+- fuel_hospital_storagerackcovered_v2
+- fuel_hospital_surgicaltrolley_v2
+- fuel_hospital_surgicaltrolleymed_v2
+- fuel_hospital_toilet_v2
+- fuel_hospital_trolleybed_v3
+- fuel_hospital_trolleybedpatient_v3
+- fuel_hospital_vendingmachine_v3
+- fuel_hospital_visitorkidsit_v2
+- fuel_hospital_whitechipchair_v3
+- fuel_hospital_xraymachine_v2
+- gazebo_builtin_v1
+required_plugins: []
+supported_profiles: []
+legacy_profiles: []
+spawn:
+  frame: world
+  position: null
+  yaw: null
+  basis: Pending native floor/clearance survey and corrected-world review.
+navigation:
+  frame: odom
+  world_to_navigation: null
+  recommended_region: null
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Curated GPS and primitive lidar visual; body physics retained. IMU noise and sampling
+    changes are documented in the runtime asset evidence.
+  - No full PX4 model root and no legacy scene model root are exposed.
+  - Native noisy 1000Hz IMU is accumulated over four samples before unchanged 250Hz
+    MAVLink; source timestamps and original control limits retained.
+  heartbeat_rate_hz: 5
+  clock_rate_hz: 100
+  battery_rate_hz: 5
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: false
+  world_loaded: false
+  sensors_checked: false
+  navigation_tested: false
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/hospital_aws_v1/import-source.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

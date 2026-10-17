@@ -1,0 +1,138 @@
+schema_version: 1
+asset_set_id: fuel_hospital_femalevisitor_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/FemaleVisitor.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: FemaleVisitor
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/FemaleVisitor.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: FemaleVisitor/meshes/FemaleVisitor.mtl
+  sha256: 7151bca3d1bfa08ecc4e3a659a7487d554f8f944374f39785d9cfd655544ae38
+- path: FemaleVisitor/meshes/FemaleVisitor.obj
+  sha256: f8b21628a927977ccc5eeabcba63a2c35ef8680857892e0fd99661ba552825e5
+- path: FemaleVisitor/meshes/FemaleVisitor.png
+  sha256: eeaf2628e01c3b0b7385505cbc53343b99bdf3809b0e2bd32a9d1c670e026204
+- path: FemaleVisitor/meshes/FemaleVisitor_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: FemaleVisitor/meshes/FemaleVisitor_Col.obj
+  sha256: 2db48f1d03cb3f350bb8c1215a5f0a3e7ac1894f1835045797f1b8640db529f4
+- path: FemaleVisitor/meshes/Handbag.png
+  sha256: e31751752b72dea533f49e540cebba567c486d81cf80741e18a2cebd8da63182
+- path: FemaleVisitor/model.config
+  sha256: f4a47939998cdcf6df857efe7388b25cced40aafa51313aba5e3119a190ff122
+- path: FemaleVisitor/model.sdf
+  sha256: e865c29e78f373e082b122abf26fb9c2ded083237b148e15a3b85611694a3ff9
+- path: FemaleVisitor/thumbnails/1.png
+  sha256: 1dda1e1bc869abbd184d54842f83f53420bc3bcd6f8f5736e5f8b8d34c114b05
+- path: FemaleVisitor/thumbnails/2.png
+  sha256: d12a40a2e3fc03e75aee64c074032982c4d89711b52f0fed15fba10fe1bf10c8
+- path: FemaleVisitor/thumbnails/3.png
+  sha256: e62f460977508b2ff2f19bb840d1eae11d118802e17e5d3d43dfbc8621eae787
+- path: FemaleVisitor/thumbnails/4.png
+  sha256: 6c56f261dbd9dfba414fa5cabc1f768e7b624295784dbdb1453bd1d0fbb9047e
+- path: FemaleVisitor/thumbnails/5.png
+  sha256: 68911da1086ceecc4e110578676278a77c9ce8012ad32629e47ac5dad86035b4
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/FemaleVisitor/2/FemaleVisitor.zip
+  sha256: 5454b3bf1ac579851b9874179dcb0c30f6115996be8ad28290f5d0416c88f95e
+  size_bytes: 685516
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 874079
+  license:
+    notice: '{"createdAt":"2020-05-20T19:33:13Z","updatedAt":"2026-10-16T18:33:02Z","name":"FemaleVisitor","owner":"OpenRobotics","description":"Female
+      visitor","likes":0,"downloads":76731,"filesize":685516,"upload_date":"2020-05-20T19:33:11Z","modify_date":"2023-09-27T15:40:27Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/FemaleVisitor/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: 10424dcbcec71c2b47fb5ce1f2a487d1cc2008ec063d45d3077e64ccf564fd7c
+  members:
+  - source: meshes/FemaleVisitor.mtl
+    target: FemaleVisitor/meshes/FemaleVisitor.mtl
+    source_sha256: 7151bca3d1bfa08ecc4e3a659a7487d554f8f944374f39785d9cfd655544ae38
+    replacements: []
+  - source: meshes/FemaleVisitor.obj
+    target: FemaleVisitor/meshes/FemaleVisitor.obj
+    source_sha256: f8b21628a927977ccc5eeabcba63a2c35ef8680857892e0fd99661ba552825e5
+    replacements: []
+  - source: meshes/FemaleVisitor.png
+    target: FemaleVisitor/meshes/FemaleVisitor.png
+    source_sha256: eeaf2628e01c3b0b7385505cbc53343b99bdf3809b0e2bd32a9d1c670e026204
+    replacements: []
+  - source: meshes/FemaleVisitor_Col.mtl
+    target: FemaleVisitor/meshes/FemaleVisitor_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/FemaleVisitor_Col.obj
+    target: FemaleVisitor/meshes/FemaleVisitor_Col.obj
+    source_sha256: 2db48f1d03cb3f350bb8c1215a5f0a3e7ac1894f1835045797f1b8640db529f4
+    replacements: []
+  - source: meshes/Handbag.png
+    target: FemaleVisitor/meshes/Handbag.png
+    source_sha256: e31751752b72dea533f49e540cebba567c486d81cf80741e18a2cebd8da63182
+    replacements: []
+  - source: model.config
+    target: FemaleVisitor/model.config
+    source_sha256: f4a47939998cdcf6df857efe7388b25cced40aafa51313aba5e3119a190ff122
+    replacements: []
+  - source: model.sdf
+    target: FemaleVisitor/model.sdf
+    source_sha256: e865c29e78f373e082b122abf26fb9c2ded083237b148e15a3b85611694a3ff9
+    replacements: []
+  - source: thumbnails/1.png
+    target: FemaleVisitor/thumbnails/1.png
+    source_sha256: 1dda1e1bc869abbd184d54842f83f53420bc3bcd6f8f5736e5f8b8d34c114b05
+    replacements: []
+  - source: thumbnails/2.png
+    target: FemaleVisitor/thumbnails/2.png
+    source_sha256: d12a40a2e3fc03e75aee64c074032982c4d89711b52f0fed15fba10fe1bf10c8
+    replacements: []
+  - source: thumbnails/3.png
+    target: FemaleVisitor/thumbnails/3.png
+    source_sha256: e62f460977508b2ff2f19bb840d1eae11d118802e17e5d3d43dfbc8621eae787
+    replacements: []
+  - source: thumbnails/4.png
+    target: FemaleVisitor/thumbnails/4.png
+    source_sha256: 6c56f261dbd9dfba414fa5cabc1f768e7b624295784dbdb1453bd1d0fbb9047e
+    replacements: []
+  - source: thumbnails/5.png
+    target: FemaleVisitor/thumbnails/5.png
+    source_sha256: 68911da1086ceecc4e110578676278a77c9ce8012ad32629e47ac5dad86035b4
+    replacements: []

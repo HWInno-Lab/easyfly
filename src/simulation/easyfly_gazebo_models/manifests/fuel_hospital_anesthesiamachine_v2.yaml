@@ -1,0 +1,131 @@
+schema_version: 1
+asset_set_id: fuel_hospital_anesthesiamachine_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/AnesthesiaMachine
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/AnesthesiaMachine.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: AnesthesiaMachine
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/AnesthesiaMachine
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/AnesthesiaMachine.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: AnesthesiaMachine/meshes/AnesthesiaMachine.mtl
+  sha256: 50d2c4004eaf4617d7f24f7fcbf60c619125a47c0548bf9dc53011b0c3ad3624
+- path: AnesthesiaMachine/meshes/AnesthesiaMachine.obj
+  sha256: f381053363c89924b47138308dd63a8a7668b2990547a3394cc4b41ff6a38d43
+- path: AnesthesiaMachine/meshes/AnesthesiaMachine.png
+  sha256: 83dc0ef39e549b0d748bf2a64fe25838c0805b94ee766229aad95c415d9dffe1
+- path: AnesthesiaMachine/meshes/AnesthesiaMachine_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: AnesthesiaMachine/meshes/AnesthesiaMachine_Col.obj
+  sha256: 2f0c691bc9fd49aaa2d49080012e8456b1f631f5377fff9fa616492067590041
+- path: AnesthesiaMachine/model.config
+  sha256: f8e87578823afc827d0b26d8a955dcfe42d752514e6dba05f372fa3ecd37243f
+- path: AnesthesiaMachine/model.sdf
+  sha256: de87cdcbd8a2d92ff6d14b85336b6dc8e67d7f10eb5e9275716c2e236a6fe565
+- path: AnesthesiaMachine/thumbnails/1.png
+  sha256: 705f4e63ff10a2f858d8c8227d37a077068eb005a2df77ff0707b9a43517a93b
+- path: AnesthesiaMachine/thumbnails/2.png
+  sha256: 6727cd9a35636f6cfab775992dcc3cce7ac5c1c862e5d71192a0a3af36f3c045
+- path: AnesthesiaMachine/thumbnails/3.png
+  sha256: 755ef13c98cf8828bf40c155ef352ce7d0cfe912b99c6ec1135544706f93a2ab
+- path: AnesthesiaMachine/thumbnails/4.png
+  sha256: 98754129daa7205aa8bf8499512792e56968f25ac1ac3056920562ef0107f7d3
+- path: AnesthesiaMachine/thumbnails/5.png
+  sha256: e05a434cc4884aa5df32f418aab98793d91ec8b7567b1b72604f22d1ac54e469
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/AnesthesiaMachine/2/AnesthesiaMachine.zip
+  sha256: a04a157ed5a93ac4d81519ab6ddeb4c8dd03f0ff76dfd36d5f215e67a928abe0
+  size_bytes: 541299
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 588351
+  license:
+    notice: '{"createdAt":"2020-06-26T09:35:49Z","updatedAt":"2026-10-16T15:34:14Z","name":"AnesthesiaMachine","owner":"OpenRobotics","description":"","likes":0,"downloads":7398,"filesize":541299,"upload_date":"2020-06-26T09:35:47Z","modify_date":"2023-09-27T15:27:00Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/AnesthesiaMachine/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Appliance"]}
+
+      '
+    sha256: 3aeab52929c1fafa03cbd4e3986b35aa987410efdea23eb642bb9ac2537fc98f
+  members:
+  - source: meshes/AnesthesiaMachine.mtl
+    target: AnesthesiaMachine/meshes/AnesthesiaMachine.mtl
+    source_sha256: 50d2c4004eaf4617d7f24f7fcbf60c619125a47c0548bf9dc53011b0c3ad3624
+    replacements: []
+  - source: meshes/AnesthesiaMachine.obj
+    target: AnesthesiaMachine/meshes/AnesthesiaMachine.obj
+    source_sha256: f381053363c89924b47138308dd63a8a7668b2990547a3394cc4b41ff6a38d43
+    replacements: []
+  - source: meshes/AnesthesiaMachine.png
+    target: AnesthesiaMachine/meshes/AnesthesiaMachine.png
+    source_sha256: 83dc0ef39e549b0d748bf2a64fe25838c0805b94ee766229aad95c415d9dffe1
+    replacements: []
+  - source: meshes/AnesthesiaMachine_Col.mtl
+    target: AnesthesiaMachine/meshes/AnesthesiaMachine_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/AnesthesiaMachine_Col.obj
+    target: AnesthesiaMachine/meshes/AnesthesiaMachine_Col.obj
+    source_sha256: 2f0c691bc9fd49aaa2d49080012e8456b1f631f5377fff9fa616492067590041
+    replacements: []
+  - source: model.config
+    target: AnesthesiaMachine/model.config
+    source_sha256: f8e87578823afc827d0b26d8a955dcfe42d752514e6dba05f372fa3ecd37243f
+    replacements: []
+  - source: model.sdf
+    target: AnesthesiaMachine/model.sdf
+    source_sha256: de87cdcbd8a2d92ff6d14b85336b6dc8e67d7f10eb5e9275716c2e236a6fe565
+    replacements: []
+  - source: thumbnails/1.png
+    target: AnesthesiaMachine/thumbnails/1.png
+    source_sha256: 705f4e63ff10a2f858d8c8227d37a077068eb005a2df77ff0707b9a43517a93b
+    replacements: []
+  - source: thumbnails/2.png
+    target: AnesthesiaMachine/thumbnails/2.png
+    source_sha256: 6727cd9a35636f6cfab775992dcc3cce7ac5c1c862e5d71192a0a3af36f3c045
+    replacements: []
+  - source: thumbnails/3.png
+    target: AnesthesiaMachine/thumbnails/3.png
+    source_sha256: 755ef13c98cf8828bf40c155ef352ce7d0cfe912b99c6ec1135544706f93a2ab
+    replacements: []
+  - source: thumbnails/4.png
+    target: AnesthesiaMachine/thumbnails/4.png
+    source_sha256: 98754129daa7205aa8bf8499512792e56968f25ac1ac3056920562ef0107f7d3
+    replacements: []
+  - source: thumbnails/5.png
+    target: AnesthesiaMachine/thumbnails/5.png
+    source_sha256: e05a434cc4884aa5df32f418aab98793d91ec8b7567b1b72604f22d1ac54e469
+    replacements: []

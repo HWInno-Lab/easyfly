@@ -1,0 +1,132 @@
+schema_version: 1
+asset_set_id: fuel_hospital_potatochipchair_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PotatoChipChair
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/PotatoChipChair.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: PotatoChipChair
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/PotatoChipChair
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/PotatoChipChair.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: PotatoChipChair/meshes/PotatoChipChair.mtl
+  sha256: a91854c4446890f5cba80c78415cc8c506ba98648bc7f25f63480e8aab2a0b79
+- path: PotatoChipChair/meshes/PotatoChipChair.obj
+  sha256: 7a758541d9166e0e783f5e2a392f3f1b0d4f498c3fbed1229afc1a064de4e186
+- path: PotatoChipChair/meshes/PotatoChipChairDiffuse.png
+  sha256: ba0aa25e8818c131cf52ac86e2c128269d6015e0786727a51271fd064b99396b
+- path: PotatoChipChair/meshes/PotatoChipChair_Col.mtl
+  sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+- path: PotatoChipChair/meshes/PotatoChipChair_Col.obj
+  sha256: 5ae03bb900cbd7002fb60513f82449d39765f119057d589ec644bd1007accc69
+- path: PotatoChipChair/model.config
+  sha256: 5dedd11fbdace9d8cf99b3728d1455f3f66179fe0e61a3950adb5da5b9f22cfa
+- path: PotatoChipChair/model.sdf
+  sha256: 9b6344e93d49d8b9d02f7b85fc48c4d3989150eeb4d2b1e1bfbd377591f833fd
+- path: PotatoChipChair/thumbnails/1.png
+  sha256: 9db0638a31b6f7ca91bdb1859552f166d3a3f2ccd73df238672c7b22140ad8e1
+- path: PotatoChipChair/thumbnails/2.png
+  sha256: 04230c3011561f052500f7af75bc4b158a7593a16ad9c5a4aa9fdbb5bb08c615
+- path: PotatoChipChair/thumbnails/3.png
+  sha256: bc47569e1b449971307d838e78048310e73c144ae171b48c56e3d65e9ade2828
+- path: PotatoChipChair/thumbnails/4.png
+  sha256: 2ac4378d0e6510ce97ec822ce7df306bd9826d981815cb83b505fd50b0b71c36
+- path: PotatoChipChair/thumbnails/5.png
+  sha256: c598fd75af21c7d7e1ac2ffbc50e0cea1c861a231800bc78ba9afaff3d1ef2f6
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/PotatoChipChair/3/PotatoChipChair.zip
+  sha256: 97ea8b33161f6ca424e45065d01af8f54aea0c1f2db544b27e5203313e675fbd
+  size_bytes: 824743
+  prefix: ''
+  max_members: 14
+  max_unpacked_bytes: 874652
+  license:
+    notice: '{"createdAt":"2019-10-28T06:34:44Z","updatedAt":"2026-10-16T18:32:25Z","name":"PotatoChipChair","owner":"OpenRobotics","description":"Three-seater
+      bench for waiting outpatients","likes":0,"downloads":79276,"filesize":824743,"upload_date":"2019-10-28T06:34:41Z","modify_date":"2023-09-27T16:20:10Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/PotatoChipChair/tip/files/thumbnails/1.png","version":3,"private":false,"tags":["hospital","furniture"]}
+
+      '
+    sha256: 4b766f14f889dfd7659d155afaa7ddb6d998322602ec22816ce7b243eef6c69b
+  members:
+  - source: meshes/PotatoChipChair.mtl
+    target: PotatoChipChair/meshes/PotatoChipChair.mtl
+    source_sha256: a91854c4446890f5cba80c78415cc8c506ba98648bc7f25f63480e8aab2a0b79
+    replacements: []
+  - source: meshes/PotatoChipChair.obj
+    target: PotatoChipChair/meshes/PotatoChipChair.obj
+    source_sha256: 7a758541d9166e0e783f5e2a392f3f1b0d4f498c3fbed1229afc1a064de4e186
+    replacements: []
+  - source: meshes/PotatoChipChairDiffuse.png
+    target: PotatoChipChair/meshes/PotatoChipChairDiffuse.png
+    source_sha256: ba0aa25e8818c131cf52ac86e2c128269d6015e0786727a51271fd064b99396b
+    replacements: []
+  - source: meshes/PotatoChipChair_Col.mtl
+    target: PotatoChipChair/meshes/PotatoChipChair_Col.mtl
+    source_sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+    replacements: []
+  - source: meshes/PotatoChipChair_Col.obj
+    target: PotatoChipChair/meshes/PotatoChipChair_Col.obj
+    source_sha256: 5ae03bb900cbd7002fb60513f82449d39765f119057d589ec644bd1007accc69
+    replacements: []
+  - source: model.config
+    target: PotatoChipChair/model.config
+    source_sha256: 5dedd11fbdace9d8cf99b3728d1455f3f66179fe0e61a3950adb5da5b9f22cfa
+    replacements: []
+  - source: model.sdf
+    target: PotatoChipChair/model.sdf
+    source_sha256: 9b6344e93d49d8b9d02f7b85fc48c4d3989150eeb4d2b1e1bfbd377591f833fd
+    replacements: []
+  - source: thumbnails/1.png
+    target: PotatoChipChair/thumbnails/1.png
+    source_sha256: 9db0638a31b6f7ca91bdb1859552f166d3a3f2ccd73df238672c7b22140ad8e1
+    replacements: []
+  - source: thumbnails/2.png
+    target: PotatoChipChair/thumbnails/2.png
+    source_sha256: 04230c3011561f052500f7af75bc4b158a7593a16ad9c5a4aa9fdbb5bb08c615
+    replacements: []
+  - source: thumbnails/3.png
+    target: PotatoChipChair/thumbnails/3.png
+    source_sha256: bc47569e1b449971307d838e78048310e73c144ae171b48c56e3d65e9ade2828
+    replacements: []
+  - source: thumbnails/4.png
+    target: PotatoChipChair/thumbnails/4.png
+    source_sha256: 2ac4378d0e6510ce97ec822ce7df306bd9826d981815cb83b505fd50b0b71c36
+    replacements: []
+  - source: thumbnails/5.png
+    target: PotatoChipChair/thumbnails/5.png
+    source_sha256: c598fd75af21c7d7e1ac2ffbc50e0cea1c861a231800bc78ba9afaff3d1ef2f6
+    replacements: []

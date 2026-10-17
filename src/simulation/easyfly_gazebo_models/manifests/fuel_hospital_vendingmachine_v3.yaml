@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_vendingmachine_v3
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine
+  revision: '3'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/VendingMachine.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: VendingMachine
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine
+    revision: '3'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/VendingMachine.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: VendingMachine/meshes/VendingMachine.mtl
+  sha256: cf6a1ab7f08db38039a8075881aa9d6215594b3c7d33a18437ad68ca7118e0ea
+- path: VendingMachine/meshes/VendingMachine.obj
+  sha256: c8407534c2b44282ee400a63a89b8fe3bda264417ac5b5bb6a43eb086722b7e8
+- path: VendingMachine/meshes/VendingMachine_Diffuse.png
+  sha256: 263a91105200f3f2ea07f324fced46009abb5e47d2a6a363f139107a65e0fa42
+- path: VendingMachine/model.config
+  sha256: 37430bfd352d371bcaefccb095157c903ff92b88f4ac8f246831cd17902f79fd
+- path: VendingMachine/model.sdf
+  sha256: 157bed3d70a424f4287054e8d895e58a3595c96e0710a35bc5836f5193407be6
+- path: VendingMachine/thumbnails/1.png
+  sha256: 9594d9e1bd0403ce9aac9fd7fc88a8be783261ddbad88302b75f4bd41b797d85
+- path: VendingMachine/thumbnails/2.png
+  sha256: b18c4535e7dbbafd8dd531f25b6ea1cf02300c1ea2a58c6e7800f899b6bb19e1
+- path: VendingMachine/thumbnails/3.png
+  sha256: d7964f27a4e707d102490faa5ef538e8494fa9a202641295ae22a3e22b70d016
+- path: VendingMachine/thumbnails/4.png
+  sha256: 4364702898bb09697bc3a0a2d100f2f6272886802a3680cd602c86e3288bb844
+- path: VendingMachine/thumbnails/5.png
+  sha256: 352be3323bba89aeeb45789aa04c2516fdbc03b23ad8f28698b012640e8999a9
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/VendingMachine/3/VendingMachine.zip
+  sha256: ef8c9b5f62b815dbc3866d6439556de82819b4bb7363248cf2f5df94fc4d9c5c
+  size_bytes: 619550
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 1643880
+  license:
+    notice: '{"createdAt":"2020-06-25T10:20:57Z","updatedAt":"2026-10-16T18:32:30Z","name":"VendingMachine","owner":"OpenRobotics","description":"Beverage
+      vending device mostly seen across singapore, including hospitals","likes":0,"downloads":99667,"filesize":619550,"upload_date":"2020-06-25T10:20:53Z","modify_date":"2023-09-27T15:27:16Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/VendingMachine/tip/files/thumbnails/1.png","version":3,"private":false,"categories":["Appliance"]}
+
+      '
+    sha256: 29d793ea0436e1ce71f3aa320b1ae6625c409c7f67e60200fc52fdbce5287633
+  members:
+  - source: meshes/VendingMachine.mtl
+    target: VendingMachine/meshes/VendingMachine.mtl
+    source_sha256: cf6a1ab7f08db38039a8075881aa9d6215594b3c7d33a18437ad68ca7118e0ea
+    replacements: []
+  - source: meshes/VendingMachine.obj
+    target: VendingMachine/meshes/VendingMachine.obj
+    source_sha256: c8407534c2b44282ee400a63a89b8fe3bda264417ac5b5bb6a43eb086722b7e8
+    replacements: []
+  - source: meshes/VendingMachine_Diffuse.png
+    target: VendingMachine/meshes/VendingMachine_Diffuse.png
+    source_sha256: 263a91105200f3f2ea07f324fced46009abb5e47d2a6a363f139107a65e0fa42
+    replacements: []
+  - source: model.config
+    target: VendingMachine/model.config
+    source_sha256: 37430bfd352d371bcaefccb095157c903ff92b88f4ac8f246831cd17902f79fd
+    replacements: []
+  - source: model.sdf
+    target: VendingMachine/model.sdf
+    source_sha256: 157bed3d70a424f4287054e8d895e58a3595c96e0710a35bc5836f5193407be6
+    replacements: []
+  - source: thumbnails/1.png
+    target: VendingMachine/thumbnails/1.png
+    source_sha256: 9594d9e1bd0403ce9aac9fd7fc88a8be783261ddbad88302b75f4bd41b797d85
+    replacements: []
+  - source: thumbnails/2.png
+    target: VendingMachine/thumbnails/2.png
+    source_sha256: b18c4535e7dbbafd8dd531f25b6ea1cf02300c1ea2a58c6e7800f899b6bb19e1
+    replacements: []
+  - source: thumbnails/3.png
+    target: VendingMachine/thumbnails/3.png
+    source_sha256: d7964f27a4e707d102490faa5ef538e8494fa9a202641295ae22a3e22b70d016
+    replacements: []
+  - source: thumbnails/4.png
+    target: VendingMachine/thumbnails/4.png
+    source_sha256: 4364702898bb09697bc3a0a2d100f2f6272886802a3680cd602c86e3288bb844
+    replacements: []
+  - source: thumbnails/5.png
+    target: VendingMachine/thumbnails/5.png
+    source_sha256: 352be3323bba89aeeb45789aa04c2516fdbc03b23ad8f28698b012640e8999a9
+    replacements: []

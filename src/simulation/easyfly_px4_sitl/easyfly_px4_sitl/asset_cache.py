@@ -15,6 +15,8 @@ import tempfile
 import time
 import urllib.request
 from urllib.parse import urlsplit
+import zipfile
+import zlib
 
 
 class CacheError(ValueError):
@@ -43,6 +45,12 @@ def digest(path):
 
 def canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
+
+
+def archive_name(spec):
+    if spec['format'] not in ('tar.gz', 'zip'):
+        raise CacheError('unsupported locked archive format')
+    return 'source.' + spec['format']
 
 
 def default_root():
@@ -89,7 +97,21 @@ def identity(asset):
         raise CacheError('archive mapping must cover the locked asset inventory exactly once')
     for member in archive['members']:
         relative(member['source']); relative(member['target'])
-    relative(archive['prefix']); relative(archive['license']['source'])
+    archive_name(archive)
+    if archive['prefix']:
+        relative(archive['prefix'])
+    elif archive['format'] != 'zip':
+        raise CacheError('tar archive requires a locked prefix')
+    license_spec = archive['license']
+    if set(license_spec) == {'source', 'sha256'}:
+        relative(license_spec['source'])
+    elif set(license_spec) == {'notice', 'sha256'}:
+        notice = license_spec['notice']
+        if (not isinstance(notice, str) or not notice or len(notice.encode()) > 65536
+                or hashlib.sha256(notice.encode()).hexdigest() != license_spec['sha256']):
+            raise CacheError('locked external license notice fingerprint/size mismatch')
+    else:
+        raise CacheError('exactly one archive license source or external notice required')
     for url in archive['urls']:
         parsed = urlsplit(url)
         if parsed.scheme != 'https' or not parsed.hostname or parsed.username or parsed.password or parsed.fragment:
@@ -136,15 +158,16 @@ def _files(root, expected):
 
 
 def _validate_payload(asset, directory, receipt):
-    expected = {'receipt.json', 'LICENSE', 'source.tar.gz'} | {'models/' + f['path'] for f in asset['files']}
+    archive = asset['archive']
+    source = directory / archive_name(archive)
+    expected = {'receipt.json', 'LICENSE', source.name} | {'models/' + f['path'] for f in asset['files']}
     if _files(directory, expected) != expected:
         raise CacheError(f'asset cache file inventory differs: {directory}; existing version is preserved')
     expected_receipt = canonical(receipt) + b'\n'
     if (directory / 'receipt.json').stat().st_size != len(expected_receipt) or \
             (directory / 'receipt.json').read_bytes() != expected_receipt:
         raise CacheError('asset cache receipt differs from the selected lock')
-    archive = asset['archive']
-    if (directory / 'source.tar.gz').stat().st_size != archive['size_bytes'] or digest(directory / 'source.tar.gz') != archive['sha256']:
+    if source.stat().st_size != archive['size_bytes'] or digest(source) != archive['sha256']:
         raise CacheError('cached source archive fingerprint mismatch; existing version is preserved')
     if digest(directory / 'LICENSE') != archive['license']['sha256']:
         raise CacheError('cached original license fingerprint mismatch')
@@ -238,36 +261,65 @@ def _download(spec, target, opener=None):
     raise CacheError('archive download failed: ' + '; '.join(failures))
 
 
+def _entries(spec, stage):
+    """Read entries without extractall; the caller checks budgets before reading data."""
+    path = stage / archive_name(spec)
+    if spec['format'] == 'tar.gz':
+        with tarfile.open(path, mode='r|gz') as archive:
+            for member in archive:
+                if not (member.isfile() or member.isdir()):
+                    raise CacheError(f'unsupported archive entry: {member.name}')
+                yield member.name, member.size, member.isdir(), lambda: archive.extractfile(member).read()
+    else:
+        with zipfile.ZipFile(path) as archive:
+            for member in archive.infolist():
+                kind = stat.S_IFMT(member.external_attr >> 16)
+                if (kind not in (0, stat.S_IFREG, stat.S_IFDIR) or member.flag_bits & 1
+                        or member.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED)
+                        or (kind == stat.S_IFDIR and not member.is_dir())
+                        or (kind == stat.S_IFREG and member.is_dir())):
+                    raise CacheError(f'unsupported archive entry: {member.filename}')
+                yield member.filename, member.file_size, member.is_dir(), lambda: archive.read(member)
+
+
 def _unpack(asset, stage):
     spec = asset['archive']
     mapping = {}
     for item in spec['members']:
         mapping.setdefault(item['source'], []).append(item)
-    license_record = dict(source=spec['license']['source'], target=None,
-                          source_sha256=spec['license']['sha256'], replacements=[])
-    mapping.setdefault(license_record['source'], []).append(license_record)
+    if 'source' in spec['license']:
+        license_record = dict(source=spec['license']['source'], target=None,
+                              source_sha256=spec['license']['sha256'], replacements=[])
+        mapping.setdefault(license_record['source'], []).append(license_record)
     outputs = {f['path']: f['sha256'] for f in asset['files']}
     seen, written = set(), set()
+    if 'notice' in spec['license']:
+        # This notice is reviewed catalog evidence, explicitly NOT a file in the ZIP.
+        (stage / 'LICENSE').write_bytes(spec['license']['notice'].encode())
+        written.add(None)
     total = 0
-    with tarfile.open(stage / 'source.tar.gz', mode='r|gz') as archive:
-        for count, member in enumerate(archive, 1):
+    entries = _entries(spec, stage)
+    try:
+        for count, (raw_name, size, is_directory, read) in enumerate(entries, 1):
             # Tar directory names conventionally have a terminal slash.
-            name = str(relative(member.name.rstrip('/')))
-            if name in seen or not (member.isfile() or member.isdir()):
-                raise CacheError(f'unsupported/duplicate archive entry: {member.name}')
+            name = str(relative(raw_name.rstrip('/') if is_directory else raw_name))
+            if name in seen:
+                raise CacheError(f'duplicate archive entry: {raw_name}')
             seen.add(name)
-            total += member.size
+            total += size
             if count > spec['max_members'] or total > spec['max_unpacked_bytes']:
                 raise CacheError('archive unpacked size/member budget exceeded')
             prefix = spec['prefix']
-            if name != prefix and not name.startswith(prefix + '/'):
+            if prefix and name != prefix and not name.startswith(prefix + '/'):
                 raise CacheError('archive entry outside locked prefix')
-            source = name[len(prefix) + 1:]
+            source = name[len(prefix) + 1:] if prefix else name
             if source not in mapping:
                 continue
-            if not member.isfile():
+            if is_directory:
                 raise CacheError('mapped archive entry must be a regular file')
-            data = archive.extractfile(member).read()
+            data = read()
+            if len(data) != size:
+                raise CacheError('archive member size differs from header')
             for item in mapping[source]:
                 if hashlib.sha256(data).hexdigest() != item['source_sha256']:
                     raise CacheError(f'archive member fingerprint mismatch: {source}')
@@ -286,6 +338,10 @@ def _unpack(asset, stage):
                 with path.open('xb') as stream:
                     stream.write(result)
                 written.add(target)
+    except (tarfile.TarError, zipfile.BadZipFile, zlib.error, RuntimeError, EOFError) as error:
+        raise CacheError(f'invalid locked archive: {error}') from error
+    finally:
+        entries.close()
     if written != set(outputs) | {None}:
         raise CacheError('archive is missing mapped inventory/license members')
 
@@ -308,7 +364,7 @@ def fetch_asset(asset, root, *, archive_path=None, offline=False, opener=None):
         _mkdir(staging, root)
         with tempfile.TemporaryDirectory(prefix=asset['asset_set_id'] + '-', dir=staging) as temp:
             stage = Path(temp)
-            archive = stage / 'source.tar.gz'
+            archive = stage / archive_name(asset['archive'])
             source = None
             if archive_path is not None:
                 local = Path(archive_path)

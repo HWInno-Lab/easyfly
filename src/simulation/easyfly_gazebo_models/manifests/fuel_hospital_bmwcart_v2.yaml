@@ -1,0 +1,150 @@
+schema_version: 1
+asset_set_id: fuel_hospital_bmwcart_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BMWCart
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/BMWCart.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: BMWCart
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/BMWCart
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/BMWCart.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: BMWCart/meshes/Cart_BMW.mtl
+  sha256: 1241789f3f788f58c779c8bd0a409d755df9928626fc75ad3a8c68a649bd8281
+- path: BMWCart/meshes/Cart_BMW.obj
+  sha256: 5874cb3f2dce1e65876f39f3c60d2e922d668ab4970f3e1d81bc1e12adcdcd6a
+- path: BMWCart/meshes/Cart_BMW_Col.mtl
+  sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+- path: BMWCart/meshes/Cart_BMW_Col.obj
+  sha256: 983f0c9a6ce3825db529f3a1a9a6580b43fbfc9af064fcb8ca86bcec721ec81b
+- path: BMWCart/meshes/Cart_BMW_Diffuse.png
+  sha256: 9473983a688a38374c776b31c9fc5220441601aeabda29fe9a6529fec2fc08d3
+- path: BMWCart/meshes/Cart_BMW_Normal.png
+  sha256: 620c9aa529c7a59eccb0a8fefd59d58022ede089395f74f278c5ae3845359210
+- path: BMWCart/meshes/Cart_BMW_SpecGloss.png
+  sha256: d90bcf59a28a56560a8a926898fad18d57a4cfe3f433fbb4a786fbea32f765ee
+- path: BMWCart/meshes/Carts_Wheels_Diffuse.png
+  sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+- path: BMWCart/model.config
+  sha256: e144bce6502c9ae969ee5c8db54a6f4a34a97b611935109c0f014f0aac874e6a
+- path: BMWCart/model.sdf
+  sha256: cd5a7575f09afe5221cd71e7bab9cb5b043c2c09992866720fc108577e0b2254
+- path: BMWCart/thumbnails/1.png
+  sha256: fbfec68b663269a589ed8e0c4fd64d3b54b9d8f773ae7788510067f000d45427
+- path: BMWCart/thumbnails/2.png
+  sha256: 86ed53de55da6f4263f0c848207066ce5be84bde91fb4bd04a9e2a6ae943c7fe
+- path: BMWCart/thumbnails/3.png
+  sha256: 7cee53091fd6634856776056dc28c940fd5f58f2a7541ffab208603fcb5e1d81
+- path: BMWCart/thumbnails/4.png
+  sha256: f6f148a10e06c92c9dac5e173c0098917a92e78701eb774872b88d87d043995b
+- path: BMWCart/thumbnails/5.png
+  sha256: e95c12dc9b21c68b7bc3d2fe5a14263e9485e5ba18231a7d14b7adeb23e3f7bb
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/BMWCart/2/BMWCart.zip
+  sha256: 315dbb83a3d93904c67832c1cea9043ea9b1f6949cd6be9120b8c68647c1a0d8
+  size_bytes: 1607574
+  prefix: ''
+  max_members: 17
+  max_unpacked_bytes: 1737827
+  license:
+    notice: '{"createdAt":"2020-06-26T09:36:40Z","updatedAt":"2026-10-16T15:29:58Z","name":"BMWCart","owner":"OpenRobotics","description":"A
+      generic hospital cart","likes":0,"downloads":8277,"filesize":1607574,"upload_date":"2020-06-26T09:36:38Z","modify_date":"2023-09-27T15:26:53Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/BMWCart/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["Appliance"]}
+
+      '
+    sha256: 17c05c453671e1e7bca6a3e930ae1ae1698236a09230e91e9b4e5f1cc368d749
+  members:
+  - source: meshes/Cart_BMW.mtl
+    target: BMWCart/meshes/Cart_BMW.mtl
+    source_sha256: 1241789f3f788f58c779c8bd0a409d755df9928626fc75ad3a8c68a649bd8281
+    replacements: []
+  - source: meshes/Cart_BMW.obj
+    target: BMWCart/meshes/Cart_BMW.obj
+    source_sha256: 5874cb3f2dce1e65876f39f3c60d2e922d668ab4970f3e1d81bc1e12adcdcd6a
+    replacements: []
+  - source: meshes/Cart_BMW_Col.mtl
+    target: BMWCart/meshes/Cart_BMW_Col.mtl
+    source_sha256: c923a69c7099e10f5db139b377ce772ec1ca8978ded44f978ce76d13af82829d
+    replacements: []
+  - source: meshes/Cart_BMW_Col.obj
+    target: BMWCart/meshes/Cart_BMW_Col.obj
+    source_sha256: 983f0c9a6ce3825db529f3a1a9a6580b43fbfc9af064fcb8ca86bcec721ec81b
+    replacements: []
+  - source: meshes/Cart_BMW_Diffuse.png
+    target: BMWCart/meshes/Cart_BMW_Diffuse.png
+    source_sha256: 9473983a688a38374c776b31c9fc5220441601aeabda29fe9a6529fec2fc08d3
+    replacements: []
+  - source: meshes/Cart_BMW_Normal.png
+    target: BMWCart/meshes/Cart_BMW_Normal.png
+    source_sha256: 620c9aa529c7a59eccb0a8fefd59d58022ede089395f74f278c5ae3845359210
+    replacements: []
+  - source: meshes/Cart_BMW_SpecGloss.png
+    target: BMWCart/meshes/Cart_BMW_SpecGloss.png
+    source_sha256: d90bcf59a28a56560a8a926898fad18d57a4cfe3f433fbb4a786fbea32f765ee
+    replacements: []
+  - source: meshes/Carts_Wheels_Diffuse.png
+    target: BMWCart/meshes/Carts_Wheels_Diffuse.png
+    source_sha256: 09782eefe7d8aeafb8912bb6eb37705014871da03df76e2d9a61cdcf7fff5984
+    replacements: []
+  - source: model.config
+    target: BMWCart/model.config
+    source_sha256: e144bce6502c9ae969ee5c8db54a6f4a34a97b611935109c0f014f0aac874e6a
+    replacements: []
+  - source: model.sdf
+    target: BMWCart/model.sdf
+    source_sha256: cd5a7575f09afe5221cd71e7bab9cb5b043c2c09992866720fc108577e0b2254
+    replacements: []
+  - source: thumbnails/1.png
+    target: BMWCart/thumbnails/1.png
+    source_sha256: fbfec68b663269a589ed8e0c4fd64d3b54b9d8f773ae7788510067f000d45427
+    replacements: []
+  - source: thumbnails/2.png
+    target: BMWCart/thumbnails/2.png
+    source_sha256: 86ed53de55da6f4263f0c848207066ce5be84bde91fb4bd04a9e2a6ae943c7fe
+    replacements: []
+  - source: thumbnails/3.png
+    target: BMWCart/thumbnails/3.png
+    source_sha256: 7cee53091fd6634856776056dc28c940fd5f58f2a7541ffab208603fcb5e1d81
+    replacements: []
+  - source: thumbnails/4.png
+    target: BMWCart/thumbnails/4.png
+    source_sha256: f6f148a10e06c92c9dac5e173c0098917a92e78701eb774872b88d87d043995b
+    replacements: []
+  - source: thumbnails/5.png
+    target: BMWCart/thumbnails/5.png
+    source_sha256: e95c12dc9b21c68b7bc3d2fe5a14263e9485e5ba18231a7d14b7adeb23e3f7bb
+    replacements: []

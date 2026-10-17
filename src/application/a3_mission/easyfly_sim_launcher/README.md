@@ -240,7 +240,11 @@ can declare `storage: cached` with `model_root: {external: asset_cache, path: mo
 it requires its reviewed archive and always uses the cache in either mode.
 
 Versions live at `<root>/<asset_id>/<revision>/<manifest_sha256>/`, containing
-`models/`, the original `LICENSE`, `source.tar.gz`, and `receipt.json`.
+`models/`, `LICENSE`, `source.tar.gz` (or `source.zip`), and `receipt.json`.
+`LICENSE` preserves either the original archive license or an explicitly locked
+external publisher notice when the archive contains no license file. The recipe
+records exactly one of `archive.license.source` and `archive.license.notice`,
+with its SHA256; an external notice never pretends to originate inside the ZIP.
 The whole manifest locks source revision, archive, literal relocations and output
 hashes; a changed revision or recipe receives a separate directory. Receipts and
 every actual file are rechecked. Concurrent fetches for one asset use a native
@@ -257,3 +261,27 @@ Fetch success means asset preparation only; run `validate` separately for scene,
 runtime and license dependencies. It does not change navigation qualification.
 Ordinary tests use small local archives and loopback HTTP; real offline Gazebo
 inspection is an explicitly invoked, disarmed check outside `colcon test`.
+
+Rootless Fuel ZIP recipes use `format: zip` and `prefix: ""`; tar.gz recipes
+continue to require a nonempty prefix. Both formats enforce canonical paths,
+regular files/directories, unique member names, member/unpacked-byte budgets,
+source/output hashes and atomic publication. ZIP links, special files, encrypted
+entries, unsupported compression and corrupt CRCs are rejected. No archive uses
+`extractall`.
+
+`hospital_aws_v1` is a resource-audit draft with 44 independent archived assets:
+one fixed AWS tarball and 43 individually versioned Fuel ZIPs. Explicit online
+`scene_catalog fetch hospital_aws_v1` prepares them; `--offline` verifies them.
+The single-asset `--archive` option rejects this scene as ambiguous. For completely
+offline maintainer preparation, first obtain the exact archives and metadata in
+`tools/scenes/hospital-source-lock.json`, then run:
+
+```bash
+python3 tools/scenes/import_aws_hospital.py /absolute/path/to/upstream \
+  --check --prepare-cache
+```
+
+This command reproduces and verifies the committed data before preparing cache
+versions; it neither downloads nor starts any process in the simulation stack.
+The original hospital world has three anomalous source heights. It remains draft
+and managed launch refuses it pending a separate geometry/runtime qualification.

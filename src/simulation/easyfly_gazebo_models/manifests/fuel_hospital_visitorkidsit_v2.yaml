@@ -1,0 +1,138 @@
+schema_version: 1
+asset_set_id: fuel_hospital_visitorkidsit_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorKidSit
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/VisitorKidSit.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: VisitorKidSit
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorKidSit
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/VisitorKidSit.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: VisitorKidSit/meshes/Book.png
+  sha256: 032db4e99dadaa80924fcd8717ae36b7dc72d43425cbee87c0ab7d13d068c4ad
+- path: VisitorKidSit/meshes/VisitorKidGreen.png
+  sha256: bc6bbd53dbb9b90470f59a9bbf2ce30b5ce535ba2d9f2798d5f4c7c477433a5f
+- path: VisitorKidSit/meshes/VisitorKidSit.mtl
+  sha256: 2014b5b68db361edcbaaa35db53d06a176300228c42dea85a6c755b836948c51
+- path: VisitorKidSit/meshes/VisitorKidSit.obj
+  sha256: 4a3e60ccdec3dfcf5376e55ab65157ad23e6099d2771b82e6685ad10f1ae1331
+- path: VisitorKidSit/meshes/VisitorKidSit_Col.mtl
+  sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+- path: VisitorKidSit/meshes/VisitorKidSit_Col.obj
+  sha256: 47ff375eebbd1dc391580bd39e3b2638d9c8b79e584e9abb5de3bdcd04cea566
+- path: VisitorKidSit/model.config
+  sha256: 75f0b6042aafc67373a0be454f07ac135b473830a4262c29336595cf6070c0cb
+- path: VisitorKidSit/model.sdf
+  sha256: b808c4c490d1533ff93674073204e94cf9a83af9f714b39d485fe21e7db46557
+- path: VisitorKidSit/thumbnails/1.png
+  sha256: 1a9421fc7c6c5de7ea0daa1157aeeb07cbb2497b5260643c5908d3f5995a95de
+- path: VisitorKidSit/thumbnails/2.png
+  sha256: bea55025e6390a263ab4d036dc731b26eea7dc17e3cf126c4fe413da92bd16a0
+- path: VisitorKidSit/thumbnails/3.png
+  sha256: 7ce5dd882acd861903d1a90c4308e1f19df34306ef1e077bba535cfc5b66ba3b
+- path: VisitorKidSit/thumbnails/4.png
+  sha256: 63eff30db929b1fab85dc3bb42b7d12978e0fb36e0ec005b11f8198c1797a6ae
+- path: VisitorKidSit/thumbnails/5.png
+  sha256: afcd2dd11eec95d32d00877fee81b079f9d9e6a6c174c9c24d88ed2fc6b4440a
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/VisitorKidSit/2/VisitorKidSit.zip
+  sha256: c913b16f720e9e044ee8f524ba14676a25807ca76f98f2f1bd0d2a15c1362122
+  size_bytes: 744956
+  prefix: ''
+  max_members: 15
+  max_unpacked_bytes: 898513
+  license:
+    notice: '{"createdAt":"2020-05-20T19:38:37Z","updatedAt":"2026-10-16T18:33:16Z","name":"VisitorKidSit","owner":"OpenRobotics","description":"Kid
+      sitting down reading a book.","likes":0,"downloads":65010,"filesize":744956,"upload_date":"2020-05-20T19:38:35Z","modify_date":"2023-09-27T15:39:59Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/VisitorKidSit/tip/files/thumbnails/1.png","version":2,"private":false,"categories":["People"]}
+
+      '
+    sha256: 970c5fa25638be8a9573fb3120c2aa02f326efeb973112fd28b1c6b7828ee793
+  members:
+  - source: meshes/Book.png
+    target: VisitorKidSit/meshes/Book.png
+    source_sha256: 032db4e99dadaa80924fcd8717ae36b7dc72d43425cbee87c0ab7d13d068c4ad
+    replacements: []
+  - source: meshes/VisitorKidGreen.png
+    target: VisitorKidSit/meshes/VisitorKidGreen.png
+    source_sha256: bc6bbd53dbb9b90470f59a9bbf2ce30b5ce535ba2d9f2798d5f4c7c477433a5f
+    replacements: []
+  - source: meshes/VisitorKidSit.mtl
+    target: VisitorKidSit/meshes/VisitorKidSit.mtl
+    source_sha256: 2014b5b68db361edcbaaa35db53d06a176300228c42dea85a6c755b836948c51
+    replacements: []
+  - source: meshes/VisitorKidSit.obj
+    target: VisitorKidSit/meshes/VisitorKidSit.obj
+    source_sha256: 4a3e60ccdec3dfcf5376e55ab65157ad23e6099d2771b82e6685ad10f1ae1331
+    replacements: []
+  - source: meshes/VisitorKidSit_Col.mtl
+    target: VisitorKidSit/meshes/VisitorKidSit_Col.mtl
+    source_sha256: d4cabdbf0789dcc8419b4ebf24a0205f2d8915e34bffa2fac9ce95536c8b4def
+    replacements: []
+  - source: meshes/VisitorKidSit_Col.obj
+    target: VisitorKidSit/meshes/VisitorKidSit_Col.obj
+    source_sha256: 47ff375eebbd1dc391580bd39e3b2638d9c8b79e584e9abb5de3bdcd04cea566
+    replacements: []
+  - source: model.config
+    target: VisitorKidSit/model.config
+    source_sha256: 75f0b6042aafc67373a0be454f07ac135b473830a4262c29336595cf6070c0cb
+    replacements: []
+  - source: model.sdf
+    target: VisitorKidSit/model.sdf
+    source_sha256: b808c4c490d1533ff93674073204e94cf9a83af9f714b39d485fe21e7db46557
+    replacements: []
+  - source: thumbnails/1.png
+    target: VisitorKidSit/thumbnails/1.png
+    source_sha256: 1a9421fc7c6c5de7ea0daa1157aeeb07cbb2497b5260643c5908d3f5995a95de
+    replacements: []
+  - source: thumbnails/2.png
+    target: VisitorKidSit/thumbnails/2.png
+    source_sha256: bea55025e6390a263ab4d036dc731b26eea7dc17e3cf126c4fe413da92bd16a0
+    replacements: []
+  - source: thumbnails/3.png
+    target: VisitorKidSit/thumbnails/3.png
+    source_sha256: 7ce5dd882acd861903d1a90c4308e1f19df34306ef1e077bba535cfc5b66ba3b
+    replacements: []
+  - source: thumbnails/4.png
+    target: VisitorKidSit/thumbnails/4.png
+    source_sha256: 63eff30db929b1fab85dc3bb42b7d12978e0fb36e0ec005b11f8198c1797a6ae
+    replacements: []
+  - source: thumbnails/5.png
+    target: VisitorKidSit/thumbnails/5.png
+    source_sha256: afcd2dd11eec95d32d00877fee81b079f9d9e6a6c174c9c24d88ed2fc6b4440a
+    replacements: []

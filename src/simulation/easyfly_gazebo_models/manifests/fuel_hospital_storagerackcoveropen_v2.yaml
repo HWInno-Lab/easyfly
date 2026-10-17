@@ -1,0 +1,120 @@
+schema_version: 1
+asset_set_id: fuel_hospital_storagerackcoveropen_v2
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCoverOpen
+  revision: '2'
+  declared_license: CC-BY-4.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/metadata/StorageRackCoverOpen.json
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/hospital_fuel/origins.json
+  note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+    no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+    model.config author/description and every ZIP file retained unchanged.
+models:
+- name: StorageRackCoverOpen
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCoverOpen
+    revision: '2'
+    declared_license: CC-BY-4.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/metadata/StorageRackCoverOpen.json
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/hospital_fuel/origins.json
+    note: Publisher API snapshot declares CC-BY-4.0 for this model/version. ZIP has
+      no LICENSE; cache LICENSE explicitly contains that external declaration. Original
+      model.config author/description and every ZIP file retained unchanged.
+files:
+- path: StorageRackCoverOpen/meshes/StorageRackCoverOpen.mtl
+  sha256: f44608886ed7536e33fff628352c60e8d4ddc58d24ed40c47a35aca7438634ba
+- path: StorageRackCoverOpen/meshes/StorageRackCoverOpen.obj
+  sha256: 04180416468748bb32182bcdf3376d1a05cf89799621f9dfa19f0c903c4d3593
+- path: StorageRackCoverOpen/meshes/StorageRackCoverOpen.png
+  sha256: f18b1975a6371cadc9f3dec620297cf2f5f7882b84714267838470810586e2b4
+- path: StorageRackCoverOpen/model.config
+  sha256: 512eedc1ffd891e685851fd069d39e7881cb19a50515af62cc8ec9fcba09bce3
+- path: StorageRackCoverOpen/model.sdf
+  sha256: 495093085fdab15d41490e3ec8af0d1a62239040cf02ed28b1c45c21ede40e4f
+- path: StorageRackCoverOpen/thumbnails/1.png
+  sha256: 6ed6a4d08c01034aae7eb0f93e5d91eb6e674447c32a86ea212e9bf8f1b883d3
+- path: StorageRackCoverOpen/thumbnails/2.png
+  sha256: 269ab80f4401c8362457e6aa2b10809f903d4a8fb5e77b2df8d27df38257081f
+- path: StorageRackCoverOpen/thumbnails/3.png
+  sha256: d139023970c671c25cccf6eeed2ae02c6aa535f1958c99bcc9cbf907fdf075a3
+- path: StorageRackCoverOpen/thumbnails/4.png
+  sha256: 6a495448cd1624d34df3621cc37cca6c73cbc28e2ab9441b4195aac105bc13bc
+- path: StorageRackCoverOpen/thumbnails/5.png
+  sha256: 4dbf1aeb8823d990f59e3b24ef82acbdeea87f4f171d9a87926fc60c87e9baa1
+storage: cached
+local_changes: []
+inventory_note: Only locked regular files enter the external cache. World geometry/navigation
+  qualification is independent.
+archive:
+  format: zip
+  urls:
+  - https://fuel.gazebosim.org/1.0/OpenRobotics/models/StorageRackCoverOpen/2/StorageRackCoverOpen.zip
+  sha256: 5dbaa6e783b1c4e24e62101db6dca0e0074138ce2eb50479fb86eb29efa5c710
+  size_bytes: 635216
+  prefix: ''
+  max_members: 12
+  max_unpacked_bytes: 680310
+  license:
+    notice: '{"createdAt":"2019-10-28T06:41:39Z","updatedAt":"2026-10-16T15:36:23Z","name":"StorageRackCoverOpen","owner":"OpenRobotics","description":"Storage
+      rack with blue cover, open.","likes":1,"downloads":23268,"filesize":635216,"upload_date":"2019-10-28T06:41:36Z","modify_date":"2023-09-27T16:19:41Z","license_id":2,"license_name":"Creative
+      Commons Attribution 4.0 International","license_url":"http://creativecommons.org/licenses/by/4.0/","license_image":"https://i.creativecommons.org/l/by/4.0/88x31.png","permission":0,"url_name":"","thumbnail_url":"/OpenRobotics/models/StorageRackCoverOpen/tip/files/thumbnails/1.png","version":2,"private":false,"tags":["hospital"]}
+
+      '
+    sha256: c9f0cc882a88095ea7b7aa8ea49373ee9ca5eca27053d1823fba41f8e98e4771
+  members:
+  - source: meshes/StorageRackCoverOpen.mtl
+    target: StorageRackCoverOpen/meshes/StorageRackCoverOpen.mtl
+    source_sha256: f44608886ed7536e33fff628352c60e8d4ddc58d24ed40c47a35aca7438634ba
+    replacements: []
+  - source: meshes/StorageRackCoverOpen.obj
+    target: StorageRackCoverOpen/meshes/StorageRackCoverOpen.obj
+    source_sha256: 04180416468748bb32182bcdf3376d1a05cf89799621f9dfa19f0c903c4d3593
+    replacements: []
+  - source: meshes/StorageRackCoverOpen.png
+    target: StorageRackCoverOpen/meshes/StorageRackCoverOpen.png
+    source_sha256: f18b1975a6371cadc9f3dec620297cf2f5f7882b84714267838470810586e2b4
+    replacements: []
+  - source: model.config
+    target: StorageRackCoverOpen/model.config
+    source_sha256: 512eedc1ffd891e685851fd069d39e7881cb19a50515af62cc8ec9fcba09bce3
+    replacements: []
+  - source: model.sdf
+    target: StorageRackCoverOpen/model.sdf
+    source_sha256: 495093085fdab15d41490e3ec8af0d1a62239040cf02ed28b1c45c21ede40e4f
+    replacements: []
+  - source: thumbnails/1.png
+    target: StorageRackCoverOpen/thumbnails/1.png
+    source_sha256: 6ed6a4d08c01034aae7eb0f93e5d91eb6e674447c32a86ea212e9bf8f1b883d3
+    replacements: []
+  - source: thumbnails/2.png
+    target: StorageRackCoverOpen/thumbnails/2.png
+    source_sha256: 269ab80f4401c8362457e6aa2b10809f903d4a8fb5e77b2df8d27df38257081f
+    replacements: []
+  - source: thumbnails/3.png
+    target: StorageRackCoverOpen/thumbnails/3.png
+    source_sha256: d139023970c671c25cccf6eeed2ae02c6aa535f1958c99bcc9cbf907fdf075a3
+    replacements: []
+  - source: thumbnails/4.png
+    target: StorageRackCoverOpen/thumbnails/4.png
+    source_sha256: 6a495448cd1624d34df3621cc37cca6c73cbc28e2ab9441b4195aac105bc13bc
+    replacements: []
+  - source: thumbnails/5.png
+    target: StorageRackCoverOpen/thumbnails/5.png
+    source_sha256: 4dbf1aeb8823d990f59e3b24ef82acbdeea87f4f171d9a87926fc60c87e9baa1
+    replacements: []
