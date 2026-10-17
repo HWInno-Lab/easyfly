@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "connection_protocol": 1,
+  "snapshot_abi": 1,
+  "managed_default_read_only": true
+}

@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+connection_bin_dir="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+connection_prefix="$(dirname -- "$(dirname -- "$connection_bin_dir")")"
+if [[ -f "$connection_prefix/setup.bash" ]]; then
+  connection_setup="$connection_prefix/setup.bash"
+elif [[ -f "$connection_prefix/../setup.bash" ]]; then
+  connection_setup="$connection_prefix/../setup.bash"
+else
+  echo 'EasyFly installation setup.bash is missing.' >&2
+  exit 2
+fi
+# Load only the selected installation and the underlays recorded when it was built.
+unset AMENT_PREFIX_PATH CMAKE_PREFIX_PATH COLCON_PREFIX_PATH LD_LIBRARY_PATH PYTHONPATH
+set +u
+source "$connection_setup"
+set -u
+exec "$connection_bin_dir/easyfly_connection_manager" "$@"

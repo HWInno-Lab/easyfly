@@ -33,6 +33,7 @@
 using namespace std::chrono_literals;
 using namespace easyfly_ui_bridge;  // NOLINT(build/namespaces)
 using Mission = easyfly_msgs::srv::ManageMission;
+using Details = easyfly_msgs::srv::GetMissionDetails;
 using Caps = easyfly_msgs::srv::GetCapabilities;
 using Params = easyfly_msgs::srv::QueryParams;
 using Perception = easyfly_msgs::srv::GetPerception;
@@ -70,6 +71,7 @@ protected:
   std::atomic<int> heartbeats{0}, goals{0}, cancels{0}, control_messages{0}, commands{0};
   std::atomic<int> mission_writes{0}, param_writes{0}, mission_calls{0};
   std::atomic<int> response_mode{0}, mission_delay_ms{0};
+  std::atomic<int> details_mode{0}, details_delay_ms{0}, details_calls{0};
   std::mutex state_mutex;
   double position_x{0};
 
@@ -148,6 +150,22 @@ protected:
             2 ? std::string(32, 'b') : request->execution_id;
             response->status = "failed"; response->execution_pending = true;
             if (response_mode == 3) {response->success = false; response->status = "not_found";}
+          }
+        }));
+    platform_resources.push_back(
+      node->create_service<Details>(
+        "/platform/mission/details",
+        [this](Details::Request::SharedPtr request, Details::Response::SharedPtr response) {
+          ++details_calls; const int delay = details_delay_ms.load();
+          if (delay) {std::this_thread::sleep_for(std::chrono::milliseconds(delay));}
+          response->mission_name = details_mode == 1 ? "wrong.yaml" : request->mission_name;
+          response->success = true; response->status = "valid_snapshot";
+          response->content = "type=hover\nwait=2\n";
+          response->content_sha256 = easyfly_mission_fsm::missionContentSha256(response->content);
+          if (details_mode == 2) {response->content_sha256 = std::string(64, '0');}
+          if (details_mode == 3) {
+            response->success = false; response->status = "invalid"; response->message = "missing";
+            response->content.clear(); response->content_sha256.clear();
           }
         }));
     for (const auto * name :
@@ -259,9 +277,128 @@ protected:
   }
 };
 
+TEST_F(ObserverTest, CameraPerceptionExactFrameSubscriptionsRemainReadonlyAcrossReset)
+{
+  auto publisher = node->create_publisher<easyfly_msgs::msg::DetectionInfoArray>("/detections", 1);
+  Observer observer(configuration()); running(observer);
+  ASSERT_TRUE(until([&] {return publisher->get_subscription_count() == 1;}));
+  auto image = sensor_msgs::msg::Image{};
+  image.header.frame_id = "camera"; image.header.stamp = stamp();
+  image.width = 640; image.height = 480; image.encoding = "rgb8"; image.step = 1920;
+  image.data.assign(921600, 5);
+  easyfly_msgs::msg::DetectionInfoArray detection; detection.header = image.header;
+  easyfly_msgs::msg::DetectionInfo box; box.header = image.header; box.track_id = -1;
+  box.class_name = "person"; box.confidence = .9; box.bbox_center_x = box.bbox_center_y = .5;
+  box.bbox_width = box.bbox_height = .2; detection.detections.push_back(box);
+  image_publisher->publish(image); publisher->publish(detection);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->camera_perception[0].detection_image.value != nullptr;
+      }));
+  const auto before = observer.snapshot();
+  ASSERT_TRUE(before->camera_perception[0].detections.value);
+  EXPECT_FALSE(before->camera_perception[1].detection_image.value);
+  EXPECT_EQ(before->camera_perception[0].detection_image.value->header, detection.header);
+  // DDS is depth1 best-effort; graph depth may be unknown (0) on Fast DDS.
+  for (const auto & subscription : node->get_subscriptions_info_by_topic("/detections")) {
+    if (subscription.node_name().find("easyfly_ui_observer_") == 0) {
+      EXPECT_EQ(subscription.qos_profile().reliability(), rclcpp::ReliabilityPolicy::BestEffort);
+    }
+  }
+  now_ns = 1000000000LL;
+  rosgraph_msgs::msg::Clock reset; reset.clock = stamp(); clock_publisher->publish(reset);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->time_epoch > before->time_epoch;}));
+  EXPECT_FALSE(observer.snapshot()->camera_perception[0].detections.value);
+  EXPECT_TRUE(before->camera_perception[0].detections.value);  // immutable old snapshot
+  stopped(observer);
+  EXPECT_EQ(observer.snapshot()->camera_perception[0].cached_images, 0U);
+}
+TEST_F(ObserverTest, DetailsMismatchTimeoutLateReplyAndReconnectFailClosed)
+{
+  Observer observer(configuration()); running(observer);
+  EXPECT_EQ(observer.mission_details("../bad.yaml").status, RequestStatus::Invalid);
+  for (int mode : {1, 2, 3}) {
+    details_mode = mode;
+    const auto receipt = request([&] {return observer.mission_details("demo.yaml");});
+    ASSERT_TRUE(
+      until(
+        [&] {
+          return observer.snapshot()->mission_details.evidence.request_id == receipt.id;
+        }));
+    auto snapshot = observer.snapshot(); EXPECT_FALSE(snapshot->mission_plan);
+    EXPECT_EQ(
+      snapshot->mission_details.evidence.quality,
+      mode == 3 ? Quality::Unknown : Quality::Invalid);
+    if (mode != 3) {EXPECT_FALSE(snapshot->mission_details.value);}
+  }
+  details_mode = 0; details_delay_ms = 1400;
+  const auto receipt = request([&] {return observer.mission_details("demo.yaml");});
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->mission_details.evidence.request_id == receipt.id &&
+        snapshot->mission_details.evidence.reason.find("timed out") != std::string::npos;
+      }));
+  std::this_thread::sleep_for(600ms);
+  EXPECT_FALSE(observer.snapshot()->mission_details.value); EXPECT_FALSE(
+    observer.snapshot()->mission_plan);
+  stopped(observer);
+  Observer reconnected(configuration(), observer.snapshot()); running(reconnected);
+  EXPECT_FALSE(reconnected.snapshot()->mission_details.value);
+  EXPECT_FALSE(reconnected.snapshot()->mission_plan); stopped(reconnected);
+}
+TEST_F(ObserverTest, DetailsAreDiscardedAcrossClockReset)
+{
+  Observer observer(configuration()); running(observer);
+  details_delay_ms = 500;
+  const auto receipt = request([&] {return observer.mission_details("demo.yaml");});
+  ASSERT_TRUE(until([&] {return details_calls > 0;}));
+  const auto before = observer.snapshot()->time_epoch; now_ns = 1000000000LL;
+  rosgraph_msgs::msg::Clock reset; reset.clock = stamp(); clock_publisher->publish(reset);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->time_epoch > before;}));
+  std::this_thread::sleep_for(700ms);
+  EXPECT_FALSE(observer.snapshot()->mission_details.value); EXPECT_FALSE(
+    observer.snapshot()->mission_plan);
+  EXPECT_NE(observer.snapshot()->mission_details.evidence.request_id, receipt.id);
+  stopped(observer);
+}
+TEST_F(ObserverTest, MultipleStatePublishersInvalidateAndRequireANewSample)
+{
+  Observer observer(configuration()); running(observer);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->state.position_valid;}));
+  auto other = node->create_publisher<easyfly_msgs::msg::UAVState>("/uav_state", 1);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->state_publishers == 2;}));
+  const auto conflicted = observer.snapshot();
+  EXPECT_FALSE(conflicted->state.position_valid);
+  EXPECT_TRUE(conflicted->trajectory.empty());
+  EXPECT_EQ(conflicted->state.evidence.quality, Quality::Invalid);
+  EXPECT_NE(conflicted->state.evidence.reason.find("multiple"), std::string::npos);
+  other.reset();
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->state_publishers == 1 && snapshot->state.position_valid;
+      }));
+  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(cancels.load(), 0);
+  stopped(observer);
+}
 TEST_F(ObserverTest, AllReadonlyRequestsPreserveTaskSemanticsAndOtherContext)
 {
   Observer observer(configuration()); running(observer);
+  auto preview = request([&] {return observer.mission_details("demo.yaml");});
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->mission_details.evidence.request_id == preview.id;
+      }));
+  ASSERT_TRUE(observer.snapshot()->mission_details.value);
+  EXPECT_EQ(observer.snapshot()->mission_details.value->mission_name, "demo.yaml");
+  ASSERT_TRUE(observer.snapshot()->mission_plan);
+  EXPECT_EQ(observer.snapshot()->mission_plan->steps.size(), 1U);
+  EXPECT_FALSE(observer.snapshot()->mission_details.evidence.source_age_available);
   auto receipt = request([&] {return observer.list_missions();});
   ASSERT_TRUE(
     until(

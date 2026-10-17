@@ -26,6 +26,7 @@
 #include <rosgraph_msgs/msg/clock.hpp>
 
 #include "easyfly_ui_bridge/observer.hpp"
+#include "easyfly_ui_bridge/camera_observations.hpp"
 
 namespace easyfly_ui_bridge
 {
@@ -33,6 +34,7 @@ namespace
 {
 using Caps = easyfly_msgs::srv::GetCapabilities;
 using Mission = easyfly_msgs::srv::ManageMission;
+using Details = easyfly_msgs::srv::GetMissionDetails;
 using Params = easyfly_msgs::srv::QueryParams;
 using Perception = easyfly_msgs::srv::GetPerception;
 using Image = sensor_msgs::msg::Image;
@@ -47,6 +49,7 @@ const char * endpoint(Key key)
     case Key::LandingCapabilities: return "/platform/precision_landing/capabilities";
     case Key::MissionList: case Key::MissionValidation: case Key::MissionQuery:
       return "/platform/mission/manage";
+    case Key::MissionDetails: return "/platform/mission/details";
     case Key::Profile: case Key::UseSimTime: case Key::OperatorNote: case Key::ExportPretty:
       return "/platform/params/query";
     case Key::Targets: case Key::Obstacles: return "/platform/perception/query";
@@ -98,11 +101,13 @@ struct Observer::Impl
   std::unique_ptr<easyfly_core::Client> sdk;
   std::map<Key, rclcpp::Client<Caps>::SharedPtr> caps_clients;
   rclcpp::Client<Mission>::SharedPtr mission_client;
+  rclcpp::Client<Details>::SharedPtr details_client;
   rclcpp::Client<Params>::SharedPtr params_client;
   rclcpp::Client<Perception>::SharedPtr perception_client;
   std::vector<rclcpp::SubscriptionBase::SharedPtr> subscriptions;
   std::array<Image::ConstSharedPtr, 2> incoming_images;
   std::array<double, 2> image_received{};
+  std::array<std::unique_ptr<CameraObservationBuffer>, 2> camera_buffers;
   easyfly_msgs::msg::MissionStatus::ConstSharedPtr incoming_event;
   double event_received{0};
   std::map<Key, Pending> pending;
@@ -125,6 +130,18 @@ struct Observer::Impl
     }
     if (!config.image_topics[0].empty() && config.image_topics[0] == config.image_topics[1]) {
       throw std::invalid_argument("camera sources must be distinct");
+    }
+    for (const auto & binding : config.camera_perception) {
+      for (const auto & topic : {binding.image_topic, binding.detections_topic,
+          binding.tracks_topic, binding.targets_topic})
+      {
+        if (topic.size() > 256 || (!topic.empty() && topic.front() != '/')) {
+          throw std::invalid_argument("camera perception bindings must be absolute topics");
+        }
+      }
+      if (binding.target_frame.empty() || binding.target_frame.size() > 256) {
+        throw std::invalid_argument("invalid camera perception target frame");
+      }
     }
     data.observation_session_id = ++next_session;
     data.selected_profile = config.selected_profile;
@@ -152,6 +169,7 @@ struct Observer::Impl
     for (Key key : {Key::Profile, Key::UseSimTime, Key::OperatorNote, Key::ExportPretty}) {
       data.parameters[key].evidence.endpoint = endpoint(key);
     }
+    data.mission_details.evidence.endpoint = endpoint(Key::MissionDetails);
     for (Key key : {Key::Targets, Key::Obstacles}) {
       data.perception[key].evidence.endpoint = endpoint(key);
       data.perception_reports[key].evidence.endpoint = endpoint(key);
@@ -213,6 +231,8 @@ struct Observer::Impl
       data.capabilities[request.key] = {nullptr, e};
     } else if (is_mission(request.key)) {
       data.missions[request.key] = {nullptr, e};
+    } else if (request.key == Key::MissionDetails) {
+      data.mission_details = {nullptr, e}; data.mission_plan.reset(); data.mission_format.clear();
     } else if (is_params(request.key)) {data.parameters[request.key] = {nullptr, e};} else {
       data.perception[request.key] = {nullptr, e};
       data.perception_reports[request.key] = PerceptionReport();
@@ -247,6 +267,8 @@ struct Observer::Impl
     for (auto & item : data.parameters) {
       item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
     }
+    data.mission_details = {}; data.mission_plan.reset(); data.mission_format.clear();
+    data.mission_details.evidence.endpoint = endpoint(Key::MissionDetails);
     for (auto & item : data.perception) {
       item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
     }
@@ -254,6 +276,8 @@ struct Observer::Impl
       item.second = PerceptionReport(); item.second.evidence.endpoint = endpoint(item.first);
     }
     for (auto & image : data.images) {image = {};}
+    for (auto & buffer : camera_buffers) {if (buffer) {buffer->clear();}}
+    data.camera_perception = {};
     incoming_images = {}; incoming_event.reset();
     data.trajectory.clear();
     // The event is historical and has no execution identity; keep original epoch.
@@ -279,6 +303,7 @@ struct Observer::Impl
       caps_clients[item.first] = node->create_client<Caps>(endpoint(item.first));
     }
     mission_client = node->create_client<Mission>(endpoint(Key::MissionList));
+    details_client = node->create_client<Details>(endpoint(Key::MissionDetails));
     params_client = node->create_client<Params>(endpoint(Key::Profile));
     perception_client = node->create_client<Perception>(endpoint(Key::Targets));
     if (config.use_sim_time) {
@@ -299,10 +324,39 @@ struct Observer::Impl
         }));
     for (std::size_t i = 0; i < config.image_topics.size(); ++i) {
       if (config.image_topics[i].empty()) {continue;}
+      const auto & binding = config.camera_perception[i];
+      if (!binding.image_topic.empty() && binding.image_topic == config.image_topics[i]) {
+        camera_buffers[i] = std::make_unique<CameraObservationBuffer>(binding);
+        const auto subscribe = [this, i](const auto & topic, auto sample, auto callback) {
+            using Message = decltype(sample);
+            if (topic.empty()) {return;}
+            subscriptions.push_back(
+              node->create_subscription<Message>(
+                topic,
+                rclcpp::QoS(1).best_effort(), [this, i, callback](
+                  typename Message::ConstSharedPtr message) {
+                  (camera_buffers[i].get()->*callback)(
+                    message, detail::steady_seconds(),
+                    current_epoch.load());
+                }));
+          };
+        subscribe(
+          binding.detections_topic, easyfly_msgs::msg::DetectionInfoArray{},
+          &CameraObservationBuffer::detections);
+        subscribe(
+          binding.tracks_topic, easyfly_msgs::msg::TrackInfoArray{},
+          &CameraObservationBuffer::tracks);
+        subscribe(
+          binding.targets_topic, easyfly_msgs::msg::Target3DArray{},
+          &CameraObservationBuffer::targets);
+      }
       subscriptions.push_back(
         node->create_subscription<Image>(
           config.image_topics[i],
           rclcpp::QoS(1).best_effort(), [this, i](Image::ConstSharedPtr m) {
+            if (camera_buffers[i]) {
+              camera_buffers[i]->image(m, detail::steady_seconds(), current_epoch.load());
+            }
             const bool same_pending_source = incoming_images[i] &&
             incoming_images[i]->header == m->header;
             if (incoming_images[i]) {++data.counters.dropped_images;}
@@ -377,6 +431,21 @@ struct Observer::Impl
             evidence(
               request, quality,
               "service success and execution_pending are independent of task status")};
+        });
+    } else if (request.key == Key::MissionDetails) {
+      auto input = std::make_shared<Details::Request>(); input->mission_name = request.argument;
+      send<Details>(
+        request, details_client, input,
+        [this, request](Details::Response::SharedPtr response) {
+          easyfly_mission_fsm::MissionValidation plan;
+          const auto quality = detail::validate_mission_details(*response, request.argument, &plan);
+          const bool retain = quality == Quality::ValidAtObservation || quality == Quality::Unknown;
+          data.mission_details = {retain ? response : nullptr,
+            evidence(request, quality, "validated content snapshot; not execution or admission")};
+          data.mission_plan = quality == Quality::ValidAtObservation ?
+          std::make_shared<const easyfly_mission_fsm::MissionValidation>(std::move(plan)) : nullptr;
+          data.mission_format = quality == Quality::ValidAtObservation ?
+          easyfly_mission_fsm::missionFormatName(response->content) : "";
         });
     } else if (is_params(request.key)) {
       auto input = std::make_shared<Params::Request>();
@@ -484,8 +553,26 @@ struct Observer::Impl
   }
   void observations(double now)
   {
+    if (now - data.state_graph_observed >= 1.0) {
+      const auto sources = node->get_publishers_info_by_topic("/uav_state");
+      data.state_publishers = sources.size(); data.state_matching_publishers = 0;
+      for (const auto & source : sources) {
+        if (source.topic_type() == "easyfly_msgs/msg/UAVState") {
+          ++data.state_matching_publishers;
+        }
+      }
+      data.state_graph_observed = now;
+    }
     const auto state = sdk->state();
-    if (state.received && detail::stamp_ns(state.value.header.stamp) != blocked_state_stamp) {
+    const bool eligible_state = state.received &&
+      detail::stamp_ns(state.value.header.stamp) != blocked_state_stamp;
+    if (data.state_publishers > 1) {
+      // No publisher identity exists in UAVState. Never merge two aircraft into one view.
+      blocked_state_stamp = state.received ? detail::stamp_ns(state.value.header.stamp) : -1;
+      last_state.reset(); data.trajectory.clear(); data.state = StateView();
+      data.state.evidence.quality = Quality::Invalid;
+      data.state.evidence.reason = "multiple /uav_state publishers; source identity ambiguous";
+    } else if (eligible_state) {
       const int64_t ns = detail::stamp_ns(state.value.header.stamp);
       const int64_t previous = last_state ? detail::stamp_ns(last_state->header.stamp) : -1;
       if (!last_state || ns > previous) {
@@ -509,6 +596,11 @@ struct Observer::Impl
       if (state.received) {data.state.evidence.quality = Quality::ClockReset;}
     }
     detail::prune_trajectory(data.trajectory, now);
+    for (size_t i = 0; i < camera_buffers.size(); ++i) {
+      if (camera_buffers[i]) {
+        data.camera_perception[i] = camera_buffers[i]->snapshot(data.clock, now);
+      }
+    }
     for (std::size_t i = 0; i < incoming_images.size(); ++i) {
       auto & image = data.images[i];
       if (incoming_images[i]) {
@@ -598,6 +690,7 @@ struct Observer::Impl
       }
     }
     for (auto & item : data.missions) {age(item.second, now);}
+    age(data.mission_details, now);
     for (auto & item : data.parameters) {age(item.second, now);}
     for (auto & item : data.perception) {
       age(item.second, now);
@@ -642,7 +735,10 @@ struct Observer::Impl
       queue.clear(); reserved.clear();
     }
     incoming_images = {}; incoming_event.reset(); subscriptions.clear();
+    for (auto & buffer : camera_buffers) {buffer.reset();}
+    data.camera_perception = {};
     caps_clients.clear(); mission_client.reset(); params_client.reset(); perception_client.reset();
+    details_client.reset();
     if (executor) {executor->cancel(); executor->remove_node(node); executor.reset();}
     node.reset();
     if (context && context->is_valid()) {context->shutdown("read-only observer stopped");}
@@ -658,6 +754,7 @@ struct Observer::Impl
     data.trajectory.clear();
     for (auto & item : data.capabilities) {item.second.evidence.quality = Quality::Stale;}
     for (auto & item : data.missions) {item.second.evidence.quality = Quality::Stale;}
+    data.mission_details.evidence.quality = Quality::Stale;
     for (auto & item : data.parameters) {item.second.evidence.quality = Quality::Stale;}
     for (auto & item : data.perception) {item.second.evidence.quality = Quality::Stale;}
     for (auto & item : data.perception_reports) {item.second.evidence.quality = Quality::Stale;}
@@ -722,6 +819,11 @@ RequestReceipt Observer::validate_mission(const std::string & name)
 RequestReceipt Observer::query_mission(const std::string & id)
 {
   return detail::execution_id(id) ? impl_->submit(Key::MissionQuery, id) :
+         RequestReceipt{0, RequestStatus::Invalid};
+}
+RequestReceipt Observer::mission_details(const std::string & name)
+{
+  return detail::catalog_name(name) ? impl_->submit(Key::MissionDetails, name) :
          RequestReceipt{0, RequestStatus::Invalid};
 }
 RequestReceipt Observer::read_parameter(Parameter parameter)

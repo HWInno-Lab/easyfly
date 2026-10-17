@@ -56,9 +56,10 @@ QString rviz_preview(const bridge::BridgeConfig & config, int preset)
     "Panels:\n  - Class: rviz_common/Displays\n    Name: Displays\n"
     "  - Class: rviz_common/Views\n    Name: Views\n"
     "Visualization Manager:\n  Class: \"\"\n  Global Options:\n"
-    "    Fixed Frame: odom\n    Background Color: 244; 246; 249\n    Frame Rate: 10\n"
-    "  Displays:\n    - Class: rviz_default_plugins/Grid\n      Name: Local odom grid\n"
+    "    Fixed Frame: %1\n    Background Color: 244; 246; 249\n    Frame Rate: 10\n"
+    "  Displays:\n    - Class: rviz_default_plugins/Grid\n      Name: Local %1 grid\n"
     "      Enabled: true\n      Plane: XY\n      Cell Size: 1\n      Color: 190; 199; 212\n";
+  result = result.arg(preset == 3 ? "map" : "odom");
   const auto display = [&](const QString & type, const QString & name,
       const QString & endpoint, bool enabled) {
       result += QString(
@@ -66,7 +67,17 @@ QString rviz_preview(const bridge::BridgeConfig & config, int preset)
         type, quoted(name), enabled ? "true" : "false");
       result += topic(endpoint);
     };
-  if (preset == 0) {
+  if (preset == 3) {
+    // MAVROS's local odometry is already in map; no synthetic map/odom TF,
+    // SLAM publisher or vehicle-control plugin is required by this view.
+    display(
+      "Odometry", "MAVROS vehicle pose / last received, not freshness checked",
+      "/mavros/local_position/odom", true);
+    result +=
+      "      Keep: 1\n      Position Tolerance: 0\n      Angle Tolerance: 0\n"
+      "      Shape:\n        Value: Axes\n        Axes Length: 0.8\n        Axes Radius: 0.04\n"
+      "      Covariance:\n        Value: false\n";
+  } else if (preset == 0) {
     display("Path", "Actual path / last known, not freshness checked", "/path", true);
     display(
       "Marker", "Planned trajectory / last known, not flight admission",
@@ -83,7 +94,7 @@ QString rviz_preview(const bridge::BridgeConfig & config, int preset)
       "/obstacle_markers", true);
     display("PointCloud2", "Filtered geometry / last known", "/pointcloud_filtered", false);
   }
-  if (preset != 0 && !config.image_topics.empty()) {
+  if ((preset == 1 || preset == 2) && !config.image_topics.empty()) {
     const auto index = preset == 2 ? 1U : 0U;
     if (config.image_topics.size() > index && !config.image_topics[index].empty()) {
       display(
@@ -158,10 +169,19 @@ ToolCommand tool_command(
     result.arguments +=
       QStringList{"--", "/tmp/easyfly-qgc.AppImage", "--appimage-extract-and-run"};
   } else {
+    // Fast DDS localhost participants still use POSIX shared memory. Hiding
+    // /dev/shm lets discovery/process startup appear healthy but drops data.
+    // RViz is a trusted ROS viewer, not a hostile-code sandbox; QGC never gets
+    // this binding. Keep PID ownership, device restrictions and ROS scope.
+    const QFileInfo shared_memory("/dev/shm");
+    if (!shared_memory.isDir() || !shared_memory.isReadable() || !shared_memory.isWritable()) {
+      result.error = QStringLiteral("RViz 所需 DDS 共享内存目录不可用；未启动"); return result;
+    }
+    result.arguments += QStringList{"--bind", "/dev/shm", "/dev/shm"};
     result.environment.insert("ROS_HOME", directory + "/ros");
     result.environment.insert("ROS_LOG_DIR", directory + "/ros/log");
     result.environment.insert("__GLX_VENDOR_LIBRARY_NAME", "mesa");
-    if (preset < 0 || preset > 2) {result.error = "Invalid RViz preset"; return result;}
+    if (preset < 0 || preset > 3) {result.error = "Invalid RViz preset"; return result;}
     QFile file(directory + "/preview.rviz");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
       result.error = "Cannot write RViz preset"; return result;

@@ -32,6 +32,7 @@ public:
   virtual bridge::RequestReceipt capabilities(bridge::CapabilitySource source) = 0;
   virtual bridge::RequestReceipt list_missions() = 0;
   virtual bridge::RequestReceipt validate_mission(const std::string & name) = 0;
+  virtual bridge::RequestReceipt mission_details(const std::string & name) = 0;
   virtual bridge::RequestReceipt query_mission(const std::string & id) = 0;
   virtual bridge::RequestReceipt read_parameter(bridge::Parameter parameter) = 0;
   virtual bridge::RequestReceipt perception(bridge::PerceptionKind kind) = 0;

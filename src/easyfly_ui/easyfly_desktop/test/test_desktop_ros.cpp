@@ -17,6 +17,8 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPushButton>
+#include <QPlainTextEdit>
+#include <QTableView>
 #include <QTimer>
 
 #include <atomic>
@@ -159,6 +161,16 @@ protected:
             if (response_mode == 3) {response->success = false; response->status = "not_found";}
           }
         }));
+    platform_resources.push_back(
+      node->create_service<easyfly_msgs::srv::GetMissionDetails>(
+        "/platform/mission/details",
+        [](easyfly_msgs::srv::GetMissionDetails::Request::SharedPtr request,
+        easyfly_msgs::srv::GetMissionDetails::Response::SharedPtr response) {
+          response->mission_name = request->mission_name; response->success = true;
+          response->status = "valid_snapshot";
+          response->content = "# <b>plain text</b>\ntype=hover\nwait=2\n";
+          response->content_sha256 = easyfly_mission_fsm::missionContentSha256(response->content);
+        }));
     for (const auto * name :
       {"/platform/flight_control/capabilities", "/platform/mission/capabilities",
         "/platform/perception/capabilities", "/platform/precision_landing/capabilities"})
@@ -241,12 +253,21 @@ TEST_F(GuiRos, ActualButtonsAreReadonlyAndOtherContextSurvives)
   ASSERT_TRUE(
     until(
       [&] {
-        return label("stateConnection").contains(QStringLiteral("本次新鲜"));
+        return label("stateConnection") == QStringLiteral("已连接");
       }, 8));
   ASSERT_TRUE(until([&] {return label("connectionSummary").contains("4/4");}, 8));
   widget<QPushButton>("listMissions")->click();
   ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}, 5));
   widget<QListWidget>("missionList")->setCurrentRow(0); QTest::qWait(1050);
+  widget<QPushButton>("inspectMission")->click();
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto body = widget<QPlainTextEdit>("missionContent")->toPlainText();
+        return body.contains("<b>plain text</b>");
+      }));
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 1);
+  EXPECT_TRUE(label("missionDetailsSummary").contains("SHA-256"));
   widget<QPushButton>("validateMission")->click();
   ASSERT_TRUE(until([&] {return label("validationResult").contains("valid");}));
   QTest::qWait(1050);
@@ -288,7 +309,7 @@ TEST_F(GuiRos, PausedClockInvalidatesActualGeometryAndState)
   ASSERT_TRUE(
     until(
       [&] {
-        return label("stateConnection").contains(QStringLiteral("本次新鲜"));
+        return label("stateConnection") == QStringLiteral("已连接");
       }, 8));
   advance = false;
   ASSERT_TRUE(until([&] {return label("stateValidity").contains(QStringLiteral("暂停"));}, 5));

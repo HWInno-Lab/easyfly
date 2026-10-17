@@ -1,0 +1,34 @@
+# Separate managed entry point; does not change the legacy ManageMission wire contract.
+# operation: session (read-only), start, lookup (read-only), cancel (exact owned execution).
+string<=16 operation
+# Required for start/lookup/cancel, obtained from session; changes on node startup.
+string<=32 server_instance_id
+# Caller-generated 32 lowercase hex characters, unique per intent, not an Action UUID.
+string<=32 client_request_id
+string<=128 mission_name
+# SHA-256 of exact reviewed original bytes. Required for start.
+string<=64 expected_content_sha256
+# Required for cancel and must match this instance/request's own execution.
+string<=32 execution_id
+---
+bool success
+string<=64 status
+string<=2048 message
+string<=32 server_instance_id
+string<=32 client_request_id
+string<=128 mission_name
+# Hash bound to the original intent, not the current catalog; not proof of admission.
+string<=64 content_sha256
+uint32 request_capacity
+uint32 retained_requests
+# Only true after the original admission reply was determined, not flight completion.
+bool admission_resolved
+bool admission_success
+string<=64 admission_status
+string<=32 execution_id
+# Empty until the child Action goal is accepted; not interchangeable with other IDs.
+string<=32 action_goal_id
+easyfly_msgs/MissionStatus current_status
+bool feedback_valid
+# False is meaningful only for a known execution; not_found is not release evidence.
+bool execution_pending

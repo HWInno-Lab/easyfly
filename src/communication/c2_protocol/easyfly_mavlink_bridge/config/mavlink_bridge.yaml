@@ -4,7 +4,8 @@
 #
 /**:
   ros__parameters:
-    # /uav_state 聚合发布频率 (Hz)
+    # 聚合定时器频率 (Hz)；/uav_state 每个有效 ROS 时间戳最多发布一次。
+    # 仿真时实际频率还受 /clock 推进频率限制，暂停时不重复发布旧身份。
     publish_rate: 20.0
 
     # encoder setpoint 超时 (秒)，超时后停止发布 setpoint

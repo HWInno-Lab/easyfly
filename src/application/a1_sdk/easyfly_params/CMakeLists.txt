@@ -11,8 +11,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_configuration test/test_configuration.py
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
-  ament_add_pytest_test(test_runtime test/test_runtime.py TIMEOUT 30
-    ENV ROS_DOMAIN_ID=93 ROS_LOG_DIR=/tmp/easyfly_d2_params
+  ament_add_pytest_test(test_runtime test/test_runtime.py TIMEOUT 60
+    ENV ROS_DOMAIN_ID=93 ROS_LOCALHOST_ONLY=1 ROS_LOG_DIR=/tmp/easyfly_d2_params
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 ament_package()

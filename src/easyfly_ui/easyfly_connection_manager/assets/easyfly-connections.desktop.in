@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=EasyFly Connections
+Name[zh_CN]=EasyFly 连接管理
+Comment=Connect to an existing EasyFly ROS platform
+Exec="@CMAKE_INSTALL_PREFIX@/lib/easyfly_connection_manager/easyfly_connections"
+Terminal=false
+Categories=Science;Engineering;

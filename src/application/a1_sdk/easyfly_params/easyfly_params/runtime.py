@@ -16,6 +16,7 @@
 import json
 
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from easyfly_msgs.srv import QueryParams
@@ -135,9 +136,13 @@ class ParameterManager(Node):
 
 def main():
     rclpy.init()
-    node = ParameterManager()
+    node = None
     try:
+        node = ParameterManager()
         rclpy.spin(node)
+    except (KeyboardInterrupt, ExternalShutdownException):
+        pass
     finally:
-        node.destroy_node()
-        rclpy.shutdown()
+        if node is not None:
+            node.destroy_node()
+        rclpy.try_shutdown()

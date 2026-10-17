@@ -17,9 +17,11 @@
 #include <unistd.h>
 #include <algorithm>
 #include <chrono>
+#include <cinttypes>
 #include <deque>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iomanip>
 #include <map>
 #include <memory>
@@ -34,23 +36,37 @@
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
 #include <easyfly_core/ownership_registry.hpp>
 #include <easyfly_msgs/srv/manage_mission.hpp>
+#include <easyfly_msgs/srv/manage_reviewed_mission.hpp>
+#include <easyfly_msgs/srv/get_mission_details.hpp>
 #include <easyfly_msgs/srv/get_capabilities.hpp>
 #include <easyfly_mission_fsm/mission_format.hpp>
+#include "import_catalog.hpp"
+#include "import_worker.hpp"
 
 namespace fs = std::filesystem;
 using Api = easyfly_msgs::srv::ManageMission;
+using Managed = easyfly_msgs::srv::ManageReviewedMission;
 using Action = easyfly_msgs::action::ExecuteMission;
 using Child = rclcpp_action::ClientGoalHandle<Action>;
 using Clock = std::chrono::steady_clock;
 using Ownership = easyfly_msgs::srv::GetActionOwnership;
 class MissionServices : public rclcpp::Node
 {
+  struct Intent;
+  struct Execution;
   struct Reply
   {
-    std::shared_ptr<rclcpp::Service<Api>> service;
-    std::shared_ptr<rmw_request_id_t> header;
+    std::function<void(const Api::Response &)> send;
+    std::weak_ptr<Intent> intent;
     Clock::time_point created{Clock::now()};
     bool sent{false};
+  };
+  struct Intent
+  {
+    std::string name, hash;
+    bool resolved{false};
+    Api::Response admission;
+    std::shared_ptr<Execution> execution;
   };
   struct Execution
   {
@@ -82,15 +98,47 @@ public:
     const auto default_directory = fs::canonical(
       ament_index_cpp::get_package_share_directory("easyfly_mission_fsm") +
       "/missions/waypoint_demo.mission").parent_path().string();
-    root_ = fs::canonical(
-      declare_parameter<std::string>(
-        "mission_directory",
-        default_directory, readonly));
+    const auto configured_directory = declare_parameter<std::string>(
+      "mission_directory", default_directory, readonly);
+    root_ = fs::canonical(configured_directory);
     if (!fs::is_directory(root_)) {
       throw std::invalid_argument("mission_directory must be a directory");
     }
+    importer_ = std::make_unique<ImportCatalog>(
+      declare_parameter<bool>("enable_mission_import", false, readonly), configured_directory,
+      instance_id_, declare_parameter<int>("import_request_capacity", 256, readonly),
+      std::vector<std::string>{EASYFLY_IMPORT_SOURCE_ROOT, EASYFLY_IMPORT_INSTALL_ROOT,
+        default_directory});
+    ImportCatalog::Api::Request session_request; session_request.operation = "session";
+    import_base_ = importer_->handle(session_request);
+    import_ = create_service<ImportCatalog::Api>(
+      "/platform/mission/import",
+      [this](std::shared_ptr<rclcpp::Service<ImportCatalog::Api>> service,
+      std::shared_ptr<rmw_request_id_t> header, ImportCatalog::Api::Request::SharedPtr request) {
+        auto reply = [service, header](ImportCatalog::Api::Response response) {
+          service->send_response(*header, response);
+        };
+        if (!import_worker_->submit(
+          request,
+          reply))
+        {
+          auto response = import_base_; response.success = false; response.resolved = false;
+          response.status = "busy";
+          response.message = "bounded import queue full; no retry of create";
+          response.client_request_id = hexIdentity(
+            request->client_request_id,
+            32) ? request->client_request_id : "";
+          response.mission_name = request->mission_name;
+          response.content_sha256 = request->expected_content_sha256;
+          reply(response);
+        }
+      });
     timeout_ = declare_parameter<double>("response_timeout", 5.0, readonly);
     freshness_ = declare_parameter<double>("feedback_max_age", 1.0, readonly);
+    request_capacity_ = declare_parameter<int>("reviewed_request_capacity", 256, readonly);
+    if (request_capacity_ < 1 || request_capacity_ > 256) {
+      throw std::invalid_argument("reviewed_request_capacity must be 1..256");
+    }
     if (!std::isfinite(timeout_) || timeout_ < 0.05 || timeout_ > 30 ||
       !std::isfinite(freshness_) || freshness_ < 0.05 || freshness_ > 10)
     {
@@ -106,8 +154,46 @@ public:
       [this](std::shared_ptr<rclcpp::Service<Api>> service,
       std::shared_ptr<rmw_request_id_t> header,
       Api::Request::SharedPtr req) {
-        auto reply = std::make_shared<Reply>(); reply->service = service; reply->header = header;
+        if (req->operation == "start" || req->operation == "cancel") {
+          Managed::Request trace; trace.operation = req->operation;
+          trace.execution_id = req->execution_id;
+          auditReviewed("legacy_write_received", header, trace);
+        }
+        auto reply = std::make_shared<Reply>();
+        reply->send = [service, header](Api::Response response) {
+          service->send_response(*header, response);
+        };
         handle(reply, *req);
+      });
+    managed_ = create_service<Managed>(
+      "/platform/mission/reviewed",
+      [this](std::shared_ptr<rclcpp::Service<Managed>> service,
+      std::shared_ptr<rmw_request_id_t> header, Managed::Request::SharedPtr request) {
+        handleReviewed(service, header, *request);
+      });
+    details_ = create_service<easyfly_msgs::srv::GetMissionDetails>(
+      "/platform/mission/details",
+      [this](easyfly_msgs::srv::GetMissionDetails::Request::SharedPtr request,
+      easyfly_msgs::srv::GetMissionDetails::Response::SharedPtr response) {
+        const bool name_utf8 = request->mission_name.size() <= 128 &&
+        easyfly_mission_fsm::missionTextUtf8(request->mission_name);
+        response->mission_name = name_utf8 ? request->mission_name : "";
+        try {
+          if (!name_utf8) {throw std::invalid_argument("mission name must be valid UTF-8");}
+          const auto text = validatedText(request->mission_name);
+          if (!easyfly_mission_fsm::missionTextUtf8(text)) {
+            throw std::invalid_argument("mission content must be valid UTF-8");
+          }
+          response->content_sha256 = easyfly_mission_fsm::missionContentSha256(text);
+          response->content = text; response->success = true; response->status = "valid_snapshot";
+          response->message = "validated catalog snapshot; not execution or flight admission";
+        } catch (const std::exception & exc) {
+          response->success = false; response->status = "invalid";
+          response->content.clear(); response->content_sha256.clear();
+          const auto error = std::string(exc.what()).substr(0, 2048);
+          response->message = easyfly_mission_fsm::missionTextUtf8(error) ?
+          error : "invalid mission content";
+        }
       });
     capabilities_ = create_service<easyfly_msgs::srv::GetCapabilities>(
       "/platform/mission/capabilities",
@@ -121,10 +207,13 @@ public:
         response->ready = {ready, ready,
           ready && search_client_->action_server_is_ready()};
         response->details = {"legacy four-step format",
-          "schema_version=1, odom m/rad/s, strict sequential seven types",
+          "schema_version=1, odom m/rad/s, strict sequential eight types",
           "mission step supported; search backend/live flight admission separately required"};
       });
     timer_ = create_wall_timer(std::chrono::milliseconds(50), [this]() {tick();});
+    // Construct last: later constructor exceptions must not abandon a joinable worker.
+    import_worker_ = std::make_unique<ImportWorker>(
+      [this](const ImportCatalog::Api::Request & request) {return importer_->handle(request);});
   }
 
 private:
@@ -140,13 +229,11 @@ private:
     }
     return out.str();
   }
-  void respond(
-    const std::shared_ptr<Reply> & p, bool success, const std::string & status,
+  Api::Response executionResponse(
+    bool success, const std::string & status,
     const std::string & message, const std::shared_ptr<Execution> & e = {},
     const std::vector<std::string> & names = {})
   {
-    if (!p || p->sent) {return;}
-    p->sent = true;
     Api::Response response; response.success = success; response.status = status;
     response.message = message; response.missions = names;
     if (e) {
@@ -163,9 +250,174 @@ private:
           e->feedback.current_waypoint >= -1 && e->feedback.total_waypoints >= 0;
       }
     }
-    try {p->service->send_response(*p->header, response);} catch (const std::exception & exc) {
+    return response;
+  }
+  void respond(
+    const std::shared_ptr<Reply> & p, bool success, const std::string & status,
+    const std::string & message, const std::shared_ptr<Execution> & e = {},
+    const std::vector<std::string> & names = {})
+  {
+    if (!p || p->sent) {return;}
+    p->sent = true;
+    const auto intent = p->intent.lock();
+    // A busy reply must never associate someone else's execution with this intent.
+    const auto response = executionResponse(
+      success, status, message, intent && intent->execution != e ? nullptr : e, names);
+    if (intent) {intent->resolved = true; intent->admission = response;}
+    try {p->send(response);} catch (const std::exception & exc) {
       RCLCPP_WARN(get_logger(), "mission response: %s", exc.what());
     }
+  }
+  static bool hexIdentity(const std::string & value, size_t length)
+  {
+    return value.size() == length && std::all_of(
+      value.begin(), value.end(), [](char c) {
+        return (c >= '0' && c <= '9') ||
+        (c >= 'a' && c <= 'f');
+      });
+  }
+  void auditReviewed(
+    const char * event, const std::shared_ptr<rmw_request_id_t> & header,
+    const Managed::Request & req, const std::string & execution = {},
+    const std::string & goal = {})
+  {
+    const auto token = [](const std::string & value, size_t length) {
+        return hexIdentity(value, length) ? value : std::string("none");
+      };
+    std::ostringstream writer;
+    if (header) {
+      for (auto byte : header->writer_guid) {
+        writer << std::hex << std::setw(2) << std::setfill('0') <<
+          static_cast<unsigned>(static_cast<uint8_t>(byte));
+      }
+    }
+    RCLCPP_INFO(
+      get_logger(), "managed_audit event=%s pid=%d domain=%zu operation=%s instance=%s "
+      "requested_instance=%s request=%s content_sha256=%s writer_guid=%s sequence=%" PRId64 " "
+      "execution=%s goal=%s",
+      event, static_cast<int>(getpid()), get_node_base_interface()->get_context()->get_domain_id(),
+      req.operation == "cancel" ? "cancel" : "start", instance_id_.c_str(),
+      token(req.server_instance_id, 32).c_str(), token(req.client_request_id, 32).c_str(),
+      token(req.expected_content_sha256, 64).c_str(), writer.str().c_str(),
+      header ? header->sequence_number : int64_t{-1},
+      token(execution.empty() ? req.execution_id : execution, 32).c_str(), token(goal, 32).c_str());
+  }
+  void reviewedResponse(
+    const std::shared_ptr<rclcpp::Service<Managed>> & service,
+    const std::shared_ptr<rmw_request_id_t> & header, const std::string & request_id,
+    const Api::Response & source, const std::shared_ptr<Intent> & intent = {})
+  {
+    Managed::Response response;
+    response.success = source.success; response.status = source.status.substr(0, 64);
+    const auto message = source.message.substr(0, 2048);
+    response.message = easyfly_mission_fsm::missionTextUtf8(message) ? message : "invalid text";
+    response.server_instance_id = instance_id_; response.client_request_id = request_id;
+    response.request_capacity = request_capacity_; response.retained_requests = intents_.size();
+    response.execution_id = source.execution_id; response.current_status = source.current_status;
+    response.feedback_valid = source.feedback_valid;
+    response.execution_pending = source.execution_pending;
+    if (intent) {
+      response.mission_name = intent->name; response.content_sha256 = intent->hash;
+      response.admission_resolved = intent->resolved;
+      response.admission_success = intent->admission.success;
+      response.admission_status = intent->admission.status;
+      if (intent->execution && intent->execution->child) {
+        response.action_goal_id = easyfly_core::goalIdentity(
+          intent->execution->child->get_goal_id());
+      }
+    }
+    try {service->send_response(*header, response);} catch (const std::exception & exc) {
+      RCLCPP_WARN(get_logger(), "reviewed mission response: %s", exc.what());
+    }
+  }
+  void handleReviewed(
+    const std::shared_ptr<rclcpp::Service<Managed>> & service,
+    const std::shared_ptr<rmw_request_id_t> & header, const Managed::Request & req)
+  {
+    if (req.operation == "start" || req.operation == "cancel") {
+      auditReviewed("write_received", header, req);
+    }
+    const auto send = [&](bool ok, const std::string & status, const std::string & message) {
+        reviewedResponse(
+          service, header, hexIdentity(req.client_request_id, 32) ?
+          req.client_request_id : "", executionResponse(ok, status, message));
+      };
+    if (req.operation == "session") {
+      send(true, "session", "instance identity only; not execution or flight admission"); return;
+    }
+    if (req.operation != "start" && req.operation != "lookup" && req.operation != "cancel") {
+      send(false, "unsupported", "supported operations: session, start, lookup, cancel"); return;
+    }
+    if (req.server_instance_id != instance_id_) {
+      send(false, "instance_mismatch", "old or unknown instance; do not replay or infer release");
+      return;
+    }
+    if (!hexIdentity(req.client_request_id, 32)) {
+      send(false, "invalid", "client_request_id must be 32 lowercase hex characters"); return;
+    }
+    const auto found = intents_.find(req.client_request_id);
+    if (found != intents_.end()) {
+      if (req.operation == "start") {auditReviewed("start_existing_request", header, req);}
+      const auto & intent = found->second;
+      if ((req.operation == "start" || req.operation == "cancel") &&
+        (req.mission_name != intent->name || req.expected_content_sha256 != intent->hash))
+      {
+        send(false, "request_conflict", "request ID already bound to different content"); return;
+      }
+      const auto & e = intent->execution;
+      if (req.operation == "cancel") {
+        if (!e || !hexIdentity(req.execution_id, 32) || req.execution_id != e->id) {
+          send(false, "execution_mismatch", "cancel must match this request's execution"); return;
+        }
+        auto reply = std::make_shared<Reply>();
+        // Do not replace the original admission decision with a cancellation reply.
+        reply->send = [this, service, header, id = req.client_request_id,
+            weak = std::weak_ptr<Intent>(intent)](const Api::Response & response) {
+            reviewedResponse(service, header, id, response, weak.lock());
+          };
+        cancelExecution(reply, e); return;
+      }
+      const auto source = e ? executionResponse(true, e->status, e->message, e) :
+        intent->admission;
+      reviewedResponse(service, header, req.client_request_id, source, intent); return;
+    }
+    if (req.operation != "start") {
+      send(false, "not_found", "unknown request in this instance; not release evidence"); return;
+    }
+    if (req.mission_name.size() > 128 ||
+      !easyfly_mission_fsm::missionTextUtf8(req.mission_name) ||
+      !hexIdentity(req.expected_content_sha256, 64))
+    {
+      send(false, "invalid", "valid UTF-8 name and lowercase SHA-256 required"); return;
+    }
+    if (intents_.size() >= static_cast<size_t>(request_capacity_)) {
+      send(false, "request_capacity", "records are never evicted; new managed starts refused");
+      return;
+    }
+    auto intent = std::make_shared<Intent>();
+    intent->name = req.mission_name; intent->hash = req.expected_content_sha256;
+    intents_.emplace(req.client_request_id, intent);
+    auditReviewed("start_new_request", header, req);
+    auto reply = std::make_shared<Reply>(); reply->intent = intent;
+    reply->send = [this, service, header, request = req, id = req.client_request_id,
+        weak = std::weak_ptr<Intent>(intent)](const Api::Response & response) {
+        const auto retained = weak.lock();
+        const auto goal = retained && retained->execution && retained->execution->child ?
+          easyfly_core::goalIdentity(retained->execution->child->get_goal_id()) : "";
+        auditReviewed("start_response", header, request, response.execution_id, goal);
+        reviewedResponse(service, header, id, response, retained);
+      };
+    try {
+      // One in-memory read is both hashed and snapshotted. Never re-read after comparison.
+      const auto text = validatedText(req.mission_name);
+      if (!easyfly_mission_fsm::missionTextUtf8(text)) {
+        throw std::invalid_argument("mission content must be valid UTF-8");
+      }
+      if (easyfly_mission_fsm::missionContentSha256(text) != intent->hash) {
+        respond(reply, false, "content_changed", "catalog differs from reviewed bytes"); return;
+      }
+      startExecution(reply, text);
+    } catch (const std::exception & exc) {respond(reply, false, "invalid", exc.what());}
   }
   fs::path catalogPath(const std::string & name) const
   {
@@ -248,45 +500,7 @@ private:
           respond(p, true, "valid", "full static validation; live flight admission is separate");
           return;
         }
-        if (active_) {
-          respond(p, false, "busy", "previous execution ownership unresolved", active_); return;
-        }
-        if (!client_->action_server_is_ready() || !ownership_client_->service_is_ready()) {
-          respond(p, false, "unsupported", "execute_mission or ownership protocol unavailable");
-          return;
-        }
-        auto e = std::make_shared<Execution>(); e->id = identity(); e->admission = p;
-        e->snapshot = snapshot(text); active_ = e; history_[e->id] = e; history_order_.push_back(
-          e->id);
-        rclcpp_action::Client<Action>::SendGoalOptions callbacks;
-        callbacks.goal_response_callback = [this, e](Child::SharedPtr child) {
-            e->child = child;
-            if (!child) {
-              e->terminal = true; e->status = "rejected";
-              e->message = "execution rejected by backend";
-              respond(e->admission, false, e->status, e->message, e); resolve(e); return;
-            }
-            e->status = "running"; respond(
-              e->admission, true, "accepted",
-              "accepted, not completed", e);
-            if (e->cancel_requested) {cancel(e);}
-          };
-        callbacks.feedback_callback =
-          [e](Child::SharedPtr, std::shared_ptr<const Action::Feedback> feedback) {
-            if (!e->terminal) {e->feedback = feedback->current_status; e->received = Clock::now();}
-          };
-        callbacks.result_callback = [this, e](const Child::WrappedResult & result) {
-            e->result_received = true;
-            e->status = result.code == rclcpp_action::ResultCode::CANCELED ? "canceled" :
-              result.code == rclcpp_action::ResultCode::SUCCEEDED && result.result &&
-              result.result->success ? "succeeded" : "failed";
-            e->message = result.result ? result.result->message : "missing backend result";
-          };
-        Action::Goal goal; goal.mission_file = e->snapshot;
-        try {client_->async_send_goal(goal, callbacks);} catch (const std::exception & exc) {
-          e->status = "fault"; e->message = exc.what(); e->cancel_requested = true;
-          respond(p, false, e->status, "send failed; ownership not confirmed", e);
-        }
+        startExecution(p, text);
       } else if (req.operation == "query" || req.operation == "cancel") {
         auto found = history_.find(req.execution_id);
         if (req.execution_id.empty() || found == history_.end()) {
@@ -294,15 +508,63 @@ private:
         }
         auto e = found->second;
         if (req.operation == "query") {respond(p, true, e->status, e->message, e); return;}
-        if (e->terminal || e != active_) {
-          respond(p, false, e->status, "execution is already terminal", e); return;
-        }
-        if (e->cancellation && !e->cancellation->sent) {
-          respond(p, false, "busy", "cancellation already pending", e); return;
-        }
-        e->cancellation = p; e->cancel_requested = true; cancel(e);
+        cancelExecution(p, e);
       } else {respond(p, false, "unsupported", "unknown operation");}
     } catch (const std::exception & exc) {respond(p, false, "invalid", exc.what());}
+  }
+  void startExecution(const std::shared_ptr<Reply> & p, const std::string & text)
+  {
+    if (active_) {
+      respond(p, false, "busy", "previous execution ownership unresolved", active_); return;
+    }
+    if (!client_->action_server_is_ready() || !ownership_client_->service_is_ready()) {
+      respond(p, false, "unsupported", "execute_mission or ownership protocol unavailable");
+      return;
+    }
+    auto e = std::make_shared<Execution>(); e->id = identity(); e->admission = p;
+    e->snapshot = snapshot(text);
+    if (auto intent = p->intent.lock()) {intent->execution = e;}
+    active_ = e; history_[e->id] = e; history_order_.push_back(
+      e->id);
+    rclcpp_action::Client<Action>::SendGoalOptions callbacks;
+    callbacks.goal_response_callback = [this, e](Child::SharedPtr child) {
+        e->child = child;
+        if (!child) {
+          e->terminal = true; e->status = "rejected";
+          e->message = "execution rejected by backend";
+          respond(e->admission, false, e->status, e->message, e); resolve(e); return;
+        }
+        e->status = "running"; respond(
+          e->admission, true, "accepted",
+          "accepted, not completed", e);
+        if (e->cancel_requested) {cancel(e);}
+      };
+    callbacks.feedback_callback =
+      [e](Child::SharedPtr, std::shared_ptr<const Action::Feedback> feedback) {
+        if (!e->terminal) {e->feedback = feedback->current_status; e->received = Clock::now();}
+      };
+    callbacks.result_callback = [this, e](const Child::WrappedResult & result) {
+        e->result_received = true;
+        e->status = result.code == rclcpp_action::ResultCode::CANCELED ? "canceled" :
+          result.code == rclcpp_action::ResultCode::SUCCEEDED && result.result &&
+          result.result->success ? "succeeded" : "failed";
+        e->message = result.result ? result.result->message : "missing backend result";
+      };
+    Action::Goal goal; goal.mission_file = e->snapshot;
+    try {client_->async_send_goal(goal, callbacks);} catch (const std::exception & exc) {
+      e->status = "fault"; e->message = exc.what(); e->cancel_requested = true;
+      respond(p, false, e->status, "send failed; ownership not confirmed", e);
+    }
+  }
+  void cancelExecution(const std::shared_ptr<Reply> & p, const std::shared_ptr<Execution> & e)
+  {
+    if (e->terminal || e != active_) {
+      respond(p, false, e->status, "execution is already terminal", e); return;
+    }
+    if (e->cancellation && !e->cancellation->sent) {
+      respond(p, false, "busy", "cancellation already pending", e); return;
+    }
+    e->cancellation = p; e->cancel_requested = true; cancel(e);
   }
   void cancel(const std::shared_ptr<Execution> & e)
   {
@@ -390,7 +652,14 @@ private:
     if (e->cancel_requested) {cancel(e);}
   }
   fs::path root_;
+  std::unique_ptr<ImportCatalog> importer_;
+  std::unique_ptr<ImportWorker> import_worker_;
+  ImportCatalog::Api::Response import_base_;
+  rclcpp::Service<ImportCatalog::Api>::SharedPtr import_;
   double timeout_, freshness_;
+  const std::string instance_id_{identity()};
+  int request_capacity_;
+  std::map<std::string, std::shared_ptr<Intent>> intents_;
   std::shared_ptr<Execution> active_;
   std::map<std::string, std::shared_ptr<Execution>> history_;
   std::deque<std::string> history_order_;
@@ -398,6 +667,8 @@ private:
   rclcpp_action::Client<easyfly_msgs::action::SearchArea>::SharedPtr search_client_;
   rclcpp::Client<Ownership>::SharedPtr ownership_client_;
   rclcpp::Service<Api>::SharedPtr service_;
+  rclcpp::Service<Managed>::SharedPtr managed_;
+  rclcpp::Service<easyfly_msgs::srv::GetMissionDetails>::SharedPtr details_;
   rclcpp::Service<easyfly_msgs::srv::GetCapabilities>::SharedPtr capabilities_;
   rclcpp::TimerBase::SharedPtr timer_;
 };

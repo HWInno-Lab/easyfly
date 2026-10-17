@@ -1,9 +1,16 @@
-#pragma once
-#include "easyfly_mission_fsm/legacy_mission.hpp"
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-namespace easyfly_mission_fsm {
-// Content detection also works with the facade's extensionless private snapshots.
-// Static validation is not authorization to fly: live action admission still applies.
-MissionValidation validateMissionText(const std::string & text);
-MissionValidation validateMissionFile(const std::string & path);
-}  // namespace easyfly_mission_fsm
+#pragma once
+// Compatibility include; preserve the existing easyfly_mission_fsm C++ API.
+#include <easyfly_mission_format/mission_format.hpp>

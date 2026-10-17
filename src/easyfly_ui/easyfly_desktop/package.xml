@@ -3,16 +3,31 @@
 <package format="3">
   <name>easyfly_desktop</name>
   <version>0.1.0</version>
-  <description>Qt5 read-only desktop for EasyFly observation and catalog queries</description>
+  <description>Qt5 observation desktop with explicit opt-in managed simulation missions</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>easyfly_ui_bridge</depend>
+  <depend>easyfly_ui_control</depend>
+  <depend>easyfly_mission_format</depend>
+  <depend>ament_index_cpp</depend>
+  <depend>nav_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>easyfly_msgs</depend>
   <depend>qtbase5-dev</depend>
+  <!-- Superset dependency; codec is linked only with EASYFLY_ENABLE_MEDIA. -->
+  <depend>libopencv-dev</depend>
+  <!-- Superset dependencies for the optional version-pinned RViz build. -->
+  <depend>rviz_common</depend>
+  <depend>rviz_rendering</depend>
+  <depend>rviz_default_plugins</depend>
 
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>mavros_msgs</test_depend>
+  <test_depend>rosgraph_msgs</test_depend>
+  <test_depend>tf2_msgs</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

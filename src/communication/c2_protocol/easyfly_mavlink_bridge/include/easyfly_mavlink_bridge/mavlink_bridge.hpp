@@ -128,6 +128,7 @@ private:
   // ---- 聚合缓存 ----
   mutable std::mutex state_mtx_;
   easyfly_msgs::msg::UAVState uav_;
+  int64_t last_published_state_stamp_{-1};  // One aggregate identity per ROS timestamp.
   easyfly_msgs::msg::FlightStatus flight_status_;
   int64_t flight_status_watermark_{0};
   bool flight_status_source_valid_{false};

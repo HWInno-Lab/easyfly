@@ -193,7 +193,8 @@ MavlinkBridge::MavlinkBridge(const rclcpp::NodeOptions & options)
 
   RCLCPP_INFO(
     get_logger(),
-    "MavlinkBridge started — %gHz /uav_state, encoder, /arm_motors, /set_flight_mode",
+    "MavlinkBridge started — %gHz state timer (one /uav_state per ROS stamp), "
+    "encoder, /arm_motors, /set_flight_mode",
     publish_rate);
 }
 
@@ -359,6 +360,7 @@ void MavlinkBridge::publish_state()
   const auto stamp = now();
   easyfly_msgs::msg::UAVState state_snapshot;
   easyfly_msgs::msg::FlightStatus status_snapshot;
+  bool publish_aggregate = false;
   {
     std::lock_guard<std::mutex> lk(state_mtx_);
     uav_.header.stamp = stamp;
@@ -407,6 +409,13 @@ void MavlinkBridge::publish_state()
     }
 
     state_snapshot = uav_;
+    // A stepped simulation clock can repeat across wall-timer ticks while MAVROS
+    // updates the payload. Never publish conflicting aggregates with one identity.
+    // Frozen clocks must not refresh downstream receipt watchdogs. Backward jumps
+    // still publish a new epoch sample so observers can invalidate the old epoch.
+    publish_aggregate = stamp.nanoseconds() > 0 &&
+      stamp.nanoseconds() != last_published_state_stamp_;
+    if (publish_aggregate) {last_published_state_stamp_ = stamp.nanoseconds();}
     status_snapshot = flight_status_;
     status_snapshot.receipt_age_s = flight_status_receipt_ ==
       std::chrono::steady_clock::time_point{} ? -1.0 :
@@ -420,7 +429,7 @@ void MavlinkBridge::publish_state()
       status_snapshot.receipt_age_s <= slow_sensor_freshness_s_;
   }
 
-  pub_uav_state_->publish(state_snapshot);
+  if (publish_aggregate) {pub_uav_state_->publish(state_snapshot);}
   pub_flight_status_->publish(status_snapshot);
 }
 

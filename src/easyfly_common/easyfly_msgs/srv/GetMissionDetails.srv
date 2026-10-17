@@ -1,0 +1,11 @@
+# Read-only inspection of a catalog basename; never executes or writes a mission.
+string<=128 mission_name
+---
+bool success
+string<=64 status
+string<=2048 message
+string<=128 mission_name
+# SHA-256 of the returned bytes, not execution identity, signature or admission.
+string<=64 content_sha256
+# Validated original file bytes, at most 64KiB; empty on failure.
+string<=65536 content

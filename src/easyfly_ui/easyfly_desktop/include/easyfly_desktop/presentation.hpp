@@ -14,6 +14,7 @@
 #ifndef EASYFLY_DESKTOP__PRESENTATION_HPP_
 #define EASYFLY_DESKTOP__PRESENTATION_HPP_
 #include <QString>
+#include <optional>
 #include <string>
 
 #include "easyfly_desktop/source.hpp"
@@ -22,6 +23,15 @@ namespace easyfly_desktop
 QString text(const std::string & value, std::size_t limit = 4096);
 QString quality_text(bridge::Quality quality);
 QString number(double value, int precision = 2);
+QString mission_step_parameters(const easyfly_mission_fsm::MissionStep & step);
+struct FlightInstruments
+{
+  bool attitude_valid{false}, position_valid{false};
+  double roll_degrees{0}, pitch_degrees{0}, heading_degrees{0};
+};
+// ENU yaw=0 is +X/east; compass heading is clockwise from local +Y/north.
+std::optional<double> enu_heading_degrees(double yaw_radians);
+FlightInstruments flight_instruments(const bridge::UiSnapshot & snapshot, double now);
 double snapshot_delay(const bridge::UiSnapshot & snapshot, double now);
 bridge::Quality display_quality(
   const bridge::Evidence & evidence,

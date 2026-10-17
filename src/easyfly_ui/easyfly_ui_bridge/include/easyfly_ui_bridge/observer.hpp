@@ -28,6 +28,9 @@ struct BridgeConfig
   std::string selected_profile{"navigation_dev"};
   std::array<std::string, 2> image_topics{
     "/camera/color/image_raw", "/camera_down/color/image_raw"};
+  std::array<CameraPerceptionBinding, 2> camera_perception{{
+    {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom"},
+    {}}};
 };
 enum class RequestStatus {Queued, Busy, RateLimited, Invalid, Closed};
 struct RequestReceipt
@@ -57,6 +60,7 @@ public:
   RequestReceipt capabilities(CapabilitySource source);
   RequestReceipt list_missions();
   RequestReceipt validate_mission(const std::string & basename);
+  RequestReceipt mission_details(const std::string & basename);
   RequestReceipt query_mission(const std::string & service_execution_id);
   RequestReceipt read_parameter(Parameter parameter);
   RequestReceipt perception(PerceptionKind kind);

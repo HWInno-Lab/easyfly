@@ -26,6 +26,35 @@ QString number(double value, int precision)
   if (!std::isfinite(value)) {return QStringLiteral("—（非有限）");}
   return QString::number(value, std::abs(value) >= 1e6 ? 'g' : 'f', precision);
 }
+std::optional<double> enu_heading_degrees(double yaw_radians)
+{
+  if (!std::isfinite(yaw_radians)) {return std::nullopt;}
+  constexpr double pi = 3.14159265358979323846;
+  const double yaw = std::remainder(yaw_radians, 2 * pi);
+  double heading = std::fmod(90 - yaw * 180 / pi, 360);
+  if (heading < 0) {heading += 360;}
+  return heading;
+}
+FlightInstruments flight_instruments(const bridge::UiSnapshot & s, double now)
+{
+  FlightInstruments result;
+  const auto & state = s.state; const auto & v = state.sdk.value;
+  const bool live = state.sdk.received && state.sdk.fresh && v.header.frame_id == "odom" &&
+    display_quality(state.evidence, s, now, 1, true) == bridge::Quality::ValidAtObservation;
+  result.position_valid = live && state.position_valid && v.pose_valid &&
+    std::isfinite(v.position_x) && std::isfinite(v.position_y) && std::isfinite(v.position_z) &&
+    std::abs(v.position_x) < 1e6 && std::abs(v.position_y) < 1e6 && std::abs(v.position_z) < 1e6;
+  constexpr double pi = 3.14159265358979323846;
+  const auto heading = enu_heading_degrees(v.yaw);
+  result.attitude_valid = live && state.attitude_valid && v.attitude_valid && heading &&
+    std::isfinite(v.roll) && std::isfinite(v.pitch) && std::abs(v.roll) <= pi &&
+    std::abs(v.pitch) <= pi / 2;
+  if (result.attitude_valid) {
+    result.roll_degrees = v.roll * 180 / pi; result.pitch_degrees = v.pitch * 180 / pi;
+    result.heading_degrees = *heading;
+  }
+  return result;
+}
 QString quality_text(bridge::Quality quality)
 {
   switch (quality) {

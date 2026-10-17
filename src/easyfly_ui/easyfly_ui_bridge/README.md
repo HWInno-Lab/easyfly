@@ -3,11 +3,12 @@
 Qt-independent C++17 read-only observer for the EasyFly desktop. It connects to
 an already running local ROS graph; it does not launch flight/simulation/tools.
 No action submission, task start/cancel, flight command, parameter write or
-generic service dispatcher is exposed. Existing backend, SDK and IDL are unchanged.
+generic service dispatcher is exposed. The dedicated GetMissionDetails read
+interface is additive; existing ManageMission and flight interfaces are unchanged.
 
 ## Build and test
 
-The commands below assume easyfly_msgs/easyfly_core are already built. For a clean
+The commands below assume easyfly_msgs/easyfly_core/easyfly_mission_format are built. For a clean
 workspace, build with `--packages-up-to easyfly_ui_bridge` instead of packages-select.
 
 ```bash
@@ -56,7 +57,10 @@ subsequent snapshots. Busy, RateLimited, Invalid and Closed send no request.
 Results are latest-per-logical-key, not an unbounded execution history.
 
 - `capabilities`: four fixed platform endpoints; implemented/ready remain per-entry.
-- `list_missions`, `validate_mission`: directory basenames only, no body/steps/active ID.
+- `list_missions`, `validate_mission`: directory basenames only, no active ID.
+- `mission_details`: dedicated read-only /platform/mission/details, basename
+  <=128 bytes; original content <=64KiB and verified SHA-256, parser-normalized
+  steps and format metadata. No execution identity or admission is inferred.
 - `query_mission`: explicit 32-character lowercase service execution ID, not an Action UUID.
 - `read_parameter`: profile/use_sim_time/operator_note/export_pretty only, with empty param_value.
 - `perception`: targets/obstacles only, default range_limit=0.
@@ -111,6 +115,31 @@ conservative UTF-8 storage limits. A front camera image is never substituted for
 missing down camera. Conversion/overlays/widgets belong to the desktop stage.
 Landing-specific observation panels, predictions and classified obstacles are
 optional future adapters, not inferred from existing generic geometry.
+
+`BridgeConfig::camera_perception` explicitly binds a camera pipeline. The default
+front binding is `/camera/color/image_raw` → `/detections`, `/tracks_raw`,
+`/target_positions`, with fused positions in `odom`; down-view has no binding.
+A changed image topic does not automatically redirect these observations. Only
+an exact configured image-topic match creates the depth1 best-effort subscribers.
+This declaration is not authentication or a discovery-based camera association.
+
+Each bound camera retains at most eight original images and 8MiB total image
+bytes, with a one-second steady lifetime. Snapshots expose only the exact-header
+images for the latest detection/track observations, not the full image cache.
+Each metadata array is limited to 100 items and labels to 128 UTF-8 bytes;
+per-track trajectory fields are bounded to 30 entries. Same-stamp duplicates
+do not renew receipt lifetime; conflicts/out-of-order arrays become invalid.
+Pause, clock reset, source mismatch and stop invalidate matching. Old snapshots
+are immutable, but consumers must not retain an unbounded snapshot history.
+
+`/tracks_raw` IDs are the namespace consumed by pixel-to-3D. Do not join these
+depth results to consolidated `/tracks` IDs. Target3D preserves the track event
+stamp but does not expose the actual depth-image stamp or TF fallback details;
+the UI can validate event association, not independent RGB-D synchronization or
+position accuracy. No perception publication or tracking/flight operation is added.
+
+The existing `dropped_images` counter still describes the raw latest-image slot;
+it is not annotation-cache eviction or total publisher/DDS loss.
 
 These limits bound retained application data, not DDS deserialization, upstream
 SDK memory, an untrusted ROS graph or arbitrary consumer-held old snapshots.

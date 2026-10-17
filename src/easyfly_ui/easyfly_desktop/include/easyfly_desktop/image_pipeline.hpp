@@ -37,6 +37,7 @@ struct ConvertedFrame
   double first_received{0};
   QImage image;
   std::string error;
+  std::string source_frame;
 };
 struct ImageQueueStats {std::size_t pending{0}; bool active{false}, stopped{false};
   uint64_t dropped{0};};

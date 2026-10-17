@@ -60,6 +60,7 @@ struct ImagePipeline::Impl
       result->binding = job.binding; result->sequence = job.sequence;
       result->stamp_ns = bridge::detail::stamp_ns(job.image->header.stamp);
       result->first_received = job.received;
+      result->source_frame = job.image->header.frame_id;
       try {result->image = convert(*job.image);} catch (const std::exception & e) {
         result->error = std::string(e.what()).substr(0, 2048);
       }

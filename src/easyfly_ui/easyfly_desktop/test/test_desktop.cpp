@@ -16,6 +16,13 @@
 #include <QComboBox>
 #include <QColor>
 #include <QDir>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QMessageBox>
+#include <QTemporaryDir>
+#include <QResource>
 #include <QGroupBox>
 #include <QLabel>
 #include <QLineEdit>
@@ -23,16 +30,25 @@
 #include <QPalette>
 #include <QPlainTextEdit>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QSplitter>
 #include <QTableView>
+#include <QTabWidget>
 #include <QTimer>
 #include <QVBoxLayout>
 
 #include <algorithm>
 #include <cmath>
 #include <limits>
+#include <iostream>
 #include <stdexcept>
 
 #include "easyfly_desktop/presentation.hpp"
+#include "easyfly_ui_bridge/camera_observations.hpp"
+#ifdef EASYFLY_ENABLE_MEDIA
+#include <opencv2/videoio.hpp>
+#endif
 #include "support.hpp"
 using namespace desktop_test;  // NOLINT(build/namespaces)
 class Desktop : public ::testing::Test
@@ -67,20 +83,53 @@ TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
   EXPECT_TRUE(content("backendProfile").contains(QStringLiteral("未确认")));
   EXPECT_FALSE(widget<QPushButton>("queryMission")->isEnabled());
   EXPECT_FALSE(widget<QWidget>("cameraCanvas")->property("has_frame").toBool());
+  EXPECT_FALSE(widget<QWidget>("overviewInstruments")->property("attitude_valid").toBool());
+  EXPECT_FALSE(widget<QWidget>("overviewMapCanvas")->property("position_valid").toBool());
+  EXPECT_EQ(content("overviewAltitude"), QStringLiteral("—"));
   for (auto * button : window->findChildren<QPushButton *>()) {
     EXPECT_FALSE(button->objectName().contains("takeoff")); EXPECT_FALSE(
       button->objectName().contains("cancel"));
   }
 }
-TEST_F(Desktop, ReferenceThemeHasLightContentDarkNavigationAndBlueSelection)
+TEST_F(Desktop, CameraControlsStayLeftAndIndependentCanvasUsesRightSpace)
+{
+  open(); widget<QListWidget>("navigation")->setCurrentRow(2);
+  auto * split = widget<QSplitter>("cameraPerceptionSplitter");
+  auto * scroll = widget<QScrollArea>("cameraControlsScroll");
+  auto * controls = widget<QWidget>("cameraControls");
+  auto * canvas = widget<QWidget>("cameraCanvas");
+  ASSERT_NE(split, nullptr); ASSERT_NE(scroll, nullptr); ASSERT_NE(controls, nullptr);
+  ASSERT_NE(canvas, nullptr); EXPECT_EQ(split->orientation(), Qt::Horizontal);
+  EXPECT_FALSE(split->childrenCollapsible()); EXPECT_EQ(canvas->parentWidget(), split);
+  for (const auto * name : {"cameraSelector", "imageEvidence", "targetTable", "obstacleTable"}) {
+    ASSERT_NE(widget<QWidget>(name), nullptr);
+    EXPECT_TRUE(controls->isAncestorOf(widget<QWidget>(name)));
+  }
+  int wide_canvas = 0;
+  for (const auto & size : {QSize(1440, 900), QSize(1024, 720)}) {
+    window->resize(size); QTest::qWait(120);
+    const QRect left(scroll->mapToGlobal(QPoint()), scroll->size());
+    const QRect right(canvas->mapToGlobal(QPoint()), canvas->size());
+    EXPECT_LT(left.right(), right.left()); EXPECT_GE(right.width(), 320);
+    EXPECT_GE(right.height(), 240); EXPECT_GT(right.width(), left.width());
+    const auto before = canvas->geometry();
+    scroll->verticalScrollBar()->setValue(scroll->verticalScrollBar()->maximum());
+    QTest::qWait(20); EXPECT_EQ(canvas->geometry(), before);
+    if (size.width() == 1440) {wide_canvas = canvas->width();} else {
+      EXPECT_LT(canvas->width(), wide_canvas);
+    }
+  }
+}
+TEST_F(Desktop, WhiteWorkspaceWithOnlyDarkMenuStripAndBlueAccents)
 {
   open(); QTest::qWait(50);
   auto * nav = widget<QListWidget>("navigation");
   const auto nav_pixels = nav->viewport()->grab().toImage();
-  EXPECT_EQ(nav_pixels.pixelColor(10, nav_pixels.height() - 8), QColor("#233142"));
-  EXPECT_EQ(nav_pixels.pixelColor(10, 20), QColor("#1769df"));
+  EXPECT_EQ(nav_pixels.pixelColor(10, nav_pixels.height() - 8), QColor("#ffffff"));
+  EXPECT_EQ(nav_pixels.pixelColor(10, 20), QColor("#ffffff"));
   const auto content_pixels = widget<QWidget>("pageContent")->grab().toImage();
-  EXPECT_EQ(content_pixels.pixelColor(content_pixels.width() - 8, 8), QColor("#f4f6f9"));
+  EXPECT_EQ(content_pixels.pixelColor(content_pixels.width() - 8, 8), QColor("#ffffff"));
+  EXPECT_EQ(widget<QWidget>("topBar")->grab().toImage().pixelColor(2, 2), QColor("#ffffff"));
   EXPECT_EQ(
     widget<QTableView>("parameterTable")->palette().color(QPalette::Base),
     QColor("#ffffff"));
@@ -106,14 +155,121 @@ TEST_F(Desktop, ReferenceThemeTextContrastIsReadable)
       return (std::max(first, second) + .05) / (std::min(first, second) + .05);
     };
   const auto * summary = widget<QLabel>("connectionSummary");
-  EXPECT_GE(contrast(summary->palette().color(QPalette::WindowText), QColor("#202d3d")), 4.5);
+  EXPECT_GE(contrast(summary->palette().color(QPalette::WindowText), QColor("#ffffff")), 4.5);
   const auto * value = widget<QLabel>("statePosition");
   EXPECT_GE(contrast(value->palette().color(QPalette::WindowText), QColor("#ffffff")), 4.5);
   EXPECT_GE(contrast(QColor("#ffffff"), QColor("#1769df")), 4.5);
   state->data->command_uncertain_observed = b::Event{1, 0, "fault", 101};
   ASSERT_TRUE(until([&] {return widget<QLabel>("warningBanner")->isVisible();}));
   const auto * warning = widget<QLabel>("warningBanner");
-  EXPECT_GE(contrast(warning->palette().color(QPalette::WindowText), QColor("#fff5df")), 4.5);
+  EXPECT_GE(contrast(warning->palette().color(QPalette::WindowText), QColor("#ffffff")), 4.5);
+}
+TEST_F(Desktop, LogoIsBundledAndOverviewContainsIndependentObservationPanels)
+{
+  open(); ASSERT_TRUE(QResource(":/easyfly/logo.png").isValid());
+  ASSERT_NE(widget<QLabel>("brand"), nullptr);
+  EXPECT_FALSE(widget<QLabel>("brand")->pixmap(Qt::ReturnByValue).isNull());
+  EXPECT_TRUE(widget<QLabel>("brand")->text().isEmpty());
+  for (const auto & size : window->windowIcon().availableSizes()) {
+    EXPECT_LE(size.width(), 64); EXPECT_LE(size.height(), 64);
+  }
+  auto * map = widget<QWidget>("overviewMapCanvas");
+  auto * split = widget<QSplitter>("overviewSplitter");
+  ASSERT_NE(map, nullptr); ASSERT_NE(split, nullptr);
+  EXPECT_EQ(split->orientation(), Qt::Horizontal); EXPECT_FALSE(split->childrenCollapsible());
+  EXPECT_TRUE(map->property("position_valid").toBool());
+  EXPECT_FALSE(map->property("heading_valid").toBool());
+  EXPECT_EQ(content("overviewAltitude"), "1.50");
+  EXPECT_EQ(widget<QTabWidget>("overviewMapTabs")->count(), 2);
+  EXPECT_NE(widget<QLabel>("overviewRvizUnavailable"), nullptr);
+  for (int i = 0; i < widget<QListWidget>("navigation")->count(); ++i) {
+    EXPECT_FALSE(widget<QListWidget>("navigation")->item(i)->icon().isNull());
+  }
+}
+TEST_F(Desktop, EnuCompassCardinalDirectionsAndWrapAreCorrect)
+{
+  constexpr double pi = 3.14159265358979323846;
+  const double yaw[] = {0, pi / 2, pi, -pi / 2, 2 * pi, 5 * pi / 2};
+  const double expected[] = {90, 0, 270, 180, 90, 0};
+  for (std::size_t i = 0; i < 6; ++i) {
+    ASSERT_TRUE(ui::enu_heading_degrees(yaw[i]));
+    EXPECT_NEAR(*ui::enu_heading_degrees(yaw[i]), expected[i], 1e-10);
+  }
+  EXPECT_FALSE(ui::enu_heading_degrees(std::numeric_limits<double>::infinity()));
+  EXPECT_FALSE(ui::enu_heading_degrees(std::numeric_limits<double>::quiet_NaN()));
+}
+TEST_F(Desktop, InstrumentsRequireIndependentValidityFreshClockAndOdomFrame)
+{
+  auto s = sample(); auto & v = s->state.sdk.value;
+  s->state.attitude_valid = v.attitude_valid = true;
+  v.roll = .2; v.pitch = -.1; v.yaw = .5;
+  const double now = s->produced_steady;
+  ASSERT_TRUE(ui::flight_instruments(*s, now).attitude_valid);
+  EXPECT_NEAR(ui::flight_instruments(*s, now).roll_degrees, 11.4591559, 1e-6);
+  s->state.position_valid = false;
+  EXPECT_TRUE(ui::flight_instruments(*s, now).attitude_valid);
+  EXPECT_FALSE(ui::flight_instruments(*s, now).position_valid);
+  for (const auto quality : {b::Quality::Invalid, b::Quality::Stale, b::Quality::ClockPaused,
+      b::Quality::ClockReset, b::Quality::ClockNotReady})
+  {
+    s->clock.quality = quality; EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  }
+  s->clock.quality = b::Quality::ValidAtObservation;
+  s->state.evidence.time_epoch = 1; EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  s->state.evidence.time_epoch = 0;
+  EXPECT_FALSE(ui::flight_instruments(*s, now + 1.1).attitude_valid);
+  s->state.sdk.fresh = false; EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  s->state.sdk.fresh = true; s->running = false;
+  EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  s->running = true; v.header.frame_id = "map";
+  EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  v.header.frame_id = "odom"; v.yaw = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  v.yaw = 0; v.pitch = 2; EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+  v.pitch = 0; s->state.attitude_valid = false;
+  EXPECT_FALSE(ui::flight_instruments(*s, now).attitude_valid);
+}
+TEST_F(Desktop, OverviewNeedlesClearOnInvalidAttitudePositionPauseAndDisconnect)
+{
+  state->data->state.attitude_valid = state->data->state.sdk.value.attitude_valid = true;
+  open(); auto * dial = widget<QWidget>("overviewInstruments");
+  auto * map = widget<QWidget>("overviewMapCanvas");
+  ASSERT_TRUE(dial->property("attitude_valid").toBool());
+  EXPECT_DOUBLE_EQ(dial->property("heading_degrees").toDouble(), 90);
+  EXPECT_TRUE(map->property("heading_valid").toBool());
+  state->data->state.attitude_valid = false;
+  ASSERT_TRUE(until([&] {return !dial->property("attitude_valid").toBool();}));
+  EXPECT_FALSE(dial->property("heading_degrees").isValid());
+  EXPECT_TRUE(map->property("position_valid").toBool());
+  EXPECT_FALSE(map->property("heading_valid").toBool());
+  state->data->state.attitude_valid = true; state->data->state.position_valid = false;
+  ASSERT_TRUE(until([&] {return !map->property("position_valid").toBool();}));
+  EXPECT_TRUE(dial->property("attitude_valid").toBool());
+  state->data->clock.quality = b::Quality::ClockPaused;
+  ASSERT_TRUE(until([&] {return !dial->property("attitude_valid").toBool();}));
+  click("observerToggle"); ASSERT_TRUE(until([&] {return window->cleanup_complete();}));
+  EXPECT_FALSE(map->property("position_valid").toBool());
+}
+TEST_F(Desktop, OverviewDetailsAreExpandableAndMapCameraDoNotOverlap)
+{
+  open(); EXPECT_FALSE(widget<QWidget>("overviewEvidencePanel")->isVisible());
+  click("overviewEvidenceToggle");
+  EXPECT_TRUE(widget<QWidget>("overviewEvidencePanel")->isVisible());
+  click("overviewEvidenceToggle"); EXPECT_FALSE(
+    widget<QWidget>(
+      "overviewEvidencePanel")->isVisible());
+  for (const auto & size : {QSize(1440, 900), QSize(1024, 720)}) {
+    window->resize(size); QTest::qWait(100);
+    auto * map = widget<QWidget>("overviewMapCanvas");
+    auto * camera = widget<QWidget>("overviewCamera");
+    const QRect a(map->mapToGlobal(QPoint()), map->size());
+    const QRect b(camera->mapToGlobal(QPoint()), camera->size());
+    EXPECT_LT(a.right(), b.left()); EXPECT_GE(map->width(), 320); EXPECT_GE(camera->width(), 180);
+    if (size.width() == 1440) {
+      EXPECT_GE(map->visibleRegion().boundingRect().height() + 2, map->height());
+      EXPECT_GE(camera->visibleRegion().boundingRect().height() + 2, camera->height());
+    }
+  }
 }
 TEST_F(Desktop, FreshnessPauseAndInvalidFields)
 {
@@ -206,6 +362,131 @@ TEST_F(Desktop, EmptyPerceptionDistinctFromInvalidAndCameraSelectionClears)
   ASSERT_TRUE(until([&] {return content("targetSummary").contains(QStringLiteral("不是有效空"));}));
   EXPECT_EQ(widget<QWidget>("spatialCanvas")->property("target_count").toInt(), 0);
 }
+TEST_F(Desktop, SameFrameCameraDisplayKeepsOverviewRawAndClearsOnSourceLoss)
+{
+  auto raw = std::make_shared<sensor_msgs::msg::Image>();
+  raw->header.stamp.sec = 10; raw->header.stamp.nanosec = 200000000;
+  raw->header.frame_id = "camera"; raw->encoding = "rgb8";
+  raw->width = 640; raw->height = 480; raw->step = 1920; raw->data.assign(921600, 80);
+  auto measured = std::make_shared<sensor_msgs::msg::Image>(*raw);
+  measured->header.stamp.nanosec = 0; measured->data.assign(921600, 120);
+  const auto now = b::detail::steady_seconds();
+  b::CameraObservationBuffer buffer(
+    {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom"});
+  buffer.image(measured, now, 0);
+  auto tracks = std::make_shared<easyfly_msgs::msg::TrackInfoArray>();
+  tracks->header = measured->header;
+  easyfly_msgs::msg::TrackInfo box; box.header = tracks->header;
+  box.track_id = 7; box.class_name = "<b>person</b>"; box.confidence = .9;
+  box.bbox_center_x = box.bbox_center_y = .5; box.bbox_width = box.bbox_height = .2;
+  tracks->tracks.push_back(box); buffer.tracks(tracks, now, 0);
+  state->data->clock.now_ns = 10200000000LL;
+  state->data->images[0] = {raw, evidence()};
+  state->data->camera_perception[0] = buffer.snapshot(state->data->clock, now);
+  open();
+  auto * camera = widget<QWidget>("cameraCanvas");
+  ASSERT_TRUE(until([&] {return camera->property("has_frame").toBool();}));
+  EXPECT_EQ(widget<QComboBox>("cameraOverlayMode")->currentIndex(), 0);
+  widget<QComboBox>("cameraOverlayMode")->setCurrentIndex(2);
+  ASSERT_TRUE(until([&] {return camera->property("overlay_count").toInt() == 1;}));
+  EXPECT_EQ(camera->property("display_stamp_ns").toLongLong(), 10000000000LL);
+  EXPECT_EQ(
+    widget<QWidget>("overviewCamera")->property("display_stamp_ns").toLongLong(),
+    10200000000LL);
+  EXPECT_EQ(state->data->images[0].value->data[0], 80);
+  EXPECT_EQ(measured->data[0], 120);
+  auto * table = widget<QTableView>("cameraOverlayTable");
+  EXPECT_EQ(table->model()->index(0, 0).data().toString(), "SORT #7");
+  EXPECT_EQ(table->model()->index(0, 3).data().toString(), QStringLiteral("—"));
+  EXPECT_EQ(table->model()->index(0, 1).data().toString(), "<b>person</b>");
+  state->data->clock.quality = b::Quality::ClockPaused;
+  ASSERT_TRUE(until([&] {return !camera->property("has_frame").toBool();}));
+  EXPECT_EQ(camera->property("overlay_count").toInt(), 0);
+  widget<QComboBox>("cameraSelector")->setCurrentIndex(1);
+  EXPECT_FALSE(camera->property("overlay_matched").toBool());
+}
+TEST_F(Desktop, OverlayDisplayNeverReplacesRawRecordingPixels)
+{
+#ifndef EASYFLY_ENABLE_MEDIA
+  GTEST_SKIP() << "Requires the opt-in media build";
+#else
+  QTemporaryDir directory; ASSERT_TRUE(directory.isValid()); directory.setAutoRemove(false);
+  int64_t source_ns = 10200000000LL;
+  b::CameraObservationBuffer buffer(
+    {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom"});
+  const auto publish = [&] {
+      const auto now = b::detail::steady_seconds(); source_ns += 50000000;
+      state->data->produced_steady = now; state->data->clock.now_ns = source_ns;
+      auto raw = std::make_shared<sensor_msgs::msg::Image>(); raw->header.frame_id = "camera";
+      raw->header.stamp.sec = source_ns / 1000000000LL;
+      raw->header.stamp.nanosec = source_ns % 1000000000LL;
+      raw->encoding = "rgb8"; raw->width = 640; raw->height = 480; raw->step = 1920;
+      raw->data.assign(921600, 80); state->data->images[0] = {raw, evidence()};
+      auto measured = std::make_shared<sensor_msgs::msg::Image>(*raw);
+      const auto old_ns = source_ns - 100000000;
+      measured->header.stamp.sec = old_ns / 1000000000LL;
+      measured->header.stamp.nanosec = old_ns % 1000000000LL;
+      measured->data.assign(921600, 120); buffer.image(measured, now, 0);
+      auto tracks = std::make_shared<easyfly_msgs::msg::TrackInfoArray>();
+      tracks->header = measured->header;
+      easyfly_msgs::msg::TrackInfo box; box.header = tracks->header; box.track_id = 7;
+      box.class_name = "person"; box.confidence = .9;
+      box.bbox_center_x = box.bbox_center_y = .5; box.bbox_width = box.bbox_height = .2;
+      tracks->tracks.push_back(box); buffer.tracks(tracks, now, 0);
+      state->data->camera_perception[0] = buffer.snapshot(state->data->clock, now);
+    };
+  publish(); QTimer producer; producer.setInterval(50);
+  QObject::connect(&producer, &QTimer::timeout, publish); producer.start();
+  window = std::make_unique<ui::MainWindow>(
+    b::BridgeConfig{}, factory(state), nullptr,
+    ui::default_tool_options(), ui::MissionOptions{}, ui::control_factory(),
+    ui::ParameterOptions{}, ui::parameter_factory(), ui::ImportOptions{}, ui::import_factory(),
+    ui::RvizOptions{}, ui::RecordingOptions{true}); window->show();
+  widget<QComboBox>("cameraOverlayMode")->setCurrentIndex(2);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return widget<QWidget>("cameraCanvas")->property("overlay_count").toInt() == 1;
+      }));
+  widget<QLineEdit>("recordingDirectory")->setText(directory.path() + "/records");
+  ASSERT_TRUE(until([&] {return widget<QPushButton>("recordingStart")->isEnabled();}));
+  click("recordingStart"); auto * prompt = widget<QMessageBox>("recordingConfirmation");
+  ASSERT_NE(prompt, nullptr); prompt->done(QMessageBox::Ok); QTest::qWait(1000);
+  click("recordingFinish");
+  QString record;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto dirs =
+        QDir(directory.path() + "/records").entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+        if (dirs.size() != 1) {return false;} record = directory.path() + "/records/" + dirs[0];
+        QFile manifest(record + "/manifest.json"); if (!manifest.open(QIODevice::ReadOnly)) {
+          return false;
+        }
+        return QJsonDocument::fromJson(manifest.readAll()).object()["status"].toString() ==
+        "verified";
+      }, 5000));
+  producer.stop(); window->close(); ASSERT_TRUE(until([&] {return window->cleanup_complete();}));
+  QFile manifest(record + "/manifest.json"); ASSERT_TRUE(manifest.open(QIODevice::ReadOnly));
+  const auto data = QJsonDocument::fromJson(manifest.readAll()).object();
+  ASSERT_GE(data["frames"].toString().toInt(), 3);
+  for (const auto & segment : data["segments"].toArray()) {
+    cv::VideoCapture video((record + "/" + segment.toObject()["name"].toString()).toStdString());
+    ASSERT_TRUE(video.isOpened()); cv::Mat frame; int frames = 0;
+    while (video.read(frame)) {
+      ++frames; ASSERT_FALSE(frame.empty());
+      for (const auto point : {cv::Point(0, 0), cv::Point(frame.cols / 2, frame.rows / 2)}) {
+        const auto pixel = frame.at<cv::Vec3b>(point);
+        for (int channel = 0; channel < 3; ++channel) {
+          EXPECT_NEAR(pixel[channel], 80, 5);
+        }
+      }
+    }
+    EXPECT_GT(frames, 0);
+  }
+  std::cout << "Raw-recording pixel evidence retained: " << record.toStdString() << std::endl;
+#endif
+}
 TEST_F(Desktop, DisconnectAndCloseWaitWithoutBlockingGui)
 {
   state->stop_delay_ms = 300;
@@ -287,6 +568,84 @@ TEST_F(Desktop, GlobalEventNeverBindsToSelectedFileOrBecomesHeartbeat)
   EXPECT_TRUE(content("globalPhaseMission").contains(QStringLiteral("不等于任务失败")));
   EXPECT_FALSE(content("globalPhaseMission").contains("demo.yaml"));
 }
+TEST_F(Desktop, MissionDetailsShowValidatedDefaultsPlainTextAndUnknownProfile)
+{
+  open(); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  widget<QListWidget>("missionList")->setCurrentRow(0); click("inspectMission");
+  ASSERT_TRUE(until([&] {return widget<QTableView>("missionSteps")->model()->rowCount() == 3;}));
+  EXPECT_EQ(state->last_details, "demo.yaml"); EXPECT_EQ(state->details_calls, 1);
+  auto * steps = widget<QTableView>("missionSteps")->model();
+  EXPECT_TRUE(steps->index(0, 2).data().toString().contains("climb_speed=1.000000 m/s"));
+  EXPECT_EQ(steps->index(0, 3).data().toString(), "120.000000");
+  EXPECT_TRUE(widget<QPlainTextEdit>("missionContent")->isReadOnly());
+  EXPECT_EQ(
+    widget<QPlainTextEdit>(
+      "missionContent")->toPlainText().toStdString(), state->details_content);
+  EXPECT_TRUE(content("missionDetailsSummary").contains("SHA-256"));
+  EXPECT_TRUE(content("missionDetailsSummary").contains(QStringLiteral("非任务文件字段")));
+  EXPECT_TRUE(content("backendProfile").contains(QStringLiteral("未确认")));
+  EXPECT_TRUE(content("missionLimit").contains(QStringLiteral("没有启动/取消")));
+}
+TEST_F(Desktop, SelectionPendingFailureAndReconnectNeverReuseOldMissionDetails)
+{
+  open(); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  auto * list = widget<QListWidget>("missionList"); list->setCurrentRow(0); click("inspectMission");
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return !widget<QPlainTextEdit>(
+          "missionContent")->toPlainText().isEmpty();
+      }));
+  list->addItem("second.yaml"); list->setCurrentRow(1);
+  EXPECT_TRUE(widget<QPlainTextEdit>("missionContent")->toPlainText().isEmpty());
+  state->answer = false; click("inspectMission");
+  ASSERT_TRUE(
+    until([&] {return content("missionDetailsSummary").contains(QStringLiteral("等待"));}));
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 0);
+  state->answer = true; state->wrong_id = true; click("inspectMission");
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return content("missionDetailsSummary").contains(QStringLiteral("不可用"));
+      }));
+  EXPECT_TRUE(widget<QPlainTextEdit>("missionContent")->toPlainText().isEmpty());
+  click("observerToggle"); ASSERT_TRUE(until([&] {return window->cleanup_complete();}));
+  click("observerToggle"); QTest::qWait(120);
+  EXPECT_TRUE(widget<QPlainTextEdit>("missionContent")->toPlainText().isEmpty());
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 0);
+}
+TEST_F(Desktop, AllStepTypesAndHistoricalPreviewStayReadonly)
+{
+  state->details_content =
+    "schema_version: 1\nframe_id: odom\nunits: {position: m, angle: rad, time: s}\nsteps:\n"
+    "- {type: takeoff, altitude: 1.5}\n- {type: hover, duration: 1}\n"
+    "- {type: waypoint, x: 1, y: 0, z: 1.5}\n- {type: navigate, x: 0, y: 0, z: 1.5}\n"
+    "- {type: track, target_id: -1, duration: 1}\n"
+    "- {type: search, center_x: 0, center_y: 0, area_width: 4, area_height: 3, "
+    "altitude: 1.5, pattern: boustrophedon}\n"
+    "- {type: land}\n- {type: precision_land, tag_id: 4}\n";
+  open(); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  widget<QListWidget>("missionList")->setCurrentRow(0); click("inspectMission");
+  ASSERT_TRUE(until([&] {return widget<QTableView>("missionSteps")->model()->rowCount() == 8;}));
+  auto * model = widget<QTableView>("missionSteps")->model();
+  EXPECT_TRUE(model->index(2, 2).data().toString().contains("yaw=0.000000 rad"));
+  EXPECT_TRUE(model->index(4, 2).data().toString().contains("target_id=-1"));
+  EXPECT_TRUE(model->index(5, 2).data().toString().contains("geometric coverage"));
+  EXPECT_TRUE(model->index(7, 2).data().toString().contains("tag_id=4"));
+  state->data->mission_details.evidence.received_steady -= 3;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return content("missionDetailsSummary").contains(QStringLiteral("最后"));
+      }));
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 8);
+  EXPECT_EQ(
+    widget<QPlainTextEdit>("missionContent")->toPlainText().toStdString(),
+    state->details_content);
+}
 TEST_F(Desktop, BoundedEventsAndSmallWindowPages)
 {
   for (int i = 0; i < 1005; ++i) {
@@ -294,7 +653,7 @@ TEST_F(Desktop, BoundedEventsAndSmallWindowPages)
   }
   open(); window->resize(1024, 720); QTest::qWait(50);
   EXPECT_EQ(widget<QTableView>("eventTable")->model()->rowCount(), 1000);
-  auto * nav = widget<QListWidget>("navigation"); ASSERT_EQ(nav->count(), 6);
+  auto * nav = widget<QListWidget>("navigation"); ASSERT_EQ(nav->count(), 7);
   for (int i = 0; i < nav->count(); ++i) {
     nav->setCurrentRow(i); QCoreApplication::processEvents(); EXPECT_TRUE(window->isVisible());
   }
@@ -318,8 +677,38 @@ TEST_F(Desktop, ActualWidgetScreenshotsOfIsolatedFixture)
     state->data = sample(); nav->setCurrentRow(i); QTest::qWait(120);
     ASSERT_TRUE(window->grab().save(output.filePath(files[i] + ".png")));
   }
+  const auto detail_directory = QDir(output.filePath("../d6-4"));
+  ASSERT_TRUE(detail_directory.mkpath("."));
+  nav->setCurrentRow(1); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  widget<QListWidget>("missionList")->setCurrentRow(0); click("inspectMission"); QTest::qWait(250);
+  ASSERT_TRUE(window->grab().save(detail_directory.filePath("mission-details.png")));
+  widget<QTabWidget>("missionDocumentTabs")->setCurrentIndex(1); QTest::qWait(50);
+  ASSERT_TRUE(window->grab().save(detail_directory.filePath("mission-content.png")));
   window->resize(1024, 720); state->data->clock.quality = b::Quality::ClockPaused;
   state->data->command_uncertain_observed = b::Event{1, 0, "fault", 101};
   nav->setCurrentRow(0); QTest::qWait(120);
   ASSERT_TRUE(window->grab().save(output.filePath("small-warning.png")));
+}
+TEST_F(Desktop, OverviewFreshAttitudeAndInvalidationScreenshots)
+{
+  state->data->state.attitude_valid = state->data->state.sdk.value.attitude_valid = true;
+  state->data->state.sdk.value.roll = .25; state->data->state.sdk.value.pitch = -.1;
+  state->data->state.sdk.value.yaw = .65; open();
+  auto * mark = new QLabel(
+    QStringLiteral("布局验收：构造观测，无 PX4 / 飞机 / 飞行控制"), window.get());
+  mark->setStyleSheet("background:#ffffff; color:#8a4b08; padding:3px;");
+  static_cast<QVBoxLayout *>(window->centralWidget()->layout())->insertWidget(0, mark);
+  const QDir output(QStringLiteral(EASYFLY_SCREENSHOT_DIRECTORY) + "/../overview-refresh");
+  ASSERT_TRUE(output.mkpath(".")); QTest::qWait(120);
+  ASSERT_TRUE(window->grab().save(output.filePath("overview-fresh.png")));
+  window->resize(1024, 720); QTest::qWait(100);
+  ASSERT_TRUE(window->grab().save(output.filePath("overview-small.png")));
+  state->data->clock.quality = b::Quality::ClockPaused;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return !widget<QWidget>("overviewInstruments")->property("attitude_valid").toBool();
+      }));
+  ASSERT_TRUE(window->grab().save(output.filePath("overview-paused.png")));
 }

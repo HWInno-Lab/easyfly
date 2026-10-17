@@ -13,7 +13,7 @@
   <depend>rclcpp_action</depend>
   <depend>easyfly_msgs</depend>
   <depend>easyfly_core</depend>
-  <depend>yaml-cpp</depend>
+  <depend>easyfly_mission_format</depend>
 
   <exec_depend>easyfly_flight_control</exec_depend>
 

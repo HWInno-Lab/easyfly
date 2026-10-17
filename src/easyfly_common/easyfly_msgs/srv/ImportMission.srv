@@ -1,0 +1,26 @@
+# Separate metadata/file operation. Never executes a mission.
+# session and lookup are read-only; create publishes one new validated YAML file.
+string<=16 operation
+string<=32 server_instance_id
+string<=32 catalog_id
+string<=32 client_request_id
+string<=128 mission_name
+string<=64 expected_content_sha256
+string<=65536 content
+---
+bool success
+string<=64 status
+string<=2048 message
+string<=32 server_instance_id
+string<=32 catalog_id
+string<=32 client_request_id
+string<=128 mission_name
+string<=64 content_sha256
+bool enabled
+# Informational configured server destination, not a client-supplied path.
+string<=4096 catalog_directory
+uint32 request_capacity
+uint32 retained_requests
+# Original decision only, not current file contents or flight admission.
+bool resolved
+bool published

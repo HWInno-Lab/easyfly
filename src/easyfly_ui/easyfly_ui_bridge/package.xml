@@ -11,6 +11,7 @@
   <depend>rclcpp</depend>
   <depend>easyfly_core</depend>
   <depend>easyfly_msgs</depend>
+  <depend>easyfly_mission_format</depend>
   <depend>sensor_msgs</depend>
   <depend>rosgraph_msgs</depend>
   <depend>jsoncpp</depend>

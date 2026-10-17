@@ -52,7 +52,7 @@ public:
   ~ToolProcess();
   bool start(
     ToolKind kind, const ToolOptions & options, const bridge::BridgeConfig & config,
-    int preset = 0);
+    int preset = 3);
   bool active() const;
   void stop();
   ToolState state() const {return state_;}

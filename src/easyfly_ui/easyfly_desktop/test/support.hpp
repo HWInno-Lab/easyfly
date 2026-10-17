@@ -19,6 +19,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <map>
 #include <memory>
 #include <string>
 #include <utility>
@@ -30,11 +31,14 @@ namespace ui = easyfly_desktop;
 namespace b = easyfly_ui_bridge;
 inline void application()
 {
-  static int argc = 1;
-  static char name[] = "easyfly_desktop_test";
-  static char * argv[] = {name, nullptr};
-  static QApplication app(argc, argv);
-  app.setQuitOnLastWindowClosed(false); app.setFont(QFont("Noto Sans CJK SC", 10));
+  if (!QApplication::instance()) {
+    static int argc = 1;
+    static char name[] = "easyfly_desktop_test";
+    static char * argv[] = {name, nullptr};
+    static QApplication app(argc, argv);
+  }
+  QApplication::setQuitOnLastWindowClosed(false);
+  QApplication::setFont(QFont("Noto Sans CJK SC", 10));
 }
 template<typename Predicate>
 bool until(Predicate predicate, int milliseconds = 3000)
@@ -102,7 +106,15 @@ struct FakeState
   uint64_t sequence{0}; int stop_calls{0}, list_calls{0}, validate_calls{0}, query_calls{0};
   bool answer{true}, wrong_id{false}, unknown_id{false}, frozen_snapshot{false};
   int stop_delay_ms{0}; double stop_requested{0};
-  std::string last_validation, last_query;
+  std::string last_validation, last_query, last_details;
+  int details_calls{0};
+  int capability_calls{0}, parameter_calls{0};
+  std::map<b::Key, std::string> parameter_values;
+  bool recheck_rate_limited{false};
+  std::string details_content{
+    "# <b>raw mission</b>\n"
+    "schema_version: 1\nframe_id: odom\nunits: {position: m, angle: rad, time: s}\n"
+    "steps:\n- type: takeoff\n  altitude: 1.5\n- type: hover\n  duration: 2\n- type: land\n"};
 };
 class FakeSource final : public ui::Source
 {
@@ -129,12 +141,23 @@ public:
     for (auto & v : result->perception) {age(v.second.evidence);}
     for (auto & v : result->capabilities) {age(v.second.evidence);}
     for (auto & v : result->missions) {age(v.second.evidence);}
+    age(result->mission_details.evidence);
     for (auto & v : result->parameters) {age(v.second.evidence);}
     return result;
   }
-  b::RequestReceipt capabilities(b::CapabilitySource) override
+  b::RequestReceipt capabilities(b::CapabilitySource source) override
   {
-    return {++state_->sequence, b::RequestStatus::Queued};
+    if (state_->recheck_rate_limited) {return {0, b::RequestStatus::RateLimited};}
+    ++state_->capability_calls; const auto id = ++state_->sequence;
+    const auto key = source == b::CapabilitySource::Flight ? b::Key::FlightCapabilities :
+      source == b::CapabilitySource::Mission ? b::Key::MissionCapabilities :
+      source == b::CapabilitySource::Perception ? b::Key::PerceptionCapabilities :
+      b::Key::LandingCapabilities;
+    if (state_->answer) {
+      state_->data->capabilities[key].evidence = evidence();
+      state_->data->capabilities[key].evidence.request_id = id;
+    }
+    return {id, b::RequestStatus::Queued};
   }
   b::RequestReceipt list_missions() override
   {
@@ -171,8 +194,32 @@ public:
     }
     return {id, b::RequestStatus::Queued};
   }
+  b::RequestReceipt mission_details(const std::string & name) override
+  {
+    if (state_->recheck_rate_limited) {return {0, b::RequestStatus::RateLimited};}
+    ++state_->details_calls; state_->last_details = name; const auto id = ++state_->sequence;
+    if (state_->answer) {
+      auto response = std::make_shared<easyfly_msgs::srv::GetMissionDetails::Response>();
+      response->mission_name = state_->wrong_id ? "wrong.yaml" : name;
+      response->success = true; response->status = "valid_snapshot";
+      response->content = state_->details_content;
+      response->content_sha256 = easyfly_mission_fsm::missionContentSha256(response->content);
+      easyfly_mission_fsm::MissionValidation plan;
+      auto e = evidence(); e.request_id = id; e.source_age_available = false;
+      e.quality = b::detail::validate_mission_details(*response, name, &plan);
+      const bool valid = e.quality == b::Quality::ValidAtObservation;
+      state_->data->mission_details = {valid ? response : nullptr, e};
+      state_->data->mission_plan = valid ?
+        std::make_shared<const easyfly_mission_fsm::MissionValidation>(std::move(plan)) : nullptr;
+      state_->data->mission_format = valid ?
+        easyfly_mission_fsm::missionFormatName(response->content) : "";
+    }
+    return {id, b::RequestStatus::Queued};
+  }
   b::RequestReceipt read_parameter(b::Parameter p) override
   {
+    if (state_->recheck_rate_limited) {return {0, b::RequestStatus::RateLimited};}
+    ++state_->parameter_calls;
     const auto id = ++state_->sequence;
     const auto key = p == b::Parameter::Profile ? b::Key::Profile : p ==
       b::Parameter::UseSimTime ? b::Key::UseSimTime : p ==
@@ -180,8 +227,12 @@ public:
     auto r = std::make_shared<easyfly_msgs::srv::QueryParams::Response>(); r->success = true;
     r->current_value = p == b::Parameter::Profile ? "\"navigation_dev\"" : p ==
       b::Parameter::OperatorNote ? "\"<script>plain</script>\"" : "false";
-    state_->data->parameters[key] = {r, evidence()};
-    state_->data->parameters[key].evidence.request_id = id;
+    const auto supplied = state_->parameter_values.find(key);
+    if (supplied != state_->parameter_values.end()) {r->current_value = supplied->second;}
+    if (state_->answer) {
+      state_->data->parameters[key] = {r, evidence()};
+      state_->data->parameters[key].evidence.request_id = id;
+    }
     return {id, b::RequestStatus::Queued};
   }
   b::RequestReceipt perception(b::PerceptionKind) override

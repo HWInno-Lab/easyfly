@@ -27,8 +27,13 @@
 #include <easyfly_msgs/srv/get_capabilities.hpp>
 #include <easyfly_msgs/srv/get_perception.hpp>
 #include <easyfly_msgs/srv/manage_mission.hpp>
+#include <easyfly_msgs/srv/get_mission_details.hpp>
+#include <easyfly_mission_format/mission_format.hpp>
 #include <easyfly_msgs/srv/query_params.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <easyfly_msgs/msg/detection_info_array.hpp>
+#include <easyfly_msgs/msg/track_info_array.hpp>
+#include <easyfly_msgs/msg/target3_d_array.hpp>
 
 namespace easyfly_ui_bridge
 {
@@ -41,7 +46,7 @@ enum class Quality
 enum class Key
 {
   FlightCapabilities, MissionCapabilities, PerceptionCapabilities, LandingCapabilities,
-  MissionList, MissionValidation, MissionQuery, Profile, UseSimTime, OperatorNote,
+  MissionList, MissionValidation, MissionQuery, MissionDetails, Profile, UseSimTime, OperatorNote,
   ExportPretty, Targets, Obstacles
 };
 struct Evidence
@@ -123,6 +128,22 @@ struct PerceptionReport
   double reported_age_sec{0};
   Evidence evidence;
 };
+// Explicit one-camera pipeline association. Topic names alone are not proof
+// that unrelated producers refer to the same camera. No automatic remapping.
+struct CameraPerceptionBinding
+{
+  std::string image_topic, detections_topic, tracks_topic, targets_topic;
+  std::string target_frame{"odom"};
+};
+struct CameraObservations
+{
+  CameraPerceptionBinding binding;
+  Observation<easyfly_msgs::msg::DetectionInfoArray> detections;
+  Observation<easyfly_msgs::msg::TrackInfoArray> tracks;
+  Observation<easyfly_msgs::msg::Target3DArray> targets;
+  Observation<sensor_msgs::msg::Image> detection_image, track_image;
+  size_t cached_images{0}, cached_bytes{0};
+};
 struct UiSnapshot
 {
   uint64_t observation_session_id{0}, time_epoch{0}, revision{0};
@@ -132,14 +153,21 @@ struct UiSnapshot
   std::string selected_profile;  // Not a confirmed backend profile.
   ClockState clock;
   StateView state;
+  // Read-only DDS graph evidence, sampled on the bridge worker at most once/second.
+  double state_graph_observed{0};
+  std::size_t state_publishers{0}, state_matching_publishers{0};
   std::map<Key, Observation<easyfly_msgs::srv::GetCapabilities::Response>> capabilities;
   std::map<Key, Observation<easyfly_msgs::srv::ManageMission::Response>> missions;
+  Observation<easyfly_msgs::srv::GetMissionDetails::Response> mission_details;
+  std::shared_ptr<const easyfly_mission_fsm::MissionValidation> mission_plan;
+  std::string mission_format;  // Classified on the bridge worker, not the GUI.
   std::map<Key, Observation<easyfly_msgs::srv::QueryParams::Response>> parameters;
   std::map<Key, Observation<easyfly_msgs::srv::GetPerception::Response>> perception;
   // Retain bounded upstream envelope even when geometry cannot be retained.
   std::map<Key, PerceptionReport> perception_reports;
   Observation<easyfly_msgs::msg::MissionStatus> last_mission_event;
   std::array<Observation<sensor_msgs::msg::Image>, 2> images;
+  std::array<CameraObservations, 2> camera_perception;
   std::deque<TrajectoryPoint> trajectory;
   std::deque<Event> events;
   // Historical warning, never cleared by telemetry, invalid JSON or disconnect.
@@ -164,6 +192,10 @@ Quality validate_mission(
   const easyfly_msgs::srv::ManageMission::Response & response,
   Key key, const std::string & requested_id);
 Quality validate_event(const easyfly_msgs::msg::MissionStatus & message);
+Quality validate_mission_details(
+  const easyfly_msgs::srv::GetMissionDetails::Response & response,
+  const std::string & requested_name, easyfly_mission_fsm::MissionValidation * plan = nullptr);
+bool catalog_name(const std::string & text);
 Quality validate_perception(
   const easyfly_msgs::srv::GetPerception::Response & response,
   Key key, const ClockState & clock);

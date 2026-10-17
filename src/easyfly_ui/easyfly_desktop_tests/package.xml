@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>easyfly_desktop_tests</name>
+  <version>0.1.0</version>
+  <description>Isolated platform integration acceptance for the EasyFly desktop</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>easyfly_desktop</depend>
+  <test_depend>qtbase5-dev</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_index_cpp</test_depend>
+  <test_depend>std_srvs</test_depend>
+  <test_depend>rosgraph_msgs</test_depend>
+  <test_depend>easyfly_params</test_depend>
+  <test_depend>easyfly_mission_srvs</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

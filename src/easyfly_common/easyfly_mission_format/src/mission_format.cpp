@@ -1,18 +1,35 @@
-#include "easyfly_mission_fsm/mission_format.hpp"
-#include <yaml-cpp/yaml.h>
-#include <algorithm>
-#include <set>
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#include "easyfly_mission_format/mission_format.hpp"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <yaml-cpp/yaml.h>
+#include <algorithm>
 #include <cerrno>
+#include <set>
 
-namespace easyfly_mission_fsm {
-namespace {
-void require(bool condition, const std::string & error) {
-  if (!condition) throw std::invalid_argument(error);
+namespace easyfly_mission_fsm
+{
+namespace
+{
+void require(bool condition, const std::string & error)
+{
+  if (!condition) {throw std::invalid_argument(error);}
 }
-void keys(const YAML::Node & map, const std::set<std::string> & allowed) {
+void keys(const YAML::Node & map, const std::set<std::string> & allowed)
+{
   require(map.IsMap(), "expected mapping");
   std::set<std::string> seen;
   for (const auto & item : map) {
@@ -22,33 +39,44 @@ void keys(const YAML::Node & map, const std::set<std::string> & allowed) {
     require(allowed.count(key), "unsupported field: " + key);
   }
 }
-std::string word(const YAML::Node & node) {
+std::string word(const YAML::Node & node)
+{
   require(node.IsScalar(), "expected scalar string");
   return node.as<std::string>();
 }
-double number(const YAML::Node & node, double low, double high) {
-  require(node.IsScalar() && node.Tag() != "!" && node.Tag() != "tag:yaml.org,2002:str",
+double number(const YAML::Node & node, double low, double high)
+{
+  require(
+    node.IsScalar() && node.Tag() != "!" && node.Tag() != "tag:yaml.org,2002:str",
     "expected unquoted numeric scalar");
   const auto raw = node.Scalar();
   size_t consumed = 0;
   const auto value = std::stod(raw, &consumed);
-  require(consumed == raw.size() && std::isfinite(value) && value >= low && value <= high,
+  require(
+    consumed == raw.size() && std::isfinite(value) && value >= low && value <= high,
     "numeric field out of range");
   return value;
 }
-double optional(const YAML::Node & node, const std::string & key, double value, double low, double high) {
+double optional(
+  const YAML::Node & node, const std::string & key, double value, double low,
+  double high)
+{
   return node[key] ? number(node[key], low, high) : value;
 }
-int integer(const YAML::Node & node, int low, int high) {
+int integer(const YAML::Node & node, int low, int high)
+{
   require(node.IsScalar(), "expected integer");
   const auto text = node.Scalar();
   require(!text.empty(), "empty integer");
   const auto first = text[0] == '-' ? 1u : 0u;
-  require(first < text.size() && std::all_of(text.begin() + first, text.end(),
-    [](char c) {return c >= '0' && c <= '9';}), "expected decimal integer");
+  require(
+    first < text.size() && std::all_of(
+      text.begin() + first, text.end(),
+      [](char c) {return c >= '0' && c <= '9';}), "expected decimal integer");
   return static_cast<int>(number(node, low, high));
 }
-MissionValidation yaml(const std::string & text) {
+MissionValidation yaml(const std::string & text)
+{
   const auto docs = YAML::LoadAll(text);
   require(docs.size() == 1, "exactly one YAML document required");
   const auto root = docs.front();
@@ -56,9 +84,12 @@ MissionValidation yaml(const std::string & text) {
   require(integer(root["schema_version"], 1, 1) == 1, "unsupported schema_version");
   require(word(root["frame_id"]) == "odom", "only odom frame supported");
   keys(root["units"], {"position", "angle", "time"});
-  require(word(root["units"]["position"]) == "m" && word(root["units"]["angle"]) == "rad" &&
+  require(
+    word(root["units"]["position"]) == "m" && word(root["units"]["angle"]) == "rad" &&
     word(root["units"]["time"]) == "s", "units must be m/rad/s");
-  if (root["failure_policy"]) require(word(root["failure_policy"]) == "abort", "only abort policy supported");
+  if (root["failure_policy"]) {
+    require(word(root["failure_policy"]) == "abort", "only abort policy supported");
+  }
   const auto steps = root["steps"];
   require(steps.IsSequence() && steps.size() > 0 && steps.size() <= 256, "expected 1..256 steps");
   MissionValidation result;
@@ -73,7 +104,9 @@ MissionValidation yaml(const std::string & text) {
       {"waypoint", {"x", "y", "z", "yaw", "max_speed", "acceptance_radius"}},
       {"navigate", {"x", "y", "z", "max_speed"}},
       {"track", {"target_id", "duration", "follow_distance", "follow_height"}},
-      {"search", {"center_x", "center_y", "area_width", "area_height", "altitude", "max_speed", "pattern"}},
+      {"search",
+        {"center_x", "center_y", "area_width", "area_height", "altitude", "max_speed",
+          "pattern"}},
       {"land", {}}, {"precision_land", {"tag_id"}}};
     const auto spec = fields.find(step.type);
     require(spec != fields.end(), "unsupported step type: " + step.type);
@@ -116,40 +149,44 @@ MissionValidation yaml(const std::string & text) {
   return result;
 }
 }  // namespace
-MissionValidation validateMissionText(const std::string & text) {
+MissionValidation validateMissionText(const std::string & text)
+{
   try {
-    require(text.size() <= 65536 && text.find('\0') == std::string::npos, "invalid mission size/content");
+    require(
+      text.size() <= 65536 && text.find(
+        '\0') == std::string::npos, "invalid mission size/content");
     std::istringstream lines(text); std::string first;
     while (std::getline(lines, first)) {
       first = trimLegacy(first);
-      if (!first.empty() && first[0] != '#' && first != "---") break;
+      if (!first.empty() && first[0] != '#' && first != "---") {break;}
     }
     require(first.empty() || (first[0] != '{' && first[0] != '['), "JSON/flow root not supported");
-    auto separator = first.find('=');
-    if (separator == std::string::npos) separator = first.find(':');
-    const std::set<std::string> legacy_keys{"type", "altitude", "climb_speed", "x", "y", "z", "yaw", "max_speed", "wait"};
-    if (separator != std::string::npos && legacy_keys.count(trimLegacy(first.substr(0, separator)))) {
+    if (missionFormatName(text) == "legacy_flat") {
       std::istringstream legacy(text); return validateLegacyMission(legacy);
     }
     return yaml(text);
-  } catch (const std::exception & exc) {return {{}, exc.what()};}
+  } catch (const std::exception & exc) {
+    return MissionValidation{{}, exc.what()};
+  }
 }
-MissionValidation validateMissionFile(const std::string & path) {
+MissionValidation validateMissionFile(const std::string & path)
+{
   const int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_CLOEXEC);
-  if (fd < 0) return {{}, "cannot open mission file"};
+  if (fd < 0) {return MissionValidation{{}, "cannot open mission file"};}
   struct Guard {int fd; ~Guard() {close(fd);}} guard{fd};
-  struct stat info{};
-  if (fstat(fd, &info) || !S_ISREG(info.st_mode) || info.st_size > 65536)
-    return {{}, "mission must be a regular file <=64KiB"};
+  struct stat info {};
+  if (fstat(fd, &info) || !S_ISREG(info.st_mode) || info.st_size > 65536) {
+    return MissionValidation{{}, "mission must be a regular file <=64KiB"};
+  }
   std::string text(65537, '\0'); size_t count = 0;
   while (count < text.size()) {
     const auto n = read(fd, text.data() + count, text.size() - count);
-    if (n < 0 && errno == EINTR) continue;
-    if (n < 0) return {{}, "mission read failed"};
-    if (!n) break;
+    if (n < 0 && errno == EINTR) {continue;}
+    if (n < 0) {return MissionValidation{{}, "mission read failed"};}
+    if (!n) {break;}
     count += static_cast<size_t>(n);
   }
-  if (count > 65536) return {{}, "mission exceeds 64KiB"};
+  if (count > 65536) {return MissionValidation{{}, "mission exceeds 64KiB"};}
   text.resize(count);
   return validateMissionText(text);
 }

@@ -64,6 +64,12 @@ public:
     message->mode = mode;
     node.cb_state(message);
   }
+  static void pose(MavlinkBridge & node, double x)
+  {
+    auto message = std::make_shared<geometry_msgs::msg::PoseStamped>();
+    message->pose.position.x = x;
+    node.cb_local_pose(message);
+  }
   static easyfly_msgs::msg::UAVState snapshot(MavlinkBridge & node)
   {
     node.publish_state();
@@ -136,6 +142,11 @@ protected:
         status_ = *message;
         ++status_count_;
       });
+    state_subscription_ = peer_->create_subscription<easyfly_msgs::msg::UAVState>(
+      "/uav_state", 10, [this](easyfly_msgs::msg::UAVState::ConstSharedPtr message) {
+        state_ = *message;
+        ++state_count_;
+      });
     rclcpp::ExecutorOptions executor_options;
     executor_options.context = context_;
     executor_ = std::make_unique<rclcpp::executors::SingleThreadedExecutor>(executor_options);
@@ -143,10 +154,12 @@ protected:
     executor_->add_node(peer_);
     const auto deadline = std::chrono::steady_clock::now() + 2s;
     while ((subscription_->get_publisher_count() == 0 ||
-      status_subscription_->get_publisher_count() == 0) &&
+      status_subscription_->get_publisher_count() == 0 ||
+      state_subscription_->get_publisher_count() == 0) &&
       std::chrono::steady_clock::now() < deadline) {std::this_thread::sleep_for(5ms);}
     ASSERT_GT(subscription_->get_publisher_count(), 0U);
     ASSERT_GT(status_subscription_->get_publisher_count(), 0U);
+    ASSERT_GT(state_subscription_->get_publisher_count(), 0U);
   }
   void TearDown() override
   {
@@ -166,10 +179,52 @@ protected:
   std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> executor_;
   rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr subscription_;
   rclcpp::Subscription<easyfly_msgs::msg::FlightStatus>::SharedPtr status_subscription_;
+  rclcpp::Subscription<easyfly_msgs::msg::UAVState>::SharedPtr state_subscription_;
+  easyfly_msgs::msg::UAVState state_;
+  int state_count_{0};
   easyfly_msgs::msg::FlightStatus status_;
   int status_count_{0};
   int setpoints_{0};
 };
+
+TEST_F(BridgeFreshness, UninitializedClockDoesNotPublishAnAggregateIdentity)
+{
+  BridgeFreshnessTestPeer::freeze(*node_, 0);
+  BridgeFreshnessTestPeer::telemetry(*node_);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin();
+  EXPECT_EQ(state_count_, 0); EXPECT_GT(status_count_, 0);
+  BridgeFreshnessTestPeer::freeze(*node_, 10);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin();
+  EXPECT_EQ(state_count_, 1);
+  EXPECT_EQ(rclcpp::Time(state_.header.stamp).nanoseconds(), 10000000000LL);
+  EXPECT_EQ(setpoints_, 0);
+}
+
+TEST_F(BridgeFreshness, AggregateIdentityIsUniqueAndFrozenClockDoesNotRenewReceipts)
+{
+  BridgeFreshnessTestPeer::pose(*node_, 1);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin();
+  ASSERT_EQ(state_count_, 1); EXPECT_EQ(state_.position_x, 1);
+  BridgeFreshnessTestPeer::pose(*node_, 2);
+  for (int i = 0; i < 5; ++i) {
+    BridgeFreshnessTestPeer::snapshot(*node_);
+  }
+  spin(); EXPECT_EQ(state_count_, 1); EXPECT_EQ(state_.position_x, 1);
+  EXPECT_GE(status_count_, 6);  // Independent status receipt-age reporting remains active.
+  std::this_thread::sleep_for(80ms);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin(); EXPECT_EQ(state_count_, 1);
+  BridgeFreshnessTestPeer::freeze(*node_, 11);
+  BridgeFreshnessTestPeer::pose(*node_, 3);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin();
+  ASSERT_EQ(state_count_, 2); EXPECT_EQ(state_.position_x, 3);
+  EXPECT_EQ(rclcpp::Time(state_.header.stamp).nanoseconds(), 11000000000LL);
+  BridgeFreshnessTestPeer::freeze(*node_, 9);
+  BridgeFreshnessTestPeer::snapshot(*node_); spin();
+  ASSERT_EQ(state_count_, 3);
+  EXPECT_EQ(rclcpp::Time(state_.header.stamp).nanoseconds(), 9000000000LL);
+  EXPECT_FALSE(state_.pose_valid);
+  EXPECT_EQ(setpoints_, 0);
+}
 
 TEST_F(BridgeFreshness, CapabilityQueriesAreReadOnlyAndCannotClearACommandFault)
 {

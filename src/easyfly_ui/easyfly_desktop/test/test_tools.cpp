@@ -16,6 +16,7 @@
 #include <QFile>
 #include <QLabel>
 #include <QDir>
+#include <QComboBox>
 #include <QMessageBox>
 #include <QPushButton>
 #include <QStandardPaths>
@@ -80,15 +81,16 @@ TEST_F(Tools, CommandsUseArgumentsAndQgcHasNoNetworkFallback)
   EXPECT_TRUE(command.arguments.contains(path));
   EXPECT_EQ(command.arguments.last(), "--appimage-extract-and-run");
   EXPECT_FALSE(command.arguments.contains("--dev-bind"));
+  EXPECT_FALSE(command.arguments.contains("/dev/shm"));
   EXPECT_FALSE(command.environment.contains("LD_LIBRARY_PATH"));
   EXPECT_EQ(command.environment.value("XDG_CONFIG_HOME"), "/tmp/easyfly-qgc-config");
 }
 TEST_F(Tools, PresetsContainOnlyViewingToolsAndExplicitEvidenceLabels)
 {
   b::BridgeConfig config; config.image_topics = {"/camera/with_'quotes", "/down/image"};
-  for (int preset = 0; preset < 3; ++preset) {
+  for (int preset = 0; preset < 4; ++preset) {
     const auto yaml = ui::rviz_preview(config, preset);
-    EXPECT_TRUE(yaml.contains("Fixed Frame: odom"));
+    EXPECT_TRUE(yaml.contains(preset == 3 ? "Fixed Frame: map" : "Fixed Frame: odom"));
     EXPECT_TRUE(yaml.contains("MoveCamera")); EXPECT_TRUE(yaml.contains("Select"));
     EXPECT_FALSE(yaml.contains("SetGoal")); EXPECT_FALSE(yaml.contains("SetInitialPose"));
     EXPECT_FALSE(yaml.contains("PublishPoint")); EXPECT_FALSE(yaml.contains("RobotModel"));
@@ -98,6 +100,51 @@ TEST_F(Tools, PresetsContainOnlyViewingToolsAndExplicitEvidenceLabels)
   }
   EXPECT_TRUE(ui::rviz_preview(config, 2).contains("/down/image"));
   EXPECT_FALSE(ui::rviz_preview(config, 2).contains("/camera/with"));
+}
+TEST_F(Tools, BasicFlightUsesBoundedRealOdometryWithoutSlamOrSyntheticTransforms)
+{
+  const auto yaml = ui::rviz_preview({}, 3);
+  EXPECT_TRUE(yaml.contains("rviz_default_plugins/Odometry"));
+  EXPECT_TRUE(yaml.contains("/mavros/local_position/odom"));
+  EXPECT_TRUE(yaml.contains("Fixed Frame: map"));
+  EXPECT_TRUE(yaml.contains("Keep: 1"));
+  EXPECT_TRUE(yaml.contains("Position Tolerance: 0"));
+  EXPECT_TRUE(yaml.contains("Angle Tolerance: 0"));
+  EXPECT_TRUE(yaml.contains("Value: Axes"));
+  EXPECT_FALSE(yaml.contains("/path"));
+  EXPECT_FALSE(yaml.contains("/cloud_registered"));
+  EXPECT_FALSE(yaml.contains("/optimal_list"));
+  EXPECT_FALSE(yaml.contains("rviz_default_plugins/TF"));
+  auto state = std::make_shared<FakeState>();
+  ui::MainWindow window({}, factory(state), nullptr, options());
+  const auto * preset = window.findChild<QComboBox *>("rvizPreset");
+  ASSERT_NE(preset, nullptr);
+  EXPECT_EQ(preset->currentIndex(), 3);
+  EXPECT_EQ(preset->count(), 4);
+}
+TEST_F(Tools, BasicFlightCommandPreservesRosScopeAndRejectsInvalidPreset)
+{
+  QTemporaryDir directory; ASSERT_TRUE(directory.isValid());
+  b::BridgeConfig bridge_config; bridge_config.use_sim_time = true;
+  const auto command = ui::tool_command(
+    ui::ToolKind::Rviz, options(), directory.path(), bridge_config, 3);
+  ASSERT_TRUE(command.error.isEmpty()) << command.error.toStdString();
+  EXPECT_FALSE(command.arguments.contains("--unshare-net"));
+  EXPECT_TRUE(command.arguments.contains("--unshare-pid"));
+  EXPECT_TRUE(command.arguments.contains("--unshare-ipc"));
+  EXPECT_EQ(command.arguments.count("/dev/shm"), 2);
+  EXPECT_TRUE(command.arguments.contains("--dev"));
+  EXPECT_FALSE(command.arguments.contains("--dev-bind"));
+  EXPECT_TRUE(command.arguments.contains("use_sim_time:=true"));
+  EXPECT_EQ(command.environment.value("ROS_DOMAIN_ID"), qEnvironmentVariable("ROS_DOMAIN_ID"));
+  EXPECT_EQ(
+    command.environment.value("ROS_LOCALHOST_ONLY"), qEnvironmentVariable("ROS_LOCALHOST_ONLY"));
+  QFile preview(directory.path() + "/preview.rviz");
+  ASSERT_TRUE(preview.open(QIODevice::ReadOnly));
+  EXPECT_EQ(QString::fromUtf8(preview.readAll()), ui::rviz_preview(bridge_config, 3));
+  EXPECT_FALSE(
+    ui::tool_command(
+      ui::ToolKind::Rviz, options(), directory.path(), bridge_config, 4).error.isEmpty());
 }
 TEST_F(Tools, OfflineQgcWrapperCannotReachHostLoopback)
 {
@@ -189,7 +236,7 @@ TEST_F(Tools, DISABLED_RealRvizPresets)
 {
   auto config = ui::default_tool_options(); b::BridgeConfig bridge_config;
   bridge_config.use_sim_time = false;
-  for (int preset = 0; preset < 3; ++preset) {
+  for (int preset = 0; preset < 4; ++preset) {
     ui::ToolProcess process; ASSERT_TRUE(
       process.start(ui::ToolKind::Rviz, config, bridge_config, preset));
     QTest::qWait(5000);

@@ -15,6 +15,8 @@
 #define WIDGETS_HPP_
 #include <QAbstractTableModel>
 #include <QImage>
+#include <QIcon>
+#include <QPixmap>
 #include <QStringList>
 #include <QVector>
 #include <QWidget>
@@ -22,8 +24,24 @@
 #include <memory>
 
 #include "easyfly_desktop/source.hpp"
+#include "easyfly_desktop/presentation.hpp"
+#include "easyfly_desktop/camera_overlay.hpp"
 namespace easyfly_desktop
 {
+QPixmap brand_pixmap();
+QIcon dashboard_icon(const QString & name);
+class FlightInstrumentCanvas final : public QWidget
+{
+public:
+  explicit FlightInstrumentCanvas(QWidget * parent = nullptr);
+  void snapshot(const bridge::UiSnapshot & snapshot, double now);
+
+protected:
+  void paintEvent(QPaintEvent *) override;
+
+private:
+  FlightInstruments instruments_;
+};
 class TextTable final : public QAbstractTableModel
 {
 public:
@@ -43,6 +61,7 @@ class CameraCanvas final : public QWidget
 public:
   explicit CameraCanvas(QWidget * parent = nullptr);
   void frame(QImage image, const QString & caption);
+  void overlay(CameraOverlay overlay);
 
 protected:
   void paintEvent(QPaintEvent *) override;
@@ -50,6 +69,7 @@ protected:
 private:
   QImage image_;
   QString caption_;
+  CameraOverlay overlay_;
 };
 class MapCanvas final : public QWidget
 {

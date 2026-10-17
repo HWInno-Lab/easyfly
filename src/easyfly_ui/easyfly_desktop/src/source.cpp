@@ -37,6 +37,10 @@ public:
   {
     return observer_.query_mission(id);
   }
+  bridge::RequestReceipt mission_details(const std::string & name) override
+  {
+    return observer_.mission_details(name);
+  }
   bridge::RequestReceipt read_parameter(bridge::Parameter p) override
   {
     return observer_.read_parameter(p);
