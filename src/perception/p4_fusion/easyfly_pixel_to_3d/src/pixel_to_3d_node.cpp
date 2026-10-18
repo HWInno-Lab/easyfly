@@ -34,6 +34,7 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 
 #include "easyfly_pixel_to_3d/frame_contract.hpp"
+#include "easyfly_projection/projection.hpp"
 
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
@@ -136,36 +137,11 @@ private:
                       const sensor_msgs::msg::Image & depth) const
     {
         if (depth.encoding != "32FC1") return -1.0f;
-        const int W = static_cast<int>(depth.width);
-        const int H = static_cast<int>(depth.height);
-
-        // bbox 归一化 → 像素 (clamp)
-        int u1 = std::clamp(static_cast<int>((t.bbox_center_x - t.bbox_width / 2) * W), 0, W - 1);
-        int u2 = std::clamp(static_cast<int>((t.bbox_center_x + t.bbox_width / 2) * W), 0, W - 1);
-        int v1 = std::clamp(static_cast<int>((t.bbox_center_y - t.bbox_height / 2) * H), 0, H - 1);
-        int v2 = std::clamp(static_cast<int>((t.bbox_center_y + t.bbox_height / 2) * H), 0, H - 1);
-        if (u2 <= u1 || v2 <= v1) return -1.0f;
-
-        const float * depth_ptr = reinterpret_cast<const float *>(depth.data.data());
-        const size_t row_step = depth.step / sizeof(float);
-
-        // 下采样采集 (步长按框大小自适应, 最多 ~200 采样点)
-        std::vector<float> vals;
-        vals.reserve(200);
-        const int du = std::max(1, (u2 - u1) / 14);
-        const int dv = std::max(1, (v2 - v1) / 14);
-        for (int v = v1; v <= v2; v += dv)
-            for (int u = u1; u <= u2; u += du) {
-                const float d = depth_ptr[v * row_step + u];
-                if (std::isfinite(d) && d > params_.min_depth && d < params_.max_depth)
-                    vals.push_back(d);
-            }
-
-        const size_t total = static_cast<size_t>((u2 - u1) / du + 1) * ((v2 - v1) / dv + 1);
-        if (vals.empty() || vals.size() < total * params_.min_valid_ratio) return -1.0f;
-
-        std::nth_element(vals.begin(), vals.begin() + vals.size() / 2, vals.end());
-        return vals[vals.size() / 2];
+        return easyfly::projection::medianDepth(
+            {t.bbox_center_x, t.bbox_center_y, t.bbox_width, t.bbox_height},
+            {depth.data.data(), depth.data.size(), static_cast<int>(depth.width),
+             static_cast<int>(depth.height), depth.step},
+            {params_.min_depth, params_.max_depth, params_.min_valid_ratio});
     }
 
     void onTracks(const easyfly_msgs::msg::TrackInfoArray::ConstSharedPtr & msg)
@@ -234,11 +210,11 @@ private:
 
             if (d > 0) {
                 // 反投影 (光学系: x右 y下 z前)
-                const double px = (tgt.pixel_u - cx) * d / fx;
-                const double py = (tgt.pixel_v - cy) * d / fy;
+                const auto optical = easyfly::projection::pinhole(
+                    tgt.pixel_u, tgt.pixel_v, d, fx, fy, cx, cy);
                 // TF 变换到目标系
                 geometry_msgs::msg::Point p_cam, p_world;
-                p_cam.x = px; p_cam.y = py; p_cam.z = d;
+                p_cam.x = optical[0]; p_cam.y = optical[1]; p_cam.z = optical[2];
                 tf2::doTransform(p_cam, p_world, tf_optical);
                 tgt.position_x = static_cast<float>(p_world.x);
                 tgt.position_y = static_cast<float>(p_world.y);

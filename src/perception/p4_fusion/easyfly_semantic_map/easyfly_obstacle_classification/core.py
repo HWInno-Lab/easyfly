@@ -14,7 +14,7 @@
 
 import copy
 import math
-from collections import Counter
+from easyfly_obstacle_association.core import Obstacle, Target, associate
 from builtin_interfaces.msg import Time
 from easyfly_msgs.msg import ClassifiedObstacle, ClassifiedObstacleArray
 
@@ -122,33 +122,16 @@ def classify(
             output.reason = 'invalid target snapshot; geometry preserved'
             return output
         ids.add(target.track_id)
-    matches = {}
-    uses = Counter()
-    for index, obstacle in enumerate(geometry.obstacles):
-        candidates = []
-        for target in targets.targets:
-            if (
-                target.confidence < minimum_confidence
-                or not target.class_name
-                or target.class_name == 'unknown'
-            ):
-                continue
-            if all(
-                abs(position - center) <= size * 0.5 + margin
-                for position, center, size in zip(
-                    (target.position_x, target.position_y, target.position_z),
-                    (obstacle.center_x, obstacle.center_y, obstacle.center_z),
-                    (obstacle.size_x, obstacle.size_y, obstacle.size_z),
-                )
-            ):
-                candidates.append(target)
-                uses[target.track_id] += 1
-        if len(candidates) == 1:
-            matches[index] = candidates[0]
-    for index, target in matches.items():
-        # A candidate must be unique in BOTH directions; never arbitrarily pick.
-        if uses[target.track_id] != 1:
-            continue
+    associations = associate(
+        [Obstacle((o.center_x, o.center_y, o.center_z), (o.size_x, o.size_y, o.size_z))
+         for o in geometry.obstacles],
+        [Target(t.track_id, t.class_name, t.confidence,
+                (t.position_x, t.position_y, t.position_z)) for t in targets.targets],
+        margin, minimum_confidence,
+    )
+    for association in associations:
+        index = association.obstacle_index
+        target = targets.targets[association.target_index]
         item = output.obstacles[index]
         item.obstacle.obstacle_type = target.class_name
         item.target_id, item.confidence, item.association_valid = (

@@ -24,3 +24,7 @@ See [D4 contracts](../../../../docs/development/d4-perception.md) for exact boun
 Pure association/copy/ambiguity cases, real ROS invalid/lost/expiry cases,
 simulated-clock regression and existing map core tests are separate from lint.
 No actual sensor/classifier accuracy or flight safety acceptance is claimed.
+
+## ALG-6 算法边界
+
+expanded-AABB 双向唯一类别匹配迁入 easyfly_obstacle_association，仅接收普通几何/类别并返回索引。core.py 继续接纳 header/geometry、复制完整原障碍、组装分类原因及 TTL；不改原障碍、占据图或飞行输入。

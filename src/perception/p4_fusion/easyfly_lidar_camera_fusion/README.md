@@ -25,3 +25,7 @@ Pure projection, deterministic queued-task epoch isolation, real ROS TF/time/Cam
 zero/pause/replay/rollback tests are registered independently of existing lint.
 Test domains 110/114/115; keep tests on each domain serial. Synthetic regression is
 not real sensor accuracy, SITL or flight safety acceptance.
+
+## ALG-6 算法边界
+
+投影数值计算已迁入 easyfly_projection_py；原 projection.py 保留 ROS 消息字节布局解析和输出序列化。lookup_transform_full 的两源时间、固定帧、worker/epoch、CameraInfo 接纳与源/接收时效规则不变。

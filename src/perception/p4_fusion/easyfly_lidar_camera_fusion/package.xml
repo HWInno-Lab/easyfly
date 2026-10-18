@@ -6,6 +6,7 @@
   <description>Source-time TF optical projection, colored cloud and occlusion-aware sparse depth</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
+  <depend>easyfly_projection_py</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>

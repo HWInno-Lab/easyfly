@@ -6,6 +6,7 @@
   <description>EasyFly M5: 像素转 3D 定位 (bbox+深度图反投影+TF 变换, 输出带 ID 的世界系目标位置)</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
+  <depend>easyfly_projection</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
