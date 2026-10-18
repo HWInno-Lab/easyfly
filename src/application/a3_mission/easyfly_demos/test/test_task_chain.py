@@ -69,6 +69,7 @@ class TaskChainTest(unittest.TestCase):
                                cancel_callback=lambda _: CancelResponse.ACCEPT,
                                callback_group=cls.group))
         cls.publisher = cls.node.create_publisher(UAVState, '/uav_state', 10)
+        cls.telemetry_generation = 0
         def telemetry():
             state = UAVState(connected=True, pose_valid=True, velocity_valid=True, battery_valid=True,
                              armed=cls.armed, flight_mode=3, battery_remaining=1.)
@@ -76,6 +77,7 @@ class TaskChainTest(unittest.TestCase):
             state.header.stamp = cls.node.get_clock().now().to_msg()
             state.position_x, state.position_y, state.position_z = cls.position
             cls.publisher.publish(state)
+            cls.telemetry_generation += 1
         cls.timer = cls.node.create_timer(.02, telemetry)
         cls.client = cls.node.create_client(ManageMission, '/platform/mission/manage')
         cls.capabilities = cls.node.create_client(GetCapabilities, '/platform/mission/capabilities')
@@ -101,11 +103,21 @@ class TaskChainTest(unittest.TestCase):
         if not cls.capabilities.wait_for_service(timeout_sec=10):
             raise RuntimeError('platform capabilities unavailable')
         deadline = time.monotonic() + 10
+        matched_generation = None
         while time.monotonic() < deadline:
+            # Service discovery does not establish the coordinator, search and
+            # mission telemetry readers. Publish distinct fresh samples only
+            # after all three readers match before requesting the first goal.
+            if cls.publisher.get_subscription_count() < 3:
+                matched_generation = None
+            elif matched_generation is None:
+                matched_generation = cls.telemetry_generation
             future = cls.capabilities.call_async(GetCapabilities.Request())
             while not future.done() and time.monotonic() < deadline:
                 time.sleep(.01)
-            if future.done() and all(future.result().ready):
+            if (future.done() and all(future.result().ready)
+                    and matched_generation is not None
+                    and cls.telemetry_generation - matched_generation >= 2):
                 break
             time.sleep(.02)
         else:
