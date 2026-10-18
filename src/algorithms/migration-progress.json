@@ -241,12 +241,18 @@
       "existing_software_regression_cases": 7
     }
   ],
-  "details": "alg8-5-validation.md",
+  "details": "alg9-validation.md",
   "baseline_issue_updates": [
     {
       "id": "ALG0-B02",
       "status": "launch_contract_fixture_repaired",
       "scope": "Isolate unrelated HRT/native IMU prerequisites in launch-scoping test; production guards unchanged and separately tested. No new full SITL qualification."
+    },
+    {
+      "id": "ALG0-B03",
+      "status": "fixture_repaired_stop_stream_assertions_passed",
+      "scope": "Prepare transactions with advancing source time, freeze the actual telemetry-loss window, then require new source time during recovery. Both installation modes passed; production guards unchanged; no hardware qualification.",
+      "commit": "556f2cc"
     }
   ],
   "integration_documentation": {
@@ -264,6 +270,24 @@
     },
     "new_backend_implementations_added": false,
     "alg8_classification_documentation_complete": true,
-    "overall_regression_complete": false
+    "overall_regression_complete": true,
+    "overall_acceptance_passed": false
+  },
+  "current_phase": "ALG-9",
+  "final_migration_manifest": "final-migration.json",
+  "phase9_validation": {
+    "execution_complete": true,
+    "signoff_passed": false,
+    "results": "baseline/alg9-results.json",
+    "clean_build_packages_per_mode": 91,
+    "independent_consumer_fixtures_per_mode": 12,
+    "latest_required_sitl_cases": 9,
+    "latest_required_sitl_passed": 8,
+    "remaining_findings": [
+      "ALG9-SEMANTIC-EXIT",
+      "ALG9-DDS-READER",
+      "ALG9-LINT"
+    ],
+    "next_work": "Resolve open findings and sign off ALG-9; do not treat validation execution as complete platform qualification."
   }
 }

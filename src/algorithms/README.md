@@ -1,14 +1,17 @@
 # EasyFly 算法目录、接口与迁移基线
 
 本目录管理项目维护的可复用计算实现与接口。ALG-1..7已交付4个能力API和15个计算组件，
-ALG-8.1..8.5已完成第三方分类、来源/补丁登记与接入指南；下一步ALG-9整体回归。
-结构交付不等于整体运行验收通过，历史未解决问题继续保留。
+ALG-8.1..8.5已完成第三方分类、来源/补丁登记与接入指南。ALG-9验证已执行，整体验收尚未通过：
+两种安装各91包构建、各12组独立消费通过，9类仿真最新8通过；退出/DDS崩溃与规范欠账仍待处理。
+结构交付不等于整体运行签收。详见[ALG-9验收](alg9-validation.md)与[最终归属](final-migration.json)。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
 按实际实现建立目录；分类父目录不放 `package.xml`。
 
 ## 当前交付
+
+- [ALG-9实际结果与未通过项](alg9-validation.md)、[机器摘要](baseline/alg9-results.json)及[最终组件归属](final-migration.json)。
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
 - [当前迁移进度](migration-progress.json)与 [ALG-8.5 验收](alg8-5-validation.md)：实际位置和验证结果。

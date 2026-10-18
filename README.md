@@ -19,6 +19,15 @@ source easyfly_env.bash
 build_all.bash
 ```
 
+## 算法结构与验收
+
+项目维护的 4 个算法接口包和 15 个计算组件位于 `src/algorithms/`；外部算法工程、
+运行库及设备 SDK 按类别保存在 `src/third_party/`。新增后端仍需接口适配、参数及运行验收。
+
+当前完整构建、两种安装、受管仿真和未通过项见
+[ALG-9 验收报告](src/algorithms/alg9-validation.md)，组件归属见
+[算法索引](src/algorithms/README.md)。ALG-9验证已执行，整体验收尚未签收。
+
 ## 仿真验收
 
 统一导航、取消、地图失效、任务编排和区域搜索的真实 PX4/Gazebo 验收入口及

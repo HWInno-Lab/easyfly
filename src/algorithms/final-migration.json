@@ -1,0 +1,354 @@
+{
+  "schema_version": 1,
+  "phase": "ALG-9",
+  "implementation_baseline_commit": "59b6158",
+  "historical_inventory": "migration-inventory.json",
+  "validation": "alg9-validation.md",
+  "validation_status": "execution_complete_signoff_not_passed",
+  "api_packages": [
+    "easyfly_tracking_api",
+    "easyfly_grid_planner_api",
+    "easyfly_detection_api",
+    "easyfly_single_tracking_api"
+  ],
+  "components": [
+    {
+      "id": "sort",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/tracking/easyfly_sort",
+      "packages": [
+        "easyfly_sort"
+      ],
+      "consumers": [
+        "easyfly_multi_object_tracking"
+      ],
+      "platform_responsibilities": "ROS conversion, class filtering, normalized boxes, QoS, raw/stable topic publication."
+    },
+    {
+      "id": "track_id_fusion",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/tracking/easyfly_track_id_fusion",
+      "packages": [
+        "easyfly_track_id_fusion"
+      ],
+      "consumers": [
+        "easyfly_multi_object_tracking"
+      ],
+      "platform_responsibilities": "World observation message admission and tracks_raw/target_positions feedback routing."
+    },
+    {
+      "id": "astar",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/planning/easyfly_astar",
+      "packages": [
+        "easyfly_astar"
+      ],
+      "consumers": [
+        "easyfly_global_planner"
+      ],
+      "platform_responsibilities": "Map freshness, endpoint admission, navigation coordinator, waypoint ownership and cancel drain."
+    },
+    {
+      "id": "coverage",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/planning/easyfly_coverage_planning",
+      "packages": [
+        "easyfly_coverage_planning"
+      ],
+      "consumers": [
+        "easyfly_mission_fsm"
+      ],
+      "platform_responsibilities": "Mission format/executor, flight bounds admission and search Action."
+    },
+    {
+      "id": "motion_prediction",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/tracking/easyfly_motion_prediction",
+      "packages": [
+        "easyfly_motion_prediction"
+      ],
+      "consumers": [
+        "easyfly_target_prediction"
+      ],
+      "platform_responsibilities": "Clock sampling, message conversion, timers, capabilities. No new navigation connection."
+    },
+    {
+      "id": "pointcloud_filters",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/preprocessing/easyfly_pointcloud_filters",
+      "packages": [
+        "easyfly_pointcloud_filters"
+      ],
+      "consumers": [
+        "easyfly_pointcloud_filter"
+      ],
+      "platform_responsibilities": "Livox messages, source-time TF, bounded queues, expiry and ROS publish."
+    },
+    {
+      "id": "yolo_onnx",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/detection/easyfly_yolo_onnx",
+      "packages": [
+        "easyfly_yolo_onnx"
+      ],
+      "consumers": [
+        "easyfly_object_detection"
+      ],
+      "platform_responsibilities": "Topics/QoS, worker/latest-slot, image conversion, diagnostic aggregation and configuration I/O."
+    },
+    {
+      "id": "tag_pose",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/detection/easyfly_tag_pose",
+      "packages": [
+        "easyfly_tag_pose"
+      ],
+      "consumers": [
+        "easyfly_apriltag_detection"
+      ],
+      "platform_responsibilities": "CameraInfo admission, source/receipt time, generation/epoch, ROS services and publication."
+    },
+    {
+      "id": "csrt",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/tracking/easyfly_csrt",
+      "packages": [
+        "easyfly_csrt"
+      ],
+      "consumers": [
+        "easyfly_single_object_tracking"
+      ],
+      "platform_responsibilities": "Explicit ROI service, worker scheduling, stale/epoch checks, states and capabilities."
+    },
+    {
+      "id": "projection_cpp",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_projection",
+      "packages": [
+        "easyfly_projection"
+      ],
+      "consumers": [
+        "easyfly_pixel_to_3d"
+      ],
+      "platform_responsibilities": "Frame contract, depth/track matching, camera/TF admission, target messages and markers."
+    },
+    {
+      "id": "projection_py",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_projection_py",
+      "packages": [
+        "easyfly_projection_py"
+      ],
+      "consumers": [
+        "easyfly_lidar_camera_fusion"
+      ],
+      "platform_responsibilities": "ROS image/cloud decode, source-time TF, bounded worker, status and result expiry."
+    },
+    {
+      "id": "ground",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_ground_segmentation",
+      "packages": [
+        "easyfly_ground_segmentation"
+      ],
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "platform_responsibilities": "State/TF admission and sampling, timestamps, complete current frame, maps and services."
+    },
+    {
+      "id": "obstacle_geometry",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_obstacle_geometry",
+      "packages": [
+        "easyfly_obstacle_geometry"
+      ],
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "platform_responsibilities": "Cloud freshness, source-frame history lifecycle, ROS output and global point budget enforcement."
+    },
+    {
+      "id": "occupancy",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_occupancy_mapping",
+      "packages": [
+        "easyfly_occupancy_mapping"
+      ],
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "platform_responsibilities": "map_validity.hpp invalid-message protocol, map version, source-time/ground/TF validity and publish."
+    },
+    {
+      "id": "obstacle_association",
+      "disposition": "reusable_computation",
+      "path": "src/algorithms/fusion_mapping/easyfly_obstacle_association",
+      "packages": [
+        "easyfly_obstacle_association"
+      ],
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "platform_responsibilities": "ROS type construction/copy, geometry validity, TTL and source header checks."
+    },
+    {
+      "id": "fast_lio",
+      "disposition": "third_party_engine",
+      "path": "src/third_party/algorithms/localization/fast_lio",
+      "packages": [
+        "fast_lio"
+      ],
+      "consumers": [
+        "easyfly_fast_lio_integration",
+        "easyfly_sim_launcher"
+      ],
+      "platform_responsibilities": "easyfly_fast_lio_integration launch and TF; original node communication."
+    },
+    {
+      "id": "ego_planner",
+      "disposition": "third_party_engine",
+      "path": "src/third_party/algorithms/planning/ego_planner",
+      "packages": [
+        "bspline_opt",
+        "ego_to_mavros",
+        "path_searching",
+        "plan_env",
+        "ego_planner",
+        "quadrotor_msgs",
+        "traj_utils",
+        "traj_utils_so"
+      ],
+      "consumers": [
+        "easyfly_local_planner",
+        "easyfly_global_planner",
+        "easyfly_flight_control"
+      ],
+      "platform_responsibilities": "easyfly_local_planner launch; coordinator sessions, flight_control trajectory execution."
+    },
+    {
+      "id": "retain_easyfly_camera_calib",
+      "disposition": "platform_retained",
+      "path": "src/perception/p1_preprocess/easyfly_camera_calib",
+      "packages": [
+        "easyfly_camera_calib"
+      ],
+      "consumers": [
+        "easyfly_camera_calib"
+      ],
+      "platform_responsibilities": "Calibration metadata/CameraInfo contracts and platform TF."
+    },
+    {
+      "id": "retain_easyfly_time_sync",
+      "disposition": "platform_retained",
+      "path": "src/perception/p1_preprocess/easyfly_time_sync",
+      "packages": [
+        "easyfly_time_sync"
+      ],
+      "consumers": [
+        "easyfly_time_sync"
+      ],
+      "platform_responsibilities": "ROS/source pairing, bounded queues and clock policy."
+    },
+    {
+      "id": "retain_easyfly_coord_transform",
+      "disposition": "platform_retained",
+      "path": "src/perception/p1_preprocess/easyfly_coord_transform",
+      "packages": [
+        "easyfly_coord_transform"
+      ],
+      "consumers": [
+        "easyfly_coord_transform"
+      ],
+      "platform_responsibilities": "Platform ENU/NED/FLU and odom/TF contract."
+    },
+    {
+      "id": "retain_easyfly_landing_detection",
+      "disposition": "platform_retained",
+      "path": "src/perception/p2_detection/easyfly_landing_detection",
+      "packages": [
+        "easyfly_landing_detection"
+      ],
+      "consumers": [
+        "easyfly_landing_detection"
+      ],
+      "platform_responsibilities": "Selected-tag adapter and expiry, no independent detector."
+    },
+    {
+      "id": "retain_easyfly_precision_landing",
+      "disposition": "platform_retained",
+      "path": "src/execution/e3_control/easyfly_precision_landing",
+      "packages": [
+        "easyfly_precision_landing"
+      ],
+      "consumers": [
+        "easyfly_precision_landing"
+      ],
+      "platform_responsibilities": "Observation conversion and flight reservation/guidance/landing policy."
+    },
+    {
+      "id": "retain_easyfly_flight_control",
+      "disposition": "platform_retained",
+      "path": "src/execution/e3_control/easyfly_flight_control",
+      "packages": [
+        "easyfly_flight_control"
+      ],
+      "consumers": [
+        "easyfly_flight_control"
+      ],
+      "platform_responsibilities": "Setpoint generation, flight ownership, PX4 handoff, fault/cancel state."
+    },
+    {
+      "id": "retain_easyfly_target_tracking",
+      "disposition": "platform_retained",
+      "path": "src/execution/e3_control/easyfly_target_tracking",
+      "packages": [
+        "easyfly_target_tracking"
+      ],
+      "consumers": [
+        "easyfly_target_tracking"
+      ],
+      "platform_responsibilities": "Target selection, follow waypoint lifecycle and loss behavior."
+    },
+    {
+      "id": "retain_easyfly_obstacle_avoidance",
+      "disposition": "platform_retained",
+      "path": "src/execution/e3_control/easyfly_obstacle_avoidance",
+      "packages": [
+        "easyfly_obstacle_avoidance"
+      ],
+      "consumers": [
+        "easyfly_obstacle_avoidance"
+      ],
+      "platform_responsibilities": "Obstacle stop supervisor, no independent planning algorithm."
+    },
+    {
+      "id": "retain_easyfly_gimbal_control",
+      "disposition": "platform_retained",
+      "path": "src/execution/e3_control/easyfly_gimbal_control",
+      "packages": [
+        "easyfly_gimbal_control"
+      ],
+      "consumers": [
+        "easyfly_gimbal_control"
+      ],
+      "platform_responsibilities": "Simulation device model, angle commands and tracking service."
+    }
+  ],
+  "excluded_unimplemented_placeholders": [
+    "easyfly_ellipse_detection",
+    "easyfly_color_line_detection",
+    "easyfly_vehicle_reid",
+    "easyfly_depth_estimation",
+    "easyfly_swarm_planner",
+    "easyfly_trajectory_optimizer"
+  ],
+  "compatibility_audit": "compatibility-audit.json",
+  "third_party_catalog": "../third_party/catalog.json",
+  "new_backends_implemented": false,
+  "fixture_repair_commits": [
+    "556f2cc",
+    "20fe92a",
+    "71c9c31"
+  ]
+}
