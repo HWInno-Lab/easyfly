@@ -1,55 +1,53 @@
-# 第三方代码分类与迁移索引
+# 第三方分类索引
 
-2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已分类 FAST-LIO/EGO；ALG-8.3 已分类 Livox/RealSense SDK；ALG-8.4 已将 QGC 接入资料分类到 tools/qgc。下一步为 ALG-8.5 接入规范收敛。
-ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为当前布局。
-自有算法实现及包装见 `../algorithms/`；外部项目、库、SDK、模型各自保留原许可。
+ALG-8.1..8.5已完成当前依赖的分类与接入记录；ALG-9整体构建/受管场景回归仍待执行。
+[分类总表](catalog.json)记录主要位置、功能标签、接入方式、版本证据和未知项；
+[来源与补丁规范](sourcing-and-patches.md)说明原许可、已知本地历史与新增项目登记方式。
+历史ALG-0清单保持不变，当前布局以本索引及[迁移进度](../algorithms/migration-progress.json)为准。
 
-## 分类与目标
+## 当前项目
 
-| 当前路径 | 目标路径 | 类型 / 批次 |
+| 主要位置 | 类型与次级用途 | 接入/来源记录 |
 | --- | --- | --- |
-| `algorithms/localization/fast_lio/` | 已完成 | 雷达惯性定位建图 / ALG-8.1；见 algorithms/localization/README.md |
-| `algorithms/planning/ego_planner/` | 已完成 | 局部轨迹规划 / ALG-8.2；见 algorithms/planning/README.md |
-| `runtimes/onnxruntime/` | 已完成 | 本地推理运行库 / ALG-5；见 runtimes/README.md |
-| `sensor_sdks/livox_sdk2/` | 已完成 | 外部雷达 SDK / ALG-8.3；见 sensor_sdks/README.md |
-| `sensor_sdks/librealsense/` | 已完成 | 外部相机 SDK / ALG-8.3；见 sensor_sdks/README.md |
-| `tools/qgc/` | 已完成 | 外部应用接入资料 / ALG-8.4；见 tools/qgc/README.md |
+| algorithms/localization/fast_lio | 完整ROS定位/惯性建图；内嵌ikd-Tree/IKFoM | [说明](algorithms/localization/README.md) · [清单](algorithms/localization/fast_lio.provenance.json) |
+| algorithms/planning/ego_planner | 完整8包ROS规划、搜索、建图和轨迹优化 | [说明](algorithms/planning/README.md) · [清单](algorithms/planning/ego_planner.provenance.json) |
+| runtimes/onnxruntime | 本地可选推理运行库，载荷忽略；CPU/CUDA依赖 | [说明](runtimes/README.md) · [清单](runtimes/onnxruntime.provenance.json) |
+| sensor_sdks/livox_sdk2 | 原生雷达SDK | [说明](sensor_sdks/README.md) · [清单](sensor_sdks/livox_sdk2.provenance.json) |
+| sensor_sdks/librealsense | 原生深度相机SDK | [说明](sensor_sdks/README.md) · [清单](sensor_sdks/librealsense.provenance.json) |
+| tools/qgc | 外部程序接入资料 | [说明](tools/qgc/README.md) · [清单](tools/qgc/provenance.json) |
 
-第三方算法分类与自有算法一致：preprocessing、detection、tracking、localization、
-fusion_mapping、planning。新项目按实际引入创建，不能以空目录表示已经集成。
-`geographic_lib`、`nlopt`、`nlohmann_json` 当前为空，实际引入时分别归入
-libraries/geometry、libraries/optimization、libraries/serialization。
+每个外部项目保留一个主要位置，其他用途以tags记录；完整上游工程的内部模块不按本项目分类拆散或复制。
+自有可复用计算及普通包装位于[algorithms](../algorithms/README.md)，新算法的具体步骤见
+[跟踪器/规划器接入指南](../algorithms/integration-guide.md)。算法名称相同不表示代码来源相同。
 
-每个项目保留一个主要源码位置，其他用途登记标签。FAST-LIO 内嵌的 ikd-Tree/IKFoM 和
-EGO 内部规划/地图包随上游工程保留，不复制或按本项目功能类别拆散。
-ROS 消息/设备适配器放 EasyFly 功能包；可复用普通计算包装放 algorithms/。系统依赖 OpenCV/PCL 不为了目录分类而额外 vendoring。
-外部 ROS 驱动继续保留在通信层，尤其不顺带移动 RealSense 嵌套仓库。
+## 分类规则与保留边界
 
-## 已确认的路径和构建注意事项
+外部算法沿用preprocessing、detection、tracking、localization、fusion_mapping、planning分类，
+按实际源码创建目录，分类父目录不创建package.xml。已有完整ROS工程继续通过话题/会话接入；
+普通库通过安装target/module消费。目录分类没有创建自动发现或热切换的算法加载器。
 
-- ALG-8.1 保留 FAST-LIO 完整 ROS 工程与包名，字节/来源登记见 algorithms/localization/fast_lio.provenance.json。
-  FASTLIO_OUTPUT_ROOT 可隔离日志与 PCD；本机旧路径桥接仅用于运行中的旧安装，并以 COLCON_IGNORE 排除。
-- ALG-5 已更新 ORT_ROOT 默认路径与忽略规则。easyfly_yolo_onnx 独占运行库/provider/许可安装，
-  动态读取实际 SONAME，PIMPL 隐藏 SDK，支持外部 ORT_ROOT 和 $ORIGIN 安装 RPATH。
-- ALG-8.2 已清除 EGO 的 PROJECT_ROOT_DIR/src/planner、相邻包源码和 plan_env_DIR include 猜测；
-  使用导出依赖/target，普通复制安装搬迁后验证消费者与节点。完整8包及本地会话/停流补丁保留。
-- Livox 驱动当前使用 `find_library(... /usr/local/lib)` 和 `find_path` 找 SDK，RealSense
-  驱动使用 `find_package(realsense2 2.56)`。移动源码不表示消费者已经改用那份源码编译的库；
-  验收需记录真实解析出的头文件和动态库，不覆盖系统安装来掩盖依赖问题。
-- ALG-8.3 两个 SDK 的3422份受追踪文件整体分类且字节不变；外部ROS驱动/嵌套仓库保持。
-  新目录的独立编译、默认系统SDK和显式私有前缀选择分别验证；旧build缓存保留忽略且不复用。
-- SDK 构建产物、ONNX SDK 和 FAST-LIO 演示资源原有忽略规则应迁到新路径。
-  不能复制旧 build/install 当作新目录构建结果。
-- `QGC.AppImage` 是被忽略的用户本地文件，继续通过显式路径选择；此轮只迁移 qgc 资料，
-  不自动移动、下载或替换该二进制。
-  离线预览与联网维护的代码均保留在EasyFly UI层，分别遵守原有启动和会话规则。
+ROS设备驱动保留在communication/c1_drivers，包括Livox驱动和RealSense嵌套仓库；
+其gitlink、许可和初始化缺口在catalog中登记，不为算法分类改变驱动所有权。
+模型资产保持工作区models位置，ONNX由easyfly_object_detection安装；
+其SHA及来源/许可缺口见[模型清单](model-assets.provenance.json)，不与ORT的MIT许可混同。
+系统OpenCV/PCL/Eigen保持系统计算依赖，不重复vendoring。
 
-## 来源登记要求
+geographic_lib、nlopt、nlohmann_json目前仍为空目录，不代表已集成库。
+真正导入时分别归libraries/geometry、libraries/optimization、libraries/serialization并补来源证据；
+RealSense私有构建中的JSON源码缓存是另行固定的构建输入，不是这个空nlohmann_json目录。
 
-每个项目记录真实上游 URL、版本/tag/commit 或明确未知项、归档/文件 hash、许可和版权、
-本地修改、构建/获取方式、消费者以及验证范围。现有详细来源记录在工作区本地
-`docs/development/third-party-provenance.md`；未来完善的可复现登记随受追踪项目保存。
-FAST-LIO/EGO 原始导入基点和部分许可仍有缺口，ALG-0 盘点与目录移动都不能补足这些证据。
+## 实际选择与当前会话
 
-实际迁移清单和指纹见 `../algorithms/migration-inventory.json` 与 `../algorithms/baseline/`。
-运行库存在不代表模型、provider 或飞行能力已经就绪；能力由相应接入层报告。
+- ONNX Runtime的ORT_ROOT可显式覆盖，只有easyfly_yolo_onnx拥有运行库/provider/许可安装。
+  公开接口隐藏SDK类型；CUDA就绪取决于宿主依赖，必须报告实际provider。TensorRT文件存在不代表实现了该后端。
+- Livox头/库通过find_path/find_library解析，RealSense通过find_package(realsense2 2.56)解析。
+  源码目录不会自动替换/usr/local安装；验收核对实际编译头和动态库。SDK构建缓存保持忽略，不复用历史路径。
+- 用户QGC.AppImage保持src/third_party/QGC.AppImage原位并忽略，程序继续由用户显式选择。
+  文档目录不是默认可执行文件目录；离线预览与联网维护各自使用原有UI接入规则。
+- FAST-LIO/EGO的旧源码路径可能保留本机忽略的软链接，父目录COLCON_IGNORE排除重复包。
+  它们服务当前旧安装/进程，不能作为新源码依赖；旧消费者退役后再清理，分类工作不启停仿真。
+
+[ALG-8.1](../algorithms/alg8-1-validation.md)、[ALG-8.2](../algorithms/alg8-2-validation.md)、
+[ALG-8.3](../algorithms/alg8-3-validation.md)、[ALG-8.4](../algorithms/alg8-4-validation.md)保留各批实际验证范围。
+[ALG-8.5](../algorithms/alg8-5-validation.md)只收敛索引、指南和兼容审计，
+不宣布历史ALG0-B03、semantic退出问题或来源/许可未知项已解决。

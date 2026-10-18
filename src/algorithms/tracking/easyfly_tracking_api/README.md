@@ -1,7 +1,7 @@
 # easyfly_tracking_api
 
-ROS 运行时无关的 C++17 多目标跟踪接口。ALG-1 只提供类型、输入校验、时间序列辅助和
-抽象接口，尚未迁移 SORT 或新增可运行跟踪器。
+ROS 运行时无关的 C++17 多目标跟踪接口。ALG-1 建立类型、输入校验、时间序列辅助和抽象接口；
+ALG-2 已迁移真实SORT并接入平台适配器，当前生产工厂仍只支持sort。
 
 ```cmake
 find_package(easyfly_tracking_api REQUIRED)
@@ -25,6 +25,7 @@ target_link_libraries(my_tracker PRIVATE easyfly_tracking_api::easyfly_tracking_
 - ok+空数组表示有效空结果，失败时 tracks 必须为空；默认结果是 backend_error。
 - 算法实例串行调用。取消、异步任务、单目标 ROI 管理、服务和飞行策略不属于此接口。
 
-抽象接口本身不能保证任意外部实现遵守契约。ALG-2 的适配器须使用并验证上述校验和状态
-规则；当前测试替身仅验证类型替换与接口含义，不构成真实跟踪精度或 ID 稳定性验收。
+抽象接口本身不能保证任意外部实现遵守契约。真实SORT适配器与回归见[ALG-2验收](../../alg2-validation.md)。
+ALG-1测试替身仅验证类型替换和接口含义，不能代替真实跟踪精度或ID稳定性验收。
+新增需求及当前节点未提供的图像/特征输入见[接入指南](../../integration-guide.md)。
 0.1 接口尚无稳定二进制 ABI 承诺，消费包需随接口变更重新编译。

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "project": "Local YOLO-named model assets",
+  "category": "model_assets",
+  "current_path": "models",
+  "artifacts": {
+    "yolo11n.onnx": {
+      "bytes": 10720537,
+      "sha256": "fb11c28ed4f579f0503cc9516fce5ee876498f303fa8a01b409d665eafcfe908"
+    },
+    "yolo11n.pt": {
+      "bytes": 5613764,
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1"
+    }
+  },
+  "original_download_source_export_command_training_data_and_license": null,
+  "filename_is_not_provenance_or_license_evidence": true,
+  "default_detection_asset": "models/yolo11n.onnx",
+  "installed_by": "easyfly_object_detection",
+  "installed_uri": "package://easyfly_object_detection/models/yolo11n.onnx",
+  "additional_artifact": "models/yolo11n.pt",
+  "loaded_checkpoint_or_reexported_in_alg8_5": false,
+  "bytes_changed_in_alg8_5": false,
+  "limitations": [
+    "Exact model source/export settings and license evidence remain unresolved.",
+    "Do not infer model licensing from EasyFly code or the ONNX Runtime MIT license."
+  ]
+}

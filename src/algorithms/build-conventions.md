@@ -171,3 +171,12 @@ ALG-8.3 两份传感器SDK完整源码位于 `../third_party/sensor_sdks`，ROS�
 新SDK与复制驱动安装根均实际搬迁，复验以实际编译头依赖和动态库加载为准，不能仅凭源目录存在宣称接入。
 SDK原构建及许可证不变；验证工程单独复用固定JSON缓存、关闭固件/联网等无关构建选项并跳过系统ldconfig。
 工具为 `../../tools/algorithms/verify_sensor_sdks.py`；范围和复验前提见 [ALG-8.3验收](alg8-3-validation.md)。
+
+
+## 5. 后续算法接入与第三方登记
+
+[新增算法指南](integration-guide.md)分别给出多目标跟踪器和二维规划器的落地步骤，明确当前工厂参数耦合、
+实际数据供给和combined调用点。示例后端未实现；源文件放入目录后仍需适配/工厂/依赖/配置与实际验收。
+外部项目的主要路径、标签、输入身份和已知本地变更入口登记在[分类总表](../third_party/catalog.json)与
+[来源/补丁规范](../third_party/sourcing-and-patches.md)。未知上游、归档、模型许可等保持显式未知。
+[兼容层审计](compatibility-audit.md)登记21份原公开转发头及本地旧安装桥接，本批不删除或复制计算实现。

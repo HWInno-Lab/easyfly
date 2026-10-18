@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "project": "ONNX Runtime local GPU SDK",
+  "category": "runtime",
+  "current_path": "src/third_party/runtimes/onnxruntime",
+  "payload_ignored_by_git": true,
+  "version_metadata": "1.23.2",
+  "git_commit_id_metadata": "a83fc4d58cb48eb68890dd689f94f28288cf2278",
+  "upstream_release_hint_from_existing_documentation": "https://github.com/microsoft/onnxruntime/releases/tag/v1.23.2",
+  "original_download_archive_url_and_sha256": null,
+  "local_payload_fingerprint_is_not_archive_authentication": true,
+  "license_files": [
+    "LICENSE",
+    "ThirdPartyNotices.txt"
+  ],
+  "license_metadata": "MIT; embedded dependencies retain ThirdPartyNotices",
+  "payload_files": {
+    "EASYFLY_SETUP.md": {
+      "bytes": 1344,
+      "sha256": "d3e1fb0b54a760e9bb185e107da74e73d6d35d4748628dab3109b6b6ebc39356"
+    },
+    "GIT_COMMIT_ID": {
+      "bytes": 41,
+      "sha256": "8991e24279baaf64c3f31ad73878a8ad75dfb1dcd129de309f8287c623170c29"
+    },
+    "LICENSE": {
+      "bytes": 1073,
+      "sha256": "2f07c72751aed99790b8a4869cf2311df85a860b22ded05fa22803587a48922c"
+    },
+    "VERSION_NUMBER": {
+      "bytes": 7,
+      "sha256": "48d625eaf5c6c9ce0c6890c697201fd6087c6147773feb8ca9a85e4f8004e79f"
+    },
+    "README.md": {
+      "bytes": 2971,
+      "sha256": "87f0387d38c0a5e3e448ab3ae3debc38024663ed8e4b2f55c625958764b01e4f"
+    },
+    "Privacy.md": {
+      "bytes": 2469,
+      "sha256": "9a15f9fd9d4c7b6dfc35f237f461863f84f8f73cf6189e330818a674d3828871"
+    },
+    "ThirdPartyNotices.txt": {
+      "bytes": 326866,
+      "sha256": "e9e90971a8e75a9a8ac0c6412e29c1202d079998389915aa485f46c816c3b4cc"
+    },
+    "include/onnxruntime_lite_custom_op.h": {
+      "bytes": 62226,
+      "sha256": "890f4918c1cdb5f8d1180b0c732c263d646d73d947ed69ce96b8047d85ede4c4"
+    },
+    "include/onnxruntime_session_options_config_keys.h": {
+      "bytes": 26693,
+      "sha256": "a7ac653a6cce0b03aea2515685a162d2956a158cf88313f22e8157f098fd6f66"
+    },
+    "include/provider_options.h": {
+      "bytes": 480,
+      "sha256": "cb7206ffd06ba31b9f7e5f6089a6206f0c720c10c3adcc61db7f829c86691cfc"
+    },
+    "include/onnxruntime_cxx_inline.h": {
+      "bytes": 130952,
+      "sha256": "226f883503ade7299f9474018a070dc94091c1541bcc6d419599eea0c2ee578e"
+    },
+    "include/onnxruntime_run_options_config_keys.h": {
+      "bytes": 2952,
+      "sha256": "973037c14b0f1af0854ae25cd676776f79dbcfd2a6791f6ee17a5374c2a62550"
+    },
+    "include/onnxruntime_float16.h": {
+      "bytes": 17860,
+      "sha256": "6c4db3d1954b266c4febe413351af86cac922e3448538e7e452e51d646e56a4a"
+    },
+    "include/onnxruntime_cxx_api.h": {
+      "bytes": 144113,
+      "sha256": "08ae3698d11d90590a0a777ad97e58172b8735fcbe27edcc8a7b94aa018e5de9"
+    },
+    "include/onnxruntime_ep_c_api.h": {
+      "bytes": 45129,
+      "sha256": "b92778f50c36ecdf53d0344e0129a78b306afed653f81bba8a9597e3e6e9546f"
+    },
+    "include/onnxruntime_c_api.h": {
+      "bytes": 332350,
+      "sha256": "71125e66180a991d65c9bdbad4aa20daaa1f7a48c7a5c0fa5f18f250ac839a02"
+    },
+    "include/onnxruntime_ep_device_ep_metadata_keys.h": {
+      "bytes": 889,
+      "sha256": "8054d3696514dfda8fcd93d4ec1257837e8ebb43e14d3f7012222d53e66be438"
+    },
+    "include/cpu_provider_factory.h": {
+      "bytes": 397,
+      "sha256": "0de52d129c718c07ee71a16b4953d8d483df019746a11caad77a0650a2f4ed47"
+    },
+    "include/core/providers/custom_op_context.h": {
+      "bytes": 296,
+      "sha256": "c1f2a96c0de1978b0f2fbf60bf1b2d50c6412d487c1f5d68ac5ffa8e01b46ee4"
+    },
+    "include/core/providers/resource.h": {
+      "bytes": 360,
+      "sha256": "7ee6117bffd2aad1f6a4865d88c0a2ae39964c757be0693b8569ac7000a1d13c"
+    },
+    "include/core/providers/cuda/cuda_context.h": {
+      "bytes": 4123,
+      "sha256": "d34d1fa993d23b55f7964179dc94feccd566fe65c1a3e380abf2a9df620a307e"
+    },
+    "include/core/providers/cuda/cuda_resource.h": {
+      "bytes": 581,
+      "sha256": "2ece8edb26f2bcca89c3fc495cd27f7ae6520bbe93fb1d55d8fe50b9be8cd82f"
+    },
+    "lib/libonnxruntime_providers_tensorrt.so": {
+      "bytes": 830120,
+      "sha256": "57b27cbd69e488df5e0bfe0368208926ab699cb9d0e83d3734754febeecb4509"
+    },
+    "lib/libonnxruntime_providers_shared.so": {
+      "bytes": 14632,
+      "sha256": "ebbfc73b7da61d56eba58cb3eb76caa6dcba8b3026f1d75626bb580ffe3cb69b"
+    },
+    "lib/libonnxruntime.so.1": {
+      "symlink": "libonnxruntime.so.1.23.2"
+    },
+    "lib/libonnxruntime_providers_cuda.so": {
+      "bytes": 368483592,
+      "sha256": "78760bb32dcebf7997c6b2300b1d3cbcf3aee8e297998bc4f76c7e1b84c116f1"
+    },
+    "lib/libonnxruntime.so": {
+      "symlink": "libonnxruntime.so.1"
+    },
+    "lib/libonnxruntime.so.1.23.2": {
+      "bytes": 23921240,
+      "sha256": "dfca180cdcb0d79fb64a5a548da34cdea810d5145520f59c8b12201802966716"
+    },
+    "lib/pkgconfig/libonnxruntime.pc": {
+      "bytes": 332,
+      "sha256": "701a96fb428ac5909a7b348ae58d0f4c7cf4239ea5ae40d298f288e0440ae732"
+    },
+    "lib/cmake/onnxruntime/onnxruntimeConfig.cmake": {
+      "bytes": 939,
+      "sha256": "880b8c3ceae1ac013b7442b852ae4f7674a439803a2f8dcb875f5043913e62bc"
+    },
+    "lib/cmake/onnxruntime/onnxruntimeTargets.cmake": {
+      "bytes": 4173,
+      "sha256": "0b84a062f97cfdb408a8eb17e5a2cc72df2bb171521785ff2f67aae39310da2a"
+    },
+    "lib/cmake/onnxruntime/onnxruntimeTargets-release.cmake": {
+      "bytes": 921,
+      "sha256": "dc11f1241682c32fad6a7e39283b210127df7a54710176b888924a679c657536"
+    },
+    "lib/cmake/onnxruntime/onnxruntimeConfigVersion.cmake": {
+      "bytes": 2765,
+      "sha256": "8a42b1500683c28e37287d47e962975919ba023a7e518563f60aff36f9368074"
+    }
+  },
+  "payload_changed_in_alg8_5": false,
+  "runtime_install_owner": "easyfly_yolo_onnx",
+  "public_api_hides_sdk_types": true,
+  "default_root_overridable_via": "ORT_ROOT",
+  "local_patch_history": [
+    "ALG-5 updated local EASYFLY_SETUP.md path/responsibility; original SDK archive unavailable."
+  ],
+  "known_limits": [
+    "CUDA dependencies remain host requirements; actual provider must be reported.",
+    "Bundled TensorRT provider is not an implemented EasyFly TensorRT backend.",
+    "No SDK refetch or upgrade in ALG-8.5."
+  ]
+}

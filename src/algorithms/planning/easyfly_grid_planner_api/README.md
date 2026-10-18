@@ -1,7 +1,8 @@
 # easyfly_grid_planner_api
 
-ROS 运行时无关的 C++17 二维栅格路径规划接口。ALG-1 提供普通类型、O(1) 布局校验、
-控制能力检查和确定性停止原因辅助；尚未迁移 A*、修改搜索循环或接入 EGO。
+ROS 运行时无关的 C++17 二维栅格路径规划接口。ALG-1 建立普通类型、O(1)布局校验及控制辅助；
+ALG-3 已接入真实A*并实现预算/取消/deadline控制，当前生产工厂仍只支持astar。
+EGO保留完整ROS工程，通过平台会话接入，不使用本接口表达三维轨迹。
 
 ```cmake
 find_package(easyfly_grid_planner_api REQUIRED)
@@ -26,5 +27,6 @@ target_link_libraries(my_planner PRIVATE easyfly_grid_planner_api::easyfly_grid_
 - 失败不携带可执行的部分路径；成功路径保留真实起点和精确目标，同格请求也保留两端点。
   路径是 XY 几何，不是三维轨迹或执行许可。高度、子航点、Action 所有权仍由平台管理。
 
-ALG-3 将独立验证 A* 对该接口的适配和预算/取消增强，当前 API 测试通过不能代替那项验收。
+真实A*适配、控制增强和安装验证见[ALG-3验收](../../alg3-validation.md)。
+API测试替身不能代替实际搜索验收；新增规划器、combined选择及三维数据边界见[接入指南](../../integration-guide.md)。
 0.1 接口尚无稳定二进制 ABI 承诺，消费包需随接口变更重新编译。

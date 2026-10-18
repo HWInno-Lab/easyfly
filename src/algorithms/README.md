@@ -1,9 +1,8 @@
 # EasyFly 算法目录、接口与迁移基线
 
-本目录管理 EasyFly 自有的可复用算法实现及接口。2026-10-18 已完成 ALG-0 盘点与
-ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-3 的 A*/覆盖路线迁移，
-并完成 ALG-4 预测/点云过滤、ALG-5 视觉包装和 ALG-6 投影/障碍类别关联迁移。
-ALG-7 建图拆分与 ALG-8.1/8.2 第三方 FAST-LIO/EGO 分类已完成；ALG-8.3 SDK 分类也已完成；ALG-8.4 QGC 资料分类已完成；下一步 ALG-8.5 接入规范收敛。
+本目录管理项目维护的可复用计算实现与接口。ALG-1..7已交付4个能力API和15个计算组件，
+ALG-8.1..8.5已完成第三方分类、来源/补丁登记与接入指南；下一步ALG-9整体回归。
+结构交付不等于整体运行验收通过，历史未解决问题继续保留。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -12,8 +11,11 @@ ALG-7 建图拆分与 ALG-8.1/8.2 第三方 FAST-LIO/EGO 分类已完成；ALG-8
 ## 当前交付
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
-- [当前迁移进度](migration-progress.json)与 [ALG-8.4 验收](alg8-4-validation.md)：实际位置和验证结果。
+- [当前迁移进度](migration-progress.json)与 [ALG-8.5 验收](alg8-5-validation.md)：实际位置和验证结果。
 - [接口与兼容契约](interface-contracts.md)：当前真实行为与拟建立的调用接口。
+- [新增算法接入指南](integration-guide.md)：跟踪器/规划器的适配、工厂、参数、输入扩展与实际验收步骤。
+- [兼容层审计](compatibility-audit.md)：21份旧公开转发头及本地旧安装桥接的保留原因。
+- [第三方总表](../third_party/catalog.json)与[来源/补丁登记](../third_party/sourcing-and-patches.md)：当前路径、标签、身份和未知项。
 - [基线验收](baseline.md)：实际构建/测试结果、证据及未覆盖项。
 - [构建规范](build-conventions.md)与 [ALG-1 验收](alg1-validation.md)：API 导出和两种安装验证。
 - [跟踪接口](tracking/easyfly_tracking_api/README.md)与

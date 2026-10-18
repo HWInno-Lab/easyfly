@@ -1,0 +1,242 @@
+{
+  "schema_version": 1,
+  "phase": "ALG-8.5",
+  "source_commit": "2b69165b2708944cf974e925bd9a87c70acec072",
+  "public_forwarding_headers": [
+    {
+      "legacy_public_header": "src/execution/e1_state_machine/easyfly_mission_fsm/include/easyfly_mission_fsm/search_geometry.hpp",
+      "implementation_packages": [
+        "easyfly_coverage_planning"
+      ],
+      "sha256": "f138f79fff65a6fa9230394f7fcbd0d4c97b70ceea06369d52a168da28aee94e",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/execution/e2_planning/easyfly_global_planner/include/easyfly_global_planner/astar.hpp",
+      "implementation_packages": [
+        "easyfly_astar"
+      ],
+      "sha256": "24a270eb42219f77f8376f0be171f582e10783db5c850095c4491a3732b620fa",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p1_preprocess/easyfly_pointcloud_filter/include/easyfly_pointcloud_filter/filter_core.hpp",
+      "implementation_packages": [
+        "easyfly_pointcloud_filters"
+      ],
+      "sha256": "1a2e052ec7262d9c9f5b3a49ecefd8bc0edd59393db1a0825f7f09de55f945cd",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p2_detection/easyfly_apriltag_detection/include/tag_core.hpp",
+      "implementation_packages": [
+        "easyfly_tag_pose"
+      ],
+      "sha256": "8dc062bd27b08a1ed784c640c1b0964ff327062b965f35091c1c37b54afe329d",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/backend_factory.hpp",
+      "implementation_packages": [
+        "easyfly_yolo_onnx"
+      ],
+      "sha256": "479030a718aed25d6f5be31835768f2b3ddcfd7963105e9ffdd4cafaf1f4ea53",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/letterbox.hpp",
+      "implementation_packages": [
+        "easyfly_yolo_onnx"
+      ],
+      "sha256": "5e78a1a118f47ec51517d95c9931d712b8ca0b21cf2c45269682a4e535a777af",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/nms.hpp",
+      "implementation_packages": [
+        "easyfly_yolo_onnx"
+      ],
+      "sha256": "5ef93535ba5236b4b228f607b9090f377891dd0e3cf892f7a01a8e5107cbe375",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/onnx_backend.hpp",
+      "implementation_packages": [
+        "easyfly_yolo_onnx"
+      ],
+      "sha256": "dc06162c32d4b275b0653d93bf5aafa0fd37f5aa27b46e18041000969db808a6",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/hungarian.hpp",
+      "implementation_packages": [
+        "easyfly_sort"
+      ],
+      "sha256": "2257934012e6b65bb8be4aea1a202b685ef6d2a081070f16e5432581bc31a3bc",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/id_consolidator.hpp",
+      "implementation_packages": [
+        "easyfly_track_id_fusion"
+      ],
+      "sha256": "6ec9f6f96c9d30ea64f552f66438c2278515b0c713754c5801bfd5e2dcec2405",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/kalman.hpp",
+      "implementation_packages": [
+        "easyfly_sort"
+      ],
+      "sha256": "b118ccad8aba8e86d4ffc7fe63e163341cbf8682cbc78540bc949bc0b6ef898e",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/sort.hpp",
+      "implementation_packages": [
+        "easyfly_sort"
+      ],
+      "sha256": "18921c9febb7d3945d7980192f30189f55c8b1c88e233597f4ac4c64e1419074",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_single_object_tracking/include/track_core.hpp",
+      "implementation_packages": [
+        "easyfly_csrt"
+      ],
+      "sha256": "361941d887fd5e4b72ec964d3efe3fc5ded8f7fa8f8cc66ad01951fcc5358528",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p3_tracking/easyfly_target_prediction/include/easyfly_target_prediction/predictor.hpp",
+      "implementation_packages": [
+        "easyfly_motion_prediction"
+      ],
+      "sha256": "fc85b263007a0e9f06e8373ed101d4b0a6aa9c553f8adafc7c36d50f9d836660",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/dynamic_obstacle_tracker.hpp",
+      "implementation_packages": [
+        "easyfly_obstacle_geometry"
+      ],
+      "sha256": "fdfa236c732678059afb11b55f40a0c8c69de9eb47c545b1096db2c54ac6bcd3",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/grid_inflation.hpp",
+      "implementation_packages": [
+        "easyfly_occupancy_mapping"
+      ],
+      "sha256": "069ed6fa2b01fb062d985a351d6b3a10d19f530b9193c9856e867136d02c1a9a",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_candidate_selection.hpp",
+      "implementation_packages": [
+        "easyfly_ground_segmentation"
+      ],
+      "sha256": "c4e41a34266c740e877466b40db56897157745b9a694e994216d5e3228822fd0",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp",
+      "implementation_packages": [
+        "easyfly_ground_segmentation"
+      ],
+      "sha256": "c3684931cd837e72431f0b1b3bcf17110f23cd9e9ec9900012b1396a661afa70",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_transform.hpp",
+      "implementation_packages": [
+        "easyfly_ground_segmentation"
+      ],
+      "sha256": "5131fe153ae768ae14feaa014b6607e9f17f45fe7f17792dc00ea18bcb81b01f",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp",
+      "implementation_packages": [
+        "easyfly_ground_segmentation"
+      ],
+      "sha256": "c988c678291f6e0760fd1907ceba3a94e7b56a6382bb7e322c098b41537d57f1",
+      "shape": "forwarding includes and compatibility aliases",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    },
+    {
+      "legacy_public_header": "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp",
+      "implementation_packages": [
+        "easyfly_occupancy_mapping"
+      ],
+      "sha256": "acafb4e2bb04246003a38a2e11d2755aeec57b50aa2c5004a6e5d461b2544b1f",
+      "shape": "concrete-ground-type forwarding wrapper",
+      "decision": "retain_public_installed_entry",
+      "unchanged_in_alg8_5": true
+    }
+  ],
+  "headers_removed": [],
+  "local_ignored_bridges": [
+    {
+      "historical_path": "src/third_party/slam/fast_lio",
+      "canonical_source": "src/third_party/algorithms/localization/fast_lio",
+      "tracked": false,
+      "excluded_by_parent_colcon_ignore": true,
+      "decision": "keep_until_active_old_install_consumers_retired"
+    },
+    {
+      "historical_path": "src/third_party/planners/ego_planner",
+      "canonical_source": "src/third_party/algorithms/planning/ego_planner",
+      "tracked": false,
+      "excluded_by_parent_colcon_ignore": true,
+      "decision": "keep_until_active_old_install_consumers_retired"
+    }
+  ],
+  "platform_retention_examples": [
+    "pixel_to_3d frame_contract.hpp and source-time/TF admission",
+    "semantic_map map validity, state/transform admission and global budgets",
+    "navigation Action ownership, cancellation drain and flight handoff"
+  ],
+  "pixel_projection_has_no_legacy_compute_header": "pixel_to_3d node directly includes easyfly_projection/projection.hpp; frame_contract.hpp is platform admission.",
+  "audit_scope": "Current extracted public C++ forwarding headers identified by core-package includes, not all platform compatibility mechanisms.",
+  "runtime_changes": []
+}

@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "inventory_date": "2026-10-18",
+  "source_commit_before_catalog": "2b69165b2708944cf974e925bd9a87c70acec072",
+  "scope": "Classified third-party roots plus retained ROS driver/model boundaries; not an exhaustive SBOM or runtime loader registry.",
+  "algorithm_categories": [
+    "preprocessing",
+    "detection",
+    "tracking",
+    "localization",
+    "fusion_mapping",
+    "planning"
+  ],
+  "projects": [
+    {
+      "id": "fast_lio",
+      "primary_path": "src/third_party/algorithms/localization/fast_lio",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "localization",
+        "mapping",
+        "inertial"
+      ],
+      "integration_style": "ros_topics_and_platform_launch",
+      "consumers": [
+        "easyfly_fast_lio_integration",
+        "easyfly_sim_launcher"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/localization/fast_lio.provenance.json",
+        "src/algorithms/alg8-1-validation.md"
+      ],
+      "version_evidence": "package.xml 0.0.0; exact fork/import unknown",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "7455e06",
+        "b52a4fd",
+        "c3e41af"
+      ],
+      "unresolved": [
+        "Exact FAST-LIO/ikd-Tree/IKFoM imports unknown.",
+        "Root GPL-v2 text and package BSD declaration differ; preserved."
+      ],
+      "related_paths": [
+        "src/third_party/algorithms/localization/fast_lio/include/ikd-Tree",
+        "src/third_party/algorithms/localization/fast_lio/include/IKFoM_toolkit"
+      ]
+    },
+    {
+      "id": "ego_planner",
+      "primary_path": "src/third_party/algorithms/planning/ego_planner",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "planning",
+        "trajectory",
+        "optimization",
+        "mapping",
+        "search"
+      ],
+      "integration_style": "ros_topics_and_navigation_session",
+      "consumers": [
+        "easyfly_local_planner",
+        "easyfly_global_planner"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/planning/ego_planner.provenance.json",
+        "src/algorithms/alg8-2-validation.md"
+      ],
+      "version_evidence": "8-package local ROS2 import, upstream version unknown",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "7455e06",
+        "04d99d4",
+        "0724742",
+        "dfd6859",
+        "fc8decd",
+        "b589593",
+        "937114c",
+        "6d4115e"
+      ],
+      "unresolved": [
+        "Exact upstream/fork/base unknown.",
+        "TODO/mixed package license metadata and no unified root license."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "onnxruntime",
+      "primary_path": "src/third_party/runtimes/onnxruntime",
+      "kind": "ignored_runtime_sdk",
+      "tags": [
+        "inference",
+        "cpu",
+        "cuda"
+      ],
+      "integration_style": "private_library_dependency",
+      "consumers": [
+        "easyfly_yolo_onnx"
+      ],
+      "evidence_files": [
+        "src/third_party/runtimes/onnxruntime.provenance.json",
+        "src/algorithms/alg5-validation.md"
+      ],
+      "version_evidence": "VERSION_NUMBER 1.23.2; GIT_COMMIT_ID a83fc4d58cb48eb68890dd689f94f28288cf2278",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [],
+      "unresolved": [
+        "Metadata commit is not proof of original downloaded archive.",
+        "Host CUDA/cuDNN compatibility remains deployment-specific."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "livox_sdk2",
+      "primary_path": "src/third_party/sensor_sdks/livox_sdk2",
+      "kind": "vendor_sensor_sdk",
+      "tags": [
+        "lidar",
+        "sensor_sdk"
+      ],
+      "integration_style": "installed_headers_and_native_library",
+      "consumers": [
+        "livox_ros_driver2"
+      ],
+      "evidence_files": [
+        "src/third_party/sensor_sdks/livox_sdk2.provenance.json",
+        "src/algorithms/alg8-3-validation.md"
+      ],
+      "version_evidence": "header/runtime 1.3.0; CHANGELOG 1.2.5; CMake library variable 0.0.2",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "c707cd3",
+        "5d84150"
+      ],
+      "unresolved": [
+        "Exact upstream import unknown.",
+        "MIT grant has listed scope; bundled licenses retained."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "librealsense",
+      "primary_path": "src/third_party/sensor_sdks/librealsense",
+      "kind": "vendor_sensor_sdk",
+      "tags": [
+        "depth_camera",
+        "sensor_sdk"
+      ],
+      "integration_style": "installed_cmake_package",
+      "consumers": [
+        "realsense2_camera"
+      ],
+      "evidence_files": [
+        "src/third_party/sensor_sdks/librealsense.provenance.json",
+        "src/algorithms/alg8-3-validation.md"
+      ],
+      "version_evidence": "rs.h/package.xml/runtime 2.56.5",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "c707cd3",
+        "5d84150"
+      ],
+      "unresolved": [
+        "Exact upstream import unknown; bundled dependencies retain licenses."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "qgc_documents",
+      "primary_path": "src/third_party/tools/qgc",
+      "kind": "external_tool_documents",
+      "tags": [
+        "ground_station",
+        "external_application"
+      ],
+      "integration_style": "explicit_user_selected_process",
+      "consumers": [
+        "easyfly_desktop",
+        "easyfly_connection_manager"
+      ],
+      "evidence_files": [
+        "src/third_party/tools/qgc/provenance.json",
+        "src/algorithms/alg8-4-validation.md"
+      ],
+      "version_evidence": "prior inspected local sample 5.0.8, bundled Qt6.8.3",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "01de492",
+        "2b69165"
+      ],
+      "unresolved": [
+        "No QGC source or binary distribution in this directory.",
+        "Local binary version/hash does not authenticate download or apply to other selected files."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "livox_ros_driver2",
+      "primary_path": "src/communication/c1_drivers/livox_ros_driver2",
+      "kind": "vendor_ros_driver",
+      "tags": [
+        "lidar",
+        "ros_driver"
+      ],
+      "integration_style": "ros_component_and_messages",
+      "consumers": [
+        "fast_lio",
+        "EasyFly sensor pipeline"
+      ],
+      "evidence_files": [
+        "src/communication/c1_drivers/livox_ros_driver2/README.md",
+        "src/communication/c1_drivers/livox_ros_driver2/LICENSE.txt",
+        "src/algorithms/alg8-3-validation.md"
+      ],
+      "version_evidence": "package.xml 1.0.0, independent of SDK version",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "c707cd3"
+      ],
+      "unresolved": [
+        "Exact upstream import unknown; MIT grant file scope retained."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "realsense_ros",
+      "primary_path": "src/communication/c1_drivers/realsense_ros",
+      "kind": "nested_ros_driver_repository",
+      "tags": [
+        "depth_camera",
+        "ros_driver"
+      ],
+      "integration_style": "ros_component_and_messages",
+      "consumers": [
+        "EasyFly camera pipeline"
+      ],
+      "evidence_files": [
+        "src/communication/c1_drivers/realsense_ros/README.md",
+        "src/communication/c1_drivers/realsense_ros/LICENSE",
+        "src/algorithms/alg8-3-validation.md"
+      ],
+      "version_evidence": "local HEAD d69f05c1b4a3f0d5740e25d6429d4417c7f3d75d",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [
+        "d69f05c1b4a3f0d5740e25d6429d4417c7f3d75d"
+      ],
+      "unresolved": [
+        "Root .gitmodules mapping missing; local adaptation commit is not an upstream lock."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "model_assets",
+      "primary_path": "models",
+      "kind": "model_assets",
+      "tags": [
+        "detection",
+        "model_weights"
+      ],
+      "integration_style": "functional_package_asset_install",
+      "consumers": [
+        "easyfly_object_detection"
+      ],
+      "evidence_files": [
+        "src/third_party/model-assets.provenance.json",
+        "src/perception/p2_detection/easyfly_object_detection/CMakeLists.txt"
+      ],
+      "version_evidence": "filenames and actual byte fingerprints only",
+      "exact_upstream_import_revision": null,
+      "known_local_patch_commits": [],
+      "unresolved": [
+        "Original model source/export/training and license evidence unknown."
+      ],
+      "related_paths": [
+        "models/yolo11n.onnx",
+        "models/yolo11n.pt"
+      ]
+    }
+  ],
+  "system_compute_dependencies": [
+    {
+      "name": "OpenCV",
+      "vendored": false,
+      "role": "Public image computation types in detection/single-tracking APIs and implementation calculations."
+    },
+    {
+      "name": "PCL",
+      "vendored": false,
+      "role": "Pointcloud fitting/clustering and complete ROS engines."
+    },
+    {
+      "name": "Eigen",
+      "vendored": false,
+      "role": "Numerical types and calculations; installed dependency resolved per consumer."
+    }
+  ],
+  "unpopulated_legacy_directories": [
+    {
+      "path": "src/third_party/geographic_lib",
+      "future_category": "libraries/geometry"
+    },
+    {
+      "path": "src/third_party/nlopt",
+      "future_category": "libraries/optimization"
+    },
+    {
+      "path": "src/third_party/nlohmann_json",
+      "future_category": "libraries/serialization"
+    }
+  ],
+  "placeholder_policy": "No source or package in these empty directories; do not claim integration. SDK private JSON cache is a separate recorded build input.",
+  "runtime_selection": "Libraries via exported installed targets/modules; ROS engines via platform launch/session; external QGC by explicitly saved path. No new automatic backend discovery.",
+  "licensing_policy": "Preserve upstream file scopes and unknowns; project-maintained algorithms are not claims of theoretical originality.",
+  "patch_record": "src/third_party/sourcing-and-patches.md"
+}

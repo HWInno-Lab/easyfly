@@ -18,3 +18,6 @@ https://github.com/microsoft/onnxruntime/releases/tag/v1.23.2 。
 CUDA provider 仍要求宿主机匹配的 CUDA/cuDNN/驱动；随包 provider 不等于携带整套 GPU 系统库。
 请求 CUDA 时保留原有失败回退 CPU 规则，必须报告实际 provider。
 SDK 内含 TensorRT provider 文件不代表 EasyFly 已实现 TensorRT 检测后端。
+
+当前元数据、载荷/符号链接SHA及原下载归档缺口见[onnxruntime.provenance.json](onnxruntime.provenance.json)。
+ALG-8.5只补登记，SDK载荷未修改、重取或升级；模型身份与许可另见[模型资产清单](../model-assets.provenance.json)。
