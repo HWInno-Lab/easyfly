@@ -19,9 +19,9 @@
 #include <limits>
 #include <vector>
 
-#include "easyfly_semantic_map/dynamic_obstacle_tracker.hpp"
+#include "easyfly_obstacle_geometry/dynamic_obstacle_tracker.hpp"
 
-namespace easyfly_semantic_map
+namespace easyfly::obstacle_geometry
 {
 namespace
 {
@@ -712,4 +712,4 @@ TEST(DynamicObstacleTrackerTest, FloatBoxAndTotalBudgetAreFailSafe)
 }
 
 }  // namespace
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::obstacle_geometry

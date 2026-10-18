@@ -15,6 +15,8 @@ ALG-6 新增标准库 C++ easyfly_projection，以及标准库 Python easyfly_pr
 easyfly_obstacle_association。Python 包由 ament_cmake_python 安装，公开普通模块，不创建空 C++ target。
 ALG-7.1 新增 easyfly_ground_segmentation，导出 SHARED target，公开系统 PCL/Eigen 计算类型，
 不引入 ROS 消息或 TF 查询。地面拟合与模型在算法包，状态/参考系接纳和地图输出在功能包。
+ALG-7.2 新增 easyfly_obstacle_geometry，导出 SHARED target，聚类/AABB 依赖 PCL，
+动态跟踪头仅依赖 STL；不包含 ROS 运行依赖。节点保留地图、时效接纳和全局预测点数预算。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -48,6 +50,7 @@ ALG-7.1 新增 easyfly_ground_segmentation，导出 SHARED target，公开系统
 | easyfly_projection_py | easyfly_projection_py/core.py | easyfly_projection_py.core（Python） |
 | easyfly_obstacle_association | easyfly_obstacle_association/core.py | easyfly_obstacle_association.core（Python） |
 | easyfly_ground_segmentation | easyfly_ground_segmentation/ground_fitting.hpp | easyfly_ground_segmentation::easyfly_ground_segmentation |
+| easyfly_obstacle_geometry | easyfly_obstacle_geometry/clustering.hpp / dynamic_obstacle_tracker.hpp | easyfly_obstacle_geometry::easyfly_obstacle_geometry |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -133,3 +136,7 @@ Python 模块位于平台选择的 site-packages/dist-packages；消费夹具按
 ALG-7.1 纯 CMake 消费显式声明 LANGUAGES C CXX，以满足系统 PCL/VTK 的 C/MPI imported target。
 这是本机计算依赖的配置要求，不是 ROS 运行依赖。旧 semantic_map 地面头保留原安装路径，
 通过其导出 include/依赖消费；原四组地面测试已迁入实现包。详见 [ALG-7.1 验收](alg7-1-validation.md)。
+
+ALG-7.2 同样使用系统 PCL 的 C/CXX 配置；旧动态头导出全部原公开类型/函数别名。
+普通安装根搬迁后用新 prefix 重配、构建和运行纯 CMake 消费者，另在 ROS 环境消费旧头。
+复验工具 `../../tools/algorithms/verify_obstacle_install.py`，详见 [ALG-7.2 验收](alg7-2-validation.md)。

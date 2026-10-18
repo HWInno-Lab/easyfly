@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ament_cmake REQUIRED)
 find_package(easyfly_ground_segmentation REQUIRED)
+find_package(easyfly_obstacle_geometry REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(easyfly_obstacle_classification)
 install(PROGRAMS scripts/obstacle_classifier DESTINATION lib/${PROJECT_NAME})
@@ -32,7 +33,7 @@ add_library(${PROJECT_NAME}_nodes SHARED
 target_compile_options(${PROJECT_NAME}_nodes PRIVATE -Wall -Wextra)
 target_include_directories(${PROJECT_NAME}_nodes PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME}_nodes ${PCL_LIBRARIES} yaml-cpp easyfly_ground_segmentation::easyfly_ground_segmentation)
+target_link_libraries(${PROJECT_NAME}_nodes ${PCL_LIBRARIES} yaml-cpp easyfly_obstacle_geometry::easyfly_obstacle_geometry easyfly_ground_segmentation::easyfly_ground_segmentation)
 ament_target_dependencies(${PROJECT_NAME}_nodes
   rclcpp rclcpp_components ament_index_cpp sensor_msgs nav_msgs visualization_msgs
   easyfly_msgs tf2 tf2_ros tf2_eigen geometry_msgs pcl_conversions)
@@ -62,6 +63,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_classification test/test_classification.py)
+  ament_add_pytest_test(test_dynamic_geometry_ros test/test_dynamic_geometry_ros.py TIMEOUT 40
+    ENV ROS_DOMAIN_ID=220)
   ament_add_pytest_test(test_ground_pipeline_ros test/test_ground_pipeline_ros.py TIMEOUT 50
     ENV ROS_DOMAIN_ID=219)
   ament_add_pytest_test(test_observed_grid_ros test/test_observed_grid_ros.py TIMEOUT 120
@@ -86,11 +89,8 @@ if(BUILD_TESTING)
   target_link_libraries(test_observed_grid easyfly_ground_segmentation::easyfly_ground_segmentation)
   target_include_directories(test_observed_grid PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
-  ament_add_gtest(test_dynamic_obstacle_tracker test/test_dynamic_obstacle_tracker.cpp)
-  target_include_directories(test_dynamic_obstacle_tracker PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 
 ament_export_include_directories(include/${PROJECT_NAME})
-ament_export_dependencies(easyfly_ground_segmentation)
+ament_export_dependencies(easyfly_ground_segmentation easyfly_obstacle_geometry)
 ament_package()
