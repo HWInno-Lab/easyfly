@@ -1,5 +1,7 @@
 # EasyFly M4 多目标跟踪 (SORT) 配置
 tracking:
+  tracker_backend: sort                  # startup-only; only sort is implemented
+  world_frame: odom                      # must match pixel_to_3d target_frame
   # ---- 话题 ----
   input_topic: /detections               # M2 检测输出
   output_topic: /tracks                  # 跟踪输出

@@ -18,15 +18,15 @@
 #include <string>
 #include <vector>
 
-#include "easyfly_multi_object_tracking/sort.hpp"
+#include "easyfly_sort/sort.hpp"
 
 namespace
 {
 
-using easyfly_multi_object_tracking::BBox;
-using easyfly_multi_object_tracking::DetectionInput;
-using easyfly_multi_object_tracking::SortParams;
-using easyfly_multi_object_tracking::Sorter;
+using easyfly::sort::BBox;
+using easyfly::sort::DetectionInput;
+using easyfly::sort::SortParams;
+using easyfly::sort::Sorter;
 
 DetectionInput make_detection(
   double cx, double cy, double width, double height, int class_id,

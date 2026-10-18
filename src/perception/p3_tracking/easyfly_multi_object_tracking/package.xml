@@ -3,23 +3,33 @@
 <package format="3">
   <name>easyfly_multi_object_tracking</name>
   <version>0.1.0</version>
-  <description>EasyFly M4: 多目标跟踪 (SORT: 卡尔曼滤波 + 匈牙利关联, 纯自实现)</description>
+  <description>ROS tracking integration and adapters for independent tracking algorithms.</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>rcl_interfaces</depend>
   <depend>rclcpp_components</depend>
   <depend>ament_index_cpp</depend>
   <depend>sensor_msgs</depend>
   <depend>easyfly_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>easyfly_tracking_api</depend>
+  <depend>easyfly_sort</depend>
+  <depend>easyfly_track_id_fusion</depend>
   <depend>libopencv-dev</depend>
   <depend>yaml-cpp</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>easyfly_pixel_to_3d</test_depend>
+  <test_depend>tf2_ros_py</test_depend>
+  <test_depend>python3-yaml</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

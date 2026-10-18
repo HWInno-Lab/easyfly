@@ -1,0 +1,701 @@
+{
+  "schema_version": 1,
+  "source_commit": "bdbc34c",
+  "status": "ALG-0 inventory; targets are not yet implemented",
+  "baseline_packages": [
+    "easyfly_multi_object_tracking",
+    "easyfly_global_planner",
+    "easyfly_mission_fsm",
+    "easyfly_target_prediction",
+    "easyfly_pointcloud_filter",
+    "easyfly_single_object_tracking",
+    "easyfly_object_detection",
+    "easyfly_apriltag_detection",
+    "easyfly_landing_detection",
+    "easyfly_pixel_to_3d",
+    "easyfly_lidar_camera_fusion",
+    "easyfly_semantic_map",
+    "easyfly_fast_lio_integration",
+    "easyfly_time_sync",
+    "easyfly_camera_calib",
+    "easyfly_target_tracking",
+    "easyfly_flight_control"
+  ],
+  "components": [
+    {
+      "id": "sort",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_multi_object_tracking",
+      "source_files": [
+        "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/sort.hpp",
+        "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/kalman.hpp",
+        "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/hungarian.hpp"
+      ],
+      "target": "src/algorithms/tracking/easyfly_sort",
+      "phase": "ALG-2",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Predict, class-aware gated Hungarian association, lifecycle and raw IDs.",
+      "platform_retains": "ROS conversion, class filtering, normalized boxes, QoS, raw/stable topic publication.",
+      "consumers": [
+        "easyfly_multi_object_tracking"
+      ],
+      "existing_ctest_names": [
+        "test_sort"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "track_id_fusion",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_multi_object_tracking",
+      "source_files": [
+        "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/id_consolidator.hpp"
+      ],
+      "target": "src/algorithms/tracking/easyfly_track_id_fusion",
+      "phase": "ALG-2",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "World-coordinate graveyard reassociation, explicit steady time and reset.",
+      "platform_retains": "World observation message admission and tracks_raw/target_positions feedback routing.",
+      "consumers": [
+        "easyfly_multi_object_tracking"
+      ],
+      "existing_ctest_names": [
+        "test_id_consolidator"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "astar",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_global_planner",
+      "source_files": [
+        "src/execution/e2_planning/easyfly_global_planner/include/easyfly_global_planner/astar.hpp"
+      ],
+      "target": "src/algorithms/planning/easyfly_astar",
+      "phase": "ALG-3",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Grid search, unstick and LOS pruning. Core currently has no cancellation/budget argument.",
+      "platform_retains": "Map freshness, endpoint admission, navigation coordinator, waypoint ownership and cancel drain.",
+      "consumers": [
+        "easyfly_global_planner"
+      ],
+      "existing_ctest_names": [
+        "test_astar",
+        "test_astar_deadline",
+        "test_astar_endpoint"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "coverage",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_mission_fsm",
+      "source_files": [
+        "src/execution/e1_state_machine/easyfly_mission_fsm/include/easyfly_mission_fsm/search_geometry.hpp"
+      ],
+      "target": "src/algorithms/planning/easyfly_coverage_planning",
+      "phase": "ALG-3",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Rectangle strips and completed area; numeric/bounds checks.",
+      "platform_retains": "Mission format/executor, flight bounds admission and search Action.",
+      "consumers": [
+        "easyfly_mission_fsm"
+      ],
+      "existing_ctest_names": [
+        "test_search_geometry",
+        "test_search_action"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "motion_prediction",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_target_prediction",
+      "source_files": [
+        "src/perception/p3_tracking/easyfly_target_prediction/include/easyfly_target_prediction/predictor.hpp"
+      ],
+      "target": "src/algorithms/tracking/easyfly_motion_prediction",
+      "phase": "ALG-4",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Observation history, explicit double-clock validity, velocity and uncertainty model.",
+      "platform_retains": "Clock sampling, message conversion, timers, capabilities. No new navigation connection.",
+      "consumers": [
+        "easyfly_target_prediction"
+      ],
+      "existing_ctest_names": [
+        "test_predictor",
+        "test_prediction_ros"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "pointcloud_filters",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_pointcloud_filter",
+      "source_files": [
+        "src/perception/p1_preprocess/easyfly_pointcloud_filter/include/easyfly_pointcloud_filter/filter_core.hpp"
+      ],
+      "target": "src/algorithms/preprocessing/easyfly_pointcloud_filters",
+      "phase": "ALG-4",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Spherical range and first-point-per-voxel filtering; output order not a stable contract.",
+      "platform_retains": "Livox messages, source-time TF, bounded queues, expiry and ROS publish.",
+      "consumers": [
+        "easyfly_pointcloud_filter"
+      ],
+      "existing_ctest_names": [
+        "test_filter_core",
+        "test_transform_timing"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "yolo_onnx",
+      "source_kind": "project_wrapper_over_external_library",
+      "source_package": "easyfly_object_detection",
+      "source_files": [
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/backend_factory.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/detector_base.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/letterbox.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/nms.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/onnx_backend.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/include/easyfly_object_detection/types.hpp",
+        "src/perception/p2_detection/easyfly_object_detection/src/onnx/onnx_backend.cpp"
+      ],
+      "target": "src/algorithms/detection/easyfly_yolo_onnx",
+      "phase": "ALG-5",
+      "core_dependencies": [
+        "OpenCV",
+        "ONNX Runtime"
+      ],
+      "extraction_scope": "Letterbox, NMS, output decode, inference and actual provider; split mixed DetectorParams.",
+      "platform_retains": "Topics/QoS, worker/latest-slot, image conversion, diagnostic aggregation and configuration I/O.",
+      "consumers": [
+        "easyfly_object_detection"
+      ],
+      "existing_ctest_names": [
+        "easyfly_object_detection_detection_contract"
+      ],
+      "provenance": "Preserve upstream notices and local patches; exact origin gaps remain explicit."
+    },
+    {
+      "id": "tag_pose",
+      "source_kind": "project_wrapper_over_external_library",
+      "source_package": "easyfly_apriltag_detection",
+      "source_files": [
+        "src/perception/p2_detection/easyfly_apriltag_detection/include/tag_core.hpp",
+        "src/perception/p2_detection/easyfly_apriltag_detection/src/tag_node.cpp"
+      ],
+      "target": "src/algorithms/detection/easyfly_tag_pose",
+      "phase": "ALG-5",
+      "core_dependencies": [
+        "OpenCV"
+      ],
+      "extraction_scope": "Extract tag detection invocation from shared node plus pure pose functions; OpenCV keeps engine ownership.",
+      "platform_retains": "CameraInfo admission, source/receipt time, generation/epoch, ROS services and publication.",
+      "consumers": [
+        "easyfly_apriltag_detection"
+      ],
+      "existing_ctest_names": [
+        "test_tag_core",
+        "test_tag_ros",
+        "test_duplicate_ros",
+        "test_clock_ros"
+      ],
+      "provenance": "Preserve upstream notices and local patches; exact origin gaps remain explicit."
+    },
+    {
+      "id": "csrt",
+      "source_kind": "project_wrapper_over_external_library",
+      "source_package": "easyfly_single_object_tracking",
+      "source_files": [
+        "src/perception/p3_tracking/easyfly_single_object_tracking/include/track_core.hpp",
+        "src/perception/p3_tracking/easyfly_single_object_tracking/src/single_node.cpp"
+      ],
+      "target": "src/algorithms/tracking/easyfly_csrt",
+      "phase": "ALG-5",
+      "core_dependencies": [
+        "OpenCV"
+      ],
+      "extraction_scope": "ROI conversion plus worker-owned TrackerCSRT lifecycle; header alone is not the full tracker.",
+      "platform_retains": "Explicit ROI service, worker scheduling, stale/epoch checks, states and capabilities.",
+      "consumers": [
+        "easyfly_single_object_tracking"
+      ],
+      "existing_ctest_names": [
+        "test_single_core",
+        "test_single_ros",
+        "test_clock_ros"
+      ],
+      "provenance": "Preserve upstream notices and local patches; exact origin gaps remain explicit."
+    },
+    {
+      "id": "projection_cpp",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_pixel_to_3d",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_pixel_to_3d/src/pixel_to_3d_node.cpp"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_projection",
+      "phase": "ALG-6",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Extract medianDepth and pinhole math from shared node into plain inputs.",
+      "platform_retains": "Frame contract, depth/track matching, camera/TF admission, target messages and markers.",
+      "consumers": [
+        "easyfly_pixel_to_3d"
+      ],
+      "existing_ctest_names": [
+        "test_frame_contract"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "projection_py",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_lidar_camera_fusion",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_lidar_camera_fusion/easyfly_lidar_camera_fusion/projection.py"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_projection_py",
+      "phase": "ALG-6",
+      "core_dependencies": [
+        "Python stdlib"
+      ],
+      "extraction_scope": "Pure projection, transforms and Z-buffer after separating ROS byte-layout parsing.",
+      "platform_retains": "ROS image/cloud decode, source-time TF, bounded worker, status and result expiry.",
+      "consumers": [
+        "easyfly_lidar_camera_fusion"
+      ],
+      "existing_ctest_names": [
+        "test_projection",
+        "test_pending",
+        "test_fusion_ros",
+        "test_clock_ros"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "ground",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_semantic_map",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_candidate_selection.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_transform.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_ground_segmentation",
+      "phase": "ALG-7.1",
+      "core_dependencies": [
+        "STL",
+        "Eigen",
+        "PCL"
+      ],
+      "extraction_scope": "Extract candidate fitting and trusted model with explicit vehicle/transform evidence; preserve armed freeze.",
+      "platform_retains": "State/TF admission and sampling, timestamps, complete current frame, maps and services.",
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "existing_ctest_names": [
+        "test_ground_plane_tracker",
+        "test_ground_spatial_support",
+        "test_ground_plane_transform",
+        "test_ground_candidate_selection"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "obstacle_geometry",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_semantic_map",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/dynamic_obstacle_tracker.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_obstacle_geometry",
+      "phase": "ALG-7.2",
+      "core_dependencies": [
+        "STL",
+        "PCL"
+      ],
+      "extraction_scope": "Current-frame clustering/AABBs, dynamic Hungarian association, EMA and full swept footprints.",
+      "platform_retains": "Cloud freshness, source-frame history lifecycle, ROS output and global point budget enforcement.",
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "existing_ctest_names": [
+        "test_dynamic_obstacle_tracker"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "occupancy",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_semantic_map",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/grid_inflation.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_occupancy_mapping",
+      "phase": "ALG-7.3",
+      "core_dependencies": [
+        "STL"
+      ],
+      "extraction_scope": "Observed-cells/cluster-boxes footprints, inflation and occupancy persistence; plain grid output.",
+      "platform_retains": "map_validity.hpp invalid-message protocol, map version, source-time/ground/TF validity and publish.",
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "existing_ctest_names": [
+        "test_grid_inflation",
+        "test_observed_grid",
+        "test_observed_grid_ros"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "obstacle_association",
+      "source_kind": "project_maintained",
+      "source_package": "easyfly_semantic_map",
+      "source_files": [
+        "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/core.py"
+      ],
+      "target": "src/algorithms/fusion_mapping/easyfly_obstacle_association",
+      "phase": "ALG-6",
+      "core_dependencies": [
+        "Python stdlib"
+      ],
+      "extraction_scope": "Extract expanded-AABB bidirectionally unique association only.",
+      "platform_retains": "ROS type construction/copy, geometry validity, TTL and source header checks.",
+      "consumers": [
+        "easyfly_semantic_map"
+      ],
+      "existing_ctest_names": [
+        "test_classification",
+        "test_classification_ros"
+      ],
+      "provenance": "Preserve existing notices; project maintenance is not a claim of theoretical originality."
+    },
+    {
+      "id": "fast_lio",
+      "source_kind": "third_party_source",
+      "source_package": "fast_lio",
+      "source_files": [
+        "src/third_party/slam/fast_lio/package.xml",
+        "src/third_party/slam/fast_lio/CMakeLists.txt",
+        "src/third_party/slam/fast_lio/src/laserMapping.cpp"
+      ],
+      "target": "src/third_party/algorithms/localization/fast_lio",
+      "phase": "ALG-8.1",
+      "core_dependencies": [
+        "PCL",
+        "Eigen",
+        "ROS2",
+        "ikd-Tree/IKFoM (bundled)"
+      ],
+      "extraction_scope": "Move whole upstream root; do not split bundled modules.",
+      "platform_retains": "easyfly_fast_lio_integration launch and TF; original node communication.",
+      "consumers": [
+        "easyfly_fast_lio_integration",
+        "easyfly_sim_launcher"
+      ],
+      "existing_ctest_names": [
+        "easyfly_fast_lio_launch_contract"
+      ],
+      "provenance": "Preserve upstream notices and local patches; exact origin gaps remain explicit."
+    },
+    {
+      "id": "ego_planner",
+      "source_kind": "third_party_source",
+      "source_package": "ego_planner",
+      "source_files": [
+        "src/third_party/planners/ego_planner/plan_manage/package.xml",
+        "src/third_party/planners/ego_planner/plan_manage/CMakeLists.txt",
+        "src/third_party/planners/ego_planner/plan_manage/src/planner_manager.cpp",
+        "src/third_party/planners/ego_planner/plan_manage/src/ego_replan_fsm.cpp",
+        "src/third_party/planners/ego_planner/plan_manage/src/traj_server.cpp"
+      ],
+      "target": "src/third_party/algorithms/planning/ego_planner",
+      "phase": "ALG-8.2",
+      "core_dependencies": [
+        "ROS2",
+        "PCL",
+        "Eigen",
+        "bundled planner packages"
+      ],
+      "extraction_scope": "Move entire ego_planner project root, including sibling packages and local patches.",
+      "platform_retains": "easyfly_local_planner launch; coordinator sessions, flight_control trajectory execution.",
+      "consumers": [
+        "easyfly_local_planner",
+        "easyfly_global_planner",
+        "easyfly_flight_control"
+      ],
+      "existing_ctest_names": [
+        "test_navigation_chain",
+        "test_local_coordinator"
+      ],
+      "provenance": "Preserve upstream notices and local patches; exact origin gaps remain explicit."
+    },
+    {
+      "id": "retain_easyfly_camera_calib",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_camera_calib",
+      "source_files": [
+        "src/perception/p1_preprocess/easyfly_camera_calib/CMakeLists.txt"
+      ],
+      "target": "src/perception/p1_preprocess/easyfly_camera_calib",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Calibration metadata/CameraInfo contracts and platform TF.",
+      "consumers": [
+        "easyfly_camera_calib"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_time_sync",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_time_sync",
+      "source_files": [
+        "src/perception/p1_preprocess/easyfly_time_sync/CMakeLists.txt"
+      ],
+      "target": "src/perception/p1_preprocess/easyfly_time_sync",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "ROS/source pairing, bounded queues and clock policy.",
+      "consumers": [
+        "easyfly_time_sync"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_coord_transform",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_coord_transform",
+      "source_files": [
+        "src/perception/p1_preprocess/easyfly_coord_transform/CMakeLists.txt"
+      ],
+      "target": "src/perception/p1_preprocess/easyfly_coord_transform",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Platform ENU/NED/FLU and odom/TF contract.",
+      "consumers": [
+        "easyfly_coord_transform"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_landing_detection",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_landing_detection",
+      "source_files": [
+        "src/perception/p2_detection/easyfly_landing_detection/CMakeLists.txt"
+      ],
+      "target": "src/perception/p2_detection/easyfly_landing_detection",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Selected-tag adapter and expiry, no independent detector.",
+      "consumers": [
+        "easyfly_landing_detection"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_precision_landing",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_precision_landing",
+      "source_files": [
+        "src/execution/e3_control/easyfly_precision_landing/CMakeLists.txt"
+      ],
+      "target": "src/execution/e3_control/easyfly_precision_landing",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Observation conversion and flight reservation/guidance/landing policy.",
+      "consumers": [
+        "easyfly_precision_landing"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_flight_control",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_flight_control",
+      "source_files": [
+        "src/execution/e3_control/easyfly_flight_control/CMakeLists.txt"
+      ],
+      "target": "src/execution/e3_control/easyfly_flight_control",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Setpoint generation, flight ownership, PX4 handoff, fault/cancel state.",
+      "consumers": [
+        "easyfly_flight_control"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_target_tracking",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_target_tracking",
+      "source_files": [
+        "src/execution/e3_control/easyfly_target_tracking/CMakeLists.txt"
+      ],
+      "target": "src/execution/e3_control/easyfly_target_tracking",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Target selection, follow waypoint lifecycle and loss behavior.",
+      "consumers": [
+        "easyfly_target_tracking"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_obstacle_avoidance",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_obstacle_avoidance",
+      "source_files": [
+        "src/execution/e3_control/easyfly_obstacle_avoidance/CMakeLists.txt"
+      ],
+      "target": "src/execution/e3_control/easyfly_obstacle_avoidance",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Obstacle stop supervisor, no independent planning algorithm.",
+      "consumers": [
+        "easyfly_obstacle_avoidance"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    },
+    {
+      "id": "retain_easyfly_gimbal_control",
+      "source_kind": "platform_retained",
+      "source_package": "easyfly_gimbal_control",
+      "source_files": [
+        "src/execution/e3_control/easyfly_gimbal_control/CMakeLists.txt"
+      ],
+      "target": "src/execution/e3_control/easyfly_gimbal_control",
+      "phase": "retain",
+      "core_dependencies": [],
+      "extraction_scope": "No whole-package migration in this plan.",
+      "platform_retains": "Simulation device model, angle commands and tracking service.",
+      "consumers": [
+        "easyfly_gimbal_control"
+      ],
+      "existing_ctest_names": [],
+      "provenance": "Keep current platform source and notices."
+    }
+  ],
+  "third_party_moves": [
+    {
+      "current": "src/third_party/slam/fast_lio",
+      "target": "src/third_party/algorithms/localization/fast_lio",
+      "phase": "ALG-8.1",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    },
+    {
+      "current": "src/third_party/planners/ego_planner",
+      "target": "src/third_party/algorithms/planning/ego_planner",
+      "phase": "ALG-8.2",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    },
+    {
+      "current": "src/third_party/onnxruntime",
+      "target": "src/third_party/runtimes/onnxruntime",
+      "phase": "ALG-5",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    },
+    {
+      "current": "src/third_party/livox_sdk2",
+      "target": "src/third_party/sensor_sdks/livox_sdk2",
+      "phase": "ALG-8.3",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    },
+    {
+      "current": "src/third_party/librealsense",
+      "target": "src/third_party/sensor_sdks/librealsense",
+      "phase": "ALG-8.3",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    },
+    {
+      "current": "src/third_party/qgc",
+      "target": "src/third_party/tools/qgc",
+      "phase": "ALG-8.4",
+      "policy": "Outer root relocation only; retain upstream structure, package names, licenses and patches."
+    }
+  ],
+  "future_api_packages": [
+    "easyfly_tracking_api",
+    "easyfly_grid_planner_api",
+    "easyfly_detection_api",
+    "easyfly_single_tracking_api"
+  ],
+  "excluded_placeholders": [
+    "easyfly_ellipse_detection",
+    "easyfly_color_line_detection",
+    "easyfly_vehicle_reid",
+    "easyfly_depth_estimation",
+    "easyfly_swarm_planner",
+    "easyfly_trajectory_optimizer"
+  ],
+  "empty_dependency_directories": {
+    "src/third_party/geographic_lib": "src/third_party/libraries/geometry/geographic_lib",
+    "src/third_party/nlopt": "src/third_party/libraries/optimization/nlopt",
+    "src/third_party/nlohmann_json": "src/third_party/libraries/serialization/nlohmann_json"
+  },
+  "local_assets": [
+    "src/third_party/onnxruntime/include/onnxruntime_cxx_api.h",
+    "src/third_party/onnxruntime/lib/libonnxruntime.so.1.23.2",
+    "src/third_party/onnxruntime/lib/libonnxruntime_providers_cuda.so",
+    "src/third_party/onnxruntime/lib/libonnxruntime_providers_shared.so",
+    "src/third_party/QGC.AppImage",
+    "models/yolo11n.onnx",
+    "models/yolo11n.pt"
+  ],
+  "known_gaps": [
+    "SORT raw/stable feedback ROS integration coverage to add in ALG-2.",
+    "A* core lacks cancel/budget argument; explicit enhancement required in ALG-3.",
+    "Detection current registered contract is static, not fresh inference accuracy acceptance.",
+    "Semantic shutdown issue remains open; regression success does not establish a fix.",
+    "Third-party exact origin/license gaps remain as recorded in existing provenance documents.",
+    "Default install lacks easyfly_fastdds_compat; baseline explicitly uses existing scene-s3 compatibility prefix with matched patch/config/library signature.",
+    "Default easyfly_px4_sitl Python install lacks imu_compatibility; support package is rebuilt in isolated baseline prefix before FAST-LIO contract rerun.",
+    "FAST-LIO contract still requires configured reviewed PX4 HRT tree after refreshing Python package; latest run fails on missing isolated HRT tree.",
+    "Frozen-clock stop-stream test fails waiting for initial connected/pose/attitude readiness; original production sources remain unchanged."
+  ],
+  "shared_file_rule": "A file may be listed by multiple components for scoped extraction; residual node code stays in the source package. All unlisted node/launch/config/msg glue remains platform-owned.",
+  "support_packages": [
+    "easyfly_px4_sitl",
+    "easyfly_fastdds_compat",
+    "easyfly_mavlink_bridge"
+  ]
+}

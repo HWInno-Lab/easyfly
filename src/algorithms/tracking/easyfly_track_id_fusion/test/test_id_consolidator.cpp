@@ -1,10 +1,10 @@
 // IdConsolidator 单元测试 (Q19): 世界系 id 重关联
 #include <gtest/gtest.h>
 
-#include "easyfly_multi_object_tracking/id_consolidator.hpp"
+#include "easyfly_track_id_fusion/id_consolidator.hpp"
 
-using easyfly_multi_object_tracking::IdConsolidator;
-using easyfly_multi_object_tracking::WorldObs;
+using easyfly::track_id_fusion::IdConsolidator;
+using easyfly::track_id_fusion::WorldObs;
 using Vec = std::vector<int>;
 using Map = std::map<int, WorldObs>;
 
@@ -104,4 +104,56 @@ TEST(IdConsolidator, RevivedGraveNotMatchedTwice)
   c.update({12}, {{12, obs(8.1, 2.0)}}, 2.0);  // 12 → 7 (墓园移除)
   c.update({13}, {{13, obs(8.2, 2.0)}}, 3.0);  // 另一新 id 同位置: 7 已复活无墓 → 不合并
   EXPECT_EQ(c.stableId(13), 13);
+}
+
+TEST(IdConsolidator, FirstDelayedWorldObservationCanInheritGrave)
+{
+  IdConsolidator c;
+  c.update({7}, {{7, obs(8, 2)}}, 0.0);
+  c.update({}, {}, 1.0);
+  c.update({12}, {}, 2.0);
+  EXPECT_EQ(c.stableId(12), 12);
+  c.update({12}, {{12, obs(8.1, 2)}}, 2.1);
+  EXPECT_EQ(c.stableId(12), 7);
+  c.update({12, 13}, {{13, obs(8.1, 2)}}, 2.2);
+  EXPECT_EQ(c.stableId(13), 13);
+}
+
+TEST(IdConsolidator, ObservedIdentityDoesNotChangeWhenGraveAppearsLater)
+{
+  IdConsolidator c;
+  c.update({7, 12}, {{7, obs(8, 2)}, {12, obs(8.1, 2)}}, 0.0);
+  c.update({12}, {{12, obs(8.1, 2)}}, 1.0);
+  c.update({12}, {{12, obs(8.1, 2)}}, 2.0);
+  EXPECT_EQ(c.stableId(12), 12);
+}
+
+TEST(IdConsolidator, ResetClearsMappingsAndGraves)
+{
+  IdConsolidator c;
+  c.update({7}, {{7, obs(8, 2)}}, 0.0);
+  c.update({}, {}, 1.0);
+  c.reset();
+  c.update({12}, {{12, obs(8.1, 2)}}, 2.0);
+  EXPECT_EQ(c.stableId(12), 12);
+}
+
+TEST(IdConsolidator, DelayedWorldAfterTtlDoesNotInherit)
+{
+  IdConsolidator c;
+  c.update({7}, {{7, obs(8, 2)}}, 0.0);
+  c.update({}, {}, 1.0);
+  c.update({12}, {}, 2.0);
+  c.update({12}, {{12, obs(8.1, 2)}}, 12.0);
+  EXPECT_EQ(c.stableId(12), 12);
+}
+
+TEST(IdConsolidator, DelayedDifferentClassDoesNotInherit)
+{
+  IdConsolidator c;
+  c.update({7}, {{7, obs(8, 2, "person")}}, 0.0);
+  c.update({}, {}, 1.0);
+  c.update({12}, {}, 2.0);
+  c.update({12}, {{12, obs(8.1, 2, "car")}}, 2.1);
+  EXPECT_EQ(c.stableId(12), 12);
 }

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "baseline_inventory": "migration-inventory.json",
+  "baseline_inventory_is_historical": true,
+  "latest_completed_phase": "ALG-2",
+  "next_phase": "ALG-3",
+  "implemented_api_packages": ["easyfly_tracking_api", "easyfly_grid_planner_api"],
+  "migrated_components": [
+    {
+      "id": "sort",
+      "package": "easyfly_sort",
+      "path": "src/algorithms/tracking/easyfly_sort",
+      "core_namespace": "easyfly::sort",
+      "consumer": "easyfly_multi_object_tracking",
+      "legacy_headers": "using aliases only",
+      "normal_trace_equivalent_to_baseline": true
+    },
+    {
+      "id": "track_id_fusion",
+      "package": "easyfly_track_id_fusion",
+      "path": "src/algorithms/tracking/easyfly_track_id_fusion",
+      "core_namespace": "easyfly::track_id_fusion",
+      "consumer": "easyfly_multi_object_tracking",
+      "legacy_headers": "using aliases only",
+      "intentional_fix": "Retry grave association on the first delayed world observation of a provisional raw ID."
+    }
+  ],
+  "third_party_moves_executed": [],
+  "details": "alg2-validation.md"
+}
