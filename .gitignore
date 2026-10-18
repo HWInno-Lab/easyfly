@@ -39,6 +39,7 @@ src/third_party/algorithms/localization/fast_lio/doc/
 
 # Local legacy-path bridge for already-running/pre-migration installs; excluded by COLCON_IGNORE.
 /src/third_party/slam/
+/src/third_party/planners/
 
 # 临时文件
 *.txt

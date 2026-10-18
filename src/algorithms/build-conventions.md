@@ -156,3 +156,11 @@ CMake FASTLIO_OUTPUT_ROOT 可隔离 Log/PCD输出；配置/消息/算法不变�
 并将该 prefix 的 lib 放在本次进程加载路径首位，不依赖旧源码或全局修改 LD_LIBRARY_PATH。
 已启动旧安装使用的源码软链接桥接仅本地忽略，并由旧父目录 COLCON_IGNORE 排除。
 见 [ALG-8.1 验收](alg8-1-validation.md)，不将完整 ROS 工程冒称为纯 C++ 核心。
+
+ALG-8.2 EGO 的8包整体位于 `../third_party/algorithms/planning/ego_planner`。
+plan_env/path_searching/traj_utils_so 通过包导出目标传播依赖；不拼接相邻包源码目录或猜测工作区根。
+traj_utils_so 同时保留原消息导出并提供其普通库 target；ament_target_dependencies 已链接的目标
+不再通过原始 *_LIBRARIES 重复展开。原优化选项保持。
+普通复制安装根搬迁后，以每包的 *_DIR 及进程级 AMENT_PREFIX_PATH/LD_LIBRARY_PATH/PYTHONPATH
+显式选择新库、消息和节点，消费端仍需 ROS/PCL 等依赖；不承诺生成的整套 colcon shell 脚本任意搬迁。
+复验工具 `../../tools/algorithms/verify_ego_install.py`，见 [ALG-8.2 验收](alg8-2-validation.md)。

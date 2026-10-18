@@ -145,6 +145,12 @@ ALG-8.1 将 FAST-LIO 完整 ROS 工程分类至 third_party/algorithms/localizat
 启动参数 scoping 夹具显式隔离无关 PX4 前提，生产 HRT/native IMU 守卫保持并独立回归。
 来源/许可未知项与本地旧安装桥接范围见 [ALG-8.1 验收](alg8-1-validation.md)。
 
+ALG-8.2 EGO 完整 ROS 工程位于 third_party/algorithms/planning/ego_planner，内部8包保持。
+easyfly_local_planner 继续提供平台 launch/接线，既有导航会话、固定终点、碰撞与失效/停流补丁保留。
+迁移不改变消息、配置、速度边界和退出断言；构建依赖通过安装导出目标消费。
+本批原有信号/导航测试与历史 ALG0-B03、semantic shutdown/stress 问题分别记录，
+不以通过局部测试宣称历史问题已修复。详见 [ALG-8.2 验收](alg8-2-validation.md)。
+
 ## 6. 接口外的平台职责
 
 保留的公开能力包括现有话题/QoS、服务/Action 名称、CameraInfo 模型、坐标系约定、

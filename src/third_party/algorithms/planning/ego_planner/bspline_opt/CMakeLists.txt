@@ -21,8 +21,6 @@ find_package(path_searching REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(traj_utils_so REQUIRED)
 
-set(PLAN_ENV_INCLUDE_DIRS "${plan_env_DIR}/../../../include")
-
 set(dependencies
   rclcpp
   std_msgs
@@ -36,12 +34,6 @@ set(dependencies
   cv_bridge
   traj_utils_so
 )
-
-if(TARGET plan_env::plan_env)
-  get_target_property(PLAN_ENV_INCLUDE_DIRS plan_env::plan_env INTERFACE_INCLUDE_DIRECTORIES)
-else()
-  set(PLAN_ENV_INCLUDE_DIRS "${plan_env_DIR}/../../../include")
-endif()
 
 include_directories(
   include
@@ -67,11 +59,7 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-  ${traj_utils_so_LIBRARIES}
-  ${plan_env_LIBRARIES}
-  ${path_searching_LIBRARIES}
   ${PCL_LIBRARIES}
-  plan_env::plan_env
 )
 
 install(TARGETS ${PROJECT_NAME}

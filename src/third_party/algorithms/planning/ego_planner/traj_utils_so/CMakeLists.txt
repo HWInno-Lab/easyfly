@@ -58,6 +58,7 @@ ament_target_dependencies(${PROJECT_NAME}_lib
 )
 
 install(TARGETS ${PROJECT_NAME}_lib
+  EXPORT ${PROJECT_NAME}Targets
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -68,6 +69,7 @@ install(
   DESTINATION include
   FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp"
 )
+ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME}_lib)
 ament_export_dependencies(${dependencies} Eigen3)

@@ -5,9 +5,6 @@ set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -Wall -g")
 
-get_filename_component(PROJECT_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../.." ABSOLUTE)
-list(APPEND CMAKE_PREFIX_PATH ${PROJECT_ROOT_DIR}/install)
-
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(easyfly_msgs REQUIRED)
@@ -25,6 +22,7 @@ find_package(pcl_msgs REQUIRED)
 find_package(bspline_opt REQUIRED)
 find_package(traj_utils_so REQUIRED)
 find_package(plan_env REQUIRED)
+find_package(path_searching REQUIRED)
 
 set(dependencies
   rclcpp
@@ -42,6 +40,7 @@ set(dependencies
   pcl_msgs
   bspline_opt
   plan_env
+  path_searching
 )
 
 include_directories(
@@ -49,12 +48,7 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/include
   ${EIGEN3_INCLUDE_DIR}
   ${PCL_INCLUDE_DIRS}
-  ${PROJECT_ROOT_DIR}/src/planner/bspline_opt/include
-  ${PROJECT_ROOT_DIR}/src/planner/path_searching/include
-  ${PROJECT_ROOT_DIR}/src/planner/plan_env/include
   ${traj_utils_so_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../traj_utils_so/include
-  ${CMAKE_CURRENT_SOURCE_DIR}/../traj_utils_z/include
 )
 
 add_executable(ego_planner_node
@@ -67,10 +61,7 @@ ament_target_dependencies(ego_planner_node ${dependencies})
 ament_target_dependencies(ego_planner_node easyfly_msgs)
 
 target_link_libraries(ego_planner_node
-  ${traj_utils_so_LIBRARIES}
-  ${bspline_opt_LIBRARIES}
   ${PCL_LIBRARIES}
-  ${plan_env_LIBRARIES}
 )
 
 add_executable(traj_server src/traj_server.cpp)
@@ -83,10 +74,6 @@ ament_target_dependencies(traj_server
   traj_utils
   quadrotor_msgs
   bspline_opt
-)
-
-target_link_libraries(traj_server
-  ${bspline_opt_LIBRARIES}
 )
 
 install(TARGETS
@@ -102,8 +89,7 @@ install(DIRECTORY launch config
 if(BUILD_TESTING)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(NAME test_ego_signal_shutdown_ros
-    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_ego_signal_shutdown.py
-      $<TARGET_FILE:ego_planner_node>)
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_ego_signal_shutdown.py)
   set_tests_properties(test_ego_signal_shutdown_ros PROPERTIES TIMEOUT 60 LABELS "ros_network"
     RUN_SERIAL TRUE)
   add_test(NAME test_traj_shutdown_ros

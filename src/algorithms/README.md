@@ -3,7 +3,7 @@
 本目录管理 EasyFly 自有的可复用算法实现及接口。2026-10-18 已完成 ALG-0 盘点与
 ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-3 的 A*/覆盖路线迁移，
 并完成 ALG-4 预测/点云过滤、ALG-5 视觉包装和 ALG-6 投影/障碍类别关联迁移。
-ALG-7 建图拆分与 ALG-8.1 第三方 FAST-LIO 分类已完成；下一步 ALG-8.2 EGO 分类。
+ALG-7 建图拆分与 ALG-8.1/8.2 第三方 FAST-LIO/EGO 分类已完成；下一步 ALG-8.3 SDK 分类。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -12,7 +12,7 @@ ALG-7 建图拆分与 ALG-8.1 第三方 FAST-LIO 分类已完成；下一步 ALG
 ## 当前交付
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
-- [当前迁移进度](migration-progress.json)与 [ALG-8.1 验收](alg8-1-validation.md)：实际位置和验证结果。
+- [当前迁移进度](migration-progress.json)与 [ALG-8.2 验收](alg8-2-validation.md)：实际位置和验证结果。
 - [接口与兼容契约](interface-contracts.md)：当前真实行为与拟建立的调用接口。
 - [基线验收](baseline.md)：实际构建/测试结果、证据及未覆盖项。
 - [构建规范](build-conventions.md)与 [ALG-1 验收](alg1-validation.md)：API 导出和两种安装验证。
@@ -30,6 +30,8 @@ ALG-7 建图拆分与 ALG-8.1 第三方 FAST-LIO 分类已完成；下一步 ALG
 - [ALG-7.2 验收](alg7-2-validation.md)：当前帧聚类/AABB、Hungarian/EMA 和完整前向扫掠。
 - [ALG-7.3 验收](alg7-3-validation.md)：observed-cells/cluster-boxes、膨胀和占据持久化。
 - [ALG-8.1 验收](alg8-1-validation.md)：FAST-LIO 完整工程分类、来源、启动/TF 与安装消息消费。
+- [ALG-8.2 验收](alg8-2-validation.md)：EGO 完整8包分类、导航/退出回归、安装库与消息消费。
+- `../../tools/algorithms/verify_ego_install.py`：两种安装、目录搬迁、200组样条差分及既有安全/导航回归。
 - `../../tools/algorithms/verify_fastlio_install.py`：两种安装、目录搬迁、实际 FAST-LIO 进程和原保护验证。
 - `../../tools/algorithms/verify_occupancy_install.py`：逐格原版差分、实际释放/reset、两种安装与无 ROS/PCL 消费。
 - `../../tools/algorithms/verify_obstacle_install.py`：原版几何/状态差分、实际移动障碍、两种安装与旧头消费。

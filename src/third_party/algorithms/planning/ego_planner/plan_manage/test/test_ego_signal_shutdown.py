@@ -10,16 +10,17 @@ import tempfile
 import time
 import unittest
 import yaml
+from ament_index_python.packages import get_package_prefix, get_package_share_directory
 import rclpy
 from rosgraph_msgs.msg import Clock
 
-EXECUTABLE=sys.argv.pop(1)
+EXECUTABLE = sys.argv.pop(1) if len(sys.argv) > 1 else str(
+    Path(get_package_prefix("ego_planner")) / "lib/ego_planner/ego_planner_node")
 
 
 class EgoShutdownTest(unittest.TestCase):
     def test_main_thread_retirement(self):
-        root=Path(__file__).resolve().parents[6]
-        launch=root/'src/execution/e2_planning/easyfly_local_planner/launch/local_planner.launch.py'
+        launch = Path(get_package_share_directory("easyfly_local_planner")) / "launch/local_planner.launch.py"
         tree=ast.parse(launch.read_text())
         assignment=next(n for n in ast.walk(tree) if isinstance(n,ast.Assign)
             and any(isinstance(t,ast.Name) and t.id=='ego_params' for t in n.targets))

@@ -1,6 +1,6 @@
 # 第三方代码分类与迁移索引
 
-2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1 已将 FAST-LIO 分类到 algorithms/localization。其余按 ALG-8 子批次推进。
+2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已将 FAST-LIO/EGO 分类到 algorithms/localization 和 algorithms/planning。其余按后续子批次推进。
 ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为当前布局。
 自有算法实现及包装见 `../algorithms/`；外部项目、库、SDK、模型各自保留原许可。
 
@@ -9,7 +9,7 @@ ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为�
 | 当前路径 | 目标路径 | 类型 / 批次 |
 | --- | --- | --- |
 | `algorithms/localization/fast_lio/` | 已完成 | 雷达惯性定位建图 / ALG-8.1；见 algorithms/localization/README.md |
-| `planners/ego_planner/` | `algorithms/planning/ego_planner/` | 局部轨迹规划 / ALG-8.2 |
+| `algorithms/planning/ego_planner/` | 已完成 | 局部轨迹规划 / ALG-8.2；见 algorithms/planning/README.md |
 | `runtimes/onnxruntime/` | 已完成 | 本地推理运行库 / ALG-5；见 runtimes/README.md |
 | `livox_sdk2/` | `sensor_sdks/livox_sdk2/` | 外部雷达 SDK / ALG-8.3 |
 | `librealsense/` | `sensor_sdks/librealsense/` | 外部相机 SDK / ALG-8.3 |
@@ -31,9 +31,8 @@ ROS 消息/设备适配器放 EasyFly 功能包；可复用普通计算包装放
   FASTLIO_OUTPUT_ROOT 可隔离日志与 PCD；本机旧路径桥接仅用于运行中的旧安装，并以 COLCON_IGNORE 排除。
 - ALG-5 已更新 ORT_ROOT 默认路径与忽略规则。easyfly_yolo_onnx 独占运行库/provider/许可安装，
   动态读取实际 SONAME，PIMPL 隐藏 SDK，支持外部 ORT_ROOT 和 $ORIGIN 安装 RPATH。
-- EGO `plan_manage/CMakeLists.txt` 通过 `../../..` 推导 PROJECT_ROOT_DIR，并追加
-  install/src/planner 搜索路径。这些对原布局的假设必须在重定位时审计，不能只移动目录。
-  bspline_opt 还有基于 plan_env_DIR 的 include 推导，需验证安装消费。
+- ALG-8.2 已清除 EGO 的 PROJECT_ROOT_DIR/src/planner、相邻包源码和 plan_env_DIR include 猜测；
+  使用导出依赖/target，普通复制安装搬迁后验证消费者与节点。完整8包及本地会话/停流补丁保留。
 - Livox 驱动当前使用 `find_library(... /usr/local/lib)` 和 `find_path` 找 SDK，RealSense
   驱动使用 `find_package(realsense2 2.56)`。移动源码不表示消费者已经改用那份源码编译的库；
   验收需记录真实解析出的头文件和动态库，不覆盖系统安装来掩盖依赖问题。

@@ -17,6 +17,7 @@ find_package(message_filters REQUIRED)
 find_package(pcl_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL 1.7 REQUIRED)
+find_package(plan_env REQUIRED)
 
 set(dependencies
   rclcpp
@@ -29,15 +30,13 @@ set(dependencies
   pcl_msgs
   pcl_conversions
   PCL
+  plan_env
 )
-
-get_filename_component(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
 
 include_directories( 
     include 
     ${Eigen3_INCLUDE_DIRS} 
     ${PCL_INCLUDE_DIRS}
-    ${PROJECT_ROOT}/plan_env/include
     ${message_filters_INCLUDE_DIRS}
     ${pcl_msgs_INCLUDE_DIRS}
 )
