@@ -39,6 +39,19 @@ struct Options {
 };
 inline float medianDepth(const Box & t, const DepthView & depth, const Options & options = {})
 {
+  if (!depth.data || depth.width <= 0 || depth.height <= 0 ||
+    depth.row_stride / sizeof(float) < static_cast<std::size_t>(depth.width) ||
+    depth.row_stride % sizeof(float) != 0 ||
+    static_cast<std::size_t>(depth.height) > depth.byte_count / depth.row_stride) return -1.0f;
+  const float edges[] = {
+    (t.bbox_center_x - t.bbox_width / 2) * depth.width,
+    (t.bbox_center_x + t.bbox_width / 2) * depth.width,
+    (t.bbox_center_y - t.bbox_height / 2) * depth.height,
+    (t.bbox_center_y + t.bbox_height / 2) * depth.height};
+  for (float edge : edges) {
+    if (!std::isfinite(edge) || static_cast<double>(edge) < std::numeric_limits<int>::min() ||
+      static_cast<double>(edge) > std::numeric_limits<int>::max()) return -1.0f;
+  }
         const int W = static_cast<int>(depth.width);
         const int H = static_cast<int>(depth.height);
 
@@ -49,8 +62,8 @@ inline float medianDepth(const Box & t, const DepthView & depth, const Options &
         int v2 = std::clamp(static_cast<int>((t.bbox_center_y + t.bbox_height / 2) * H), 0, H - 1);
         if (u2 <= u1 || v2 <= v1) return -1.0f;
 
-        const float * depth_ptr = reinterpret_cast<const float *>(depth.data);
-        const size_t row_step = depth.row_stride / sizeof(float);
+        const std::uint8_t * depth_ptr = depth.data;
+        const size_t row_step = depth.row_stride;
 
         // 下采样采集 (步长按框大小自适应, 最多 ~200 采样点)
         std::vector<float> vals;
@@ -59,7 +72,8 @@ inline float medianDepth(const Box & t, const DepthView & depth, const Options &
         const int dv = std::max(1, (v2 - v1) / 14);
         for (int v = v1; v <= v2; v += dv)
             for (int u = u1; u <= u2; u += du) {
-                const float d = depth_ptr[v * row_step + u];
+                float d;
+                std::memcpy(&d, depth_ptr + v * row_step + u * sizeof(float), sizeof(float));
                 if (std::isfinite(d) && d > options.min_depth && d < options.max_depth)
                     vals.push_back(d);
             }

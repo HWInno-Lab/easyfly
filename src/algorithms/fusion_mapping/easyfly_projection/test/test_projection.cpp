@@ -24,6 +24,23 @@ TEST(Projection, InvalidDepthAndInsufficientRatio)
   values[4] = INFINITY;
   EXPECT_FLOAT_EQ(p::medianDepth({.5f,.5f,1,1}, view(values,3,3,3)), -1);
 }
+TEST(Projection, InvalidLayoutAndNonFiniteBoxAreRejected)
+{
+  std::vector<float> values(9, 2);
+  auto image=view(values,3,3,3); image.byte_count=4;
+  EXPECT_FLOAT_EQ(p::medianDepth({.5f,.5f,1,1}, image), -1);
+  image=view(values,3,3,3); image.row_stride=0;
+  EXPECT_FLOAT_EQ(p::medianDepth({.5f,.5f,1,1}, image), -1);
+  EXPECT_FLOAT_EQ(p::medianDepth({NAN,.5f,1,1}, view(values,3,3,3)), -1);
+  EXPECT_FLOAT_EQ(p::medianDepth({.5f,.5f,0,0}, view(values,3,3,3)), -1);
+}
+TEST(Projection, BorrowedUnalignedBytes)
+{
+  std::vector<std::uint8_t> bytes(4 * 9 + 1);
+  const float depth=2;
+  for(int i=0;i<9;++i)std::memcpy(bytes.data()+1+i*4,&depth,4);
+  EXPECT_FLOAT_EQ(p::medianDepth({.5f,.5f,1,1}, {bytes.data()+1,36,3,3,12}), 2);
+}
 TEST(Projection, OpticalAxesRightDownForward)
 {
   auto xyz=p::pinhole(330,220,2,100,200,320,240);

@@ -1,7 +1,7 @@
-# 算法接口与行为冻结（ALG-0 至 ALG-5）
+# 算法接口与行为冻结（ALG-0 至 ALG-6）
 
 基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
-ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-5 已完成规划、预测/滤波和视觉抽离。
+ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离。
 本文件记录不变的计算语义和各批次显式新增的接口检查。
 实际头文件与细节见各 API 包 README；以下单位和职责边界继续作为迁移约束。
 
@@ -114,6 +114,13 @@ ALG-4 已将完整预测历史模型迁入 `easyfly_motion_prediction`，过滤�
 `easyfly_pointcloud_filters`；节点直接调用新普通类型/函数，旧头仅保留别名。
 两份核心和节点正文经结构归一后与原版相同，双时钟、源时间 TF、队列/过期规则未改变。
 实际时序、安装与独立消费验证见 [ALG-4 验收](alg4-validation.md)。
+
+ALG-6 已将中位深度/针孔迁入 easyfly_projection，投影与 Z-buffer 迁入 easyfly_projection_py，
+expanded-AABB 双向唯一匹配迁入 easyfly_obstacle_association。后两者仅使用 Python 标准库。
+原 projection.py 保留 ROS 字节布局解析和序列化；分类 core.py 保留消息/快照校验、完整几何深拷贝、TTL。
+像素节点原有 latest TF 回退仍保留；两源精确时间且不回退 latest 的约束属于雷达相机融合。
+C++ 借用视图新增布局/可表示整数检查并通过 memcpy 支持非对齐数据，边界增强与迁移分开提交。
+240 组 C++ 深度/反投影、240 组 Python 投影及 320 组完整分类消息对照，详见 [ALG-6 验收](alg6-validation.md)。
 
 ## 6. 接口外的平台职责
 

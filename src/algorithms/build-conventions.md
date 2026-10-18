@@ -11,11 +11,13 @@ ALG-4 新增 `tracking/easyfly_motion_prediction` 和 `preprocessing/easyfly_poi
 均仅依赖标准库。节点直接使用已有普通类型，显式传入时间；TF/队列保留在功能包。
 ALG-5 新增 detection/single_tracking API 和 YOLO/标志位姿/CSRT 包装。API 使用 OpenCV 图像类型，
 不依赖具体实现；YOLO 私有依赖 ONNX Runtime，通过 PIMPL 隐藏 SDK，单独负责运行库安装。
+ALG-6 新增标准库 C++ easyfly_projection，以及标准库 Python easyfly_projection_py 和
+easyfly_obstacle_association。Python 包由 ament_cmake_python 安装，公开普通模块，不创建空 C++ target。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
 
-- 独立包包含 package.xml、CMakeLists.txt、include/包名、README 和必要测试。
+- 独立包包含 package.xml、CMakeLists.txt、README 和必要测试；C++ 使用 include/包名，Python 使用同名模块目录。
 - 自有源码使用根项目 Apache-2.0；导入源码保留原来源与许可，不套用本模板覆盖。
 - 可独立替换的实现单独建包，接口包不依赖具体算法，不引入跟踪/规划之外的平台对象。
 - 公开头不包含 ROS 消息、节点、TF 或 SDK；Eigen/OpenCV 等计算库仅在实际需要的包声明；图像 API 显式声明 OpenCV。
@@ -25,7 +27,7 @@ ALG-5 新增 detection/single_tracking API 和 YOLO/标志位姿/CSRT 包装。A
 
 现有 target：
 
-| 包 | 头文件 | CMake target |
+| 包 | 头文件/模块 | CMake target / Python import |
 | --- | --- | --- |
 | easyfly_tracking_api | easyfly_tracking_api/tracker.hpp | easyfly_tracking_api::easyfly_tracking_api |
 | easyfly_grid_planner_api | easyfly_grid_planner_api/planner.hpp | easyfly_grid_planner_api::easyfly_grid_planner_api |
@@ -40,6 +42,9 @@ ALG-5 新增 detection/single_tracking API 和 YOLO/标志位姿/CSRT 包装。A
 | easyfly_yolo_onnx | easyfly_yolo_onnx/backend_factory.hpp | easyfly_yolo_onnx::easyfly_yolo_onnx |
 | easyfly_tag_pose | easyfly_tag_pose/tag_core.hpp | easyfly_tag_pose::easyfly_tag_pose |
 | easyfly_csrt | easyfly_csrt/track_core.hpp | easyfly_csrt::easyfly_csrt |
+| easyfly_projection | easyfly_projection/projection.hpp | easyfly_projection::easyfly_projection |
+| easyfly_projection_py | easyfly_projection_py/core.py | easyfly_projection_py.core（Python） |
+| easyfly_obstacle_association | easyfly_obstacle_association/core.py | easyfly_obstacle_association.core（Python） |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -116,3 +121,8 @@ ALG-4 的预测/过滤核心、双时钟与源时间 TF 回归见 [ALG-4 验收]
 ALG-5 图像/单目标接口和 OpenCV 包装、SDK 私有依赖/许可安装、旧头与搬迁验证见
 [ALG-5 验收](alg5-validation.md)。普通 CMake 通过五个核心 prefix 消费，
 独立编译不需要 ROS 或 SDK include。ORT_ROOT 显式外部覆盖由普通安装矩阵验证。
+
+ALG-6 同时验证普通 C++ target 和 Python 已安装模块：
+[ALG-6 验收](alg6-validation.md)，复验工具 `../../tools/algorithms/verify_fusion_install.py`。
+Python 模块位于平台选择的 site-packages/dist-packages；消费夹具按显式 prefix 发现目录，
+在 python -I 与清理环境下导入，不读取 ROS overlay 或工作区源码路径。普通安装搬迁后重复消费。

@@ -2,8 +2,8 @@
 
 本目录管理 EasyFly 自有的可复用算法实现及接口。2026-10-18 已完成 ALG-0 盘点与
 ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-3 的 A*/覆盖路线迁移，
-并完成 ALG-4 的预测/点云过滤和 ALG-5 的检测、标志位姿与单目标跟踪迁移。
-下一阶段为 ALG-6 投影与障碍类别关联。
+并完成 ALG-4 预测/点云过滤、ALG-5 视觉包装和 ALG-6 投影/障碍类别关联迁移。
+下一阶段为 ALG-7 地面、障碍和占据建图拆分，按三个子批次推进。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -12,7 +12,7 @@ ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-
 ## 当前交付
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
-- [当前迁移进度](migration-progress.json)与 [ALG-5 验收](alg5-validation.md)：实际位置和验证结果。
+- [当前迁移进度](migration-progress.json)与 [ALG-6 验收](alg6-validation.md)：实际位置和验证结果。
 - [接口与兼容契约](interface-contracts.md)：当前真实行为与拟建立的调用接口。
 - [基线验收](baseline.md)：实际构建/测试结果、证据及未覆盖项。
 - [构建规范](build-conventions.md)与 [ALG-1 验收](alg1-validation.md)：API 导出和两种安装验证。
@@ -25,6 +25,8 @@ ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-
 - [ALG-2 验收](alg2-validation.md)：跟踪实现与真实世界坐标回流。
 - [ALG-3 验收](alg3-validation.md)：规划、覆盖路线与控制增强。
 - [ALG-5 验收](alg5-validation.md)：真实 CPU/CUDA 检测、标志位姿、CSRT 与 SDK 安装责任。
+- [ALG-6 验收](alg6-validation.md)：中位深度/针孔、普通投影和双向类别关联；平台保留时间与消息。
+- `../../tools/algorithms/verify_fusion_install.py`：完整消息差分、原 ROS 回归、无 ROS C++/Python 消费。
 - `../../tools/algorithms/verify_vision_install.py`：视觉差分、原 ROS 入口、两种安装与无 ROS 消费。
 - `../../tools/algorithms/verify_prediction_filter_install.py`：预测/过滤、真实时序、旧头与独立消费。
 - `../../tools/algorithms/verify_planning_install.py`：规划/搜索回归、两种安装及真实库消费。

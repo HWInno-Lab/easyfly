@@ -136,7 +136,11 @@ private:
     float medianDepth(const easyfly_msgs::msg::TrackInfo & t,
                       const sensor_msgs::msg::Image & depth) const
     {
-        if (depth.encoding != "32FC1") return -1.0f;
+        const std::uint16_t endian_probe = 1;
+        const bool host_bigendian = *reinterpret_cast<const std::uint8_t *>(&endian_probe) == 0;
+        if (depth.encoding != "32FC1" || depth.is_bigendian != host_bigendian ||
+            depth.width > static_cast<std::uint32_t>(std::numeric_limits<int>::max()) ||
+            depth.height > static_cast<std::uint32_t>(std::numeric_limits<int>::max())) return -1.0f;
         return easyfly::projection::medianDepth(
             {t.bbox_center_x, t.bbox_center_y, t.bbox_width, t.bbox_height},
             {depth.data.data(), depth.data.size(), static_cast<int>(depth.width),
