@@ -75,14 +75,28 @@ public:
         loadParams();
         rcl_interfaces::msg::ParameterDescriptor descriptor;
         descriptor.read_only = true;
+        AStarParams algorithm_params;
+        const auto max_cells = declare_parameter<std::int64_t>("max_grid_cells", 4000000, descriptor);
+        const auto expansions = declare_parameter<std::int64_t>("planning_max_expansions", 4000000, descriptor);
+        planning_timeout_ = declare_parameter<double>("planning_timeout", 5.0, descriptor);
+        if (max_cells < 1 || expansions < 0 || !std::isfinite(planning_timeout_) ||
+            planning_timeout_ <= 0 || planning_timeout_ > 300) throw std::invalid_argument("invalid planning budget");
+        algorithm_params.max_cells = static_cast<std::size_t>(max_cells);
+        planning_max_expansions_ = static_cast<std::size_t>(expansions);
         planner_ = make_planner(declare_parameter<std::string>(
-            "planner_backend", "astar", descriptor));
+            "planner_backend", "astar", descriptor), algorithm_params);
 
         auto qos = rclcpp::QoS(10);
         grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
             params_.grid_topic, qos,
             [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
+                std::lock_guard<std::mutex> send_lock(send_mtx_);
                 std::lock_guard<std::mutex> lk(snap_mtx_);
+                if (!occupancyGridReady(*msg)) {
+                    ++map_invalidations_;
+                    search_stop_ = true;
+                }
+                ++grid_revision_;
                 latest_grid_ = std::move(msg);
                 grid_arrival_ = std::chrono::steady_clock::now();
                 grid_received_ = true;
@@ -114,6 +128,7 @@ public:
     {
         stopping_ = true;
         cancel_req_ = true;
+        search_stop_ = true;
         if (worker_.joinable()) worker_.join();
     }
 
@@ -173,11 +188,14 @@ private:
 
     // ------------------------------------------------ 快照
 
-    nav_msgs::msg::OccupancyGrid::ConstSharedPtr snapGrid(double & age_s)
+    nav_msgs::msg::OccupancyGrid::ConstSharedPtr snapGrid(double & age_s, std::uint64_t * revision = nullptr,
+      std::uint64_t * invalidations = nullptr)
     {
         std::lock_guard<std::mutex> lk(snap_mtx_);
         age_s = std::chrono::duration<double>(
             std::chrono::steady_clock::now() - grid_arrival_).count();
+        if (revision) *revision = grid_revision_;
+        if (invalidations) *invalidations = map_invalidations_;
         return latest_grid_;
     }
 
@@ -255,6 +273,8 @@ private:
     {
         std::lock_guard<std::mutex> lk(goal_mtx_);
         if (auto current = active_goal_.lock(); current && current == gh) {
+            std::lock_guard<std::mutex> send_lock(send_mtx_);
+            search_stop_ = true;
             cancel_req_ = true;  // 仅取消当前 parent goal 的控制线程
             return rclcpp_action::CancelResponse::ACCEPT;
         }
@@ -293,6 +313,7 @@ private:
             active_ = true;
             active_goal_ = gh;
             cancel_req_ = false;
+            search_stop_ = false;
             child_fault_ = false;
         }
         if (worker_.joinable()) worker_.join();
@@ -347,6 +368,7 @@ private:
             active_goal_.reset();
             active_ = false;
             cancel_req_ = false;
+            search_stop_ = false;
         }
     }
 
@@ -375,6 +397,13 @@ private:
             return false;
         }
         try {
+            // Serialize the final admission check and send with map invalidation
+            // and parent cancellation. Release this lock before polling futures.
+            std::lock_guard<std::mutex> send_lock(send_mtx_);
+            if (stopping_ || cancel_req_ || (safety_check && !safety_check())) {
+                lifecycle.resolveSend(false);
+                return false;
+            }
             goal_fut = cli_wp_->async_send_goal(goal);
         } catch (const std::exception & e) {
             lifecycle.resolveSend(false);
@@ -641,7 +670,8 @@ private:
             return;
         }
         double grid_age = 0;
-        const auto grid_msg = snapGrid(grid_age);
+        std::uint64_t revision = 0, map_generation = 0;
+        const auto grid_msg = snapGrid(grid_age, &revision, &map_generation);
         if (!grid_msg || grid_age > params_.grid_stale_timeout ||
             !occupancyGridReady(*grid_msg)) {
             auto res = std::make_shared<NavigateTo::Result>();
@@ -658,6 +688,7 @@ private:
         request.grid = {grid_msg->info.width, grid_msg->info.height,
             grid_msg->info.resolution, grid_msg->info.origin.position.x,
             grid_msg->info.origin.position.y, grid_msg->data.data(), grid_msg->data.size()};
+        request.map.revision = revision;
         request.map.source_stamp_ns = static_cast<std::int64_t>(grid_msg->header.stamp.sec) *
             1000000000 + grid_msg->header.stamp.nanosec;
 
@@ -679,10 +710,30 @@ private:
         // ---- 规划 ----
         request.start = {uav.position_x, uav.position_y};
         request.goal = {goal->target_x, goal->target_y};
-        const auto plan = planner_->plan(request, {});
-        if (plan.status != gp::Status::ok) {
+        gp::SearchControl control;
+        control.cancel_requested = &search_stop_;
+        control.expansion_limit = planning_max_expansions_;
+        control.deadline = gp::SearchControl::Clock::now() +
+            std::chrono::duration_cast<gp::SearchControl::Clock::duration>(
+                std::chrono::duration<double>(planning_timeout_));
+        const auto plan = planner_->plan(request, control);
+        auto mapStillValid = [&]() {
+            double age = 0;
+            std::uint64_t invalidations = 0;
+            const auto current = snapGrid(age, nullptr, &invalidations);
+            return current && invalidations == map_generation &&
+                age <= params_.grid_stale_timeout && occupancyGridReady(*current);
+        };
+        if (cancel_req_ || stopping_ || !mapStillValid() || plan.status != gp::Status::ok) {
             const char * msg =
-                plan.status == gp::Status::goal_in_obstacle ? "goal in inflated obstacle"
+                cancel_req_ ? "cancelled"
+              : stopping_ ? "planner stopping"
+              : !mapStillValid() ? "occupancy grid invalidated during planning"
+              : plan.status == gp::Status::timed_out ? "planning time budget exhausted"
+              : plan.status == gp::Status::budget_exhausted ? "planning expansion budget exhausted"
+              : plan.status == gp::Status::resource_limit ? "planning resource limit"
+              : plan.status == gp::Status::canceled ? "planning interrupted"
+              : plan.status == gp::Status::goal_in_obstacle ? "goal in inflated obstacle"
               : plan.status == gp::Status::out_of_bounds    ? "goal out of grid bounds"
               : plan.status == gp::Status::start_in_obstacle ? "start deeply in obstacle"
               : "no path found";
@@ -690,7 +741,8 @@ private:
             auto res = std::make_shared<NavigateTo::Result>();
             res->success = false;
             res->message = msg;
-            gh->abort(res);
+            if (cancel_req_) gh->canceled(res);
+            else gh->abort(res);
             return;
         }
 
@@ -703,7 +755,7 @@ private:
         const auto t_total0 = std::chrono::steady_clock::now();
         auto requireState = [&](const char * phase, StateSnapshot & snapshot) {
                 snapshot = snapState();
-                if (stateValid(snapshot)) return true;
+                if (stateValid(snapshot) && mapStillValid()) return true;
                 RCLCPP_ERROR(get_logger(), "导航安全终止: UAV state invalid/stale (%s)", phase);
                 if (!cancelWaypointUntilTerminal(
                         wp_gh, wp_goal_fut, wp_res_fut, child_lifecycle, cancel_sent)) {
@@ -711,7 +763,8 @@ private:
                 }
                 auto state_res = std::make_shared<NavigateTo::Result>();
                 state_res->success = false;
-                state_res->message = "uav state invalid or stale";
+                state_res->message = !mapStillValid() ?
+                    "occupancy grid invalidated or stale" : "uav state invalid or stale";
                 gh->abort(state_res);
                 return false;
             };
@@ -758,7 +811,7 @@ private:
 
             if (!issueWaypoint(
                     seg_goal, wp_gh, wp_goal_fut, child_lifecycle,
-                    [this]() {return stateValid(snapState());})) {
+                    [this, &mapStillValid]() {return stateValid(snapState()) && mapStillValid();})) {
                 if (!cancelWaypointUntilTerminal(
                         wp_gh, wp_goal_fut, wp_res_fut, child_lifecycle, cancel_sent)) {
                     return;
@@ -922,7 +975,12 @@ private:
     nav_msgs::msg::OccupancyGrid::ConstSharedPtr latest_grid_;
     std::chrono::steady_clock::time_point grid_arrival_{std::chrono::steady_clock::now()};
     bool grid_received_{false};
+    std::mutex send_mtx_;
     std::unique_ptr<gp::GridPlanner> planner_;
+    std::atomic_bool search_stop_{false};
+    std::uint64_t grid_revision_{0}, map_invalidations_{0};  // Guarded by snap_mtx_.
+    std::size_t planning_max_expansions_{4000000};
+    double planning_timeout_{5.0};
     easyfly_msgs::msg::UAVState latest_state_;
     bool state_received_{false};
     std::chrono::steady_clock::time_point state_arrival_{};

@@ -73,6 +73,10 @@ if(BUILD_TESTING)
     TIMEOUT 30 ENV ROS_LOG_DIR=/tmp/easyfly_d1_astar_deadline_test ROS_DOMAIN_ID=88)
   ament_add_pytest_test(test_astar_endpoint test/test_astar_endpoint.py
     TIMEOUT 45 ENV ROS_LOG_DIR=/tmp/easyfly_astar_endpoint_test ROS_DOMAIN_ID=89)
+  ament_add_pytest_test(test_planning_control_ros test/test_planning_control_ros.py
+    TIMEOUT 75 ENV ROS_DOMAIN_ID=214 ROS_LOG_DIR=/tmp/easyfly_alg3_controls)
+  ament_add_gtest(test_astar_adapter test/test_astar_adapter.cpp)
+  target_link_libraries(test_astar_adapter ${PROJECT_NAME}_backends)
   ament_add_gtest(test_map_validity test/test_map_validity.cpp)
   target_include_directories(test_map_validity PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

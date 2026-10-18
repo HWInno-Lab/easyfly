@@ -1,0 +1,2 @@
+include(CMakeFindDependencyMacro)
+find_dependency(easyfly_grid_planner_api)

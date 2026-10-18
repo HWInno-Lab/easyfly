@@ -2,9 +2,12 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-2",
-  "next_phase": "ALG-3",
-  "implemented_api_packages": ["easyfly_tracking_api", "easyfly_grid_planner_api"],
+  "latest_completed_phase": "ALG-3",
+  "next_phase": "ALG-4",
+  "implemented_api_packages": [
+    "easyfly_tracking_api",
+    "easyfly_grid_planner_api"
+  ],
   "migrated_components": [
     {
       "id": "sort",
@@ -23,8 +26,32 @@
       "consumer": "easyfly_multi_object_tracking",
       "legacy_headers": "using aliases only",
       "intentional_fix": "Retry grave association on the first delayed world observation of a provisional raw ID."
+    },
+    {
+      "id": "astar",
+      "package": "easyfly_astar",
+      "path": "src/algorithms/planning/easyfly_astar",
+      "core_namespace": "easyfly::astar",
+      "consumer": "easyfly_global_planner",
+      "legacy_headers": "using aliases and detail namespace alias only",
+      "normal_trace_equivalent_to_baseline": true,
+      "enhancements": [
+        "expansion budget",
+        "deadline",
+        "cancellation",
+        "validated inputs"
+      ]
+    },
+    {
+      "id": "coverage",
+      "package": "easyfly_coverage_planning",
+      "path": "src/algorithms/planning/easyfly_coverage_planning",
+      "core_namespace": "easyfly::coverage",
+      "consumer": "easyfly_mission_fsm",
+      "legacy_headers": "using aliases only",
+      "normal_trace_equivalent_to_baseline": true
     }
   ],
   "third_party_moves_executed": [],
-  "details": "alg2-validation.md"
+  "details": "alg3-validation.md"
 }

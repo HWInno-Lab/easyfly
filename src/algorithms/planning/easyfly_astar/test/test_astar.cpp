@@ -23,8 +23,9 @@ using easyfly::astar::AStarResult;
 using easyfly::astar::OccupancyGrid2d;
 
 /// 构造空栅格 (w×h 格, 分辨率 res, 原点 (ox,oy))
-static OccupancyGrid2d emptyGrid(int w = 100, int h = 100, double res = 0.2,
-                                 double ox = -10.0, double oy = -10.0)
+static OccupancyGrid2d emptyGrid(
+  int w = 100, int h = 100, double res = 0.2,
+  double ox = -10.0, double oy = -10.0)
 {
   OccupancyGrid2d g;
   g.width = w;
@@ -36,25 +37,31 @@ static OccupancyGrid2d emptyGrid(int w = 100, int h = 100, double res = 0.2,
   return g;
 }
 
-static void fillRect(OccupancyGrid2d & g, double x1, double y1, double x2,
-                     double y2)
+static void fillRect(
+  OccupancyGrid2d & g, double x1, double y1, double x2,
+  double y2)
 {
   const int c1 = std::max(0, static_cast<int>((x1 - g.origin_x) / g.resolution));
-  const int c2 = std::min(g.width - 1,
-      static_cast<int>((x2 - g.origin_x) / g.resolution));
+  const int c2 = std::min(
+    g.width - 1,
+    static_cast<int>((x2 - g.origin_x) / g.resolution));
   const int r1 = std::max(0, static_cast<int>((y1 - g.origin_y) / g.resolution));
-  const int r2 = std::min(g.height - 1,
-      static_cast<int>((y2 - g.origin_y) / g.resolution));
-  for (int r = r1; r <= r2; ++r)
-    for (int c = c1; c <= c2; ++c)
+  const int r2 = std::min(
+    g.height - 1,
+    static_cast<int>((y2 - g.origin_y) / g.resolution));
+  for (int r = r1; r <= r2; ++r) {
+    for (int c = c1; c <= c2; ++c) {
       g.data[r * g.width + c] = 100;
+    }
+  }
 }
 
 static double pathLength(const std::vector<std::pair<double, double>> & p)
 {
   double len = 0;
-  for (size_t i = 1; i < p.size(); ++i)
+  for (size_t i = 1; i < p.size(); ++i) {
     len += std::hypot(p[i].first - p[i - 1].first, p[i].second - p[i - 1].second);
+  }
   return len;
 }
 
@@ -116,7 +123,7 @@ TEST(AStar, GapInWallFound)
   ASSERT_TRUE(r.ok);
   bool near_gap = false;
   for (const auto & [x, y] : r.waypoints) {
-    if (std::abs(x) < 0.6 && std::abs(y) < 1.0) near_gap = true;
+    if (std::abs(x) < 0.6 && std::abs(y) < 1.0) {near_gap = true;}
   }
   EXPECT_TRUE(near_gap);
   EXPECT_GT(pathLength(r.waypoints), 11.0);  // 直线 10m 被挡, 实际绕行
@@ -169,4 +176,84 @@ TEST(AStar, SmoothingReducesWaypoints)
   auto r = planPath(g, -5, 0, 5, 0);
   ASSERT_TRUE(r.ok);
   EXPECT_LE(r.waypoints.size(), 4u);  // 剪枝后极少航点 (绕端 3~4 个)
+}
+
+TEST(AStarControl, ExpansionLimitIsExactAndDoesNotLeakPartialPath)
+{
+  auto grid = emptyGrid();
+  easyfly::astar::SearchControl control;
+  control.expansion_limit = 7;
+  const auto stopped = planPath(grid, -5, 0, 5, 0, 5, control);
+  EXPECT_FALSE(stopped.ok);
+  EXPECT_EQ(stopped.fail, AStarResult::Fail::BUDGET_EXHAUSTED);
+  EXPECT_EQ(stopped.expansions, 7u);
+  EXPECT_TRUE(stopped.waypoints.empty());
+  const auto normal = planPath(grid, -5, 0, 5, 0);
+  ASSERT_TRUE(normal.ok);
+  control.expansion_limit = normal.expansions;
+  const auto exact = planPath(grid, -5, 0, 5, 0, 5, control);
+  EXPECT_TRUE(exact.ok);
+  EXPECT_EQ(exact.waypoints, normal.waypoints);
+  control.expansion_limit = 0;
+  EXPECT_EQ(planPath(grid, 0, 0, .01, .01, 5, control).expansions, 0u);
+  EXPECT_EQ(
+    planPath(grid, 0, 0, .01, .01, 5, control).fail,
+    AStarResult::Fail::BUDGET_EXHAUSTED);
+}
+
+TEST(AStarControl, CancellationDeadlineAndPrecedence)
+{
+  auto grid = emptyGrid();
+  std::atomic_bool canceled{true};
+  easyfly::astar::SearchControl control;
+  control.cancel_requested = &canceled;
+  control.deadline = easyfly::astar::SearchControl::Clock::now();
+  control.expansion_limit = 0;
+  EXPECT_EQ(planPath(grid, -5, 0, 5, 0, 5, control).fail, AStarResult::Fail::CANCELED);
+  canceled = false;
+  EXPECT_EQ(planPath(grid, -5, 0, 5, 0, 5, control).fail, AStarResult::Fail::TIMED_OUT);
+  control.deadline.reset();
+  EXPECT_EQ(
+    planPath(grid, -5, 0, 5, 0, 5, control).fail,
+    AStarResult::Fail::BUDGET_EXHAUSTED);
+  control.expansion_limit.reset();
+  EXPECT_TRUE(planPath(grid, -5, 0, 5, 0, 5, control).ok);
+}
+
+TEST(AStarControl, InterruptedLosAndUnstickUseTheSameControl)
+{
+  auto grid = emptyGrid();
+  std::atomic_bool canceled{true};
+  easyfly::astar::SearchControl control;
+  control.cancel_requested = &canceled;
+  easyfly::astar::detail::SearchContext context{control};
+  EXPECT_THROW(
+    easyfly::astar::detail::lineOfSight(grid, -5, 0, 5, 0, &context),
+    AStarResult::Fail);
+  grid.data.assign(grid.data.size(), 100);
+  EXPECT_THROW(
+    easyfly::astar::detail::nearestFreeCell(grid, 50, 50, 5, &context),
+    AStarResult::Fail);
+}
+
+TEST(AStarControl, RejectsMalformedGeometryAndHalfOpenUpperBoundary)
+{
+  auto grid = emptyGrid();
+  EXPECT_EQ(planPath(grid, 0, 0, 10, 0).fail, AStarResult::Fail::OUT_OF_BOUNDS);
+  EXPECT_EQ(planPath(grid, NAN, 0, 1, 1).fail, AStarResult::Fail::INVALID_INPUT);
+  grid.data.pop_back();
+  EXPECT_EQ(planPath(grid, 0, 0, 1, 1).fail, AStarResult::Fail::INVALID_INPUT);
+  EXPECT_TRUE(grid.worldOccupied(INFINITY, 0));
+  grid = emptyGrid();
+  grid.resolution = 0;
+  EXPECT_EQ(planPath(grid, 0, 0, 1, 1).fail, AStarResult::Fail::INVALID_INPUT);
+}
+
+TEST(AStarControl, UnknownIsFreeAndIllegalValuesAreOccupied)
+{
+  auto grid = emptyGrid();
+  grid.data.assign(grid.data.size(), -1);
+  EXPECT_TRUE(planPath(grid, -5, 0, 5, 0).ok);
+  grid.data.assign(grid.data.size(), 101);
+  EXPECT_FALSE(planPath(grid, -5, 0, 5, 0).ok);
 }

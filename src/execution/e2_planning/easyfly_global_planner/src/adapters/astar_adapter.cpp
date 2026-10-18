@@ -24,7 +24,8 @@ namespace gp = easyfly::grid_planning;
 class AStarAdapter final : public gp::GridPlanner
 {
 public:
-  explicit AStarAdapter(AStarParams params) : params_(params)
+  explicit AStarAdapter(AStarParams params)
+  : params_(params)
   {
     if (!params_.max_cells || params_.max_cells > static_cast<std::size_t>(
         std::numeric_limits<int>::max()) || params_.unstick_cells < 0 ||
@@ -33,7 +34,7 @@ public:
       throw std::invalid_argument("invalid A* parameters");
     }
   }
-  gp::Capabilities capabilities() const override {return {"astar", false, false, false};}
+  gp::Capabilities capabilities() const override {return {"astar", true, true, true};}
   gp::PathResult plan(const gp::Request & request, const gp::SearchControl & control) override
   {
     gp::PathResult result;
@@ -45,6 +46,8 @@ public:
       return result;
     }
     result.status = gp::validate_control(control, capabilities());
+    if (result.status != gp::Status::ok) {return result;}
+    result.status = gp::check_control(control, 0, gp::SearchControl::Clock::now());
     if (result.status != gp::Status::ok) {return result;}
     const auto & g = request.grid;
     const auto inside = [&](gp::Point point) {
@@ -61,32 +64,57 @@ public:
     core.resolution = g.resolution;
     core.origin_x = g.origin_x;
     core.origin_y = g.origin_y;
-    core.data.reserve(g.cell_count);
-    for (std::size_t i = 0; i < g.cell_count; ++i) {
-      core.data.push_back(gp::occupied_value(g.cells[i], g.occupied_threshold,
-          g.unknown_policy) ? 100 : 0);
-    }
-    const auto output = easyfly::astar::planPath(core, request.start.x, request.start.y,
-        request.goal.x, request.goal.y, params_.unstick_cells);
-    using Fail = easyfly::astar::AStarResult::Fail;
-    switch (output.fail) {
-      case Fail::NONE: result.status = output.ok ? gp::Status::ok : gp::Status::backend_error; break;
-      case Fail::START_IN_OBSTACLE: result.status = gp::Status::start_in_obstacle; break;
-      case Fail::GOAL_IN_OBSTACLE: result.status = gp::Status::goal_in_obstacle; break;
-      case Fail::NO_PATH: result.status = gp::Status::no_path; break;
-      case Fail::OUT_OF_BOUNDS: result.status = gp::Status::out_of_bounds; break;
-    }
-    if (result.status == gp::Status::ok) {
-      for (const auto & point : output.waypoints) {
-        result.waypoints.push_back({point.first, point.second});
+    try {
+      core.data.reserve(g.cell_count);
+      for (std::size_t i = 0; i < g.cell_count; ++i) {
+        if (i % 256 == 0) {
+          result.status = gp::check_control(control, 0, gp::SearchControl::Clock::now());
+          if (result.status != gp::Status::ok) {return result;}
+        }
+        core.data.push_back(
+          gp::occupied_value(
+            g.cells[i], g.occupied_threshold,
+            g.unknown_policy) ? 100 : 0);
       }
+      const auto output = easyfly::astar::planPath(
+        core, request.start.x, request.start.y,
+        request.goal.x, request.goal.y, params_.unstick_cells, control);
+      result.expansions = output.expansions;
+      using Fail = easyfly::astar::AStarResult::Fail;
+      switch (output.fail) {
+        case Fail::NONE: result.status = output.ok ? gp::Status::ok : gp::Status::backend_error;
+          break;
+        case Fail::START_IN_OBSTACLE: result.status = gp::Status::start_in_obstacle; break;
+        case Fail::GOAL_IN_OBSTACLE: result.status = gp::Status::goal_in_obstacle; break;
+        case Fail::NO_PATH: result.status = gp::Status::no_path; break;
+        case Fail::INVALID_INPUT: result.status = gp::Status::invalid_input; break;
+        case Fail::RESOURCE_LIMIT: result.status = gp::Status::resource_limit; break;
+        case Fail::CANCELED: result.status = gp::Status::canceled; break;
+        case Fail::TIMED_OUT: result.status = gp::Status::timed_out; break;
+        case Fail::BUDGET_EXHAUSTED: result.status = gp::Status::budget_exhausted; break;
+        case Fail::OUT_OF_BOUNDS: result.status = gp::Status::out_of_bounds; break;
+      }
+      if (result.status == gp::Status::ok) {
+        for (const auto & point : output.waypoints) {
+          result.waypoints.push_back({point.first, point.second});
+        }
+      }
+    } catch (const std::bad_alloc &) {
+      result.status = gp::Status::resource_limit;
+      result.waypoints.clear();
+    } catch (const std::length_error &) {
+      result.status = gp::Status::resource_limit;
+      result.waypoints.clear();
     }
     return result;
   }
+
 private:
   AStarParams params_;
 };
-std::unique_ptr<gp::GridPlanner> make_planner(const std::string & backend, const AStarParams & params)
+std::unique_ptr<gp::GridPlanner> make_planner(
+  const std::string & backend,
+  const AStarParams & params)
 {
   if (backend == "astar") {return std::make_unique<AStarAdapter>(params);}
   throw std::invalid_argument("unknown grid planner backend '" + backend + "' (available: astar)");

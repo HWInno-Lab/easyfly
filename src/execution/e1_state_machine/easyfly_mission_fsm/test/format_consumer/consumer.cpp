@@ -12,6 +12,7 @@
 // limitations under the License.
 
 #include <sstream>
+#include <easyfly_mission_fsm/search_geometry.hpp>
 #include <easyfly_mission_fsm/legacy_mission.hpp>
 #include <easyfly_mission_fsm/mission_format.hpp>
 #include <easyfly_mission_format/mission_format.hpp>
@@ -23,6 +24,8 @@ int main()
   const auto yaml = easyfly_mission_fsm::validateMissionText(
     "schema_version: 1\nframe_id: odom\nunits: {position: m, angle: rad, time: s}\n"
     "steps: [{type: precision_land, tag_id: 7}]\n");
+  const auto route = easyfly_mission_fsm::searchRoute(0, 0, 4, 3, 1.5, 2, {});
+  if (route.size() != 4 || route.back().completed_area != 12) return 2;
   return legacy.valid() && legacy.steps.size() == 2 && yaml.valid() &&
          yaml.steps.front().tag_id == 7 &&
          easyfly_mission_fsm::missionContentSha256("abc") ==

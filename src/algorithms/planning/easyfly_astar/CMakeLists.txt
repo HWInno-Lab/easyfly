@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.16)
 project(easyfly_astar)
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_grid_planner_api REQUIRED)
 add_library(${PROJECT_NAME} INTERFACE)
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} INTERFACE easyfly_grid_planner_api::easyfly_grid_planner_api)
 target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_17)
 target_include_directories(${PROJECT_NAME} INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -16,4 +18,4 @@ if(BUILD_TESTING)
   ament_add_gtest(test_astar test/test_astar.cpp)
   target_link_libraries(test_astar ${PROJECT_NAME})
 endif()
-ament_package()
+ament_package(CONFIG_EXTRAS cmake/algorithm_dependencies.cmake)

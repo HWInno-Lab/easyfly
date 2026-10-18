@@ -22,10 +22,13 @@
 #include <std_srvs/srv/trigger.hpp>
 #include <easyfly_core/ownership_registry.hpp>
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
-#include "easyfly_global_planner/astar.hpp"
+#include "easyfly_astar/astar.hpp"
+#include "easyfly_global_planner/adapters/planner_factory.hpp"
 #include "easyfly_global_planner/map_validity.hpp"
 
 namespace easyfly_global_planner {
+namespace gp = easyfly::grid_planning;
+using easyfly::astar::OccupancyGrid2d;
 // All callbacks use the default mutually exclusive group, also when composed.
 // Public termination does not release unresolved child or planner ownership.
 class NavigationCoordinatorNode : public rclcpp::Node {
@@ -55,6 +58,7 @@ class NavigationCoordinatorNode : public rclcpp::Node {
 public:
   explicit NavigationCoordinatorNode(const rclcpp::NodeOptions & options)
   : Node("navigation_coordinator", options) {
+    combined_planner_ = make_planner("astar", {1000000, 0});
     strategy_ = declare_parameter<std::string>("strategy", "astar");
     if (strategy_ != "astar" && strategy_ != "ego" && strategy_ != "combined")
       throw std::invalid_argument("strategy must be astar, ego or combined");
@@ -215,18 +219,32 @@ private:
     if (c->z < z_min_ || c->z > z_max_) {drain(c, "target altitude outside navigation limits"); return false;}
     c->route.clear(); c->segment = 0;
     if (strategy_ == "ego") {c->route.emplace_back(goal->target_x, goal->target_y); return true;}
-    auto g = grid();
-    auto path = planPath(g, state_->position_x, state_->position_y, goal->target_x, goal->target_y, 0);
-    if (!path.ok) {drain(c, "global route unavailable"); return false;}
+    gp::Request request;
+    request.grid = {map_->info.width, map_->info.height, map_->info.resolution,
+      map_->info.origin.position.x, map_->info.origin.position.y,
+      map_->data.data(), map_->data.size(), 50, gp::UnknownPolicy::occupied};
+    request.start = {state_->position_x, state_->position_y};
+    request.goal = {goal->target_x, goal->target_y};
+    request.map.source_stamp_ns = static_cast<std::int64_t>(map_->header.stamp.sec) *
+      1000000000 + map_->header.stamp.nanosec;
+    gp::SearchControl control;
+    control.expansion_limit = 1000000;
+    // This coordinator's callbacks are mutually exclusive. Bound synchronous
+    // planning by the remaining parent budget and the input freshness window.
+    control.deadline = std::min(c->created + std::chrono::duration_cast<Clock::duration>(
+        std::chrono::duration<double>(goal_timeout_)), Clock::now() +
+        std::chrono::duration_cast<Clock::duration>(std::chrono::duration<double>(freshness_)));
+    const auto path = combined_planner_->plan(request, control);
+    if (path.status != gp::Status::ok) {drain(c, "global route unavailable"); return false;}
     // planPath preserves the requested endpoint before collision/LOS pruning;
     // never replace a checked final segment with an unchecked endpoint here.
     for (size_t i = 1; i < path.waypoints.size(); ++i) {
       const auto from = path.waypoints[i - 1], to = path.waypoints[i];
-      const double distance = std::hypot(to.first - from.first, to.second - from.second);
+      const double distance = std::hypot(to.x - from.x, to.y - from.y);
       const int count = std::max(1, static_cast<int>(std::ceil(distance / step_)));
       for (int j = 1; j <= count; ++j) {
         const double t = static_cast<double>(j) / count;
-        c->route.emplace_back(from.first + (to.first - from.first) * t, from.second + (to.second - from.second) * t);
+        c->route.emplace_back(from.x + (to.x - from.x) * t, from.y + (to.y - from.y) * t);
         if (c->route.size() > 256) {drain(c, "global route exceeds 256 local goals"); return false;}
       }
     }
@@ -364,7 +382,7 @@ private:
     if (!c->draining && strategy_ == "combined" && c->start_done) {
       auto g = grid(); auto target = c->route[c->segment];
       if (g.worldOccupied(target.first, target.second) ||
-          !detail::lineOfSight(g, state_->position_x, state_->position_y, target.first, target.second)) {
+          !easyfly::astar::detail::lineOfSight(g, state_->position_x, state_->position_y, target.first, target.second)) {
         if (c->replans++ < max_replans_) drain(c, "global corridor blocked, replanning", true);
         else drain(c, "global replan budget exhausted");
       }
@@ -383,6 +401,7 @@ private:
     if (success && strategy_ != "astar" && ++c->segment < c->route.size()) {nextSegment(c); return;}
     finish(c, success, c->supervisor ? "supervisor_stop" : c->reason); release(c);
   }
+  std::unique_ptr<gp::GridPlanner> combined_planner_;
   std::string strategy_;
   std::atomic<bool> reserved_{false};
   int max_replans_;

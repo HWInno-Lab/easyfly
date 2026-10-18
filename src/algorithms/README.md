@@ -1,7 +1,8 @@
 # EasyFly 算法目录、接口与迁移基线
 
 本目录管理 EasyFly 自有的可复用算法实现及接口。2026-10-18 已完成 ALG-0 盘点与
-ALG-1 两个 API 包，以及 ALG-2 的 SORT/世界坐标 ID 整合迁移；A* 等其余算法尚未迁移。
+ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-3 的 A*/覆盖路线迁移。
+下一阶段为 ALG-4 预测与点云预处理。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -10,7 +11,7 @@ ALG-1 两个 API 包，以及 ALG-2 的 SORT/世界坐标 ID 整合迁移；A* �
 ## 当前交付
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
-- [当前迁移进度](migration-progress.json)与 [ALG-2 验收](alg2-validation.md)：实际位置和验证结果。
+- [当前迁移进度](migration-progress.json)与 [ALG-3 验收](alg3-validation.md)：实际位置和验证结果。
 - [接口与兼容契约](interface-contracts.md)：当前真实行为与拟建立的调用接口。
 - [基线验收](baseline.md)：实际构建/测试结果、证据及未覆盖项。
 - [构建规范](build-conventions.md)与 [ALG-1 验收](alg1-validation.md)：API 导出和两种安装验证。
@@ -20,6 +21,8 @@ ALG-1 两个 API 包，以及 ALG-2 的 SORT/世界坐标 ID 整合迁移；A* �
 - `../../tools/algorithms/capture_inventory.py`：只读盘点工具，不构建、不启动节点、不移动源码。
 - `../../tools/algorithms/run_baseline.py`：串行运行清单内既有软件回归，保存命令、日志与 JUnit；
   默认使用 DDS 域 212，各测试自带的非零隔离域继续生效。
+- [ALG-2 验收](alg2-validation.md)：跟踪实现与真实世界坐标回流。
+- `../../tools/algorithms/verify_planning_install.py`：规划/搜索回归、两种安装及真实库消费。
 - `../../tools/algorithms/verify_api_install.py`：只构建新 API，验证安装及独立 CMake 消费，不运行节点。
 
 自有实现表示本项目维护实现代码，不表示 SORT、A* 等算法理论为原创。

@@ -4,6 +4,9 @@ ALG-1 建立 `tracking/easyfly_tracking_api` 和 `planning/easyfly_grid_planner_
 二者均为 ament 导出的 C++17 header-only INTERFACE target，没有 ROS 运行库或具体算法依赖。
 ALG-2 新增 `tracking/easyfly_sort` 与 `tracking/easyfly_track_id_fusion` 两个标准库实现包，
 同样导出 INTERFACE target；原跟踪功能包现已通过适配器依赖 tracking API 与这两个实现。
+ALG-3 新增 `planning/easyfly_astar` 与 `planning/easyfly_coverage_planning`；前者依赖
+grid planner API 的 SearchControl，后者仅依赖标准库。全局规划和 combined 协调器
+通过工厂调用 A*，搜索任务直接消费覆盖几何；功能包继续拥有执行与运行接纳。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -24,6 +27,8 @@ ALG-2 新增 `tracking/easyfly_sort` 与 `tracking/easyfly_track_id_fusion` 两�
 | easyfly_grid_planner_api | easyfly_grid_planner_api/planner.hpp | easyfly_grid_planner_api::easyfly_grid_planner_api |
 | easyfly_sort | easyfly_sort/sort.hpp | easyfly_sort::easyfly_sort |
 | easyfly_track_id_fusion | easyfly_track_id_fusion/id_consolidator.hpp | easyfly_track_id_fusion::easyfly_track_id_fusion |
+| easyfly_astar | easyfly_astar/astar.hpp | easyfly_astar::easyfly_astar |
+| easyfly_coverage_planning | easyfly_coverage_planning/search_geometry.hpp | easyfly_coverage_planning::easyfly_coverage_planning |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -54,7 +59,7 @@ colcon build --base-paths src --packages-up-to \
 
 ALG-1 依赖闭包仅含这两个源码包，ament/gtest 来自已安装构建/测试工具。
 ALG-2 已同步更新跟踪包的 package.xml 与链接 target，现有 build_layer.bash 的
---packages-up-to 会自动补入对应算法依赖。规划包接入留到 ALG-3。
+--packages-up-to 会自动补入对应算法依赖。ALG-3 已按同样方式声明规划/覆盖实现依赖。
 
 完整的可重复验证入口：
 
@@ -89,3 +94,7 @@ symlink-install 的安装头自然链接源文件，这是该安装模式的正�
 ALG-2 已实现 SORT 适配器、reset 与实际 ROS 回归，结果及安装验证命令见
 [ALG-2 验收](alg2-validation.md)。适配器共享库使用标准 CMake find_dependency 导出
 公开算法依赖，普通 CMake 消费时无需初始化 ament Python 构建环境。
+
+ALG-3 的真实 A*/覆盖几何、普通 CMake 适配器库与安装矩阵见
+[ALG-3 验收](alg3-validation.md)，复验工具为 `../../tools/algorithms/verify_planning_install.py`。
+两个规划实现与 grid planner API 的源码依赖闭包仅自身三包，不引入 ROS 运行库。
