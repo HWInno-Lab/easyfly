@@ -14,6 +14,7 @@
   <depend>easyfly_msgs</depend>
   <depend>easyfly_core</depend>
   <depend>easyfly_mission_format</depend>
+  <depend>easyfly_coverage_planning</depend>
 
   <exec_depend>easyfly_flight_control</exec_depend>
 

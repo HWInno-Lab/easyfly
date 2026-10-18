@@ -23,6 +23,9 @@
   <depend>easyfly_msgs</depend>
   <depend>easyfly_core</depend>
   <depend>yaml-cpp</depend>
+  <depend>easyfly_astar</depend>
+  <depend>easyfly_grid_planner_api</depend>
+  <depend>rcl_interfaces</depend>
   <exec_depend>easyfly_obstacle_avoidance</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>

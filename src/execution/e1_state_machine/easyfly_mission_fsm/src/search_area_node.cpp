@@ -6,11 +6,14 @@
 #include <easyfly_msgs/srv/get_capabilities.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
-#include "easyfly_mission_fsm/search_geometry.hpp"
+#include "easyfly_coverage_planning/search_geometry.hpp"
 #include <chrono>
 #include <set>
 
 namespace easyfly_mission_fsm {
+using easyfly::coverage::SearchPoint;
+using easyfly::coverage::SearchBounds;
+using easyfly::coverage::searchRoute;
 using Clock = std::chrono::steady_clock;
 using Search = easyfly_msgs::action::SearchArea;
 using Handle = rclcpp_action::ServerGoalHandle<Search>;

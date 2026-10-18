@@ -1,12 +1,26 @@
+// Copyright 2026 EasyFly Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // A* 纯逻辑单元测试 (M4.2): 搜索/绕障/剪枝/失败语义
 #include <gtest/gtest.h>
 
 #include <cmath>
 
-#include "easyfly_global_planner/astar.hpp"
+#include "easyfly_astar/astar.hpp"
 
-using easyfly_global_planner::AStarResult;
-using easyfly_global_planner::OccupancyGrid2d;
+using easyfly::astar::AStarResult;
+using easyfly::astar::OccupancyGrid2d;
 
 /// 构造空栅格 (w×h 格, 分辨率 res, 原点 (ox,oy))
 static OccupancyGrid2d emptyGrid(int w = 100, int h = 100, double res = 0.2,

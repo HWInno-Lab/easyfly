@@ -16,6 +16,15 @@ find_package(std_srvs REQUIRED)
 find_package(easyfly_msgs REQUIRED)
 find_package(easyfly_core REQUIRED)
 find_package(yaml-cpp REQUIRED)
+find_package(easyfly_astar REQUIRED)
+find_package(easyfly_grid_planner_api REQUIRED)
+find_package(rcl_interfaces REQUIRED)
+
+add_library(${PROJECT_NAME}_backends SHARED src/adapters/astar_adapter.cpp)
+target_include_directories(${PROJECT_NAME}_backends PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
+target_link_libraries(${PROJECT_NAME}_backends PUBLIC
+  easyfly_grid_planner_api::easyfly_grid_planner_api easyfly_astar::easyfly_astar)
 
 add_library(${PROJECT_NAME}_nodes SHARED
   src/global_planner_node.cpp
@@ -25,8 +34,8 @@ target_compile_options(${PROJECT_NAME}_nodes PRIVATE -Wall -Wextra)
 target_include_directories(${PROJECT_NAME}_nodes PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 ament_target_dependencies(${PROJECT_NAME}_nodes
-  rclcpp rclcpp_components rclcpp_action ament_index_cpp nav_msgs geometry_msgs std_msgs std_srvs easyfly_msgs)
-target_link_libraries(${PROJECT_NAME}_nodes yaml-cpp easyfly_core::easyfly_core)
+  rclcpp rcl_interfaces rclcpp_components rclcpp_action ament_index_cpp nav_msgs geometry_msgs std_msgs std_srvs easyfly_msgs)
+target_link_libraries(${PROJECT_NAME}_nodes yaml-cpp easyfly_core::easyfly_core ${PROJECT_NAME}_backends)
 
 rclcpp_components_register_node(${PROJECT_NAME}_nodes
   PLUGIN "easyfly_global_planner::GlobalPlannerNode"
@@ -39,8 +48,10 @@ install(TARGETS ${PROJECT_NAME}_nodes
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
+install(TARGETS ${PROJECT_NAME}_backends EXPORT plannerBackends
+  ARCHIVE DESTINATION lib LIBRARY DESTINATION lib RUNTIME DESTINATION bin)
 install(DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
+  DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
@@ -62,9 +73,6 @@ if(BUILD_TESTING)
     TIMEOUT 30 ENV ROS_LOG_DIR=/tmp/easyfly_d1_astar_deadline_test ROS_DOMAIN_ID=88)
   ament_add_pytest_test(test_astar_endpoint test/test_astar_endpoint.py
     TIMEOUT 45 ENV ROS_LOG_DIR=/tmp/easyfly_astar_endpoint_test ROS_DOMAIN_ID=89)
-  ament_add_gtest(test_astar test/test_astar.cpp)
-  target_include_directories(test_astar PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_add_gtest(test_map_validity test/test_map_validity.cpp)
   target_include_directories(test_map_validity PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -81,5 +89,5 @@ if(BUILD_TESTING)
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 
-ament_export_include_directories(include)
-ament_package()
+ament_export_targets(plannerBackends HAS_LIBRARY_TARGET)
+ament_package(CONFIG_EXTRAS cmake/algorithm_dependencies.cmake)

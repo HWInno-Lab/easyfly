@@ -11,6 +11,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(easyfly_msgs REQUIRED)
 find_package(easyfly_core REQUIRED)
 find_package(easyfly_mission_format REQUIRED)
+find_package(easyfly_coverage_planning REQUIRED)
 
 add_executable(mission_fsm_node
   src/mission_fsm_node.cpp
@@ -32,7 +33,7 @@ target_link_libraries(mission_fsm_node easyfly_mission_format::easyfly_mission_f
 add_executable(search_area_node src/search_area_node.cpp)
 ament_target_dependencies(search_area_node rclcpp rclcpp_action easyfly_msgs)
 target_include_directories(search_area_node PRIVATE include)
-target_link_libraries(search_area_node easyfly_core::easyfly_core)
+target_link_libraries(search_area_node easyfly_core::easyfly_core easyfly_coverage_planning::easyfly_coverage_planning)
 add_executable(mission_validate src/mission_validate.cpp)
 target_include_directories(mission_validate PRIVATE include)
 target_link_libraries(mission_validate easyfly_mission_format::easyfly_mission_format)
@@ -47,12 +48,10 @@ install(DIRECTORY missions launch
 )
 install(DIRECTORY include/ DESTINATION include)
 ament_export_include_directories(include)
-ament_export_dependencies(easyfly_mission_format)
+ament_export_dependencies(easyfly_mission_format easyfly_coverage_planning)
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_search_geometry test/test_search_geometry.cpp)
-  target_include_directories(test_search_geometry PRIVATE include)
   add_test(NAME test_installed_format_compat
     COMMAND ${CMAKE_COMMAND}
       -DCONSUMER_SOURCE=${CMAKE_CURRENT_SOURCE_DIR}/test/format_consumer

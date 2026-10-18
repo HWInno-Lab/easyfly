@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "phase": "ALG-3 migration before search controls",
+  "source_commit": "22b13aa39d73c38b9527456e98a0ac902738fcd3",
+  "status": "migration_checks_passed",
+  "differential": {
+    "records": [
+      {
+        "mode": "legacy",
+        "command": [
+          "g++",
+          "-std=c++17",
+          "-O2",
+          "tools/algorithms/probes/planning_probe.cpp",
+          "-o",
+          "artifacts/algorithms/alg3-20261018/legacy-probe",
+          "-DEASYFLY_LEGACY_PLANNING",
+          "-Iartifacts/algorithms/alg3-20261018/legacy"
+        ],
+        "sha256": "71e6fccc246a08cae8d614680c6837de4ef5cb2cbc33ffa54e49021b55fffb24",
+        "bytes": 239012
+      },
+      {
+        "mode": "migrated",
+        "command": [
+          "g++",
+          "-std=c++17",
+          "-O2",
+          "tools/algorithms/probes/planning_probe.cpp",
+          "-o",
+          "artifacts/algorithms/alg3-20261018/migrated-probe",
+          "-Isrc/algorithms/planning/easyfly_astar/include",
+          "-Isrc/algorithms/planning/easyfly_coverage_planning/include"
+        ],
+        "sha256": "71e6fccc246a08cae8d614680c6837de4ef5cb2cbc33ffa54e49021b55fffb24",
+        "bytes": 239012
+      }
+    ],
+    "identical": true
+  },
+  "tests": [
+    {
+      "package": "easyfly_astar",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "artifacts/algorithms/alg3-20261018/migration/build/easyfly_astar",
+        "--output-on-failure",
+        "-j1",
+        "-R",
+        "^test_",
+        "--output-junit",
+        "/home/jia/easyfly_ws/artifacts/algorithms/alg3-20261018/migration-tests/easyfly_astar.xml"
+      ],
+      "returncode": 0
+    },
+    {
+      "package": "easyfly_coverage_planning",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "artifacts/algorithms/alg3-20261018/migration/build/easyfly_coverage_planning",
+        "--output-on-failure",
+        "-j1",
+        "-R",
+        "^test_",
+        "--output-junit",
+        "/home/jia/easyfly_ws/artifacts/algorithms/alg3-20261018/migration-tests/easyfly_coverage_planning.xml"
+      ],
+      "returncode": 0
+    },
+    {
+      "package": "easyfly_global_planner",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "artifacts/algorithms/alg3-20261018/migration/build/easyfly_global_planner",
+        "--output-on-failure",
+        "-j1",
+        "-R",
+        "^(test_astar_endpoint|test_map_validity|test_goal_validation|test_segment_acceptance|test_waypoint_lifecycle)$",
+        "--output-junit",
+        "/home/jia/easyfly_ws/artifacts/algorithms/alg3-20261018/migration-tests/easyfly_global_planner.xml"
+      ],
+      "returncode": 0
+    },
+    {
+      "package": "easyfly_mission_fsm",
+      "command": [
+        "ctest",
+        "--test-dir",
+        "artifacts/algorithms/alg3-20261018/migration/build/easyfly_mission_fsm",
+        "--output-on-failure",
+        "-j1",
+        "-R",
+        "^test_search_action$",
+        "--output-junit",
+        "/home/jia/easyfly_ws/artifacts/algorithms/alg3-20261018/migration-tests/easyfly_mission_fsm.xml"
+      ],
+      "returncode": 0
+    }
+  ],
+  "source_files": {
+    "src/execution/e1_state_machine/easyfly_mission_fsm/CMakeLists.txt": "b2750e4f4ae7cc4c5cad4df466406add09f7ec0c81ab6f6406d40908ba574dac",
+    "src/execution/e1_state_machine/easyfly_mission_fsm/include/easyfly_mission_fsm/search_geometry.hpp": "f138f79fff65a6fa9230394f7fcbd0d4c97b70ceea06369d52a168da28aee94e",
+    "src/execution/e1_state_machine/easyfly_mission_fsm/package.xml": "fe6b7364d7ed7067c48b2e8b6b314006c9de91524afdd8ea78bc02c35f7545f0",
+    "src/execution/e1_state_machine/easyfly_mission_fsm/src/search_area_node.cpp": "7bfbbfcdfa4b58b54a971425287ce3ddbfd1389015d6559dbf76d5bc6b700ef3",
+    "src/execution/e2_planning/easyfly_global_planner/CMakeLists.txt": "5814218e91610455861a378d373f450e4587279e4828618197f995ff6876d5b8",
+    "src/execution/e2_planning/easyfly_global_planner/include/easyfly_global_planner/astar.hpp": "24a270eb42219f77f8376f0be171f582e10783db5c850095c4491a3732b620fa",
+    "src/execution/e2_planning/easyfly_global_planner/package.xml": "1d5cdc501c9fc74de8f6d01f4b796392f80ff838758b663ddd284acb07fb5d56",
+    "src/execution/e2_planning/easyfly_global_planner/src/global_planner_node.cpp": "8fa2aece9f782c813f5209b334a57728d69b8dcc3024d18fbb12499591e70fbb",
+    "src/algorithms/planning/easyfly_astar/CMakeLists.txt": "f74e5bd46f4b989b4e0606bc22af19b90e585b634fec5659ce4102e292cde445",
+    "src/algorithms/planning/easyfly_astar/README.md": "9912df6cc6eb2abf8bf068ea44ffb9d4bfadd18528ec84d1bd8b5019ff3be464",
+    "src/algorithms/planning/easyfly_astar/include/easyfly_astar/astar.hpp": "d6b601bc59ae7dda5596ea31056ebbbc0c088c952f81cd624c518b21f011ad20",
+    "src/algorithms/planning/easyfly_astar/package.xml": "cbcf932b11b6d9634ec42ab4aa78fd63d6e00d98a477605a3e8dccf717cac259",
+    "src/algorithms/planning/easyfly_astar/test/test_astar.cpp": "51c0a69476bba14c0708c5f216f5329da54796585ee1925f1e4d79029ccf816a",
+    "src/algorithms/planning/easyfly_coverage_planning/CMakeLists.txt": "4668b603ae25e22ad8a5a4f9f03b7ad3ded3086429d9e55e2a058e1b75c23c25",
+    "src/algorithms/planning/easyfly_coverage_planning/README.md": "751f7ef96cf96685011b2e863dc811d1beedebb79c61e798a5bfa16a41be4c7c",
+    "src/algorithms/planning/easyfly_coverage_planning/include/easyfly_coverage_planning/search_geometry.hpp": "a13a32aa31c119ec8d3e7a9b6a53e711cfc27eed5f3c121e81d8bdf1ba168df1",
+    "src/algorithms/planning/easyfly_coverage_planning/package.xml": "48b4e0807fcba16545c89cf4ba42567695c7684189e58d3e30070c828d407f72",
+    "src/algorithms/planning/easyfly_coverage_planning/test/test_search_geometry.cpp": "97a00a30d02c966a7a5b99423a0591299c3cac0df93d0193c37f179279eacf18",
+    "src/execution/e2_planning/easyfly_global_planner/cmake/algorithm_dependencies.cmake": "657e4d2c674cb5413a4979549912f983d94287b0f455d422e4dd42321ada9ae5",
+    "src/execution/e2_planning/easyfly_global_planner/include/easyfly_global_planner/adapters/planner_factory.hpp": "9f761db9196266b9497e527cf56781c8d0494522a18e6b237cdf3c52a1b73d45",
+    "src/execution/e2_planning/easyfly_global_planner/src/adapters/astar_adapter.cpp": "9393d0e1a952b9c4c03e4ecb8202c78975f0503bcd2fe66523a78cdc144d0ff8",
+    "tools/algorithms/probes/planning_probe.cpp": "5a25a0233012fb8b20ca3f18bb058f4c8ba91a4bfe19a4b5ea80305fa84feb73"
+  },
+  "limits": [
+    "No search control capability yet; adapter rejects requested controls.",
+    "Normal finite in-bounds behavior preserved. API additionally validates geometry, layout and occupancy policy.",
+    "Initial build missed fastdds compatibility underlay; completion explicitly loaded scene-s3 normal underlay.",
+    "Full coordinator/navigation and install matrix follow in control-enhancement commit."
+  ]
+}

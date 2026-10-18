@@ -48,7 +48,8 @@
 #include <easyfly_msgs/action/go_to_waypoint.hpp>
 #include <easyfly_msgs/msg/uav_state.hpp>
 
-#include "easyfly_global_planner/astar.hpp"
+#include "easyfly_global_planner/adapters/planner_factory.hpp"
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
 #include "easyfly_global_planner/goal_validation.hpp"
 #include "easyfly_global_planner/map_validity.hpp"
 #include "easyfly_global_planner/segment_acceptance.hpp"
@@ -56,6 +57,8 @@
 
 namespace easyfly_global_planner
 {
+
+namespace gp = easyfly::grid_planning;
 
 using NavigateTo = easyfly_msgs::action::NavigateTo;
 using GoToWaypoint = easyfly_msgs::action::GoToWaypoint;
@@ -70,6 +73,10 @@ public:
         : Node("easyfly_global_planner", options)
     {
         loadParams();
+        rcl_interfaces::msg::ParameterDescriptor descriptor;
+        descriptor.read_only = true;
+        planner_ = make_planner(declare_parameter<std::string>(
+            "planner_backend", "astar", descriptor));
 
         auto qos = rclcpp::QoS(10);
         grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
@@ -647,14 +654,12 @@ private:
             return;
         }
 
-        // ---- 栅格 → A* 输入 ----
-        OccupancyGrid2d grid;
-        grid.width = static_cast<int>(grid_msg->info.width);
-        grid.height = static_cast<int>(grid_msg->info.height);
-        grid.resolution = grid_msg->info.resolution;
-        grid.origin_x = grid_msg->info.origin.position.x;
-        grid.origin_y = grid_msg->info.origin.position.y;
-        grid.data = grid_msg->data;
+        gp::Request request;
+        request.grid = {grid_msg->info.width, grid_msg->info.height,
+            grid_msg->info.resolution, grid_msg->info.origin.position.x,
+            grid_msg->info.origin.position.y, grid_msg->data.data(), grid_msg->data.size()};
+        request.map.source_stamp_ns = static_cast<std::int64_t>(grid_msg->header.stamp.sec) *
+            1000000000 + grid_msg->header.stamp.nanosec;
 
         const auto state_snapshot = snapState();
         if (!stateValid(state_snapshot)) {
@@ -672,29 +677,14 @@ private:
             : std::clamp(uav.position_z, params_.z_min, params_.z_max);
 
         // ---- 规划 ----
-        const auto plan = planPath(grid, uav.position_x, uav.position_y,
-                                   goal->target_x, goal->target_y);
-        {
-            // 诊断: 规划时刻直线上栅格的占据采样 (分流"A*没绕"vs"栅格没障碍")
-            std::string diag;
-            for (int i = 0; i <= 10; ++i) {
-                const double t = i / 10.0;
-                const double sx = uav.position_x +
-                    (goal->target_x - uav.position_x) * t;
-                const double sy = uav.position_y +
-                    (goal->target_y - uav.position_y) * t;
-                diag += std::to_string(grid.worldOccupied(sx, sy) ? 1 : 0);
-            }
-            RCLCPP_INFO(get_logger(),
-                        "[规划诊断] 直线占据采样(起→终): %s raw/smooth=%zu/%zu",
-                        diag.c_str(), plan.waypoints.size() >= 2 ? plan.waypoints.size() : 0,
-                        plan.waypoints.size());
-        }
-        if (!plan.ok) {
+        request.start = {uav.position_x, uav.position_y};
+        request.goal = {goal->target_x, goal->target_y};
+        const auto plan = planner_->plan(request, {});
+        if (plan.status != gp::Status::ok) {
             const char * msg =
-                plan.fail == AStarResult::Fail::GOAL_IN_OBSTACLE ? "goal in inflated obstacle"
-              : plan.fail == AStarResult::Fail::OUT_OF_BOUNDS    ? "goal out of grid bounds"
-              : plan.fail == AStarResult::Fail::START_IN_OBSTACLE ? "start deeply in obstacle"
+                plan.status == gp::Status::goal_in_obstacle ? "goal in inflated obstacle"
+              : plan.status == gp::Status::out_of_bounds    ? "goal out of grid bounds"
+              : plan.status == gp::Status::start_in_obstacle ? "start deeply in obstacle"
               : "no path found";
             RCLCPP_WARN(get_logger(), "规划失败: %s", msg);
             auto res = std::make_shared<NavigateTo::Result>();
@@ -741,8 +731,8 @@ private:
             StateSnapshot segment_state;
             if (!requireState("before segment", segment_state)) return;
 
-            const double wx = plan.waypoints[seg].first;
-            const double wy = plan.waypoints[seg].second;
+            const double wx = plan.waypoints[seg].x;
+            const double wy = plan.waypoints[seg].y;
             // 末段用目标 z; 中间段维持巡航高度
             const double wz = (seg + 1 == plan.waypoints.size()) ? goal_z :
                 std::clamp(segment_state.state.position_z, params_.z_min, params_.z_max);
@@ -883,12 +873,12 @@ private:
                     // 剩余 = 当前位置到本段终点 + 其后各段长度
                     const auto & cur = wait_state.state;
                     double remaining = std::hypot(
-                        plan.waypoints[seg].first - cur.position_x,
-                        plan.waypoints[seg].second - cur.position_y);
+                        plan.waypoints[seg].x - cur.position_x,
+                        plan.waypoints[seg].y - cur.position_y);
                     for (size_t k = seg + 1; k < plan.waypoints.size(); ++k) {
                         remaining += std::hypot(
-                            plan.waypoints[k].first - plan.waypoints[k - 1].first,
-                            plan.waypoints[k].second - plan.waypoints[k - 1].second);
+                            plan.waypoints[k].x - plan.waypoints[k - 1].x,
+                            plan.waypoints[k].y - plan.waypoints[k - 1].y);
                     }
                     fb->distance_remaining = remaining;
                     gh->publish_feedback(fb);
@@ -932,6 +922,7 @@ private:
     nav_msgs::msg::OccupancyGrid::ConstSharedPtr latest_grid_;
     std::chrono::steady_clock::time_point grid_arrival_{std::chrono::steady_clock::now()};
     bool grid_received_{false};
+    std::unique_ptr<gp::GridPlanner> planner_;
     easyfly_msgs::msg::UAVState latest_state_;
     bool state_received_{false};
     std::chrono::steady_clock::time_point state_arrival_{};
