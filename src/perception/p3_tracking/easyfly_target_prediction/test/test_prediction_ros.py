@@ -86,15 +86,21 @@ class PredictionRosTest(unittest.TestCase):
         if cls.process.poll() is None:
             os.killpg(cls.process.pid, signal.SIGINT)
         try:
-            cls.process.wait(timeout=5)
+            code = cls.process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             os.killpg(cls.process.pid, signal.SIGKILL)
             cls.process.wait(timeout=5)
+            code = -9
         cls.executor.shutdown(timeout_sec=5)
         cls.thread.join(timeout=5)
         cls.node.destroy_node()
         rclpy.shutdown()
+        cls.log.seek(0)
+        diagnostics = cls.log.read()
         cls.log.close()
+        if code != 0 or cls.thread.is_alive():
+            raise RuntimeError(
+                f'prediction node/executor did not stop cleanly: {code}\n{diagnostics}')
 
     def until(self, predicate, timeout=3):
         end = time.monotonic() + timeout

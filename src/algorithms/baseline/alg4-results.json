@@ -1,0 +1,1044 @@
+{
+  "schema_version": 1,
+  "phase": "ALG-4",
+  "status": "completed",
+  "date": "2026-10-18",
+  "source_commit": "9129012c3a6c9d6d08ed5d634f3fa2c831a8e8e1",
+  "original_source_commit": "bdbc34cd698d31b3694dcede308be12df455e3d0",
+  "colcon_package_count": 80,
+  "migrated_packages": [
+    "easyfly_motion_prediction",
+    "easyfly_pointcloud_filters"
+  ],
+  "consumer_packages": [
+    "easyfly_target_prediction",
+    "easyfly_pointcloud_filter"
+  ],
+  "source_dependency_closure": [
+    "easyfly_motion_prediction",
+    "easyfly_pointcloud_filters"
+  ],
+  "matrix": {
+    "schema_version": 1,
+    "source_files": {
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/CMakeLists.txt": "e74b3fb81cb2a03df49e7f82d2d630af672c90329bd36d1d6cc1d5e987f8ab14",
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/README.md": "fbee8d3faf6fe007466db793e509b7ef61e1ba1b88afafafd9077c643638930b",
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/include/easyfly_pointcloud_filters/filter_core.hpp": "a90ba6e3bc96e746d8971d7b7af49a37f6ffbcb2530a67d84fc6e99d2b915901",
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/package.xml": "b7e50e5d0ad507fb1cac25d363a6771da724ff97d7082ebd5648b4033557bc07",
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/test/test_filter_core.cpp": "af5a5e2566e2020373bb00271e0d4500b5858e9fb0519a59c41d45bc54498dea",
+      "src/algorithms/tracking/easyfly_motion_prediction/CMakeLists.txt": "230ebc6c261ecbe6c89dfb79b4c6475b7944214d704c63344914de11ec363e3b",
+      "src/algorithms/tracking/easyfly_motion_prediction/README.md": "e95d18c6a3240e7514c7f21fdad9c648c9923c474511af97b30c0a457af402e7",
+      "src/algorithms/tracking/easyfly_motion_prediction/include/easyfly_motion_prediction/predictor.hpp": "be75d08d1d754f1050eab1e64d3d4bf6559f994c6d5f444f96effb08067b7879",
+      "src/algorithms/tracking/easyfly_motion_prediction/package.xml": "90ae5bc522300f12977aa3eea991336682ca996a50158e5823908fc685677847",
+      "src/algorithms/tracking/easyfly_motion_prediction/test/test_predictor.cpp": "3aaf469e13193b947636473c02f9b5aae3d038d4f0b66149d1a503adb309eca5",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/CMakeLists.txt": "adf06eba4d22958e9f970a5ae45b536d34fbacee81bc10b1d9fb58f372a934f1",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/README.md": "966031486cddc3397b3234d410e8c6a74c5fc825437cf514e6ee00f147027ab7",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/config/pointcloud_filter.yaml": "a39c85904f7e8a0c1330a0381988a9e1cc2f2ebe6167c2c480ea781c8626cf9f",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/include/easyfly_pointcloud_filter/filter_core.hpp": "1a2e052ec7262d9c9f5b3a49ecefd8bc0edd59393db1a0825f7f09de55f945cd",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/launch/pcf.launch.py": "01e38066dcbde083cba7eb2d3f9df06741fb9c099937c6d577c3eda0968be1e4",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/package.xml": "caf882687af916c28a6ac043cc095777dddc7599462ff802928eb395821d841d",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/src/pointcloud_filter_node.cpp": "1faff496cdc1e80b954607c6bd9df880a0cbe198580d16e26b6f2ed50c61ed6b",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_transform_timing.py": "d54d08df8257628b468a5207218f373da2cc3a91b1a50f693600771291b251e5",
+      "src/perception/p3_tracking/easyfly_target_prediction/CMakeLists.txt": "cf3a90de4c34038bea3e6895e333c44b752d7d44d9e95ad527067de390213123",
+      "src/perception/p3_tracking/easyfly_target_prediction/README.md": "0731b07a54688618406bff945d2d2d59f1155df989673c319a21ef217cc0065b",
+      "src/perception/p3_tracking/easyfly_target_prediction/include/easyfly_target_prediction/predictor.hpp": "fc85b263007a0e9f06e8373ed101d4b0a6aa9c553f8adafc7c36d50f9d836660",
+      "src/perception/p3_tracking/easyfly_target_prediction/launch/target_prediction.launch.py": "193472d843fd02cdd93e01cf465281f917c68ee17820bcc64c803dc21627a6f2",
+      "src/perception/p3_tracking/easyfly_target_prediction/package.xml": "4753f90dbae413618e0267144149a7df04cbfb2d0f5b2c793f3e0cdfc9a0784b",
+      "src/perception/p3_tracking/easyfly_target_prediction/src/target_prediction_node.cpp": "5a84400bfc36fb9af03e40e6bc5abe7996cae6eb0149aed2f6daa25f5f87c30d",
+      "src/perception/p3_tracking/easyfly_target_prediction/test/test_prediction_ros.py": "c25ef84bd65fdd5979ab080bcaef1560ace4168b3e2760f666d2c51baae52a89",
+      "tools/algorithms/prediction_filter_consumer/CMakeLists.txt": "9a641cf7ce9b0f946617df637264944a5e79aa363c96799fc47cd3d5bf15acd8",
+      "tools/algorithms/prediction_filter_consumer/main.cpp": "1d557e9a8e2463b95874a2f7076b117557d2791a13f69ae946c7445b00e9e449",
+      "tools/algorithms/verify_api_install.py": "045ceb5e553038460bcafde9598cf774cb3b4ccb9fe86ceec950b53c08da61d9",
+      "tools/algorithms/verify_prediction_filter_install.py": "3ef0199b05f0dce1f07c59e4ea2caa37d8bf7144f9e6d3362063cf6c887d0824"
+    },
+    "commands": [
+      {
+        "name": "core-closure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "colcon",
+          "list",
+          "--base-paths",
+          "src",
+          "--packages-up-to",
+          "easyfly_motion_prediction",
+          "easyfly_pointcloud_filters",
+          "--names-only"
+        ],
+        "returncode": 0,
+        "log_sha256": "7003144319a93fcab1f8ad977c7da0b46e9a7a2373d852ac08c04a305a6c35a2"
+      },
+      {
+        "name": "symlink-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "colcon",
+          "--log-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/log",
+          "build",
+          "--base-paths",
+          "src",
+          "--build-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/build",
+          "--install-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "--packages-select",
+          "easyfly_motion_prediction",
+          "easyfly_pointcloud_filters",
+          "easyfly_target_prediction",
+          "easyfly_pointcloud_filter",
+          "--allow-overriding",
+          "easyfly_motion_prediction",
+          "easyfly_pointcloud_filters",
+          "easyfly_target_prediction",
+          "easyfly_pointcloud_filter",
+          "--executor",
+          "sequential",
+          "--symlink-install",
+          "--cmake-args",
+          "-DBUILD_TESTING=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "8056af6150466bf15993f3c9b296598b1bd92e46ccd52c1fc48fd41abdc7d9d6"
+      },
+      {
+        "name": "symlink-easyfly_motion_prediction",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/build/easyfly_motion_prediction",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_motion_prediction.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "b7e335e5543576b6c4043faf85c74dd1ca2ec2f66de5c75790d65fd06cd5d211"
+      },
+      {
+        "name": "symlink-easyfly_pointcloud_filters",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/build/easyfly_pointcloud_filters",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_pointcloud_filters.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "6845b16ad3cf20b95fd4de618c5535583f8ffe0ad6c5e98bcc8ca2f3595526ef"
+      },
+      {
+        "name": "symlink-easyfly_target_prediction",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/build/easyfly_target_prediction",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_target_prediction.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "04ebfdf36e1780250eea4660e295ee2f10d2907a24e3c1f9237f2d44388a31e3"
+      },
+      {
+        "name": "symlink-easyfly_pointcloud_filter",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/build/easyfly_pointcloud_filter",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_pointcloud_filter.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "4c863732bb53a7ac9846751d77f16c533cbdfd900cdbc79338edb625c2e42365"
+      },
+      {
+        "name": "symlink-legacy-configure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer-build",
+          "-DEASYFLY_CHECK_LEGACY=ON",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "ed60e13b7837b12b5ef898b5ab5053fe926322ed363cb9002379df74b5beb2e6"
+      },
+      {
+        "name": "symlink-legacy-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "a003cb7e7a185564bedbddab0f89e704e9947420459c3d4bcded3471c2011156"
+      },
+      {
+        "name": "symlink-legacy-test",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "ff35d43b80af4c32b64fb3f494e5acd06f0d2d2bef405b0fb16157e51b03a585"
+      },
+      {
+        "name": "symlink-consumer-configure",
+        "command": [
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer-build",
+          "-DCMAKE_PREFIX_PATH=/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install/easyfly_motion_prediction;/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install/easyfly_pointcloud_filters",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "c01ddeb766be4b35230b1653ab00e5231ef880d3330d581e8b1b77475b41dd2e"
+      },
+      {
+        "name": "symlink-consumer-build",
+        "command": [
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "a003cb7e7a185564bedbddab0f89e704e9947420459c3d4bcded3471c2011156"
+      },
+      {
+        "name": "symlink-consumer-test",
+        "command": [
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "715cf6646eef82196b59e7784d58a705873da228a384f02c178b32cdca4f258d"
+      },
+      {
+        "name": "symlink-consumer-libraries",
+        "command": [
+          "ldd",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer-build/prediction_filter_consumer"
+        ],
+        "returncode": 0,
+        "log_sha256": "2edb4061a369667c2415c159190ac163b32281feb932e75f2f98e38bb060c7c9"
+      },
+      {
+        "name": "copy-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "colcon",
+          "--log-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/log",
+          "build",
+          "--base-paths",
+          "src",
+          "--build-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/build",
+          "--install-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "--packages-select",
+          "easyfly_motion_prediction",
+          "easyfly_pointcloud_filters",
+          "easyfly_target_prediction",
+          "easyfly_pointcloud_filter",
+          "--allow-overriding",
+          "easyfly_motion_prediction",
+          "easyfly_pointcloud_filters",
+          "easyfly_target_prediction",
+          "easyfly_pointcloud_filter",
+          "--executor",
+          "sequential",
+          "--cmake-args",
+          "-DBUILD_TESTING=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "e5e795c734a87763f9ed53355848c2f7fdb0212ab2eea9b29f5f14559c2a6314"
+      },
+      {
+        "name": "copy-easyfly_motion_prediction",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_motion_prediction",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_motion_prediction.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "00c020649c666f10ef949651ad716c34ed9b774e5e827045fb0f0cdba678608b"
+      },
+      {
+        "name": "copy-easyfly_pointcloud_filters",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_pointcloud_filters",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_pointcloud_filters.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "f00f282400c3ce63b08e013800404dde6678ab809072ba17c43714a6ad5d3adb"
+      },
+      {
+        "name": "copy-easyfly_target_prediction",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_target_prediction",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_target_prediction.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "549416240d5ae3d004d805a15ebb3e0d65d739b6196b272d698e6b7a29fa5c86"
+      },
+      {
+        "name": "copy-easyfly_pointcloud_filter",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_pointcloud_filter",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_pointcloud_filter.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "fb55db9c677ec19528f5e7adfc94fba4f31baee4c004ff1801346ad15fcfacf7"
+      },
+      {
+        "name": "copy-legacy-configure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer-build",
+          "-DEASYFLY_CHECK_LEGACY=ON",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "362ae55faa8e51c35982f0cd0bcbf676b9ba3e0ca9cf45169b5b6fc21bfd4459"
+      },
+      {
+        "name": "copy-legacy-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "a003cb7e7a185564bedbddab0f89e704e9947420459c3d4bcded3471c2011156"
+      },
+      {
+        "name": "copy-legacy-test",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$2/local_setup.bash\" && shift 2 && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "2f7f7af65a728c6b1068e79381e836769135ca1803b4d2742bf25e05b3c180b1"
+      },
+      {
+        "name": "copy-consumer-configure",
+        "command": [
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer-build",
+          "-DCMAKE_PREFIX_PATH=/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/relocated-install/easyfly_motion_prediction;/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/relocated-install/easyfly_pointcloud_filters",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "e1fb465d4a8882cc02e511f879b10662cb3e673a1ee1755d85340da3612b0a86"
+      },
+      {
+        "name": "copy-consumer-build",
+        "command": [
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "a003cb7e7a185564bedbddab0f89e704e9947420459c3d4bcded3471c2011156"
+      },
+      {
+        "name": "copy-consumer-test",
+        "command": [
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "32c29eca12ce3d002d40e3de2d50c2aa9aeb920e3a4df66372cdb3a327c0ded7"
+      },
+      {
+        "name": "copy-consumer-libraries",
+        "command": [
+          "ldd",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/consumer-build/prediction_filter_consumer"
+        ],
+        "returncode": 0,
+        "log_sha256": "46bf14ad17e4ed37379501ca419443fa07cdb51a70f090c0aab9d455ed7e46d8"
+      }
+    ],
+    "modes": [
+      {
+        "mode": "symlink",
+        "consumer_prefix": "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install",
+        "real_prediction_and_tf_timing_regressions_passed": true,
+        "installed_legacy_headers_passed": true,
+        "plain_consumer_without_ros_runtime_passed": true
+      },
+      {
+        "mode": "copy",
+        "consumer_prefix": "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/relocated-install",
+        "real_prediction_and_tf_timing_regressions_passed": true,
+        "installed_legacy_headers_passed": true,
+        "plain_consumer_without_ros_runtime_passed": true
+      }
+    ],
+    "passed": true
+  },
+  "case_counts": {
+    "symlink": {
+      "easyfly_motion_prediction": 9,
+      "easyfly_pointcloud_filters": 7,
+      "easyfly_target_prediction": 5,
+      "easyfly_pointcloud_filter": 1,
+      "legacy_installed_header_consumer": 1,
+      "pure_core_installed_consumer": 1
+    },
+    "copy": {
+      "easyfly_motion_prediction": 9,
+      "easyfly_pointcloud_filters": 7,
+      "easyfly_target_prediction": 5,
+      "easyfly_pointcloud_filter": 1,
+      "legacy_installed_header_consumer": 1,
+      "pure_core_installed_consumer": 1
+    }
+  },
+  "total_case_executions": 48,
+  "total_ctest_entries": 12,
+  "test_evidence": [
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial/build/easyfly_motion_prediction/test_results/easyfly_motion_prediction/test_predictor.gtest.xml",
+      "sha256": "81987762228f5d42810f63ec56b7ad1974e95adc7ba0fd9be0774d9b94ae1ccb",
+      "cases": 9
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_motion_prediction.xml",
+      "sha256": "8e74b04736201b68d41677a89e56f26bf02afec45ada4821c97bfd600437661f",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial/build/easyfly_pointcloud_filters/test_results/easyfly_pointcloud_filters/test_filter_core.gtest.xml",
+      "sha256": "bfb7e4262940eb0228c8c1bd4435398b7a55a5018b256e1dee5cec6bb9dcfe1c",
+      "cases": 7
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_pointcloud_filters.xml",
+      "sha256": "cf844691fa9e87900483eecb40c01f3df7937f8f5865b2c97fedf409414a4207",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial/build/easyfly_target_prediction/test_results/easyfly_target_prediction/test_prediction_ros.xunit.xml",
+      "sha256": "4d70f66ada6747b15b9ac0ddc3a95e37912793ec90742055af28edaed0866608",
+      "cases": 5
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_target_prediction.xml",
+      "sha256": "9eadae5187872ff494db8190f0531a4eed90c1bf7b73afa36c052ac9193dc5ff",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial/build/easyfly_pointcloud_filter/test_results/easyfly_pointcloud_filter/test_transform_timing.xunit.xml",
+      "sha256": "e302621cbbfa57d5f8d5a2eeb529797bec852718764992e7749be29b9e9df669",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/easyfly_pointcloud_filter.xml",
+      "sha256": "2abeae2ff26ead8e7b29294a4c5446aeb7607d74e53b1660cd66f35aa51c7f3a",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/legacy-consumer.xml",
+      "sha256": "3639421a90ed5304a2eb8fd6670284bb87771dd3193ef8ee808f79f43670e53b",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/symlink/consumer.xml",
+      "sha256": "0285c6791246271f2a4a2f1902fce7b38013356a7bb83c1097718ff3b21e03cd",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial/build/easyfly_pointcloud_filter/CTestTestfile.cmake",
+      "sha256": "d2d8aede237866252801ba9ee1fd76027d10865324227f4be79b281590443f20",
+      "installed_filter_executable": "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/initial/install/easyfly_pointcloud_filter/lib/easyfly_pointcloud_filter/pointcloud_filter_node"
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_motion_prediction/test_results/easyfly_motion_prediction/test_predictor.gtest.xml",
+      "sha256": "7dfee808b73cc9ab7b038dfe75976355ef8c7f8d40cfdabd98e811a6979b5bf2",
+      "cases": 9
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_motion_prediction.xml",
+      "sha256": "c6cb4392d201e53868ecd26f111fa626a57bda6cc9c5d08e28fc96becd7de764",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_pointcloud_filters/test_results/easyfly_pointcloud_filters/test_filter_core.gtest.xml",
+      "sha256": "66817b01864e4cd2197bff63a6fd5760f8d80178b760eb8df5d6f061b58fc9af",
+      "cases": 7
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_pointcloud_filters.xml",
+      "sha256": "44461c8fb09c76c249377b84aa2ee2319375d6de33a726c902b12f32e1ec2e1f",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_target_prediction/test_results/easyfly_target_prediction/test_prediction_ros.xunit.xml",
+      "sha256": "3773b66879647c327563e249595486f6416930f8e16b7907c11373b3cc623401",
+      "cases": 5
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_target_prediction.xml",
+      "sha256": "d019d9699df1e910e2916a100ff093e46ffd32b0b29a1410236f188d720443fa",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_pointcloud_filter/test_results/easyfly_pointcloud_filter/test_transform_timing.xunit.xml",
+      "sha256": "c482ab404711c240bff3dc9427a7ef326bff2fee69d8cd61772a611fa71498ef",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/easyfly_pointcloud_filter.xml",
+      "sha256": "b4a231d76efe53496b1640b4b82be06427009e21661e396509ee3cee8c3c46eb",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/legacy-consumer.xml",
+      "sha256": "5e6f0a0eb3bbe216a7eb07baa208220e0d28522940a73adf9d6b3249d7ef4b80",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/consumer.xml",
+      "sha256": "f1c272ae392893a5d6317bf5681ebb8bf17aea7c44bd0f4a27e9fdefedd8693d",
+      "cases": 1
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/install-validation/copy/build/easyfly_pointcloud_filter/CTestTestfile.cmake",
+      "sha256": "e07d3f55e9393efae31b448401971b086841568b3be40be44a34b718f87bd92e",
+      "installed_filter_executable": "/home/jia/easyfly_ws/artifacts/algorithms/alg4-20261018/install-validation/copy/install/easyfly_pointcloud_filter/lib/easyfly_pointcloud_filter/pointcloud_filter_node"
+    }
+  ],
+  "structural_equivalence": [
+    {
+      "package": "easyfly_motion_prediction",
+      "core_equal_after_namespace_guard_license_normalization": true,
+      "node_equal_after_include_alias_and_blank_line_normalization": true,
+      "original_core_sha256": "51024c0b1cbf06ca6da7ee1dbf4251508f896d2ad33b7a81ddb4c3be9770f931",
+      "migrated_core_sha256": "be75d08d1d754f1050eab1e64d3d4bf6559f994c6d5f444f96effb08067b7879",
+      "original_node_sha256": "8c41aecc439eb53e72c8e41a013fb78a73c96a66fdd9243a4b76ae70b28b9f81",
+      "migrated_node_sha256": "5a84400bfc36fb9af03e40e6bc5abe7996cae6eb0149aed2f6daa25f5f87c30d"
+    },
+    {
+      "package": "easyfly_pointcloud_filters",
+      "core_equal_after_namespace_guard_license_normalization": true,
+      "node_equal_after_include_alias_and_blank_line_normalization": true,
+      "original_core_sha256": "eb74ba863cb95c92cfedd69746b42bc7c1e48167a6792f625a8d611b289cfaa8",
+      "migrated_core_sha256": "a90ba6e3bc96e746d8971d7b7af49a37f6ffbcb2530a67d84fc6e99d2b915901",
+      "original_node_sha256": "dd214a4b82c29b4fb0fb05c702074a27833d7bfa8aa17ad8cd7634f789a88b97",
+      "migrated_node_sha256": "1faff496cdc1e80b954607c6bd9df880a0cbe198580d16e26b6f2ed50c61ed6b"
+    }
+  ],
+  "final_differential": {
+    "command": [
+      "g++",
+      "-std=c++17",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "tools/algorithms/probes/preprocessing_prediction_probe.cpp",
+      "-Isrc/algorithms/tracking/easyfly_motion_prediction/include",
+      "-Isrc/algorithms/preprocessing/easyfly_pointcloud_filters/include",
+      "-o",
+      "artifacts/algorithms/alg4-20261018/final-probe"
+    ],
+    "prediction_steps": 320,
+    "cloud_scenarios": 60,
+    "identical_to_legacy": true,
+    "bytes": 10819070,
+    "sha256": "9757ed1b34f3cdfeda307e14f27a339b83527d41bb73028a6168dbc12eca53ef",
+    "source_files": {
+      "tools/algorithms/probes/preprocessing_prediction_probe.cpp": "989de63dbab06b3f2a073da1e9ac941c81987038cedaf19e6a7281d99cbe08b2",
+      "artifacts/algorithms/alg4-20261018/legacy/easyfly_pointcloud_filter/filter_core.hpp": "eb74ba863cb95c92cfedd69746b42bc7c1e48167a6792f625a8d611b289cfaa8",
+      "artifacts/algorithms/alg4-20261018/legacy/easyfly_target_prediction/predictor.hpp": "51024c0b1cbf06ca6da7ee1dbf4251508f896d2ad33b7a81ddb4c3be9770f931",
+      "src/algorithms/tracking/easyfly_motion_prediction/include/easyfly_motion_prediction/predictor.hpp": "be75d08d1d754f1050eab1e64d3d4bf6559f994c6d5f444f96effb08067b7879",
+      "src/algorithms/preprocessing/easyfly_pointcloud_filters/include/easyfly_pointcloud_filters/filter_core.hpp": "a90ba6e3bc96e746d8971d7b7af49a37f6ffbcb2530a67d84fc6e99d2b915901"
+    }
+  },
+  "targeted_lint": [
+    {
+      "name": "core-cpplint",
+      "command": [
+        "ament_cpplint",
+        "src/algorithms/tracking/easyfly_motion_prediction/include/easyfly_motion_prediction/predictor.hpp",
+        "src/algorithms/preprocessing/easyfly_pointcloud_filters/include/easyfly_pointcloud_filters/filter_core.hpp"
+      ],
+      "returncode": 0,
+      "log_sha256": "06217907b20d6fa12e9cc804e7a18300823cd5db4d9d94b31edc06d8b5725c0d"
+    },
+    {
+      "name": "python-flake8",
+      "command": [
+        "ament_flake8",
+        "src/perception/p3_tracking/easyfly_target_prediction/test/test_prediction_ros.py",
+        "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_transform_timing.py"
+      ],
+      "returncode": 0,
+      "log_sha256": "2ecc436201ce7848d4760fa38a22d46b5f99c740c9d86d82416ccecadcab2cb0"
+    }
+  ],
+  "previous_phase_source_files_unchanged": {
+    "alg1": 13,
+    "alg2": 36,
+    "alg3": 69
+  },
+  "baseline_source_delta": {
+    "frozen_files": 465,
+    "unchanged": 427,
+    "changed": [
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/CMakeLists.txt",
+        "baseline_sha256": "c0fb778441a2564d2e85bcd6fcd0c5faf49ed228a55562e232d773062656f730",
+        "current_sha256": "b2750e4f4ae7cc4c5cad4df466406add09f7ec0c81ab6f6406d40908ba574dac"
+      },
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/include/easyfly_mission_fsm/search_geometry.hpp",
+        "baseline_sha256": "3b62359c5f8ec34ae8330e1174dcbc4dce2ddd7742d0eac0511c007327ff4175",
+        "current_sha256": "f138f79fff65a6fa9230394f7fcbd0d4c97b70ceea06369d52a168da28aee94e"
+      },
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/package.xml",
+        "baseline_sha256": "dbf89ed6167e81910aabd34757cef23fec1698f323aaf7132e0fd5bd9a3661ae",
+        "current_sha256": "fe6b7364d7ed7067c48b2e8b6b314006c9de91524afdd8ea78bc02c35f7545f0"
+      },
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/src/search_area_node.cpp",
+        "baseline_sha256": "654195971f2b28fc48dbde62687242b457f4474cafbdee1a752becc870b30a5a",
+        "current_sha256": "7bfbbfcdfa4b58b54a971425287ce3ddbfd1389015d6559dbf76d5bc6b700ef3"
+      },
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/test/format_consumer/CMakeLists.txt",
+        "baseline_sha256": "2bdec60a506c697c300e9e18cfa62b01a7152d591d9186b1922cb95d4d7ee83d",
+        "current_sha256": "8b7834c330525e65b1b1f1361125845ace09f81e7cdf939fd0fa0e81073b617e"
+      },
+      {
+        "path": "src/execution/e1_state_machine/easyfly_mission_fsm/test/format_consumer/consumer.cpp",
+        "baseline_sha256": "a31d35e54bfa355a547c876172f9e9cbe2816a426e395690216c596b3e8dad2f",
+        "current_sha256": "d32fe7d0a258e63dada9f51d5d844081774917983191051e5531fd8ad7ca4d86"
+      },
+      {
+        "path": "src/execution/e2_planning/easyfly_global_planner/CMakeLists.txt",
+        "baseline_sha256": "98d79c97b0d0e5dae11af4885458ed4175cc9aa34c1785ecb323a19d1028496d",
+        "current_sha256": "56fcea6ca930dd180d2bbc98b50fdd95b3d3badb68339bcbfee1f87acf5766d2"
+      },
+      {
+        "path": "src/execution/e2_planning/easyfly_global_planner/include/easyfly_global_planner/astar.hpp",
+        "baseline_sha256": "37c83c004767b0f60d4e60f708c5405e3522abb93eee409ca756f27375bdfbce",
+        "current_sha256": "24a270eb42219f77f8376f0be171f582e10783db5c850095c4491a3732b620fa"
+      },
+      {
+        "path": "src/execution/e2_planning/easyfly_global_planner/package.xml",
+        "baseline_sha256": "1806411c68d841c239f8d31880199ccec84a445627ebe76cfe05f8fe7f29a6ae",
+        "current_sha256": "d714314268dbf4975af2bcb91c6c932da8d925badf61df4da7966e2f8df7f575"
+      },
+      {
+        "path": "src/execution/e2_planning/easyfly_global_planner/src/global_planner_node.cpp",
+        "baseline_sha256": "4b2f85e3c7f4f6ac3e8d9050dbc61b5c5f64a2a3d1241d61e015130f84496cf2",
+        "current_sha256": "2dcce1191cb5c99bc518b2c54c673f7c3ecf6b3977fca99d633814ce931df6e5"
+      },
+      {
+        "path": "src/execution/e2_planning/easyfly_global_planner/src/navigation_coordinator_node.cpp",
+        "baseline_sha256": "b5eb8e59ef54ae45b2c6027c1bf46db11e707d2a13e5ab2cd9d4dffac5014d0c",
+        "current_sha256": "f23976c6c4cce79754ff60b40680746b40e72e3cef7be863356d8bc177f693d0"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/CMakeLists.txt",
+        "baseline_sha256": "8d617113b3ad9ceaa1313ffdfa5725a1e2b3374a03a92e7f00abaf6a9b934f9a",
+        "current_sha256": "adf06eba4d22958e9f970a5ae45b536d34fbacee81bc10b1d9fb58f372a934f1"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/README.md",
+        "baseline_sha256": "d46a22c70f8f4103b02380788b4de695683cd2834da5e728be82a535b077042f",
+        "current_sha256": "966031486cddc3397b3234d410e8c6a74c5fc825437cf514e6ee00f147027ab7"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/include/easyfly_pointcloud_filter/filter_core.hpp",
+        "baseline_sha256": "eb74ba863cb95c92cfedd69746b42bc7c1e48167a6792f625a8d611b289cfaa8",
+        "current_sha256": "1a2e052ec7262d9c9f5b3a49ecefd8bc0edd59393db1a0825f7f09de55f945cd"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/package.xml",
+        "baseline_sha256": "b2aa28167800ea63b801a64466b1ba73121881d42d7d80eae2febd08a2879ce4",
+        "current_sha256": "caf882687af916c28a6ac043cc095777dddc7599462ff802928eb395821d841d"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/src/pointcloud_filter_node.cpp",
+        "baseline_sha256": "dd214a4b82c29b4fb0fb05c702074a27833d7bfa8aa17ad8cd7634f789a88b97",
+        "current_sha256": "1faff496cdc1e80b954607c6bd9df880a0cbe198580d16e26b6f2ed50c61ed6b"
+      },
+      {
+        "path": "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_transform_timing.py",
+        "baseline_sha256": "d1568495b88fbc0263695e1b05a1a579e0300310d5dedd49e0c3c515028f2736",
+        "current_sha256": "d54d08df8257628b468a5207218f373da2cc3a91b1a50f693600771291b251e5"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/CMakeLists.txt",
+        "baseline_sha256": "5b10d46632bcbe31f16aa6d2ac10048ba17a2d853aaaf45c36b429fb2a58bfce",
+        "current_sha256": "3a15a215278c12bdc2e905280062f8fe7eb9539da92106a18279595ccc3dc471"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/config/tracking.yaml",
+        "baseline_sha256": "a6c964f1858e50ddfacea64ffe56c5a16b0bee8a8be2a946d9bdf34ba4b0572f",
+        "current_sha256": "5453c34b32997bea4bfc6225811d6018b805a9ac957f3f14609aaa7ecf22b983"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/hungarian.hpp",
+        "baseline_sha256": "e93a12dad640e5b6c1de7afaa6f38a46b2018645400d9b4279a357f2d4499437",
+        "current_sha256": "2257934012e6b65bb8be4aea1a202b685ef6d2a081070f16e5432581bc31a3bc"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/id_consolidator.hpp",
+        "baseline_sha256": "0b03f04243b586eacadc021871a8901a69b97a3a1cf2f32329586e5e3f1ba7c3",
+        "current_sha256": "6ec9f6f96c9d30ea64f552f66438c2278515b0c713754c5801bfd5e2dcec2405"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/kalman.hpp",
+        "baseline_sha256": "cd2e0e853b0b2bb99bf3b2c5aebd75b6201d6a9f188fe67e125662200c2bcb59",
+        "current_sha256": "b118ccad8aba8e86d4ffc7fe63e163341cbf8682cbc78540bc949bc0b6ef898e"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/include/easyfly_multi_object_tracking/sort.hpp",
+        "baseline_sha256": "e30ba02fb126ba254d82246d8904798ad3130d11cff63b685b2a3d7dc6542f3c",
+        "current_sha256": "18921c9febb7d3945d7980192f30189f55c8b1c88e233597f4ac4c64e1419074"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/launch/tracking.launch.py",
+        "baseline_sha256": "da2877b83e646b0e35fde73efa9c72967eeab7053b477cef46d08c9314ec9717",
+        "current_sha256": "563c0b82c80560b9ceb62cfc5e293baddd9536e1ef449b7ec78a8695235b7ee9"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/package.xml",
+        "baseline_sha256": "9a4f1939d1e1b92ad7d57b76177115eb404c57fd36f55e154ab0cefd067c8de4",
+        "current_sha256": "9cb071220d8def1b1581515763d880e8eb85feef993b1493e8e7060b5db127da"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_multi_object_tracking/src/tracking_node.cpp",
+        "baseline_sha256": "b58f49b17bd5eba49ddf184e86540baff60b8b99772eb8cb261396353589ec0f",
+        "current_sha256": "3fa7c332dfd3dc54e62438b1acf1d1dc403427322898ae0056a4f8c852dd28a0"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/CMakeLists.txt",
+        "baseline_sha256": "778782af101baebc7e96eab6d2ae13f8bd3de1a3c98747d0f45ff7a1267c6a48",
+        "current_sha256": "cf3a90de4c34038bea3e6895e333c44b752d7d44d9e95ad527067de390213123"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/README.md",
+        "baseline_sha256": "5c1094a0dbc162fed75794b2bcd10fcf2b0206922b7cf84e3d60e9eb5286bffb",
+        "current_sha256": "0731b07a54688618406bff945d2d2d59f1155df989673c319a21ef217cc0065b"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/include/easyfly_target_prediction/predictor.hpp",
+        "baseline_sha256": "51024c0b1cbf06ca6da7ee1dbf4251508f896d2ad33b7a81ddb4c3be9770f931",
+        "current_sha256": "fc85b263007a0e9f06e8373ed101d4b0a6aa9c553f8adafc7c36d50f9d836660"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/package.xml",
+        "baseline_sha256": "8d620d4ee45373c64178b86a64fe786e27a9642a81de452363ec7a9f6ae234d7",
+        "current_sha256": "4753f90dbae413618e0267144149a7df04cbfb2d0f5b2c793f3e0cdfc9a0784b"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/src/target_prediction_node.cpp",
+        "baseline_sha256": "8c41aecc439eb53e72c8e41a013fb78a73c96a66fdd9243a4b76ae70b28b9f81",
+        "current_sha256": "5a84400bfc36fb9af03e40e6bc5abe7996cae6eb0149aed2f6daa25f5f87c30d"
+      },
+      {
+        "path": "src/perception/p3_tracking/easyfly_target_prediction/test/test_prediction_ros.py",
+        "baseline_sha256": "a5b853d70e1ff875cdcb8a8b8d896058b1f674053396dadae2d1fada265d17a9",
+        "current_sha256": "c25ef84bd65fdd5979ab080bcaef1560ace4168b3e2760f666d2c51baae52a89"
+      }
+    ],
+    "removed_after_test_migration": [
+      "src/execution/e1_state_machine/easyfly_mission_fsm/test/test_search_geometry.cpp",
+      "src/execution/e2_planning/easyfly_global_planner/test/test_astar.cpp",
+      "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_filter_core.cpp",
+      "src/perception/p3_tracking/easyfly_multi_object_tracking/test/test_id_consolidator.cpp",
+      "src/perception/p3_tracking/easyfly_multi_object_tracking/test/test_sort.cpp",
+      "src/perception/p3_tracking/easyfly_target_prediction/test/test_predictor.cpp"
+    ]
+  },
+  "phase_production_source_delta_from_alg3": [
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/CMakeLists.txt",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/README.md",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/include/easyfly_pointcloud_filter/filter_core.hpp",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/package.xml",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/src/pointcloud_filter_node.cpp",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_filter_core.cpp",
+    "src/perception/p1_preprocess/easyfly_pointcloud_filter/test/test_transform_timing.py",
+    "src/perception/p3_tracking/easyfly_target_prediction/CMakeLists.txt",
+    "src/perception/p3_tracking/easyfly_target_prediction/README.md",
+    "src/perception/p3_tracking/easyfly_target_prediction/include/easyfly_target_prediction/predictor.hpp",
+    "src/perception/p3_tracking/easyfly_target_prediction/package.xml",
+    "src/perception/p3_tracking/easyfly_target_prediction/src/target_prediction_node.cpp",
+    "src/perception/p3_tracking/easyfly_target_prediction/test/test_prediction_ros.py",
+    "src/perception/p3_tracking/easyfly_target_prediction/test/test_predictor.cpp"
+  ],
+  "production_algorithm_behavior_changed": false,
+  "production_message_clock_tf_queue_logic_changed": false,
+  "test_strengthening": [
+    "Different clock origins, steady rollback and predictions not creating observations.",
+    "Inclusive range endpoints, signed voxels and first-wins preserving complete point attributes.",
+    "Actual installed filter executable used in timing tests for both modes.",
+    "Replay of an expired scan and duplicate/out-of-order stamps do not requeue or republish.",
+    "Prediction node and executor must exit normally; forced cleanup is a test failure."
+  ],
+  "historical_iterations": [
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial-build.log",
+      "reason": "Include replacement matched the plural new package prefix; fixed migrated test include only."
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial-build-completion.log",
+      "reason": "All remaining selected packages built after include correction."
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/lint-core-initial.log",
+      "reason": "New filter header guard style adjusted; no algorithm changes."
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/lint-python-initial.log",
+      "reason": "Split a long new teardown diagnostic line."
+    },
+    {
+      "path": "artifacts/algorithms/alg4-20261018/initial-tests/summary.json",
+      "reason": "All preliminary core and real-node tests passed; final counts use the stable install matrix only."
+    }
+  ],
+  "alg0_failures": {
+    "ALG0-B02": "not fixed or rerun",
+    "ALG0-B03": "not fixed or rerun"
+  },
+  "limits": [
+    "Pure core CMake consumption has no ROS overlay or runtime; legacy functional package metadata retains its ROS dependencies and is tested with the supported ROS build environment.",
+    "Filter canonicalization compares full retained points, not unordered_map global iteration order. Original voxel-key and numerical-input preconditions remain.",
+    "Prediction source/reference and steady clocks have separate origins and semantics; no new producer authentication or calibrated covariance is claimed.",
+    "Selected packages rebuilt with explicit existing underlays; no full-workspace clean rebuild or downstream simulation certification.",
+    "Real ROS tests use nonzero DDS domains and synthetic inputs; no PX4/Gazebo, flight goals or physical vehicle connection.",
+    "Normal core target/header relocation is verified; no promise that generated shell environment scripts relocate.",
+    "Only two targeted lint invocations were run; no full-package legacy lint claim."
+  ]
+}

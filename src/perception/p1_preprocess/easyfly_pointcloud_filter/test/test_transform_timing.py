@@ -93,7 +93,11 @@ def test_measured_transform_and_bounded_wait(tmp_path):
         assert observed[0].header.frame_id == 'odom'
         assert observed[0].header.stamp.sec == 10
         assert observed[0].header.stamp.nanosec == 0
-        assert struct.unpack_from('<fff', observed[0].data) == pytest.approx((0, 1, 0))
+        assert struct.unpack_from('<ffff', observed[0].data) == pytest.approx((0, 1, 0, 10))
+        assert [(f.name, f.offset, f.datatype, f.count) for f in observed[0].fields] == [
+            ('x', 0, 7, 1), ('y', 4, 7, 1), ('z', 8, 7, 1), ('intensity', 12, 7, 1)]
+        assert observed[0].point_step == observed[0].row_step == 16
+        assert observed[0].width == observed[0].height == 1
 
         # A frozen simulation clock must not keep a missing-transform scan forever.
         current[0] = 10.5
@@ -103,6 +107,9 @@ def test_measured_transform_and_bounded_wait(tmp_path):
         transform(10.5)
         pump(0.15)
         assert len(observed) == 1
+        cloud(10.5)  # Replayed expired scan must not acquire a fresh receipt TTL.
+        pump(0.1)
+        assert len(observed) == 1
         current[0] = 10.6
         pump(0.05)
         transform(10.6)
@@ -110,6 +117,11 @@ def test_measured_transform_and_bounded_wait(tmp_path):
         pump(0.2)
         assert len(observed) == 2
         assert struct.unpack_from('<fff', observed[-1].data) == pytest.approx((1, 0, 0))
+
+        cloud(10.6)  # Duplicate and out-of-order scans cannot republish.
+        cloud(10.55)
+        pump(0.1)
+        assert len(observed) == 2
 
         # Zero time must never mean "latest", and invalid-age data stays unpublished.
         for value in (0.0, 8.0, 12.0):

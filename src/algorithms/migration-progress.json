@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-3",
-  "next_phase": "ALG-4",
+  "latest_completed_phase": "ALG-4",
+  "next_phase": "ALG-5",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api"
@@ -50,8 +50,28 @@
       "consumer": "easyfly_mission_fsm",
       "legacy_headers": "using aliases only",
       "normal_trace_equivalent_to_baseline": true
+    },
+    {
+      "id": "motion_prediction",
+      "package": "easyfly_motion_prediction",
+      "path": "src/algorithms/tracking/easyfly_motion_prediction",
+      "core_namespace": "easyfly::motion_prediction",
+      "consumer": "easyfly_target_prediction",
+      "legacy_headers": "using aliases only",
+      "normal_trace_equivalent_to_baseline": true,
+      "explicit_dual_clock_history_preserved": true
+    },
+    {
+      "id": "pointcloud_filters",
+      "package": "easyfly_pointcloud_filters",
+      "path": "src/algorithms/preprocessing/easyfly_pointcloud_filters",
+      "core_namespace": "easyfly::pointcloud_filters",
+      "consumer": "easyfly_pointcloud_filter",
+      "legacy_headers": "using aliases only",
+      "normal_trace_equivalent_to_baseline": true,
+      "first_wins_point_attributes_and_source_time_tf_preserved": true
     }
   ],
   "third_party_moves_executed": [],
-  "details": "alg3-validation.md"
+  "details": "alg4-validation.md"
 }

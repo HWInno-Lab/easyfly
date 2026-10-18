@@ -107,6 +107,11 @@ ALG-3 按等价迁移、控制增强分开提交并完成实际验证，见 [ALG
 - 占据图保留 cluster_boxes/observed_cells、膨胀半径至少 .7m、20 帧持久化、未知格重置。
   `map_validity.hpp` 依赖 ROS 消息并定义平台失效协议，留在功能包，不能整头迁入纯库。
 
+ALG-4 已将完整预测历史模型迁入 `easyfly_motion_prediction`，过滤计算迁入
+`easyfly_pointcloud_filters`；节点直接调用新普通类型/函数，旧头仅保留别名。
+两份核心和节点正文经结构归一后与原版相同，双时钟、源时间 TF、队列/过期规则未改变。
+实际时序、安装与独立消费验证见 [ALG-4 验收](alg4-validation.md)。
+
 ## 6. 接口外的平台职责
 
 保留的公开能力包括现有话题/QoS、服务/Action 名称、CameraInfo 模型、坐标系约定、

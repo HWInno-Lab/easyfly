@@ -7,6 +7,8 @@ ALG-2 新增 `tracking/easyfly_sort` 与 `tracking/easyfly_track_id_fusion` 两�
 ALG-3 新增 `planning/easyfly_astar` 与 `planning/easyfly_coverage_planning`；前者依赖
 grid planner API 的 SearchControl，后者仅依赖标准库。全局规划和 combined 协调器
 通过工厂调用 A*，搜索任务直接消费覆盖几何；功能包继续拥有执行与运行接纳。
+ALG-4 新增 `tracking/easyfly_motion_prediction` 和 `preprocessing/easyfly_pointcloud_filters`，
+均仅依赖标准库。节点直接使用已有普通类型，显式传入时间；TF/队列保留在功能包。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -29,6 +31,8 @@ grid planner API 的 SearchControl，后者仅依赖标准库。全局规划和 
 | easyfly_track_id_fusion | easyfly_track_id_fusion/id_consolidator.hpp | easyfly_track_id_fusion::easyfly_track_id_fusion |
 | easyfly_astar | easyfly_astar/astar.hpp | easyfly_astar::easyfly_astar |
 | easyfly_coverage_planning | easyfly_coverage_planning/search_geometry.hpp | easyfly_coverage_planning::easyfly_coverage_planning |
+| easyfly_motion_prediction | easyfly_motion_prediction/predictor.hpp | easyfly_motion_prediction::easyfly_motion_prediction |
+| easyfly_pointcloud_filters | easyfly_pointcloud_filters/filter_core.hpp | easyfly_pointcloud_filters::easyfly_pointcloud_filters |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -98,3 +102,6 @@ ALG-2 已实现 SORT 适配器、reset 与实际 ROS 回归，结果及安装验
 ALG-3 的真实 A*/覆盖几何、普通 CMake 适配器库与安装矩阵见
 [ALG-3 验收](alg3-validation.md)，复验工具为 `../../tools/algorithms/verify_planning_install.py`。
 两个规划实现与 grid planner API 的源码依赖闭包仅自身三包，不引入 ROS 运行库。
+
+ALG-4 的预测/过滤核心、双时钟与源时间 TF 回归见 [ALG-4 验收](alg4-validation.md)。
+旧 ROS 功能包继续导出其 ROS 元数据；新纯核心可单独 find_package，无需 ROS overlay。

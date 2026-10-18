@@ -13,6 +13,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>easyfly_pointcloud_filters</depend>
   <depend>rclcpp_components</depend>
   <depend>sensor_msgs</depend>
   <depend>livox_ros_driver2</depend>

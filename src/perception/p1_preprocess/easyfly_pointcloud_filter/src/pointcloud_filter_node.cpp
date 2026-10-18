@@ -29,10 +29,15 @@
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <Eigen/Geometry>
 
-#include "easyfly_pointcloud_filter/filter_core.hpp"
+#include "easyfly_pointcloud_filters/filter_core.hpp"
 
 namespace easyfly_pointcloud_filter
 {
+using easyfly::pointcloud_filters::Pt;
+using easyfly::pointcloud_filters::rangeFilter;
+using easyfly::pointcloud_filters::voxelDownsample;
+using easyfly::pointcloud_filters::filterCloud;
+
 
 class PointcloudFilterNode : public rclcpp::Node
 {

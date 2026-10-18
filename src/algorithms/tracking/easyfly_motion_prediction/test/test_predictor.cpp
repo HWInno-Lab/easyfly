@@ -14,11 +14,11 @@
 
 #include <gtest/gtest.h>
 #include <limits>
-#include "easyfly_target_prediction/predictor.hpp"
-using easyfly_target_prediction::Frame;
-using easyfly_target_prediction::Observation;
-using easyfly_target_prediction::Options;
-using easyfly_target_prediction::Predictor;
+#include "easyfly_motion_prediction/predictor.hpp"
+using easyfly::motion_prediction::Frame;
+using easyfly::motion_prediction::Observation;
+using easyfly::motion_prediction::Options;
+using easyfly::motion_prediction::Predictor;
 static constexpr int64_t S = 1000000000LL;
 static Frame frame(int64_t stamp, double x = 0, int id = 1)
 {
@@ -133,4 +133,40 @@ TEST(Predictor, CacheAndInputBoundsAndOptions) {
   o.horizon = 0;Predictor zero(o);zero.observe(frame(S), S, S);
   zero.observe(frame(S + S / 10, .1), S + S / 10, S + S / 10);
   EXPECT_NEAR(zero.predict(S + S / 5, S + S / 5).at(0).position[0], .2, 1e-9);
+}
+
+TEST(PredictorMigration, DistinctClockOriginsAndPredictionsDoNotRefreshObservations)
+{
+  Predictor p;
+  ASSERT_TRUE(p.observe(frame(100 * S), 100 * S, 9 * S));
+  for (int i = 1; i <= 3; ++i) {
+    const auto output = p.predict(100 * S + i * S / 100, 9 * S + i * S / 100);
+    ASSERT_EQ(output.size(), 1u);
+    EXPECT_FALSE(output[0].valid);
+    EXPECT_EQ(output[0].observation.stamp_ns, 100 * S);
+  }
+  ASSERT_TRUE(p.observe(frame(100 * S + S / 10, .1), 100 * S + S / 10, 9 * S + S / 10));
+  const auto output = p.predict(100 * S + S / 5, 9 * S + S / 5);
+  ASSERT_EQ(output.size(), 1u);
+  EXPECT_TRUE(output[0].valid);
+  EXPECT_NEAR(output[0].velocity[0], 1, 1e-9);
+  EXPECT_NEAR(output[0].position[0], .7, 1e-9);
+  const auto expired = p.predict(100 * S + 3 * S / 10, 9 * S + 8 * S / 10);
+  ASSERT_EQ(expired.size(), 1u);
+  EXPECT_FALSE(expired[0].valid);
+  EXPECT_EQ(expired[0].reason, "expired");
+  EXPECT_TRUE(p.predict(100 * S + 3 * S / 10, 9 * S + 8 * S / 10).empty());
+}
+
+TEST(PredictorMigration, SteadyRollbackRequiresTwoNewObservations)
+{
+  Predictor p;
+  ASSERT_TRUE(p.observe(frame(S), S, 10 * S));
+  ASSERT_TRUE(p.observe(frame(S + S / 10, .1), S + S / 10, 10 * S + S / 10));
+  EXPECT_TRUE(p.predict(S + S / 5, 10 * S + S / 5).at(0).valid);
+  EXPECT_TRUE(p.predict(S + 3 * S / 10, 9 * S).empty());
+  ASSERT_TRUE(p.observe(frame(S + 4 * S / 10, .2), S + 4 * S / 10, 9 * S + S / 10));
+  EXPECT_FALSE(p.predict(S + 4 * S / 10, 9 * S + S / 10).at(0).valid);
+  ASSERT_TRUE(p.observe(frame(S + S / 2, .3), S + S / 2, 9 * S + S / 5));
+  EXPECT_TRUE(p.predict(S + S / 2, 9 * S + S / 5).at(0).valid);
 }

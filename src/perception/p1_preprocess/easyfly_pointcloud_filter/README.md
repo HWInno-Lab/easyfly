@@ -19,3 +19,11 @@ The ordinary ROS regression starts only this node and publishes synthetic clock,
 TF and cloud messages. It checks delayed rotation, frozen-clock expiry, recovery,
 invalid timestamps and clock rewind; it never starts a simulator or sends flight
 goals.
+
+ALG-4 moves range/voxel computation into the standard-library-only
+`easyfly_pointcloud_filters` package. The node directly consumes its `Pt` and
+filter functions; the old `filter_core.hpp` contains forwarding aliases only.
+Parsing, source-time TF, queue/watermark/clock handling and PointCloud2 layout
+remain in this node. Filtering happens in the source frame before the original
+measurement-time transform. No PCL, Eigen or ROS runtime dependency is added to
+the algorithm package; Eigen/TF remain node dependencies.

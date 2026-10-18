@@ -16,7 +16,7 @@
 #include <cstdio>
 #include <memory>
 #include <mutex>
-#include "easyfly_target_prediction/predictor.hpp"
+#include "easyfly_motion_prediction/predictor.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <easyfly_msgs/msg/target3_d_array.hpp>
 #include <easyfly_msgs/msg/target_prediction_array.hpp>
@@ -24,6 +24,12 @@
 
 namespace easyfly_target_prediction
 {
+using easyfly::motion_prediction::Options;
+using easyfly::motion_prediction::Observation;
+using easyfly::motion_prediction::Frame;
+using easyfly::motion_prediction::Prediction;
+using easyfly::motion_prediction::Predictor;
+
 class TargetPredictionNode : public rclcpp::Node
 {
 public:

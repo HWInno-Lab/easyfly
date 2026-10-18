@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_pointcloud_filters REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(ament_index_cpp REQUIRED)
@@ -28,7 +29,7 @@ target_include_directories(${PROJECT_NAME}_nodes PUBLIC
 ament_target_dependencies(${PROJECT_NAME}_nodes
   rclcpp rclcpp_components ament_index_cpp sensor_msgs
   livox_ros_driver2 tf2 tf2_ros tf2_eigen geometry_msgs)
-target_link_libraries(${PROJECT_NAME}_nodes Eigen3::Eigen yaml-cpp)
+target_link_libraries(${PROJECT_NAME}_nodes Eigen3::Eigen yaml-cpp easyfly_pointcloud_filters::easyfly_pointcloud_filters)
 
 rclcpp_components_register_node(${PROJECT_NAME}_nodes
   PLUGIN "easyfly_pointcloud_filter::PointcloudFilterNode"
@@ -39,7 +40,7 @@ install(TARGETS ${PROJECT_NAME}_nodes
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
 install(DIRECTORY include/
-  DESTINATION include/${PROJECT_NAME}
+  DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
@@ -49,16 +50,13 @@ if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
-  ament_add_gtest(test_filter_core test/test_filter_core.cpp)
-  target_include_directories(test_filter_core PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_transform_timing test/test_transform_timing.py
-    ENV "POINTCLOUD_FILTER_EXECUTABLE=$<TARGET_FILE:pointcloud_filter_node>"
+    ENV "POINTCLOUD_FILTER_EXECUTABLE=${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}/pointcloud_filter_node"
     TIMEOUT 45)
 endif()
 
 ament_export_include_directories(include)
-ament_export_dependencies(rclcpp sensor_msgs livox_ros_driver2)
+ament_export_dependencies(rclcpp sensor_msgs livox_ros_driver2 easyfly_pointcloud_filters)
 
 ament_package()

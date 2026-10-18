@@ -51,7 +51,15 @@ implemented, and ready only while at least one currently valid prediction exists
 Readiness is not flight permission. DDS identities are not authenticated here;
 use a trusted publisher or DDS Security when producer trust matters.
 
-Tests comprise pure-core GTests and actual ROS positive/negative cases on domain
-104, including paused and regressed `/clock`. Build only after `easyfly_msgs` has
+Core GTests now belong to `easyfly_motion_prediction`; the functional package
+retains actual ROS positive/negative cases on domain 104, including paused and regressed `/clock`. Build only after `easyfly_msgs` has
 been regenerated with the prediction interfaces. Run targeted CTests from
 `build/easyfly_target_prediction` after sourcing the workspace installation.
+
+
+ALG-4 moves the complete prediction/history model into the standard-library-only
+`easyfly_motion_prediction` package. The node directly consumes its ordinary
+C++ types and explicitly supplies ROS/steady timestamps; the old `predictor.hpp`
+contains forwarding aliases only. Message conversion, clock sampling, timer and
+capability service remain here. Topics, QoS, parameters, model thresholds and
+clock/watchdog call order are preserved. No navigation/control consumer is added.
