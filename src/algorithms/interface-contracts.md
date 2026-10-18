@@ -1,7 +1,7 @@
-# 算法接口与行为冻结（ALG-0 至 ALG-7.2）
+# 算法接口与行为冻结（ALG-0 至 ALG-7.3）
 
 基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
-ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离，ALG-7.1/7.2 已完成地面和障碍几何子批次。
+ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离，ALG-7 三个子批次已完成地面、障碍几何和占据图拆分。
 本文件记录不变的计算语义和各批次显式新增的接口检查。
 实际头文件与细节见各 API 包 README；以下单位和职责边界继续作为迁移约束。
 
@@ -132,6 +132,13 @@ ALG-7.2 已将两轮当前帧 PCL 聚类/AABB、动态 Hungarian 关联、EMA �
 tracker 仅消费显式源时间和当前观测；空帧不保留历史框/速度确认，有限休眠 ID 规则保持。
 节点仍执行输入接纳/失效 reset、原消息精度/唯一 ID 保护和全局点数预算；占据图留待 ALG-7.3。
 详见 [ALG-7.2 验收](alg7-2-validation.md)。
+
+ALG-7.3 已将 observed-cells、cluster-boxes 膨胀、完整预测足迹转换和 GridPersistence
+迁入 easyfly_occupancy_mapping；输出为普通 GridGeometry / vector<int8_t>。
+有界层模板直接消费原地面对象的 normal/valid/zAt，不复制地面判定实现或依赖 ROS/PCL。
+保留 .70m 最小膨胀、体素交集、20帧保持/第21帧释放和尺寸变化清理；节点失效时调用 reset。
+map_validity.hpp、未知失效消息、地图源时间/地面/TF 接纳与发布仍在功能包。
+详见 [ALG-7.3 验收](alg7-3-validation.md)。
 
 ## 6. 接口外的平台职责
 

@@ -81,14 +81,19 @@
 #include "easyfly_ground_segmentation/ground_spatial_support.hpp"
 #include "easyfly_ground_segmentation/ground_plane_transform.hpp"
 #include "easyfly_ground_segmentation/ground_fitting.hpp"
-#include "easyfly_semantic_map/grid_inflation.hpp"
-#include "easyfly_semantic_map/observed_grid.hpp"
+#include "easyfly_occupancy_mapping/grid_inflation.hpp"
+#include "easyfly_occupancy_mapping/observed_grid.hpp"
+#include "easyfly_occupancy_mapping/occupancy_grid.hpp"
 #include "easyfly_semantic_map/map_validity.hpp"
 #include "easyfly_semantic_map/dynamic_obstacle_tracker.hpp"
 #include "easyfly_obstacle_geometry/clustering.hpp"
 
 namespace easyfly_semantic_map
 {
+using easyfly::occupancy::normalizeGridInflationRadius;
+using easyfly::occupancy::kDefaultGridInflationRadius;
+using easyfly::occupancy::kMinimumGridInflationRadius;
+using easyfly::occupancy::rasterizeObservedFootprints;
 using easyfly::ground::isGroundFitSample;
 using easyfly::ground::groundSpatialSupport;
 using easyfly::ground::GroundPlaneModel;
@@ -829,8 +834,7 @@ private:
 
   void invalidateMap(const char * reason = nullptr)
   {
-    grid_persist_.clear();
-    grid_miss_.clear();
+    grid_history_.reset();
     resetObstacleTracking();
 
     bool publish_transition = false;
@@ -1481,22 +1485,9 @@ private:
       for (std::size_t i = 0; i < boxes.size(); ++i) {
         if (arr.obstacles[i].is_dynamic) {dynamic_boxes.push_back(boxes[i]);}
       }
-      constexpr auto footprint = DynamicObstacleTracker::kPredictionFootprintPoints;
-      for (std::size_t i = 0; i < published_prediction_points; i += footprint) {
-        const auto start = merged_nonground->size() - published_prediction_points + i;
-        const auto & p = merged_nonground->points[start];
-        std::array<double, 6> b{p.x, p.y, p.z, p.x, p.y, p.z};
-        for (std::size_t j = 1; j < footprint; ++j) {
-          const auto & v = merged_nonground->points[start + j];
-          b[0] = std::min(b[0], static_cast<double>(v.x)); b[1] = std::min(
-            b[1],
-            static_cast<double>(v.y));
-          b[3] = std::max(b[3], static_cast<double>(v.x)); b[4] = std::max(
-            b[4],
-            static_cast<double>(v.y));
-        }
-        dynamic_boxes.push_back(b);
-      }
+      easyfly::occupancy::appendPredictionFootprintBoxes(
+        *merged_nonground, published_prediction_points,
+        DynamicObstacleTracker::kPredictionFootprintPoints, dynamic_boxes);
       publishGrid(arr.header, dynamic_boxes, merged_nonground.get(), &classification_ground);
     } else {
       publishGrid(arr.header, boxes);
@@ -1522,11 +1513,13 @@ private:
     }
     nav_msgs::msg::OccupancyGrid grid;
     grid.header = header;
-    grid.info.resolution = params_.grid_resolution;
-    grid.info.width = static_cast<uint32_t>(params_.grid_width / params_.grid_resolution);
-    grid.info.height = static_cast<uint32_t>(params_.grid_height / params_.grid_resolution);
-    grid.info.origin.position.x = -params_.grid_width / 2.0;
-    grid.info.origin.position.y = -params_.grid_height / 2.0;
+    const auto geometry = easyfly::occupancy::makeGridGeometry(
+      params_.grid_width, params_.grid_height, params_.grid_resolution);
+    grid.info.resolution = geometry.resolution;
+    grid.info.width = geometry.width;
+    grid.info.height = geometry.height;
+    grid.info.origin.position.x = geometry.origin_x;
+    grid.info.origin.position.y = geometry.origin_y;
     grid.info.origin.orientation.w = 1.0;
     const size_t n = static_cast<size_t>(grid.info.width) * grid.info.height;
     grid.data.assign(n, 0);
@@ -1542,54 +1535,9 @@ private:
       invalidateMap("observed occupancy geometry invalid");
       return;
     }
-    for (const auto & b : boxes) {
-      const int c1 = std::max(
-        0, static_cast<int>(std::floor(
-          (b[0] - inf -
-          grid.info.origin.position.x) / params_.grid_resolution)));
-      const int c2 = std::min(
-        static_cast<int>(grid.info.width) - 1,
-        static_cast<int>(std::floor(
-          (b[3] + inf -
-          grid.info.origin.position.x) / params_.grid_resolution)));
-      const int r1 = std::max(
-        0, static_cast<int>(std::floor(
-          (b[1] - inf -
-          grid.info.origin.position.y) / params_.grid_resolution)));
-      const int r2 = std::min(
-        static_cast<int>(grid.info.height) - 1,
-        static_cast<int>(std::floor(
-          (b[4] + inf -
-          grid.info.origin.position.y) / params_.grid_resolution)));
-      for (int r = r1; r <= r2; ++r) {
-        for (int c = c1; c <= c2; ++c) {
-          grid.data[r * grid.info.width + c] = 100;
-        }
-      }
-    }
+    easyfly::occupancy::rasterizeClusterBoxes(boxes, geometry, inf, grid.data);
 
-    // 持久化融合 (两段式): 最近 persist_frames 帧内见过 → 100, 超时 → 0。
-    // 不用数值衰减: 衰减值会在 A* 占据阈值 (>=50) 边缘抖动 — 测试目标格
-    // 采样时 55(占据)、规划执行时 48(空闲), 同一障碍时有时无。
-    // 历史尺寸不符则重置。
-    if (grid_persist_.size() != n || grid_miss_.size() != n) {
-      grid_persist_.assign(n, 0);
-      grid_miss_.assign(n, 0);
-    }
-    for (size_t i = 0; i < n; ++i) {
-      if (grid.data[i] == 100) {
-        grid_persist_[i] = 100;
-        grid_miss_[i] = 0;
-      } else if (grid_persist_[i] > 0) {
-        if (++grid_miss_[i] > static_cast<uint32_t>(
-            std::max(0, params_.grid_persist_frames)))
-        {
-          grid_persist_[i] = 0;
-          grid_miss_[i] = 0;
-        }
-        grid.data[i] = grid_persist_[i];
-      }
-    }
+    grid_history_.apply(grid.data, params_.grid_persist_frames);
     grid_pub_->publish(grid);
   }
 
@@ -1687,8 +1635,7 @@ private:
   bool invalid_published_{false};
   std::string grid_footprint_mode_;
   double grid_height_limit_m_{0.0};
-  std::vector<int8_t> grid_persist_;    // 栅格持久化状态 (两段式)
-  std::vector<uint32_t> grid_miss_;     // 连续未观测帧数
+  easyfly::occupancy::GridPersistence grid_history_;
 
   std::mutex input_mtx_;
   bool input_seen_{false};

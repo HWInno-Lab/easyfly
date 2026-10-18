@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-7.2",
-  "next_phase": "ALG-7.3",
+  "latest_completed_phase": "ALG-7.3",
+  "next_phase": "ALG-8.1",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api",
@@ -153,6 +153,19 @@
       "current_frame_pcl_clustering_and_both_aabb_paths_extracted": true,
       "hungarian_ema_and_complete_swept_footprints_extracted": true,
       "platform_admission_map_and_global_point_budget_preserved": true
+    },
+    {
+      "id": "occupancy",
+      "package": "easyfly_occupancy_mapping",
+      "path": "src/algorithms/fusion_mapping/easyfly_occupancy_mapping",
+      "core_namespace": "easyfly::occupancy",
+      "consumer": "easyfly_semantic_map",
+      "legacy_headers": "inflation aliases and concrete-plane forwarding wrapper",
+      "normal_trace_equivalent_to_baseline": true,
+      "observed_cells_cluster_boxes_inflation_and_persistence_extracted": true,
+      "core_export_requires_only_stl": true,
+      "ground_package_is_test_only_dependency": true,
+      "platform_map_validity_source_time_ground_tf_and_publish_preserved": true
     }
   ],
   "third_party_moves_executed": [
@@ -164,5 +177,5 @@
       "payload_unchanged": true
     }
   ],
-  "details": "alg7-2-validation.md"
+  "details": "alg7-3-validation.md"
 }

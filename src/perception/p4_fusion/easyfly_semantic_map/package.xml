@@ -12,6 +12,7 @@
   <license>Apache-2.0</license>
   <depend>easyfly_ground_segmentation</depend>
   <depend>easyfly_obstacle_geometry</depend>
+  <depend>easyfly_occupancy_mapping</depend>
   <depend>easyfly_obstacle_association</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>

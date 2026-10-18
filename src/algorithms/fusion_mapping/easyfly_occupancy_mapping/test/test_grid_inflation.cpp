@@ -17,9 +17,9 @@
 #include <cmath>
 #include <limits>
 
-#include "easyfly_semantic_map/grid_inflation.hpp"
+#include "easyfly_occupancy_mapping/grid_inflation.hpp"
 
-namespace easyfly_semantic_map
+namespace easyfly::occupancy
 {
 namespace
 {
@@ -43,4 +43,4 @@ TEST(GridInflationTest, InvalidRadiusFallsBackToSafeDefault)
 }
 
 }  // namespace
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::occupancy

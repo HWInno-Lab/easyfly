@@ -17,6 +17,8 @@ ALG-7.1 新增 easyfly_ground_segmentation，导出 SHARED target，公开系统
 不引入 ROS 消息或 TF 查询。地面拟合与模型在算法包，状态/参考系接纳和地图输出在功能包。
 ALG-7.2 新增 easyfly_obstacle_geometry，导出 SHARED target，聚类/AABB 依赖 PCL，
 动态跟踪头仅依赖 STL；不包含 ROS 运行依赖。节点保留地图、时效接纳和全局预测点数预算。
+ALG-7.3 新增 easyfly_occupancy_mapping，导出 STL-only INTERFACE target；原真实地面模型
+仅为测试依赖，不导出 PCL/地面包依赖。节点管理消息、失效协议与历史 reset 时机。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -51,6 +53,7 @@ ALG-7.2 新增 easyfly_obstacle_geometry，导出 SHARED target，聚类/AABB �
 | easyfly_obstacle_association | easyfly_obstacle_association/core.py | easyfly_obstacle_association.core（Python） |
 | easyfly_ground_segmentation | easyfly_ground_segmentation/ground_fitting.hpp | easyfly_ground_segmentation::easyfly_ground_segmentation |
 | easyfly_obstacle_geometry | easyfly_obstacle_geometry/clustering.hpp / dynamic_obstacle_tracker.hpp | easyfly_obstacle_geometry::easyfly_obstacle_geometry |
+| easyfly_occupancy_mapping | easyfly_occupancy_mapping/occupancy_grid.hpp / observed_grid.hpp / grid_inflation.hpp | easyfly_occupancy_mapping::easyfly_occupancy_mapping |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -140,3 +143,8 @@ ALG-7.1 纯 CMake 消费显式声明 LANGUAGES C CXX，以满足系统 PCL/VTK �
 ALG-7.2 同样使用系统 PCL 的 C/CXX 配置；旧动态头导出全部原公开类型/函数别名。
 普通安装根搬迁后用新 prefix 重配、构建和运行纯 CMake 消费者，另在 ROS 环境消费旧头。
 复验工具 `../../tools/algorithms/verify_obstacle_install.py`，详见 [ALG-7.2 验收](alg7-2-validation.md)。
+
+ALG-7.3 纯 CMake 消费仅声明 CXX，只提供 occupancy prefix 即可，不需要 ROS、PCL 或地面库。
+原 bounded-layer 测试通过 test_depend 使用实际地面类型；colcon源码闭包包含该测试依赖。
+旧 observed_grid 头用薄转发保留具体地面指针签名；旧 ROS 功能包配置仍需支持的 ROS/C/PCL 环境。
+复验工具 `../../tools/algorithms/verify_occupancy_install.py`，见 [ALG-7.3 验收](alg7-3-validation.md)。
