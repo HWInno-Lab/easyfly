@@ -1,0 +1,80 @@
+{
+  "scene": "urban_block_osrf_v1",
+  "resources_complete": true,
+  "licenses_complete": true,
+  "registration_complete": false,
+  "runtime_verified": false,
+  "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+  "asset_manifest_sha256": "d6c725d971d7ebeb3960a945e70870ea99626d9cf1a7c39e88ccbecc5f92ac4a",
+  "cache_lock": "2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035",
+  "validation": {
+    "scene_id": "urban_block_osrf_v1",
+    "resources_complete": true,
+    "scene_resources_complete": true,
+    "runtime_resources_complete": true,
+    "licenses_complete": true,
+    "registration_complete": false,
+    "runtime_verified": false,
+    "issues": [
+      {
+        "scope": "registration",
+        "message": "draft scene; no newly verified profile compatibility"
+      },
+      {
+        "scope": "registration",
+        "message": "world/odom alignment not measured"
+      }
+    ],
+    "checked_files": [
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/apartment/materials/textures/apartment_diffuse.jpg",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/apartment/materials/textures/apartment_spec.jpg",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/apartment/meshes/apartment.dae",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/apartment/model.config",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/apartment/model.sdf",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/office_building/meshes/office_building.dae",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/office_building/model-1_3.sdf",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/office_building/model-1_4.sdf",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/office_building/model.config",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/office_building/model.sdf",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/parking_garage/materials/textures/parking_garage_diffuse.jpg",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/parking_garage/materials/textures/parking_garage_spec.jpg",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/parking_garage/meshes/parking_garage.dae",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/parking_garage/model.config",
+      "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models/parking_garage/model.sdf",
+      "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/share/easyfly_gazebo_plugins/livox_laser_plugin/scan_mode/mid360-real-centr.csv",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/easyfly_iris.sdf",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/easyfly_iris.urdf",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/meshes/iris.stl",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/meshes/iris_prop_ccw.dae",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/meshes/iris_prop_cw.dae",
+      "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models/easyfly_iris/model.config",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_models/easyfly/runtime_models/gps/gps.sdf",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_models/easyfly/runtime_models/gps/model.config",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_models/easyfly/runtime_models/mid360/mid360.sdf",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_models/easyfly/runtime_models/mid360/model.config",
+      "/home/jia/easyfly_ws/src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+      "/usr/share/gazebo-11/media/materials/scripts/gazebo.material",
+      "/usr/share/gazebo-11/models/ground_plane/model.config",
+      "/usr/share/gazebo-11/models/ground_plane/model.sdf",
+      "/usr/share/gazebo-11/models/sun/model.config",
+      "/usr/share/gazebo-11/models/sun/model.sdf"
+    ],
+    "checked_plugins": [
+      "libeasyfly_gazebo_ros_camera.so",
+      "libeasyfly_imu_antialias.so",
+      "libgazebo_barometer_plugin.so",
+      "libgazebo_gps_plugin.so",
+      "libgazebo_groundtruth_plugin.so",
+      "libgazebo_imu_plugin.so",
+      "libgazebo_magnetometer_plugin.so",
+      "libgazebo_mavlink_interface.so",
+      "libgazebo_motor_model.so",
+      "libgazebo_multirotor_base_plugin.so",
+      "libgazebo_ros_imu_sensor.so",
+      "libgazebo_ros_init.so",
+      "liblivox_laser_simulation.so"
+    ]
+  },
+  "configuration_notes": [],
+  "scope": "Read-only source catalog and actual prepared cache; UAV plugins checked as files only, not runtime ABI or sensor output."
+}

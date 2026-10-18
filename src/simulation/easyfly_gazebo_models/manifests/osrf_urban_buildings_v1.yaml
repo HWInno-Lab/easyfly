@@ -1,0 +1,180 @@
+schema_version: 1
+asset_set_id: osrf_urban_buildings_v1
+model_root:
+  external: asset_cache
+  path: models
+provenance:
+  status: recorded
+  source_url: https://github.com/osrf/gazebo_models
+  revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  declared_license: CC-BY-3.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_urban_buildings/LICENSE
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_urban_buildings/ATTRIBUTION.md
+  - package: easyfly_gazebo_models
+    path: licenses/osrf_urban_buildings/origins.json
+  note: Only apartment, office_building and parking_garage; all fifteen upstream files
+    unchanged, including every config-listed SDF version. Mesh units/transforms, collision,
+    texture pixels and author metadata retained.
+models:
+- name: apartment
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/osrf/gazebo_models
+    revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+    declared_license: CC-BY-3.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/origins.json
+    note: Only apartment, office_building and parking_garage; all fifteen upstream
+      files unchanged, including every config-listed SDF version. Mesh units/transforms,
+      collision, texture pixels and author metadata retained.
+- name: office_building
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/osrf/gazebo_models
+    revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+    declared_license: CC-BY-3.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/origins.json
+    note: Only apartment, office_building and parking_garage; all fifteen upstream
+      files unchanged, including every config-listed SDF version. Mesh units/transforms,
+      collision, texture pixels and author metadata retained.
+- name: parking_garage
+  sdf: model.sdf
+  provenance:
+    status: recorded
+    source_url: https://github.com/osrf/gazebo_models
+    revision: 8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+    declared_license: CC-BY-3.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/LICENSE
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/ATTRIBUTION.md
+    - package: easyfly_gazebo_models
+      path: licenses/osrf_urban_buildings/origins.json
+    note: Only apartment, office_building and parking_garage; all fifteen upstream
+      files unchanged, including every config-listed SDF version. Mesh units/transforms,
+      collision, texture pixels and author metadata retained.
+files:
+- path: apartment/materials/textures/apartment_diffuse.jpg
+  sha256: a013d0272d7437d64a3466ada08a59618aaf875b54fa2b7b10d3be21cf7b3158
+- path: apartment/materials/textures/apartment_spec.jpg
+  sha256: 5dff7b507c86b6155b59e0477e34d2d8c86feb01cc114647c2bfa999d84168e1
+- path: apartment/meshes/apartment.dae
+  sha256: 1bad8646026a29dcef112850278badbf60ade2b2dc479a054d78a72b4715e32b
+- path: apartment/model.config
+  sha256: 67278bc623a0e133655acbbb7d8bf47d662d27d57425969cea71b9a9635f5cb5
+- path: apartment/model.sdf
+  sha256: b85af2c0c6b143d6960e98821a8d9bff21c843bd1a3cad002747cd16d169d08b
+- path: office_building/meshes/office_building.dae
+  sha256: 552a6ad03daeb4266f8f83aa343acd7a402ab85592ff460c738058acb24de00c
+- path: office_building/model-1_3.sdf
+  sha256: ca00b5b275e5d83b35857e95c8b1472a242448255350b49b325b44526caaa097
+- path: office_building/model-1_4.sdf
+  sha256: da1d3356543a9df8f6a9d62328cdcd93d15f50c7a2a161d7bbfbb4fefad382da
+- path: office_building/model.config
+  sha256: 4721fc7ace2e39327317ba5e89f8dddf684bc09a707e4253db2564d8a7cfe4aa
+- path: office_building/model.sdf
+  sha256: 11d5aef74a493ac098a48b698c088a6b0eea46a8b2a70bdbb8fa064e6741f92e
+- path: parking_garage/materials/textures/parking_garage_diffuse.jpg
+  sha256: 3fdd5ed504e2f1120a14c5e4d2dd114a9d5bc6435961c78d232421166cdf0579
+- path: parking_garage/materials/textures/parking_garage_spec.jpg
+  sha256: 2b3c9d329feaefb6b690ed359518df88b396c3edfb9952cab5cee6e2427b04d5
+- path: parking_garage/meshes/parking_garage.dae
+  sha256: 8f2994635242a26e4a9094067e71c21005da3170e731e64f3e257c469370434b
+- path: parking_garage/model.config
+  sha256: 159f9b31cc51ad0b6ab67f3de402522fecd5bff31b0f223aa255538eae1bff58
+- path: parking_garage/model.sdf
+  sha256: 61518b4c66f0f62781b8f621eef24428383ec4d9f120f14ab1a783795a63d28b
+storage: cached
+local_changes: []
+inventory_note: All fifteen unchanged building files; unrelated archive models are
+  not exposed, packaged or installed as scene dependencies.
+archive:
+  format: tar.gz
+  urls:
+  - https://codeload.github.com/osrf/gazebo_models/tar.gz/8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  sha256: e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a
+  size_bytes: 227118253
+  prefix: gazebo_models-8163eb4b5e7e21985c6591d1c0bfb56468c0093f
+  max_members: 2384
+  max_unpacked_bytes: 322220389
+  license:
+    source: LICENSE
+    sha256: 776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e
+  members:
+  - source: apartment/materials/textures/apartment_diffuse.jpg
+    target: apartment/materials/textures/apartment_diffuse.jpg
+    source_sha256: a013d0272d7437d64a3466ada08a59618aaf875b54fa2b7b10d3be21cf7b3158
+    replacements: []
+  - source: apartment/materials/textures/apartment_spec.jpg
+    target: apartment/materials/textures/apartment_spec.jpg
+    source_sha256: 5dff7b507c86b6155b59e0477e34d2d8c86feb01cc114647c2bfa999d84168e1
+    replacements: []
+  - source: apartment/meshes/apartment.dae
+    target: apartment/meshes/apartment.dae
+    source_sha256: 1bad8646026a29dcef112850278badbf60ade2b2dc479a054d78a72b4715e32b
+    replacements: []
+  - source: apartment/model.config
+    target: apartment/model.config
+    source_sha256: 67278bc623a0e133655acbbb7d8bf47d662d27d57425969cea71b9a9635f5cb5
+    replacements: []
+  - source: apartment/model.sdf
+    target: apartment/model.sdf
+    source_sha256: b85af2c0c6b143d6960e98821a8d9bff21c843bd1a3cad002747cd16d169d08b
+    replacements: []
+  - source: office_building/meshes/office_building.dae
+    target: office_building/meshes/office_building.dae
+    source_sha256: 552a6ad03daeb4266f8f83aa343acd7a402ab85592ff460c738058acb24de00c
+    replacements: []
+  - source: office_building/model-1_3.sdf
+    target: office_building/model-1_3.sdf
+    source_sha256: ca00b5b275e5d83b35857e95c8b1472a242448255350b49b325b44526caaa097
+    replacements: []
+  - source: office_building/model-1_4.sdf
+    target: office_building/model-1_4.sdf
+    source_sha256: da1d3356543a9df8f6a9d62328cdcd93d15f50c7a2a161d7bbfbb4fefad382da
+    replacements: []
+  - source: office_building/model.config
+    target: office_building/model.config
+    source_sha256: 4721fc7ace2e39327317ba5e89f8dddf684bc09a707e4253db2564d8a7cfe4aa
+    replacements: []
+  - source: office_building/model.sdf
+    target: office_building/model.sdf
+    source_sha256: 11d5aef74a493ac098a48b698c088a6b0eea46a8b2a70bdbb8fa064e6741f92e
+    replacements: []
+  - source: parking_garage/materials/textures/parking_garage_diffuse.jpg
+    target: parking_garage/materials/textures/parking_garage_diffuse.jpg
+    source_sha256: 3fdd5ed504e2f1120a14c5e4d2dd114a9d5bc6435961c78d232421166cdf0579
+    replacements: []
+  - source: parking_garage/materials/textures/parking_garage_spec.jpg
+    target: parking_garage/materials/textures/parking_garage_spec.jpg
+    source_sha256: 2b3c9d329feaefb6b690ed359518df88b396c3edfb9952cab5cee6e2427b04d5
+    replacements: []
+  - source: parking_garage/meshes/parking_garage.dae
+    target: parking_garage/meshes/parking_garage.dae
+    source_sha256: 8f2994635242a26e4a9094067e71c21005da3170e731e64f3e257c469370434b
+    replacements: []
+  - source: parking_garage/model.config
+    target: parking_garage/model.config
+    source_sha256: 159f9b31cc51ad0b6ab67f3de402522fecd5bff31b0f223aa255538eae1bff58
+    replacements: []
+  - source: parking_garage/model.sdf
+    target: parking_garage/model.sdf
+    source_sha256: 61518b4c66f0f62781b8f621eef24428383ec4d9f120f14ab1a783795a63d28b
+    replacements: []

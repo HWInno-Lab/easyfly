@@ -321,4 +321,57 @@ ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene
 正式矩阵72正常退出，无强制/异常/所属残留；两种安装各324常规测试结果及44项CLI通过。
 当前证据为`calibration-s6-region-v2.json`、`mission-s6-final.json`和
 `evidence/scene-s6-office-signoff.json`；原策略的拒绝与冷启动记录单独保留。
-当前目录14图、9 registered、5 draft。S6整体未完成，医院43个Fuel外部依赖仍待逐项审核。
+办公室该轮签收时目录14图、9 registered、5 draft，医院当时仍待逐项审核。
+后续医院v2的当前签收见本文开头；历史办公室运行记录仍对应其当轮代码与配置。
+
+## S6 城市、园区候选审计
+
+候选筛选与首选资源闭包结果见
+[`evidence/urban-candidates-s6/README.md`](evidence/urban-candidates-s6/README.md)。
+首选固定OSRF归档中的公寓、办公楼和停车楼，用于后续自有小型街区；
+三建筑15文件、3,352,376字节，五份SDF格式及离线资源闭包检查通过。
+原模型CC-BY-3.0声明与作者信息单独保留，新布局使用项目许可。
+完整CitySim、CMU campus及Clearpath inspection各自的资源/许可/转换缺口单独记录。
+本轮仅完成来源审计，未登记新场景、测量出生点或执行飞行验收；
+候选审计时目录16项、10 registered、6 draft；后续街区草稿接入见下一节。
+
+## S6 静态城市街区：有界参考路线
+
+`urban_block_osrf_v1`归类`outdoor/urban`，标签building/road/inspection/static。
+它是项目自有的道路/地面布局，引用三种原始OSRF建筑，不是完整CitySim或实景校园。
+三建筑全部15文件通过`osrf_urban_buildings_v1`可选缓存提供，保留CC-BY-3.0及作者署名；
+项目world放在`worlds/outdoor/urban/`，使用Apache-2.0。没有引入人物、车控或上游插件。
+
+原生Gazebo/ODE已测量每栋建筑的实际碰撞尺寸，保留原始mesh单位与变换。
+停车楼约60.47×41.53×45.91m，位于北侧；公寓/办公楼位于南侧，主路宽10m。
+三个world实例仅按原生碰撞底部作z落位，源模型文件不变。有限地面物理顶面为z=0；
+道路与车道线是高出地面1–2mm的视觉涂层，不增加碰撞障碍。
+
+五条y偏移(-1、-0.5、0、0.5、1)m、x从-6到6m的路线共108,970条原生射线通过，
+采样高度0.1–4.0m、32方位，最小采样水平净距12.4798m，85处地面射线命中z=0，
+25m向上射线无命中。出生点登记为world(0,0,0.1)、yaw=0。
+实际布局/原生尺寸/文件与测量指纹见`evidence/urban_block_osrf_v1/`。
+静态几何记录保留原草稿阶段结论；当前传感器/建图、两种安装独立冷启动标定和
+同仿真连续两轮参考任务已通过，`navigation_tested=true`，支持`navigation_dev`。
+推荐任务为`easyfly_mission_scripts/missions/scenes/urban_block_osrf_v1/street_out_and_back.yaml`：
+odom中1.5m起飞、悬停、前往(1.5,0,1.5)、返回(0,0,1.5)、降落。
+4个真实导航UUID成功，最大到位误差0.091056m；两次落地恢复3.6661/8.4519墙秒。
+正式矩阵72进程正常退出，无强制/异常/所属残留；另有24进程的草稿无Goal检查通过。
+
+两种安装在推荐区域内的实测坐标差最大0.012412m、yaw差0.000196rad。
+飞行前按两次独立冷启动冻结world/odom参考，未按飞行结果重新标定。
+默认`grid_height_limit_m=0`，保留全高度2D投影；不继承医院的2D高度上界。
+当前证据为`bootstrap-s6-qualified.json`、`calibration-s6-final.json`、`mission-s6-final.json`
+及`evidence/scene-s6-urban-signoff.json`。原草稿资源/几何结论与启动前运行器错误日志独立保留。
+
+```bash
+ros2 run easyfly_sim_launcher scene_catalog fetch urban_block_osrf_v1
+ros2 run easyfly_sim_launcher scene_catalog validate urban_block_osrf_v1 --json
+ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene:=urban_block_osrf_v1 headless:=true
+```
+
+命令要求source含当前场景与清单的安装前缀；离线维护可用fetch的`--archive`和`--offline`。
+PX4运行时需已有`mag_lpf_interval_v1`兼容构建；缺缓存或资源损坏仍在启动前拒绝。
+离线validate的`runtime_verified`保持false，不替代实际起飞时的健康、地图与任务接纳检查。
+本轮只覆盖出生点附近上述往返路线，不涵盖其他道路、建筑内部、停车楼楼层、屋顶或长时间飞行。
+当前目录17项、11 registered、6 draft；S6继续按实际用途逐图扩展和验收。

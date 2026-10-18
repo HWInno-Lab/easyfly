@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-10-17",
+  "scope": "S6 urban/campus source selection and offline resource audit; no new runnable scene or flight qualification.",
+  "candidate_screening_complete": true,
+  "selected_source_resource_audit_complete": true,
+  "urban_scene_qualification_complete": false,
+  "S6_complete": false,
+  "production_catalog_modified": false,
+  "catalog_counts": {
+    "total": 16,
+    "registered": 10,
+    "draft": 6
+  },
+  "selected_candidate": "osrf_static_buildings",
+  "next_scene_proposed_id": "urban_block_osrf_v1",
+  "next_scene_proposed_category": "outdoor/urban",
+  "candidates": [
+    {
+      "id": "osrf_static_buildings",
+      "decision": "selected_for_next_draft_import",
+      "kind": "Three source models for a new EasyFly-authored static block; not an existing real campus or CitySim map.",
+      "source": {
+        "repo": "osrf/gazebo_models",
+        "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+        "url": "https://codeload.github.com/osrf/gazebo_models/tar.gz/8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+        "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+        "archive_bytes": 227118253
+      },
+      "selected_models": [
+        "apartment",
+        "office_building",
+        "parking_garage"
+      ],
+      "selected_files": 15,
+      "selected_payload_bytes": 3352376,
+      "declared_license": "CC-BY-3.0",
+      "license_sha256": "776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e",
+      "license_url": "https://github.com/osrf/gazebo_models/blob/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/LICENSE",
+      "license_scope": "Selected model files, including mesh and texture; no model-local license exception found. Retain the root notice and original config/mesh author credits. New layout/world separately project Apache-2.0.",
+      "resource_closure_complete": true,
+      "resource_evidence": "building-resources.json",
+      "native_sdf_syntax_checks": 5,
+      "remaining": [
+        "Prepare cached asset manifest, attribution and source inventory; reuse the exact existing archive without packaging its full payload.",
+        "Create a small static outdoor block with project-authored road/ground and original building meshes; record actual layout revision.",
+        "All three meshes declare inches (meter=0.0254); native importer transforms, floor and collision dimensions must be measured before placement/spawn.",
+        "Register a draft with no measured spawn, odom alignment or supported profile until qualified.",
+        "Native ODE collision/clearance, sensors/map, two independent cold starts and two consecutive mission cycles remain required."
+      ]
+    },
+    {
+      "id": "osrf_citysim_full",
+      "decision": "deferred_requires_derived_static_revision",
+      "source": {
+        "repo": "osrf/citysim",
+        "revision": "3928b08e2598f5ead2e9b24640fe1bde262a136d",
+        "url": "https://codeload.github.com/osrf/citysim/tar.gz/3928b08e2598f5ead2e9b24640fe1bde262a136d",
+        "archive_sha256": "65f9f161f91b940e1cb442406e1bfbfffc6bb4619235fabf502411bfd281e7a4",
+        "archive_bytes": 15610091,
+        "member_count": 85,
+        "regular_files": 65,
+        "unpacked_bytes": 37621968
+      },
+      "world": "worlds/simple_city.world",
+      "declared_root_license": "Apache-2.0",
+      "include_instance_count": 546,
+      "direct_include_model_names": [
+        "ambulance",
+        "apartment",
+        "bus",
+        "cafe_table",
+        "cardboard_box",
+        "cinder_block",
+        "cinder_block_2",
+        "city_terrain",
+        "collapsed_industrial",
+        "construction_barrel",
+        "construction_cone",
+        "drc_practice_angled_barrier_45",
+        "drc_practice_orange_jersey_barrier",
+        "dumpster",
+        "fast_food",
+        "fire_hydrant",
+        "fire_station",
+        "fire_truck",
+        "fountain",
+        "gazebo",
+        "grocery_store",
+        "hatchback",
+        "hatchback_blue",
+        "hatchback_red",
+        "house_1",
+        "house_2",
+        "house_3",
+        "lamp_post",
+        "law_office",
+        "oak_tree",
+        "ocean",
+        "osrf_first_office",
+        "parking_garage",
+        "person_standing",
+        "pickup",
+        "pier",
+        "pine_tree",
+        "playground",
+        "police_station",
+        "post_office",
+        "postbox",
+        "powerplant",
+        "prius_hybrid_sensors",
+        "radio_tower",
+        "reactor",
+        "robocup_3Dsim_field",
+        "salon",
+        "school",
+        "stop_light_post",
+        "stop_sign",
+        "suv",
+        "telephone_pole",
+        "thrift_shop",
+        "tower_crane",
+        "truss_bridge"
+      ],
+      "direct_unique_include_models": 55,
+      "direct_external_models": 53,
+      "local_models": [
+        "city_terrain",
+        "ocean"
+      ],
+      "actors": 22,
+      "world_plugins": [
+        "libBloomVisualPlugin.so",
+        "libJoyPlugin.so",
+        "libKeyboardGUIPlugin.so",
+        "libLensFlareVisualPlugin.so",
+        "libPriusHybridPlugin.so",
+        "libTrafficLightsGUIPlugin.so"
+      ],
+      "transitive_osrf_model_discovery": {
+        "models": 57,
+        "files": 362,
+        "payload_bytes": 87493422,
+        "missing_model_names": [],
+        "scope": "SDF/config model-name discovery only; DAE/OGRE texture closure and third-party licenses not qualified."
+      },
+      "license_resource_closure_complete": false,
+      "evidence": [
+        {
+          "path": "CMakeLists.txt",
+          "size": 1916,
+          "sha256": "c85e08177638305006377ea19e27755c791956e455837740a2ab5c455e712f99",
+          "url": "https://raw.githubusercontent.com/osrf/citysim/3928b08e2598f5ead2e9b24640fe1bde262a136d/CMakeLists.txt"
+        },
+        {
+          "path": "LICENSE",
+          "size": 11357,
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "url": "https://raw.githubusercontent.com/osrf/citysim/3928b08e2598f5ead2e9b24640fe1bde262a136d/LICENSE"
+        },
+        {
+          "path": "models/ocean/materials/textures/License and source soil_sand_0045_01.txt",
+          "size": 640,
+          "sha256": "adc825d279b11c7fb0a0d5aa9dc5920cd5cc61e4be5df6d031ded8365251df88",
+          "url": "https://raw.githubusercontent.com/osrf/citysim/3928b08e2598f5ead2e9b24640fe1bde262a136d/models/ocean/materials/textures/License%20and%20source%20soil_sand_0045_01.txt"
+        },
+        {
+          "path": "models/ocean/model.sdf",
+          "size": 3331,
+          "sha256": "13d13ac55034215f6177ae610fcabc68614dfbf9e4c3bf4d3ba1008822a98699",
+          "url": "https://raw.githubusercontent.com/osrf/citysim/3928b08e2598f5ead2e9b24640fe1bde262a136d/models/ocean/model.sdf"
+        },
+        {
+          "path": "worlds/simple_city.world",
+          "size": 373747,
+          "sha256": "b36f8a3974f22643169b153e0475c66eaa3ab73f9e929460b1d2c0f37fed491e",
+          "url": "https://raw.githubusercontent.com/osrf/citysim/3928b08e2598f5ead2e9b24640fe1bde262a136d/worlds/simple_city.world"
+        }
+      ],
+      "findings": [
+        "Classic SDF 1.6 world; original build requests Gazebo 9, not proof of Gazebo 11 plugin ABI compatibility.",
+        "57 transitive model names are present in the separately pinned OSRF archive; only SDF/config model-name discovery performed, not recursive DAE/OGRE or per-file license qualification.",
+        "22 actor elements plus Prius control, joystick, traffic light GUI and rendering plugins exceed the current static single-UAV scope.",
+        "Ocean material uses GLSL programs; current catalog deliberately refuses unsupported advanced material closures.",
+        "Ocean includes a texturelib.com notice with custom conditions on standalone image redistribution. It is not covered solely by the CitySim Apache-2.0 declaration; ocean exclusion or separate integration review required.",
+        "A static derivative needs its own revision, explicit exclusions and independent asset-by-asset/native acceptance; no whole-world direct-use claim."
+      ]
+    },
+    {
+      "id": "cmu_campus",
+      "decision": "deferred_missing_external_asset_lock_and_license",
+      "source": {
+        "repo": "HongbiaoZ/autonomous_exploration_development_environment",
+        "revision": "bf0cba71365271ebff09831a05afd78578150300",
+        "url": "https://codeload.github.com/HongbiaoZ/autonomous_exploration_development_environment/tar.gz/bf0cba71365271ebff09831a05afd78578150300",
+        "archive_sha256": "3ddb3c6ee10d11eb09ca49b72c8934bd149cb4ac1e814472800c6fc59789c064",
+        "archive_bytes": 2187400,
+        "member_count": 190,
+        "regular_files": 124,
+        "unpacked_bytes": 32508020
+      },
+      "world": "src/vehicle_simulator/world/campus.world",
+      "package_license_declaration": "BSD (vehicle_simulator/package.xml only)",
+      "world_license_recorded": false,
+      "external_model_license_recorded": false,
+      "resource_closure_complete": false,
+      "download_script": "src/vehicle_simulator/mesh/download_environments.sh",
+      "external_google_drive_id": "1V4MWCD3qYLr3RFLLATbqAh_lXKcCU39C",
+      "external_archive_downloaded": false,
+      "measured_from_world": {
+        "gravity": "0 0 0",
+        "magnetic_field": "0 0 0",
+        "map_pose": "0 0 1 0 0 0",
+        "historical_sim_time": "4176 536000000",
+        "mesh_uris": [
+          "model://campus/meshes/campus.dae"
+        ]
+      },
+      "evidence": [
+        {
+          "path": "README.md",
+          "size": 584,
+          "sha256": "ef2e92f78e6e287be7a7cc2a032708ed8202e6a897657588c02eb288bfcab059",
+          "url": "https://raw.githubusercontent.com/HongbiaoZ/autonomous_exploration_development_environment/bf0cba71365271ebff09831a05afd78578150300/README.md"
+        },
+        {
+          "path": "src/vehicle_simulator/mesh/download_environments.sh",
+          "size": 609,
+          "sha256": "adf373503eb5cf0f58ccb92dfdba0bccf4c881d173f86f0a881273e2b4cc814c",
+          "url": "https://raw.githubusercontent.com/HongbiaoZ/autonomous_exploration_development_environment/bf0cba71365271ebff09831a05afd78578150300/src/vehicle_simulator/mesh/download_environments.sh"
+        },
+        {
+          "path": "src/vehicle_simulator/package.xml",
+          "size": 841,
+          "sha256": "7b1be4b329ad6da5378ddafa67fc9d3813f716717ce838a212e720cb37d5ff0f",
+          "url": "https://raw.githubusercontent.com/HongbiaoZ/autonomous_exploration_development_environment/bf0cba71365271ebff09831a05afd78578150300/src/vehicle_simulator/package.xml"
+        },
+        {
+          "path": "src/vehicle_simulator/world/campus.world",
+          "size": 2958,
+          "sha256": "3a3ac96157b73cd8c8adcf6dca47b4b1a07e180e600a271e2dac9609b87981b6",
+          "url": "https://raw.githubusercontent.com/HongbiaoZ/autonomous_exploration_development_environment/bf0cba71365271ebff09831a05afd78578150300/src/vehicle_simulator/world/campus.world"
+        }
+      ],
+      "findings": [
+        "No root LICENSE or campus-model notice in the fixed repository archive; the velodyne subtree license does not establish campus mesh/texture rights.",
+        "The script points to an external Google Drive bundle without a content hash or a per-environment license record; external campus geometry/texture inventory and byte size remain unknown.",
+        "Original campus world has zero gravity and zero magnetic field plus saved historical clock; it cannot be used unchanged as a PX4 flight world.",
+        "The downloader was read, not executed; no external mesh rights or validity inferred from code package BSD metadata."
+      ]
+    },
+    {
+      "id": "clearpath_inspection",
+      "decision": "deferred_geometry_conversion_and_full_resource_audit",
+      "source": {
+        "repo": "clearpathrobotics/cpr_gazebo",
+        "revision": "509afbeec942c6aad376a5a76a24330f1c56dc17"
+      },
+      "world": "cpr_inspection_gazebo/worlds/inspection_world.world",
+      "declared_package_license": "BSD",
+      "package_notice": "BSD-3-Clause-style notice in cpr_inspection_gazebo/docs/LICENSE.txt",
+      "license_resource_closure_complete": false,
+      "source_tree_files": 305,
+      "archive_complete": false,
+      "archive_download_size_lower_bound_bytes": 209715200,
+      "archive_size_bytes": null,
+      "selected_payload_bytes": null,
+      "evidence": [
+        {
+          "path": "cpr_inspection_gazebo/docs/LICENSE.txt",
+          "size": 1505,
+          "sha256": "8e59401d4167d8a6c1605c55d1d7f9741c5209d838bfc6255744dfe9ce2d345a",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/docs/LICENSE.txt"
+        },
+        {
+          "path": "cpr_inspection_gazebo/docs/README.md",
+          "size": 2466,
+          "sha256": "e1f396d6300d4937a5dd9824116ca162cba9358224d67f3f730011c213523c5b",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/docs/README.md"
+        },
+        {
+          "path": "cpr_inspection_gazebo/package.xml",
+          "size": 987,
+          "sha256": "c861f95fc19bd46eb16fd2469ad1931e20d8d19f2e94f216a4005192f3665879",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/package.xml"
+        },
+        {
+          "path": "cpr_inspection_gazebo/worlds/inspection_world.world",
+          "size": 3213,
+          "sha256": "79c92606ccaa971446178121e75ee22abb8cadd3056665e05ef6e245df6ee988",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/worlds/inspection_world.world"
+        },
+        {
+          "path": "cpr_inspection_gazebo/urdf/inspection_geometry.urdf.xacro",
+          "size": 1416,
+          "sha256": "751a48203675c4629c51af1559d83a3b97168195ceeb8c3f369c29e91cc6845c",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/urdf/inspection_geometry.urdf.xacro"
+        },
+        {
+          "path": "cpr_inspection_gazebo/launch/inspection_world.launch",
+          "size": 1644,
+          "sha256": "8378127e5f232f7766d69ab292d09f17373e215f2ba4a242a64e860b215513c2",
+          "url": "https://raw.githubusercontent.com/clearpathrobotics/cpr_gazebo/509afbeec942c6aad376a5a76a24330f1c56dc17/cpr_inspection_gazebo/launch/inspection_world.launch"
+        }
+      ],
+      "findings": [
+        "Package-local notice is present despite no repository-root LICENSE; do not classify the package as unlicensed based on its homepage.",
+        "World SDF 1.5 contains lighting/physics, while the actual environment is spawned separately from ROS1 URDF/Xacro; loading only this world would omit the inspection terrain.",
+        "Xacro geometry applies scale 2 2 1 and yaw pi, includes a separate water visual and cpr_accessories_gazebo base_station; standalone SDF conversion must preserve these semantics.",
+        "Water-current plugins in this noetic world are commented out; they are not active dependencies of the parsed world.",
+        "Full repository archive exceeded a 200MiB inspection budget. Git tree and selected pinned text were then audited; no complete archive hash/size or mesh/texture closure claimed.",
+        "Full DAE, texture-origin/embedded-license, accessories closure, terrain collision and practical loading cost still need audit."
+      ]
+    }
+  ],
+  "next_steps": [
+    "Import only the three selected source models as a locked optional cache asset and retain notices/credits.",
+    "Author and register urban_block_osrf_v1 as draft; first measure native building units/transform/floor/collision, then freeze layout and spawn.",
+    "Qualify the selected reference region through sensors/map, independent normal/symlink cold starts and two mission cycles; register only the actual passed scope."
+  ],
+  "limitations": [
+    "No new production catalog entry, layout, spawn, calibration, flight mission or navigation qualification added by this audit.",
+    "No upstream scripts/plugins, ROS1 launch or downloaded executable code were run.",
+    "Ordinary ROS colcon and flight regressions are not required by the source-only audit and were not rerun. Existing hospital evidence remains version-specific."
+  ],
+  "verification_summary": {
+    "building_resource_closure": true,
+    "native_sdf_syntax_checks": 5,
+    "missing_texture_rejected": true,
+    "changed_texture_rejected": true,
+    "wrong_archive_rejected": true,
+    "uav_runtime_checked": false,
+    "native_flight_runs": 0
+  },
+  "independent_source_checks": {
+    "clearpath_selected_text_blobs_match_fixed_git_tree": 11,
+    "selected_jpeg_metadata_checked": 4,
+    "selected_jpeg_copyright_or_artist_tags_found": 0,
+    "selected_jpeg_xmp_blocks_found": 0
+  },
+  "selected_texture_metadata": [
+    {
+      "path": "apartment/materials/textures/apartment_diffuse.jpg",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "JPEG",
+      "relevant_exif": {},
+      "comment": "b''",
+      "xmp_present": false
+    },
+    {
+      "path": "apartment/materials/textures/apartment_spec.jpg",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "JPEG",
+      "relevant_exif": {},
+      "comment": "b''",
+      "xmp_present": false
+    },
+    {
+      "path": "parking_garage/materials/textures/parking_garage_diffuse.jpg",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "JPEG",
+      "relevant_exif": {},
+      "comment": "b''",
+      "xmp_present": false
+    },
+    {
+      "path": "parking_garage/materials/textures/parking_garage_spec.jpg",
+      "size": [
+        1024,
+        1024
+      ],
+      "format": "JPEG",
+      "relevant_exif": {},
+      "comment": "b''",
+      "xmp_present": false
+    }
+  ]
+}

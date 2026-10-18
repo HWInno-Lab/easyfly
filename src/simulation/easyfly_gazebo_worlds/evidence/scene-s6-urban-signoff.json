@@ -1,0 +1,297 @@
+{
+  "stage": "S6",
+  "scene": "urban_block_osrf_v1",
+  "category": "outdoor/urban",
+  "urban_block_reference_qualification_complete": true,
+  "S6_complete": false,
+  "scope": "Three unchanged OSRF buildings in an EasyFly-authored static street. Sensor/map and two cold starts plus two bounded 1.5m out-and-back/landing missions near the origin only. No whole-city, building-interior, parking-level, rooftop or long-duration qualification.",
+  "catalog": {
+    "total": 17,
+    "registered": 11,
+    "draft": 6
+  },
+  "asset": {
+    "id": "osrf_urban_buildings_v1",
+    "manifest_sha256": "d6c725d971d7ebeb3960a945e70870ea99626d9cf1a7c39e88ccbecc5f92ac4a",
+    "storage": "cached",
+    "model_count": 3,
+    "locked_files": 15,
+    "payload_bytes": 3352376,
+    "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+    "declared_license": "CC-BY-3.0",
+    "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+    "archive_bytes": 227118253,
+    "cache_lock": "2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035",
+    "payload_installed": false,
+    "all_fifteen_model_files_unchanged": true
+  },
+  "evidence": [
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/asset-source.json",
+      "sha256": "c155634ab3c37d71f715c348ce1293d47ea2bbea1ebb466ae7a53d8873481cfe"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/layout.json",
+      "sha256": "3a6daa076af423fee2fb64a221bb6edbebee991292175bc75ec58a5199d6f912"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/geometry-s6-draft.json",
+      "sha256": "5aebbe4d8f447d9eb8c10981370c3c873f57377ef313dee4201c32f11290422e"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/resource-audit-s6.json",
+      "sha256": "ebc1469773404c984b9cc25ec85a383d0d5747e63890453c40a2e34f2ff20454"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/bootstrap-s6-qualified.json",
+      "sha256": "61c6cd4a01b06e0499a2722f4ec3ed1c35f52aadb3d9055622f2044472abda95"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/calibration-s6-final.json",
+      "sha256": "c1772e1d748ff2f5332aff3a4b24bd7a6075bd8928a33f39e18090817f3602f6"
+    },
+    {
+      "path": "src/simulation/easyfly_gazebo_worlds/evidence/urban_block_osrf_v1/mission-s6-final.json",
+      "sha256": "5ee902de317266b3523547a15c5d570ba1e227683f98b0a4c69374f031142523"
+    }
+  ],
+  "formal_matrix": {
+    "cold_starts": 2,
+    "installation_modes": [
+      "normal",
+      "symlink"
+    ],
+    "mission_runs": 1,
+    "mission_cycles": 2,
+    "parent_missions": 2,
+    "navigation_goals": 4,
+    "max_navigation_error_m": 0.09105551358877335,
+    "normal_exits": 72,
+    "all_runs_network_isolated": true,
+    "interfaces": [
+      "lo"
+    ],
+    "no_external_routes": true,
+    "forced_cleanup": false,
+    "leftovers": false,
+    "draft_disarmed_inspection_normal_exits": 24
+  },
+  "navigation": {
+    "profile": "navigation_dev",
+    "frame": "odom",
+    "world_to_navigation": {
+      "translation": [
+        0.00086379969434347,
+        0.006616135826334357,
+        -0.060408394205729174
+      ],
+      "yaw": -0.018633558383292354
+    },
+    "reference_frozen_before_flight": true,
+    "recommended_region": {
+      "min": [
+        -0.3,
+        -0.3,
+        0.5
+      ],
+      "max": [
+        1.8,
+        0.3,
+        2.3
+      ]
+    },
+    "grid_footprint_mode": "observed_cells",
+    "grid_height_limit_m": 0.0,
+    "mission": "missions/scenes/urban_block_osrf_v1/street_out_and_back.yaml",
+    "mission_sha256": "7c4a8e22c39478b67e2e036428a14845f4779d67ec2e9bfcc38e4fd451fcf33d"
+  },
+  "cold_start_pair_alignment_check": {
+    "policy": "recommended_region",
+    "maximum_position_error_m": 0.012412319787014377,
+    "yaw_error_rad": 0.00019603170455343225,
+    "translation_component_error_m": 0.012396166762586865,
+    "samples": [
+      {
+        "world_point": [
+          -0.2960390170426457,
+          -0.3129257906048813,
+          0.5543303098958333
+        ],
+        "reference_navigation": [
+          -0.3,
+          -0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          -0.30190881435161576,
+          -0.3014787767472823,
+          0.4878438313802083
+        ],
+        "error_m": 0.012393659201787229
+      },
+      {
+        "world_point": [
+          -0.2960390170426457,
+          -0.3129257906048813,
+          2.354330309895833
+        ],
+        "reference_navigation": [
+          -0.3,
+          -0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          -0.30190881435161576,
+          -0.3014787767472823,
+          2.287843831380208
+        ],
+        "error_m": 0.012393659201787501
+      },
+      {
+        "world_point": [
+          -0.3072773043572631,
+          0.28696895091085667,
+          0.5543303098958333
+        ],
+        "reference_navigation": [
+          -0.3,
+          0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          -0.3020264333735945,
+          0.298521211724189,
+          0.4878438313802083
+        ],
+        "error_m": 0.012412319787014105
+      },
+      {
+        "world_point": [
+          -0.3072773043572631,
+          0.28696895091085667,
+          2.354330309895833
+        ],
+        "reference_navigation": [
+          -0.3,
+          0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          -0.3020264333735945,
+          0.298521211724189,
+          2.287843831380208
+        ],
+        "error_m": 0.012412319787014377
+      },
+      {
+        "world_point": [
+          1.8035925782624374,
+          -0.2735917850037204,
+          0.5543303098958333
+        ],
+        "reference_navigation": [
+          1.8,
+          -0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          1.7980911452985338,
+          -0.3010671101703567,
+          0.4878438313802083
+        ],
+        "error_m": 0.012351311100437749
+      },
+      {
+        "world_point": [
+          1.8035925782624374,
+          -0.2735917850037204,
+          2.354330309895833
+        ],
+        "reference_navigation": [
+          1.8,
+          -0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          1.7980911452985338,
+          -0.3010671101703567,
+          2.287843831380208
+        ],
+        "error_m": 0.012351311100438023
+      },
+      {
+        "world_point": [
+          1.7923542909478198,
+          0.3263029565120176,
+          0.5543303098958333
+        ],
+        "reference_navigation": [
+          1.8,
+          0.3,
+          0.5
+        ],
+        "measured_navigation": [
+          1.7979735262765548,
+          0.2989328783011146,
+          0.4878438313802083
+        ],
+        "error_m": 0.012370035569263901
+      },
+      {
+        "world_point": [
+          1.7923542909478198,
+          0.3263029565120176,
+          2.354330309895833
+        ],
+        "reference_navigation": [
+          1.8,
+          0.3,
+          2.3
+        ],
+        "measured_navigation": [
+          1.7979735262765548,
+          0.2989328783011146,
+          2.287843831380208
+        ],
+        "error_m": 0.012370035569264174
+      }
+    ]
+  },
+  "recovery_seconds": [
+    3.666123349001282,
+    8.45186811000167
+  ],
+  "regression": {
+    "tests": 190,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "raw_result": "artifacts/scene-s6-urban-qualification-20261017/related-tests.xml",
+    "raw_result_sha256": "290881597c67de72442d59a91a4352bf27ea96de787662c0fa129b846d93c516"
+  },
+  "runtime": {
+    "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+    "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+    "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "scene_probe_sha256": "2fee33fe4ca3881551678c7dc62d65875bf0ef7c305d6efe7315fd53f6368727",
+    "loaded_library_sha256": {
+      "libeasyfly_imu_antialias.so": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687",
+      "liblivox_laser_simulation.so": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d",
+      "libgazebo_transport.so.11.10.2": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb",
+      "libeasyfly_pointcloud_filter_nodes.so": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d",
+      "libeasyfly_semantic_map_nodes.so": "b21619f86c57274254b4ee5954a17a3ce451e985e7319b54d628423e5a8be1dc",
+      "libplan_env.so": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+    },
+    "runtime_source_modified": false
+  },
+  "preserved_prelaunch_record": {
+    "path": "artifacts/scene-s6-urban-qualification-20261017/draft-bootstrap-v1-prelaunch-rejection.json",
+    "native_run_started": false,
+    "flight_goals": 0,
+    "counted_as_native_pass": false
+  },
+  "limitations": [
+    "Historical draft/source/geometry audit records retain their original statuses; current qualification is in scene YAML and final calibration/mission evidence.",
+    "Ordinary offline validate still reports runtime_verified=false; stored qualification does not replace live health and navigation admission."
+  ]
+}

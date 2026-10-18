@@ -1,0 +1,6012 @@
+{
+  "grid_height_limit_m": 0.0,
+  "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+  "mission_sha256": "7c4a8e22c39478b67e2e036428a14845f4779d67ec2e9bfcc38e4fd451fcf33d",
+  "scene_probe_sha256": "2fee33fe4ca3881551678c7dc62d65875bf0ef7c305d6efe7315fd53f6368727",
+  "script_sha256": "6a0e7ed9754b0f30802f619ff751c920fd3b14fe481620fa07d2ffe318f3c8c4",
+  "planner_sha256": "97cc353d43da9b47535014bf91a183e108856d20467ec972329bbf9d306c6ef5",
+  "server_sha256": "d28591fcb61c417e11b24b22a3f0bbd60752b530faf71e0a7350df8380f8148a",
+  "px4_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+  "px4_telemetry": {
+    "battery_rate_hz": 5,
+    "command_returncodes": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "local_port": 14580,
+    "native_output_deferred": false,
+    "native_sha256": "6374c01ea362492aa7078346d28f2b8a630abf433101de8790586d0b78b1af9d",
+    "pid": 161719,
+    "rate_hz": 5,
+    "remote_port": 14540,
+    "start_ticks": "3896227",
+    "status": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+    "streams": "\ninstance #0:\n\tmavlink chan: #0\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Normal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (18570, remote port: 14550)\n\tBroadcast enabled: NO\n\ninstance #1:\n\tmavlink chan: #1\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 4000000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14580, remote port: 14540)\n\tBroadcast enabled: NO\n\ninstance #2:\n\tmavlink chan: #2\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 0.152\n\t  tx rate max: 4000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Onboard\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (14280, remote port: 14030)\n\tBroadcast enabled: NO\n\ninstance #3:\n\tmavlink chan: #3\n\ttype:\t\tGENERIC LINK OR RADIO\n\tflow control: OFF\n\trates:\n\t  tx: 0.0 B/s\n\t  txerr: 0.0 B/s\n\t  tx rate mult: 1.000\n\t  tx rate max: 400000 B/s\n\t  rx: 0.0 B/s\n\t  rx loss: 0.0%\n\tFTP enabled: YES, TX enabled: YES\n\tmode: Gimbal\n\tForwarding: On\n\tMAVLink version: 2\n\ttransport protocol: UDP (13030, remote port: 13280)\n\tBroadcast enabled: NO\n\ninstance #0:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tADSB_VEHICLE                  unlimited         50\n\tALTITUDE                        1.00 (1.000)    44\n\tATTITUDE                       50.00 (50.000)   40\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                50.00 (50.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  0.50 (0.500)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tDISTANCE_SENSOR                 0.50 (0.500)  \n\tEFI_STATUS                      2.00 (2.000)  \n\tESC_INFO                        1.00 (1.000)  \n\tESC_STATUS                      1.00 (1.000)  \n\tESTIMATOR_STATUS                0.50 (0.500)    54\n\tEXTENDED_SYS_STATE              1.00 (1.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                        1.00 (1.000)  \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                     5.00 (5.000)  \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               0.10 (0.100)  \n\tLOCAL_POSITION_NED             50.00 (50.000)   40\n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tNAV_CONTROLLER_OUTPUT           1.00 (1.000)  \n\tOBSTACLE_DISTANCE               1.00 (1.000)  \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tORBIT_EXECUTION_STATUS          2.00 (2.000)  \n\tPING                            0.10 (0.100)    26\n\tPOSITION_TARGET_GLOBAL_INT      1.00 (1.000)    63\n\tPOSITION_TARGET_LOCAL_NED      50.00 (50.000) \n\tRAW_RPM                         2.00 (2.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             50.00 (50.000)   49\n\tSYS_STATUS                      1.00 (1.000)    55\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                         4.00 (4.000)    32\n\tVIBRATION                       0.10 (0.100)    44\n\tWIND_COV                        0.50 (0.500)    52\n\tDEBUG                           1.00 (1.000)  \n\tDEBUG_FLOAT_ARRAY               1.00 (1.000)  \n\tDEBUG_VECT                      1.00 (1.000)  \n\tNAMED_VALUE_FLOAT               1.00 (1.000)  \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\ninstance #1:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       5.00 (5.000)    21\n\tSTATUSTEXT                     20.00 (20.000)   66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (10.000)   30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (50.000)   75\n\tLOCAL_POSITION_NED             30.00 (30.000)   40\n\tATTITUDE                      100.00 (100.000)  40\n\tALTITUDE                       10.00 (10.000)   44\n\tDISTANCE_SENSOR                10.00 (10.000) \n\tESC_INFO                       10.00 (10.000) \n\tESC_STATUS                     10.00 (10.000) \n\tMOUNT_ORIENTATION              10.00 (10.000) \n\tOBSTACLE_DISTANCE              10.00 (10.000) \n\tODOMETRY                       30.00 (30.000)  245\n\tADSB_VEHICLE                  unlimited         50\n\tATTITUDE_QUATERNION            50.00 (50.000)   60\n\tATTITUDE_TARGET                10.00 (10.000) \n\tAVAILABLE_MODES                 0.30 (0.300)  \n\tBATTERY_STATUS                  5.00 (5.000)  \n\tCAMERA_IMAGE_CAPTURED         unlimited       \n\tCURRENT_MODE                    0.50 (0.500)    21\n\tEFI_STATUS                      2.00 (2.000)  \n\tESTIMATOR_STATUS                1.00 (1.000)    54\n\tEXTENDED_SYS_STATE              5.00 (5.000)    14\n\tGIMBAL_DEVICE_ATTITUDE_STATUS   1.00 (1.000)  \n\tGIMBAL_DEVICE_SET_ATTITUDE      5.00 (5.000)  \n\tGIMBAL_MANAGER_STATUS           0.50 (0.500)  \n\tGLOBAL_POSITION_INT            50.00 (50.000)   40\n\tGPS2_RAW                      unlimited       \n\tGPS_GLOBAL_ORIGIN               1.00 (1.000)    32\n\tGPS_RAW_INT                   unlimited       \n\tGPS_STATUS                      1.00 (1.000)  \n\tHOME_POSITION                   0.50 (0.500)  \n\tHYGROMETER_SENSOR               1.00 (1.000)  \n\tNAV_CONTROLLER_OUTPUT          10.00 (10.000) \n\tOPEN_DRONE_ID_LOCATION          1.00 (1.000)    71\n\tOPEN_DRONE_ID_SYSTEM            1.00 (1.000)  \n\tOPEN_DRONE_ID_ARM_STATUS        1.00 (1.000)  \n\tOPTICAL_FLOW_RAD               10.00 (10.000) \n\tORBIT_EXECUTION_STATUS          5.00 (5.000)  \n\tPING                            1.00 (1.000)    26\n\tPOSITION_TARGET_GLOBAL_INT     10.00 (10.000)   63\n\tPOSITION_TARGET_LOCAL_NED      10.00 (10.000) \n\tRAW_RPM                         5.00 (5.000)  \n\tRC_CHANNELS                    20.00 (20.000) \n\tSCALED_PRESSURE                 1.00 (1.000)    28\n\tSERVO_OUTPUT_RAW_0             10.00 (10.000)   49\n\tSYS_STATUS                      5.00 (5.000)    55\n\tSYSTEM_TIME                     1.00 (1.000)    24\n\tTIME_ESTIMATE_TO_TARGET         1.00 (1.000)    32\n\tVFR_HUD                        10.00 (10.000)   32\n\tVIBRATION                       0.50 (0.500)    44\n\tWIND_COV                       10.00 (10.000)   52\n\tDEBUG                          10.00 (10.000) \n\tDEBUG_FLOAT_ARRAY              10.00 (10.000) \n\tDEBUG_VECT                     10.00 (10.000) \n\tNAMED_VALUE_FLOAT              10.00 (10.000) \n\tLINK_NODE_STATUS                1.00 (1.000)    48\n\tFIGURE_EIGHT_EXECUTION_STATUS   5.00 (5.000)  \n\tFUEL_STATUS                     1.00 (1.000)  \n\ninstance #2:\n\tName                Rate Config (current) [Hz] Message Size (if active) [B]\n\tHEARTBEAT                       1.00 (1.000)    21\n\tSTATUSTEXT                     20.00 (3.042)    66\n\tCOMMAND_LONG                  unlimited       \n\tTIMESYNC                       10.00 (1.521)    30\n\tCAMERA_TRIGGER                unlimited       \n\tHIGHRES_IMU                    50.00 (7.606)    75\n\tLOCAL_POSITION_NED             30.00 (4.564)    40\n\tATTITUDE                      100.00 (15.212)   40\n\tALTITUDE                       10.00 (1.521)    44\n\tDISTANCE_SENSOR                10.00 (1.521)  \n\tESC_INFO                       10.00 (1.521)  \n\tESC_STATUS                     10.00 (1.521)  \n\tMOUNT_ORIENTATION              10.00",
+    "observed_state_samples": [
+      {
+        "stamp": 73390000000,
+        "receipt": 39079.049972476,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 73590000000,
+        "receipt": 39079.099423658,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 73790000000,
+        "receipt": 39079.321954068,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 73990000000,
+        "receipt": 39079.71163914,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74190000000,
+        "receipt": 39081.415958108,
+        "armed": false,
+        "mode": "OFFBOARD"
+      },
+      {
+        "stamp": 74390000000,
+        "receipt": 39081.466369246,
+        "armed": false,
+        "mode": "OFFBOARD"
+      }
+    ],
+    "max_receipt_gap_seconds": 1.7043189680043724,
+    "observed_battery_samples": [
+      {
+        "stamp": 73520000000,
+        "receipt": 39079.050133899,
+        "voltage": 16.200000762939453,
+        "percentage": 0.8500000238418579
+      },
+      {
+        "stamp": 73720000000,
+        "receipt": 39079.242760335,
+        "voltage": 16.200000762939453,
+        "percentage": 0.8799999952316284
+      },
+      {
+        "stamp": 73920000000,
+        "receipt": 39079.596838827,
+        "voltage": 16.200000762939453,
+        "percentage": 0.8999999761581421
+      },
+      {
+        "stamp": 74120000000,
+        "receipt": 39079.888891842,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9200000166893005
+      },
+      {
+        "stamp": 74320000000,
+        "receipt": 39081.416027478,
+        "voltage": 16.200000762939453,
+        "percentage": 0.9300000071525574
+      },
+      {
+        "stamp": 74520000000,
+        "receipt": 39081.466598734,
+        "voltage": 16.200000762939453,
+        "percentage": 0.949999988079071
+      }
+    ],
+    "max_battery_receipt_gap_seconds": 1.5271356360026402
+  },
+  "gazebo_clock": {
+    "rate_hz": 100,
+    "publisher": "gazebo",
+    "samples": [
+      {
+        "stamp": 72290000000,
+        "receipt": 39076.627961224
+      },
+      {
+        "stamp": 72300000000,
+        "receipt": 39076.637058233
+      },
+      {
+        "stamp": 72310000000,
+        "receipt": 39076.647025734
+      },
+      {
+        "stamp": 72320000000,
+        "receipt": 39076.657286424
+      },
+      {
+        "stamp": 72330000000,
+        "receipt": 39076.71258454
+      },
+      {
+        "stamp": 72340000000,
+        "receipt": 39076.75859907
+      },
+      {
+        "stamp": 72350000000,
+        "receipt": 39076.759545696
+      },
+      {
+        "stamp": 72360000000,
+        "receipt": 39076.760275032
+      },
+      {
+        "stamp": 72370000000,
+        "receipt": 39076.760656883
+      },
+      {
+        "stamp": 72380000000,
+        "receipt": 39076.762169785
+      },
+      {
+        "stamp": 72390000000,
+        "receipt": 39076.773905274
+      },
+      {
+        "stamp": 72400000000,
+        "receipt": 39076.782454755
+      },
+      {
+        "stamp": 72410000000,
+        "receipt": 39076.792566553
+      },
+      {
+        "stamp": 72420000000,
+        "receipt": 39076.802624558
+      },
+      {
+        "stamp": 72660000000,
+        "receipt": 39077.415034761
+      },
+      {
+        "stamp": 72680000000,
+        "receipt": 39077.463422827
+      },
+      {
+        "stamp": 72720000000,
+        "receipt": 39077.543091712
+      },
+      {
+        "stamp": 72770000000,
+        "receipt": 39077.595032496
+      },
+      {
+        "stamp": 72780000000,
+        "receipt": 39077.600409954
+      },
+      {
+        "stamp": 72790000000,
+        "receipt": 39077.603526872
+      },
+      {
+        "stamp": 72800000000,
+        "receipt": 39077.607117431
+      },
+      {
+        "stamp": 72810000000,
+        "receipt": 39077.609220223
+      },
+      {
+        "stamp": 72820000000,
+        "receipt": 39077.611231183
+      },
+      {
+        "stamp": 72830000000,
+        "receipt": 39077.654890474
+      },
+      {
+        "stamp": 72840000000,
+        "receipt": 39077.703480162
+      },
+      {
+        "stamp": 72850000000,
+        "receipt": 39077.707159736
+      },
+      {
+        "stamp": 72860000000,
+        "receipt": 39077.708187184
+      },
+      {
+        "stamp": 72870000000,
+        "receipt": 39077.7089797
+      },
+      {
+        "stamp": 72880000000,
+        "receipt": 39077.709637444
+      },
+      {
+        "stamp": 72890000000,
+        "receipt": 39077.714825483
+      },
+      {
+        "stamp": 72900000000,
+        "receipt": 39077.725392293
+      },
+      {
+        "stamp": 72910000000,
+        "receipt": 39077.73465264
+      },
+      {
+        "stamp": 72920000000,
+        "receipt": 39077.746028678
+      },
+      {
+        "stamp": 72940000000,
+        "receipt": 39077.853189948
+      },
+      {
+        "stamp": 72950000000,
+        "receipt": 39077.856080609
+      },
+      {
+        "stamp": 72960000000,
+        "receipt": 39077.857038273
+      },
+      {
+        "stamp": 72970000000,
+        "receipt": 39077.857837079
+      },
+      {
+        "stamp": 72980000000,
+        "receipt": 39077.858476544
+      },
+      {
+        "stamp": 72990000000,
+        "receipt": 39077.860529071
+      },
+      {
+        "stamp": 73000000000,
+        "receipt": 39077.870783579
+      },
+      {
+        "stamp": 73010000000,
+        "receipt": 39077.880855572
+      },
+      {
+        "stamp": 73020000000,
+        "receipt": 39077.890765372
+      },
+      {
+        "stamp": 73030000000,
+        "receipt": 39077.946765813
+      },
+      {
+        "stamp": 73040000000,
+        "receipt": 39078.031880839
+      },
+      {
+        "stamp": 73050000000,
+        "receipt": 39078.034330614
+      },
+      {
+        "stamp": 73060000000,
+        "receipt": 39078.035367579
+      },
+      {
+        "stamp": 73070000000,
+        "receipt": 39078.036251645
+      },
+      {
+        "stamp": 73080000000,
+        "receipt": 39078.095475922
+      },
+      {
+        "stamp": 73090000000,
+        "receipt": 39078.107094095
+      },
+      {
+        "stamp": 73100000000,
+        "receipt": 39078.115692825
+      },
+      {
+        "stamp": 73110000000,
+        "receipt": 39078.224992468
+      },
+      {
+        "stamp": 73120000000,
+        "receipt": 39078.235011582
+      },
+      {
+        "stamp": 73500000000,
+        "receipt": 39078.998615066
+      },
+      {
+        "stamp": 73560000000,
+        "receipt": 39079.049789346
+      },
+      {
+        "stamp": 73580000000,
+        "receipt": 39079.099299423
+      },
+      {
+        "stamp": 73660000000,
+        "receipt": 39079.187869896
+      },
+      {
+        "stamp": 73680000000,
+        "receipt": 39079.238618434
+      },
+      {
+        "stamp": 73690000000,
+        "receipt": 39079.242636977
+      },
+      {
+        "stamp": 73700000000,
+        "receipt": 39079.246994748
+      },
+      {
+        "stamp": 73710000000,
+        "receipt": 39079.249694192
+      },
+      {
+        "stamp": 73720000000,
+        "receipt": 39079.251759032
+      },
+      {
+        "stamp": 73730000000,
+        "receipt": 39079.255237732
+      },
+      {
+        "stamp": 73740000000,
+        "receipt": 39079.308752446
+      },
+      {
+        "stamp": 73750000000,
+        "receipt": 39079.311944854
+      },
+      {
+        "stamp": 73760000000,
+        "receipt": 39079.313274442
+      },
+      {
+        "stamp": 73770000000,
+        "receipt": 39079.314834433
+      },
+      {
+        "stamp": 73780000000,
+        "receipt": 39079.315922774
+      },
+      {
+        "stamp": 73790000000,
+        "receipt": 39079.316561661
+      },
+      {
+        "stamp": 73800000000,
+        "receipt": 39079.323157705
+      },
+      {
+        "stamp": 73810000000,
+        "receipt": 39079.333209473
+      },
+      {
+        "stamp": 73820000000,
+        "receipt": 39079.34392263
+      },
+      {
+        "stamp": 73830000000,
+        "receipt": 39079.498388136
+      },
+      {
+        "stamp": 73840000000,
+        "receipt": 39079.508204258
+      },
+      {
+        "stamp": 73850000000,
+        "receipt": 39079.518122471
+      },
+      {
+        "stamp": 73860000000,
+        "receipt": 39079.528885571
+      },
+      {
+        "stamp": 73870000000,
+        "receipt": 39079.53821962
+      },
+      {
+        "stamp": 73880000000,
+        "receipt": 39079.5485167
+      },
+      {
+        "stamp": 73890000000,
+        "receipt": 39079.558434132
+      },
+      {
+        "stamp": 73900000000,
+        "receipt": 39079.569369969
+      },
+      {
+        "stamp": 73910000000,
+        "receipt": 39079.578401937
+      },
+      {
+        "stamp": 73920000000,
+        "receipt": 39079.588506117
+      },
+      {
+        "stamp": 73930000000,
+        "receipt": 39079.642608909
+      },
+      {
+        "stamp": 73940000000,
+        "receipt": 39079.701119708
+      },
+      {
+        "stamp": 73950000000,
+        "receipt": 39079.705525887
+      },
+      {
+        "stamp": 73960000000,
+        "receipt": 39079.706669913
+      },
+      {
+        "stamp": 73970000000,
+        "receipt": 39079.707593751
+      },
+      {
+        "stamp": 73980000000,
+        "receipt": 39079.708237074
+      },
+      {
+        "stamp": 73990000000,
+        "receipt": 39079.708916068
+      },
+      {
+        "stamp": 74000000000,
+        "receipt": 39079.712456429
+      },
+      {
+        "stamp": 74010000000,
+        "receipt": 39079.722742265
+      },
+      {
+        "stamp": 74020000000,
+        "receipt": 39079.733187444
+      },
+      {
+        "stamp": 74030000000,
+        "receipt": 39079.78826478
+      },
+      {
+        "stamp": 74080000000,
+        "receipt": 39079.888758267
+      },
+      {
+        "stamp": 74090000000,
+        "receipt": 39079.892925119
+      },
+      {
+        "stamp": 74100000000,
+        "receipt": 39079.894611246
+      },
+      {
+        "stamp": 74110000000,
+        "receipt": 39079.895664373
+      },
+      {
+        "stamp": 74120000000,
+        "receipt": 39079.896764851
+      },
+      {
+        "stamp": 74130000000,
+        "receipt": 39079.936736054
+      },
+      {
+        "stamp": 74920000000,
+        "receipt": 39081.415897813
+      },
+      {
+        "stamp": 74970000000,
+        "receipt": 39081.466218695
+      }
+    ],
+    "median_sim_interval_s": 0.01
+  },
+  "loaded_libraries": {
+    "libeasyfly_imu_antialias.so": {
+      "pid": 161596,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/libeasyfly_imu_antialias.so",
+      "sha256": "4441e6e037d9c142ae20679f0d6de38ec90392a73c1ad620846b8b2e8d95d687"
+    },
+    "liblivox_laser_simulation.so": {
+      "pid": 161596,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/liblivox_laser_simulation.so",
+      "sha256": "8c26cdca8a25d796ba3ca703326348b05ce3da177ad1bfb1b0f074b79f40a53d"
+    },
+    "libgazebo_transport.so.11.10.2": {
+      "pid": 161596,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/transport/libgazebo_transport.so.11.10.2",
+      "sha256": "fe11dead11e967c9aea7477fd840d95d33217a271417c102be7db8ed96241aeb"
+    },
+    "libeasyfly_pointcloud_filter_nodes.so": {
+      "pid": 162446,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/easyfly_pointcloud_filter/lib/libeasyfly_pointcloud_filter_nodes.so",
+      "sha256": "24bb71dea82ed66c91963bad79a267a6416ceb3a025a6ddf6501e89737191b6d"
+    },
+    "libeasyfly_semantic_map_nodes.so": {
+      "pid": 162448,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "b21619f86c57274254b4ee5954a17a3ce451e985e7319b54d628423e5a8be1dc"
+    },
+    "libplan_env.so": {
+      "pid": 162533,
+      "path": "/home/jia/easyfly_ws/artifacts/scene-s2-20261015/normal/install/plan_env/lib/libplan_env.so",
+      "sha256": "e8f429b6616cff200a10da61b7945f879d28a83f59818f69a4fbcd4687703bc7"
+    }
+  },
+  "dds_compatibility": {
+    "path": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_fastdds_compat/lib/easyfly_fastdds_compat/libfastrtps.so.2.6",
+    "sha256": "b56bc087770bf881e100426b16d97acfe2a4fef52f7f0f3d9314a2c7b3fe8c3d",
+    "implementation": "rmw_fastrtps_cpp",
+    "source_version": "2.6.11",
+    "fix": "reader_writer_listener_snapshot",
+    "component_profiles_sha256": "a332c60993626499a8852b38e86558420cdfeb7b39c028f8357453e2978ece0e",
+    "profile_environment": {
+      "FASTRTPS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-kytwf7dh/profiles.xml",
+      "FASTDDS_DEFAULT_PROFILES_FILE": "/tmp/easyfly-scene-dds-kytwf7dh/profiles.xml"
+    },
+    "loaded_pids": [
+      161596,
+      162040,
+      162042,
+      162044,
+      162184,
+      162186,
+      162188,
+      162274,
+      162276,
+      162301,
+      162303,
+      162350,
+      162364,
+      162379,
+      162446,
+      162448,
+      162478,
+      162491,
+      162493,
+      162495,
+      162531,
+      162533
+    ],
+    "child_profile_paths": {
+      "162184": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162186": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162188": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162446": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162448": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162350": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162478": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162491": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "161596": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162493": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162364": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162495": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162379": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162274": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162531": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162276": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162533": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162040": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162042": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162044": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162301": "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml",
+      "162303": "/tmp/easyfly-scene-dds-kytwf7dh/profiles.xml"
+    },
+    "child_profiles": {
+      "/tmp/easyfly-scene-dds-kytwf7dh/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78",
+      "/tmp/easyfly-scene-dds-9lay1ytn/profiles.xml": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+    },
+    "managed_profile_sha256": "d512f0fcb3bd294649609c5693be83e56062aeb836a756591a7a55a52b8dae78"
+  },
+  "landing_reference_anchor": {
+    "frame": "map",
+    "position": [
+      -0.02130786071228593,
+      0.027055969687120422,
+      -0.00010001344818155375
+    ],
+    "basis": {
+      "source_ns": 20125489997,
+      "age_s": 0.004510003,
+      "translation": [
+        -0.02545422182879668,
+        0.019818144372141234,
+        0.0006582013628268662
+      ],
+      "quaternion_xyzw": [
+        0.00017930256850173828,
+        -0.00025414371243436126,
+        0.010018534598680191,
+        0.9999497648512436
+      ]
+    }
+  },
+  "mission_cycles": [
+    {
+      "cycle": 1,
+      "alignment": {
+        "translation": [
+          0.005718995817005634,
+          0.008011208536724249,
+          -0.05256029036458334
+        ],
+        "yaw": -0.019552333078371988
+      },
+      "inspection_index": 1,
+      "preflight_state": {
+        "source_ns": 20130000000,
+        "frame": "odom",
+        "ros_now_ns": 20130000000,
+        "receipt": 38989.493377007,
+        "steady_now": 38989.561020598,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.004290156997740269,
+          0.007153026759624481,
+          -0.000762939453125
+        ],
+        "velocity": [
+          -0.00017492874758318067,
+          -0.004325103480368853,
+          -0.0003419479471631348
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "beedfab4989c4e7b967e11cd1796e596",
+      "status": 4,
+      "navigation_uuids": [
+        "65acc1b26397c348c57b72aeaa02d404",
+        "aa4cbca2e0e1ad6a14f6779609c34aad"
+      ],
+      "navigation_terminal_errors_m": [
+        0.0877732162962308,
+        0.09086219343459331
+      ],
+      "landed_state": {
+        "source_ns": 72420000000,
+        "frame": "odom",
+        "ros_now_ns": 72420000000,
+        "receipt": 39076.810724445,
+        "steady_now": 39076.851596555,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.03954505920410156,
+          0.019213516265153885,
+          0.034088134765625
+        ],
+        "velocity": [
+          -0.0050394609570503235,
+          -0.00222527957521379,
+          0.003518368350341916
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.5199999809265137
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map",
+        "alignment_position_error_m": 0.2,
+        "alignment_yaw_error_rad": 0.1,
+        "alignment_query_min_interval_wall_s": 1.0
+      },
+      "recovery_alignment_samples": [
+        {
+          "sample": {
+            "world_pose": [
+              0.031881,
+              0.022377,
+              0.054718,
+              0.00114,
+              -4.1e-05,
+              -1.37062
+            ],
+            "odom_position": [
+              0.03937074542045593,
+              0.01953108422458172,
+              0.033447265625
+            ],
+            "yaw": -0.013281346634211655,
+            "translation": [
+              0.007195369233948715,
+              -0.0024205320543336864,
+              -0.021270734375000003
+            ],
+            "state": {
+              "source_ns": 72520000000,
+              "frame": "odom",
+              "ros_now_ns": 72700000000,
+              "receipt": 39077.369180493,
+              "steady_now": 39077.369271882,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.03937074542045593,
+                0.01953108422458172,
+                0.033447265625
+              ],
+              "velocity": [
+                -0.0046770405024290085,
+                -0.002015697304159403,
+                0.00354394712485373
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.6100000143051147
+            },
+            "state_before": {
+              "source_ns": 72420000000,
+              "frame": "odom",
+              "ros_now_ns": 72420000000,
+              "receipt": 39076.810724445,
+              "steady_now": 39076.852061286,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.03954505920410156,
+                0.019213516265153885,
+                0.034088134765625
+              ],
+              "velocity": [
+                -0.0050394609570503235,
+                -0.00222527957521379,
+                0.003518368350341916
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.5199999809265137
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.041335844723454626,
+            "yaw_error_rad": 0.005352211749080699,
+            "translation_component_error_m": 0.04066333183897043,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29202305452325866,
+                  -0.3106425552775995,
+                  0.5391376598307291
+                ],
+                "error_m": 0.04133584472345442
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29202305452325866,
+                  -0.3106425552775995,
+                  2.339137659830729
+                ],
+                "error_m": 0.041335844723454626
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29523436624069194,
+                  0.2893488508917334,
+                  0.5391376598307291
+                ],
+                "error_m": 0.04084011091415221
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29523436624069194,
+                  0.2893488508917334,
+                  2.339137659830729
+                ],
+                "error_m": 0.04084011091415242
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8079468670694068,
+                  -0.2994029642665829,
+                  0.5391376598307291
+                ],
+                "error_m": 0.0399407757174503
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8079468670694068,
+                  -0.2994029642665829,
+                  2.339137659830729
+                ],
+                "error_m": 0.03994077571745052
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8047355553519737,
+                  0.30058844190275,
+                  0.5391376598307291
+                ],
+                "error_m": 0.039427505188515136
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8047355553519737,
+                  0.30058844190275,
+                  2.339137659830729
+                ],
+                "error_m": 0.03942750518851536
+              }
+            ]
+          },
+          "seconds_since_landing": 0.5176866420006263,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.02634906617793427,
+              0.024818369628740015,
+              -0.0023745024949494292
+            ],
+            "basis": {
+              "source_ns": 72326989997,
+              "age_s": 0.37301000300000003,
+              "translation": [
+                -0.012741197430026522,
+                0.004786256736948335,
+                -0.03585440942268764
+              ],
+              "quaternion_xyzw": [
+                0.0004969868234740362,
+                -0.00016540895889297273,
+                0.0068094829742427615,
+                0.9999766780208412
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.5839442640062771,
+            "/pointcloud_nonground": 0.5885831960040377
+          }
+        },
+        {
+          "sample": {
+            "world_pose": [
+              0.031881,
+              0.022377,
+              0.054718,
+              0.00114,
+              -4.1e-05,
+              -1.37062
+            ],
+            "odom_position": [
+              0.037891969084739685,
+              0.021740347146987915,
+              0.029052734375
+            ],
+            "yaw": -0.013498004070263914,
+            "translation": [
+              0.0057118376725327075,
+              -0.00020429758226413186,
+              -0.025665265625000003
+            ],
+            "state": {
+              "source_ns": 73340000000,
+              "frame": "odom",
+              "ros_now_ns": 73520000000,
+              "receipt": 39078.9496802,
+              "steady_now": 39078.949785998,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.037891969084739685,
+                0.021740347146987915,
+                0.029052734375
+              ],
+              "velocity": [
+                -0.0050514074973762035,
+                -0.0002826726995408535,
+                0.003081053961068392
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.8199999928474426
+            },
+            "state_before": {
+              "source_ns": 73120000000,
+              "frame": "odom",
+              "ros_now_ns": 73120000000,
+              "receipt": 39078.260258527,
+              "steady_now": 39078.374737383,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.03838431090116501,
+                0.021411055698990822,
+                0.030029296875
+              ],
+              "velocity": [
+                -0.004780149087309837,
+                -0.0010428610257804394,
+                0.0031835250556468964
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.7799999713897705
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.03630841717994145,
+            "yaw_error_rad": 0.005135554313028441,
+            "translation_component_error_m": 0.035736630614765175,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.2935733576547158,
+                  -0.308361485675487,
+                  0.5347431285807291
+                ],
+                "error_m": 0.03630841717994124
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.2935733576547158,
+                  -0.308361485675487,
+                  2.334743128580729
+                ],
+                "error_m": 0.03630841717994145
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.2966546766980818,
+                  0.291630602166472,
+                  0.5347431285807291
+                ],
+                "error_m": 0.035893216513253556
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.2966546766980818,
+                  0.291630602166472,
+                  2.334743128580729
+                ],
+                "error_m": 0.03589321651325377
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8063989497921407,
+                  -0.2975768690237058,
+                  0.5347431285807291
+                ],
+                "error_m": 0.03541049428838422
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8063989497921407,
+                  -0.2975768690237058,
+                  2.334743128580729
+                ],
+                "error_m": 0.035410494288384435
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8033176307487746,
+                  0.30241521881825323,
+                  0.5347431285807291
+                ],
+                "error_m": 0.03498463861900444
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8033176307487746,
+                  0.30241521881825323,
+                  2.334743128580729
+                ],
+                "error_m": 0.034984638619004665
+              }
+            ]
+          },
+          "seconds_since_landing": 2.0982113009958994,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.02705170860421713,
+              0.02549220315895807,
+              -0.0036514826342382775
+            ],
+            "basis": {
+              "source_ns": 73020375000,
+              "age_s": 0.49962500000000004,
+              "translation": [
+                -0.01053098363662408,
+                0.003270384924534671,
+                -0.032741642966233386
+              ],
+              "quaternion_xyzw": [
+                0.0005344618550927786,
+                -0.00018455183951595169,
+                0.006790823027461513,
+                0.9999767822373445
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.9194889669961412,
+            "/pointcloud_nonground": 0.9192431659976137
+          }
+        },
+        {
+          "sample": {
+            "world_pose": [
+              0.031881,
+              0.022377,
+              0.054718,
+              0.00114,
+              -4.1e-05,
+              -1.37062
+            ],
+            "odom_position": [
+              0.04075418785214424,
+              0.025316648185253143,
+              0.026611328125
+            ],
+            "yaw": -0.01365566172222832,
+            "translation": [
+              0.008570597098724021,
+              0.0033770771726657663,
+              -0.028106671875000003
+            ],
+            "state": {
+              "source_ns": 74290000000,
+              "frame": "odom",
+              "ros_now_ns": 74420000000,
+              "receipt": 39080.517488239,
+              "steady_now": 39080.517586695,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.04075418785214424,
+                0.025316648185253143,
+                0.026611328125
+              ],
+              "velocity": [
+                -0.0014502505073323846,
+                0.002154870191588998,
+                0.0018207039684057236
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9200000166893005
+            },
+            "state_before": {
+              "source_ns": 74120000000,
+              "frame": "odom",
+              "ros_now_ns": 74130000000,
+              "receipt": 39079.910307547,
+              "steady_now": 39079.982859223,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.04067755490541458,
+                0.02439619041979313,
+                0.026702880859375
+              ],
+              "velocity": [
+                -0.001881599542684853,
+                0.0013327025808393955,
+                0.0016876254230737686
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9200000166893005
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.03407294578349904,
+            "yaw_error_rad": 0.004977896661064034,
+            "translation_component_error_m": 0.033365963087038264,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29076317784752714,
+                  -0.3047329224898219,
+                  0.5323017223307291
+                ],
+                "error_m": 0.03392816977531504
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29076317784752714,
+                  -0.3047329224898219,
+                  2.332301722330729
+                ],
+                "error_m": 0.03392816977531525
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29374990350922414,
+                  0.29525964368897817,
+                  0.5323017223307291
+                ],
+                "error_m": 0.033240576854666325
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29374990350922414,
+                  0.29525964368897817,
+                  2.332301722330729
+                ],
+                "error_m": 0.03324057685466655
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.809210803778273,
+                  -0.29427938267388243,
+                  0.5323017223307291
+                ],
+                "error_m": 0.03407294578349882
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.809210803778273,
+                  -0.29427938267388243,
+                  2.332301722330729
+                ],
+                "error_m": 0.03407294578349904
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8062240781165761,
+                  0.3057131835049176,
+                  0.5323017223307291
+                ],
+                "error_m": 0.03338833448517057
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8062240781165761,
+                  0.3057131835049176,
+                  2.332301722330729
+                ],
+                "error_m": 0.033388334485170784
+              }
+            ]
+          },
+          "seconds_since_landing": 3.6660024839948164,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.030681594793527604,
+              0.02650951725711706,
+              -0.0016704408359944252
+            ],
+            "basis": {
+              "source_ns": 74027675003,
+              "age_s": 0.392324997,
+              "translation": [
+                -0.009708307894452333,
+                0.0006675283069739786,
+                -0.028332148496164136
+              ],
+              "quaternion_xyzw": [
+                0.0005753300099262031,
+                -0.00025812407561495016,
+                0.0068517362312268135,
+                0.999976327758792
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.6310139540000819,
+            "/pointcloud_nonground": 0.6307149659987772
+          }
+        }
+      ],
+      "recovery_seconds": 3.666123349001282,
+      "recovered_state": {
+        "source_ns": 74290000000,
+        "frame": "odom",
+        "ros_now_ns": 74420000000,
+        "receipt": 39080.517488239,
+        "steady_now": 39080.517747497,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.04075418785214424,
+          0.025316648185253143,
+          0.026611328125
+        ],
+        "velocity": [
+          -0.0014502505073323846,
+          0.002154870191588998,
+          0.0018207039684057236
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 0.9200000166893005
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.030681594793527604,
+          0.02650951725711706,
+          -0.0016704408359944252
+        ],
+        "basis": {
+          "source_ns": 74027675003,
+          "age_s": 0.392324997,
+          "translation": [
+            -0.009708307894452333,
+            0.0006675283069739786,
+            -0.028332148496164136
+          ],
+          "quaternion_xyzw": [
+            0.0005753300099262031,
+            -0.00025812407561495016,
+            0.0068517362312268135,
+            0.999976327758792
+          ]
+        }
+      }
+    },
+    {
+      "cycle": 2,
+      "alignment": {
+        "translation": [
+          0.010207724037973112,
+          0.009513612721981595,
+          -0.03892006705729167
+        ],
+        "yaw": -0.013639943720306202
+      },
+      "inspection_index": 2,
+      "preflight_state": {
+        "source_ns": 78820000000,
+        "frame": "odom",
+        "ros_now_ns": 78830000000,
+        "receipt": 39087.659981527,
+        "steady_now": 39087.697784796,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.04143049195408821,
+          0.029330523684620857,
+          0.011474609375
+        ],
+        "velocity": [
+          -7.612595072714612e-05,
+          0.0027214176952838898,
+          -0.00013077630137559026
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "goal_uuid": "3ff4b26a1be74491b36e15c05846d234",
+      "status": 4,
+      "navigation_uuids": [
+        "beef206c6a56fb930a3221933ad48da7",
+        "c10673334ebf595d6785b3644a9c2356"
+      ],
+      "navigation_terminal_errors_m": [
+        0.09105551358877335,
+        0.0870864985442521
+      ],
+      "landed_state": {
+        "source_ns": 131220000000,
+        "frame": "odom",
+        "ros_now_ns": 131230000000,
+        "receipt": 39176.809327038,
+        "steady_now": 39176.849044253,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.054150838404893875,
+          0.008472809568047523,
+          -0.1632080078125
+        ],
+        "velocity": [
+          0.0031655700877308846,
+          -0.007816295139491558,
+          -0.07711894810199738
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 15.30000114440918,
+        "battery_remaining": 0.5
+      },
+      "recovery_limits": {
+        "timeout_wall_s": 120,
+        "continuous_wall_s": 3,
+        "speed_m_s": 0.05,
+        "anchor_error_m": 0.15,
+        "map_receipt_age_s": 1.0,
+        "anchor_frame": "map",
+        "alignment_position_error_m": 0.2,
+        "alignment_yaw_error_rad": 0.1,
+        "alignment_query_min_interval_wall_s": 1.0
+      },
+      "recovery_alignment_samples": [
+        {
+          "sample": {
+            "world_pose": [
+              0.049375,
+              0.002736,
+              0.054835,
+              0.000792,
+              0.000116,
+              -1.3774
+            ],
+            "odom_position": [
+              0.05600759759545326,
+              0.00659753754734993,
+              -0.173065185546875
+            ],
+            "yaw": -0.00037365599785776915,
+            "translation": [
+              0.0066315787195061135,
+              0.003879987002813369,
+              -0.227900185546875
+            ],
+            "state": {
+              "source_ns": 133560000000,
+              "frame": "odom",
+              "ros_now_ns": 133720000000,
+              "receipt": 39180.937457593,
+              "steady_now": 39180.937549126,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05600759759545326,
+                0.00659753754734993,
+                -0.173065185546875
+              ],
+              "velocity": [
+                0.0064651211723685265,
+                -0.008147615939378738,
+                -0.04760459065437317
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.949999988079071
+            },
+            "state_before": {
+              "source_ns": 133420000000,
+              "frame": "odom",
+              "ros_now_ns": 133420000000,
+              "receipt": 39180.509194104,
+              "steady_now": 39180.509553125,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05572962388396263,
+                0.006856353022158146,
+                -0.1724853515625
+              ],
+              "velocity": [
+                0.006252724677324295,
+                -0.007955152541399002,
+                -0.048792410641908646
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9399999976158142
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.17054589531383435,
+            "yaw_error_rad": 0.01825990238543459,
+            "translation_component_error_m": 0.1676134062416652,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.2885835951702438,
+                  -0.30817847197696796,
+                  0.3325082086588542
+                ],
+                "error_m": 0.16807951055908285
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.2885835951702438,
+                  -0.30817847197696796,
+                  2.132508208658854
+                ],
+                "error_m": 0.16807951055908307
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.2995389277826209,
+                  0.29172150359175314,
+                  0.3325082086588542
+                ],
+                "error_m": 0.16769688803623314
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.2995389277826209,
+                  0.29172150359175314,
+                  2.132508208658854
+                ],
+                "error_m": 0.16769688803623337
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8110663193202803,
+                  -0.2698348078336479,
+                  0.3325082086588542
+                ],
+                "error_m": 0.17054589531383413
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8110663193202803,
+                  -0.2698348078336479,
+                  2.132508208658854
+                ],
+                "error_m": 0.17054589531383435
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.800110986707903,
+                  0.3300651677350732,
+                  0.3325082086588542
+                ],
+                "error_m": 0.17016881851753374
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.800110986707903,
+                  0.3300651677350732,
+                  2.132508208658854
+                ],
+                "error_m": 0.17016881851753396
+              }
+            ]
+          },
+          "seconds_since_landing": 4.088516078001703,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.05498488807891295,
+              9.75692578540615e-05,
+              -0.0014574333466468026
+            ],
+            "basis": {
+              "source_ns": 133324874999,
+              "age_s": 0.39512500100000003,
+              "translation": [
+                -0.0012125066375968472,
+                -0.006644434766246751,
+                0.17154064510306602
+              ],
+              "quaternion_xyzw": [
+                0.0003362376398432718,
+                -0.000558101948471723,
+                0.00025049639816476083,
+                0.99999975635898
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.48772536299657077,
+            "/pointcloud_nonground": 0.4945398209965788
+          }
+        },
+        {
+          "sample": {
+            "world_pose": [
+              0.049375,
+              0.002736,
+              0.054835,
+              0.000792,
+              0.000116,
+              -1.3774
+            ],
+            "odom_position": [
+              0.05629457160830498,
+              0.005831651855260134,
+              -0.165435791015625
+            ],
+            "yaw": -0.00036130671050593755,
+            "translation": [
+              0.00691858629593544,
+              0.00311349155228542,
+              -0.220270791015625
+            ],
+            "state": {
+              "source_ns": 134440000000,
+              "frame": "odom",
+              "ros_now_ns": 134620000000,
+              "receipt": 39182.397332484,
+              "steady_now": 39182.397496056,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05629457160830498,
+                0.005831651855260134,
+                -0.165435791015625
+              ],
+              "velocity": [
+                0.0055201081559062,
+                -0.008789668790996075,
+                -0.038797538727521896
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9800000190734863
+            },
+            "state_before": {
+              "source_ns": 134260000000,
+              "frame": "odom",
+              "ros_now_ns": 134290000000,
+              "receipt": 39181.90920391,
+              "steady_now": 39181.941511759,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05616286024451256,
+                0.006350039504468441,
+                -0.165130615234375
+              ],
+              "velocity": [
+                0.006004818249493837,
+                -0.008077970705926418,
+                -0.03984830528497696
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9700000286102295
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.16294340975768432,
+            "yaw_error_rad": 0.018272251672786417,
+            "translation_component_error_m": 0.16001535823634536,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.28829273387172316,
+                  -0.3089486131007136,
+                  0.3401376031901042
+                ],
+                "error_m": 0.1605400998829549
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.28829273387172316,
+                  -0.3089486131007136,
+                  2.140137603190104
+                ],
+                "error_m": 0.16054009988295512
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29925547482044534,
+                  0.2909512271317132,
+                  0.3401376031901042
+                ],
+                "error_m": 0.16012001911681564
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29925547482044534,
+                  0.2909512271317132,
+                  2.140137603190104
+                ],
+                "error_m": 0.16012001911681586
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8113567069417706,
+                  -0.2705790197801857,
+                  0.3401376031901042
+                ],
+                "error_m": 0.1629434097576841
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8113567069417706,
+                  -0.2705790197801857,
+                  2.140137603190104
+                ],
+                "error_m": 0.16294340975768432
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8003939659930484,
+                  0.3293208204522411,
+                  0.3401376031901042
+                ],
+                "error_m": 0.1625295408072047
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8003939659930484,
+                  0.3293208204522411,
+                  2.140137603190104
+                ],
+                "error_m": 0.16252954080720491
+              }
+            ]
+          },
+          "seconds_since_landing": 5.5484965780051425,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.05213381711188279,
+              -0.00048342561869392335,
+              0.0064831477814664695
+            ],
+            "basis": {
+              "source_ns": 134221915000,
+              "age_s": 0.398085,
+              "translation": [
+                -0.004328662249980332,
+                -0.006438809583412311,
+                0.1718572985155913
+              ],
+              "quaternion_xyzw": [
+                0.0003219296026852865,
+                -0.0005130115874673665,
+                0.00015284695776555693,
+                0.9999998049091058
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.5561744779988658,
+            "/pointcloud_nonground": 0.55837728100596
+          }
+        },
+        {
+          "sample": {
+            "world_pose": [
+              0.049375,
+              0.002736,
+              0.054835,
+              0.000792,
+              0.000116,
+              -1.3774
+            ],
+            "odom_position": [
+              0.0588604137301445,
+              0.006306651514023542,
+              -0.15045166015625
+            ],
+            "yaw": -0.0005322729437124973,
+            "translation": [
+              0.00948396442576549,
+              0.003596932876952592,
+              -0.20528666015625
+            ],
+            "state": {
+              "source_ns": 135340000000,
+              "frame": "odom",
+              "ros_now_ns": 135520000000,
+              "receipt": 39183.853909694,
+              "steady_now": 39183.854081955,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.0588604137301445,
+                0.006306651514023542,
+                -0.15045166015625
+              ],
+              "velocity": [
+                0.006042017135769129,
+                -0.007697904482483864,
+                -0.030031366273760796
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9900000095367432
+            },
+            "state_before": {
+              "source_ns": 135220000000,
+              "frame": "odom",
+              "ros_now_ns": 135220000000,
+              "receipt": 39183.359319612,
+              "steady_now": 39183.398195005,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05875701829791069,
+                0.00610140198841691,
+                -0.1531982421875
+              ],
+              "velocity": [
+                0.006170762702822685,
+                -0.007714448496699333,
+                -0.030872812494635582
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 0.9900000095367432
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.1485198771003023,
+            "yaw_error_rad": 0.018101285439579857,
+            "translation_component_error_m": 0.14516588707846018,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.2857807035097596,
+                  -0.308414696048181,
+                  0.3551217340494792
+                ],
+                "error_m": 0.1458173770409085
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.2857807035097596,
+                  -0.308414696048181,
+                  2.155121734049479
+                ],
+                "error_m": 0.1458173770409087
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29664088168277825,
+                  0.2914870096753903,
+                  0.3551217340494792
+                ],
+                "error_m": 0.1451670300893623
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29664088168277825,
+                  0.2914870096753903,
+                  2.155121734049479
+                ],
+                "error_m": 0.14516703008936252
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8138752665227398,
+                  -0.2704040724426156,
+                  0.3551217340494792
+                ],
+                "error_m": 0.1485198771003021
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8138752665227398,
+                  -0.2704040724426156,
+                  2.155121734049479
+                ],
+                "error_m": 0.1485198771003023
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8030150883497211,
+                  0.32949763328095566,
+                  0.3551217340494792
+                ],
+                "error_m": 0.14788141557262763
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8030150883497211,
+                  0.32949763328095566,
+                  2.155121734049479
+                ],
+                "error_m": 0.14788141557262785
+              }
+            ]
+          },
+          "seconds_since_landing": 7.005071913001302,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.0570284287297588,
+              0.0007015352552654976,
+              0.014924676971548922
+            ],
+            "basis": {
+              "source_ns": 135129675003,
+              "age_s": 0.390324997,
+              "translation": [
+                -0.0019773820387149355,
+                -0.005744474576493714,
+                0.16531346463332508
+              ],
+              "quaternion_xyzw": [
+                0.0003664630883910693,
+                -0.0004937725056987307,
+                0.0002469865107024631,
+                0.9999997804455664
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.552846911996312,
+            "/pointcloud_nonground": 0.5526105979952263
+          }
+        },
+        {
+          "sample": {
+            "world_pose": [
+              0.049375,
+              0.002736,
+              0.054835,
+              0.000792,
+              0.000116,
+              -1.3774
+            ],
+            "odom_position": [
+              0.058344848453998566,
+              0.006376038771122694,
+              -0.135528564453125
+            ],
+            "yaw": -0.000708563859449951,
+            "translation": [
+              0.008967922218114772,
+              0.003675024795577366,
+              -0.190363564453125
+            ],
+            "state": {
+              "source_ns": 136320000000,
+              "frame": "odom",
+              "ros_now_ns": 136490000000,
+              "receipt": 39185.300548533,
+              "steady_now": 39185.300711303,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.058344848453998566,
+                0.006376038771122694,
+                -0.135528564453125
+              ],
+              "velocity": [
+                0.004973268136382103,
+                -0.00607014587149024,
+                -0.0201313067227602
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 1.0
+            },
+            "state_before": {
+              "source_ns": 136220000000,
+              "frame": "odom",
+              "ros_now_ns": 136220000000,
+              "receipt": 39184.809199763,
+              "steady_now": 39184.855023288,
+              "armed": false,
+              "connected": true,
+              "mode": 3,
+              "mode_name": "OFFBOARD",
+              "position": [
+                0.05847219005227089,
+                0.006372857838869095,
+                -0.1375732421875
+              ],
+              "velocity": [
+                0.004762433003634214,
+                -0.006481175310909748,
+                -0.021152503788471222
+              ],
+              "pose_valid": true,
+              "velocity_valid": true,
+              "battery_valid": true,
+              "battery_voltage": 16.200000762939453,
+              "battery_remaining": 1.0
+            }
+          },
+          "alignment": {
+            "policy": "recommended_region",
+            "maximum_position_error_m": 0.13389285461899444,
+            "yaw_error_rad": 0.0179249945238424,
+            "translation_component_error_m": 0.1302408277384829,
+            "samples": [
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.28635174594471974,
+                  -0.30828454680270595,
+                  0.3700448297526042
+                ],
+                "error_m": 0.13093225281997298
+              },
+              {
+                "world_point": [
+                  -0.29509855076878855,
+                  -0.31216874611298273,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.28635174594471974,
+                  -0.30828454680270595,
+                  2.170044829752604
+                ],
+                "error_m": 0.1309322528199732
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  -0.29710616672847284,
+                  0.29161906414959193,
+                  0.3700448297526042
+                ],
+                "error_m": 0.1302572862866476
+              },
+              {
+                "world_point": [
+                  -0.30627803883515037,
+                  0.2877270940514362,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  -0.3,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  -0.29710616672847284,
+                  0.29161906414959193,
+                  2.170044829752604
+                ],
+                "error_m": 0.13025728628664782
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.813310892388323,
+                  -0.2706440740595703,
+                  0.3700448297526042
+                ],
+                "error_m": 0.13389285461899425
+              },
+              {
+                "world_point": [
+                  1.8045368898066778,
+                  -0.27304053788071625,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  -0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.813310892388323,
+                  -0.2706440740595703,
+                  2.170044829752604
+                ],
+                "error_m": 0.13389285461899444
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  0.5604083942057292
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  0.5
+                ],
+                "measured_navigation": [
+                  1.8025564716045699,
+                  0.32925953689272763,
+                  0.3700448297526042
+                ],
+                "error_m": 0.1332328875325889
+              },
+              {
+                "world_point": [
+                  1.793357401740316,
+                  0.3268553022837027,
+                  2.360408394205729
+                ],
+                "reference_navigation": [
+                  1.8,
+                  0.3,
+                  2.3
+                ],
+                "measured_navigation": [
+                  1.8025564716045699,
+                  0.32925953689272763,
+                  2.170044829752604
+                ],
+                "error_m": 0.1332328875325891
+              }
+            ]
+          },
+          "seconds_since_landing": 8.451699350000126,
+          "valid": true,
+          "reference": {
+            "frame": "map",
+            "position": [
+              0.05356746270486763,
+              0.0010994676667970367,
+              0.018068908396053074
+            ],
+            "basis": {
+              "source_ns": 136125334999,
+              "age_s": 0.36466500100000004,
+              "translation": [
+                -0.004911405359298148,
+                -0.005424191509413931,
+                0.15353267054350825
+              ],
+              "quaternion_xyzw": [
+                0.0004030240958325756,
+                -0.0005101994795754096,
+                0.00032873400751829714,
+                0.9999997346009756
+              ]
+            }
+          },
+          "receipt_ages": {
+            "/occupancy_grid": 0.5052122619963484,
+            "/pointcloud_nonground": 0.5049883440005942
+          }
+        }
+      ],
+      "recovery_seconds": 8.45186811000167,
+      "recovered_state": {
+        "source_ns": 136320000000,
+        "frame": "odom",
+        "ros_now_ns": 136490000000,
+        "receipt": 39185.300548533,
+        "steady_now": 39185.300944095,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.058344848453998566,
+          0.006376038771122694,
+          -0.135528564453125
+        ],
+        "velocity": [
+          0.004973268136382103,
+          -0.00607014587149024,
+          -0.0201313067227602
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      },
+      "recovered_reference": {
+        "frame": "map",
+        "position": [
+          0.05356746270486763,
+          0.0010994676667970367,
+          0.018068908396053074
+        ],
+        "basis": {
+          "source_ns": 136125334999,
+          "age_s": 0.36466500100000004,
+          "translation": [
+            -0.004911405359298148,
+            -0.005424191509413931,
+            0.15353267054350825
+          ],
+          "quaternion_xyzw": [
+            0.0004030240958325756,
+            -0.0005101994795754096,
+            0.00032873400751829714,
+            0.9999997346009756
+          ]
+        }
+      }
+    }
+  ],
+  "inspections": [
+    {
+      "index": 1,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_sample_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.00299074632092115,
+          "yaw_error_rad": 0.00013100237449498178,
+          "translation_component_error_m": 0.0029748141195652376,
+          "samples": [
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29927161865527324,
+                -0.30049306926948655,
+                0.5028584798177083
+              ],
+              "error_m": 0.00299074632092115
+            },
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29927161865527324,
+                -0.30049306926948655,
+                2.302858479817708
+              ],
+              "error_m": 0.0029907463209209377
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29935022007974543,
+                0.29950692558202685,
+                0.5028584798177083
+              ],
+              "error_m": 0.0029725819071425115
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29935022007974543,
+                0.29950692558202685,
+                2.302858479817708
+              ],
+              "error_m": 0.0029725819071422977
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8007283633250237,
+                -0.30021796428383396,
+                0.5028584798177083
+              ],
+              "error_m": 0.0029578587577016343
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8007283633250237,
+                -0.30021796428383396,
+                2.302858479817708
+              ],
+              "error_m": 0.00295785875770142
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8006497619005515,
+                0.2997820305676795,
+                0.5028584798177083
+              ],
+              "error_m": 0.002939491124170947
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8006497619005515,
+                0.2997820305676795,
+                2.302858479817708
+              ],
+              "error_m": 0.0029394911241707312
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0003764149488765738,
+          "yaw_error_rad": 7.833170752386681e-06,
+          "translation_component_error_m": 0.0003734331760991308,
+          "samples": [
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2997779164570772,
+                -0.29974747962714865,
+                0.4998372395833333
+              ],
+              "error_m": 0.00037360218411518464
+            },
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2997779164570772,
+                -0.29974747962714865,
+                2.299837239583333
+              ],
+              "error_m": 0.0003736021841153055
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29977321655462585,
+                0.3002525203544437,
+                0.4998372395833333
+              ],
+              "error_m": 0.0003764149488764538
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29977321655462585,
+                0.3002525203544437,
+                2.299837239583333
+              ],
+              "error_m": 0.0003764149488765738
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8002220834784965,
+                -0.2997639292857285,
+                0.4998372395833333
+              ],
+              "error_m": 0.00036268637524902996
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8002220834784965,
+                -0.2997639292857285,
+                2.299837239583333
+              ],
+              "error_m": 0.00036268637524915453
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8002267833809478,
+                0.30023607069586394,
+                0.4998372395833333
+              ],
+              "error_m": 0.00036558313494099555
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8002267833809478,
+                0.30023607069586394,
+                2.299837239583333
+              ],
+              "error_m": 0.00036558313494111915
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0028684740456985,
+          "yaw_error_rad": 0.00012316920367939563,
+          "translation_component_error_m": 0.002853203720196822,
+          "samples": [
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3009504599359749,
+                -0.29975944611456384,
+                0.4973042805989583
+              ],
+              "error_m": 0.0028684740456982392
+            },
+            {
+              "world_point": [
+                -0.2996386064197003,
+                -0.3139294738161291,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3009504599359749,
+                -0.29975944611456384,
+                2.297304280598958
+              ],
+              "error_m": 0.0028684740456985
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30087655841395416,
+                0.3002405493342403,
+                0.4973042805989583
+              ],
+              "error_m": 0.002844841247667411
+            },
+            {
+              "world_point": [
+                -0.31136925880757915,
+                0.28595584171889443,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30087655841395416,
+                0.3002405493342403,
+                2.297304280598958
+              ],
+              "error_m": 0.002844841247667674
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7990495241348397,
+                -0.30001810144163654,
+                0.4973042805989583
+              ],
+              "error_m": 0.00285843228389169
+            },
+            {
+              "world_point": [
+                1.7999599979528822,
+                -0.27287219045855315,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7990495241348397,
+                -0.30001810144163654,
+                2.297304280598958
+              ],
+              "error_m": 0.0028584322838919518
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                0.5525602903645833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7991234256568607,
+                0.2999818940071676,
+                0.4973042805989583
+              ],
+              "error_m": 0.002834715769734102
+            },
+            {
+              "world_point": [
+                1.7882293455650033,
+                0.3270131250764704,
+                2.352560290364583
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7991234256568607,
+                0.2999818940071676,
+                2.297304280598958
+              ],
+              "error_m": 0.0028347157697343663
+            }
+          ]
+        }
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            0.0,
+            0.0,
+            0.054371,
+            -0.0,
+            0.0,
+            0.0
+          ],
+          "odom_position": [
+            0.006407024338841438,
+            0.007558186538517475,
+            0.004669189453125
+          ],
+          "yaw": -0.019421330703877006,
+          "translation": [
+            0.006407024338841438,
+            0.007558186538517475,
+            -0.049701810546875
+          ],
+          "state": {
+            "source_ns": 18440000000,
+            "frame": "odom",
+            "ros_now_ns": 18620000000,
+            "receipt": 38987.052689961,
+            "steady_now": 38987.052795212,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.006407024338841438,
+              0.007558186538517475,
+              0.004669189453125
+            ],
+            "velocity": [
+              0.0019384031184017658,
+              -0.004278468433767557,
+              0.0015079403528943658
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 18210000000,
+            "frame": "odom",
+            "ros_now_ns": 18230000000,
+            "receipt": 38986.460770069,
+            "steady_now": 38986.576530346,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.00695141963660717,
+              0.0075278859585523605,
+              0.007293701171875
+            ],
+            "velocity": [
+              0.0020347677636891603,
+              -0.0041860779747366905,
+              0.002384407678619027
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            0.0,
+            0.0,
+            0.054371,
+            -0.0,
+            0.0,
+            0.0
+          ],
+          "odom_position": [
+            0.00594349205493927,
+            0.008261334151029587,
+            0.00164794921875
+          ],
+          "yaw": -0.019560166249124374,
+          "translation": [
+            0.00594349205493927,
+            0.008261334151029587,
+            -0.05272305078125
+          ],
+          "state": {
+            "source_ns": 19180000000,
+            "frame": "odom",
+            "ros_now_ns": 19320000000,
+            "receipt": 38988.115023769,
+            "steady_now": 38988.115115009,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.00594349205493927,
+              0.008261334151029587,
+              0.00164794921875
+            ],
+            "velocity": [
+              0.0007542821113020182,
+              -0.004018344450742006,
+              0.0007363539189100266
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 18920000000,
+            "frame": "odom",
+            "ros_now_ns": 18930000000,
+            "receipt": 38987.510489717,
+            "steady_now": 38987.57672671,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.0059519121423363686,
+              0.00791128072887659,
+              0.00225830078125
+            ],
+            "velocity": [
+              0.0009598192991688848,
+              -0.004624225199222565,
+              0.0006932680844329298
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            0.0,
+            0.0,
+            0.054371,
+            -0.0,
+            0.0,
+            0.0
+          ],
+          "odom_position": [
+            0.004806471057236195,
+            0.008214104920625687,
+            -0.000885009765625
+          ],
+          "yaw": -0.019675502282051383,
+          "translation": [
+            0.004806471057236195,
+            0.008214104920625687,
+            -0.055256009765625
+          ],
+          "state": {
+            "source_ns": 19750000000,
+            "frame": "odom",
+            "ros_now_ns": 19920000000,
+            "receipt": 38989.039180152,
+            "steady_now": 38989.039367461,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.004806471057236195,
+              0.008214104920625687,
+              -0.000885009765625
+            ],
+            "velocity": [
+              0.00021307544375304133,
+              -0.004525385331362486,
+              -0.00028700142866000533
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 19620000000,
+            "frame": "odom",
+            "ros_now_ns": 19620000000,
+            "receipt": 38988.610492797,
+            "steady_now": 38988.625254277,
+            "armed": false,
+            "connected": true,
+            "mode": 2,
+            "mode_name": "AUTO.LOITER",
+            "position": [
+              0.005118647590279579,
+              0.008407492190599442,
+              -0.000732421875
+            ],
+            "velocity": [
+              0.00026753402198664844,
+              -0.004417284391820431,
+              0.0003048963553737849
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          0.005718995817005634,
+          0.008011208536724249,
+          -0.05256029036458334
+        ],
+        "yaw": -0.019552333078371988
+      },
+      "settled_preflight_state": {
+        "source_ns": 18210000000,
+        "frame": "odom",
+        "ros_now_ns": 18230000000,
+        "receipt": 38986.460770069,
+        "steady_now": 38986.576513421,
+        "armed": false,
+        "connected": true,
+        "mode": 2,
+        "mode_name": "AUTO.LOITER",
+        "position": [
+          0.00695141963660717,
+          0.0075278859585523605,
+          0.007293701171875
+        ],
+        "velocity": [
+          0.0020347677636891603,
+          -0.0041860779747366905,
+          0.002384407678619027
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    },
+    {
+      "index": 2,
+      "passed": true,
+      "loaded_components": [
+        "calib_tf_publisher",
+        "camera_info_checker",
+        "easyfly_multi_object_tracking",
+        "easyfly_object_detection",
+        "easyfly_pixel_to_3d",
+        "map_odom_tf",
+        "odom_tf_publisher"
+      ],
+      "alignment_sample_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0018859454007228772,
+          "yaw_error_rad": 2.8548209695899305e-05,
+          "translation_component_error_m": 0.0018806089261385317,
+          "samples": [
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3010185363248118,
+                -0.30017334645651506,
+                0.5015665690104166
+              ],
+              "error_m": 0.001876593643638708
+            },
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3010185363248118,
+                -0.30017334645651506,
+                2.301566569010417
+              ],
+              "error_m": 0.0018765936436389863
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3010356652506269,
+                0.2998266532989848,
+                0.5015665690104166
+              ],
+              "error_m": 0.0018859454007226005
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3010356652506269,
+                0.2998266532989848,
+                2.301566569010417
+              ],
+              "error_m": 0.0018859454007228772
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7989814628194376,
+                -0.30011339521616187,
+                0.5015665690104166
+              ],
+              "error_m": 0.001872008260567838
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7989814628194376,
+                -0.30011339521616187,
+                2.301566569010417
+              ],
+              "error_m": 0.0018720082605681169
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7989643338936225,
+                0.299886604539338,
+                0.5015665690104166
+              ],
+              "error_m": 0.0018813828102743012
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7989643338936225,
+                0.299886604539338,
+                2.301566569010417
+              ],
+              "error_m": 0.0018813828102745786
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0014285029155335057,
+          "yaw_error_rad": 4.8518238443437736e-05,
+          "translation_component_error_m": 0.001372920137859561,
+          "samples": [
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29892429031540796,
+                -0.2993466090764915,
+                0.5005594889322916
+              ],
+              "error_m": 0.0013773521299236303
+            },
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29892429031540796,
+                -0.2993466090764915,
+                2.300559488932292
+              ],
+              "error_m": 0.0013773521299237656
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29895340125846265,
+                0.30065339021730253,
+                0.5005594889322916
+              ],
+              "error_m": 0.001354738191390143
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29895340125846265,
+                0.30065339021730253,
+                2.300559488932292
+              ],
+              "error_m": 0.0013547381913902804
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8010757072128711,
+                -0.29924472077580033,
+                0.5005594889322916
+              ],
+              "error_m": 0.0014285029155333751
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8010757072128711,
+                -0.29924472077580033,
+                2.300559488932292
+              ],
+              "error_m": 0.0014285029155335057
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8010465962698168,
+                0.3007552785179937,
+                0.5005594889322916
+              ],
+              "error_m": 0.0014067115045715438
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8010465962698168,
+                0.3007552785179937,
+                2.300559488932292
+              ],
+              "error_m": 0.0014067115045716763
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0022215771403702547,
+          "yaw_error_rad": 7.706644819270927e-05,
+          "translation_component_error_m": 0.0021852228199602396,
+          "samples": [
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30005717194705434,
+                -0.3004800430574284,
+                0.4978739420572917
+              ],
+              "error_m": 0.0021803284945779017
+            },
+            {
+              "world_point": [
+                -0.3059572503606121,
+                -0.31371590566116625,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30005717194705434,
+                -0.3004800430574284,
+                2.297873942057292
+              ],
+              "error_m": 0.002180328494577631
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3000109320781844,
+                0.2995199551608002,
+                0.4978739420572917
+              ],
+              "error_m": 0.0021796066006802427
+            },
+            {
+              "world_point": [
+                -0.3141409628266433,
+                0.2862282807847674,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3000109320781844,
+                0.2995199551608002,
+                2.297873942057292
+              ],
+              "error_m": 0.002179606600679972
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999428218167461,
+                -0.3006418825984729,
+                0.4978739420572917
+              ],
+              "error_m": 0.0022215771403702547
+            },
+            {
+              "world_point": [
+                1.7938474022001558,
+                -0.2850729120300571,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7999428218167461,
+                -0.3006418825984729,
+                2.297873942057292
+              ],
+              "error_m": 0.002221577140369989
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                0.5389200670572917
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.799989061685616,
+                0.2993581156197557,
+                0.4978739420572917
+              ],
+              "error_m": 0.0022208686543954454
+            },
+            {
+              "world_point": [
+                1.7856636897341247,
+                0.3148712744158766,
+                2.3389200670572916
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.799989061685616,
+                0.2993581156197557,
+                2.297873942057292
+              ],
+              "error_m": 0.0022208686543951795
+            }
+          ]
+        }
+      ],
+      "alignment_samples": [
+        {
+          "world_pose": [
+            0.031881,
+            0.022377,
+            0.054718,
+            0.00114,
+            -4.1e-05,
+            -1.37062
+          ],
+          "odom_position": [
+            0.04136297106742859,
+            0.031290117651224136,
+            0.017364501953125
+          ],
+          "yaw": -0.013611395510610302,
+          "translation": [
+            0.009180351527233135,
+            0.009349122014493571,
+            -0.037353498046875
+          ],
+          "state": {
+            "source_ns": 77100000000,
+            "frame": "odom",
+            "ros_now_ns": 77220000000,
+            "receipt": 39085.051915734,
+            "steady_now": 39085.052029578,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.04136297106742859,
+              0.031290117651224136,
+              0.017364501953125
+            ],
+            "velocity": [
+              0.00043902508332394063,
+              0.004915258847177029,
+              0.0012708567082881927
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 76920000000,
+            "frame": "odom",
+            "ros_now_ns": 76930000000,
+            "receipt": 39084.560090385,
+            "steady_now": 39084.651532306,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.041397254914045334,
+              0.03126825392246246,
+              0.017181396484375
+            ],
+            "velocity": [
+              1.969110053323675e-05,
+              0.004821405280381441,
+              0.0016942411893978715
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            0.031881,
+            0.022377,
+            0.054718,
+            0.00114,
+            -4.1e-05,
+            -1.37062
+          ],
+          "odom_position": [
+            0.043450597673654556,
+            0.03212369233369827,
+            0.016357421875
+          ],
+          "yaw": -0.013591425481862764,
+          "translation": [
+            0.011268416302189936,
+            0.010182054013505418,
+            -0.038360578125
+          ],
+          "state": {
+            "source_ns": 77750000000,
+            "frame": "odom",
+            "ros_now_ns": 77900000000,
+            "receipt": 39086.078065991,
+            "steady_now": 39086.078221395,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.043450597673654556,
+              0.03212369233369827,
+              0.016357421875
+            ],
+            "velocity": [
+              0.0019809214863926172,
+              0.004412262700498104,
+              0.0008390720468014479
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 77520000000,
+            "frame": "odom",
+            "ros_now_ns": 77530000000,
+            "receipt": 39085.459935641,
+            "steady_now": 39085.57984982,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.043305858969688416,
+              0.03187508136034012,
+              0.017303466796875
+            ],
+            "velocity": [
+              0.001601348165422678,
+              0.004476577043533325,
+              0.0011821346124634147
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        },
+        {
+          "world_pose": [
+            0.031881,
+            0.022377,
+            0.054718,
+            0.00114,
+            -4.1e-05,
+            -1.37062
+          ],
+          "odom_position": [
+            0.04235934093594551,
+            0.030947258695960045,
+            0.013671875
+          ],
+          "yaw": -0.013717010168498911,
+          "translation": [
+            0.010174404284496265,
+            0.009009662137945795,
+            -0.041046125
+          ],
+          "state": {
+            "source_ns": 78420000000,
+            "frame": "odom",
+            "ros_now_ns": 78540000000,
+            "receipt": 39087.166637718,
+            "steady_now": 39087.166800584,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.04235934093594551,
+              0.030947258695960045,
+              0.013671875
+            ],
+            "velocity": [
+              0.0003507373621687293,
+              0.003941404167562723,
+              0.0009674602770246565
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          },
+          "state_before": {
+            "source_ns": 78130000000,
+            "frame": "odom",
+            "ros_now_ns": 78130000000,
+            "receipt": 39086.55992352,
+            "steady_now": 39086.627205859,
+            "armed": false,
+            "connected": true,
+            "mode": 3,
+            "mode_name": "OFFBOARD",
+            "position": [
+              0.043073806911706924,
+              0.032689522951841354,
+              0.01434326171875
+            ],
+            "velocity": [
+              0.0013891226844862103,
+              0.004847145639359951,
+              0.000868427159730345
+            ],
+            "pose_valid": true,
+            "velocity_valid": true,
+            "battery_valid": true,
+            "battery_voltage": 16.200000762939453,
+            "battery_remaining": 1.0
+          }
+        }
+      ],
+      "world_to_navigation": {
+        "translation": [
+          0.010207724037973112,
+          0.009513612721981595,
+          -0.03892006705729167
+        ],
+        "yaw": -0.013639943720306202
+      },
+      "settled_preflight_state": {
+        "source_ns": 76920000000,
+        "frame": "odom",
+        "ros_now_ns": 76930000000,
+        "receipt": 39084.560090385,
+        "steady_now": 39084.651515667,
+        "armed": false,
+        "connected": true,
+        "mode": 3,
+        "mode_name": "OFFBOARD",
+        "position": [
+          0.041397254914045334,
+          0.03126825392246246,
+          0.017181396484375
+        ],
+        "velocity": [
+          1.969110053323675e-05,
+          0.004821405280381441,
+          0.0016942411893978715
+        ],
+        "pose_valid": true,
+        "velocity_valid": true,
+        "battery_valid": true,
+        "battery_voltage": 16.200000762939453,
+        "battery_remaining": 1.0
+      }
+    }
+  ],
+  "ownership": [
+    {
+      "service": "/mission/ownership",
+      "requested": "beedfab4989c4e7b967e11cd1796e596",
+      "returned": "beedfab4989c4e7b967e11cd1796e596",
+      "state": 2,
+      "steady": 39076.839772005
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "65acc1b26397c348c57b72aeaa02d404",
+      "returned": "65acc1b26397c348c57b72aeaa02d404",
+      "state": 2,
+      "steady": 39076.845936846
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "aa4cbca2e0e1ad6a14f6779609c34aad",
+      "returned": "aa4cbca2e0e1ad6a14f6779609c34aad",
+      "state": 2,
+      "steady": 39076.850590826
+    },
+    {
+      "service": "/mission/ownership",
+      "requested": "3ff4b26a1be74491b36e15c05846d234",
+      "returned": "3ff4b26a1be74491b36e15c05846d234",
+      "state": 2,
+      "steady": 39176.837879676
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "beef206c6a56fb930a3221933ad48da7",
+      "returned": "beef206c6a56fb930a3221933ad48da7",
+      "state": 2,
+      "steady": 39176.845284702
+    },
+    {
+      "service": "/navigation/ownership",
+      "requested": "c10673334ebf595d6785b3644a9c2356",
+      "returned": "c10673334ebf595d6785b3644a9c2356",
+      "state": 2,
+      "steady": 39176.848152133
+    }
+  ],
+  "sessions": [
+    {
+      "steady": 39003.935112342,
+      "session_id": "65acc1b26397c348c57b72aeaa02d404:1",
+      "active": true
+    },
+    {
+      "steady": 39035.328067971,
+      "session_id": "65acc1b26397c348c57b72aeaa02d404:1",
+      "active": false
+    },
+    {
+      "steady": 39035.435657942,
+      "session_id": "aa4cbca2e0e1ad6a14f6779609c34aad:1",
+      "active": true
+    },
+    {
+      "steady": 39066.394784529,
+      "session_id": "aa4cbca2e0e1ad6a14f6779609c34aad:1",
+      "active": false
+    },
+    {
+      "steady": 39102.380115232,
+      "session_id": "beef206c6a56fb930a3221933ad48da7:1",
+      "active": true
+    },
+    {
+      "steady": 39134.528829108,
+      "session_id": "beef206c6a56fb930a3221933ad48da7:1",
+      "active": false
+    },
+    {
+      "steady": 39134.6290715,
+      "session_id": "c10673334ebf595d6785b3644a9c2356:1",
+      "active": true
+    },
+    {
+      "steady": 39167.044504245,
+      "session_id": "c10673334ebf595d6785b3644a9c2356:1",
+      "active": false
+    }
+  ],
+  "final_disarmed_state": {
+    "source_ns": 136320000000,
+    "frame": "odom",
+    "ros_now_ns": 136490000000,
+    "receipt": 39185.300548533,
+    "steady_now": 39185.30095595,
+    "armed": false,
+    "connected": true,
+    "mode": 3,
+    "mode_name": "OFFBOARD",
+    "position": [
+      0.058344848453998566,
+      0.006376038771122694,
+      -0.135528564453125
+    ],
+    "velocity": [
+      0.004973268136382103,
+      -0.00607014587149024,
+      -0.0201313067227602
+    ],
+    "pose_valid": true,
+    "velocity_valid": true,
+    "battery_valid": true,
+    "battery_voltage": 16.200000762939453,
+    "battery_remaining": 1.0
+  },
+  "sensors": {
+    "/livox/lidar": {
+      "count": 1333,
+      "first_source_ns": 2710000000,
+      "last_source_ns": 136127000000,
+      "receipt": 39184.792020734,
+      "frame": "livox_frame",
+      "points": 20000,
+      "sample_xyz": [
+        [
+          0.2799547612667084,
+          15.879767417907715,
+          20.447237014770508
+        ],
+        [
+          9.102723121643066,
+          19.22221565246582,
+          22.44456672668457
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -16.278568267822266,
+          19.222217559814453,
+          24.397048950195312
+        ],
+        [
+          -5.61004638671875,
+          19.222217559814453,
+          22.746522903442383
+        ],
+        [
+          3.482872724533081,
+          19.222217559814453,
+          18.32553482055664
+        ],
+        [
+          11.554441452026367,
+          19.222219467163086,
+          23.708269119262695
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          13.7547607421875,
+          -13.38994026184082,
+          15.64020824432373
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -23.460826873779297,
+          19.222986221313477,
+          23.16084098815918
+        ],
+        [
+          -9.46267032623291,
+          19.22221565246582,
+          18.426557540893555
+        ],
+        [
+          0.221658855676651,
+          15.874114036560059,
+          11.585646629333496
+        ],
+        [
+          7.696123123168945,
+          19.222217559814453,
+          16.63111686706543
+        ],
+        [
+          24.35702896118164,
+          19.22222137451172,
+          22.19200897216797
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          16.69647979736328,
+          -12.350235939025879,
+          12.994796752929688
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -12.400094032287598,
+          21.143903732299805,
+          15.617525100708008
+        ],
+        [
+          -1.0766514539718628,
+          15.95705509185791,
+          8.746665000915527
+        ],
+        [
+          6.241969108581543,
+          19.222219467163086,
+          12.04153823852539
+        ],
+        [
+          21.71928596496582,
+          19.78382682800293,
+          15.725178718566895
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          19.43697166442871,
+          -12.463947296142578,
+          10.761134147644043
+        ],
+        [
+          12.301824569702148,
+          -20.051177978515625,
+          12.138588905334473
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -12.986388206481934,
+          -11.064404487609863,
+          7.711087226867676
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -11.932219505310059,
+          19.222219467163086,
+          10.823378562927246
+        ],
+        [
+          -1.649950385093689,
+          15.91191577911377,
+          6.507838726043701
+        ],
+        [
+          7.068448543548584,
+          23.515625,
+          10.91051197052002
+        ],
+        [
+          19.86351776123047,
+          19.22221565246582,
+          11.021692276000977
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          20.759679794311523,
+          -12.458885192871094,
+          8.21015453338623
+        ],
+        [
+          12.461638450622559,
+          -19.500715255737305,
+          8.88260555267334
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -12.986751556396484,
+          -11.537881851196289,
+          5.768045425415039
+        ],
+        [
+          -26.80590057373047,
+          -10.263526916503906,
+          9.566779136657715
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -14.332639694213867,
+          22.99949836730957,
+          9.598687171936035
+        ],
+        [
+          -1.9019962549209595,
+          16.539596557617188,
+          4.833399295806885
+        ],
+        [
+          5.821837902069092,
+          19.222217559814453,
+          6.465447902679443
+        ],
+        [
+          19.581167221069336,
+          19.222217559814453,
+          7.778509616851807
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          21.030487060546875,
+          -12.462179183959961,
+          5.508156776428223
+        ],
+        [
+          12.464017868041992,
+          -19.655311584472656,
+          6.25151252746582
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -12.986568450927734,
+          -11.521505355834961,
+          3.835756540298462
+        ],
+        [
+          -27.56980323791504,
+          -10.26352596282959,
+          6.442729949951172
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -11.431475639343262,
+          19.22221565246582,
+          5.351912975311279
+        ],
+        [
+          -1.626274824142456,
+          16.010377883911133,
+          2.8462767601013184
+        ],
+        [
+          6.88462495803833,
+          20.68389320373535,
+          4.4922590255737305
+        ],
+        [
+          20.898880004882812,
+          19.78382682800293,
+          4.8874006271362305
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          19.461767196655273,
+          -12.18468952178955,
+          2.496152639389038
+        ],
+        [
+          12.463642120361328,
+          -21.12532615661621,
+          3.7717552185058594
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -12.98638916015625,
+          -10.81447696685791,
+          1.7884259223937988
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -18.0556583404541,
+          34.537288665771484,
+          4.902739524841309
+        ],
+        [
+          -0.7986210584640503,
+          15.930083274841309,
+          0.9657418727874756
+        ],
+        [
+          7.828791618347168,
+          19.222217559814453,
+          1.9281903505325317
+        ],
+        [
+          22.802875518798828,
+          19.222219467163086,
+          1.6303966045379639
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          16.870018005371094,
+          -12.315362930297852,
+          -0.16341857612133026
+        ],
+        [
+          12.151427268981934,
+          -24.65150260925293,
+          1.1809812784194946
+        ],
+        [
+          -0.0958443209528923,
+          -10.038954734802246,
+          -0.23000000417232513
+        ],
+        [
+          -12.986390113830566,
+          -27.449357986450195,
+          0.7050694227218628
+        ],
+        [
+          -14.497309684753418,
+          -10.263527870178223,
+          -0.10404594242572784
+        ],
+        [
+          -0.0,
+          -0.0,
+          -0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -6.344320297241211,
+          5.310321807861328,
+          -0.23000000417232513
+        ],
+        [
+          -7.696124076843262,
+          19.22222137451172,
+          0.5926472544670105
+        ],
+        [
+          0.30158162117004395,
+          5.641477584838867,
+          -0.23000000417232513
+        ],
+        [
+          10.373759269714355,
+          18.987377166748047,
+          0.049072716385126114
+        ],
+        [
+          4.6341705322265625,
+          3.106994152069092,
+          -0.23000000417232513
+        ],
+        [
+          4.6685791015625,
+          0.809760570526123,
+          -0.23000000417232513
+        ],
+        [
+          5.948929309844971,
+          -2.024022340774536,
+          -0.23000000417232513
+        ],
+        [
+          1.7626919746398926,
+          -1.6698111295700073,
+          -0.23000000417232513
+        ],
+        [
+          2.0306715965270996,
+          -5.874175548553467,
+          -0.23000000417232513
+        ],
+        [
+          -0.2967281639575958,
+          -2.1150803565979004,
+          -0.23000000417232513
+        ],
+        [
+          -2.5994410514831543,
+          -4.011366367340088,
+          -0.23000000417232513
+        ],
+        [
+          -2.4577908515930176,
+          -1.2925586700439453,
+          -0.23000000417232513
+        ],
+        [
+          -3.4216277599334717,
+          -0.28036510944366455,
+          -0.23000000417232513
+        ],
+        [
+          -4.805083274841309,
+          2.244732618331909,
+          -0.23000000417232513
+        ],
+        [
+          -1.8251591920852661,
+          2.0463554859161377,
+          -0.23000000417232513
+        ],
+        [
+          -2.643023729324341,
+          10.842119216918945,
+          -0.23000000417232513
+        ],
+        [
+          0.5198372602462769,
+          2.530207633972168,
+          -0.23000000417232513
+        ],
+        [
+          4.302367687225342,
+          5.670214653015137,
+          -0.23000000417232513
+        ],
+        [
+          2.5980076789855957,
+          1.219761610031128,
+          -0.23000000417232513
+        ],
+        [
+          3.215921401977539,
+          0.04939689114689827,
+          -0.23000000417232513
+        ],
+        [
+          3.1829946041107178,
+          -1.6619077920913696,
+          -0.23000000417232513
+        ],
+        [
+          1.2598764896392822,
+          -1.6544232368469238,
+          -0.23000000417232513
+        ],
+        [
+          0.7913838028907776,
+          -4.3895344734191895,
+          -0.23000000417232513
+        ],
+        [
+          -0.5747551918029785,
+          -1.8432866334915161,
+          -0.23000000417232513
+        ],
+        [
+          -3.101306676864624,
+          -3.4607133865356445,
+          -0.23000000417232513
+        ],
+        [
+          -2.4869184494018555,
+          -0.835394561290741,
+          -0.23000000417232513
+        ],
+        [
+          -4.0895185470581055,
+          0.30677467584609985,
+          -0.23000000417232513
+        ],
+        [
+          -5.1789469718933105,
+          3.4840452671051025,
+          -0.23000000417232513
+        ],
+        [
+          -1.9964385032653809,
+          3.102621078491211,
+          -0.23000000417232513
+        ],
+        [
+          -1.4243264198303223,
+          15.990784645080566,
+          0.016765860840678215
+        ],
+        [
+          1.3782401084899902,
+          3.6862704753875732,
+          -0.23000000417232513
+        ],
+        [
+          19.61537742614746,
+          19.222213745117188,
+          0.15742890536785126
+        ],
+        [
+          5.375021934509277,
+          1.5890932083129883,
+          -0.23000000417232513
+        ],
+        [
+          12.284818649291992,
+          -1.5911591053009033,
+          -0.23000000417232513
+        ],
+        [
+          11.746174812316895,
+          -8.521573066711426,
+          -0.23000000417232513
+        ],
+        [
+          2.3827364444732666,
+          -4.2879743576049805,
+          -0.23000000417232513
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -1.9615988731384277,
+          -4.116644859313965,
+          -0.23000000417232513
+        ],
+        [
+          -12.986387252807617,
+          -11.091422080993652,
+          0.3277994692325592
+        ],
+        [
+          -13.02503776550293,
+          -2.4441583156585693,
+          -0.23000000417232513
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -21.796098709106445,
+          19.22260856628418,
+          1.075596809387207
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.48856672644615173,
+          15.900003433227539,
+          1.3103787899017334
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          14.14216136932373,
+          -12.657882690429688,
+          1.570540428161621
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -11.640592575073242,
+          -19.7673282623291,
+          1.3884520530700684
+        ],
+        [
+          -14.305325508117676,
+          -10.26352596282959,
+          2.2063395977020264
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -19.32968521118164,
+          20.100553512573242,
+          4.046611785888672
+        ],
+        [
+          -13.412346839904785,
+          33.313846588134766,
+          4.897683620452881
+        ],
+        [
+          1.6662124395370483,
+          16.014253616333008,
+          3.07690691947937
+        ],
+        [
+          13.992181777954102,
+          23.58426856994629,
+          4.036017894744873
+        ],
+        [
+          27.657146453857422,
+          19.222217559814453,
+          6.995238304138184
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          13.605429649353027,
+          -13.539102554321289,
+          3.772003173828125
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -12.618898391723633,
+          -19.7673282623291,
+          4.151212692260742
+        ],
+        [
+          -15.553638458251953,
+          -10.26352596282959,
+          4.447684288024902
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -17.114337921142578,
+          19.22221565246582,
+          6.681931018829346
+        ],
+        [
+          -7.183069705963135,
+          19.222219467163086,
+          5.119754791259766
+        ],
+        [
+          2.301530599594116,
+          16.671722412109375,
+          5.127094745635986
+        ],
+        [
+          11.960121154785156,
+          19.22221565246582,
+          5.89203405380249
+        ],
+        [
+          29.10778045654297,
+          19.222213745117188,
+          11.163143157958984
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          13.378103256225586,
+          -13.766616821289062,
+          5.943312168121338
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -11.168686866760254,
+          -17.423091888427734,
+          5.969927787780762
+        ],
+        [
+          -15.844371795654297,
+          -10.263526916503906,
+          6.633601665496826
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -17.59816551208496,
+          20.109304428100586,
+          10.054886817932129
+        ],
+        [
+          -7.232816219329834,
+          19.222219467163086,
+          7.437066555023193
+        ],
+        [
+          2.4418928623199463,
+          16.7181396484375,
+          7.150161266326904
+        ],
+        [
+          13.430999755859375,
+          21.84886360168457,
+          9.598686218261719
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          13.47281265258789,
+          -13.671795845031738,
+          8.247467041015625
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -11.293632507324219,
+          -18.48379898071289,
+          8.80176830291748
+        ],
+        [
+          -15.397073745727539,
+          -10.263525009155273,
+          8.824917793273926
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -17.319915771484375,
+          19.222217559814453,
+          13.243905067443848
+        ],
+        [
+          -7.997200965881348,
+          19.783824920654297,
+          10.487163543701172
+        ],
+        [
+          2.2023754119873047,
+          16.638931274414062,
+          9.519564628601074
+        ],
+        [
+          11.07112979888916,
+          19.222217559814453,
+          11.267461776733398
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          13.915998458862305,
+          -13.228888511657715,
+          11.119386672973633
+        ],
+        [
+          12.440080642700195,
+          -26.87351417541504,
+          16.043203353881836
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -19.155235290527344,
+          19.22221565246582,
+          18.772335052490234
+        ],
+        [
+          -10.719446182250977,
+          22.534486770629883,
+          16.472984313964844
+        ],
+        [
+          1.299649953842163,
+          15.97868824005127,
+          12.288481712341309
+        ],
+        [
+          10.047283172607422,
+          20.563535690307617,
+          15.61760425567627
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          15.103574752807617,
+          -12.160956382751465,
+          15.093770027160645
+        ],
+        [
+          12.6056547164917,
+          -21.737152099609375,
+          18.148086547851562
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -13.19218921661377,
+          20.423269271850586,
+          21.177114486694336
+        ],
+        [
+          -0.8098258972167969,
+          15.931169509887695,
+          16.451723098754883
+        ],
+        [
+          6.156778335571289,
+          19.22221565246582,
+          18.001745223999023
+        ],
+        [
+          18.273109436035156,
+          19.22221565246582,
+          27.914836883544922
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          12.362027168273926,
+          -14.618130683898926,
+          17.561708450317383
+        ],
+        [
+          0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          -0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -6.595713138580322,
+          20.33574104309082,
+          26.733625411987305
+        ],
+        [
+          1.0231740474700928,
+          15.951868057250977,
+          16.660486221313477
+        ],
+        [
+          10.143302917480469,
+          19.222219467163086,
+          27.32769012451172
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ]
+      ]
+    },
+    "/livox/imu": {
+      "count": 17903,
+      "first_source_ns": 2715000000,
+      "last_source_ns": 136228000000,
+      "receipt": 39184.854910754,
+      "frame": "livox_frame",
+      "finite": true
+    },
+    "/camera/color/image_raw": {
+      "count": 4168,
+      "first_source_ns": 2711000000,
+      "last_source_ns": 136202000000,
+      "receipt": 39184.802346054,
+      "frame": "camera_color_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "rgb8",
+      "sample_saved": true,
+      "non_increasing_stamps": 257
+    },
+    "/camera/aligned_depth_to_color/depth/image_raw": {
+      "count": 4168,
+      "first_source_ns": 2711000000,
+      "last_source_ns": 136202000000,
+      "receipt": 39184.802695211,
+      "frame": "camera_depth_optical_frame",
+      "width": 640,
+      "height": 480,
+      "encoding": "32FC1",
+      "finite_positive_pixels": 177078,
+      "min_m": 0.4493235945701599,
+      "max_m": 19.960838317871094,
+      "non_increasing_stamps": 257
+    }
+  },
+  "shutdown_seconds": 0.8650494530011201,
+  "alignment_contract": {
+    "policy": "recommended_region",
+    "module_sha256": "f02f53a38b4df351f3a2b056f1d7654dd0b43b4b2b7a90fe13be5b68e2e256d3",
+    "maximum_position_error_m": 0.2,
+    "maximum_yaw_error_rad": 0.1
+  },
+  "alignment_checks": [
+    {
+      "cycle": 1,
+      "policy": "recommended_region",
+      "maximum_position_error_m": 0.009521060315668767,
+      "yaw_error_rad": 0.0009187746950796333,
+      "translation_component_error_m": 0.009333375121476492,
+      "samples": [
+        {
+          "world_point": [
+            -0.29509855076878855,
+            -0.31216874611298273,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.29542638799778487,
+            -0.29832837186814876,
+            0.5078481038411459
+          ],
+          "error_m": 0.009236070661239618
+        },
+        {
+          "world_point": [
+            -0.29509855076878855,
+            -0.31216874611298273,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.29542638799778487,
+            -0.29832837186814876,
+            2.307848103841146
+          ],
+          "error_m": 0.009236070661239711
+        },
+        {
+          "world_point": [
+            -0.30627803883515037,
+            0.2877270940514362,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.2948751232582951,
+            0.30167137488778695,
+            0.5078481038411459
+          ],
+          "error_m": 0.009521060315668675
+        },
+        {
+          "world_point": [
+            -0.30627803883515037,
+            0.2877270940514362,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.2948751232582951,
+            0.30167137488778695,
+            2.307848103841146
+          ],
+          "error_m": 0.009521060315668767
+        },
+        {
+          "world_point": [
+            1.8045368898066778,
+            -0.27304053788071625,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8045727256479902,
+            -0.3002577984563627,
+            0.5078481038411459
+          ],
+          "error_m": 0.009086749352617723
+        },
+        {
+          "world_point": [
+            1.8045368898066778,
+            -0.27304053788071625,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8045727256479902,
+            -0.3002577984563627,
+            2.307848103841146
+          ],
+          "error_m": 0.009086749352617818
+        },
+        {
+          "world_point": [
+            1.793357401740316,
+            0.3268553022837027,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.80512399038748,
+            0.29974194829957307,
+            0.5078481038411459
+          ],
+          "error_m": 0.009376278689996869
+        },
+        {
+          "world_point": [
+            1.793357401740316,
+            0.3268553022837027,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.80512399038748,
+            0.29974194829957307,
+            2.307848103841146
+          ],
+          "error_m": 0.00937627868999696
+        }
+      ]
+    },
+    {
+      "cycle": 2,
+      "policy": "recommended_region",
+      "maximum_position_error_m": 0.026847558112386767,
+      "yaw_error_rad": 0.0049936146629861525,
+      "translation_component_error_m": 0.023610431976957995,
+      "samples": [
+        {
+          "world_point": [
+            -0.29509855076878855,
+            -0.31216874611298273,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.2891212079977354,
+            -0.29860109183129574,
+            0.5214883271484375
+          ],
+          "error_m": 0.024125780052285987
+        },
+        {
+          "world_point": [
+            -0.29509855076878855,
+            -0.31216874611298273,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            -0.3,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.2891212079977354,
+            -0.29860109183129574,
+            2.3214883271484372
+          ],
+          "error_m": 0.02412578005228589
+        },
+        {
+          "world_point": [
+            -0.30627803883515037,
+            0.2877270940514362,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            -0.29211736434337143,
+            0.3013914273280288,
+            0.5214883271484375
+          ],
+          "error_m": 0.02293077012537115
+        },
+        {
+          "world_point": [
+            -0.30627803883515037,
+            0.2877270940514362,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            -0.3,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            -0.29211736434337143,
+            0.3013914273280288,
+            2.3214883271484372
+          ],
+          "error_m": 0.022930770125371047
+        },
+        {
+          "world_point": [
+            1.8045368898066778,
+            -0.27304053788071625,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8108526090599009,
+            -0.2881145446215693,
+            0.5214883271484375
+          ],
+          "error_m": 0.026847558112386767
+        },
+        {
+          "world_point": [
+            1.8045368898066778,
+            -0.27304053788071625,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            1.8,
+            -0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8108526090599009,
+            -0.2881145446215693,
+            2.3214883271484372
+          ],
+          "error_m": 0.026847558112386677
+        },
+        {
+          "world_point": [
+            1.793357401740316,
+            0.3268553022837027,
+            0.5604083942057292
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            0.5
+          ],
+          "measured_navigation": [
+            1.8078564527142649,
+            0.31187797453775523,
+            0.5214883271484375
+          ],
+          "error_m": 0.02577902891905197
+        },
+        {
+          "world_point": [
+            1.793357401740316,
+            0.3268553022837027,
+            2.360408394205729
+          ],
+          "reference_navigation": [
+            1.8,
+            0.3,
+            2.3
+          ],
+          "measured_navigation": [
+            1.8078564527142649,
+            0.31187797453775523,
+            2.3214883271484372
+          ],
+          "error_m": 0.025779028919051875
+        }
+      ]
+    }
+  ],
+  "scene": "urban_block_osrf_v1",
+  "passed": true,
+  "scope": "Two consecutive takeoff/1.5m out-and-back/landing reference missions near the measured street origin in one offline native simulator. No building interiors, parking levels, rooftops or whole-city claim.",
+  "raw_result": "artifacts/scene-s6-urban-qualification-20261017/qualified-two-cycles/result.json",
+  "raw_result_sha256": "126465f1bc8ff0dfe279f2184dd982ec7a95e6393bf3a80aa20b576b8c77a546",
+  "model_sha256": "c9494110df3815df35ea7f56ebadf39d1a570069f0b7995046d0b5378b516956",
+  "frozen_world_to_navigation": {
+    "translation": [
+      0.00086379969434347,
+      0.006616135826334357,
+      -0.060408394205729174
+    ],
+    "yaw": -0.018633558383292354
+  },
+  "normal_exits": 24,
+  "launch_returncode": 0,
+  "transport_drained": true,
+  "leftovers": [],
+  "cache": {
+    "passed": true,
+    "read_only": true,
+    "semantic_component": {
+      "library": "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "sha256": "b21619f86c57274254b4ee5954a17a3ce451e985e7319b54d628423e5a8be1dc",
+      "loaded_pids": [
+        162448
+      ]
+    },
+    "observer_sha256": "93e75e6e3f0cc3ccc96a31cfbefa413cdf3465940be6fb8ee1337203caec1662",
+    "asset_locks": {
+      "osrf_urban_buildings_v1": {
+        "schema_version": 1,
+        "asset_set_id": "osrf_urban_buildings_v1",
+        "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+        "lock_sha256": "2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035",
+        "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+        "archive_size_bytes": 227118253
+      }
+    },
+    "processes": [
+      {
+        "pid": 161596,
+        "identity": {
+          "executable": "/home/jia/easyfly_ws/artifacts/scene-s3-20261016/normal/install/easyfly_gazebo_plugins/lib/easyfly_gazebo_plugins/easyfly_gzserver",
+          "start_ticks": "3895627"
+        },
+        "model_paths": [
+          "/home/jia/.cache/easyfly/assets/osrf_urban_buildings_v1/8163eb4b5e7e21985c6591d1c0bfb56468c0093f/2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035/models",
+          "/usr/share/gazebo-11/models",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-hospital-repair-20261017/normal/install/easyfly_px4_sitl/share/easyfly_px4_sitl/models",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-qualification-20261017/normal/install/easyfly_gazebo_models/share/easyfly_gazebo_models/easyfly/runtime_models"
+        ],
+        "asset_mode": "cache",
+        "cache_root": null
+      }
+    ]
+  },
+  "offline_network": {
+    "namespace": "net:[4026533031]",
+    "interfaces": [
+      {
+        "ifindex": 1,
+        "ifname": "lo",
+        "flags": [
+          "LOOPBACK",
+          "UP",
+          "LOWER_UP"
+        ],
+        "mtu": 65536,
+        "qdisc": "noqueue",
+        "operstate": "UNKNOWN",
+        "group": "default",
+        "txqlen": 1000,
+        "link_type": "loopback",
+        "address": "00:00:00:00:00:00",
+        "broadcast": "00:00:00:00:00:00",
+        "addr_info": [
+          {
+            "family": "inet",
+            "local": "127.0.0.1",
+            "prefixlen": 8,
+            "scope": "host",
+            "label": "lo",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          },
+          {
+            "family": "inet6",
+            "local": "::1",
+            "prefixlen": 128,
+            "scope": "host",
+            "valid_life_time": 4294967295,
+            "preferred_life_time": 4294967295
+          }
+        ]
+      }
+    ],
+    "routes": []
+  }
+}

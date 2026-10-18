@@ -1,0 +1,140 @@
+{
+  "scene": "urban_block_osrf_v1",
+  "revision": "urban_block_layout_v1",
+  "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+  "world_frame": "world",
+  "project_world_license": "Apache-2.0",
+  "building_asset_license": "CC-BY-3.0",
+  "ground": {
+    "bounds": {
+      "min": [
+        -60.0,
+        -55.0,
+        -0.2
+      ],
+      "max": [
+        60.0,
+        75.0,
+        0.0
+      ]
+    },
+    "floor_z_m": 0.0
+  },
+  "buildings": [
+    {
+      "instance": "apartment_southwest",
+      "pose": [
+        -21.0,
+        -21.0,
+        0.01132025197148323,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_collision_bounds": {
+        "min": [
+          -31.128618240356445,
+          -32.13504219055176,
+          0.0
+        ],
+        "max": [
+          -10.871381759643555,
+          -9.864957809448242,
+          14.804590363055468
+        ]
+      }
+    },
+    {
+      "instance": "office_southeast",
+      "pose": [
+        21.0,
+        -21.0,
+        2.07284188036283e-06,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_collision_bounds": {
+        "min": [
+          12.151416778564453,
+          -29.848544120788574,
+          0.0
+        ],
+        "max": [
+          29.84857940673828,
+          -12.151456832885742,
+          18.657461331875083
+        ]
+      }
+    },
+    {
+      "instance": "parking_north",
+      "pose": [
+        0.0,
+        37.0,
+        0.001241397112607956,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "native_collision_bounds": {
+        "min": [
+          -30.236160278320312,
+          15.75971794128418,
+          0.0
+        ],
+        "max": [
+          30.236160278320312,
+          57.284942626953125,
+          45.90516443178058
+        ]
+      }
+    }
+  ],
+  "roads": {
+    "main": {
+      "center": [
+        0.0,
+        0.0
+      ],
+      "size": [
+        100.0,
+        10.0
+      ]
+    },
+    "south_access": {
+      "center": [
+        0.0,
+        -20.0
+      ],
+      "size": [
+        8.0,
+        40.0
+      ]
+    },
+    "paint_collision": false,
+    "paint_visual_top_range_m": [
+      0.001,
+      0.002
+    ]
+  },
+  "candidate_spawn_world": [
+    0.0,
+    0.0,
+    0.1
+  ],
+  "candidate_spawn_yaw": 0.0,
+  "reference_route_world": [
+    [
+      0.0,
+      0.0,
+      1.5
+    ],
+    [
+      1.5,
+      0.0,
+      1.5
+    ]
+  ],
+  "route_is_geometry_candidate_only": true
+}

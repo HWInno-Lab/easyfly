@@ -128,3 +128,25 @@ attribution, project-authored wrapper world and import record from local bytes.
 Original inch units, mesh transforms and model pose `(-20,-20,0)` remain intact.
 The collision DAE includes a distant line marker (`ID635`); it is retained and
 documented in the office geometry evidence, not silently removed or rescaled.
+
+## S6 urban building cache asset
+
+`osrf_urban_buildings_v1` selects three unchanged OSRF models: `apartment`,
+`office_building` and `parking_garage`. All fifteen files (including every
+config-listed SDF version, three DAE meshes and four JPEG textures) are locked
+to the same official `8163eb4b5e7e21985c6591d1c0bfb56468c0093f` snapshot.
+Original CC-BY-3.0 notice and author credits are retained in
+`licenses/osrf_urban_buildings/`; the new EasyFly street world uses Apache-2.0.
+
+The selected payload is 3,352,376 bytes and stays outside the ROS installation.
+Prepare it with `scene_catalog fetch urban_block_osrf_v1`; the single-source
+`--archive` option can reuse the already reviewed 227,118,253-byte official
+archive. Missing or changed cached bytes are rejected; launch never downloads.
+The street scene now has independent sensor/map, cold-start alignment and two
+bounded reference-mission acceptances. Other layouts using this asset require
+their own scene qualification; the asset itself does not grant flight readiness.
+
+`python3 tools/scenes/import_osrf_urban.py <archive> --check` reproduces the
+manifest, original notice, attribution and file inventory without downloading,
+executing upstream code or overwriting outputs. Source inch units and internal
+transforms remain unchanged; only new world instance positions are authored.

@@ -1,0 +1,785 @@
+{
+  "scene": "urban_block_osrf_v1",
+  "passed": true,
+  "scope": "Native static geometry and draft placement only; no UAV sensors, odom calibration or flight.",
+  "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+  "source_model_inventory": [
+    {
+      "model": "apartment",
+      "native_collision_bounds_at_origin": {
+        "min": [
+          -10.128618240356445,
+          -11.135042190551758,
+          -0.01132025197148323
+        ],
+        "max": [
+          10.128618240356445,
+          11.135042190551758,
+          14.793270111083984
+        ]
+      },
+      "native_size_m": [
+        20.25723648071289,
+        22.270084381103516,
+        14.804590363055468
+      ],
+      "source_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "grounding_offset_z_m": 0.01132025197148323,
+      "raw_models": "artifacts/scene-s6-urban-block-20261017/inventory-apartment.csv.models",
+      "raw_models_sha256": "04188684b7a54d6228010aed166f0e872285f0353d265fdb15b44e01546836fd",
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/apartment-measurement.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/inventory-apartment.csv",
+          "100",
+          "100",
+          "1.5"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7149067239952274,
+        "world_sha256": "1f8423373ce9ebfe84696a22908fa595a09de0656473438afd08db656f03a5a0",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      }
+    },
+    {
+      "model": "office_building",
+      "native_collision_bounds_at_origin": {
+        "min": [
+          -8.848583221435547,
+          -8.848544120788574,
+          -2.07284188036283e-06
+        ],
+        "max": [
+          8.848579406738281,
+          8.848543167114258,
+          18.657459259033203
+        ]
+      },
+      "native_size_m": [
+        17.697162628173828,
+        17.697087287902832,
+        18.657461331875083
+      ],
+      "source_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "grounding_offset_z_m": 2.07284188036283e-06,
+      "raw_models": "artifacts/scene-s6-urban-block-20261017/inventory-office_building.csv.models",
+      "raw_models_sha256": "7d12467328eddbe6f0980e5fa7d66e2260da95df9eaf9a6c16210987ac0bae6d",
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/office_building-measurement.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/inventory-office_building.csv",
+          "100",
+          "100",
+          "1.5"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7151594289971399,
+        "world_sha256": "4fde9996105d850af1ee0aaae2708822f451b30d3861cbecb8398f61ee0fcb20",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      }
+    },
+    {
+      "model": "parking_garage",
+      "native_collision_bounds_at_origin": {
+        "min": [
+          -30.236160278320312,
+          -21.24028205871582,
+          -0.001241397112607956
+        ],
+        "max": [
+          30.236160278320312,
+          20.284942626953125,
+          45.90392303466797
+        ]
+      },
+      "native_size_m": [
+        60.472320556640625,
+        41.525224685668945,
+        45.90516443178058
+      ],
+      "source_pose": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "grounding_offset_z_m": 0.001241397112607956,
+      "raw_models": "artifacts/scene-s6-urban-block-20261017/inventory-parking_garage.csv.models",
+      "raw_models_sha256": "6b2ac213b0dbd900d121053c1b03fb64e5f7a6027fec1d5b4cf833364ea377a3",
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/parking_garage-measurement.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/inventory-parking_garage.csv",
+          "100",
+          "100",
+          "1.5"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7161771680039237,
+        "world_sha256": "ca3f8ab519044f269d9d544378ac6720f933947329976af74af54c8b8a211c2a",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      }
+    }
+  ],
+  "layout": {
+    "scene": "urban_block_osrf_v1",
+    "revision": "urban_block_layout_v1",
+    "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+    "world_frame": "world",
+    "project_world_license": "Apache-2.0",
+    "building_asset_license": "CC-BY-3.0",
+    "ground": {
+      "bounds": {
+        "min": [
+          -60.0,
+          -55.0,
+          -0.2
+        ],
+        "max": [
+          60.0,
+          75.0,
+          0.0
+        ]
+      },
+      "floor_z_m": 0.0
+    },
+    "buildings": [
+      {
+        "instance": "apartment_southwest",
+        "pose": [
+          -21.0,
+          -21.0,
+          0.01132025197148323,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "native_collision_bounds": {
+          "min": [
+            -31.128618240356445,
+            -32.13504219055176,
+            0.0
+          ],
+          "max": [
+            -10.871381759643555,
+            -9.864957809448242,
+            14.804590363055468
+          ]
+        }
+      },
+      {
+        "instance": "office_southeast",
+        "pose": [
+          21.0,
+          -21.0,
+          2.07284188036283e-06,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "native_collision_bounds": {
+          "min": [
+            12.151416778564453,
+            -29.848544120788574,
+            0.0
+          ],
+          "max": [
+            29.84857940673828,
+            -12.151456832885742,
+            18.657461331875083
+          ]
+        }
+      },
+      {
+        "instance": "parking_north",
+        "pose": [
+          0.0,
+          37.0,
+          0.001241397112607956,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "native_collision_bounds": {
+          "min": [
+            -30.236160278320312,
+            15.75971794128418,
+            0.0
+          ],
+          "max": [
+            30.236160278320312,
+            57.284942626953125,
+            45.90516443178058
+          ]
+        }
+      }
+    ],
+    "roads": {
+      "main": {
+        "center": [
+          0.0,
+          0.0
+        ],
+        "size": [
+          100.0,
+          10.0
+        ]
+      },
+      "south_access": {
+        "center": [
+          0.0,
+          -20.0
+        ],
+        "size": [
+          8.0,
+          40.0
+        ]
+      },
+      "paint_collision": false,
+      "paint_visual_top_range_m": [
+        0.001,
+        0.002
+      ]
+    },
+    "candidate_spawn_world": [
+      0.0,
+      0.0,
+      0.1
+    ],
+    "candidate_spawn_yaw": 0.0,
+    "reference_route_world": [
+      [
+        0.0,
+        0.0,
+        1.5
+      ],
+      [
+        1.5,
+        0.0,
+        1.5
+      ]
+    ],
+    "route_is_geometry_candidate_only": true
+  },
+  "surveyed_route_world_start": [
+    -6.0,
+    0.0
+  ],
+  "surveyed_route_world_end": [
+    6.0,
+    0.0
+  ],
+  "sampled_offsets_y_world_m": [
+    -1.0,
+    -0.5,
+    0.0,
+    0.5,
+    1.0
+  ],
+  "sampled_height_range_m": [
+    0.1,
+    4.0
+  ],
+  "azimuth_samples": 32,
+  "rays_per_strip": 21794,
+  "total_layout_rays": 108970,
+  "layout_strips": [
+    {
+      "y_offset_world_m": -1.0,
+      "rays": 21794,
+      "positions": 17,
+      "min_sampled_horizontal_clearance_m": 12.575167655944824,
+      "floor_world_z_m": 0.0,
+      "floor_entity": "urban_ground::link::collision",
+      "overhead_hits": 0,
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/layout-y-1.csv",
+          "-6",
+          "-1",
+          "12"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7150823210031376,
+        "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "raw_rays": "artifacts/scene-s6-urban-block-20261017/layout-y-1.csv",
+      "raw_rays_sha256": "4d0b834fdb0d405b0f44efb9a8421c623b78e3e9c93aa224acf39bdc192dea6c",
+      "raw_models_sha256": "5ae4fde08b533de2143a940299c74e4b5a1067ce0d6adcc75494cce633363a3d",
+      "raw_links_sha256": "2b2e81fd46ba9d3f92c4fe67c5773cbe9838e7b3e05eabcc305b0aa45fd3028b"
+    },
+    {
+      "y_offset_world_m": -0.5,
+      "rays": 21794,
+      "positions": 17,
+      "min_sampled_horizontal_clearance_m": 12.575167655944824,
+      "floor_world_z_m": 0.0,
+      "floor_entity": "urban_ground::link::collision",
+      "overhead_hits": 0,
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/layout-y-0.5.csv",
+          "-6",
+          "-0.5",
+          "12"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7654375310012256,
+        "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "raw_rays": "artifacts/scene-s6-urban-block-20261017/layout-y-0.5.csv",
+      "raw_rays_sha256": "83a6b066ea4974837d6e2e282082ea3250205f78aa64f6c3e294cf8e9dbee154",
+      "raw_models_sha256": "5ae4fde08b533de2143a940299c74e4b5a1067ce0d6adcc75494cce633363a3d",
+      "raw_links_sha256": "2b2e81fd46ba9d3f92c4fe67c5773cbe9838e7b3e05eabcc305b0aa45fd3028b"
+    },
+    {
+      "y_offset_world_m": 0.0,
+      "rays": 21794,
+      "positions": 17,
+      "min_sampled_horizontal_clearance_m": 12.47983455657959,
+      "floor_world_z_m": 0.0,
+      "floor_entity": "urban_ground::link::collision",
+      "overhead_hits": 0,
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/layout-y0.csv",
+          "-6",
+          "0",
+          "12"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.715054822001548,
+        "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "raw_rays": "artifacts/scene-s6-urban-block-20261017/layout-y0.csv",
+      "raw_rays_sha256": "536e85d17ac1f6da49891b739432e8410e2c5197739f75015c0ce0bba8d05b0e",
+      "raw_models_sha256": "5ae4fde08b533de2143a940299c74e4b5a1067ce0d6adcc75494cce633363a3d",
+      "raw_links_sha256": "2b2e81fd46ba9d3f92c4fe67c5773cbe9838e7b3e05eabcc305b0aa45fd3028b"
+    },
+    {
+      "y_offset_world_m": 0.5,
+      "rays": 21794,
+      "positions": 17,
+      "min_sampled_horizontal_clearance_m": 12.821924209594727,
+      "floor_world_z_m": 0.0,
+      "floor_entity": "urban_ground::link::collision",
+      "overhead_hits": 0,
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/layout-y0.5.csv",
+          "-6",
+          "0.5",
+          "12"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.8651932959983242,
+        "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "raw_rays": "artifacts/scene-s6-urban-block-20261017/layout-y0.5.csv",
+      "raw_rays_sha256": "95510faca10a0dd2f27d61bb60c750ae2eb0c4758aedddd51660f5cd041082de",
+      "raw_models_sha256": "5ae4fde08b533de2143a940299c74e4b5a1067ce0d6adcc75494cce633363a3d",
+      "raw_links_sha256": "2b2e81fd46ba9d3f92c4fe67c5773cbe9838e7b3e05eabcc305b0aa45fd3028b"
+    },
+    {
+      "y_offset_world_m": 1.0,
+      "rays": 21794,
+      "positions": 17,
+      "min_sampled_horizontal_clearance_m": 13.546527862548828,
+      "floor_world_z_m": 0.0,
+      "floor_entity": "urban_ground::link::collision",
+      "overhead_hits": 0,
+      "execution": {
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/scene-s6-forest-20261017/forest_geometry_probe",
+          "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/urban_block_osrf_v1.world",
+          "/home/jia/easyfly_ws/artifacts/scene-s6-urban-block-20261017/layout-y1.csv",
+          "-6",
+          "1",
+          "12"
+        ],
+        "returncode": 0,
+        "elapsed_seconds": 0.7659515070045018,
+        "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+        "probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+        "probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+        "network_namespace": "net:[4026533030]",
+        "interfaces": [
+          {
+            "ifindex": 1,
+            "ifname": "lo",
+            "flags": [
+              "LOOPBACK",
+              "UP",
+              "LOWER_UP"
+            ],
+            "mtu": 65536,
+            "qdisc": "noqueue",
+            "operstate": "UNKNOWN",
+            "group": "default",
+            "txqlen": 1000,
+            "link_type": "loopback",
+            "address": "00:00:00:00:00:00",
+            "broadcast": "00:00:00:00:00:00",
+            "addr_info": [
+              {
+                "family": "inet",
+                "local": "127.0.0.1",
+                "prefixlen": 8,
+                "scope": "host",
+                "label": "lo",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              },
+              {
+                "family": "inet6",
+                "local": "::1",
+                "prefixlen": 128,
+                "scope": "host",
+                "valid_life_time": 4294967295,
+                "preferred_life_time": 4294967295
+              }
+            ]
+          }
+        ],
+        "routes": []
+      },
+      "raw_rays": "artifacts/scene-s6-urban-block-20261017/layout-y1.csv",
+      "raw_rays_sha256": "44cb5a926e0d690f763c29a33224f3ca838234fd246da856c62912550eb77655",
+      "raw_models_sha256": "5ae4fde08b533de2143a940299c74e4b5a1067ce0d6adcc75494cce633363a3d",
+      "raw_links_sha256": "2b2e81fd46ba9d3f92c4fe67c5773cbe9838e7b3e05eabcc305b0aa45fd3028b"
+    }
+  ],
+  "min_sampled_horizontal_clearance_m": 12.47983455657959,
+  "floor_world_z_m": 0.0,
+  "overhead_ray_length_m": 25.0,
+  "overhead_hits": 0,
+  "visual_only_noncollision_models": [
+    "road_paint"
+  ],
+  "native_runs": 8,
+  "normal_exits": 8,
+  "forced_cleanup": false,
+  "native_probe_source": "tools/scenes/forest_geometry_probe.cpp",
+  "native_probe_source_sha256": "9509b2dce80e243d453c6f8025cf26b32296e36fe15330db0692ef9e901b7e78",
+  "native_probe_sha256": "512aa77599a20adc19719b4170e89e893d0b0e6291b446d957cf8aa15e25f151",
+  "required_loaded_transport_core_sha256": "984c29da37f618c4f72e2023733df82479bc6cc98352f6fb6f30e3ddd4c5899d",
+  "source_mesh_bytes_modified": false,
+  "source_mesh_scales_modified": false,
+  "sensors_checked": false,
+  "navigation_tested": false,
+  "limitations": [
+    "Sampled rays are not a continuous exact-distance proof for arbitrary routes.",
+    "World loading here is native Gazebo physics without a UAV, ROS sensor chain or rendered camera.",
+    "Empty road_paint collision AABB is the native sentinel for a visual-only link, not a real obstacle.",
+    "No building interior, doorway, parking level, rooftop, whole-map or long-duration navigation qualified."
+  ]
+}

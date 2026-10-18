@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+     Project-authored static street layout. Three original OSRF building models
+     remain CC-BY-3.0; see easyfly_gazebo_models/licenses/osrf_urban_buildings/.
+     Building units, meshes, textures and internal transforms are unchanged.
+     Instance z offsets place native measured collision minima on ground z=0.
+     Road and lane paint are visual markings, not additional collision surfaces. -->
+<sdf version="1.6">
+  <world name="default">
+    <include><uri>model://sun</uri></include>
+    <gravity>0 0 -9.8</gravity>
+    <physics name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>0.7 0.7 0.7 1</ambient>
+      <background>0.65 0.78 0.9 1</background>
+      <shadows>false</shadows>
+    </scene>
+    <gui>
+      <camera name="user_camera"><pose>75 -85 90 0 0.65 2.25</pose></camera>
+    </gui>
+
+    <!-- Finite project-authored terrain, physical top at z=0. -->
+    <model name="urban_ground">
+      <static>true</static>
+      <pose>0 10 -0.1 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>120 130 0.2</size></box></geometry>
+          <surface><friction><ode><mu>0.8</mu><mu2>0.8</mu2></ode></friction></surface>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>120 130 0.2</size></box></geometry>
+          <material><ambient>0.35 0.42 0.30 1</ambient><diffuse>0.35 0.42 0.30 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <model name="road_paint">
+      <static>true</static>
+      <link name="link">
+        <visual name="main_road">
+          <pose>0 0 0.0005 0 0 0</pose>
+          <geometry><box><size>100 10 0.001</size></box></geometry>
+          <material><ambient>0.18 0.18 0.20 1</ambient><diffuse>0.18 0.18 0.20 1</diffuse></material>
+        </visual>
+        <visual name="south_access">
+          <pose>0 -20 0.0005 0 0 0</pose>
+          <geometry><box><size>8 40 0.001</size></box></geometry>
+          <material><ambient>0.18 0.18 0.20 1</ambient><diffuse>0.18 0.18 0.20 1</diffuse></material>
+        </visual>
+        <visual name="lane_west_outer">
+          <pose>-30 0 0.0015 0 0 0</pose>
+          <geometry><box><size>26 0.15 0.001</size></box></geometry>
+          <material><ambient>0.95 0.92 0.72 1</ambient><diffuse>0.95 0.92 0.72 1</diffuse></material>
+        </visual>
+        <visual name="lane_west_inner">
+          <pose>-10 0 0.0015 0 0 0</pose>
+          <geometry><box><size>10 0.15 0.001</size></box></geometry>
+          <material><ambient>0.95 0.92 0.72 1</ambient><diffuse>0.95 0.92 0.72 1</diffuse></material>
+        </visual>
+        <visual name="lane_east_inner">
+          <pose>10 0 0.0015 0 0 0</pose>
+          <geometry><box><size>10 0.15 0.001</size></box></geometry>
+          <material><ambient>0.95 0.92 0.72 1</ambient><diffuse>0.95 0.92 0.72 1</diffuse></material>
+        </visual>
+        <visual name="lane_east_outer">
+          <pose>30 0 0.0015 0 0 0</pose>
+          <geometry><box><size>26 0.15 0.001</size></box></geometry>
+          <material><ambient>0.95 0.92 0.72 1</ambient><diffuse>0.95 0.92 0.72 1</diffuse></material>
+        </visual>
+      </link>
+    </model>
+
+    <include>
+      <name>apartment_southwest</name><uri>model://apartment</uri>
+      <pose>-21 -21 0.011320251971483231 0 0 0</pose>
+    </include>
+    <include>
+      <name>office_southeast</name><uri>model://office_building</uri>
+      <pose>21 -21 0.0000020728418803628301 0 0 0</pose>
+    </include>
+    <include>
+      <name>parking_north</name><uri>model://parking_garage</uri>
+      <pose>0 37 0.0012413971126079559 0 0 0</pose>
+    </include>
+  </world>
+</sdf>

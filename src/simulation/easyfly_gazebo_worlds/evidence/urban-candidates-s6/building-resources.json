@@ -1,0 +1,293 @@
+{
+  "schema_version": 1,
+  "audit": "s6-urban-building-resources",
+  "source_url": "https://github.com/osrf/gazebo_models",
+  "revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+  "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+  "archive_size_bytes": 227118253,
+  "license_sha256": "776eee6c1a315c1acca92898edb797a9549c71da0e41dcb0eb6864df6301678e",
+  "declared_license": "CC-BY-3.0",
+  "catalog_sha256": "bf88a9ef7b4e5e222e0ebe53c5869855379a1f7bf5e9d46955c981ccb4ff89be",
+  "schema_sha256": {
+    "scene-v1.schema.json": "898fb79286fc54714fe9bd1c4a8965a591506d0df68ce003a372604eb59905ad",
+    "asset-set-v1.schema.json": "aa6b711c5be1c32fb149d1fd421d8b9961e8f78aacf3a06244b131a3ee032344"
+  },
+  "selected_models": [
+    {
+      "name": "apartment",
+      "config_authors": [
+        "Nate Koenig"
+      ],
+      "declared_license": "CC-BY-3.0",
+      "license_basis": "Pinned repository LICENSE; model.config and DAE author metadata retained; no per-model license exception found in selected files.",
+      "sdf_versions": [
+        {
+          "sdf_version": "1.6",
+          "path": "apartment/model.sdf",
+          "mesh_uris": [
+            "model://apartment/meshes/apartment.dae",
+            "model://apartment/meshes/apartment.dae"
+          ]
+        }
+      ],
+      "meshes": [
+        {
+          "path": "apartment/meshes/apartment.dae",
+          "author_metadata": [
+            "Cole"
+          ],
+          "unit": {
+            "name": "inch",
+            "meter": "0.0254"
+          },
+          "up_axis": "Z_UP",
+          "image_references": [
+            "apartment_diffuse.jpg",
+            "apartment_spec.jpg"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "office_building",
+      "config_authors": [
+        "Cole Biesemeyer",
+        "Nate Koenig"
+      ],
+      "declared_license": "CC-BY-3.0",
+      "license_basis": "Pinned repository LICENSE; model.config and DAE author metadata retained; no per-model license exception found in selected files.",
+      "sdf_versions": [
+        {
+          "sdf_version": "1.3",
+          "path": "office_building/model-1_3.sdf",
+          "mesh_uris": [
+            "model://office_building/meshes/office_building.dae",
+            "model://office_building/meshes/office_building.dae"
+          ]
+        },
+        {
+          "sdf_version": "1.4",
+          "path": "office_building/model-1_4.sdf",
+          "mesh_uris": [
+            "model://office_building/meshes/office_building.dae",
+            "model://office_building/meshes/office_building.dae"
+          ]
+        },
+        {
+          "sdf_version": "1.5",
+          "path": "office_building/model.sdf",
+          "mesh_uris": [
+            "model://office_building/meshes/office_building.dae",
+            "model://office_building/meshes/office_building.dae"
+          ]
+        }
+      ],
+      "meshes": [
+        {
+          "path": "office_building/meshes/office_building.dae",
+          "author_metadata": [
+            "Blender User"
+          ],
+          "unit": {
+            "name": "inch",
+            "meter": "0.0254"
+          },
+          "up_axis": "Z_UP",
+          "image_references": []
+        }
+      ]
+    },
+    {
+      "name": "parking_garage",
+      "config_authors": [
+        "Nate Koenig"
+      ],
+      "declared_license": "CC-BY-3.0",
+      "license_basis": "Pinned repository LICENSE; model.config and DAE author metadata retained; no per-model license exception found in selected files.",
+      "sdf_versions": [
+        {
+          "sdf_version": "1.6",
+          "path": "parking_garage/model.sdf",
+          "mesh_uris": [
+            "model://parking_garage/meshes/parking_garage.dae",
+            "model://parking_garage/meshes/parking_garage.dae"
+          ]
+        }
+      ],
+      "meshes": [
+        {
+          "path": "parking_garage/meshes/parking_garage.dae",
+          "author_metadata": [
+            "Cole"
+          ],
+          "unit": {
+            "name": "inch",
+            "meter": "0.0254"
+          },
+          "up_axis": "Z_UP",
+          "image_references": [
+            "parking_garage_diffuse.jpg",
+            "parking_garage_spec.jpg"
+          ]
+        }
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "apartment/materials/textures/apartment_diffuse.jpg",
+      "size_bytes": 358878,
+      "sha256": "a013d0272d7437d64a3466ada08a59618aaf875b54fa2b7b10d3be21cf7b3158"
+    },
+    {
+      "path": "apartment/materials/textures/apartment_spec.jpg",
+      "size_bytes": 346828,
+      "sha256": "5dff7b507c86b6155b59e0477e34d2d8c86feb01cc114647c2bfa999d84168e1"
+    },
+    {
+      "path": "apartment/meshes/apartment.dae",
+      "size_bytes": 771013,
+      "sha256": "1bad8646026a29dcef112850278badbf60ade2b2dc479a054d78a72b4715e32b"
+    },
+    {
+      "path": "apartment/model.config",
+      "size_bytes": 283,
+      "sha256": "67278bc623a0e133655acbbb7d8bf47d662d27d57425969cea71b9a9635f5cb5"
+    },
+    {
+      "path": "apartment/model.sdf",
+      "size_bytes": 520,
+      "sha256": "b85af2c0c6b143d6960e98821a8d9bff21c843bd1a3cad002747cd16d169d08b"
+    },
+    {
+      "path": "office_building/meshes/office_building.dae",
+      "size_bytes": 504411,
+      "sha256": "552a6ad03daeb4266f8f83aa343acd7a402ab85592ff460c738058acb24de00c"
+    },
+    {
+      "path": "office_building/model-1_3.sdf",
+      "size_bytes": 549,
+      "sha256": "ca00b5b275e5d83b35857e95c8b1472a242448255350b49b325b44526caaa097"
+    },
+    {
+      "path": "office_building/model-1_4.sdf",
+      "size_bytes": 549,
+      "sha256": "da1d3356543a9df8f6a9d62328cdcd93d15f50c7a2a161d7bbfbb4fefad382da"
+    },
+    {
+      "path": "office_building/model.config",
+      "size_bytes": 473,
+      "sha256": "4721fc7ace2e39327317ba5e89f8dddf684bc09a707e4253db2564d8a7cfe4aa"
+    },
+    {
+      "path": "office_building/model.sdf",
+      "size_bytes": 550,
+      "sha256": "11d5aef74a493ac098a48b698c088a6b0eea46a8b2a70bdbb8fa064e6741f92e"
+    },
+    {
+      "path": "parking_garage/materials/textures/parking_garage_diffuse.jpg",
+      "size_bytes": 235873,
+      "sha256": "3fdd5ed504e2f1120a14c5e4d2dd114a9d5bc6435961c78d232421166cdf0579"
+    },
+    {
+      "path": "parking_garage/materials/textures/parking_garage_spec.jpg",
+      "size_bytes": 317235,
+      "sha256": "2b3c9d329feaefb6b690ed359518df88b396c3edfb9952cab5cee6e2427b04d5"
+    },
+    {
+      "path": "parking_garage/meshes/parking_garage.dae",
+      "size_bytes": 814386,
+      "sha256": "8f2994635242a26e4a9094067e71c21005da3170e731e64f3e257c469370434b"
+    },
+    {
+      "path": "parking_garage/model.config",
+      "size_bytes": 283,
+      "sha256": "159f9b31cc51ad0b6ab67f3de402522fecd5bff31b0f223aa255538eae1bff58"
+    },
+    {
+      "path": "parking_garage/model.sdf",
+      "size_bytes": 545,
+      "sha256": "61518b4c66f0f62781b8f621eef24428383ec4d9f120f14ab1a783795a63d28b"
+    }
+  ],
+  "selected_payload_bytes": 3352376,
+  "resource_closure_complete": true,
+  "checked_files": [
+    "assets/models/apartment/materials/textures/apartment_diffuse.jpg",
+    "assets/models/apartment/materials/textures/apartment_spec.jpg",
+    "assets/models/apartment/meshes/apartment.dae",
+    "assets/models/apartment/model.config",
+    "assets/models/apartment/model.sdf",
+    "assets/models/office_building/meshes/office_building.dae",
+    "assets/models/office_building/model-1_3.sdf",
+    "assets/models/office_building/model-1_4.sdf",
+    "assets/models/office_building/model.config",
+    "assets/models/office_building/model.sdf",
+    "assets/models/parking_garage/materials/textures/parking_garage_diffuse.jpg",
+    "assets/models/parking_garage/materials/textures/parking_garage_spec.jpg",
+    "assets/models/parking_garage/meshes/parking_garage.dae",
+    "assets/models/parking_garage/model.config",
+    "assets/models/parking_garage/model.sdf",
+    "worlds/fixture.world"
+  ],
+  "registration_complete": false,
+  "runtime_verified": false,
+  "uav_runtime_checked": false,
+  "native_world_loaded": false,
+  "geometry_checked": false,
+  "sensors_checked": false,
+  "navigation_tested": false,
+  "production_catalog_modified": false,
+  "native_sdf_syntax_checks": [
+    {
+      "path": "apartment/model.sdf",
+      "exit_code": 0,
+      "stdout": "Check complete",
+      "stderr": ""
+    },
+    {
+      "path": "office_building/model-1_3.sdf",
+      "exit_code": 0,
+      "stdout": "Check complete",
+      "stderr": ""
+    },
+    {
+      "path": "office_building/model-1_4.sdf",
+      "exit_code": 0,
+      "stdout": "Check complete",
+      "stderr": ""
+    },
+    {
+      "path": "office_building/model.sdf",
+      "exit_code": 0,
+      "stdout": "Check complete",
+      "stderr": ""
+    },
+    {
+      "path": "parking_garage/model.sdf",
+      "exit_code": 0,
+      "stdout": "Check complete",
+      "stderr": ""
+    }
+  ],
+  "negative_checks": {
+    "missing_texture_rejected": true,
+    "changed_texture_rejected": true
+  },
+  "registration_issues": [
+    {
+      "scope": "registration",
+      "message": "draft scene; no newly verified profile compatibility"
+    },
+    {
+      "scope": "registration",
+      "message": "spawn not specified"
+    },
+    {
+      "scope": "registration",
+      "message": "world/odom alignment not measured"
+    }
+  ],
+  "limitation": "Resource-only temporary catalog; overlapping default includes are not a flight layout. Preserve original mesh unit/transforms; measure native dimensions, collision and floor before choosing placement or spawn.",
+  "audit_tool_sha256": "af70fb3735ede2a6509214df17bd5e60079da81c67c491e2e89d6e76a9e17fb9"
+}

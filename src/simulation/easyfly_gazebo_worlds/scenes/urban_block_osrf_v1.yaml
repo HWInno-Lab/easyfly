@@ -1,0 +1,116 @@
+schema_version: 1
+id: urban_block_osrf_v1
+name: OSRF 静态城市街区
+status: registered
+category: outdoor/urban
+tags:
+- building
+- road
+- inspection
+- static
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/outdoor/urban/urban_block_osrf_v1.world
+  sha256: 8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1
+provenance:
+  status: recorded
+  source_url: null
+  revision: urban_block_layout_v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/asset-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/layout.json
+  note: Project-authored static block; three unchanged OSRF buildings separately CC-BY-3.0.
+    No existing campus or CitySim world, robots, plugins, traffic or actors imported.
+asset_sets:
+- osrf_urban_buildings_v1
+- gazebo_builtin_v1
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0.0
+  - 0.0
+  - 0.1
+  yaw: 0.0
+  basis: 'Native ODE five-strip survey x[-6,6], y[-1,1]: floor z=0, 108970 rays, sampled
+    horizontal clearance >=12.479m. Static geometry only; sensor/odom/flight qualification
+    pending.'
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 0.00086379969434347
+    - 0.006616135826334357
+    - -0.060408394205729174
+    yaw: -0.018633558383292354
+  recommended_region:
+    min:
+    - -0.3
+    - -0.3
+    - 0.5
+    max:
+    - 1.8
+    - 0.3
+    - 2.3
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+  alignment_check: recommended_region
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Same curated Iris, GPS, MID360 and camera as existing qualified scenes. Independent
+    cold starts and two bounded street reference missions passed; other routes require
+    separate qualification.
+  heartbeat_rate_hz: 5
+  clock_rate_hz: 100
+  battery_rate_hz: 5
+recommended_missions:
+- package: easyfly_mission_scripts
+  path: missions/scenes/urban_block_osrf_v1/street_out_and_back.yaml
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/asset-source.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/layout.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/geometry-s6-draft.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/resource-audit-s6.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/bootstrap-s6-qualified.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/lifecycle-fixes-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/dds-discovery-fix-s3.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/calibration-s6-final.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/urban_block_osrf_v1/mission-s6-final.json
+  required_px4_compatibility:
+  - mag_lpf_interval_v1

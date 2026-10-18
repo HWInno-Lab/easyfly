@@ -1,0 +1,24 @@
+{
+  "scene": "urban_block_osrf_v1",
+  "asset_set": "osrf_urban_buildings_v1",
+  "source_revision": "8163eb4b5e7e21985c6591d1c0bfb56468c0093f",
+  "archive_sha256": "e4aafc9a6e37f0e496c1ee1712ec26fb01576c5ea2d28f1edcc59dad6e536b7a",
+  "selected_models": [
+    "apartment",
+    "office_building",
+    "parking_garage"
+  ],
+  "model_files": 15,
+  "selected_payload_bytes": 3352376,
+  "model_license": "CC-BY-3.0",
+  "source_model_files_changed": false,
+  "source_mesh_unit": {
+    "name": "inch",
+    "meter": "0.0254"
+  },
+  "changes": [
+    "New cache manifest, file inventory and explicit attribution only.",
+    "World/layout and native geometry evidence maintained independently."
+  ],
+  "limitations": "Asset provenance and resource closure do not qualify a UAV runtime or route."
+}
