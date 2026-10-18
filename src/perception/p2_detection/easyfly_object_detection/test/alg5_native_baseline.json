@@ -1,0 +1,134 @@
+{
+  "model_sha256": "fb11c28ed4f579f0503cc9516fce5ee876498f303fa8a01b409d665eafcfe908",
+  "frame_sha256": "4752cc8d2c67c58eac4cfe684dc582f613c87baf252152917f9fea8ee5180ef3",
+  "runs": [
+    {
+      "requested": "cpu",
+      "result": {
+        "provider": "CPUExecutionProvider",
+        "detections": [
+          {
+            "class_id": 5,
+            "class_name": "bus",
+            "confidence": 0.834623933,
+            "box": [
+              417.373657,
+              93.7120667,
+              639.515503,
+              243.227661
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.831683993,
+            "box": [
+              124.390381,
+              79.8221436,
+              160.985229,
+              243.22644
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.712180555,
+            "box": [
+              393.468719,
+              161.478882,
+              410.878632,
+              242.530334
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.695951045,
+            "box": [
+              342.483643,
+              201.047546,
+              360.655396,
+              241.881165
+            ]
+          },
+          {
+            "class_id": 5,
+            "class_name": "bus",
+            "confidence": 0.631949067,
+            "box": [
+              160.115204,
+              175.391464,
+              337.680878,
+              241.745605
+            ]
+          }
+        ],
+        "caller_timing_preserved": true
+      }
+    },
+    {
+      "requested": "gpu",
+      "result": {
+        "provider": "CUDAExecutionProvider",
+        "detections": [
+          {
+            "class_id": 5,
+            "class_name": "bus",
+            "confidence": 0.835040808,
+            "box": [
+              417.390289,
+              93.6992798,
+              639.515991,
+              243.230682
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.831819117,
+            "box": [
+              124.388336,
+              79.8234863,
+              160.983459,
+              243.234741
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.712186456,
+            "box": [
+              393.46933,
+              161.47937,
+              410.880829,
+              242.528809
+            ]
+          },
+          {
+            "class_id": 0,
+            "class_name": "person",
+            "confidence": 0.695557714,
+            "box": [
+              342.485718,
+              201.047485,
+              360.654419,
+              241.883667
+            ]
+          },
+          {
+            "class_id": 5,
+            "class_name": "bus",
+            "confidence": 0.633976936,
+            "box": [
+              160.12088,
+              175.392883,
+              337.690826,
+              241.74469
+            ]
+          }
+        ],
+        "caller_timing_preserved": true
+      }
+    }
+  ]
+}

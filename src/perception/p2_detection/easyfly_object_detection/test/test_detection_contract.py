@@ -6,8 +6,9 @@ from pathlib import Path
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 NODE = (PACKAGE_ROOT / "src" / "detection_node.cpp").read_text()
-BACKEND = (PACKAGE_ROOT / "src" / "onnx" / "onnx_backend.cpp").read_text()
-BASE = (PACKAGE_ROOT / "include" / "easyfly_object_detection" / "detector_base.hpp").read_text()
+ALGORITHMS = PACKAGE_ROOT.parents[2] / "algorithms"
+BACKEND = (ALGORITHMS / "detection/easyfly_yolo_onnx/src/onnx_backend.cpp").read_text()
+BASE = (ALGORITHMS / "detection/easyfly_detection_api/include/easyfly_detection_api/detector.hpp").read_text()
 LAUNCH = (PACKAGE_ROOT / "launch" / "detection.launch.py").read_text()
 CONFIG = (PACKAGE_ROOT / "config" / "detection.yaml").read_text()
 

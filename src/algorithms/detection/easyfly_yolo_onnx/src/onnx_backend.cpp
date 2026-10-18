@@ -1,19 +1,61 @@
+// Copyright 2026 EasyFly Project
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // EasyFly P2: OnnxRuntime 后端实现
 // 数据流: BGR 图 → letterbox → RGB float32 NCHW → Run → [1,4+nc,8400]
 //         → 转置解析 (xywh, max conf, class) → 置信度过滤 → 按类别 NMS
 // 与 Python 基准 (m2_onnx_verify.py) 完全同构, 结果可对拍。
 
-#include "easyfly_object_detection/onnx_backend.hpp"
+#include "easyfly_yolo_onnx/onnx_backend.hpp"
 
 #include <chrono>
+#include <onnxruntime_cxx_api.h>
+#include "easyfly_yolo_onnx/letterbox.hpp"
 
-#include "easyfly_object_detection/nms.hpp"
+#include "easyfly_yolo_onnx/nms.hpp"
 
-namespace easyfly_object_detection
+namespace easyfly::yolo_onnx
 {
+struct OnnxBackend::Impl
+{
+    explicit Impl(const DetectorParams & params);
+    void detectImpl(const cv::Mat & bgr_img, std::vector<Detection> & detections, DetectionTiming * timing);
+    DetectorParams params_;
+    void createSession(const char * log_tag);
+    void parseOutput(const float * output, int num_preds, int num_classes,
+                     std::vector<Detection> & detections);
 
-OnnxBackend::OnnxBackend(const DetectorParams & params)
-    : DetectorBase(params)
+    Ort::Env env_{nullptr};
+    Ort::SessionOptions session_opts_{nullptr};
+    std::unique_ptr<Ort::Session> session_;
+    Ort::AllocatorWithDefaultOptions allocator_;
+    std::string input_name_;
+    std::vector<std::string> output_names_;
+
+    // 预分配的推理缓冲
+    std::vector<float> input_tensor_;        // 1*3*imgsz*imgsz
+    std::vector<float> output_tensor_;       // 1*(4+nc)*num_preds
+    LetterboxInfo last_lb_;
+    std::string active_provider_;
+    // 输出布局: num_classes_ 与 num_preds_ 从模型 shape 推断
+    int num_classes_{0};
+    int num_preds_{0};
+};
+
+
+OnnxBackend::Impl::Impl(const DetectorParams & params)
+    : params_(params)
 {
     env_ = Ort::Env(OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING, "easyfly_det");
 
@@ -40,7 +82,7 @@ OnnxBackend::OnnxBackend(const DetectorParams & params)
             params_.imgsz, params_.class_names.size(), active_provider_.c_str());
 }
 
-void OnnxBackend::createSession(const char * log_tag)
+void OnnxBackend::Impl::createSession(const char * log_tag)
 {
     session_opts_ = Ort::SessionOptions();
     session_opts_.SetIntraOpNumThreads(2);
@@ -101,7 +143,7 @@ void OnnxBackend::createSession(const char * log_tag)
     output_tensor_.resize((4 + num_classes_) * num_preds_);
 }
 
-void OnnxBackend::detectImpl(const cv::Mat & bgr_img, std::vector<Detection> & detections,
+void OnnxBackend::Impl::detectImpl(const cv::Mat & bgr_img, std::vector<Detection> & detections,
                              DetectionTiming * timing)
 {
     detections.clear();
@@ -160,7 +202,7 @@ void OnnxBackend::detectImpl(const cv::Mat & bgr_img, std::vector<Detection> & d
     }
 }
 
-void OnnxBackend::parseOutput(const float * output, int num_preds, int num_classes,
+void OnnxBackend::Impl::parseOutput(const float * output, int num_preds, int num_classes,
                               std::vector<Detection> & detections)
 {
     // 模型布局 [1, 4+nc, num_preds] → 逐候选遍历 (列优先)
@@ -202,4 +244,16 @@ void OnnxBackend::parseOutput(const float * output, int num_preds, int num_class
     detections = nms_by_class(candidates, static_cast<float>(params_.nms_threshold));
 }
 
-}  // namespace easyfly_object_detection
+}  // namespace easyfly::yolo_onnx
+
+namespace easyfly::yolo_onnx
+{
+OnnxBackend::OnnxBackend(const DetectorParams & params)
+: DetectorBase(params), impl_(std::make_unique<Impl>(params)) {}
+OnnxBackend::~OnnxBackend() = default;
+std::string OnnxBackend::activeProvider() const {return impl_->active_provider_;}
+void OnnxBackend::detectImpl(const cv::Mat & image, std::vector<Detection> & detections,
+  DetectionTiming * timing) {impl_->detectImpl(image, detections, timing);}
+void OnnxBackend::unletterboxImpl(Detection & d)
+{unletterbox(d.x1, d.y1, d.x2, d.y2, impl_->last_lb_);}
+}

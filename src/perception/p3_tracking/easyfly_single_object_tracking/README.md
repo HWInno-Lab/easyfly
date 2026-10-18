@@ -43,3 +43,7 @@ Positive source time, optical frame, source/receipt freshness and ROS clock
 progress remain mandatory. Paused/zero/regressed clocks still invalidate output;
 original source stamps are never rewritten. This is perception readiness only,
 not permission to fly or publish flight commands.
+
+## ALG-5 算法边界
+
+CSRT 模型生命周期已迁入 easyfly_csrt，并通过 easyfly_single_tracking_api 调用；ROI 服务、重定位、图像所有权、源时间/过期和 worker generation 留在本包。未知分数继续发布原 confidence=0，算法使用 nullopt。

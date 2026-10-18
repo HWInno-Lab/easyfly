@@ -30,8 +30,9 @@ src/third_party/librealsense/build/
 Platform/
 
 # onnxruntime GPU SDK (libonnxruntime_providers_cuda.so 单文件 352MB, 超过 GitHub 100MB 限制)
-# 获取方式见 src/third_party/onnxruntime/README.md
+# 获取方式见 src/third_party/runtimes/README.md
 src/third_party/onnxruntime/
+src/third_party/runtimes/onnxruntime/
 
 # fast_lio 上游 doc 仅有演示 gif/pdf (~128MB), 源码正常入库
 src/third_party/slam/fast_lio/doc/

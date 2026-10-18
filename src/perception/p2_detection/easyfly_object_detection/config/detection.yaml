@@ -9,7 +9,7 @@
 detection:
   # ---- 后端 ----
   backend: onnx            # onnx | tensorrt(预留) | openvino(预留)
-  model_path: /home/jia/easyfly_ws/models/yolo11n.onnx
+  model_path: package://easyfly_object_detection/models/yolo11n.onnx
   imgsz: 640               # 模型输入边长 (与导出一致)
 
   # ---- 类别表 (COCO 80 类, 顺序与官方训练一致) ----

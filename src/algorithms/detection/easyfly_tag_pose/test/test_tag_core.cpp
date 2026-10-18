@@ -13,7 +13,8 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
-#include "tag_core.hpp"
+#include "easyfly_tag_pose/tag_core.hpp"
+namespace ef_tag = easyfly::tag_pose;
 TEST(TagCore, KnownTiltPoseAndUnitQuaternion) {
   cv::Mat K = (cv::Mat_<double>(3, 3) << 600, 0, 320, 0, 600, 240, 0, 0, 1);
 
@@ -130,4 +131,17 @@ TEST(TagCore, SubpixelRefinementOfKnownTiltCorners) {
   auto parameters = ef_tag::detector_parameters();
   EXPECT_EQ(parameters->cornerRefinementMethod, cv::aruco::CORNER_REFINE_SUBPIX);
   EXPECT_EQ(parameters->cornerRefinementWinSize, 3);
+}
+
+TEST(TagCore, ActualWrapperRejectsAmbiguityAndReprojectionError)
+{
+  cv::Mat K = (cv::Mat_<double>(3, 3) << 600, 0, 320, 0, 600, 240, 0, 0, 1);
+  std::vector<cv::Point3f> object{{-.1, .1, 0}, {.1, .1, 0}, {.1, -.1, 0}, {-.1, -.1, 0}};
+  std::vector<cv::Point2f> corners;
+  cv::projectPoints(object, cv::Vec3d(3.0, .03, .01), cv::Vec3d(.12, .06, 1), K, cv::Mat(), corners);
+  const auto ambiguous = ef_tag::estimate(corners, K, cv::Mat(), .2, 20, 100);
+  EXPECT_FALSE(ambiguous.valid); EXPECT_EQ(ambiguous.reason, "pose_ambiguous");
+  corners[0].x += 5;
+  const auto noisy = ef_tag::estimate(corners, K, cv::Mat(), .2, .001, .000001);
+  EXPECT_FALSE(noisy.valid); EXPECT_EQ(noisy.reason, "reprojection_error");
 }

@@ -15,7 +15,8 @@
 #include <condition_variable>
 #include <thread>
 #include "safety.hpp"
-#include "tag_core.hpp"
+#include "easyfly_tag_pose/tag_core.hpp"
+namespace ef_tag = easyfly::tag_pose;
 #include <easyfly_msgs/msg/tag_observation_array.hpp>
 #include <easyfly_msgs/srv/get_capabilities.hpp>
 #include <sensor_msgs/msg/camera_info.hpp>
@@ -296,13 +297,9 @@ private:
               pixels, gray,
               image->encoding == "rgb8" ? cv::COLOR_RGB2GRAY : cv::COLOR_BGR2GRAY);
           }
-          std::vector<int> ids;
-          std::vector<std::vector<cv::Point2f>> corners;
-
-          cv::aruco::detectMarkers(
-            gray,
-            cv::aruco::getPredefinedDictionary(cv::aruco::DICT_APRILTAG_36h11), corners, ids,
-            ef_tag::detector_parameters());
+          const auto detections = ef_tag::detect(gray);
+          const auto & ids = detections.ids;
+          const auto & corners = detections.corners;
 
           if (ids.size() > 64) {
             output.reason = "too_many_tags";

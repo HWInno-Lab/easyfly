@@ -1,0 +1,8 @@
+# Preserve SONAME aliases without embedding a source SDK path.
+set(_ort_destination "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib")
+if(NOT "@_ort_soname@" STREQUAL "@_ort_filename@")
+  file(CREATE_LINK "@_ort_filename@" "${_ort_destination}/@_ort_soname@" SYMBOLIC)
+endif()
+if(NOT "libonnxruntime.so" STREQUAL "@_ort_filename@")
+  file(CREATE_LINK "@_ort_soname@" "${_ort_destination}/libonnxruntime.so" SYMBOLIC)
+endif()

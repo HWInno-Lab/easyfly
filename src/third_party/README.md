@@ -1,6 +1,7 @@
 # 第三方代码分类与迁移索引
 
-2026-10-18 / ALG-0：本文件记录当前布局和目标分类，尚未执行目录迁移。
+2026-10-18 / ALG-5：ONNX Runtime 已分类至 runtimes/onnxruntime，其余目录待 ALG-8。
+ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为当前布局。
 自有算法实现及包装见 `../algorithms/`；外部项目、库、SDK、模型各自保留原许可。
 
 ## 分类与目标
@@ -9,7 +10,7 @@
 | --- | --- | --- |
 | `slam/fast_lio/` | `algorithms/localization/fast_lio/` | 雷达惯性定位建图 / ALG-8.1 |
 | `planners/ego_planner/` | `algorithms/planning/ego_planner/` | 局部轨迹规划 / ALG-8.2 |
-| `onnxruntime/` | `runtimes/onnxruntime/` | 本地推理运行库 / ALG-5 |
+| `runtimes/onnxruntime/` | 已完成 | 本地推理运行库 / ALG-5；见 runtimes/README.md |
 | `livox_sdk2/` | `sensor_sdks/livox_sdk2/` | 外部雷达 SDK / ALG-8.3 |
 | `librealsense/` | `sensor_sdks/librealsense/` | 外部相机 SDK / ALG-8.3 |
 | `qgc/` | `tools/qgc/` | 外部应用接入资料 / ALG-8.4 |
@@ -21,13 +22,13 @@ libraries/geometry、libraries/optimization、libraries/serialization。
 
 每个项目保留一个主要源码位置，其他用途登记标签。FAST-LIO 内嵌的 ikd-Tree/IKFoM 和
 EGO 内部规划/地图包随上游工程保留，不复制或按本项目功能类别拆散。
-适配器放 EasyFly 功能包；系统依赖 OpenCV/PCL 不为了目录分类而额外 vendoring。
+ROS 消息/设备适配器放 EasyFly 功能包；可复用普通计算包装放 algorithms/。系统依赖 OpenCV/PCL 不为了目录分类而额外 vendoring。
 外部 ROS 驱动继续保留在通信层，尤其不顺带移动 RealSense 嵌套仓库。
 
 ## 已确认的路径和构建注意事项
 
-- 检测包默认 ORT_ROOT 使用源码相对路径，并安装固定 SONAME/provider 库；移动 SDK
-  必须与消费方、运行库安装责任和 `.gitignore` 一起修改。
+- ALG-5 已更新 ORT_ROOT 默认路径与忽略规则。easyfly_yolo_onnx 独占运行库/provider/许可安装，
+  动态读取实际 SONAME，PIMPL 隐藏 SDK，支持外部 ORT_ROOT 和 $ORIGIN 安装 RPATH。
 - EGO `plan_manage/CMakeLists.txt` 通过 `../../..` 推导 PROJECT_ROOT_DIR，并追加
   install/src/planner 搜索路径。这些对原布局的假设必须在重定位时审计，不能只移动目录。
   bspline_opt 还有基于 plan_env_DIR 的 include 推导，需验证安装消费。

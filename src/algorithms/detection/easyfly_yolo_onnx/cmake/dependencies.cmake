@@ -1,0 +1,3 @@
+include(CMakeFindDependencyMacro)
+find_dependency(easyfly_detection_api)
+find_dependency(OpenCV COMPONENTS core imgproc)

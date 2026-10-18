@@ -62,3 +62,7 @@ Positive source time, optical frame, source/receipt freshness and ROS clock
 progress remain mandatory. Paused/zero/regressed clocks still invalidate output;
 original source stamps are never rewritten. This is perception readiness only,
 not permission to fly or publish flight commands.
+
+## ALG-5 算法边界
+
+标志检测与 IPPE 位姿计算迁入 easyfly_tag_pose；CameraInfo 接纳、校准版本、源时间/过期和 worker generation 留在本包。旧 tag_core.hpp 仅为兼容别名。

@@ -254,6 +254,11 @@ private:
 
         params_.backend = d["backend"].as<std::string>("onnx");
         params_.model_path = d["model_path"].as<std::string>();
+        const std::string packaged_model = "package://easyfly_object_detection/";
+        if (params_.model_path.rfind(packaged_model, 0) == 0) {
+            params_.model_path = ament_index_cpp::get_package_share_directory(
+                "easyfly_object_detection") + "/" + params_.model_path.substr(packaged_model.size());
+        }
         params_.imgsz = d["imgsz"].as<int>(640);
         params_.conf_threshold = d["conf_threshold"].as<double>(0.35);
         params_.nms_threshold = d["nms_threshold"].as<double>(0.45);

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_yolo_onnx</name><version>0.1.0</version>
+  <description>Project maintained YOLO ONNX wrapper, letterbox and NMS.</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>easyfly_detection_api</depend>
+  <depend>libopencv-dev</depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

@@ -13,7 +13,8 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
-#include "track_core.hpp"
+#include "easyfly_csrt/track_core.hpp"
+namespace ef_single = easyfly::csrt;
 TEST(SingleCore, ExplicitRoiAndSyntheticTranslation) {
   EXPECT_FALSE(ef_single::roi(-.1, 0, .2, .2));
   EXPECT_FALSE(ef_single::roi(0, 0, 0, .2));

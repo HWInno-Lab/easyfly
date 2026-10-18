@@ -15,7 +15,8 @@
 #include <condition_variable>
 #include <thread>
 #include "safety.hpp"
-#include "track_core.hpp"
+#include "easyfly_csrt/track_core.hpp"
+namespace ef_single = easyfly::csrt;
 #include <easyfly_msgs/msg/single_track_state.hpp>
 #include <easyfly_msgs/msg/track_info_array.hpp>
 #include <easyfly_msgs/srv/get_capabilities.hpp>
@@ -226,7 +227,7 @@ private:
     } catch (const std::exception &) {}}
   void run()
   {
-    cv::Ptr<cv::TrackerCSRT> tracker;
+    std::unique_ptr<easyfly::single_tracking::Tracker> tracker;
     uint64_t tracker_generation = 0;
 
     for (;
@@ -277,13 +278,14 @@ private:
           color = pixels;
         }
         if (init) {
-          tracker = cv::TrackerCSRT::create();
-          tracker->init(color, box);
+          tracker = ef_single::make_tracker("csrt");
+          ok = tracker->initialize(color, box);
 
           tracker_generation = generation;
-          ok = true;
         } else if (tracker && tracker_generation == generation) {
-          ok = tracker->update(color, box);
+          const auto result = tracker->update(color);
+          ok = result.ok;
+          box = result.box;
         }
       } catch (const cv::Exception &) {
         ok = false;
@@ -306,7 +308,7 @@ private:
         box.x + box.width > static_cast<int>(image->width) ||
         box.y + box.height > static_cast<int>(image->height))
       {
-        tracker.release();
+        tracker.reset();
         invalidate("csrt_lost_or_expired");
         continue;
       }

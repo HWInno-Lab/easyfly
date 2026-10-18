@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_single_tracking_api</name><version>0.1.0</version>
+  <description>Synchronous explicit-ROI single tracker interface.</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>libopencv-dev</depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>
