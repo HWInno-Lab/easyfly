@@ -40,6 +40,8 @@ def test_frozen_clock_telemetry_loss_stops_full_output_chain(tmp_path):
     state = State(connected=True, armed=False, mode="AUTO.LOITER")
     clock = Clock()
     clock.clock.sec = 10
+    clock_origin = time.monotonic()
+    clock_frozen = False
     pose = PoseStamped()
     pose.header.frame_id = "odom"
     pose.header.stamp = clock.clock
@@ -92,9 +94,19 @@ def test_frozen_clock_telemetry_loss_stops_full_output_chain(tmp_path):
     )
 
     def publish():
+        # Prepare with distinct samples; freeze only during telemetry loss.
+        if not clock_frozen:
+            source_ns = 10000000000 + int(
+                (time.monotonic() - clock_origin) * 1e9
+            )
+            clock.clock.sec, clock.clock.nanosec = divmod(
+                source_ns, 1000000000
+            )
         clock_pub.publish(clock)
         if active_inputs:
             state.header.stamp = clock.clock
+            pose.header.stamp = clock.clock
+            imu.header.stamp = clock.clock
             state_pub.publish(state)
             pose_pub.publish(pose)
             imu_pub.publish(imu)
@@ -190,6 +202,10 @@ def test_frozen_clock_telemetry_loss_stops_full_output_chain(tmp_path):
             spin(0.15)
             assert not result.done()
             assert setpoints, "fixture never observed MAVROS output"
+            clock_frozen = True
+            frozen_source_ns = (
+                clock.clock.sec * 1000000000 + clock.clock.nanosec
+            )
             active_inputs = False
             until(result.done, timeout=3.0)
             assert (
@@ -208,9 +224,18 @@ def test_frozen_clock_telemetry_loss_stops_full_output_chain(tmp_path):
             assert (
                 calls == calls_after
             ), "telemetry loss initiated a compensating flight request"
+            assert (
+                clock.clock.sec * 1000000000 + clock.clock.nanosec
+            ) == frozen_source_ns, "loss window did not keep ROS time frozen"
+            clock_frozen = False
             active_inputs = True
             until(
-                lambda: last_state.connected
+                lambda: (
+                    last_state.header.stamp.sec * 1000000000
+                    + last_state.header.stamp.nanosec
+                )
+                > frozen_source_ns
+                and last_state.connected
                 and last_state.pose_valid
                 and last_state.attitude_valid
             )

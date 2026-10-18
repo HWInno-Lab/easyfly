@@ -192,6 +192,9 @@ def test_managed_scene_rejects_override(ready_catalog, override):
 def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, filename, profile, managed):
     module = load_launch('easyfly_px4_sitl', filename)
     monkeypatch.setattr(module,'_resolve_px4_dir', lambda:Path('/tmp/nonexecuted-px4'))
+    # Inspect descriptions only; native rejection has a separate guard test.
+    native_inputs = []
+    monkeypatch.setattr(module, 'require_native_imu', native_inputs.append)
     monkeypatch.setattr(module,'preflight_action',lambda **kw:preflight_action(
         catalog_factory=lambda **k:(ready_catalog,[]),**kw))
     context = LaunchContext()
@@ -202,6 +205,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
         ready_catalog.scenes['test']['runtime']['clock_rate_hz']=100
         context.launch_configurations.update(scene='test',scene_profile=profile)
     description = module.generate_launch_description()
+    assert native_inputs == [Path('/tmp/nonexecuted-px4')]
     guard_index = None
     preflight_index = None
     for index, action in enumerate(description.entities):
