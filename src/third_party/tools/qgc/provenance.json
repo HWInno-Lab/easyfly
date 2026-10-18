@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "project": "QGroundControl integration documents",
+  "category": "external_tool",
+  "historical_document_path": "src/third_party/qgc/README.md",
+  "current_document_path": "src/third_party/tools/qgc/README.md",
+  "migration_source_commit": "5d84150467443ad156da97e586c339020c604bd3",
+  "initial_local_integration_commit": "01de492",
+  "upstream_url_from_existing_readme": "https://github.com/mavlink/qgroundcontrol",
+  "upstream_source_vendored": false,
+  "binary_redistributed": false,
+  "exact_binary_download_source_and_signature_verification": null,
+  "user_local_binary": {
+    "path": "src/third_party/QGC.AppImage",
+    "bytes": 180816376,
+    "sha256": "06969c67ef58ea063def0a8271447a1cc385438c4a7df36813315b4475146737",
+    "format": "ELF Type-2 AppImage, statically checked; not executed in ALG-8.4",
+    "version_from_prior_local_inspection": "5.0.8",
+    "bundled_qt_from_prior_local_inspection": "6.8.3",
+    "license_metadata_from_prior_local_inspection": "GPL-3.0",
+    "location_and_file_identity_unchanged": true,
+    "ignored_by_git": true,
+    "applies_only_to_this_local_sample": true
+  },
+  "document_sha256": {
+    "before": "cbe8712e4914f5784038d913c3cf41e41db3474e58f659f1c6c72e510dde4c08",
+    "current": "783a193819a1f74305ff557acb5f63b1f92fec030068549725de85afb75dd70e"
+  },
+  "local_document_changes": [
+    "Relocate integration documentation; update desktop reference.",
+    "Replace outdated future-networking wording with links to the existing separate networked-maintenance contract."
+  ],
+  "runtime_owners": [
+    "easyfly_desktop (explicit offline-isolated preview)",
+    "easyfly_connection_manager (explicitly enabled networked maintenance)"
+  ],
+  "runtime_source_changes": [],
+  "limitations": [
+    "Prior embedded metadata is not authentication or proof of binary download provenance.",
+    "Runtime selection remains explicit; document classification does not set executable paths.",
+    "Existing fixture/profile tests rerun; no new real-QGC or vehicle/network qualification."
+  ]
+}

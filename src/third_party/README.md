@@ -1,6 +1,6 @@
 # 第三方代码分类与迁移索引
 
-2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已分类 FAST-LIO/EGO；ALG-8.3 已将 Livox/RealSense SDK 分类到 sensor_sdks。其余按后续子批次推进。
+2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已分类 FAST-LIO/EGO；ALG-8.3 已分类 Livox/RealSense SDK；ALG-8.4 已将 QGC 接入资料分类到 tools/qgc。下一步为 ALG-8.5 接入规范收敛。
 ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为当前布局。
 自有算法实现及包装见 `../algorithms/`；外部项目、库、SDK、模型各自保留原许可。
 
@@ -13,7 +13,7 @@ ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为�
 | `runtimes/onnxruntime/` | 已完成 | 本地推理运行库 / ALG-5；见 runtimes/README.md |
 | `sensor_sdks/livox_sdk2/` | 已完成 | 外部雷达 SDK / ALG-8.3；见 sensor_sdks/README.md |
 | `sensor_sdks/librealsense/` | 已完成 | 外部相机 SDK / ALG-8.3；见 sensor_sdks/README.md |
-| `qgc/` | `tools/qgc/` | 外部应用接入资料 / ALG-8.4 |
+| `tools/qgc/` | 已完成 | 外部应用接入资料 / ALG-8.4；见 tools/qgc/README.md |
 
 第三方算法分类与自有算法一致：preprocessing、detection、tracking、localization、
 fusion_mapping、planning。新项目按实际引入创建，不能以空目录表示已经集成。
@@ -42,6 +42,7 @@ ROS 消息/设备适配器放 EasyFly 功能包；可复用普通计算包装放
   不能复制旧 build/install 当作新目录构建结果。
 - `QGC.AppImage` 是被忽略的用户本地文件，继续通过显式路径选择；此轮只迁移 qgc 资料，
   不自动移动、下载或替换该二进制。
+  离线预览与联网维护的代码均保留在EasyFly UI层，分别遵守原有启动和会话规则。
 
 ## 来源登记要求
 

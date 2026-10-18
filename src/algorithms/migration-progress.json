@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-8.3",
-  "next_phase": "ALG-8.4",
+  "latest_completed_phase": "ALG-8.4",
+  "next_phase": "ALG-8.5",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api",
@@ -230,9 +230,18 @@
       "driver_sources_unchanged": true,
       "system_and_explicit_private_sdk_resolution_verified": true,
       "old_sdk_bridge_created": false
+    },
+    {
+      "phase": "ALG-8.4",
+      "from": "src/third_party/qgc",
+      "to": "src/third_party/tools/qgc",
+      "scope": "integration documentation only",
+      "binary_path": "src/third_party/QGC.AppImage",
+      "user_binary_and_runtime_code_unchanged": true,
+      "existing_software_regression_cases": 7
     }
   ],
-  "details": "alg8-3-validation.md",
+  "details": "alg8-4-validation.md",
   "baseline_issue_updates": [
     {
       "id": "ALG0-B02",

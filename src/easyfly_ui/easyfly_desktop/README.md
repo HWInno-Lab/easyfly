@@ -389,7 +389,7 @@ implemented in [libglvnd](https://github.com/NVIDIA/libglvnd/blob/master/src/GLX
 This was verified locally with RViz2 11.2.26; another graphics stack may fail
 visibly rather than render. The three presets passed real-window startup checks
 without a backend. The supplied QGC 5.0.8 AppImage also passed offline startup.
-See `src/third_party/qgc/README.md` for the inspected binary's identity and scope.
+See `src/third_party/tools/qgc/README.md` for the inspected binary's identity and scope.
 
 Default tool lifecycle/isolation tests require bwrap. Optional real-window
 smoke checks never run in ordinary CTest:
