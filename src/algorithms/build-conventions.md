@@ -148,3 +148,11 @@ ALG-7.3 纯 CMake 消费仅声明 CXX，只提供 occupancy prefix 即可，不�
 原 bounded-layer 测试通过 test_depend 使用实际地面类型；colcon源码闭包包含该测试依赖。
 旧 observed_grid 头用薄转发保留具体地面指针签名；旧 ROS 功能包配置仍需支持的 ROS/C/PCL 环境。
 复验工具 `../../tools/algorithms/verify_occupancy_install.py`，见 [ALG-7.3 验收](alg7-3-validation.md)。
+
+ALG-8.1 FAST-LIO 保留完整 ROS2 工程，包名仍为 fast_lio，位置为
+`../third_party/algorithms/localization/fast_lio`；不要求其成为无 ROS 普通库。
+CMake FASTLIO_OUTPUT_ROOT 可隔离 Log/PCD输出；配置/消息/算法不变，原许可与 README 随 share 安装。
+两种安装均验证原生进程、配置读取和 Pose6D 消息序列化；复制安装搬迁后显式指定 fast_lio_DIR，
+并将该 prefix 的 lib 放在本次进程加载路径首位，不依赖旧源码或全局修改 LD_LIBRARY_PATH。
+已启动旧安装使用的源码软链接桥接仅本地忽略，并由旧父目录 COLCON_IGNORE 排除。
+见 [ALG-8.1 验收](alg8-1-validation.md)，不将完整 ROS 工程冒称为纯 C++ 核心。

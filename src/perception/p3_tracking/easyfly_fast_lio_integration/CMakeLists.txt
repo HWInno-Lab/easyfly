@@ -33,6 +33,9 @@ install(DIRECTORY launch
 
 if(BUILD_TESTING)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_map_odom_tf_ros test/test_map_odom_tf_ros.py TIMEOUT 30
+    ENV ROS_DOMAIN_ID=222)
   add_test(
     NAME easyfly_fast_lio_launch_contract
     COMMAND ${Python3_EXECUTABLE}

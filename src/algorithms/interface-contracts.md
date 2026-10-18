@@ -1,4 +1,4 @@
-# 算法接口与行为冻结（ALG-0 至 ALG-7.3）
+# 算法接口与行为冻结（ALG-0 至 ALG-8.1）
 
 基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
 ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离，ALG-7 三个子批次已完成地面、障碍几何和占据图拆分。
@@ -139,6 +139,11 @@ ALG-7.3 已将 observed-cells、cluster-boxes 膨胀、完整预测足迹转换�
 保留 .70m 最小膨胀、体素交集、20帧保持/第21帧释放和尺寸变化清理；节点失效时调用 reset。
 map_validity.hpp、未知失效消息、地图源时间/地面/TF 接纳与发布仍在功能包。
 详见 [ALG-7.3 验收](alg7-3-validation.md)。
+
+ALG-8.1 将 FAST-LIO 完整 ROS 工程分类至 third_party/algorithms/localization/fast_lio。
+包名、话题/消息/配置、ikd-Tree/IKFoM 和 map→odom TF 实现保持；构建增加隔离输出根选择。
+启动参数 scoping 夹具显式隔离无关 PX4 前提，生产 HRT/native IMU 守卫保持并独立回归。
+来源/许可未知项与本地旧安装桥接范围见 [ALG-8.1 验收](alg8-1-validation.md)。
 
 ## 6. 接口外的平台职责
 

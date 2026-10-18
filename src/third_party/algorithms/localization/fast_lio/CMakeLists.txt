@@ -9,7 +9,11 @@ ADD_COMPILE_OPTIONS(-std=c++14)
 ADD_COMPILE_OPTIONS(-std=c++14)
 set(CMAKE_CXX_FLAGS "-std=c++14 -O3")
 
-add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
+# Keep runtime outputs separate from source/install trees when explicitly configured.
+# Default retains the upstream layout; relocation validation supplies an isolated writable root.
+set(FASTLIO_OUTPUT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Writable FAST-LIO Log/ and PCD/ root")
+file(MAKE_DIRECTORY "${FASTLIO_OUTPUT_ROOT}/Log" "${FASTLIO_OUTPUT_ROOT}/PCD")
+add_definitions(-DROOT_DIR=\"${FASTLIO_OUTPUT_ROOT}/\")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexceptions")
 set(CMAKE_CXX_STANDARD 14)
@@ -124,6 +128,8 @@ install(
   DIRECTORY config launch rviz
   DESTINATION share/${PROJECT_NAME}
 )
+
+install(FILES LICENSE README.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)

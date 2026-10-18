@@ -35,7 +35,10 @@ src/third_party/onnxruntime/
 src/third_party/runtimes/onnxruntime/
 
 # fast_lio 上游 doc 仅有演示 gif/pdf (~128MB), 源码正常入库
-src/third_party/slam/fast_lio/doc/
+src/third_party/algorithms/localization/fast_lio/doc/
+
+# Local legacy-path bridge for already-running/pre-migration installs; excluded by COLCON_IGNORE.
+/src/third_party/slam/
 
 # 临时文件
 *.txt

@@ -104,12 +104,18 @@ def test_parent_group_blocks_detection_config_file() -> None:
         "easyfly_gazebo_worlds": WORKSPACE_SRC / "simulation" / "easyfly_gazebo_worlds",
         "easyfly_gazebo_plugins": WORKSPACE_SRC / "simulation" / "easyfly_gazebo_plugins",
         "easyfly_fast_lio_integration": PACKAGE_DIR,
-        "fast_lio": WORKSPACE_SRC / "third_party" / "slam" / "fast_lio",
+        "fast_lio": WORKSPACE_SRC / "third_party" / "algorithms" / "localization" / "fast_lio",
     }
 
     def source_share(package: str) -> str:
         return str(source_dirs.get(package, WORKSPACE_SRC))
 
+    # This fixture inspects launch actions; it never starts PX4/Gazebo. Full HRT/native-IMU
+    # selection has dedicated fail-closed tests and is not a prerequisite for config scoping.
+    original_resolve_px4 = parent._resolve_px4_dir
+    original_native_imu = parent.require_native_imu
+    parent._resolve_px4_dir = lambda: Path("/inert-test-only-px4")
+    parent.require_native_imu = lambda directory: None
     original_parent_lookup = parent.get_package_share_directory
     original_ament_lookup = ament_packages.get_package_share_directory
     parent.get_package_share_directory = source_share
@@ -157,6 +163,8 @@ def test_parent_group_blocks_detection_config_file() -> None:
         assert files
         assert files[0].name == "mid360.yaml"
     finally:
+        parent._resolve_px4_dir = original_resolve_px4
+        parent.require_native_imu = original_native_imu
         parent.get_package_share_directory = original_parent_lookup
         ament_packages.get_package_share_directory = original_ament_lookup
 

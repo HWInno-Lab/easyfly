@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-7.3",
-  "next_phase": "ALG-8.1",
+  "latest_completed_phase": "ALG-8.1",
+  "next_phase": "ALG-8.2",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api",
@@ -175,7 +175,27 @@
       "phase": "ALG-5",
       "runtime_install_owner": "easyfly_yolo_onnx",
       "payload_unchanged": true
+    },
+    {
+      "phase": "ALG-8.1",
+      "from": "src/third_party/slam/fast_lio",
+      "to": "src/third_party/algorithms/localization/fast_lio",
+      "package": "fast_lio",
+      "algorithm_config_and_notices_unchanged": true,
+      "non_cmake_vendor_files_unchanged": 45,
+      "build_only_changes": [
+        "configurable isolated output root",
+        "install original license and README"
+      ],
+      "local_ignored_legacy_bridge": "Excluded from colcon; preserves currently running old installation, not a committed source copy."
     }
   ],
-  "details": "alg7-3-validation.md"
+  "details": "alg8-1-validation.md",
+  "baseline_issue_updates": [
+    {
+      "id": "ALG0-B02",
+      "status": "launch_contract_fixture_repaired",
+      "scope": "Isolate unrelated HRT/native IMU prerequisites in launch-scoping test; production guards unchanged and separately tested. No new full SITL qualification."
+    }
+  ]
 }
