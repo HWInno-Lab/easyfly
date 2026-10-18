@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-8.2",
-  "next_phase": "ALG-8.3",
+  "latest_completed_phase": "ALG-8.3",
+  "next_phase": "ALG-8.4",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api",
@@ -208,9 +208,31 @@
       "algorithm_cpp_headers_messages_configs_and_notices_unchanged": true,
       "build_and_fixture_changes_only": true,
       "local_ignored_legacy_bridge": "Excluded from colcon; preserves currently running old installation, not a committed source copy."
+    },
+    {
+      "phase": "ALG-8.3",
+      "from": "src/third_party/livox_sdk2",
+      "to": "src/third_party/sensor_sdks/livox_sdk2",
+      "package": "livox_sdk2",
+      "tracked_files": 220,
+      "all_tracked_files_byte_identical": true,
+      "driver_sources_unchanged": true,
+      "system_and_explicit_private_sdk_resolution_verified": true,
+      "old_sdk_bridge_created": false
+    },
+    {
+      "phase": "ALG-8.3",
+      "from": "src/third_party/librealsense",
+      "to": "src/third_party/sensor_sdks/librealsense",
+      "package": "librealsense2",
+      "tracked_files": 3202,
+      "all_tracked_files_byte_identical": true,
+      "driver_sources_unchanged": true,
+      "system_and_explicit_private_sdk_resolution_verified": true,
+      "old_sdk_bridge_created": false
     }
   ],
-  "details": "alg8-2-validation.md",
+  "details": "alg8-3-validation.md",
   "baseline_issue_updates": [
     {
       "id": "ALG0-B02",

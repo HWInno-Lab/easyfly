@@ -23,8 +23,8 @@ log-v2/
 # 用户提供的本地可选 QGC 二进制（181 MB）；不影响第三方源码。
 /src/third_party/QGC.AppImage
 .vscode/
-src/third_party/livox_sdk2/build/
-src/third_party/librealsense/build/
+src/third_party/sensor_sdks/livox_sdk2/build/
+src/third_party/sensor_sdks/librealsense/build/
 
 # 本地参考工程 (2.6GB, ROS1 参考, 不参与编译: colcon_defaults.yaml base-paths=src)
 Platform/

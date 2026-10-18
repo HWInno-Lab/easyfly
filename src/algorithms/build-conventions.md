@@ -164,3 +164,10 @@ traj_utils_so 同时保留原消息导出并提供其普通库 target；ament_ta
 普通复制安装根搬迁后，以每包的 *_DIR 及进程级 AMENT_PREFIX_PATH/LD_LIBRARY_PATH/PYTHONPATH
 显式选择新库、消息和节点，消费端仍需 ROS/PCL 等依赖；不承诺生成的整套 colcon shell 脚本任意搬迁。
 复验工具 `../../tools/algorithms/verify_ego_install.py`，见 [ALG-8.2 验收](alg8-2-validation.md)。
+
+
+ALG-8.3 两份传感器SDK完整源码位于 `../third_party/sensor_sdks`，ROS驱动保持communication/c1_drivers。
+目录分类不会自动改变驱动SDK选择：默认仍可解析/usr/local，私有安装需显式LIVOX头/库及realsense2_DIR。
+新SDK与复制驱动安装根均实际搬迁，复验以实际编译头依赖和动态库加载为准，不能仅凭源目录存在宣称接入。
+SDK原构建及许可证不变；验证工程单独复用固定JSON缓存、关闭固件/联网等无关构建选项并跳过系统ldconfig。
+工具为 `../../tools/algorithms/verify_sensor_sdks.py`；范围和复验前提见 [ALG-8.3验收](alg8-3-validation.md)。

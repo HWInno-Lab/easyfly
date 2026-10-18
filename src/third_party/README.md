@@ -1,6 +1,6 @@
 # 第三方代码分类与迁移索引
 
-2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已将 FAST-LIO/EGO 分类到 algorithms/localization 和 algorithms/planning。其余按后续子批次推进。
+2026-10-18：ALG-5 已分类 ONNX Runtime；ALG-8.1/8.2 已分类 FAST-LIO/EGO；ALG-8.3 已将 Livox/RealSense SDK 分类到 sensor_sdks。其余按后续子批次推进。
 ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为当前布局。
 自有算法实现及包装见 `../algorithms/`；外部项目、库、SDK、模型各自保留原许可。
 
@@ -11,8 +11,8 @@ ALG-0 migration-inventory.json 保留历史布局，不将历史清单改写为�
 | `algorithms/localization/fast_lio/` | 已完成 | 雷达惯性定位建图 / ALG-8.1；见 algorithms/localization/README.md |
 | `algorithms/planning/ego_planner/` | 已完成 | 局部轨迹规划 / ALG-8.2；见 algorithms/planning/README.md |
 | `runtimes/onnxruntime/` | 已完成 | 本地推理运行库 / ALG-5；见 runtimes/README.md |
-| `livox_sdk2/` | `sensor_sdks/livox_sdk2/` | 外部雷达 SDK / ALG-8.3 |
-| `librealsense/` | `sensor_sdks/librealsense/` | 外部相机 SDK / ALG-8.3 |
+| `sensor_sdks/livox_sdk2/` | 已完成 | 外部雷达 SDK / ALG-8.3；见 sensor_sdks/README.md |
+| `sensor_sdks/librealsense/` | 已完成 | 外部相机 SDK / ALG-8.3；见 sensor_sdks/README.md |
 | `qgc/` | `tools/qgc/` | 外部应用接入资料 / ALG-8.4 |
 
 第三方算法分类与自有算法一致：preprocessing、detection、tracking、localization、
@@ -36,6 +36,8 @@ ROS 消息/设备适配器放 EasyFly 功能包；可复用普通计算包装放
 - Livox 驱动当前使用 `find_library(... /usr/local/lib)` 和 `find_path` 找 SDK，RealSense
   驱动使用 `find_package(realsense2 2.56)`。移动源码不表示消费者已经改用那份源码编译的库；
   验收需记录真实解析出的头文件和动态库，不覆盖系统安装来掩盖依赖问题。
+- ALG-8.3 两个 SDK 的3422份受追踪文件整体分类且字节不变；外部ROS驱动/嵌套仓库保持。
+  新目录的独立编译、默认系统SDK和显式私有前缀选择分别验证；旧build缓存保留忽略且不复用。
 - SDK 构建产物、ONNX SDK 和 FAST-LIO 演示资源原有忽略规则应迁到新路径。
   不能复制旧 build/install 当作新目录构建结果。
 - `QGC.AppImage` 是被忽略的用户本地文件，继续通过显式路径选择；此轮只迁移 qgc 资料，
