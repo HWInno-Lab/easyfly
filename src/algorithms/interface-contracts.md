@@ -1,7 +1,7 @@
-# 算法接口与行为冻结（ALG-0 至 ALG-6）
+# 算法接口与行为冻结（ALG-0 至 ALG-7.1）
 
 基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
-ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离。
+ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离，ALG-7.1 已完成地面子批次。
 本文件记录不变的计算语义和各批次显式新增的接口检查。
 实际头文件与细节见各 API 包 README；以下单位和职责边界继续作为迁移约束。
 
@@ -121,6 +121,11 @@ expanded-AABB 双向唯一匹配迁入 easyfly_obstacle_association。后两者�
 像素节点原有 latest TF 回退仍保留；两源精确时间且不回退 latest 的约束属于雷达相机融合。
 C++ 借用视图新增布局/可表示整数检查并通过 memcpy 支持非对齐数据，边界增强与迁移分开提交。
 240 组 C++ 深度/反投影、240 组 Python 投影及 320 组完整分类消息对照，详见 [ALG-6 验收](alg6-validation.md)。
+
+ALG-7.1 已将实际 PCL 候选拟合、四份地面数学/状态辅助迁入 easyfly_ground_segmentation。
+fitGroundCandidate 只返回候选与诊断计数；可信状态由 tracker 消费显式车辆证据决定。
+节点继续采样/接纳状态与 TF、参考系跳变时 reset、维护地图有效性并对完整当前帧分类。
+所有原阈值和正式 YAML 空间支撑选择保持，旧四头为别名；详见 [ALG-7.1 验收](alg7-1-validation.md)。
 
 ## 6. 接口外的平台职责
 

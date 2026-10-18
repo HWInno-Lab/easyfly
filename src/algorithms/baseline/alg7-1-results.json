@@ -1,0 +1,837 @@
+{
+  "schema_version": 1,
+  "phase": "ALG-7.1",
+  "status": "completed",
+  "date": "2026-10-18",
+  "source_commit": "644183b783a687d3c3d610fe5c0293015c52a672",
+  "original_source_commit": "bdbc34cd698d31b3694dcede308be12df455e3d0",
+  "migrated_packages": [
+    "easyfly_ground_segmentation"
+  ],
+  "consumer_packages": [
+    "easyfly_semantic_map"
+  ],
+  "matrix": {
+    "schema_version": 1,
+    "source_files": {
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/CMakeLists.txt": "cd9a4b37851c372e2e6d33b79c54d70f79cfdfd276b7de233b253d0989bbb30a",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/README.md": "6b617f601a68d251895a12ecaab90f73b3745d910ba36e54fff0b76e6422ee9d",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/cmake/dependencies.cmake": "6e6b24b5499d65ef7440770ba9dd73c6733cee0a322558df23fccb7c350d8163",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/include/easyfly_ground_segmentation/ground_candidate_selection.hpp": "03acc16e34a788e815824f7af10f61d0deb8795825250f62f1b26178bc212101",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/include/easyfly_ground_segmentation/ground_fitting.hpp": "3dd32dabded71645ff79f93a103937459930b16f37f6443ff84a03b7e56815a3",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/include/easyfly_ground_segmentation/ground_plane_tracker.hpp": "a8781313b9a0a9df751c7476e075995aa7135d4b4119e1fa2090f5cf2ea4f0af",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/include/easyfly_ground_segmentation/ground_plane_transform.hpp": "9fdda6e2424b58d5dde062cd1183ad0eb342b36c5076db5ac659ab8f5e1990f0",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/include/easyfly_ground_segmentation/ground_spatial_support.hpp": "718e6b2c00dc1bd37f293f24e408e6c61745f1b9207621fdba8c740a621b493d",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/package.xml": "f078033a264ea63be5069c103d559d70a162680445fe7644a9c0cf2f321bde58",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/src/ground_fitting.cpp": "3f9191b0de0e9c91c7be335ab5caf4678285e35e79ee2c0351e0a37163491265",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/test/test_ground_candidate_selection.cpp": "a8a3d19634a9a97fb295e9bc26300c7e641c67ab995efc47309149e94b098ce7",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/test/test_ground_fitting.cpp": "b991d387cde4091ac936515c478b2b6d8895c86cac3556175246d27d04aced2c",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/test/test_ground_plane_tracker.cpp": "d20fc26307ab701d8b9536373f8f2ec44a0756ef40f69b6828f4d055268ddc2f",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/test/test_ground_plane_transform.cpp": "5a259017a65c8ec5a3ad36295f07984eafb3ce2c72352e137e4fffcf10dc38f3",
+      "src/algorithms/fusion_mapping/easyfly_ground_segmentation/test/test_ground_spatial_support.cpp": "709ce5da527b58724bfaefb7c765594d37d1e9d428ace27e60589121f6fd0af8",
+      "src/perception/p4_fusion/easyfly_semantic_map/CMakeLists.txt": "21032fefa188192eca45444e3a02d38e3d20231848b54397ad82a54a6392758a",
+      "src/perception/p4_fusion/easyfly_semantic_map/README-classification.md": "e03ef3c6fd4f69ead85e08edc76774ea1446299c1e51869a952a08174b920c6a",
+      "src/perception/p4_fusion/easyfly_semantic_map/README-ground.md": "34632e7376468a644ecc3064f53d6c5f7014cee927a116c8401fdebc49870a61",
+      "src/perception/p4_fusion/easyfly_semantic_map/config/semantic_map.yaml": "2e1dbecf2e284846be85ffd14810f865df2a635fd07e223d39cbe464c95dd603",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/__init__.py": "f4be4f2a5a9901f51a07623b3e2ef9f0ab67950ca34a5e29b258f27e80771409",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/core.py": "1e8032fb0c148c784567e29ceb3c12d64c8ce7cc2bcf9a0c526de9dcf2f8c5f4",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/node.py": "48315fc55b8337a472cf6b434ac98f469e2e87f79ca255f5c877647b9309aa20",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/dynamic_obstacle_tracker.hpp": "c1056ebb32ec2e1c6ce285c351d4268554966cd3202c353706ec492268b19844",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/grid_inflation.hpp": "fb706cdc747c3ab78d835ab3c7356d060fafc35b4a145b9fdd4e6df98958150a",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_candidate_selection.hpp": "c4e41a34266c740e877466b40db56897157745b9a694e994216d5e3228822fd0",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp": "c3684931cd837e72431f0b1b3bcf17110f23cd9e9ec9900012b1396a661afa70",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_transform.hpp": "5131fe153ae768ae14feaa014b6607e9f17f45fe7f17792dc00ea18bcb81b01f",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp": "c988c678291f6e0760fd1907ceba3a94e7b56a6382bb7e322c098b41537d57f1",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/map_validity.hpp": "6f3a7398559af5ba7c30197fbf7b0bd74d64ac04595d9b53c69bcc82af3c050f",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp": "eeea6dea60b9265f35ece6ad2066e19cd6fb1c4f2920a6837946cf3ee4b4e993",
+      "src/perception/p4_fusion/easyfly_semantic_map/launch/classification.launch.py": "4a553d7a5ac14dd4dc229f028dff54335ed73f56e720cc10904a1ef72540c438",
+      "src/perception/p4_fusion/easyfly_semantic_map/launch/semantic_map.launch.py": "d09621c35edc720c18a42a1b1ab13c00db179d59fdaa9340bb7243cc43fb24da",
+      "src/perception/p4_fusion/easyfly_semantic_map/package.xml": "3fbf1c2023adf317b54541ec88926bc14c66c9e95d5d35c6c49799ed00f95f5b",
+      "src/perception/p4_fusion/easyfly_semantic_map/scripts/obstacle_classifier": "7c4da9255f6b804e502c26582fe8fdaa6b7c42b7b86c34e0d85236c6640e278a",
+      "src/perception/p4_fusion/easyfly_semantic_map/scripts/semantic_shutdown_capture.py": "bd646635b7c0e255b91a18ce5ba56b7ddaef0a0abe06c5714596be57c6716250",
+      "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp": "c49c11f33733e63b84ccf7d14b0a4dcf488d113af4fe8756300ef79045322de3",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/capture_fixture.cpp": "fe7ac81565accc2d62c1d9a43dce6ceea27b73bcd01aad4901382ead08daca44",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_capture.py": "a343ddbf9fc15ca0a99c8ee52667f20d7ae8096bdcdebece137aac64acbb66a0",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_classification.py": "e38164142f13efd16f1b9fb2e8e961f54c707bee655ffdfb6b2cef0e633aacca",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_classification_ros.py": "80078cd27b5ce2c5cdc8061128950fde4628d6ae5543b3657c2cc2aed8738230",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_dynamic_obstacle_tracker.cpp": "e8b3e1e25aa4b826f4588fddf00272e9ed9d23b92572ced183d34a1eefb802db",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_grid_inflation.cpp": "3fc69c388a4b6799255a797c08da91a3ab06add1941400b7c60c559cf3113650",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_pipeline_ros.py": "921d2b3e1c650e2af5dea4abb584f1a6993991e0099a7cb06274312d28cc05ec",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_map_validity.cpp": "cb264dd9a16082f8751de52ee09f911bbd33f19af7157b99c423db33dc81ec81",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid.cpp": "c1adfa687669b22139f0dcb567e8d20b57acef75c33545cefa9d20971164eca2",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid_ros.py": "c01489e6ecefe8d9d462cd5db97809168d8398177006f4a421daf09ff23864d4",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_shutdown_ros.py": "790d634286fef9139dc11a2782093bf239f3fbb7e83bb179694136647d31c861",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_shutdown_stress_ros.py": "27bdc79843af2c8e2ce1b4d367d4dad9728f7bda8821631c657cf57ceb2164d4",
+      "tools/algorithms/ground_consumer/CMakeLists.txt": "88131e9eefe5a22154e801f35fdda029a5e49b533c58c34ff8d22f8e41f96301",
+      "tools/algorithms/ground_consumer/main.cpp": "91f5ff02e6905e34c1b38bf027fe2687252957c3d11e260a3f9c14b33beb9a79",
+      "tools/algorithms/probes/ground_probe.cpp": "d9cdab65f07b8bd5acc1aaa771d5e12725c9333c2b797c66fab63bf840c82aaf",
+      "tools/algorithms/verify_api_install.py": "045ceb5e553038460bcafde9598cf774cb3b4ccb9fe86ceec950b53c08da61d9",
+      "tools/algorithms/verify_ground_install.py": "701b1e166c2e1e2e19e5306274e3bcc9ecb40422780828eaf81d75e3ca65004d"
+    },
+    "commands": [
+      {
+        "name": "legacy-configure",
+        "command": [
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/legacy-consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/legacy-consumer-build"
+        ],
+        "returncode": 0,
+        "log_sha256": "e4add45ad86b3721aac0b56023da93c20c424cfff36bc4ccb339d46849e36c2b"
+      },
+      {
+        "name": "legacy-build",
+        "command": [
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/legacy-consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "51faad607f77053ba304b366b0d24d137a3905a73dfa332b2e8c262d39629785"
+      },
+      {
+        "name": "legacy-trace",
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/legacy-consumer-build/legacy_ground"
+        ],
+        "returncode": 0,
+        "log_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745"
+      },
+      {
+        "name": "legacy-ground-ros",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "python3",
+          "-m",
+          "pytest",
+          "-q",
+          "/home/jia/easyfly_ws/src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_pipeline_ros.py",
+          "--junitxml=/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/legacy-ground-ros.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "4f92fa82ce02ebf2e969b975823f081116d1b02b99797d6ebc507f90821092e9"
+      },
+      {
+        "name": "core-closure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "colcon",
+          "list",
+          "--base-paths",
+          "src",
+          "--packages-up-to",
+          "easyfly_ground_segmentation",
+          "--names-only"
+        ],
+        "returncode": 0,
+        "log_sha256": "a2e3fa94ee4155812e81082e0a15ca7176a08a3a100ef7638f32d3549c43eee7"
+      },
+      {
+        "name": "symlink-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "colcon",
+          "--log-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/log",
+          "build",
+          "--base-paths",
+          "src",
+          "--build-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/build",
+          "--install-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "--packages-select",
+          "easyfly_ground_segmentation",
+          "easyfly_semantic_map",
+          "--allow-overriding",
+          "easyfly_ground_segmentation",
+          "easyfly_semantic_map",
+          "--executor",
+          "sequential",
+          "--symlink-install",
+          "--cmake-args",
+          "-DBUILD_TESTING=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "e1437907c101175610bfeaff0f155e38e0414b3d6c3d9043febe82abd106174f"
+      },
+      {
+        "name": "symlink-core-tests",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/build/easyfly_ground_segmentation",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/easyfly_ground_segmentation.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "5f3a7d8d7d8283dcecf54673455b2128d4fdd5758cb638b41b55a26c15cba282"
+      },
+      {
+        "name": "symlink-functional-tests",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/build/easyfly_semantic_map",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_(ground_pipeline_ros|observed_grid_ros|classification(_ros)?|map_validity|grid_inflation|observed_grid|dynamic_obstacle_tracker)$",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/easyfly_semantic_map.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "80c52cf6c9ee0fd16d9aa9a4d819045c962f750457ad31f44df5792ba271eb5f"
+      },
+      {
+        "name": "symlink-old-headers-configure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/old-headers-consumer-build",
+          "-DEASYFLY_CHECK_LEGACY=ON",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "5d202f7619556d31a3d3357781b9b69f31901fc6953b70fd90108201926a1324"
+      },
+      {
+        "name": "symlink-old-headers-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/old-headers-consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "d5af10458d2c368c1397ef91c8f14b5bb3a64440c86d263fbaf371a07c2eed6b"
+      },
+      {
+        "name": "symlink-old-headers-test",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/old-headers-consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/old-headers.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "1913d150899aa96dc3b44e96055cb35284863093d9bd3babfda2d7d68b8ccbc7"
+      },
+      {
+        "name": "symlink-consumer-configure",
+        "command": [
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-build",
+          "-DCMAKE_PREFIX_PATH=/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install/easyfly_ground_segmentation",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "df07e1e32cd3780d9d3f03e2b078bd41d87adcae8462e984a91626c08a09afd7"
+      },
+      {
+        "name": "symlink-consumer-build",
+        "command": [
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "8305313b38bbe3a84558c5f047bf7c26ad3a6b5f31212e89452c398e07ab94c5"
+      },
+      {
+        "name": "symlink-consumer-test",
+        "command": [
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "67ef2e457c106017265a04abcc693aaaedc4c1aedfa1c2826c2a2a2b329523ae"
+      },
+      {
+        "name": "symlink-differential",
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-build/ground_probe"
+        ],
+        "returncode": 0,
+        "log_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745"
+      },
+      {
+        "name": "symlink-libraries",
+        "command": [
+          "ldd",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/symlink/consumer-build/ground_consumer"
+        ],
+        "returncode": 0,
+        "log_sha256": "fb860352513dd01792fe85d5505c78646e85c758d9c97f42e7001041ae837077"
+      },
+      {
+        "name": "copy-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "colcon",
+          "--log-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/log",
+          "build",
+          "--base-paths",
+          "src",
+          "--build-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/build",
+          "--install-base",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "--packages-select",
+          "easyfly_ground_segmentation",
+          "easyfly_semantic_map",
+          "--allow-overriding",
+          "easyfly_ground_segmentation",
+          "easyfly_semantic_map",
+          "--executor",
+          "sequential",
+          "--cmake-args",
+          "-DBUILD_TESTING=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "c77eec835328e3291dde244d54921fbdc2cfe6c0e7dbf8926fa085344cc66cf0"
+      },
+      {
+        "name": "copy-core-tests",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/build/easyfly_ground_segmentation",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/easyfly_ground_segmentation.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "ffc326a2b4ad8f89ae0f686fd524975ef788204aabef846e2a6ee2623c9496ea"
+      },
+      {
+        "name": "copy-functional-tests",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/build/easyfly_semantic_map",
+          "--output-on-failure",
+          "-j1",
+          "-R",
+          "^test_(ground_pipeline_ros|observed_grid_ros|classification(_ros)?|map_validity|grid_inflation|observed_grid|dynamic_obstacle_tracker)$",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/easyfly_semantic_map.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "0c5cc31ece1dc3a5b9fbd30beb4d57a8f2278b20c2a24ea04a49c6514906d6a6"
+      },
+      {
+        "name": "copy-old-headers-configure",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/old-headers-consumer-build",
+          "-DEASYFLY_CHECK_LEGACY=ON",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "02831d9415b2c109dd1b994461582c32b9c9700d7b60cc0a1f049bd80749c274"
+      },
+      {
+        "name": "copy-old-headers-build",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/old-headers-consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "d7026d06c235afee55621925372b8a229f88cb5d73e326bc6b4104aca21d6dd3"
+      },
+      {
+        "name": "copy-old-headers-test",
+        "command": [
+          "bash",
+          "--noprofile",
+          "--norc",
+          "-c",
+          "source /opt/ros/humble/setup.bash && source \"$1/install/setup.bash\" && source \"$1/artifacts/scene-s3-20261016/normal/install/local_setup.bash\" && source \"$1/artifacts/algorithms/alg6-20261018/initial/install/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && source \"$1/local_setup.bash\" && shift && exec \"$@\"",
+          "bash",
+          "/home/jia/easyfly_ws",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/install",
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/old-headers-consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/old-headers.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "ed51eb28e94797734d0b9adc3ccce4c75605b44fef70f66c8d4212b867396fe5"
+      },
+      {
+        "name": "copy-consumer-configure",
+        "command": [
+          "cmake",
+          "-S",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-source",
+          "-B",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-build",
+          "-DCMAKE_PREFIX_PATH=/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/relocated-install/easyfly_ground_segmentation",
+          "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
+        ],
+        "returncode": 0,
+        "log_sha256": "1e77d8309351da8977a99784f43158491aa531b4933f8bda474a97ac8ad4cd0f"
+      },
+      {
+        "name": "copy-consumer-build",
+        "command": [
+          "cmake",
+          "--build",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-build",
+          "--parallel",
+          "2"
+        ],
+        "returncode": 0,
+        "log_sha256": "e843aba8822d68bdef6205954bf7c21b51108d3e12575d989f2716aa7844e9a3"
+      },
+      {
+        "name": "copy-consumer-test",
+        "command": [
+          "ctest",
+          "--test-dir",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-build",
+          "--output-on-failure",
+          "--output-junit",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer.xml"
+        ],
+        "returncode": 0,
+        "log_sha256": "9fb48fe87942d3c0b64fbbee88861209c514df1063c29503265f300f61707a08"
+      },
+      {
+        "name": "copy-differential",
+        "command": [
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-build/ground_probe"
+        ],
+        "returncode": 0,
+        "log_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745"
+      },
+      {
+        "name": "copy-libraries",
+        "command": [
+          "ldd",
+          "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/consumer-build/ground_consumer"
+        ],
+        "returncode": 0,
+        "log_sha256": "cd2c8ccded2cef046b55e332da4ac867b0fe9476421a327958f65c0b00def3a0"
+      }
+    ],
+    "modes": [
+      {
+        "mode": "symlink",
+        "consumer_prefix": "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/initial/install",
+        "differential_identical": true,
+        "trace_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745",
+        "fitting_frames": 32,
+        "tracker_steps": 240,
+        "real_ground_lifecycle_and_existing_ros_regressions_passed": true,
+        "installed_old_headers_and_pure_consumer_passed": true
+      },
+      {
+        "mode": "copy",
+        "consumer_prefix": "/home/jia/easyfly_ws/artifacts/algorithms/alg7-1-20261018/matrix-v2/copy/relocated-install",
+        "differential_identical": true,
+        "trace_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745",
+        "fitting_frames": 32,
+        "tracker_steps": 240,
+        "real_ground_lifecycle_and_existing_ros_regressions_passed": true,
+        "installed_old_headers_and_pure_consumer_passed": true
+      }
+    ],
+    "baseline_source_commit": "644183b783a687d3c3d610fe5c0293015c52a672",
+    "baseline_snapshot_sha256": "79b35ba3afed6e6b220f787e00adcbf89d720e7d0b20974ad027b16ee48e2e68",
+    "passed": true
+  },
+  "test_counts": {
+    "symlink": {
+      "packages": {
+        "easyfly_ground_segmentation": {
+          "test_ground_candidate_selection.gtest.xml": {
+            "cases": 4,
+            "sha256": "daeb8844d21edba7e47b2847a584fd23f1806674b260318b8c4042548e6a2962"
+          },
+          "test_ground_fitting.gtest.xml": {
+            "cases": 3,
+            "sha256": "eb45201a0e8bcbd6a03329010b5dbe000166af1b49c4421d0fec63ca9404c9db"
+          },
+          "test_ground_plane_tracker.gtest.xml": {
+            "cases": 18,
+            "sha256": "956361c5cf3980a791d5e5b88f085e02ba08afc2a706a2b0faa62f67bc9f2ab4"
+          },
+          "test_ground_plane_transform.gtest.xml": {
+            "cases": 3,
+            "sha256": "2a90fa16cbca01be810f1e97535c91cb58c8c8f756ce5e253eb235a302916165"
+          },
+          "test_ground_spatial_support.gtest.xml": {
+            "cases": 8,
+            "sha256": "ae54d1ddaf6876e7c473c097764c8a0983f2156e33be8675a9138322bad32ce2"
+          }
+        },
+        "easyfly_semantic_map": {
+          "test_classification.xunit.xml": {
+            "cases": 4,
+            "sha256": "70b4cc7eef94fbb71d5d0f48a68985a56b7fe7c7dd6ce9945ceeccc987e4f7c3"
+          },
+          "test_classification_ros.xunit.xml": {
+            "cases": 2,
+            "sha256": "12a69a7f7bbc830821460b5e25ea2e767e543e6dd61a0e723698f17c637e1e26"
+          },
+          "test_dynamic_obstacle_tracker.gtest.xml": {
+            "cases": 34,
+            "sha256": "e775d2cfcff4e26eab98ab5bde640a78bafc43ec655128d4b6321921e50c4f2a"
+          },
+          "test_grid_inflation.gtest.xml": {
+            "cases": 2,
+            "sha256": "d370fe7a198640f6a022c439b7d4bb2a796ef87babf32d46479f8604f5798fd8"
+          },
+          "test_ground_pipeline_ros.xunit.xml": {
+            "cases": 1,
+            "sha256": "813b4c3c2ffbb8be76ff6353606754b707b822ccdcb04f74546907275559712e"
+          },
+          "test_map_validity.gtest.xml": {
+            "cases": 2,
+            "sha256": "846dd273d68bffc957f5777ea9a5d71d99ae0ffa2357a049cd37a440130e213d"
+          },
+          "test_observed_grid.gtest.xml": {
+            "cases": 9,
+            "sha256": "b8fd642406d0ddefec87c55d57cbf4337fec9bd02084dae955002cdc1dc15fd4"
+          },
+          "test_observed_grid_ros.xunit.xml": {
+            "cases": 7,
+            "sha256": "a89939fe81541904833f7aac80172f184357cc65036e20dd7b8ffc51406404d1"
+          }
+        }
+      },
+      "package_cases": 97,
+      "installed_consumer_checks": 2,
+      "total_cases_and_consumers": 99,
+      "ctest_registrations": 15
+    },
+    "copy": {
+      "packages": {
+        "easyfly_ground_segmentation": {
+          "test_ground_candidate_selection.gtest.xml": {
+            "cases": 4,
+            "sha256": "5ab770398c17b690234f9469d2c7623a5e7f9d68006b3b490f7deb93a24d8f1b"
+          },
+          "test_ground_fitting.gtest.xml": {
+            "cases": 3,
+            "sha256": "224cfd4ef0a88597220f4b96d2bdfa1d3b94c9dceea9f1eb445b56354848e1e9"
+          },
+          "test_ground_plane_tracker.gtest.xml": {
+            "cases": 18,
+            "sha256": "8ce56a9ba97a49cd7b82d21c97680bd2f36d1f07428843ddddd699ad17192a45"
+          },
+          "test_ground_plane_transform.gtest.xml": {
+            "cases": 3,
+            "sha256": "33d1ded584cdab89249d91f194ce37c57e37ff646252abee5059717c70a414bc"
+          },
+          "test_ground_spatial_support.gtest.xml": {
+            "cases": 8,
+            "sha256": "1030fae3a799c5b3121c0410df678aed2591725f79d04dca9725f88a9ed3c681"
+          }
+        },
+        "easyfly_semantic_map": {
+          "test_classification.xunit.xml": {
+            "cases": 4,
+            "sha256": "96d3175d7a60a70789e254bef1875f395fa05720cf50c5f81d6dc5973d59a935"
+          },
+          "test_classification_ros.xunit.xml": {
+            "cases": 2,
+            "sha256": "cddc222fac471e1fcfdcd8b6b9b072af4ff47564bed8839897e9b73db2c8698f"
+          },
+          "test_dynamic_obstacle_tracker.gtest.xml": {
+            "cases": 34,
+            "sha256": "c16629707f18ebff272030a96a7de7f01932fe71e258e3b258b6d30d76a8ca79"
+          },
+          "test_grid_inflation.gtest.xml": {
+            "cases": 2,
+            "sha256": "4f6c5bf24274d423342488b6fed839db59b28173773a335dabeb2813edadb190"
+          },
+          "test_ground_pipeline_ros.xunit.xml": {
+            "cases": 1,
+            "sha256": "cb41e5b5a58d2de7826c64ed319d2dab587330d5a90dc473c596d343a42631d8"
+          },
+          "test_map_validity.gtest.xml": {
+            "cases": 2,
+            "sha256": "18002725ac8e8e8631eabe3f08da44f3fe53c6f120ca0eb49056229933d41991"
+          },
+          "test_observed_grid.gtest.xml": {
+            "cases": 9,
+            "sha256": "f7e62e1c2f8757dc7189fd566913283935757d03cef496d45e18b7b2ed94f27f"
+          },
+          "test_observed_grid_ros.xunit.xml": {
+            "cases": 7,
+            "sha256": "c3a2773dbdb795547bfd35dc87f0f5d41b653a60e84a83e2adc17216753472b6"
+          }
+        }
+      },
+      "package_cases": 97,
+      "installed_consumer_checks": 2,
+      "total_cases_and_consumers": 99,
+      "ctest_registrations": 15
+    }
+  },
+  "legacy_node_lifecycle_test_cases": 1,
+  "source_audit": {
+    "four_helper_bodies_and_original_tests_identical_after_namespace_migration": true,
+    "fitting_arithmetic_and_pcl_call_order_preserved": true,
+    "node_platform_body_preserved_after_restoring_moved_calls": true,
+    "fit_input_denominator_invariant": "ground_cloud is a point-for-point transform of the complete original cloud; sizes are equal.",
+    "unchanged_other_semantic_headers": [
+      "grid_inflation.hpp",
+      "observed_grid.hpp",
+      "map_validity.hpp",
+      "dynamic_obstacle_tracker.hpp"
+    ],
+    "prior_phase_protected_source_counts": {
+      "ALG-1": 13,
+      "ALG-2": 36,
+      "ALG-3": 69,
+      "ALG-4": 29,
+      "ALG-5": 146
+    },
+    "alg6_sources": {
+      "total": 81,
+      "unchanged": 69,
+      "planned_semantic_changes_or_test_moves": [
+        "src/perception/p4_fusion/easyfly_semantic_map/CMakeLists.txt",
+        "src/perception/p4_fusion/easyfly_semantic_map/README-ground.md",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_candidate_selection.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_transform.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/package.xml",
+        "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_candidate_selection.cpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_plane_tracker.cpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_plane_transform.cpp",
+        "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_spatial_support.cpp"
+      ]
+    },
+    "alg0_frozen_files": {
+      "unchanged": 383,
+      "modified": 69,
+      "moved_or_deleted": 13
+    },
+    "colcon_package_count": 89
+  },
+  "baseline_input_snapshot": {
+    "source_commit": "644183b783a687d3c3d610fe5c0293015c52a672",
+    "files": {
+      "src/perception/p4_fusion/easyfly_semantic_map/README-ground.md": "ab79fd4f7322c20a32be26ede42409bc5b21d8edab4a0c6ab6abffc756e65489",
+      "src/perception/p4_fusion/easyfly_semantic_map/package.xml": "4cc99f159f8dfd1e51dcf69b901da9b94fd8f65f132d4391f88f37dac01dca61",
+      "src/perception/p4_fusion/easyfly_semantic_map/README-classification.md": "e03ef3c6fd4f69ead85e08edc76774ea1446299c1e51869a952a08174b920c6a",
+      "src/perception/p4_fusion/easyfly_semantic_map/CMakeLists.txt": "b07814b97e5fd5e9b576f26c232a07fb72d84a1c0638feb8870f69b569c2acd2",
+      "src/perception/p4_fusion/easyfly_semantic_map/launch/semantic_map.launch.py": "d09621c35edc720c18a42a1b1ab13c00db179d59fdaa9340bb7243cc43fb24da",
+      "src/perception/p4_fusion/easyfly_semantic_map/launch/classification.launch.py": "4a553d7a5ac14dd4dc229f028dff54335ed73f56e720cc10904a1ef72540c438",
+      "src/perception/p4_fusion/easyfly_semantic_map/src/semantic_map_node.cpp": "d431e0f60300419c0f997f0bb91fc4d02d7a0547732ad5dd9a4a5140692846cd",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/grid_inflation.hpp": "fb706cdc747c3ab78d835ab3c7356d060fafc35b4a145b9fdd4e6df98958150a",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_tracker.hpp": "6df42aa8c1c88c3226bac75a2403a10f5b54ad9c690929a8e59d1e312ecd811a",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_candidate_selection.hpp": "933b523fe64046ae527db05691010b1066355b96bd900b8b7948908631171302",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_plane_transform.hpp": "c36646b50d9eac07feabd2b4717c664772ade060d3551802a4d06f2da49b19df",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/observed_grid.hpp": "eeea6dea60b9265f35ece6ad2066e19cd6fb1c4f2920a6837946cf3ee4b4e993",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/map_validity.hpp": "6f3a7398559af5ba7c30197fbf7b0bd74d64ac04595d9b53c69bcc82af3c050f",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/ground_spatial_support.hpp": "af224df373d5c94e31684a0a15094463b1084cef1e240ea2643fcd8697383d7d",
+      "src/perception/p4_fusion/easyfly_semantic_map/include/easyfly_semantic_map/dynamic_obstacle_tracker.hpp": "c1056ebb32ec2e1c6ce285c351d4268554966cd3202c353706ec492268b19844",
+      "src/perception/p4_fusion/easyfly_semantic_map/scripts/obstacle_classifier": "7c4da9255f6b804e502c26582fe8fdaa6b7c42b7b86c34e0d85236c6640e278a",
+      "src/perception/p4_fusion/easyfly_semantic_map/scripts/semantic_shutdown_capture.py": "bd646635b7c0e255b91a18ce5ba56b7ddaef0a0abe06c5714596be57c6716250",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_shutdown_ros.py": "790d634286fef9139dc11a2782093bf239f3fbb7e83bb179694136647d31c861",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_capture.py": "a343ddbf9fc15ca0a99c8ee52667f20d7ae8096bdcdebece137aac64acbb66a0",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_plane_tracker.cpp": "35406ddde8081025109859028fc57ff98a0d2a8862022c409fcaf852c3d70dc1",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_shutdown_stress_ros.py": "27bdc79843af2c8e2ce1b4d367d4dad9728f7bda8821631c657cf57ceb2164d4",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/capture_fixture.cpp": "fe7ac81565accc2d62c1d9a43dce6ceea27b73bcd01aad4901382ead08daca44",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_classification.py": "e38164142f13efd16f1b9fb2e8e961f54c707bee655ffdfb6b2cef0e633aacca",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid.cpp": "c1adfa687669b22139f0dcb567e8d20b57acef75c33545cefa9d20971164eca2",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_candidate_selection.cpp": "4b597b08e699e33854ed54d8278a9fe40a36939a4c7aa088d0cc2518b5abc88e",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_dynamic_obstacle_tracker.cpp": "e8b3e1e25aa4b826f4588fddf00272e9ed9d23b92572ced183d34a1eefb802db",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_observed_grid_ros.py": "c01489e6ecefe8d9d462cd5db97809168d8398177006f4a421daf09ff23864d4",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_plane_transform.cpp": "a9df6e0e9e97d3212bf4f208b9dbacf8a1c10cd1f9f1e5ad994423ff9df11489",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_classification_ros.py": "80078cd27b5ce2c5cdc8061128950fde4628d6ae5543b3657c2cc2aed8738230",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_grid_inflation.cpp": "3fc69c388a4b6799255a797c08da91a3ab06add1941400b7c60c559cf3113650",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_map_validity.cpp": "cb264dd9a16082f8751de52ee09f911bbd33f19af7157b99c423db33dc81ec81",
+      "src/perception/p4_fusion/easyfly_semantic_map/test/test_ground_spatial_support.cpp": "6c2d0d9f84183b7c1a6da2fbf42c113de548bf4236d752934accd682372d7ee1",
+      "src/perception/p4_fusion/easyfly_semantic_map/config/semantic_map.yaml": "2e1dbecf2e284846be85ffd14810f865df2a635fd07e223d39cbe464c95dd603",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/core.py": "1e8032fb0c148c784567e29ceb3c12d64c8ce7cc2bcf9a0c526de9dcf2f8c5f4",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/node.py": "48315fc55b8337a472cf6b434ac98f469e2e87f79ca255f5c877647b9309aa20",
+      "src/perception/p4_fusion/easyfly_semantic_map/easyfly_obstacle_classification/__init__.py": "f4be4f2a5a9901f51a07623b3e2ef9f0ab67950ca34a5e29b258f27e80771409"
+    },
+    "legacy_node_binary": {
+      "path": "artifacts/algorithms/alg6-20261018/initial/install/easyfly_semantic_map/lib/libeasyfly_semantic_map_nodes.so",
+      "resolved": "/home/jia/easyfly_ws/artifacts/algorithms/alg6-20261018/initial/build/easyfly_semantic_map/libeasyfly_semantic_map_nodes.so",
+      "sha256": "f403581a52cb27e203b2da203b2bc4240565b18c0902b88c53ed00c9b5d76d70"
+    }
+  },
+  "differential": {
+    "fit_frames": 32,
+    "tracker_steps": 240,
+    "install_modes": 2,
+    "trace_sha256": "5c8305ad5c12660c0012adecb7eb40456addd179d5d2f395f4ce18ade68f5745",
+    "byte_identical": true
+  },
+  "intentional_algorithm_enhancements": [],
+  "retained_platform_contracts": [
+    "Vehicle state sampling, steady receipt age and state/pose admission stay in the node.",
+    "Ground-basis TF query/freshness/continuity and reset/map invalidation stay in the node; only transform arithmetic moves.",
+    "Full-frame denominator and point-for-point ground-cloud transform are preserved.",
+    "Trusted-plane current-frame low-obstacle classification, dynamic geometry, occupancy persistence, safety margins and services stay in the functional package.",
+    "Formal YAML, raw parameter/scene input rules, shutdown and invalid-map coalescing behavior are unchanged."
+  ],
+  "limitations": [
+    "Uses installed ROS/main/scene/ALG-6 underlays; not a clean rebuild of the full workspace.",
+    "Pure core depends on host Eigen/PCL; system RANSAC is wrapped, not reimplemented or vendored.",
+    "ROS tests are synthetic cloud/TF/state and software lifecycle tests, not actual sensor/landing/flight qualification.",
+    "Relocation covers installed CMake exports/native consumer loading, not all generated colcon shell scripts.",
+    "Legacy public headers support source rebuilding, not old binary ABI.",
+    "ALG0-B02/B03 and the pre-existing semantic shutdown/stress issue remain unresolved; those tests were excluded."
+  ],
+  "evidence_root": "artifacts/algorithms/alg7-1-20261018",
+  "static_checks": {
+    "python_syntax": true,
+    "package_xml": true,
+    "git_diff_check": true
+  }
+}

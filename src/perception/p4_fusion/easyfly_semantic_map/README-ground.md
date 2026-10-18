@@ -68,3 +68,10 @@ local 3D planner retain overhead surfaces. Invalid ground/current-cloud evidence
 or vehicle height above `limit - 0.4m` invalidates the grid. Managed scenes must
 declare a measured recommended region with `max.z + 0.6m <= limit`; arbitrary
 mission heights outside that region require independent qualification.
+
+## ALG-7.1 算法归属
+
+候选筛选/PCL RANSAC、空间支撑、可信平面状态及坐标变换数学迁入
+`easyfly_ground_segmentation`，原四个头仅转发别名；完整当前帧和车辆/TF证据由本包显式传入。
+节点继续接纳车辆状态、steady接收年龄、TF时效/参考系跳变，管理地图失效、低障碍分类、栅格和服务。
+候选可用不代表地面可信，分类仍使用可信平面；原阈值和正式 YAML 的空间支撑选择保持。

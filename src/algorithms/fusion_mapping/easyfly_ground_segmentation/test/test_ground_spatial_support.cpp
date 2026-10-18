@@ -15,9 +15,9 @@
 #include <gtest/gtest.h>
 #include <limits>
 #include <vector>
-#include "easyfly_semantic_map/ground_spatial_support.hpp"
+#include "easyfly_ground_segmentation/ground_spatial_support.hpp"
 
-namespace easyfly_semantic_map
+namespace easyfly::ground
 {
 namespace
 {
@@ -171,4 +171,4 @@ TEST(GroundSpatialSupport, TrustedPlaneDoesNotRemoveLowObstacle)
   EXPECT_TRUE(tracker.isGroundPoint(1.5, 0, 0.0, 0.12));
 }
 }  // namespace
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::ground

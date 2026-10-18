@@ -20,10 +20,10 @@
 
 #include <limits>
 
-#include "easyfly_semantic_map/ground_candidate_selection.hpp"
-#include "easyfly_semantic_map/ground_plane_tracker.hpp"
+#include "easyfly_ground_segmentation/ground_candidate_selection.hpp"
+#include "easyfly_ground_segmentation/ground_plane_tracker.hpp"
 
-namespace easyfly_semantic_map
+namespace easyfly::ground
 {
 namespace
 {
@@ -111,4 +111,4 @@ TEST(GroundCandidateSelection, PhysicalClearanceAndFiniteInputsRemainRequired)
 }
 
 }  // namespace
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::ground

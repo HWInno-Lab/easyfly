@@ -2,8 +2,8 @@
   "schema_version": 1,
   "baseline_inventory": "migration-inventory.json",
   "baseline_inventory_is_historical": true,
-  "latest_completed_phase": "ALG-6",
-  "next_phase": "ALG-7.1",
+  "latest_completed_phase": "ALG-7.1",
+  "next_phase": "ALG-7.2",
   "implemented_api_packages": [
     "easyfly_tracking_api",
     "easyfly_grid_planner_api",
@@ -129,6 +129,18 @@
       "consumer": "easyfly_semantic_map",
       "normal_trace_equivalent_to_baseline": true,
       "platform_time_and_message_admission_preserved": true
+    },
+    {
+      "id": "ground",
+      "package": "easyfly_ground_segmentation",
+      "path": "src/algorithms/fusion_mapping/easyfly_ground_segmentation",
+      "core_namespace": "easyfly::ground",
+      "consumer": "easyfly_semantic_map",
+      "legacy_headers": "forwarding includes and using aliases only",
+      "normal_trace_equivalent_to_baseline": true,
+      "complete_pcl_candidate_fitting_extracted": true,
+      "explicit_vehicle_and_transform_evidence": true,
+      "platform_admission_map_and_flight_behavior_preserved": true
     }
   ],
   "third_party_moves_executed": [
@@ -140,5 +152,5 @@
       "payload_unchanged": true
     }
   ],
-  "details": "alg6-validation.md"
+  "details": "alg7-1-validation.md"
 }

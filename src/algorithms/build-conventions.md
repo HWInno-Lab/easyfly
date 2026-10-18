@@ -13,6 +13,8 @@ ALG-5 新增 detection/single_tracking API 和 YOLO/标志位姿/CSRT 包装。A
 不依赖具体实现；YOLO 私有依赖 ONNX Runtime，通过 PIMPL 隐藏 SDK，单独负责运行库安装。
 ALG-6 新增标准库 C++ easyfly_projection，以及标准库 Python easyfly_projection_py 和
 easyfly_obstacle_association。Python 包由 ament_cmake_python 安装，公开普通模块，不创建空 C++ target。
+ALG-7.1 新增 easyfly_ground_segmentation，导出 SHARED target，公开系统 PCL/Eigen 计算类型，
+不引入 ROS 消息或 TF 查询。地面拟合与模型在算法包，状态/参考系接纳和地图输出在功能包。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -45,6 +47,7 @@ easyfly_obstacle_association。Python 包由 ament_cmake_python 安装，公开�
 | easyfly_projection | easyfly_projection/projection.hpp | easyfly_projection::easyfly_projection |
 | easyfly_projection_py | easyfly_projection_py/core.py | easyfly_projection_py.core（Python） |
 | easyfly_obstacle_association | easyfly_obstacle_association/core.py | easyfly_obstacle_association.core（Python） |
+| easyfly_ground_segmentation | easyfly_ground_segmentation/ground_fitting.hpp | easyfly_ground_segmentation::easyfly_ground_segmentation |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -126,3 +129,7 @@ ALG-6 同时验证普通 C++ target 和 Python 已安装模块：
 [ALG-6 验收](alg6-validation.md)，复验工具 `../../tools/algorithms/verify_fusion_install.py`。
 Python 模块位于平台选择的 site-packages/dist-packages；消费夹具按显式 prefix 发现目录，
 在 python -I 与清理环境下导入，不读取 ROS overlay 或工作区源码路径。普通安装搬迁后重复消费。
+
+ALG-7.1 纯 CMake 消费显式声明 LANGUAGES C CXX，以满足系统 PCL/VTK 的 C/MPI imported target。
+这是本机计算依赖的配置要求，不是 ROS 运行依赖。旧 semantic_map 地面头保留原安装路径，
+通过其导出 include/依赖消费；原四组地面测试已迁入实现包。详见 [ALG-7.1 验收](alg7-1-validation.md)。

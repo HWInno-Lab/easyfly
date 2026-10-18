@@ -16,9 +16,9 @@
 
 #include <cmath>
 
-#include "easyfly_semantic_map/ground_plane_tracker.hpp"
+#include "easyfly_ground_segmentation/ground_plane_tracker.hpp"
 
-namespace easyfly_semantic_map
+namespace easyfly::ground
 {
 namespace
 {
@@ -296,4 +296,4 @@ TEST(GroundPlaneTrackerTest, DisarmedStateAllowsFreshInitializationWithoutGps)
 }
 
 }  // namespace
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::ground

@@ -76,10 +76,11 @@
 #include <easyfly_msgs/msg/uav_state.hpp>
 #include <easyfly_msgs/srv/get_obstacles.hpp>
 
-#include "easyfly_semantic_map/ground_plane_tracker.hpp"
-#include "easyfly_semantic_map/ground_candidate_selection.hpp"
-#include "easyfly_semantic_map/ground_spatial_support.hpp"
-#include "easyfly_semantic_map/ground_plane_transform.hpp"
+#include "easyfly_ground_segmentation/ground_plane_tracker.hpp"
+#include "easyfly_ground_segmentation/ground_candidate_selection.hpp"
+#include "easyfly_ground_segmentation/ground_spatial_support.hpp"
+#include "easyfly_ground_segmentation/ground_plane_transform.hpp"
+#include "easyfly_ground_segmentation/ground_fitting.hpp"
 #include "easyfly_semantic_map/grid_inflation.hpp"
 #include "easyfly_semantic_map/observed_grid.hpp"
 #include "easyfly_semantic_map/map_validity.hpp"
@@ -87,6 +88,18 @@
 
 namespace easyfly_semantic_map
 {
+using easyfly::ground::isGroundFitSample;
+using easyfly::ground::groundSpatialSupport;
+using easyfly::ground::GroundPlaneModel;
+using easyfly::ground::GroundSpatialSupport;
+using easyfly::ground::GroundPlaneCandidate;
+using easyfly::ground::GroundVehiclePose;
+using easyfly::ground::GroundPlaneUpdate;
+using easyfly::ground::GroundPlaneTracker;
+using easyfly::ground::groundPlaneInWorld;
+using easyfly::ground::groundBasisContinuous;
+using easyfly::ground::groundBasisStampFresh;
+
 
 using easyfly_msgs::msg::ObstacleInfo;
 using easyfly_msgs::msg::ObstacleInfoArray;
@@ -1037,8 +1050,6 @@ private:
 
     GroundPlaneUpdate plane_update = GroundPlaneUpdate::kRejected;
     double candidate_ground_z = std::numeric_limits<double>::quiet_NaN();
-    pcl::ModelCoefficients::Ptr coeff(new pcl::ModelCoefficients);
-    pcl::PointIndices::Ptr ground_inliers(new pcl::PointIndices);
     const GroundVehiclePose vehicle_pose = groundVehiclePose(
       vehicle_T.translation().x(), vehicle_T.translation().y(),
       vehicle_T.translation().z());
@@ -1091,99 +1102,26 @@ private:
       ground_vehicle.x = position.x(); ground_vehicle.y = position.y();
       ground_vehicle.z = position.z();
     }
-    if (cloud->size() >= 100) {
-      // ---- 本帧地面候选: RANSAC 只提供候选, 不能直接决定剔除 ----
-      // A ceiling can dominate an indoor frame. Fit only physically possible
-      // below-vehicle samples, while retaining the entire cloud for obstacle
-      // classification and for the tracker's original inlier-ratio denominator.
-      pcl::PointCloud<pcl::PointXYZI>::Ptr ground_fit(new pcl::PointCloud<pcl::PointXYZI>);
-      ground_fit->reserve(cloud->size());
-      for (const auto & point : ground_cloud->points) {
-        if (isGroundFitSample(point.z, ground_vehicle.z, params_.ground_min_clearance)) {
-          ground_fit->push_back(point);
-        }
-      }
-      pcl::SACSegmentation<pcl::PointXYZI> seg;
-      seg.setOptimizeCoefficients(true);
-      seg.setModelType(pcl::SACMODEL_PERPENDICULAR_PLANE);
-      seg.setMethodType(pcl::SAC_RANSAC);
-      seg.setAxis(Eigen::Vector3f(0.0f, 0.0f, 1.0f));
-      seg.setEpsAngle(0.1);        // ±6° 内视为水平 (EKF 姿态噪声量级, 平面本身随帧倾斜)
-      seg.setDistanceThreshold(params_.plane_distance_threshold);
-      seg.setMaxIterations(200);
-      if (ground_fit->size() >= static_cast<std::size_t>(params_.plane_min_inliers)) {
-        seg.setInputCloud(ground_fit);
-        seg.segment(*ground_inliers, *coeff);
-      }
-
-      if (!ground_inliers->indices.empty() && coeff->values.size() >= 4) {
-        GroundPlaneCandidate candidate;
-        const double coeff_norm = std::sqrt(
-          static_cast<double>(coeff->values[0]) * coeff->values[0] +
-          static_cast<double>(coeff->values[1]) * coeff->values[1] +
-          static_cast<double>(coeff->values[2]) * coeff->values[2]);
-        if (std::isfinite(coeff_norm) && coeff_norm >= 1e-9) {
-          candidate.model.normal = {
-            static_cast<double>(coeff->values[0]) / coeff_norm,
-            static_cast<double>(coeff->values[1]) / coeff_norm,
-            static_cast<double>(coeff->values[2]) / coeff_norm};
-          candidate.model.offset = static_cast<double>(coeff->values[3]) / coeff_norm;
-          if (candidate.model.normal[2] < 0.0) {
-            for (double & component : candidate.model.normal) {component = -component;}
-            candidate.model.offset = -candidate.model.offset;
-          }
-          candidate.inlier_count = ground_inliers->indices.size();
-          candidate.sample_count = cloud->size();
-          if (params_.ground_spatial_support_enabled &&
-            static_cast<double>(candidate.inlier_count) / candidate.sample_count <
-            params_.plane_min_inlier_ratio)
-          {
-            // Independently fit a much narrower plane before checking spatial
-            // support. The original 0.12 m fit can include low clutter and
-            // bias the floor; it cannot certify the 0.025 m support residual.
-            pcl::PointIndices strict_inliers;
-            pcl::ModelCoefficients strict_coeff;
-            seg.setDistanceThreshold(0.02);
-            seg.setMaxIterations(300);
-            seg.segment(strict_inliers, strict_coeff);
-            if (strict_coeff.values.size() >= 4) {
-              GroundPlaneCandidate strict_candidate;
-              double length = std::sqrt(
-                strict_coeff.values[0] * strict_coeff.values[0] +
-                strict_coeff.values[1] * strict_coeff.values[1] +
-                strict_coeff.values[2] * strict_coeff.values[2]);
-              if (std::isfinite(length) && length >= 1e-9) {
-                if (strict_coeff.values[2] < 0.0) {length = -length;}
-                strict_candidate.model.normal = {strict_coeff.values[0] / length,
-                  strict_coeff.values[1] / length, strict_coeff.values[2] / length};
-                strict_candidate.model.offset = strict_coeff.values[3] / length;
-                strict_candidate.inlier_count = strict_inliers.indices.size();
-                strict_candidate.sample_count = cloud->size();
-                strict_candidate.spatial_support = groundSpatialSupport(
-                  *ground_cloud, strict_candidate.model, ground_vehicle);
-                if (strict_candidate.spatial_support.qualified()) {
-                  candidate = strict_candidate;
-                  *ground_inliers = strict_inliers;
-                  *coeff = strict_coeff;
-                }
-              }
-            }
-          }
-          candidate_ground_z = candidate.model.zAt(ground_vehicle.x, ground_vehicle.y);
-          plane_update = ground_tracker_.update(candidate, ground_vehicle);
-          if (plane_update == GroundPlaneUpdate::kInitialized) {
-            RCLCPP_INFO(
-              get_logger(),
-              "ground_initialized frame=%s method=%s global_inliers=%zu/%zu spatial_cells=%zu/%zu "
-              "spatial_points=%zu clearance=%.3fm",
-              (params_.ground_model_frame.empty() ?
-              params_.world_frame : params_.ground_model_frame).c_str(),
-              candidate.spatial_support.qualified() ? "spatial_support" : "global_ratio",
-              candidate.inlier_count, candidate.sample_count, candidate.spatial_support.cells,
-              candidate.spatial_support.eligible_cells, candidate.spatial_support.points,
-              ground_vehicle.z - candidate_ground_z);
-          }
-        }
+    const auto fit = easyfly::ground::fitGroundCandidate(
+      *ground_cloud, ground_vehicle,
+      {params_.plane_distance_threshold, params_.plane_min_inliers,
+       params_.ground_min_clearance, params_.ground_spatial_support_enabled,
+       params_.plane_min_inlier_ratio});
+    if (fit.has_candidate) {
+      const auto & candidate = fit.candidate;
+      candidate_ground_z = candidate.model.zAt(ground_vehicle.x, ground_vehicle.y);
+      plane_update = ground_tracker_.update(candidate, ground_vehicle);
+      if (plane_update == GroundPlaneUpdate::kInitialized) {
+        RCLCPP_INFO(
+          get_logger(),
+          "ground_initialized frame=%s method=%s global_inliers=%zu/%zu spatial_cells=%zu/%zu "
+          "spatial_points=%zu clearance=%.3fm",
+          (params_.ground_model_frame.empty() ?
+          params_.world_frame : params_.ground_model_frame).c_str(),
+          candidate.spatial_support.qualified() ? "spatial_support" : "global_ratio",
+          candidate.inlier_count, candidate.sample_count, candidate.spatial_support.cells,
+          candidate.spatial_support.eligible_cells, candidate.spatial_support.points,
+          ground_vehicle.z - candidate_ground_z);
       }
     }
     if (!ground_tracker_.initialized()) {
@@ -1196,7 +1134,7 @@ private:
           "inliers=%zu/%zu (要求 >= %.3f), state_age=%.3fs "
           "connected=%d pose_valid=%d armed=%d, 丢弃当前帧",
           candidate_clearance, params_.ground_min_clearance,
-          ground_inliers->indices.size(),
+          fit.inlier_count,
           cloud->size(), params_.plane_min_inlier_ratio,
           ground_vehicle.state_age_s, ground_vehicle.connected, ground_vehicle.pose_valid,
           ground_vehicle.armed);
@@ -1208,7 +1146,7 @@ private:
       invalidateMap("可信地面模型尚未初始化，清除 semantic_map");
       return;
     }
-    if (ground_inliers->indices.empty() || coeff->values.size() < 4) {
+    if (fit.inlier_count == 0 || fit.coefficient_count < 4) {
       RCLCPP_WARN_THROTTLE(
         get_logger(), *get_clock(), 5000,
         "当前帧未得到有效地面候选, 使用历史可信平面分类");

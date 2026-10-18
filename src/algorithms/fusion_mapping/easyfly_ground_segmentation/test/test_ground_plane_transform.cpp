@@ -13,8 +13,8 @@
 // limitations under the License.
 
 #include <gtest/gtest.h>
-#include "easyfly_semantic_map/ground_plane_transform.hpp"
-namespace easyfly_semantic_map
+#include "easyfly_ground_segmentation/ground_plane_transform.hpp"
+namespace easyfly::ground
 {
 TEST(GroundPlaneTransform, OdomHeightChangeTransportsPlaneWithoutRefitting)
 {
@@ -66,4 +66,4 @@ TEST(GroundPlaneTransform, BasisJumpsAndInvalidTimesFailClosed)
   EXPECT_FALSE(groundBasisStampFresh(10.0, 10.3, 1.0));
   EXPECT_FALSE(groundBasisStampFresh(10.0, 0.0, 1.0));
 }
-}  // namespace easyfly_semantic_map
+}  // namespace easyfly::ground

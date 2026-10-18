@@ -10,6 +10,7 @@
   </description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
+  <depend>easyfly_ground_segmentation</depend>
   <depend>easyfly_obstacle_association</depend>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
