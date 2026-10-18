@@ -933,15 +933,19 @@ def main():
         finally:
             node.destroy_client(client)
 
+    preflight_stationary_since = None
+
     def preflight_ready():
+        nonlocal preflight_stationary_since
         state = latest.get("/uav_state")
         if state is None:
+            preflight_stationary_since = None
             return False
         source = (
             state.header.stamp.sec * 1000000000 + state.header.stamp.nanosec
         )
         age = (node.get_clock().now().nanoseconds - source) * 1e-9
-        return (
+        ready = (
             source > 0
             and node.get_clock().now().nanoseconds > 1000000000
             and -0.2 <= age <= 1.0
@@ -949,13 +953,35 @@ def main():
             and state.connected
             and state.pose_valid
             and state.attitude_valid
+            and state.velocity_valid
             and all(math.isfinite(value) for value in (
                 state.position_x, state.position_y, state.position_z,
                 state.roll, state.pitch, state.yaw,
+                state.velocity_x, state.velocity_y, state.velocity_z,
             ))
+            and math.hypot(state.velocity_x, state.velocity_y, state.velocity_z) <= 0.05
+            and max(abs(state.roll), abs(state.pitch)) <= 0.1
             and not state.armed
             and state.flight_mode <= 7
         )
+        # A newly valid EKF pose can still be settling. Establish the same
+        # stationary prerequisites as ground_sample before its strict sampling;
+        # calibration still rejects any new moving/untrusted sample unchanged.
+        now = time.monotonic()
+        if not ready:
+            preflight_stationary_since = None
+            return False
+        if preflight_stationary_since is None:
+            preflight_stationary_since = now
+        duration = now - preflight_stationary_since
+        if duration < 1.8:
+            return False
+        report["preflight_stationary"] = {
+            "duration_s": duration, "source_ns": source,
+            "velocity_mps": [state.velocity_x, state.velocity_y, state.velocity_z],
+            "armed": state.armed,
+        }
+        return True
 
     def calibrate_ground_reference():
         client = node.create_client(GetEntityState, "/d5_reference/get_entity_state")

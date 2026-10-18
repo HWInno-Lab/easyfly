@@ -9,7 +9,8 @@
     <scene><shadows>false</shadows></scene>
     <include><uri>model://sun</uri></include>
     <include><uri>model://ground_plane</uri></include>
-    <physics type="ode"><max_step_size>0.004</max_step_size><real_time_update_rate>250</real_time_update_rate></physics>
+    <!-- Four native 1000Hz IMU samples feed the unchanged 250Hz MAVLink stream. -->
+    <physics type="ode"><max_step_size>0.001</max_step_size><real_time_update_rate>1000</real_time_update_rate></physics>
     <model name="static_tag_7">
       <static>true</static>
       <pose>0.15 0 0.02 0 0.13962634015954636 0</pose>
