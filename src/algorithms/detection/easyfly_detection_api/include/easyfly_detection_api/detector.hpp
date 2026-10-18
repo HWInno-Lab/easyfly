@@ -35,7 +35,13 @@ namespace easyfly::detection
 class DetectorBase
 {
 public:
-    explicit DetectorBase(const DetectorParams & params) : params_(params) {}
+    explicit DetectorBase(const DetectorParams & params) : params_(params) {
+      if (params.imgsz < 1 || params.imgsz > 4096 || params.max_detections < 1 ||
+          params.max_detections > 4096 || !std::isfinite(params.conf_threshold) ||
+          params.conf_threshold < 0 || params.conf_threshold > 1 ||
+          !std::isfinite(params.nms_threshold) || params.nms_threshold < 0 || params.nms_threshold > 1)
+        throw std::invalid_argument("invalid detector computation parameters");
+    }
     virtual ~DetectorBase() = default;
 
     /// 启动预热: 零图跑一遍推理, 触发 engine/CUDA context 初始化
@@ -54,6 +60,8 @@ public:
         // The caller owns the sample and may have filled node-level fields
         // (queue/color conversion) before invoking the backend.  Backends
         // only write their own stage fields; do not reset the whole sample.
+        if (bgr_img.empty() || bgr_img.type() != CV_8UC3)
+          throw std::invalid_argument("detector requires a non-empty BGR8 image");
         detectImpl(bgr_img, detections, timing);
 
         // 反 letterbox 到原图坐标

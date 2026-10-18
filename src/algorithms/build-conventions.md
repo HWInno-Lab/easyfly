@@ -9,6 +9,8 @@ grid planner API 的 SearchControl，后者仅依赖标准库。全局规划和 
 通过工厂调用 A*，搜索任务直接消费覆盖几何；功能包继续拥有执行与运行接纳。
 ALG-4 新增 `tracking/easyfly_motion_prediction` 和 `preprocessing/easyfly_pointcloud_filters`，
 均仅依赖标准库。节点直接使用已有普通类型，显式传入时间；TF/队列保留在功能包。
+ALG-5 新增 detection/single_tracking API 和 YOLO/标志位姿/CSRT 包装。API 使用 OpenCV 图像类型，
+不依赖具体实现；YOLO 私有依赖 ONNX Runtime，通过 PIMPL 隐藏 SDK，单独负责运行库安装。
 目录分类不决定包名或编译顺序，`package.xml` 才是工作区依赖闭包的依据。
 
 ## 1. 包与导出
@@ -16,7 +18,7 @@ ALG-4 新增 `tracking/easyfly_motion_prediction` 和 `preprocessing/easyfly_poi
 - 独立包包含 package.xml、CMakeLists.txt、include/包名、README 和必要测试。
 - 自有源码使用根项目 Apache-2.0；导入源码保留原来源与许可，不套用本模板覆盖。
 - 可独立替换的实现单独建包，接口包不依赖具体算法，不引入跟踪/规划之外的平台对象。
-- 公开头不包含 ROS 消息、节点、TF 或 SDK；Eigen/OpenCV 等计算库仅在实际需要的实现包声明。
+- 公开头不包含 ROS 消息、节点、TF 或 SDK；Eigen/OpenCV 等计算库仅在实际需要的包声明；图像 API 显式声明 OpenCV。
 - 通过 namespaced target 传递 C++ 标准、安装头路径和必要计算依赖；不让消费者手工添加
   相邻源码 include，也不从算法包反向链接 EasyFly 功能包。
 - API 以 0.1 开始，当前不承诺跨版本稳定 ABI。改变契约需同步适配、测试和文档，消费者重新编译。
@@ -33,6 +35,11 @@ ALG-4 新增 `tracking/easyfly_motion_prediction` 和 `preprocessing/easyfly_poi
 | easyfly_coverage_planning | easyfly_coverage_planning/search_geometry.hpp | easyfly_coverage_planning::easyfly_coverage_planning |
 | easyfly_motion_prediction | easyfly_motion_prediction/predictor.hpp | easyfly_motion_prediction::easyfly_motion_prediction |
 | easyfly_pointcloud_filters | easyfly_pointcloud_filters/filter_core.hpp | easyfly_pointcloud_filters::easyfly_pointcloud_filters |
+| easyfly_detection_api | easyfly_detection_api/detector.hpp | easyfly_detection_api::easyfly_detection_api |
+| easyfly_single_tracking_api | easyfly_single_tracking_api/tracker.hpp | easyfly_single_tracking_api::easyfly_single_tracking_api |
+| easyfly_yolo_onnx | easyfly_yolo_onnx/backend_factory.hpp | easyfly_yolo_onnx::easyfly_yolo_onnx |
+| easyfly_tag_pose | easyfly_tag_pose/tag_core.hpp | easyfly_tag_pose::easyfly_tag_pose |
+| easyfly_csrt | easyfly_csrt/track_core.hpp | easyfly_csrt::easyfly_csrt |
 
 C++ 实现包可导出普通 STATIC/SHARED 库，按 PUBLIC/PRIVATE 划分依赖。header-only 包导出
 INTERFACE target，不使用 HAS_LIBRARY_TARGET 伪装成运行时动态库。默认导出命名空间为包名。
@@ -105,3 +112,7 @@ ALG-3 的真实 A*/覆盖几何、普通 CMake 适配器库与安装矩阵见
 
 ALG-4 的预测/过滤核心、双时钟与源时间 TF 回归见 [ALG-4 验收](alg4-validation.md)。
 旧 ROS 功能包继续导出其 ROS 元数据；新纯核心可单独 find_package，无需 ROS overlay。
+
+ALG-5 图像/单目标接口和 OpenCV 包装、SDK 私有依赖/许可安装、旧头与搬迁验证见
+[ALG-5 验收](alg5-validation.md)。普通 CMake 通过五个核心 prefix 消费，
+独立编译不需要 ROS 或 SDK include。ORT_ROOT 显式外部覆盖由普通安装矩阵验证。

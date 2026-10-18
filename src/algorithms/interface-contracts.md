@@ -1,7 +1,7 @@
-# 算法接口与行为冻结（ALG-0 / ALG-1）
+# 算法接口与行为冻结（ALG-0 至 ALG-5）
 
 基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
-ALG-2 已接入真实 SORT 与 ID 整合；二维规划适配仍待 ALG-3。
+ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-5 已完成规划、预测/滤波和视觉抽离。
 本文件记录不变的计算语义和各批次显式新增的接口检查。
 实际头文件与细节见各 API 包 README；以下单位和职责边界继续作为迁移约束。
 
@@ -73,11 +73,11 @@ ALG-3 按等价迁移、控制增强分开提交并完成实际验证，见 [ALG
 ## 4. 单目标、检测和标志位姿（ALG-5）
 
 单目标接口与多目标接口分开：图像和显式 ROI 初始化、update、停止/reset；保留 CSRT
-初始化/重定位成功后才报告 tracking，未知置信度不伪造为 1。`single_node.cpp` 当前直接
-拥有 `cv::TrackerCSRT`，仅移动 `track_core.hpp` 的 ROI 函数并不能完成算法抽离。
+初始化/重定位成功后才报告 tracking，未知置信度不伪造为 1。ALG-5 的 `easyfly_single_tracking_api`
+和 `easyfly_csrt` 已管理真实模型生命周期，节点通过接口调用 initialize/update/reset。
 
 检测接口接收只读图像视图，返回原图像素框及类别、置信度和实际 provider。
-现有 DetectorParams 混有话题、QoS 和节点性能字段，需要拆分算法配置和节点配置。
+ALG-5 已拆分纯计算 DetectorParams；原功能包的兼容结构额外保留话题/QoS/性能字段。
 `DetectionTiming` 算法只填写预处理/推理/后处理部分，不清空调用者填写的队列和转换耗时。
 默认模型 yolo11n.onnx、输入 640、conf=.35、NMS=.45；TensorRT/OpenVINO 仍是预留。
 
@@ -85,8 +85,11 @@ ALG-3 按等价迁移、控制增强分开提交并完成实际验证，见 [ALG
 歧义拒绝。算法返回相机光学系位姿及原因，CameraInfo 接纳、源时间和结果过期由节点管理。
 标签尺寸默认 0 表示未配置，不能用接口默认值悄悄变为固定尺寸。
 
-现有检测 contract 测试主要检查源码结构/观测字段，不代表本轮重新验证了实际模型精度。
-仓库 m2_frame.bin/m2_baseline.json 可作后续实推理对照输入，其历史 CUDA 耗时不是本轮结果。
+ALG-5 同时运行源码 contract 与固定图像的真实 CPU/CUDA 模型对照，记录实际 provider。
+类内 NMS、类别、像素框和调用者 timing 保持；不把历史 CUDA 耗时作为本轮结果，
+不据单帧对照宣称数据集精度。默认同一权重由功能包安装并解析 package:// 路径。
+检测参数/图像格式新增显式拒绝检查，正常算法语义与这些契约增强分别记录。
+普通图像类型、算法参数和详细所有权约束见各新包 README 与 [ALG-5 验收](alg5-validation.md)。
 
 ## 5. 预测、预处理和融合建图（ALG-4 / ALG-6 / ALG-7）
 

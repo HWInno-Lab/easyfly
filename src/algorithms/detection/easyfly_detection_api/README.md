@@ -10,4 +10,6 @@
 
 DetectionTiming 使用 steady duration 毫秒。算法只写 preprocess/inference/postprocess，
 保留调用者的 queue/color_conversion/debug/end_to_end 字段。
+ALG-5 新增有限阈值 [0,1]、imgsz/max_detections [1,4096] 及图像格式检查，非法输入抛 invalid_argument；
+这些是明确的契约增强，正常输入的 letterbox/NMS/截断语义保持原版。
 新后端继承 DetectorBase，具体工厂属于实现包；API 不依赖 YOLO/ONNX Runtime。

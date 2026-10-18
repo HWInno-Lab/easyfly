@@ -26,3 +26,14 @@ TEST(DetectionApi, BorrowedTimingCoordinateMappingAndLimit)
   EXPECT_DOUBLE_EQ(t.debug_image_ms, 13); EXPECT_DOUBLE_EQ(t.end_to_end_ms, 17);
   EXPECT_DOUBLE_EQ(t.inference_ms, 3);
 }
+TEST(DetectionApi, InvalidImageAndParametersFailExplicitly)
+{
+  api::DetectorParams params; params.max_detections = 0;
+  EXPECT_THROW(FakeDetector detector(params), std::invalid_argument);
+  params.max_detections = 1; params.conf_threshold = NAN;
+  EXPECT_THROW(FakeDetector detector(params), std::invalid_argument);
+  params.conf_threshold = .35; FakeDetector detector(params);
+  std::vector<api::Detection> out;
+  EXPECT_THROW(detector.detect({}, out), std::invalid_argument);
+  EXPECT_THROW(detector.detect(cv::Mat(10, 10, CV_8UC1), out), std::invalid_argument);
+}

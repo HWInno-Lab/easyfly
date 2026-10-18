@@ -2,7 +2,8 @@
 
 本目录管理 EasyFly 自有的可复用算法实现及接口。2026-10-18 已完成 ALG-0 盘点与
 ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-3 的 A*/覆盖路线迁移，
-并完成 ALG-4 的预测/点云过滤迁移。下一阶段为 ALG-5 检测、标志位姿与单目标跟踪。
+并完成 ALG-4 的预测/点云过滤和 ALG-5 的检测、标志位姿与单目标跟踪迁移。
+下一阶段为 ALG-6 投影与障碍类别关联。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -11,18 +12,20 @@ ALG-1 两个 API 包、ALG-2 的 SORT/世界坐标 ID 整合迁移，以及 ALG-
 ## 当前交付
 
 - [ALG-0 冻结清单](migration-inventory.json)：历史来源、提取范围和迁移目标。
-- [当前迁移进度](migration-progress.json)与 [ALG-4 验收](alg4-validation.md)：实际位置和验证结果。
+- [当前迁移进度](migration-progress.json)与 [ALG-5 验收](alg5-validation.md)：实际位置和验证结果。
 - [接口与兼容契约](interface-contracts.md)：当前真实行为与拟建立的调用接口。
 - [基线验收](baseline.md)：实际构建/测试结果、证据及未覆盖项。
 - [构建规范](build-conventions.md)与 [ALG-1 验收](alg1-validation.md)：API 导出和两种安装验证。
 - [跟踪接口](tracking/easyfly_tracking_api/README.md)与
   [二维规划接口](planning/easyfly_grid_planner_api/README.md)：实际公共类型和调用契约。
 - `baseline/`：源码和配置指纹、外部路径引用、包依赖和测试结果摘要。
-- `../../tools/algorithms/capture_inventory.py`：只读盘点工具，不构建、不启动节点、不移动源码。
+- `../../tools/algorithms/capture_inventory.py`：ALG-0 历史布局的只读盘点工具，不构建、不启动节点、不移动源码；当前布局以迁移进度为准。
 - `../../tools/algorithms/run_baseline.py`：串行运行清单内既有软件回归，保存命令、日志与 JUnit；
   默认使用 DDS 域 212，各测试自带的非零隔离域继续生效。
 - [ALG-2 验收](alg2-validation.md)：跟踪实现与真实世界坐标回流。
 - [ALG-3 验收](alg3-validation.md)：规划、覆盖路线与控制增强。
+- [ALG-5 验收](alg5-validation.md)：真实 CPU/CUDA 检测、标志位姿、CSRT 与 SDK 安装责任。
+- `../../tools/algorithms/verify_vision_install.py`：视觉差分、原 ROS 入口、两种安装与无 ROS 消费。
 - `../../tools/algorithms/verify_prediction_filter_install.py`：预测/过滤、真实时序、旧头与独立消费。
 - `../../tools/algorithms/verify_planning_install.py`：规划/搜索回归、两种安装及真实库消费。
 - `../../tools/algorithms/verify_api_install.py`：只构建新 API，验证安装及独立 CMake 消费，不运行节点。
@@ -36,7 +39,8 @@ OpenCV/PCL/ONNX 等外部库保持各自来源和许可。新包装库只承载�
 EasyFly 节点 → 适配器/工厂 → 算法库 → 能力接口/外部计算库
 ```
 
-算法库不依赖 EasyFly 消息、ROS 节点、TF 查询、SDK、任务或飞控。可采用 ament 导出
+算法公开接口不依赖 EasyFly 消息、ROS 节点、TF 查询、设备 SDK、任务或飞控。
+计算实现可私有依赖推理 SDK，例如 YOLO 包的 ONNX Runtime；不能向公开接口泄漏 SDK 类型/路径。可采用 ament 导出
 普通 C++/Python 库；消费者使用安装后的 target/module，不跨包引用源码树。
 时钟、参考系和车辆状态证据显式传入；算法自身数值检查和可信模型守卫仍然保留。
 
