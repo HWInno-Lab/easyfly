@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Manual Gazebo recovery experiment: only the three reviewed guard inputs. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <publisher profile_name="/livox/imu">
+    <times><heartbeatPeriod><sec>0</sec><nanosec>50000000</nanosec></heartbeatPeriod></times>
+  </publisher>
+  <publisher profile_name="/camera/color/image_raw">
+    <times><heartbeatPeriod><sec>0</sec><nanosec>50000000</nanosec></heartbeatPeriod></times>
+  </publisher>
+  <publisher profile_name="/camera/color/camera_info">
+    <times><heartbeatPeriod><sec>0</sec><nanosec>50000000</nanosec></heartbeatPeriod></times>
+  </publisher>
+</profiles>

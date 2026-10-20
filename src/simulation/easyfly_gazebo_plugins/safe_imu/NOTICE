@@ -1,0 +1,16 @@
+Derived from gazebo_ros_pkgs tag 3.9.0, gazebo_ros_imu_sensor.cpp/.hpp.
+Copyright 2018 Open Source Robotics Foundation, Inc. Apache-2.0.
+https://github.com/ros-simulation/gazebo_ros_pkgs/tree/3.9.0/gazebo_plugins
+
+EasyFly modifications (2026-10-19): distinct class/library; reject a missing ROS
+node; disconnect update callback before teardown; publish a single ImuMessage
+snapshot including its measurement stamp instead of scheduler LastUpdateTime and
+separate getters. Skip uninitialized/byte-identical snapshots, never retimestamp,
+interpolate, fill a source gap, or suppress a backwards/conflicting measurement.
+Reliable publisher history is bounded at 1000 by default (upstream: 5), matching
+the guard reader so transient shared-image transport pressure need not exhaust
+the writer history. Sensor physics, configured rate, frame, noise and covariance
+are unchanged.
+Optional bounded producer timing records CLOCK_MONOTONIC callback/snapshot/publish
+boundaries in memory and writes CSV at teardown; disabled by default. It does not
+alter the ROS message or measurement timestamp.

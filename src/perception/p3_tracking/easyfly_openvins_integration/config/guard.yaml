@@ -1,0 +1,19 @@
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+/**:
+  ros__parameters:
+    camera_topic: /camera/color/image_raw
+    camera_info_topic: /camera/color/camera_info
+    imu_topic: /livox/imu
+    camera_frame: camera_color_optical_frame
+    imu_frame: livox_imu_frame
+    image_encoding: rgb8
+    width: 640
+    height: 480
+    intrinsics: [337.3570508552852, 337.3570508552852, 320.5, 240.5]
+    max_imu_gap: 0.025
+    max_camera_gap: 0.25
+    receipt_timeout: 0.5
+    pose_timeout: 0.5
+    max_source_age: 0.5
+    future_tolerance: 0.2
+    max_pending: 4

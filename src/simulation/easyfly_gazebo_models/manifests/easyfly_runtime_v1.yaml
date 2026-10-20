@@ -48,18 +48,22 @@ models:
       path: licenses/runtime/PROJECT-LICENSE
     - package: easyfly_gazebo_models
       path: licenses/runtime/ORIGINS.json
-    note: Project sensor configuration, self-authored cylinder visual; all original
-      sensor/IMU/physics fields retained; vendor mesh excluded.
+    note: Project sensor configuration, self-authored cylinder visual; SDFormat axis
+      IMU noise and sampling frame corrected; physical poses/mass/inertia retained;
+      vendor mesh excluded.
 files:
 - path: gps/gps.sdf
   sha256: ed28b2b88fb667218d2e9c360fac77bd7cd73b4c620a1bd4237b690ddb146a99
 - path: gps/model.config
   sha256: 7d2c9be9e01d898ef42b0525aa97becb5f554d48e2d8e915e284ea84fe0c3d9c
 - path: mid360/mid360.sdf
-  sha256: dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d
+  sha256: a2435213a2311dd79d317d56f33c43aa407191833aa37503fe23d2acbf65ad7f
 - path: mid360/model.config
   sha256: 3ec98913762f4a3ac3d4467ee69cec3f74863c61642672a02406a991c5f24d69
 local_changes:
-- MID360 visual mesh replaced with own cylinder; sensor, IMU, mass and inertia unchanged.
+- Initial S2 curation replaced MID360 visual mesh with own cylinder; sensor, IMU,
+  mass and inertia were unchanged at that stage.
+- VIO input correction (2026-10-19), per-axis IMU noise, livox_imu_frame and unused
+  plugin updateRateHZ removal; physical sensor poses unchanged. See ORIGINS.json.
 storage: vendored
 inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

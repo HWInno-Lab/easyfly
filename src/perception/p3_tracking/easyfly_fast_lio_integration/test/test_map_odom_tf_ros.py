@@ -15,8 +15,9 @@ from rclpy.qos import DurabilityPolicy, QoSProfile
 from tf2_msgs.msg import TFMessage
 
 
-@pytest.mark.parametrize('alpha,custom_frames', [(.1, False), (1., True)])
-def test_map_odom_tf_composition_and_smoothing(tmp_path, alpha, custom_frames):
+@pytest.mark.parametrize('alpha,custom_frames,imu_offset',
+                         [(.1, False, False), (1., True, False), (.1, False, True)])
+def test_map_odom_tf_composition_and_smoothing(tmp_path, alpha, custom_frames, imu_offset):
     rclpy.init()
     peer = rclpy.create_node('alg81_map_odom_tf_peer')
     odom_pub = peer.create_publisher(Odometry, '/odom', 10)
@@ -58,11 +59,21 @@ def test_map_odom_tf_composition_and_smoothing(tmp_path, alpha, custom_frames):
         assert tf.header.stamp.nanosec == 0
         return tf.transform
 
+    def slam_pose(stamp, xyz, yaw):
+        if imu_offset:
+            # IMU pose corresponding to this base pose. Includes rotated lever arm.
+            x, y, z = .011, .02329, -.12412
+            xyz = (xyz[0] - math.cos(yaw)*x + math.sin(yaw)*y,
+                   xyz[1] - math.sin(yaw)*x - math.cos(yaw)*y, xyz[2] - z)
+        return pose(stamp, xyz, yaw)
+
     try:
         with log_path.open('w') as log:
             executable = Path(get_package_prefix('easyfly_fast_lio_integration')) / (
                 'lib/easyfly_fast_lio_integration/map_odom_tf')
             command = [str(executable), '--ros-args', '-p', 'use_sim_time:=false']
+            if imu_offset:
+                command += ['-p', 'body_to_base_translation:=[0.011, 0.02329, -0.12412]']
             if custom_frames:
                 command += ['-p', 'smooth_alpha:=1.0', '-p', 'map_frame:='+map_frame,
                             '-p', 'odom_frame:='+odom_frame, '-p', 'slam_frame:='+slam_frame]
@@ -72,19 +83,19 @@ def test_map_odom_tf_composition_and_smoothing(tmp_path, alpha, custom_frames):
             assert identity.header.frame_id == map_frame
             assert identity.transform.rotation.w == 1.
             assert identity.transform.translation.x == 0.
-            slam_pub.publish(pose(101, (4., 6., 8.), .2))
+            slam_pub.publish(slam_pose(101, (4., 6., 8.), .2))
             spin(.15)
             assert not dynamic  # No map->odom estimate before odom evidence.
             odom_pub.publish(pose(101, (1., 2., 3.), .2))
             spin(.1)
-            slam_pub.publish(pose(102, (4., 6., 8.), .2))
+            slam_pub.publish(slam_pose(102, (4., 6., 8.), .2))
             first = receive(102)
             assert (first.translation.x, first.translation.y, first.translation.z) == pytest.approx((3., 4., 5.))
-            slam_pub.publish(pose(103, (6., 10., 12.), .2))
+            slam_pub.publish(slam_pose(103, (6., 10., 12.), .2))
             second = receive(103)
             expected = (3.+alpha*2., 4.+alpha*4., 5.+alpha*4.)
             assert (second.translation.x, second.translation.y, second.translation.z) == pytest.approx(expected)
-            slam_pub.publish(pose(104, (6., 10., 12.), 1.2))
+            slam_pub.publish(slam_pose(104, (6., 10., 12.), 1.2))
             third = receive(104)
             # Analytic R(1 rad) composition and slerp from identity.
             target = (6.-math.cos(1.)+2.*math.sin(1.), 10.-math.sin(1.)-2.*math.cos(1.), 9.)

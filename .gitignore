@@ -5,6 +5,9 @@ log/
 build-v2/
 install-v2/
 log-v2/
+/build-*/
+/install-*/
+/log-*/
 .reasonix/
 
 # 本地开发计划、进度、问题与验收记录（保留文件，不入库）
@@ -45,6 +48,12 @@ src/third_party/algorithms/localization/fast_lio/doc/
 *.txt
 !CMakeLists.txt
 *.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
 
 # 复验期飞行证据 (ulog 巨大 + 验收日志), 全部仅本地留存, 不入库
 evidence-v2-09/
@@ -53,8 +62,25 @@ evidence-v2-10/
 
 # python 字节码
 __pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
 # G1-G4 验收过程归档, 仅本地留存不入库
 artifacts/
+
+# 算法验证基线、验收报告与迁移过程记录仅本地保留。
+# 保留 README、接口/构建/接入说明，以及盘点工具实际读取的 migration-inventory.json。
+/src/algorithms/baseline/
+/src/algorithms/*-validation.md
+/src/algorithms/baseline.md
+/src/algorithms/compatibility-audit.md
+/src/algorithms/compatibility-audit.json
+/src/algorithms/migration-progress.json
+/src/algorithms/final-migration.json
 
 # V2-19 复验证据 (日志/bag/测试产物, 登记簿见 question-v2.md; 原始证据本地留存)
 test-results-v219/

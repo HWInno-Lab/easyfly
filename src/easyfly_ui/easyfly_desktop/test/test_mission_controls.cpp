@@ -426,7 +426,7 @@ TEST_F(MissionGui, ManagedWidgetScreenshotsUseExplicitMockWatermark)
   watermark->setStyleSheet("color:#8a4b08; background:#fff5df; padding:6px;");
   static_cast<QVBoxLayout *>(window->centralWidget()->layout())->insertWidget(0, watermark);
   window->show_page("tasks");
-  widget<QTabWidget>("taskCenterTabs")->setCurrentIndex(3);
+  widget<QTabWidget>("taskCenterTabs")->setCurrentIndex(0);
   ASSERT_TRUE(prepare());
   const QDir output(QStringLiteral(EASYFLY_MANAGED_SCREENSHOT_DIRECTORY));
   ASSERT_TRUE(output.mkpath("."));
@@ -524,4 +524,22 @@ TEST_F(MissionGui, OccupiedAndLinkedJournalFailBeforeOpeningWindow)
     EXPECT_TRUE(child.readAllStandardError().contains("mission journal startup failed"));
   }
   EXPECT_FALSE(QFile::exists(owned + "/intent.json")); owner.stop();
+}
+
+TEST_F(MissionGui, MissingAndStaleAlgorithmInterfacesBlockBeforeConfirmation)
+{
+  open(); ASSERT_TRUE(prepare());
+  source->data->task_backends["takeoff"] = false;
+  ASSERT_TRUE(until([&] {return !widget<QPushButton>("startMission")->isEnabled();}));
+  EXPECT_TRUE(widget<QLabel>("missionAlgorithmDependencies")->text().contains("takeoff"));
+  EXPECT_EQ(control->starts, 0);
+  source->data->task_backends["takeoff"] = true;
+  source->renew_backend_graph = false;
+  source->data->backend_graph_observed = b::detail::steady_seconds() - 3;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return widget<QLabel>("missionAlgorithmDependencies")->text().contains("新鲜");
+      }));
+  EXPECT_FALSE(widget<QPushButton>("startMission")->isEnabled());
 }

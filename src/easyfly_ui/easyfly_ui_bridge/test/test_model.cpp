@@ -177,3 +177,31 @@ TEST(BridgeModel, EventsAndTrajectoryHitRealLimitsWithoutSleeping)
   detail::prune_trajectory(points, 311);
   EXPECT_TRUE(points.empty());
 }
+
+
+TEST(BridgeModel, LocalizationStatusIsObservationNotNavigationAdmission)
+{
+  easyfly_msgs::msg::LocalizationStatus m;
+  m.backend_id = "openvins"; m.session_id = "test-session";
+  m.header.frame_id = "openvins_odom"; m.header.stamp.sec = 10;
+  m.tracked_frame = "livox_imu_frame";
+  m.pose_stamp.sec = 10; m.state = m.ESTIMATING;
+  m.pose_valid = true; m.covariance_available = true;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::ValidAtObservation);
+  m.pose_stamp.sec = 9;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Stale);
+  m.pose_stamp.sec = 10;
+  EXPECT_EQ(detail::validate_localization(m, clock, .6), Quality::Stale);
+  clock.quality = Quality::ClockPaused;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::ClockPaused);
+  clock.quality = Quality::ValidAtObservation;
+  m.state = m.RESET_REQUIRED; m.pose_valid = false;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+  m.state = m.INITIALIZING;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Unknown);
+  m.session_id.clear();
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+  m.session_id = "test"; m.reason = std::string(2049, 'x');
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+}

@@ -55,7 +55,9 @@ void receive(
   current.evidence.quality = Quality::ValidAtObservation;
 }
 template<typename Message>
-Observation<Message> age(Observation<Message> current, const ClockState & clock, double now)
+Observation<Message> age(
+  Observation<Message> current, const ClockState & clock, double now,
+  double lifetime = 1.0)
 {
   if (!current.value) {return current;}
   auto & evidence = current.evidence;
@@ -64,7 +66,7 @@ Observation<Message> age(Observation<Message> current, const ClockState & clock,
     detail::stamp_ns(current.value->header.stamp)) / 1e9;
   evidence.source_age_available = clock.now_ns > 0;
   evidence.quality = evidence.time_epoch != clock.epoch ? Quality::ClockReset :
-    detail::source_quality(current.value->header, clock, evidence.receipt_age, 1.0, false);
+    detail::source_quality(current.value->header, clock, evidence.receipt_age, lifetime, false);
   return current;
 }
 }  // namespace
@@ -75,6 +77,7 @@ void CameraObservationBuffer::clear()
   const auto binding = data_.binding; data_ = {}; data_.binding = binding;
   images_.clear(); bytes_ = 0;
   image_watermark_ = detection_watermark_ = track_watermark_ = target_watermark_ = 0;
+  ellipse_watermark_ = color_line_watermark_ = 0;
 }
 void CameraObservationBuffer::image(
   sensor_msgs::msg::Image::ConstSharedPtr message,
@@ -143,6 +146,58 @@ void CameraObservationBuffer::targets(
     message, data_.targets, target_watermark_, data_.binding.targets_topic, now, epoch,
     valid);
 }
+namespace
+{
+template<typename Message> bool geometry_envelope(const Message & message)
+{
+  return message.valid && message.reason.size() <= 256 && message.image_width > 0 &&
+         message.image_height > 0 &&
+         static_cast<uint64_t>(message.image_width) * message.image_height <= 2073600 &&
+         message.observations.size() <= 32;
+}
+bool point(double x, double y, uint32_t width, uint32_t height)
+{
+  return std::isfinite(x) && std::isfinite(y) && x >= 0 && y >= 0 && x < width && y < height;
+}
+bool score(double value) {return std::isfinite(value) && value >= 0 && value <= 1;}
+}  // namespace
+void CameraObservationBuffer::ellipses(
+  easyfly_msgs::msg::EllipseObservationArray::ConstSharedPtr message, double now, uint64_t epoch)
+{
+  if (!message) {return;}
+  const bool valid = geometry_envelope(*message) && std::all_of(
+    message->observations.begin(), message->observations.end(), [&](const auto & value) {
+      return point(value.center_x, value.center_y, message->image_width, message->image_height) &&
+      std::isfinite(value.major_axis_px) && std::isfinite(value.minor_axis_px) &&
+      value.minor_axis_px > 0 && value.major_axis_px >= value.minor_axis_px &&
+      value.major_axis_px <= 8192 && std::isfinite(value.angle_rad) &&
+      value.angle_rad >= 0 && value.angle_rad < 3.141593 && score(value.score) &&
+      std::isfinite(value.radial_error) && value.radial_error >= 0;
+    });
+  receive(
+    message, data_.ellipses, ellipse_watermark_, data_.binding.ellipse_topic, now, epoch,
+    valid);
+}
+void CameraObservationBuffer::color_lines(
+  easyfly_msgs::msg::ColorLineObservationArray::ConstSharedPtr message, double now, uint64_t epoch)
+{
+  if (!message) {return;}
+  const bool valid = geometry_envelope(*message) && std::all_of(
+    message->observations.begin(), message->observations.end(), [&](const auto & value) {
+      return point(value.center_x, value.center_y, message->image_width, message->image_height) &&
+      point(value.start_x, value.start_y, message->image_width, message->image_height) &&
+      point(value.end_x, value.end_y, message->image_width, message->image_height) &&
+      std::isfinite(value.length_px) && value.length_px > 0 && value.length_px <= 8192 &&
+      std::isfinite(value.width_px) && value.width_px > 0 && value.width_px <= 8192 &&
+      std::isfinite(value.area_px) && value.area_px > 0 && value.area_px <= 2073600 &&
+      std::isfinite(value.angle_rad) && std::abs(value.angle_rad) <= 1.570797 &&
+      std::isfinite(value.offset_x_normalized) && std::abs(value.offset_x_normalized) <= 1 &&
+      score(value.score);
+    });
+  receive(
+    message, data_.color_lines, color_line_watermark_, data_.binding.color_line_topic, now,
+    epoch, valid);
+}
 CameraObservations CameraObservationBuffer::snapshot(const ClockState & clock, double now)
 {
   while (!images_.empty() && now - images_.front().evidence.first_source_steady > 1) {
@@ -150,6 +205,8 @@ CameraObservations CameraObservationBuffer::snapshot(const ClockState & clock, d
   }
   auto result = data_; result.cached_images = images_.size(); result.cached_bytes = bytes_;
   result.detections = age(result.detections, clock, now);
+  result.ellipses = age(result.ellipses, clock, now, .5);
+  result.color_lines = age(result.color_lines, clock, now, .5);
   result.tracks = age(result.tracks, clock, now); result.targets = age(result.targets, clock, now);
   const auto match = [&](const auto & observation) {
       Observation<sensor_msgs::msg::Image> found;
@@ -164,6 +221,8 @@ CameraObservations CameraObservationBuffer::snapshot(const ClockState & clock, d
       return found;
     };
   result.detection_image = match(result.detections); result.track_image = match(result.tracks);
+  result.ellipse_image = match(result.ellipses);
+  result.color_line_image = match(result.color_lines);
   return result;
 }
 }  // namespace easyfly_ui_bridge

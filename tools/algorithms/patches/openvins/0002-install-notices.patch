@@ -1,0 +1,41 @@
+diff --git a/ov_core/cmake/ROS2.cmake b/ov_core/cmake/ROS2.cmake
+index b4ed9b7..eec9dd9 100644
+--- a/ov_core/cmake/ROS2.cmake
++++ b/ov_core/cmake/ROS2.cmake
+@@ -82,5 +82,8 @@ ament_target_dependencies(test_profile rclcpp cv_bridge)
+ target_link_libraries(test_profile ov_core_lib ${thirdparty_libraries})
+ install(TARGETS test_profile DESTINATION lib/${PROJECT_NAME})
+ 
++# Retain upstream license and project documentation with installed ROS packages.
++install(FILES ../LICENSE ../ReadMe.md DESTINATION share/${PROJECT_NAME})
++
+ # finally define this as the package
+ ament_package()
+\ No newline at end of file
+diff --git a/ov_init/cmake/ROS2.cmake b/ov_init/cmake/ROS2.cmake
+index 0d1634f..ad3fc72 100644
+--- a/ov_init/cmake/ROS2.cmake
++++ b/ov_init/cmake/ROS2.cmake
+@@ -82,6 +82,9 @@ install(TARGETS test_dynamic_init DESTINATION lib/${PROJECT_NAME})
+ # Install launch and config directories
+ install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch/)
+ 
++# Retain upstream license and project documentation with installed ROS packages.
++install(FILES ../LICENSE ../ReadMe.md DESTINATION share/${PROJECT_NAME})
++
+ # finally define this as the package
+ ament_package()
+ 
+diff --git a/ov_msckf/cmake/ROS2.cmake b/ov_msckf/cmake/ROS2.cmake
+index eacffbb..6a1eb38 100644
+--- a/ov_msckf/cmake/ROS2.cmake
++++ b/ov_msckf/cmake/ROS2.cmake
+@@ -112,5 +112,8 @@ install(TARGETS test_sim_repeat DESTINATION lib/${PROJECT_NAME})
+ install(DIRECTORY launch/ DESTINATION share/${PROJECT_NAME}/launch/)
+ install(DIRECTORY ../config/ DESTINATION share/${PROJECT_NAME}/config/)
+ 
++# Retain upstream license and project documentation with installed ROS packages.
++install(FILES ../LICENSE ../ReadMe.md DESTINATION share/${PROJECT_NAME})
++
+ # finally define this as the package
+ ament_package()

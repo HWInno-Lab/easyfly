@@ -47,6 +47,8 @@ ALG-7.3 新增 easyfly_occupancy_mapping，导出 STL-only INTERFACE target；�
 | easyfly_single_tracking_api | easyfly_single_tracking_api/tracker.hpp | easyfly_single_tracking_api::easyfly_single_tracking_api |
 | easyfly_yolo_onnx | easyfly_yolo_onnx/backend_factory.hpp | easyfly_yolo_onnx::easyfly_yolo_onnx |
 | easyfly_tag_pose | easyfly_tag_pose/tag_core.hpp | easyfly_tag_pose::easyfly_tag_pose |
+| easyfly_ellipse | easyfly_ellipse/detector.hpp | easyfly_ellipse::easyfly_ellipse |
+| easyfly_color_line | easyfly_color_line/detector.hpp | easyfly_color_line::easyfly_color_line |
 | easyfly_csrt | easyfly_csrt/track_core.hpp | easyfly_csrt::easyfly_csrt |
 | easyfly_projection | easyfly_projection/projection.hpp | easyfly_projection::easyfly_projection |
 | easyfly_projection_py | easyfly_projection_py/core.py | easyfly_projection_py.core（Python） |

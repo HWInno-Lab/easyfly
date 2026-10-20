@@ -140,7 +140,7 @@ class CalibrationROS(unittest.TestCase):
 
     def test_valid_complete_static_tree_and_invalid_config_no_partial_tf(self):
         self.start('calib_tf_publisher')
-        self.until(lambda: len(self.transforms) >= 4, 6)
+        self.until(lambda: len(self.transforms) >= 5, 6)
         children = {t.child_frame_id for t in self.transforms}
         self.assertEqual(
             children,
@@ -149,8 +149,12 @@ class CalibrationROS(unittest.TestCase):
                 'camera_color_optical_frame',
                 'camera_depth_optical_frame',
                 'livox_frame',
+                'livox_imu_frame',
             },
         )
+        imu = next(t for t in self.transforms if t.child_frame_id == 'livox_imu_frame')
+        self.assertEqual(imu.header.frame_id, 'livox_frame')
+        self.assertAlmostEqual(imu.transform.translation.z, -0.00588)
         source = (
             Path(get_package_share_directory('easyfly_camera_calib'))
             / 'config/sensors.yaml'

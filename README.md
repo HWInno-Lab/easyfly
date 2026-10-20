@@ -21,10 +21,13 @@ build_all.bash
 
 ## 算法结构与验收
 
-项目维护的 4 个算法接口包和 15 个计算组件位于 `src/algorithms/`；外部算法工程、
+项目维护的 4 个算法接口包和 17 个计算组件位于 `src/algorithms/`；外部算法工程、
 运行库及设备 SDK 按类别保存在 `src/third_party/`。新增后端仍需接口适配、参数及运行验收。
 
-当前完整构建、两种安装、受管仿真和未通过项见
+新增[椭圆与彩线检测](src/algorithms/classical-detection.md)包含独立算法库、ROS 节点、
+消息、配置及启动入口；算法相关预留包剩车辆重识别、深度估计、集群规划和独立轨迹优化四个。
+
+ALG-9 基线的完整构建、两种安装、受管仿真和未通过项见
 [ALG-9 验收报告](src/algorithms/alg9-validation.md)，组件归属见
 [算法索引](src/algorithms/README.md)。ALG-9验证已执行，整体验收尚未签收。
 

@@ -15,6 +15,7 @@ add_subdirectory(native_imu)
 
 # Independently named upstream camera with a fail-closed duplicate-node guard.
 add_subdirectory(safe_camera)
+add_subdirectory(safe_imu)
 
 # Exact-version, process-local transport lifetime compatibility server.
 add_subdirectory(safe_transport)

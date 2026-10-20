@@ -33,6 +33,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSplitter>
+#include <QToolButton>
 #include <QTableView>
 #include <QTabWidget>
 #include <QTimer>
@@ -159,8 +160,32 @@ TEST_F(Desktop, ConnectionPageSharesNavigationWithoutRestartingObservation)
   EXPECT_EQ(state->stop_calls, 0);
   EXPECT_TRUE(widget<QWidget>("configurationPanel")->isHidden());
   EXPECT_EQ(window->findChildren<ui::RvizView *>().size(), ui::RvizView::available() ? 1 : 0);
-  EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 4);
+  EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 3);
   EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->count(), 2);
+}
+TEST_F(Desktop, TaskCatalogAndExecutionStayTogetherWithoutWastingNavigationSpace)
+{
+  open(); window->show_page("tasks");
+  auto * tabs = widget<QTabWidget>("taskCenterTabs"); tabs->setCurrentIndex(0);
+  auto * catalog = widget<QWidget>("missionCatalogPage");
+  auto * query = widget<QPushButton>("queryMission");
+  auto * execution = widget<QToolButton>("toggleTaskExecution");
+  EXPECT_FALSE(query->isVisible()); execution->click();
+  auto * navigation = widget<QListWidget>("navigation");
+  for (const auto & size : {QSize(1366, 768), QSize(1024, 720)}) {
+    window->resize(size); QTest::qWait(60);
+    EXPECT_TRUE(catalog->isVisible()); EXPECT_TRUE(query->isVisible());
+    EXPECT_GE(catalog->width(), 350);
+    const auto start = catalog->mapTo(window.get(), QPoint());
+    const auto nav_start = navigation->mapTo(window.get(), QPoint());
+    EXPECT_LE(start.x() - nav_start.x() - navigation->width(), 24);
+    EXPECT_LT(start.x() + catalog->width(), query->mapTo(window.get(), QPoint()).x());
+    EXPECT_TRUE(
+      window->rect().contains(
+        QRect(
+          query->mapTo(window.get(), QPoint()),
+          query->size())));
+  }
 }
 TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
 {
@@ -178,33 +203,35 @@ TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
       button->objectName().contains("cancel"));
   }
 }
-TEST_F(Desktop, CameraControlsStayLeftAndIndependentCanvasUsesRightSpace)
+TEST_F(Desktop, CameraCanvasKeepsSpaceAndTablesExpandBelowInsteadOfInsideSidebar)
 {
   open(); window->show_page("perception");
-  auto * split = widget<QSplitter>("cameraPerceptionSplitter");
   auto * scroll = widget<QScrollArea>("cameraControlsScroll");
-  auto * controls = widget<QWidget>("cameraControls");
   auto * canvas = widget<QWidget>("cameraCanvas");
-  ASSERT_NE(split, nullptr); ASSERT_NE(scroll, nullptr); ASSERT_NE(controls, nullptr);
-  ASSERT_NE(canvas, nullptr); EXPECT_EQ(split->orientation(), Qt::Horizontal);
-  EXPECT_FALSE(split->childrenCollapsible()); EXPECT_EQ(canvas->parentWidget(), split);
-  for (const auto * name : {"cameraSelector", "imageEvidence", "targetTable", "obstacleTable"}) {
-    ASSERT_NE(widget<QWidget>(name), nullptr);
-    EXPECT_TRUE(controls->isAncestorOf(widget<QWidget>(name)));
-  }
-  int wide_canvas = 0;
-  for (const auto & size : {QSize(1440, 900), QSize(1024, 720)}) {
-    window->resize(size); QTest::qWait(120);
-    const QRect left(scroll->mapToGlobal(QPoint()), scroll->size());
-    const QRect right(canvas->mapToGlobal(QPoint()), canvas->size());
-    EXPECT_LT(left.right(), right.left()); EXPECT_GE(right.width(), 320);
-    EXPECT_GE(right.height(), 240); EXPECT_GT(right.width(), left.width());
-    const auto before = canvas->geometry();
-    scroll->verticalScrollBar()->setValue(scroll->verticalScrollBar()->maximum());
-    QTest::qWait(20); EXPECT_EQ(canvas->geometry(), before);
-    if (size.width() == 1440) {wide_canvas = canvas->width();} else {
-      EXPECT_LT(canvas->width(), wide_canvas);
+  auto * results = widget<QTabWidget>("perceptionObjectTabs");
+  auto * focus = widget<QToolButton>("cameraFocusMode");
+  auto * expand = widget<QToolButton>("togglePerceptionResults");
+  ASSERT_NE(scroll, nullptr); ASSERT_NE(canvas, nullptr); ASSERT_NE(results, nullptr);
+  for (const auto & size : {QSize(1440, 900), QSize(1366, 768), QSize(1024, 720)}) {
+    window->resize(size); QTest::qWait(80);
+    const QRect image(canvas->mapToGlobal(QPoint()), canvas->size());
+    const QRect side(scroll->mapToGlobal(QPoint()), scroll->size());
+    EXPECT_LT(image.right(), side.left()); EXPECT_GT(image.width(), side.width());
+    EXPECT_GE(image.height(), 240); EXPECT_FALSE(results->isVisible());
+    EXPECT_EQ(scroll->horizontalScrollBar()->maximum(), 0);
+    const auto original_width = canvas->width();
+    expand->click(); QTest::qWait(30);
+    EXPECT_TRUE(results->isVisible()); EXPECT_GT(results->width(), scroll->width());
+    EXPECT_GT(results->mapToGlobal(QPoint()).y(), image.top());
+    for (const auto * name : {"targetTable", "obstacleTable", "algorithmStatusTable"}) {
+      EXPECT_TRUE(results->isAncestorOf(widget<QWidget>(name)));
     }
+    focus->click(); QTest::qWait(30);
+    EXPECT_FALSE(scroll->isVisible()); EXPECT_FALSE(results->isVisible());
+    EXPECT_GT(canvas->width(), original_width); EXPECT_FALSE(expand->isEnabled());
+    focus->click(); QTest::qWait(30);
+    EXPECT_TRUE(scroll->isVisible()); EXPECT_TRUE(results->isVisible());
+    expand->click();
   }
 }
 TEST_F(Desktop, BlueGrayWorkspaceKeepsWhiteCardsAndClearActionHierarchy)
@@ -829,4 +856,83 @@ TEST_F(Desktop, OverviewFreshAttitudeAndInvalidationScreenshots)
         return !widget<QWidget>("overviewInstruments")->property("attitude_valid").toBool();
       }));
   ASSERT_TRUE(window->grab().save(output.filePath("overview-paused.png")));
+}
+
+TEST_F(Desktop, ClassicalLineViewShowsSameFrameGeometryAndClearsOnInvalidation)
+{
+  const auto now = b::detail::steady_seconds();
+  auto image = std::make_shared<sensor_msgs::msg::Image>();
+  image->header.stamp.sec = 10; image->header.frame_id = "camera";
+  image->encoding = "rgb8"; image->width = 640; image->height = 480; image->step = 1920;
+  image->data.assign(921600, 80);
+  b::CameraPerceptionBinding binding;
+  binding.image_topic = "/camera/color/image_raw";
+  binding.color_line_topic = "/color_line_observations";
+  b::CameraObservationBuffer buffer(binding); buffer.image(image, now, 0);
+  auto lines = std::make_shared<easyfly_msgs::msg::ColorLineObservationArray>();
+  lines->header = image->header; lines->valid = true; lines->image_width = 640;
+  lines->image_height = 480;
+  easyfly_msgs::msg::ColorLineObservation line;
+  line.center_x = 320; line.center_y = 240; line.start_x = 160; line.start_y = 240;
+  line.end_x = 480; line.end_y = 240; line.length_px = 320; line.width_px = 12;
+  line.area_px = 3840; line.score = .9; lines->observations.push_back(line);
+  buffer.color_lines(lines, now, 0);
+  state->data->images[0] = {image, evidence()};
+  state->data->camera_perception[0] = buffer.snapshot(state->data->clock, now);
+  open(); window->show_page("perception");
+  widget<QComboBox>("cameraOverlayMode")->setCurrentIndex(4);
+  auto * canvas = widget<QWidget>("cameraCanvas");
+  ASSERT_TRUE(until([&] {return canvas->property("overlay_count").toInt() == 1;}));
+  auto * table = widget<QTableView>("cameraOverlayTable");
+  EXPECT_TRUE(table->model()->index(0, 4).data().toString().contains("320"));
+  EXPECT_EQ(table->model()->index(0, 3).data().toString(), QStringLiteral("—"));
+  if (qEnvironmentVariableIsSet("EASYFLY_GEOMETRY_SCREENSHOT")) {
+    ASSERT_TRUE(window->grab().save(qEnvironmentVariable("EASYFLY_GEOMETRY_SCREENSHOT")));
+  }
+  lines->valid = false; buffer.color_lines(lines, b::detail::steady_seconds(), 0);
+  state->data->camera_perception[0] = buffer.snapshot(
+    state->data->clock,
+    b::detail::steady_seconds());
+  ASSERT_TRUE(until([&] {return !canvas->property("has_frame").toBool();}));
+  EXPECT_EQ(canvas->property("overlay_count").toInt(), 0);
+}
+
+TEST_F(Desktop, OpenvinsStatusShowsSessionAndDoesNotClaimNavigationReadiness)
+{
+  state->data->selected_localization_backend = "openvins";
+  auto m = std::make_shared<easyfly_msgs::msg::LocalizationStatus>();
+  m->backend_id = "openvins"; m->session_id = "visible-session";
+  m->state = m->ESTIMATING; m->pose_valid = true;
+  m->tracked_frame = "livox_imu_frame"; m->reason = "fresh_output_tracking_quality_unavailable";
+  state->data->localization = {m, evidence()};
+  open();
+  auto * table = widget<QTableView>("algorithmStatusTable"); ASSERT_NE(table, nullptr);
+  auto contents = [&]() {
+      QString result;
+      for (int row = 0; row < table->model()->rowCount(); ++row) {
+        for (int column = 0; column < table->model()->columnCount(); ++column) {
+          result += table->model()->data(table->model()->index(row, column)).toString();
+        }
+      }
+      return result;
+    };
+  ASSERT_TRUE(until([&]() {return contents().contains("visible-session");}));
+  EXPECT_TRUE(contents().contains(QStringLiteral("导航已禁用")));
+  EXPECT_TRUE(contents().contains(QStringLiteral("仅表示输出新鲜")));
+  m->state = m->RESET_REQUIRED; m->pose_valid = false;
+  state->data->localization.evidence.quality = b::Quality::Invalid;
+  ASSERT_TRUE(until([&]() {return contents().contains(QStringLiteral("需要重启整个定位会话"));}));
+}
+
+
+TEST_F(Desktop, OpenvinsPreventsNavigationMissionEvenIfActionIsDiscovered)
+{
+  auto plan = std::make_shared<easyfly_mission_fsm::MissionValidation>();
+  easyfly_mission_fsm::MissionStep step; step.type = "navigate";
+  plan->steps.push_back(step); state->data->mission_plan = plan;
+  state->data->selected_localization_backend = "openvins";
+  const auto now = b::detail::steady_seconds();
+  EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).contains("OpenVINS"));
+  state->data->selected_localization_backend = "fast_lio";
+  EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).isEmpty());
 }

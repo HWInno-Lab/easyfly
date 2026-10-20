@@ -5,11 +5,20 @@ ALG-8.1..8.5已完成第三方分类、来源/补丁登记与接入指南。ALG-
 两种安装各91包构建、各12组独立消费通过，9类仿真最新8通过；退出/DDS崩溃与规范欠账仍待处理。
 结构交付不等于整体运行签收。详见[ALG-9验收](alg9-validation.md)与[最终归属](final-migration.json)。
 
+ALG-9 之后新增 `easyfly_ellipse` 和 `easyfly_color_line`，当前合计 4 个 API、17 个计算组件。
+两种检测的功能包已实现，详情见[椭圆与彩线检测](classical-detection.md)。
+剩余算法预留包为车辆重识别、深度估计、集群规划和独立轨迹优化；ALG-9 历史结果保持原样。
+
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
 按实际实现建立目录；分类父目录不放 `package.xml`。
 
 ## 当前交付
+
+- [OpenVINS ROS 接入](../perception/p3_tracking/easyfly_openvins_integration/README.md)：
+  固定上游运行源码、独立仿真配置、实时输入守卫与定位状态；默认导航数据源保持原配置。
+
+- [椭圆与彩线检测](classical-detection.md)：普通 OpenCV 库、ROS 接入、参数、消息及复验。
 
 - [ALG-9实际结果与未通过项](alg9-validation.md)、[机器摘要](baseline/alg9-results.json)及[最终组件归属](final-migration.json)。
 

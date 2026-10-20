@@ -16,6 +16,14 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QCoreApplication>
+#include <QDialog>
+#include <QDoubleSpinBox>
+#include <QListWidget>
+#include <QMessageBox>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QTabWidget>
+#include <QTimer>
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
@@ -114,13 +122,13 @@ TEST(ConnectionProfile, RejectsMissingAndIncompatibleDesktopProtocol)
   QFile protocol(share + "/easyfly_desktop/connection_protocol.json");
   ASSERT_TRUE(protocol.open(QIODevice::WriteOnly));
   protocol.write(
-    "{\"connection_protocol\":2,\"snapshot_abi\":2,"
+    "{\"connection_protocol\":2,\"snapshot_abi\":1,"
     "\"managed_default_read_only\":true}");
   protocol.close();
   EXPECT_THROW(cm::desktop_program(), std::runtime_error);
   ASSERT_TRUE(protocol.open(QIODevice::WriteOnly | QIODevice::Truncate));
   protocol.write(
-    "{\"connection_protocol\":2,\"snapshot_abi\":1,"
+    "{\"connection_protocol\":2,\"snapshot_abi\":3,"
     "\"managed_default_read_only\":true}");
   protocol.close();
   EXPECT_EQ(cm::desktop_program(), binary.fileName());
@@ -418,7 +426,18 @@ TEST(ConnectionManager, SimulationAndSerialCanBeConfiguredWithoutCommandLine)
   EXPECT_TRUE(manager.findChild<QPushButton *>("startConnection")->text().contains("DDS"));
   ASSERT_NE(manager.findChild<QPushButton *>("startQgc"), nullptr);
   ASSERT_NE(manager.findChild<QPushButton *>("stopBackend"), nullptr);
+  auto * ellipse = manager.findChild<QCheckBox *>("algorithm_ellipse_enabled");
+  auto * strategy = manager.findChild<QComboBox *>("algorithm_strategy");
+  ASSERT_NE(ellipse, nullptr); ASSERT_NE(strategy, nullptr);
+  ellipse->setChecked(true); strategy->setCurrentIndex(strategy->findData("ego"));
+  QTest::mouseClick(save, Qt::LeftButton);
+  const auto algorithms = cm::read_profiles(root.path() + "/profiles.json");
+  ASSERT_EQ(algorithms.size(), 1);
+  EXPECT_TRUE(algorithms[0].algorithms["ellipse_enabled"].toBool());
+  EXPECT_EQ(algorithms[0].algorithms["strategy"], "ego");
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
   mode->setCurrentIndex(mode->findData("communication"));
+  EXPECT_FALSE(ellipse->isEnabled());
   auto * transport = manager.findChild<QComboBox *>("connectionTransport");
   transport->setCurrentIndex(transport->findData("serial"));
   auto * device = manager.findChild<QComboBox *>("connectionSerialDevice");
@@ -476,4 +495,179 @@ TEST(ConnectionManager, RecoveredBackendReopensFrozenProfileWithoutOverwritingAn
   ASSERT_TRUE(until([&] {return !requested.isEmpty();}));
   EXPECT_EQ(requested, frozen.json());
   EXPECT_EQ(cm::read_profiles(file)[0].json(), saved.json());
+}
+
+TEST(ConnectionProfile, AlgorithmConfigurationIsFrozenAndLegacyHashesRemainStable)
+{
+  auto p = cm::Profile::create("algorithms");
+  EXPECT_FALSE(p.json().contains("algorithms"));
+  const auto legacy_hash = p.hash();
+  EXPECT_EQ(cm::Profile::from_json(p.json()).hash(), legacy_hash);
+  p.mode = "sitl"; p.algorithms["ellipse_enabled"] = true;
+  p.algorithms["strategy"] = "ego"; p.algorithms["camera"] = "down";
+  const auto restored = cm::Profile::from_json(p.json());
+  EXPECT_EQ(restored.algorithms, p.algorithms); EXPECT_EQ(restored.hash(), p.hash());
+  EXPECT_NE(restored.hash(), legacy_hash);
+  p.algorithms["morphology_kernel"] = 2;
+  EXPECT_THROW(p.validate(), std::runtime_error);
+  p.algorithms["morphology_kernel"] = 3; p.down_topic.clear();
+  EXPECT_THROW(p.validate(), std::runtime_error);
+  p.down_topic = "/image"; p.algorithms["provider"] = "not_installed";
+  EXPECT_THROW(p.validate(), std::runtime_error);
+}
+
+TEST(ConnectionManager, CompactConfigurationKeepsActionsVisibleAndSwitchCancellationConsistent)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  const auto file = root.path() + "/profiles.json";
+  cm::write_profiles(file, {cm::Profile::create("First"), cm::Profile::create("Second")});
+  cm::ManagerWindow manager(file, root.path() + "/runtime"); manager.show();
+  auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}));
+  auto * selector = manager.findChild<QComboBox *>("connectionSelector");
+  ASSERT_NE(selector, nullptr); EXPECT_EQ(selector->count(), 2);
+  EXPECT_FALSE(manager.findChild<QDialog *>("connectionProfilesDialog")->isVisible());
+  auto * tabs = manager.findChild<QTabWidget *>("connectionConfigurationTabs");
+  for (const auto & size : {QSize(1200, 650), QSize(850, 570)}) {
+    manager.resize(size); QTest::qWait(40);
+    for (int i = 0; i < tabs->count(); ++i) {
+      tabs->setCurrentIndex(i); QTest::qWait(20);
+      auto * area = qobject_cast<QScrollArea *>(tabs->currentWidget()); ASSERT_NE(area, nullptr);
+      EXPECT_EQ(area->horizontalScrollBar()->maximum(), 0);
+      for (const auto * id :
+        {"saveConnection", "startConnection", "closeConnection", "stopBackend"})
+      {
+        auto * action = manager.findChild<QPushButton *>(id); ASSERT_NE(action, nullptr);
+        const QRect bounds(action->mapTo(&manager, QPoint()), action->size());
+        EXPECT_TRUE(manager.rect().contains(bounds));
+        for (auto * ancestor = action->parentWidget(); ancestor;
+          ancestor = ancestor->parentWidget())
+        {
+          EXPECT_EQ(qobject_cast<QScrollArea *>(ancestor), nullptr);
+        }
+      }
+    }
+  }
+  manager.findChild<QLineEdit *>("connectionName")->setText("Unsaved");
+  QTimer::singleShot(
+    0, &manager, [&manager] {
+      auto * prompt = manager.findChild<QMessageBox *>();
+      if (prompt) {prompt->done(QMessageBox::No);}
+    });
+  selector->setCurrentIndex(1);
+  EXPECT_EQ(selector->currentIndex(), 0);
+  EXPECT_EQ(manager.findChild<QListWidget *>("connectionList")->currentRow(), 0);
+  EXPECT_EQ(manager.findChild<QLineEdit *>("connectionName")->text(), "Unsaved");
+  save->click(); selector->setCurrentIndex(1);
+  EXPECT_EQ(manager.findChild<QLineEdit *>("connectionName")->text(), "Second");
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+}
+
+TEST(ConnectionProfile, SlamDefaultsPreserveLegacyHashesAndCustomSettingsRoundTrip)
+{
+  cm::Profile profile; profile.id = "00000000-0000-0000-0000-000000000001";
+  profile.name = "Legacy algorithms"; profile.mode = "sitl";
+  profile.selected_profile = "navigation_dev";
+  EXPECT_EQ(profile.hash(), "e558f62fadef6628125749d628bac7aaa3bc414d7bdd987d5c169076020e789d");
+  profile.algorithms["ellipse_enabled"] = true;
+  EXPECT_EQ(profile.hash(), "d59686845f4e51ef2f4171dd9346537abb6681099a9f9e537e1a81a32febe6c9");
+  auto legacy = profile.json();
+  EXPECT_FALSE(legacy["algorithms"].toObject().contains("slam"));
+  auto restored = cm::Profile::from_json(legacy);
+  EXPECT_EQ(restored.algorithms["slam"], "profile"); EXPECT_EQ(restored.hash(), profile.hash());
+  restored.algorithms["slam"] = "fast_lio";
+  restored.algorithms["slam_filter_size_map"] = .25;
+  EXPECT_EQ(cm::Profile::from_json(restored.json()).algorithms, restored.algorithms);
+  restored.selected_profile = "base_sim"; EXPECT_THROW(restored.validate(), std::runtime_error);
+  restored.selected_profile = "navigation_dev";
+  restored.algorithms["slam_imu_topic"] = "/bad;topic";
+  EXPECT_THROW(restored.validate(), std::runtime_error);
+}
+
+TEST(ConnectionManager, SlamCanBeConfiguredAndSavedWithoutStartingAnyBackend)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  cm::ManagerWindow manager(root.path() + "/profiles.json", root.path() + "/runtime");
+  manager.show(); auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}));
+  auto * slam = manager.findChild<QComboBox *>("algorithm_slam"); ASSERT_NE(slam, nullptr);
+  EXPECT_EQ(slam->currentData(), "profile");
+  auto * profile = manager.findChild<QComboBox *>("connectionProfile");
+  profile->setCurrentIndex(profile->findData("navigation_dev"));
+  slam->setCurrentIndex(slam->findData("fast_lio"));
+  manager.findChild<QLineEdit *>("algorithm_slam_lidar_topic")->setText("/scanner/cloud");
+  manager.findChild<QLineEdit *>("algorithm_slam_imu_topic")->setText("/scanner/imu");
+  manager.findChild<QDoubleSpinBox *>("algorithm_slam_filter_size_map")->setValue(.25);
+  save->click();
+  const auto saved = cm::read_profiles(root.path() + "/profiles.json"); ASSERT_EQ(saved.size(), 1);
+  EXPECT_EQ(saved[0].algorithms["slam"], "fast_lio");
+  EXPECT_EQ(saved[0].algorithms["slam_lidar_topic"], "/scanner/cloud");
+  EXPECT_DOUBLE_EQ(saved[0].algorithms["slam_filter_size_map"].toDouble(), .25);
+  slam->setCurrentIndex(slam->findData("disabled"));
+  EXPECT_TRUE(manager.findChild<QLabel *>("slamConfigurationSummary")->text().contains("不启动"));
+  save->click();
+  EXPECT_EQ(cm::read_profiles(root.path() + "/profiles.json")[0].algorithms["slam"], "disabled");
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
+
+TEST(Connections, OpenvinsSelectionIsDistinctFixedAndPreservedInEnvironment)
+{
+  auto profile = cm::Profile::create("openvins");
+  profile.mode = "sitl"; profile.selected_profile = "navigation_dev";
+  const auto previous = profile.hash();
+  profile.algorithms["slam"] = "openvins";
+  EXPECT_NO_THROW(profile.validate());
+  EXPECT_NE(profile.hash(), previous);
+  EXPECT_EQ(
+    cm::session_environment(profile, "session").value("EASYFLY_LOCALIZATION_BACKEND"),
+    "openvins");
+  EXPECT_EQ(cm::Profile::from_json(profile.json()).algorithms["slam"], "openvins");
+  profile.algorithms["slam_imu_topic"] = "/custom/imu";
+  EXPECT_THROW(profile.validate(), std::exception);
+  profile.algorithms["slam_imu_topic"] = "/livox/imu";
+  profile.selected_profile = "base_sim";
+  EXPECT_THROW(profile.validate(), std::exception);
+}
+
+TEST(ConnectionManager, SceneAdmissionTracksProfileDraftAndMissingSelection)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  auto p = cm::Profile::create("Base scenes"); p.mode = "sitl";
+  p.selected_profile = "base_sim";
+  const auto file = root.path() + "/profiles.json"; cm::write_profiles(file, {p});
+  cm::ManagerWindow manager(file, root.path() + "/runtime");
+  auto * scenes = manager.findChild<QComboBox *>("connectionScene");
+  auto * profile = manager.findChild<QComboBox *>("connectionProfile");
+  auto * status = manager.findChild<QLabel *>("connectionSceneStatus");
+  auto * start = manager.findChild<QPushButton *>("startConnection");
+  ASSERT_TRUE(until([&] {return scenes->findData("empty") >= 0;}, 15000));
+  ASSERT_TRUE(until([&] {return start->isEnabled();}));
+  EXPECT_TRUE(scenes->currentText().contains(QStringLiteral(" · 可用")));
+  profile->setCurrentIndex(profile->findData("full_perception"));
+  EXPECT_FALSE(start->isEnabled());
+  EXPECT_TRUE(status->text().contains(QStringLiteral("不支持")));
+  EXPECT_TRUE(status->text().contains(QStringLiteral("基础仿真")));
+  profile->setCurrentIndex(profile->findData("base_sim"));
+  EXPECT_TRUE(start->isEnabled());
+  scenes->setCurrentIndex(scenes->findData("empty"));
+  EXPECT_FALSE(start->isEnabled()); EXPECT_TRUE(status->text().contains(QStringLiteral("草稿")));
+  scenes->addItem("removed_scene", "removed_scene");
+  scenes->setCurrentIndex(scenes->count() - 1);
+  EXPECT_FALSE(start->isEnabled());
+  EXPECT_TRUE(status->text().contains(QStringLiteral("不在已安装目录")));
+  manager.findChild<QPushButton *>("refreshScenes")->click();
+  EXPECT_FALSE(start->isEnabled());
+  ASSERT_TRUE(
+    until(
+      [&] {return status->text().contains(QStringLiteral("不在已安装目录"));}, 15000));
+  EXPECT_EQ(scenes->currentData(), "removed_scene");
+  EXPECT_FALSE(start->isEnabled());
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
 }

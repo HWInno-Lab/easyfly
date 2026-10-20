@@ -188,7 +188,7 @@ TEST(MissionGeometryEditor, InvalidationAndFormResetDoNotShowOldGeometry)
   ASSERT_TRUE(desktop_test::until([&] {return ready(editor);}));
   auto * canvas = editor.findChild<ui::MissionGeometryCanvas *>();
   auto * list = editor.findChild<QListWidget *>("draftSteps"); list->setCurrentRow(1);
-  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(1);
+  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(0);
   auto * field = editor.findChild<QLineEdit *>("draftField_x"); ASSERT_NE(field, nullptr);
   field->setFocus(); field->selectAll(); QTest::keyClicks(field, "8");
   EXPECT_FALSE(ready(editor)); EXPECT_TRUE(canvas->geometry().points.empty());
@@ -244,7 +244,7 @@ TEST(MissionGeometryEditor, ActualScreenshotsAndClicksNeverUseTaskRpc)
       ui::draft_yaml(
         steps())));
   ASSERT_TRUE(desktop_test::until([&] {return ready(*editor);}));
-  window.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(2);
+  window.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(1);
   window.findChild<QLabel *>("requestNote")->setText(
     QStringLiteral("离线构造几何测试 · 非真实飞行 · 不发送导航"));
   auto * canvas = window.findChild<ui::MissionGeometryCanvas *>(); QTest::qWait(100);
@@ -260,12 +260,8 @@ TEST(MissionGeometryEditor, ActualScreenshotsAndClicksNeverUseTaskRpc)
       QString(EASYFLY_GEOMETRY_SCREENSHOT_DIRECTORY) +
       "/geometry-offline.png"));
   window.resize(1024, 720); QTest::qWait(100);
-  auto * ancestor = editor->parentWidget();
-  while (ancestor && !qobject_cast<QScrollArea *>(ancestor)) {ancestor = ancestor->parentWidget();}
-  auto * scroll = qobject_cast<QScrollArea *>(ancestor);
-  ASSERT_NE(scroll, nullptr); scroll->ensureWidgetVisible(canvas, 10, 10); QTest::qWait(100);
-  const QRect visible(canvas->mapTo(scroll->viewport(), QPoint()), canvas->size());
-  EXPECT_TRUE(scroll->viewport()->rect().contains(visible));
+  const QRect visible(canvas->mapTo(&window, QPoint()), canvas->size());
+  EXPECT_TRUE(window.rect().contains(visible));
   EXPECT_TRUE(
     window.grab().save(
       QString(EASYFLY_GEOMETRY_SCREENSHOT_DIRECTORY) +

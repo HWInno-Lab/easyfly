@@ -51,3 +51,30 @@ def test_component_profiles_reject_conflicting_user_policy(tmp_path):
         component_profile_environment(profile,{'FASTRTPS_DEFAULT_PROFILES_FILE':str(original)})
     with pytest.raises(RuntimeError,match='Conflicting Fast DDS'):
         component_profile_environment(profile,{'FASTRTPS_DEFAULT_PROFILES_FILE':str(original),'FASTDDS_DEFAULT_PROFILES_FILE':str(profile)})
+
+
+def test_openvins_defaults_preserve_explicit_policy_and_network_scope(tmp_path):
+    import xml.etree.ElementTree as ET
+    from easyfly_fastdds_compat.runtime import (
+        component_profile_environment, openvins_profile_environment)
+    config = Path(__file__).resolve().parents[1]/'config'
+    profile, component = config/'openvins_simulation.xml', config/'component_services.xml'
+    ns = {'d': 'http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles'}
+    for locality in ('0', '1'):
+        environment = {'ROS_LOCALHOST_ONLY': locality}
+        # Ordinary activation before selection does not mask the default choice.
+        environment.update(component_profile_environment(component, environment))
+        selected = openvins_profile_environment(profile, environment, component)
+        assert selected
+        root = ET.parse(selected['FASTRTPS_DEFAULT_PROFILES_FILE']).getroot()
+        assert (root.find('.//d:interfaceWhiteList', ns) is not None) == (locality == '1')
+        assert root.find('.//d:segment_size', ns).text == '134217728'
+        assert root.find('.//d:port_queue_capacity', ns).text == '4096'
+        raw = Path(selected['FASTRTPS_DEFAULT_PROFILES_FILE']).read_bytes()
+        assert openvins_profile_environment(profile, selected, component) == {}
+        assert Path(selected['FASTRTPS_DEFAULT_PROFILES_FILE']).read_bytes() == raw
+    explicit = tmp_path/'explicit.xml'
+    explicit.write_text('<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">'
+                        '<participant profile_name="caller"/></profiles>')
+    assert openvins_profile_environment(profile, {
+        'FASTRTPS_DEFAULT_PROFILES_FILE': str(explicit)}, component) == {}

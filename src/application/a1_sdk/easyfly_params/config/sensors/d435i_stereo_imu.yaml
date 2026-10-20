@@ -1,0 +1,40 @@
+# Copyright 2026 EasyFly Project
+# SPDX-License-Identifier: Apache-2.0
+# Flat parameters for realsense2_camera/rs_launch.py config_file (not --params-file).
+# Device acquisition preset only; intrinsics, extrinsics and VIO noise need calibration.
+# Launch with camera_namespace:=sensors camera_name:=d435i; see README.md.
+use_sim_time: false
+
+enable_infra1: true
+enable_infra2: true
+depth_module.infra_profile: "640,480,30"
+depth_module.infra1_format: "Y8"
+depth_module.infra2_format: "Y8"
+depth_module.enable_auto_exposure: true
+# Avoid tracking the camera-mounted projected pattern as environmental texture.
+depth_module.emitter_enabled: 0
+
+enable_gyro: true
+enable_accel: true
+gyro_fps: 200
+accel_fps: 250
+# 2 = interpolate accel onto gyro timestamps, producing the combined /imu stream.
+unite_imu_method: 2
+depth_module.global_time_enabled: true
+motion_module.global_time_enabled: true
+# Video frame grouping; does not provide camera/IMU hardware synchronization.
+enable_sync: true
+hold_back_imu_for_frames: false
+
+# Stereo VIO uses infrared images; optional depth/RGB can be enabled separately later.
+enable_color: false
+enable_depth: false
+enable_rgbd: false
+pointcloud.enable: false
+align_depth.enable: false
+
+publish_tf: true
+tf_publish_rate: 0.0
+initial_reset: false
+wait_for_device_timeout: 10.0
+diagnostics_period: 1.0

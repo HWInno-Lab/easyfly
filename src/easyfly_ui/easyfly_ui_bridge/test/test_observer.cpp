@@ -759,3 +759,76 @@ TEST_F(ObserverTest, RepeatedGeometryQueryRetainsFirstSourceAgeAndBackendEnvelop
       Key::Targets).evidence.quality, Quality::ValidAtObservation);
   stopped(observer);
 }
+
+TEST_F(ObserverTest, ClassicalGeometrySubscriptionsInvalidateWithoutReusingOldResults)
+{
+  auto publisher = node->create_publisher<easyfly_msgs::msg::EllipseObservationArray>(
+    "/ellipse_observations", 1);
+  auto config = configuration();
+  config.camera_perception[0].ellipse_topic = "/ellipse_observations";
+  Observer observer(config); running(observer);
+  ASSERT_TRUE(until([&] {return publisher->get_subscription_count() == 1;}));
+  sensor_msgs::msg::Image image; image.header.stamp = stamp(); image.header.frame_id = "camera";
+  image.width = 640; image.height = 480; image.encoding = "rgb8"; image.step = 1920;
+  image.data.assign(921600, 5);
+  easyfly_msgs::msg::EllipseObservationArray result;
+  result.header = image.header; result.image_width = 640; result.image_height = 480;
+  result.valid = true;
+  image_publisher->publish(image); publisher->publish(result);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->camera_perception[0].ellipse_image.value != nullptr;
+      }));
+  EXPECT_TRUE(observer.snapshot()->camera_perception[0].ellipses.value->observations.empty());
+  result.valid = false; result.reason = "expired"; publisher->publish(result);
+  ASSERT_TRUE(until([&] {return !observer.snapshot()->camera_perception[0].ellipse_image.value;}));
+  stopped(observer);
+}
+
+
+TEST_F(ObserverTest, LocalizationSessionAndStaleStatusRemainReadOnly)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  auto publisher = node->create_publisher<Status>(
+    "/localization/openvins/status",
+    rclcpp::QoS(1).reliable().transient_local());
+  BridgeConfig options; options.poll_observations = false;
+  options.selected_localization_backend = "openvins";
+  Observer observer(options);
+  Status m; m.backend_id = "openvins"; m.session_id = "session-a";
+  m.header.frame_id = "openvins_odom"; m.tracked_frame = "livox_imu_frame";
+  m.state = m.ESTIMATING; m.pose_valid = true; m.covariance_available = true;
+  auto publish_until = [&](Quality quality, bool old_pose = false) {
+      return until(
+        [&]() {
+          m.header.stamp = stamp();
+          m.pose_stamp = old_pose ? stamp(now_ns.load() - 2000000000LL) : m.header.stamp;
+          publisher->publish(m);
+          auto s = observer.snapshot();
+          return s->localization.value && s->localization.value->session_id == m.session_id &&
+          s->localization.value->state == m.state && s->localization.evidence.quality == quality;
+        });
+    };
+  ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+  EXPECT_EQ(observer.snapshot()->selected_localization_backend, "openvins");
+  ASSERT_TRUE(publish_until(Quality::Stale, true));
+  m.state = m.RESET_REQUIRED; m.pose_valid = false; ++m.generation;
+  ASSERT_TRUE(publish_until(Quality::Invalid));
+  m.session_id = "session-b"; m.generation = 0; m.pose_valid = true; m.state = m.ESTIMATING;
+  ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+  auto conflicting = node->create_publisher<Status>(
+    "/localization/openvins/status",
+    rclcpp::QoS(1).reliable().transient_local());
+  ASSERT_TRUE(publish_until(Quality::Invalid));
+  conflicting.reset();
+  ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+  ASSERT_TRUE(
+    until(
+      [&]() {
+        return observer.snapshot()->localization.evidence.quality == Quality::Stale;
+      }));
+  observer.stop();
+  EXPECT_EQ(observer.snapshot()->localization.evidence.quality, Quality::Stale);
+  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(commands.load(), 0); EXPECT_EQ(control_messages.load(), 0);
+}

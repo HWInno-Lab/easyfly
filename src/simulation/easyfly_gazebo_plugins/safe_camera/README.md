@@ -12,7 +12,8 @@ Fetched upstream SHA-256: source
 `9d2f1b9808a21648bc852e5358e99ff3d96c9d47fe9544b117f1b675190486ec`.
 
 EasyFly changes are deliberately limited to an independent class/library/header
-name and a null-node check immediately after `gazebo_ros::Node::Get`. Duplicate
+name, a null-node check immediately after `gazebo_ros::Node::Get`, and reporting
+the actual CameraInfo writer history depth in its existing startup log. Duplicate
 ROS plugin names remain rejected: the second camera does not publish. No node
 names are automatically changed, no original stream is replaced, and a disabled
 camera does not authorize flight. Original image, depth, geometry, timestamp and

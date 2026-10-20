@@ -43,6 +43,42 @@ def component_profile_environment(profile, environment):
     return {key:str(destination) for key in keys}
 
 
+def openvins_profile_environment(profile, environment, component_profile):
+    """Use measured simulation defaults only when the caller supplied no DDS policy.
+
+    A previous activation may already contain exactly the component reply rules.
+    Any other explicit policy, including a transport, remains the caller's choice.
+    """
+    keys = ('FASTRTPS_DEFAULT_PROFILES_FILE', 'FASTDDS_DEFAULT_PROFILES_FILE')
+    originals = {str(Path(environment[k]).resolve(strict=True))
+                 for k in keys if environment.get(k)}
+    if len(originals) > 1:
+        raise RuntimeError('Conflicting Fast DDS profile inputs')
+    ns = '{http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles}'
+    if originals:
+        existing = ET.parse(next(iter(originals))).getroot()
+        existing = existing if existing.tag == ns+'profiles' else existing.find(ns+'profiles')
+        approved = ET.parse(component_profile).getroot()
+        def shape(node):
+            return (node.tag, dict(node.attrib), (node.text or '').strip(),
+                    [shape(child) for child in node])
+        allowed = [shape(child) for child in approved]
+        if existing is None or any(shape(child) not in allowed for child in existing):
+            return {}  # Never silently replace user XML, even an empty participant.
+    root = ET.parse(profile).getroot()
+    if environment.get('ROS_LOCALHOST_ONLY') != '1':
+        for descriptor in root.findall(ns+'transport_descriptors/'+ns+'transport_descriptor'):
+            whitelist = descriptor.find(ns+'interfaceWhiteList')
+            if whitelist is not None:
+                descriptor.remove(whitelist)
+    directory = tempfile.TemporaryDirectory(prefix='easyfly-vio-dds-')
+    _PROFILE_DIRECTORIES.append(directory)
+    destination = Path(directory.name)/'profiles.xml'
+    ET.register_namespace('', ns[1:-1])
+    ET.ElementTree(root).write(destination, encoding='utf-8', xml_declaration=True)
+    return {key: str(destination) for key in keys}
+
+
 def verified_library(prefix):
     directory = Path(prefix) / 'lib/easyfly_fastdds_compat'
     library = (directory / 'libfastrtps.so.2.6').resolve(strict=True)
@@ -59,7 +95,7 @@ def check_loaded(library, maps):
             raise RuntimeError('Unpatched Fast DDS is already loaded; start a fresh managed simulation process')
 
 
-def activate(prefix=None):
+def activate(prefix=None, openvins=False):
     if os.environ.get('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp') != 'rmw_fastrtps_cpp':
         raise RuntimeError('Managed scene DDS compatibility requires rmw_fastrtps_cpp')
     if prefix is None:
@@ -70,13 +106,20 @@ def activate(prefix=None):
     _HANDLES.append(ctypes.CDLL(str(library), mode=os.RTLD_NOW | os.RTLD_GLOBAL))
     check_loaded(library, Path('/proc/self/maps').read_text())
     profile = Path(prefix) / 'share/easyfly_fastdds_compat/config/component_services.xml'
-    profile_environment = component_profile_environment(profile, os.environ)
+    selected_environment = dict(os.environ)
+    vio_environment = {}
+    if openvins:
+        vio_profile = Path(prefix) / 'share/easyfly_fastdds_compat/config/openvins_simulation.xml'
+        vio_environment = openvins_profile_environment(vio_profile, selected_environment, profile)
+        selected_environment.update(vio_environment)
+    profile_environment = component_profile_environment(profile, selected_environment)
     os.environ.update(profile_environment)
     paths = os.environ.get('LD_LIBRARY_PATH', '').split(':')
     paths = [str(library.parent)] + [p for p in paths if p and p != str(library.parent)]
     os.environ['LD_LIBRARY_PATH'] = ':'.join(paths)
     os.environ['RMW_IMPLEMENTATION'] = 'rmw_fastrtps_cpp'
     return dict(path=str(library), sha256=digest, implementation='rmw_fastrtps_cpp',
-                source_version='2.6.11', fix='reader_writer_listener_snapshot',
+                source_version='2.6.11', openvins_defaults_selected=bool(vio_environment),
+                fix='reader_writer_listener_snapshot',
                 component_profiles_sha256=hashlib.sha256(profile.read_bytes()).hexdigest(),
                 profile_environment=profile_environment)

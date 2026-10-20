@@ -26,10 +26,11 @@ struct BridgeConfig
   bool use_sim_time{true};
   bool poll_observations{true};
   std::string selected_profile{"navigation_dev"};
+  std::string selected_localization_backend{"external"};
   std::array<std::string, 2> image_topics{
     "/camera/color/image_raw", "/camera_down/color/image_raw"};
   std::array<CameraPerceptionBinding, 2> camera_perception{{
-    {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom"},
+    {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom", "", ""},
     {}}};
 };
 enum class RequestStatus {Queued, Busy, RateLimited, Invalid, Closed};

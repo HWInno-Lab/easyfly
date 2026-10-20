@@ -56,6 +56,10 @@ install(FILES README.md ../safe_camera/LICENSE
 install(FILES upstream/SHA256SUMS DESTINATION share/${PROJECT_NAME}/safe_transport)
 
 if(BUILD_TESTING)
+  add_executable(test_transport_wakeup test/test_transport_wakeup.cpp)
+  target_link_libraries(test_transport_wakeup easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_transport_wakeup COMMAND test_transport_wakeup)
+  set_tests_properties(test_transport_wakeup PROPERTIES TIMEOUT 15 RUN_SERIAL TRUE)
   add_executable(test_transport_node_cycle test/test_node_cycle.cpp)
   target_link_libraries(test_transport_node_cycle easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
   add_test(NAME test_transport_node_cycle COMMAND test_transport_node_cycle)

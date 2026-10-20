@@ -1,13 +1,21 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 project(easyfly_color_line_detection)
-
 find_package(ament_cmake REQUIRED)
-
-# TODO: add library/executable targets
-
+find_package(easyfly_image_detection_common REQUIRED)
+find_package(easyfly_color_line REQUIRED)
+add_executable(color_line_detection_node src/color_line_node.cpp)
+target_compile_options(color_line_detection_node PRIVATE -Wall -Wextra -Wpedantic)
+target_link_libraries(color_line_detection_node PRIVATE
+  easyfly_image_detection_common::easyfly_image_detection_common easyfly_color_line::easyfly_color_line)
+install(TARGETS color_line_detection_node DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_detector_ros test/test_detector_ros.py TIMEOUT 100
+    ENV ROS_DOMAIN_ID=164
+    PYTHONNOUSERSITE=1 ROS_LOG_DIR=/tmp/easyfly_color_line_test)
 endif()
-
 ament_package()

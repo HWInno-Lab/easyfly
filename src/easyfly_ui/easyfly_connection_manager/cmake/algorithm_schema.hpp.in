@@ -1,0 +1,3 @@
+// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+#pragma once
+constexpr const char algorithm_ui_schema[] = R"schema(@ALGORITHM_UI_SCHEMA@)schema";

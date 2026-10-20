@@ -11,3 +11,10 @@ require restarting the common calibration launch.
 Set `use_sim_time:=false` for system time; `calib_file` selects a trusted local
 file. First format supports plumb_bob/5 coefficients only. Detailed contract and
 tests: [D4 guide](../../../../docs/development/d4-perception.md).
+
+The Gazebo MID360 configuration publishes a fifth transform,
+`livox_frame -> livox_imu_frame`, at `(-0.011, -0.02329, -0.00588)` metres.
+`sensors.lidar.imu_extrinsic.translation` is the IMU origin in the lidar frame;
+the laser sensor's 0.05 m offset has already been subtracted. Its optional `child`
+enables TF publication. Older configurations without `child` retain validation-only
+behavior. This transform is the inverse of FAST-LIO's lidar-in-IMU extrinsic.

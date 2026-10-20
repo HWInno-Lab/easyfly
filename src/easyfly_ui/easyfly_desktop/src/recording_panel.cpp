@@ -100,7 +100,7 @@ struct RecordingPanel::Impl
         QStringLiteral("帧数"), QStringLiteral("开始时间 UTC"), QStringLiteral("观测时长"),
         QStringLiteral("来源 / 执行"), QStringLiteral("结束原因")});
     index->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    index->setMinimumHeight(120); owner->setMinimumHeight(580);
+    index->setMinimumHeight(120); owner->setMinimumHeight(420);
     index->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     const int widths[]{140, 62, 44, 104, 66, 110, 86};
     for (int col = 0; col < 7; ++col) {index->setColumnWidth(col, widths[col]);}

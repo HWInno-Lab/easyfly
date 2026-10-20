@@ -44,9 +44,9 @@ models:
       remain in maintained aircraft SDF; no parameter changed by this curation.
 files:
 - path: easyfly_iris/easyfly_iris.sdf
-  sha256: 9d3abf68005ac841ff40d9189f5540687972ceddb628f4297911a7c0c9a269c6
+  sha256: 88b9cafe8544599f5db8d8f947235f2f42fc1e395315a9276289fb5c53e803b8
 - path: easyfly_iris/easyfly_iris.urdf
-  sha256: 1d9521ff9721f5ab85dc76dbab438f38e16e6b3902c8dc5fa4e9b9d03ac134cf
+  sha256: f562a77a9f46ac11fae3ec66e689fc1928feaae1668d61a28e59fa9b63e41821
 - path: easyfly_iris/meshes/iris.stl
   sha256: 11a9a1453723182f812e4ca0def829b18272a0dfc1145d2c3e28f8c6210cea7b
 - path: easyfly_iris/meshes/iris_prop_ccw.dae
@@ -66,5 +66,9 @@ local_changes:
 - Independently named pinned native IMU widens timestamp arithmetic before the
   2147.484 s signed-int boundary and releases its update event normally; native
   channels, noise, physics and relay rejection rules are retained.
+- VIO input correction (2026-10-19), URDF adds livox_imu_frame at the physical
+  sensor origin, consistent with sensors.yaml; SDF sensor poses remain unchanged.
+- RGB image and CameraInfo publisher histories keep_last(32) retain bounded VIO
+  burst input; physical sampling, noise and message timestamps are unchanged.
 storage: existing
 inventory_note: S2 reviewed fixed local snapshot; see retained notices and ORIGINS.json.

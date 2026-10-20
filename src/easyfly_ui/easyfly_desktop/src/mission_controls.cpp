@@ -115,7 +115,7 @@ struct MissionPanel::Impl
   uint64_t seen_session{0}, seen_epoch{0};
   bool start_prompt{false};
   QCheckBox * permit;
-  QLabel * gate, * status;
+  QLabel * gate, * status, * dependencies;
   QPushButton * start, * cancel, * stop_check;
   QMessageBox * prompt{nullptr};
 
@@ -130,11 +130,15 @@ struct MissionPanel::Impl
     }
     auto * layout = new QVBoxLayout(panel); layout->setContentsMargins(0, 0, 0, 0);
     permit = new QCheckBox(
-      QStringLiteral("我确认本 ROS domain 仅用于仿真且未连接实机；允许新的受管任务启动"), panel);
+      QStringLiteral("允许新的仿真任务"), panel);
     permit->setObjectName("managedSimulationPermit"); permit->setChecked(false);
     layout->addWidget(permit);
+    auto * permit_hint = plain("managedSimulationPermitHint", panel);
+    permit_hint->setText(QStringLiteral("勾选即确认本 ROS domain 仅用于仿真且未连接实机。"));
+    layout->addWidget(permit_hint);
+    dependencies = plain("missionAlgorithmDependencies", panel); layout->addWidget(dependencies);
     gate = plain("missionPreflight", panel); layout->addWidget(gate);
-    auto * row = new QHBoxLayout;
+    auto * row = new QVBoxLayout;
     start = new QPushButton(QStringLiteral("审阅并确认启动"), panel);
     start->setObjectName("startMission");
     cancel = new QPushButton(QStringLiteral("确认取消本地登记执行"), panel);
@@ -194,6 +198,8 @@ struct MissionPanel::Impl
     const auto values = parsed.array();
     return values.size() == 1 ? values.at(0) : QJsonValue{};
   }
+  QString missing_backends(double now) const
+  {return observed ? missing_mission_backends(*observed, now) : QString{};}
   QString preflight(double now, bool reviewing = false) const
   {
     if (check) {return QStringLiteral("正在只读复核已确认内容；尚未发送启动，不接受重复操作");}
@@ -215,6 +221,8 @@ struct MissionPanel::Impl
       !recent(observed->produced_steady, now, 1) ||
       observed->clock.quality != bridge::Quality::ValidAtObservation)
     {return QStringLiteral("观测器/模拟时钟不新鲜或已暂停、重置");}
+    const auto missing = missing_backends(now);
+    if (!missing.isEmpty()) {return missing;}
     if (reviewing) {
       const auto & d = observed->mission_details;
       if (!read || waiting || selected.empty() || !d.value || !d.value->success ||
@@ -299,6 +307,12 @@ struct MissionPanel::Impl
     if (local_queued && s && s->intent && s->intent->request != queued_after) {
       local_queued = false; notice.clear();
     }
+    const auto dependency = missing_backends(bridge::detail::steady_seconds());
+    dependencies->setText(
+      !observed || !observed->mission_plan ? QStringLiteral("读取任务后显示算法依赖。") :
+      dependency.isEmpty() ? QStringLiteral(
+        "任务所需接口已发现；输入数据、算法就绪"
+        "和飞行准入仍由后端检查。") : dependency);
     const auto reason = preflight(bridge::detail::steady_seconds(), true);
     gate->setText(
       (reason.isEmpty() ? QStringLiteral(

@@ -12,10 +12,54 @@
 // limitations under the License.
 
 #include <QStringList>
+#include <cmath>
+#include <algorithm>
 
 #include "easyfly_desktop/presentation.hpp"
 namespace easyfly_desktop
 {
+QString missing_mission_backends(const bridge::UiSnapshot & snapshot, double now)
+{
+  if (!snapshot.mission_plan) {return {};}
+  const auto & steps = snapshot.mission_plan->steps;
+  if (std::all_of(
+      steps.begin(), steps.end(),
+      [](const auto & step) {return step.type == "hover";}))
+  {
+    return {};
+  }
+  const bool depends_on_localization = std::any_of(
+    steps.begin(), steps.end(),
+    [](const auto & step) {
+      return step.type == "navigate" || step.type == "track" || step.type == "search";
+    });
+  if (depends_on_localization && snapshot.selected_localization_backend == "openvins") {
+    return QStringLiteral("OpenVINS 当前仅观测：导航/跟踪/搜索尚未完成 odom 对齐与地图接入");
+  }
+  if (depends_on_localization && snapshot.selected_localization_backend == "disabled") {
+    return QStringLiteral("定位已关闭：导航/跟踪/搜索不可用");
+  }
+  if (!snapshot.running || snapshot.stopped || !std::isfinite(snapshot.backend_graph_observed) ||
+    snapshot.backend_graph_observed <= 0 || now < snapshot.backend_graph_observed ||
+    now - snapshot.backend_graph_observed > 2)
+  {
+    return QStringLiteral("任务依赖接口尚未取得新鲜观测；请等待连接或检查运行方案");
+  }
+  QStringList missing;
+  for (const auto & step : steps) {
+    if (step.type == "hover") {continue;}
+    const auto backend = step.type == "waypoint" ? std::string("goto") : step.type;
+    const auto found = snapshot.task_backends.find(backend);
+    if (found == snapshot.task_backends.end() || !found->second) {
+      missing.push_back(text(step.type, 64));
+    }
+  }
+  missing.removeDuplicates();
+  return missing.empty() ? QString{} : QStringLiteral(
+    "缺少任务依赖接口：%1。请在连接与仿真检查运行方案；"
+    "精降准备不包含完整精降。")
+         .arg(missing.join(QStringLiteral("、")));
+}
 QString mission_step_parameters(const easyfly_mission_fsm::MissionStep & step)
 {
   QStringList values;

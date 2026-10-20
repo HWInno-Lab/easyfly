@@ -1,0 +1,7 @@
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+# Simulation only: p_imu = R_imu_lidar * p_lidar + t_lidar_in_imu.
+# ray origin (0,0,0.05) minus IMU origin (-0.011,-0.02329,0.04412).
+/**:
+  ros__parameters:
+    mapping.extrinsic_T: [0.011, 0.02329, 0.00588]
+    mapping.extrinsic_R: [1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0]

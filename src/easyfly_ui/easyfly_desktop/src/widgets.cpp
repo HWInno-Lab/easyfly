@@ -224,7 +224,22 @@ void CameraCanvas::paintEvent(QPaintEvent * event)
         target.y() + box.normalized.y() * target.height(), box.normalized.width() * target.width(),
         box.normalized.height() * target.height());
       const QColor color(box.tracking ? "#a65e00" : "#1769df");
-      painter.setPen(QPen(color, 2)); painter.drawRect(bounds);
+      painter.setPen(QPen(color, 2));
+      if (box.shape == CameraOverlayMode::Ellipses) {
+        painter.save(); painter.translate(bounds.center()); painter.rotate(box.angle_degrees);
+        painter.drawEllipse(
+          QRectF(
+            -bounds.width() / 2, -bounds.height() / 2, bounds.width(),
+            bounds.height()));
+        painter.restore();
+      } else if (box.shape == CameraOverlayMode::ColorLines) {
+        const auto pixel = [&](const QPointF & point) {
+            return QPointF(
+              target.x() + point.x() * target.width(),
+              target.y() + point.y() * target.height());
+          };
+        painter.drawLine(QLineF(pixel(box.segment.p1()), pixel(box.segment.p2())));
+      } else {painter.drawRect(bounds);}
       const auto text = painter.fontMetrics().elidedText(
         box.label, Qt::ElideRight,
         std::max(0, std::min(220, target.width() / 2) - 8));

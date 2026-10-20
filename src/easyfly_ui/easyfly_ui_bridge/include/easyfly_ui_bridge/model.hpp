@@ -34,6 +34,9 @@
 #include <easyfly_msgs/msg/detection_info_array.hpp>
 #include <easyfly_msgs/msg/track_info_array.hpp>
 #include <easyfly_msgs/msg/target3_d_array.hpp>
+#include <easyfly_msgs/msg/ellipse_observation_array.hpp>
+#include <easyfly_msgs/msg/color_line_observation_array.hpp>
+#include <easyfly_msgs/msg/localization_status.hpp>
 
 namespace easyfly_ui_bridge
 {
@@ -134,6 +137,7 @@ struct CameraPerceptionBinding
 {
   std::string image_topic, detections_topic, tracks_topic, targets_topic;
   std::string target_frame{"odom"};
+  std::string ellipse_topic, color_line_topic;
 };
 struct CameraObservations
 {
@@ -142,6 +146,9 @@ struct CameraObservations
   Observation<easyfly_msgs::msg::TrackInfoArray> tracks;
   Observation<easyfly_msgs::msg::Target3DArray> targets;
   Observation<sensor_msgs::msg::Image> detection_image, track_image;
+  Observation<easyfly_msgs::msg::EllipseObservationArray> ellipses;
+  Observation<easyfly_msgs::msg::ColorLineObservationArray> color_lines;
+  Observation<sensor_msgs::msg::Image> ellipse_image, color_line_image;
   size_t cached_images{0}, cached_bytes{0};
 };
 struct UiSnapshot
@@ -152,9 +159,14 @@ struct UiSnapshot
   std::string local_error;
   std::string selected_profile;  // Not a confirmed backend profile.
   ClockState clock;
+  // Read-only localization telemetry; never navigation or flight admission.
+  std::string selected_localization_backend;
+  Observation<easyfly_msgs::msg::LocalizationStatus> localization;
   StateView state;
   // Read-only DDS graph evidence, sampled on the bridge worker at most once/second.
   double state_graph_observed{0};
+  double backend_graph_observed{0};
+  std::map<std::string, bool> task_backends;
   std::size_t state_publishers{0}, state_matching_publishers{0};
   std::map<Key, Observation<easyfly_msgs::srv::GetCapabilities::Response>> capabilities;
   std::map<Key, Observation<easyfly_msgs::srv::ManageMission::Response>> missions;
@@ -186,6 +198,9 @@ Quality source_quality(
 StateView state_view(
   const easyfly_core::StateSnapshot & sdk, const ClockState & clock,
   double first_received, double steady, bool duplicate_conflict);
+Quality validate_localization(
+  const easyfly_msgs::msg::LocalizationStatus & message,
+  const ClockState & clock, double receipt_age);
 Quality validate_image(const sensor_msgs::msg::Image & image);
 Quality validate_capabilities(const easyfly_msgs::srv::GetCapabilities::Response & response);
 Quality validate_mission(

@@ -17,6 +17,29 @@ PX4_REVISION='54f0455ffcd755534539a7cf33a09a20bf71d29d'
 CLASSIC_REVISION='70683dc759cbd3ebccfa78429b564f8b1fb5d149'
 
 
+def configure_mid360_imu(sensor):
+    """Use SDFormat 1.6 axis noises and the actual IMU sampling frame."""
+    imu_sensor = sensor.find(".//sensor[@name='imu_sensor']")
+    imu = imu_sensor.find('imu')
+    imu.clear()
+    # Per-sample sigma in rad/s and m/s^2, not continuous-time densities.
+    # Bias is sampled once at initialization; no dynamic bias diffusion is configured.
+    for quantity, sigma, bias in [('angular_velocity', '0.00017', '0.00001'),
+                                  ('linear_acceleration', '0.017', '0.001')]:
+        field = ET.SubElement(imu, quantity)
+        for axis in 'xyz':
+            noise = ET.SubElement(ET.SubElement(field, axis), 'noise', type='gaussian')
+            for key, value in [('mean', '0.0'), ('stddev', sigma),
+                               ('bias_mean', '0.0'), ('bias_stddev', bias)]:
+                ET.SubElement(noise, key).text = value
+    plugin = imu_sensor.find("plugin[@name='imu_plugin']")
+    plugin.find('frame_name').text = 'livox_imu_frame'
+    plugin.set('filename', 'libeasyfly_gazebo_ros_imu.so')
+    legacy_rate = plugin.find('updateRateHZ')
+    if legacy_rate is not None:
+        plugin.remove(legacy_rate)
+
+
 class PlainDumper(yaml.SafeDumper):
     def ignore_aliases(self, data):
         return True
@@ -69,6 +92,7 @@ def main():
             raise ValueError('Iris mesh is not the recorded upstream bytes: '+name)
     shutil.copytree(classic/'models/gps',runtime/'gps')
     sensor=ET.parse(models/'mid360/mid360.sdf')
+    configure_mid360_imu(sensor)
     visual=sensor.find('.//visual/geometry')
     visual.clear()
     cylinder=ET.SubElement(visual,'cylinder')
@@ -95,7 +119,7 @@ def main():
         [loc('PX4-LICENSE'),loc('PX4-CLASSIC-package.xml'),loc('ORIGINS.json')],
         'Unmodified GPS files from pinned Classic package declaring BSD; retain PX4 BSD-3-Clause notice; author Nuno Marques.')
     sensor_prov=provenance(None,'easyfly-mid360-primitive-v1','Apache-2.0',[loc('PROJECT-LICENSE'),loc('ORIGINS.json')],
-        'Project sensor configuration, self-authored cylinder visual; all original sensor/IMU/physics fields retained; vendor mesh excluded.')
+        'Project sensor configuration, self-authored cylinder visual; SDFormat axis IMU noise and sampling frame corrected; physical poses/mass/inertia retained; vendor mesh excluded.')
     gazebo_prov=provenance('https://packages.ubuntu.com/jammy/gazebo-common','11.10.2+dfsg-1','Apache-2.0',
         [loc('GAZEBO-COPYRIGHT'),loc('ORIGINS.json')],
         'Installed Gazebo sun/ground_plane and selected gazebo.material; package Files:* declaration applies, no matching exception.')
@@ -106,7 +130,7 @@ def main():
                      for n in ['iris.stl','iris_prop_ccw.dae','iris_prop_cw.dae']],
         gps_files=[dict(path=p.relative_to(classic).as_posix(),sha256=digest(p)) for p in sorted((classic/'models/gps').rglob('*')) if p.is_file()],
         original_mid360_sdf_sha256=digest(models/'mid360/mid360.sdf'),curated_mid360_sdf_sha256=digest(runtime/'mid360/mid360.sdf'),
-        mid360_change='Only the visual geometry is replaced by a project primitive; no original mesh is imported.',
+        mid360_change='Visual geometry replaced by a project primitive; IMU uses SDFormat axis noise, livox_imu_frame and the coherent measurement-snapshot plugin; physical poses/mass/inertia retained; no original mesh imported.',
         gazebo_package='gazebo-common=11.10.2+dfsg-1',
         gazebo_material_sha256=digest(Path('/usr/share/gazebo-11/media/materials/scripts/gazebo.material')))
     (evidence/'ORIGINS.json').write_text(json.dumps(origins,indent=2)+'\n')
@@ -130,7 +154,8 @@ def main():
                      'Curated GPS and project MID360 only; no sun/ground_plane and no vendor lidar mesh.')
     manifest('easyfly_runtime_v1',dict(package='easyfly_gazebo_models',path='easyfly/runtime_models'),runtime,
              [('gps','gps.sdf',gps_prov),('mid360','mid360.sdf',sensor_prov)],mixed,'vendored',
-             ['MID360 visual mesh replaced with own cylinder; sensor, IMU, mass and inertia unchanged.'])
+             ['MID360 visual mesh replaced with own cylinder; physical poses, mass and inertia retained.',
+              'VIO correction: SDFormat per-axis IMU noise and livox_imu_frame; removed unused plugin updateRateHZ.'])
     manifest('gazebo_builtin_v1',dict(external='gazebo_share',path='models'),Path('/usr/share/gazebo-11/models'),
              [('sun','model.sdf',gazebo_prov),('ground_plane','model.sdf',gazebo_prov)],gazebo_prov)
     aws=json.loads((models/'licenses/aws_warehouse/origins.json').read_text())

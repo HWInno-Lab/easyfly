@@ -97,6 +97,15 @@
         <plugin name='color_camera_plugin' filename='libeasyfly_gazebo_ros_camera.so'>
           <ros>
             <namespace>/camera</namespace>
+            <!-- Match the bounded VIO reader histories; preserve stamp groups during bursts. -->
+            <qos>
+              <topic name='/camera/color/image_raw'>
+                <publisher><history depth='32'>keep_last</history></publisher>
+              </topic>
+              <topic name='/camera/color/camera_info'>
+                <publisher><history depth='32'>keep_last</history></publisher>
+              </topic>
+            </qos>
           </ros>
           <camera_name>color</camera_name>
           <frame_name>camera_color_optical_frame</frame_name>

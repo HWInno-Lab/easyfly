@@ -1,0 +1,117 @@
+diff --git a/ov_msckf/src/ros/ROS2Visualizer.cpp b/ov_msckf/src/ros/ROS2Visualizer.cpp
+index e91cd74..ad5e39c 100644
+--- a/ov_msckf/src/ros/ROS2Visualizer.cpp
++++ b/ov_msckf/src/ros/ROS2Visualizer.cpp
+@@ -149,14 +149,20 @@ ROS2Visualizer::ROS2Visualizer(std::shared_ptr<rclcpp::Node> node, std::shared_p
+ 
+   // Start thread for the image publishing
+   if (_app->get_params().use_multi_threading_pubs) {
+-    std::thread thread([&] {
++    publishing_thread = std::thread([this] {
+       rclcpp::Rate loop_rate(20);
+-      while (rclcpp::ok()) {
++      while (!stop_publishing.load() && rclcpp::ok()) {
+         publish_images();
+         loop_rate.sleep();
+       }
+     });
+-    thread.detach();
++  }
++}
++
++ROS2Visualizer::~ROS2Visualizer() {
++  stop_publishing.store(true);
++  if (publishing_thread.joinable()) {
++    publishing_thread.join();
+   }
+ }
+ 
+diff --git a/ov_msckf/src/ros/ROS2Visualizer.h b/ov_msckf/src/ros/ROS2Visualizer.h
+index a737f80..aebadf1 100644
+--- a/ov_msckf/src/ros/ROS2Visualizer.h
++++ b/ov_msckf/src/ros/ROS2Visualizer.h
+@@ -49,6 +49,7 @@
+ #include <fstream>
+ #include <memory>
+ #include <mutex>
++#include <thread>
+ 
+ #include <Eigen/Eigen>
+ #include <boost/date_time/posix_time/posix_time.hpp>
+@@ -86,6 +87,8 @@ public:
+    */
+   ROS2Visualizer(std::shared_ptr<rclcpp::Node> node, std::shared_ptr<VioManager> app, std::shared_ptr<Simulator> sim = nullptr);
+ 
++  ~ROS2Visualizer();
++
+   /**
+    * @brief Will setup ROS subscribers and callbacks
+    * @param parser Configuration file parser
+@@ -178,6 +181,10 @@ protected:
+   bool start_time_set = false;
+   boost::posix_time::ptime rT1, rT2;
+ 
++  // Own the publishing worker until it has stopped before members are released.
++  std::atomic<bool> stop_publishing{false};
++  std::thread publishing_thread;
++
+   // Thread atomics
+   std::atomic<bool> thread_update_running;
+ 
+diff --git a/ov_msckf/src/run_simulation.cpp b/ov_msckf/src/run_simulation.cpp
+index 7b5ee4e..c6d5b9b 100644
+--- a/ov_msckf/src/run_simulation.cpp
++++ b/ov_msckf/src/run_simulation.cpp
+@@ -105,6 +105,13 @@ int main(int argc, char **argv) {
+   // Ensure we read in all parameters required
+   if (!parser->successful()) {
+     PRINT_ERROR(RED "unable to parse all parameters, please fix\n" RESET);
++#if ROS_AVAILABLE == 2
++    viz.reset();
++    sys.reset();
++    sim.reset();
++    node.reset();
++    rclcpp::shutdown();
++#endif
+     std::exit(EXIT_FAILURE);
+   }
+ 
+@@ -183,6 +190,10 @@ int main(int argc, char **argv) {
+   ros::shutdown();
+ #elif ROS_AVAILABLE == 2
+   viz->visualize_final();
++  viz.reset();
++  sys.reset();
++  sim.reset();
++  node.reset();
+   rclcpp::shutdown();
+ #endif
+ 
+diff --git a/ov_msckf/src/run_subscribe_msckf.cpp b/ov_msckf/src/run_subscribe_msckf.cpp
+index 6a5b341..1d5f7af 100644
+--- a/ov_msckf/src/run_subscribe_msckf.cpp
++++ b/ov_msckf/src/run_subscribe_msckf.cpp
+@@ -95,6 +95,12 @@ int main(int argc, char **argv) {
+   // Ensure we read in all parameters required
+   if (!parser->successful()) {
+     PRINT_ERROR(RED "unable to parse all parameters, please fix\n" RESET);
++#if ROS_AVAILABLE == 2
++    viz.reset();
++    sys.reset();
++    node.reset();
++    rclcpp::shutdown();
++#endif
+     std::exit(EXIT_FAILURE);
+   }
+ 
+@@ -117,6 +123,10 @@ int main(int argc, char **argv) {
+ #if ROS_AVAILABLE == 1
+   ros::shutdown();
+ #elif ROS_AVAILABLE == 2
++  executor.remove_node(node);
++  viz.reset();
++  sys.reset();
++  node.reset();
+   rclcpp::shutdown();
+ #endif
+ 

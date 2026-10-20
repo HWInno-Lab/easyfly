@@ -61,6 +61,8 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_localization_selection test/test_localization_selection.py
+    TIMEOUT 90 ENV ROS_LOG_DIR=/tmp/easyfly_localization_selection ROS_DOMAIN_ID=213)
   ament_add_pytest_test(test_coordinator test/test_coordinator.py
     TIMEOUT 45 ENV ROS_LOG_DIR=/tmp/easyfly_d1_coordinator_test ROS_DOMAIN_ID=83)
   ament_add_pytest_test(test_local_coordinator test/test_local_coordinator.py

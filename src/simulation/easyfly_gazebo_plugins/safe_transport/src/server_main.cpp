@@ -28,6 +28,9 @@
 #include <exception>
 #include <iostream>
 #include <memory>
+#include <algorithm>
+#include <string>
+#include <vector>
 #include <gazebo/Server.hh>
 #include <gazebo/common/Console.hh>
 #include <gazebo/common/Exception.hh>
@@ -47,7 +50,23 @@ int main(int argc, char ** argv)
     gzLogInit("server-", "gzserver.log");
     gazebo::util::LogRecord::Instance()->Init("gzserver");
     server = std::make_unique<gazebo::Server>();
-    if (!server->ParseArgs(argc, argv)) {
+    std::vector<std::string> arguments(argv, argv+argc);
+    const char * lockstep = std::getenv("EASYFLY_GAZEBO_LOCKSTEP");
+    if (lockstep && std::string(lockstep) == "1" && !std::getenv("LP_NUM_THREADS")) {
+      // Keep the software rasterizer inside the VIO simulation CPU budget.
+      // An explicit caller setting takes precedence; hardware drivers ignore this.
+      ::setenv("LP_NUM_THREADS", "2", false);
+      std::cerr << "EasyFly Gazebo: VIO render budget LP_NUM_THREADS=2\n";
+    }
+    if (lockstep && std::string(lockstep) == "1" &&
+        std::find(arguments.begin(), arguments.end(), "--lockstep") == arguments.end()) {
+      arguments.insert(arguments.begin()+1, "--lockstep");
+      std::cerr << "EasyFly Gazebo: OpenVINS synchronous rendering enabled\n";
+    }
+    std::vector<char *> pointers;
+    for (auto & argument : arguments) pointers.push_back(argument.data());
+    pointers.push_back(nullptr);
+    if (!server->ParseArgs(static_cast<int>(arguments.size()), pointers.data())) {
       result = -1;
     } else {
       server->Run();

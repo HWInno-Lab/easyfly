@@ -17,6 +17,7 @@
   <depend>geometry_msgs</depend>
 
   <exec_depend>fast_lio</exec_depend>
+  <exec_depend>easyfly_params</exec_depend>
 
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>rclpy</test_depend>

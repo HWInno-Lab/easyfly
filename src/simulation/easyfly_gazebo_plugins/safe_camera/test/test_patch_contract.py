@@ -28,7 +28,7 @@ probe = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(probe)
 
 
-def test_source_is_only_named_upstream_plus_guard():
+def test_source_is_only_named_upstream_plus_guard_and_qos_log():
     source = (CAMERA / 'src/safe_camera.cpp').read_text()
     assert source.startswith(NOTE)
     assert source.count(GUARD) == 1
@@ -36,6 +36,12 @@ def test_source_is_only_named_upstream_plus_guard():
         'EasyFlyGazeboRosCamera', 'GazeboRosCamera').replace(
         '#include "easyfly_gazebo_plugins/safe_camera.hpp"',
         '#include <gazebo_plugins/gazebo_ros_camera.hpp>')
+    restored = restored.replace(
+        '"Publishing camera info to [%s]; history depth=%zu",\n'
+        '      impl_->camera_info_pub_.back()->get_topic_name(),\n'
+        '      impl_->camera_info_pub_.back()->get_actual_qos().depth()',
+        '"Publishing camera info to [%s]",\n'
+        '      impl_->camera_info_pub_.back()->get_topic_name()')
     assert hashlib.sha256(restored.encode()).hexdigest() == (
         '0385ceec25a7b55f57aea38c060267bc593c4959a0f097ae4cb89561cf34a416')
 

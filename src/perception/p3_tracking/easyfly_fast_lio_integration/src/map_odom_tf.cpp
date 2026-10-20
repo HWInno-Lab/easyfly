@@ -4,7 +4,7 @@
 // EasyFly TF 树要求: map → odom → base_link (M1 的 odom→base_link 由
 // easyfly_coord_transform 维护)。
 //
-// 原理: 每收到一帧 SLAM Odometry (T_map_base), 结合最新 /odom (T_odom_base),
+// 原理: 每收到一帧 SLAM Odometry (T_map_body), 先转换到 base_link，结合 /odom，
 // 计算 T_map_odom = T_map_base × T_odom_base⁻¹ 并发布静态化的 TF。
 //   - 两个 odom 帧同源同时刻时, T_map_odom 理论恒定
 //   - 实际存在漂移差异 → 用低通滤波平滑, 避免跳变传入控制链
@@ -12,6 +12,9 @@
 // 独立节点设计 (不侵入 fast_lio 源码, 便于上游同步)。
 
 #include <memory>
+#include <cmath>
+#include <stdexcept>
+#include <vector>
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
@@ -39,6 +42,21 @@ public:
         declare_parameter<std::string>("odom_frame", "odom");
         // 平滑系数 (0~1, 越小越平滑)
         declare_parameter<double>("smooth_alpha", 0.1);
+        // Translation of the base origin in SLAM body coordinates; axes must align.
+        // Default preserves native setups. Gazebo explicitly selects its IMU offset.
+        rcl_interfaces::msg::ParameterDescriptor fixed; fixed.read_only = true;
+        const auto body_to_base = declare_parameter<std::vector<double>>(
+            "body_to_base_translation", {0.0, 0.0, 0.0}, fixed);
+        if (body_to_base.size() != 3) {
+            throw std::invalid_argument("body_to_base_translation requires 3 values");
+        }
+        for (const auto value : body_to_base) {
+            if (!std::isfinite(value) || std::abs(value) > 100) {
+                throw std::invalid_argument("invalid body_to_base_translation");
+            }
+        }
+        body_to_base_.setIdentity();
+        body_to_base_.setOrigin(tf2::Vector3(body_to_base[0], body_to_base[1], body_to_base[2]));
 
         slam_frame_ = get_parameter("slam_frame").as_string();
         map_frame_ = get_parameter("map_frame").as_string();
@@ -93,8 +111,8 @@ private:
             return;
         }
 
-        // T_map_base (SLAM) 与 T_odom_base (mavros 里程计)
-        const tf2::Transform T_map_base = toTf(*slam);
+        // FAST-LIO body is the IMU sampling origin, not necessarily base_link.
+        const tf2::Transform T_map_base = toTf(*slam) * body_to_base_;
         const tf2::Transform T_odom_base = toTf(*odom_);
 
         // T_map_odom = T_map_base × T_odom_base⁻¹
@@ -136,6 +154,7 @@ private:
     double alpha_{0.1};
     bool has_init_{false};
     tf2::Transform tf_est_;
+    tf2::Transform body_to_base_;
 
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     std::shared_ptr<tf2_ros::StaticTransformBroadcaster> static_tf_broadcaster_;

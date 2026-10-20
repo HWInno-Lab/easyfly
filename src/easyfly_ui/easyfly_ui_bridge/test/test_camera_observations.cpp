@@ -117,3 +117,28 @@ TEST(CameraObservations, PauseResetFutureAndClearFailClosed)
   buffer.clear(); EXPECT_EQ(buffer.snapshot(observed_clock(), 1.1).cached_images, 0U);
   EXPECT_FALSE(buffer.snapshot(observed_clock(), 1.1).detections.value);
 }
+
+TEST(CameraObservations, ClassicalGeometryMatchesOnlyOriginalImageAndExpires)
+{
+  auto bnd = binding(); bnd.ellipse_topic = "/ellipse_observations";
+  b::CameraObservationBuffer buffer(bnd);
+  auto message = std::make_shared<easyfly_msgs::msg::EllipseObservationArray>();
+  message->header = image()->header; message->image_width = 640; message->image_height = 480;
+  message->valid = true; buffer.image(image(), 1, 0); buffer.ellipses(message, 1, 0);
+  auto result = buffer.snapshot(observed_clock(), 1.1);
+  ASSERT_TRUE(result.ellipse_image.value); ASSERT_TRUE(result.ellipses.value);
+  EXPECT_TRUE(result.ellipses.value->observations.empty());  // valid no-target image
+  buffer.ellipses(message, 1.4, 0);  // duplicate cannot refresh the receipt lifetime
+  EXPECT_FALSE(buffer.snapshot(observed_clock(), 1.6).ellipse_image.value);
+  buffer.clear(); buffer.image(image(), 2, 0); buffer.ellipses(message, 2, 0);
+  auto invalidation = std::make_shared<easyfly_msgs::msg::EllipseObservationArray>(*message);
+  invalidation->valid = false; buffer.ellipses(invalidation, 2.1, 0);
+  EXPECT_FALSE(buffer.snapshot(observed_clock(), 2.2).ellipse_image.value);
+  buffer.clear(); auto malformed = std::make_shared<easyfly_msgs::msg::ColorLineObservationArray>();
+  malformed->header = image()->header; malformed->valid = true;
+  malformed->image_width = 640; malformed->image_height = 480;
+  malformed->observations.resize(33); buffer.color_lines(malformed, 3, 0);
+  EXPECT_EQ(
+    buffer.snapshot(observed_clock(), 3.1).color_lines.evidence.quality,
+    b::Quality::Invalid);
+}

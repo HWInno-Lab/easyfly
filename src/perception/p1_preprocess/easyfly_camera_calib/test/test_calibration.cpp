@@ -31,9 +31,16 @@ static std::string replace(std::string text, const std::string & from, const std
   if (at != std::string::npos) {text.replace(at, from.size(), to);} return text;
 }
 TEST(Calibration, RealConfiguredTreeIsValidated) {
-  const auto c = loadCalibration(CALIBRATION_FILE); ASSERT_EQ(c.mounts.size(), 4u);
+  const auto c = loadCalibration(CALIBRATION_FILE); ASSERT_EQ(c.mounts.size(), 5u);
   EXPECT_TRUE(c.has_camera); EXPECT_EQ(c.camera_frame, "camera_color_optical_frame");
   EXPECT_DOUBLE_EQ(c.camera.fx, 337.36);
+  const auto & imu = c.mounts.back();
+  EXPECT_EQ(imu.parent, "livox_frame"); EXPECT_EQ(imu.child, "livox_imu_frame");
+  EXPECT_DOUBLE_EQ(imu.translation[2], -0.00588);
+}
+TEST(Calibration, LegacyExtrinsicWithoutChildRemainsValidationOnly) {
+  const auto c = parseCalibration(replace(config(), "      child: livox_imu_frame\n", ""));
+  EXPECT_EQ(c.mounts.size(), 4u);
 }
 TEST(Calibration, RejectMalformedIntrinsicExtrinsicAndGraphBeforePublication) {
   const auto text = config();
@@ -44,7 +51,10 @@ TEST(Calibration, RejectMalformedIntrinsicExtrinsicAndGraphBeforePublication) {
     {"distortion_model: plumb_bob", "distortion_model: unsupported"},
     {"fx: 337.36", "fx: 337.36\n      fx: 300"}, {"child: livox_frame", "child: invalid frame"},
     {"parent: base_link", "parent: camera_color_optical_frame"},
-    {"fx: 337.36", "unknown_field: 42\n      fx: 337.36"}})
+    {"fx: 337.36", "unknown_field: 42\n      fx: 337.36"},
+    {"child: livox_imu_frame", "child: livox_frame"},
+    {"child: livox_imu_frame", "child: camera_link"},
+    {"child: livox_imu_frame", "child: bad imu"}})
   {
     EXPECT_THROW(parseCalibration(replace(text, bad.first, bad.second)), std::exception);
   }

@@ -81,6 +81,7 @@ asset_sets:
 - gazebo_builtin_v1
 required_plugins: []
 supported_profiles:
+- base_sim
 - navigation_dev
 legacy_profiles: []
 spawn:
@@ -146,6 +147,8 @@ verification:
   sensors_checked: true
   navigation_tested: true
   evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/base-sim-startup-20261020.json
   - package: easyfly_gazebo_worlds
     path: evidence/hospital_aws_v2/import-source.json
   - package: easyfly_gazebo_worlds

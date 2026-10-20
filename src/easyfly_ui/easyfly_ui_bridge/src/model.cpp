@@ -109,6 +109,28 @@ Quality source_quality(
   if (receipt_age > lifetime || age > lifetime) {return Quality::Stale;}
   return Quality::ValidAtObservation;
 }
+Quality validate_localization(
+  const easyfly_msgs::msg::LocalizationStatus & m, const ClockState & clock, double receipt_age)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  if (m.session_id.empty() || m.session_id.size() > 128 || m.reason.size() > 2048 ||
+    m.last_rejection.size() > 2048 || m.backend_id != "openvins" ||
+    m.header.frame_id != "openvins_odom" || m.tracked_frame != "livox_imu_frame" ||
+    m.state > Status::FAILED || stamp_ns(m.pose_stamp) < 0 ||
+    stamp_ns(m.camera_stamp) < 0 || stamp_ns(m.imu_stamp) < 0 ||
+    m.velocity_valid || m.tracking_quality_available ||
+    (m.pose_valid != (m.state == Status::ESTIMATING)) ||
+    (m.pose_valid && (stamp_ns(m.pose_stamp) <= 0 || !m.covariance_available)))
+  {return Quality::Invalid;}
+  if (m.state == Status::RESET_REQUIRED || m.state == Status::FAILED) {return Quality::Invalid;}
+  const auto quality = source_quality(m.header, clock, receipt_age, .5, false);
+  if (quality != Quality::ValidAtObservation) {return quality;}
+  if (m.state == Status::STALE) {return Quality::Stale;}
+  if (m.state != Status::ESTIMATING) {return Quality::Unknown;}
+  auto pose_header = m.header;
+  pose_header.stamp = m.pose_stamp;
+  return source_quality(pose_header, clock, receipt_age, .5, false);
+}
 StateView state_view(
   const easyfly_core::StateSnapshot & sdk, const ClockState & clock,
   double first_received, double steady, bool conflict)

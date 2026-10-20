@@ -133,7 +133,8 @@ struct Observer::Impl
     }
     for (const auto & binding : config.camera_perception) {
       for (const auto & topic : {binding.image_topic, binding.detections_topic,
-          binding.tracks_topic, binding.targets_topic})
+          binding.tracks_topic, binding.targets_topic, binding.ellipse_topic,
+          binding.color_line_topic})
       {
         if (topic.size() > 256 || (!topic.empty() && topic.front() != '/')) {
           throw std::invalid_argument("camera perception bindings must be absolute topics");
@@ -145,6 +146,13 @@ struct Observer::Impl
     }
     data.observation_session_id = ++next_session;
     data.selected_profile = config.selected_profile;
+    if (config.selected_localization_backend != "external" &&
+      config.selected_localization_backend != "fast_lio" &&
+      config.selected_localization_backend != "openvins" &&
+      config.selected_localization_backend != "disabled")
+    {throw std::invalid_argument("invalid selected localization backend");}
+    data.selected_localization_backend = config.selected_localization_backend;
+    data.localization.evidence.endpoint = "/localization/openvins/status";
     if (previous_session) {
       if (!previous_session->stopped) {
         throw std::invalid_argument("previous observer is not stopped");
@@ -278,8 +286,11 @@ struct Observer::Impl
     for (auto & image : data.images) {image = {};}
     for (auto & buffer : camera_buffers) {if (buffer) {buffer->clear();}}
     data.camera_perception = {};
+    data.task_backends.clear(); data.backend_graph_observed = 0;
     incoming_images = {}; incoming_event.reset();
     data.trajectory.clear();
+    data.localization = {};
+    data.localization.evidence.endpoint = "/localization/openvins/status";
     // The event is historical and has no execution identity; keep original epoch.
     data.last_mission_event.evidence.quality = Quality::ClockReset;
     event("ROS clock moved backwards: current layers and read-only requests invalidated");
@@ -317,6 +328,36 @@ struct Observer::Impl
           }));
     }
     subscriptions.push_back(
+      node->create_subscription<easyfly_msgs::msg::LocalizationStatus>(
+        "/localization/openvins/status", rclcpp::QoS(1).reliable().transient_local(),
+        [this](easyfly_msgs::msg::LocalizationStatus::ConstSharedPtr m) {
+          const double received = detail::steady_seconds();
+          const auto structural = detail::validate_localization(
+            *m,
+            {Quality::ValidAtObservation, detail::stamp_ns(m->header.stamp), 0}, 0);
+          // Bound retained strings and reject malformed identities before storing.
+          if (structural == Quality::Invalid && (m->backend_id != "openvins" ||
+          m->session_id.empty() || m->session_id.size() > 128 || m->reason.size() > 2048 ||
+          m->last_rejection.size() > 2048 || m->header.frame_id.size() > 256 ||
+          m->tracked_frame.size() > 256))
+          {
+            data.localization.value.reset();
+            data.localization.evidence.quality = Quality::Invalid;
+            data.localization.evidence.reason = "invalid localization status envelope";
+            return;
+          }
+          auto & observation = data.localization;
+          auto & e = observation.evidence;
+          const bool same_source = observation.value &&
+          observation.value->session_id == m->session_id &&
+          observation.value->generation == m->generation &&
+          observation.value->header.stamp == m->header.stamp;
+          if (!same_source) {e.first_source_steady = received;}
+          e.received_steady = received; e.time_epoch = data.clock.epoch;
+          e.reason = "localization observation only; navigation frame/map integration pending";
+          observation.value = std::move(m);
+        }));
+    subscriptions.push_back(
       node->create_subscription<easyfly_msgs::msg::MissionStatus>(
         "/mission_status", rclcpp::QoS(1),
         [this](easyfly_msgs::msg::MissionStatus::ConstSharedPtr m) {
@@ -349,6 +390,12 @@ struct Observer::Impl
         subscribe(
           binding.targets_topic, easyfly_msgs::msg::Target3DArray{},
           &CameraObservationBuffer::targets);
+        subscribe(
+          binding.ellipse_topic, easyfly_msgs::msg::EllipseObservationArray{},
+          &CameraObservationBuffer::ellipses);
+        subscribe(
+          binding.color_line_topic, easyfly_msgs::msg::ColorLineObservationArray{},
+          &CameraObservationBuffer::color_lines);
       }
       subscriptions.push_back(
         node->create_subscription<Image>(
@@ -553,6 +600,19 @@ struct Observer::Impl
   }
   void observations(double now)
   {
+    if (data.localization.value) {
+      auto & e = data.localization.evidence;
+      e.receipt_age = now - e.first_source_steady;
+      e.source_age_available = data.clock.now_ns > 0;
+      e.source_age = e.source_age_available ? static_cast<double>(data.clock.now_ns -
+        detail::stamp_ns(data.localization.value->header.stamp)) / 1e9 : 0;
+      e.quality =
+        detail::validate_localization(*data.localization.value, data.clock, e.receipt_age);
+      if (node->count_publishers("/localization/openvins/status") > 1) {
+        e.quality = Quality::Invalid;
+        e.reason = "multiple localization publishers; ambiguous session";
+      }
+    }
     if (now - data.state_graph_observed >= 1.0) {
       const auto sources = node->get_publishers_info_by_topic("/uav_state");
       data.state_publishers = sources.size(); data.state_matching_publishers = 0;
@@ -737,6 +797,7 @@ struct Observer::Impl
     incoming_images = {}; incoming_event.reset(); subscriptions.clear();
     for (auto & buffer : camera_buffers) {buffer.reset();}
     data.camera_perception = {};
+    data.task_backends.clear(); data.backend_graph_observed = 0;
     caps_clients.clear(); mission_client.reset(); params_client.reset(); perception_client.reset();
     details_client.reset();
     if (executor) {executor->cancel(); executor->remove_node(node); executor.reset();}
@@ -752,6 +813,7 @@ struct Observer::Impl
     data.state.speed_mps.reset(); data.state.battery_percent.reset();
     for (auto & image : data.images) {image = {};}
     data.trajectory.clear();
+    data.localization.evidence.quality = Quality::Stale;
     for (auto & item : data.capabilities) {item.second.evidence.quality = Quality::Stale;}
     for (auto & item : data.missions) {item.second.evidence.quality = Quality::Stale;}
     data.mission_details.evidence.quality = Quality::Stale;
@@ -772,6 +834,12 @@ struct Observer::Impl
         const double now = detail::steady_seconds();
         data.clock = clock.state(now, node->now().nanoseconds());
         if (config.poll_observations && now - last_poll >= 1.01) {
+          data.backend_graph_observed = now;
+          for (const auto & name :
+            {"takeoff", "goto", "navigate", "track", "search", "precision_land", "land"})
+          {
+            data.task_backends[name] = sdk->server_ready(name);
+          }
           for (Key key : {Key::FlightCapabilities, Key::MissionCapabilities,
               Key::PerceptionCapabilities, Key::LandingCapabilities}) {submit(key);}
           submit(targets ? Key::Targets : Key::Obstacles); targets = !targets; last_poll = now;

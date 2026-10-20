@@ -30,6 +30,7 @@ asset_sets:
 - aws_racetrack_day_v1
 required_plugins: []
 supported_profiles:
+- base_sim
 - navigation_dev
 legacy_profiles: []
 spawn:
@@ -93,6 +94,8 @@ verification:
   sensors_checked: true
   navigation_tested: true
   evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/base-sim-startup-20261020.json
   - package: easyfly_gazebo_worlds
     path: evidence/racetrack_aws_day_v2/cold-world-s6.json
   - package: easyfly_gazebo_worlds

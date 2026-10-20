@@ -148,6 +148,7 @@ def test_parent_group_blocks_detection_config_file() -> None:
 
         assert context.launch_configurations["config_file"] == ""
         assert context.launch_configurations["fastlio_config_file"] == "mid360.yaml"
+        assert context.launch_configurations["sensor_profile"] == "gazebo_mid360"
         assert child_description is not None
 
         for action in child_description.entities:
@@ -162,6 +163,7 @@ def test_parent_group_blocks_detection_config_file() -> None:
         files = parameter_files(child_node, context)
         assert files
         assert files[0].name == "mid360.yaml"
+        assert files[1] == PACKAGE_DIR / 'config/gazebo_mid360_extrinsics.yaml'
     finally:
         parent._resolve_px4_dir = original_resolve_px4
         parent.require_native_imu = original_native_imu
@@ -187,7 +189,66 @@ def main() -> None:
     test_standalone_legacy_config_file_is_effective()
     test_parent_group_blocks_detection_config_file()
     test_delayed_map_clock_is_frozen_before_parent_scope_exits()
+    test_ui_parameters_survive_scoped_parent_and_keep_yaml_and_ros_types()
+    test_gazebo_body_offset_survives_parent_scope()
     print("PASS FAST-LIO launch semantic contracts")
+
+
+def test_ui_parameters_survive_scoped_parent_and_keep_yaml_and_ros_types():
+    import json
+    from unittest.mock import patch
+    from launch_ros.utilities import evaluate_parameters
+    parent = load_launch_module(PERCEPTION_PATH, 'perception_slam_ui')
+    with patch.object(parent, '_resolve_px4_dir', lambda: Path('/inert-test-only-px4')), \
+            patch.object(parent, 'require_native_imu', lambda directory: None):
+        description = parent.generate_launch_description()
+    timer = next(action for action in guarded_actions(description)
+                 if getattr(action, 'period', None) == 14.0)
+    group = next(action for action in timer.actions if isinstance(action, GroupAction))
+    raw = json.dumps(dict(slam='fast_lio', slam_lidar_topic='/scanner/cloud',
+                          slam_imu_topic='/scanner/imu', slam_max_iteration=5,
+                          slam_filter_size_map=.25, slam_det_range=75))
+    context = make_context(config_file='detection.yaml', fastlio_options_json=raw,
+                           slam_enabled='false')
+    assert not group.condition.evaluate(context)
+    context.launch_configurations['slam_enabled'] = 'true'
+    assert group.condition.evaluate(context)
+    for action in group.get_sub_entities():
+        returned = action.execute(context)
+        if isinstance(action, IncludeLaunchDescription):
+            for entity in returned:
+                if isinstance(entity, LaunchDescription):
+                    child = entity
+                else:
+                    entity.execute(context)
+            break
+    assert context.launch_configurations['config_file'] == ''
+    assert context.launch_configurations['fastlio_options_json'] == raw
+    for action in child.entities:
+        if isinstance(action, DeclareLaunchArgument):
+            action.execute(context)
+        elif isinstance(action, OpaqueFunction):
+            node = next(item for item in action.execute(context) if isinstance(item, Node))
+            break
+    params = evaluate_parameters(context, node._Node__parameters)[-1]
+    assert params['common.lid_topic'] == '/scanner/cloud'
+    assert params['common.imu_topic'] == '/scanner/imu'
+    assert params['max_iteration'] == 5 and type(params['max_iteration']) is int
+    assert params['filter_size_map'] == .25
+    assert params['mapping.det_range'] == 75.0 and type(params['mapping.det_range']) is float
+    assert parameter_files(node, context)[0].name == 'mid360.yaml'
+    assert parameter_files(node, context)[1].name == 'gazebo_mid360_extrinsics.yaml'
+
+
+def test_gazebo_body_offset_survives_parent_scope():
+    fastlio = load_launch_module(FASTLIO_PATH, 'fastlio_gazebo_body_offset')
+    context = make_context(use_sim_time='true', sensor_profile='gazebo_mid360')
+    container = fastlio._launch_map_odom_tf(context)[0].actions[0]
+    description = container._ComposableNodeContainer__composable_node_descriptions[0]
+    context.launch_configurations.clear()
+    request = get_composable_node_load_request(description, context)
+    offset = next(p for p in request.parameters if p.name == 'body_to_base_translation')
+    assert list(offset.value.double_array_value) == [.011, .02329, -.12412]
 
 
 if __name__ == "__main__":

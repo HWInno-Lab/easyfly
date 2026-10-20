@@ -98,6 +98,12 @@ inline std::shared_ptr<b::UiSnapshot> sample()
   for (int i = 0; i < 30; ++i) {
     s->trajectory.push_back({i, s->produced_steady, i * .04, i * -.02, 1.5});
   }
+  s->backend_graph_observed = s->produced_steady;
+  for (const auto & name :
+    {"takeoff", "goto", "navigate", "track", "search", "precision_land", "land"})
+  {
+    s->task_backends[name] = true;
+  }
   return s;
 }
 struct FakeState
@@ -105,6 +111,7 @@ struct FakeState
   std::shared_ptr<b::UiSnapshot> data{sample()};
   uint64_t sequence{0}; int stop_calls{0}, list_calls{0}, validate_calls{0}, query_calls{0};
   bool answer{true}, wrong_id{false}, unknown_id{false}, frozen_snapshot{false};
+  bool renew_backend_graph{true};
   int stop_delay_ms{0}; double stop_requested{0};
   std::string last_validation, last_query, last_details;
   int details_calls{0};
@@ -126,6 +133,9 @@ public:
     auto result = std::make_shared<b::UiSnapshot>(*state_->data);
     const double now = b::detail::steady_seconds();
     if (!state_->frozen_snapshot) {result->produced_steady = now;}
+    if (!state_->frozen_snapshot && state_->renew_backend_graph) {
+      result->backend_graph_observed = now - .01;
+    }
     if (state_->stop_requested > 0 &&
       (now - state_->stop_requested) * 1000 >= state_->stop_delay_ms)
     {

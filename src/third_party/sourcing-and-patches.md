@@ -1,6 +1,6 @@
 # 来源、版本与本地补丁登记
 
-当前入口是[catalog.json](catalog.json)，涵盖6个已分类项目、保留原位的2个ROS驱动和1组模型资产。
+当前入口是[catalog.json](catalog.json)，涵盖7个已分类项目、保留原位的2个ROS驱动和1组模型资产。
 它记录当前算法分层涉及的边界，不是整个平台的完整软件物料清单，也不参与运行时后端发现。
 项目维护的SORT/A*等实现由algorithms管理；系统OpenCV/PCL/Eigen不额外复制为vendored源码。
 
@@ -9,6 +9,7 @@
 | 组件 | 可确认版本/身份 | 原许可证据与缺口 | 详细记录 |
 | --- | --- | --- | --- |
 | FAST-LIO及内嵌ikd-Tree/IKFoM | 完整本地ROS2导入；精确上游基点未知 | 根GPL-v2文本与包BSD元数据差异保留；嵌入组件基点未知 | [清单](algorithms/localization/fast_lio.provenance.json) |
+| OpenVINS | 官方提交 `69488123ed9362dd44b6f28e7f4680abbff1442b`，运行所需三包及配置子集 | 原 GPLv3 文本、源文件 GPLv3-or-later 通知保留并安装；两项有序补丁 | [清单](algorithms/localization/open_vins.provenance.json) |
 | EGO完整8包 | 本地ROS2导入，原上游/fork/commit未知 | TODO/MIT/BSD包元数据及文件通知保留；没有统一根许可 | [清单](algorithms/planning/ego_planner.provenance.json) |
 | ONNX Runtime | 本地SDK元数据1.23.2，GIT_COMMIT_ID有记录 | MIT与ThirdPartyNotices；原下载归档/签名未保存 | [清单](runtimes/onnxruntime.provenance.json) |
 | Livox SDK2 | 公共头/运行库1.3.0；CHANGELOG1.2.5、CMake变量0.0.2分别保留 | LICENSE.txt按列出的范围授权MIT；准确导入commit未知 | [清单](sensor_sdks/livox_sdk2.provenance.json) |

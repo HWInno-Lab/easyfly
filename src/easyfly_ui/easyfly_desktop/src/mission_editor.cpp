@@ -27,6 +27,7 @@
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QTabWidget>
+#include <QToolButton>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <algorithm>
@@ -36,6 +37,8 @@
 #include "easyfly_desktop/mission_draft.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_desktop/mission_geometry.hpp"
+#include "layout_state.hpp"
+
 namespace easyfly_desktop
 {
 namespace mission = easyfly_mission_fsm;
@@ -79,7 +82,10 @@ struct MissionEditor::Impl
       QStringLiteral(
         "仅编辑、校验和导出，不执行任务。坐标 odom · m / rad / s · 顺序执行，失败终止。\n"
         "导出后不会自动进入服务目录；仿真参数示例不代表实机安全配置。"), owner);
-    note->setWordWrap(true); layout->addWidget(note);
+    note->setWordWrap(true); note->hide();
+    auto * help = new QToolButton(owner); help->setText(QStringLiteral("任务编辑说明"));
+    help->setCheckable(true);
+    QObject::connect(help, &QToolButton::toggled, note, &QWidget::setVisible);
     auto * toolbar = new QHBoxLayout;
     button(
       toolbar, "draftNew", QStringLiteral("新建示例"), [this] {
@@ -106,26 +112,24 @@ struct MissionEditor::Impl
         dialog->open();
       });
     button(toolbar, "draftValidate", QStringLiteral("校验任务"), [this] {validate();});
-    toolbar->addStretch(); layout->addLayout(toolbar);
-    auto * editor_tabs = new QTabWidget(owner); editor_tabs->setObjectName("draftEditorTabs");
-    layout->addWidget(editor_tabs, 1);
-    auto * split = new QSplitter(Qt::Horizontal, editor_tabs);
-    editor_tabs->addTab(split, QStringLiteral("步骤与参数"));
-    auto * raw = new QGroupBox(QStringLiteral("YAML 正文 · 保留原文直至编辑"), editor_tabs);
+    toolbar->addStretch(); toolbar->addWidget(help); layout->addLayout(toolbar);
+    layout->addWidget(note);
+    auto * tabs = new QTabWidget(owner); tabs->setObjectName("draftTabs");
+    layout->addWidget(tabs, 1);
+    auto * split = new QSplitter(Qt::Horizontal, tabs);
+    split->setObjectName("draftStepParameterSplitter"); split->setChildrenCollapsible(false);
+    tabs->addTab(split, QStringLiteral("步骤与参数"));
+    auto * raw = new QGroupBox(QStringLiteral("YAML 正文 · 保留原文直至编辑"), tabs);
     auto * raw_layout = new QVBoxLayout(raw); body = new QPlainTextEdit(raw);
     body->setObjectName("draftBody");
     body->setPlaceholderText(QStringLiteral("新建示例或打开本地文件；也可直接粘贴 v1 YAML。"));
     body->setLineWrapMode(QPlainTextEdit::NoWrap); raw_layout->addWidget(body);
-    auto * structured = new QGroupBox(QStringLiteral("步骤预览 / 表单"), split);
-    auto * right = new QVBoxLayout(structured);
-    auto * tabs = new QTabWidget(structured); tabs->setObjectName("draftTabs"); right->addWidget(
-      tabs);
-    auto * sequence_page = new QWidget(tabs);
+    auto * sequence_page = new QWidget(split); sequence_page->setMinimumWidth(230);
     auto * sequence_layout = new QVBoxLayout(sequence_page);
-    auto * parameters_page = new QWidget(tabs);
+    sequence_layout->addWidget(new QLabel(QStringLiteral("任务步骤"), sequence_page));
+    auto * parameters_page = new QWidget(split); parameters_page->setMinimumWidth(320);
     auto * parameters_layout = new QVBoxLayout(parameters_page);
-    tabs->addTab(sequence_page, QStringLiteral("顺序与类型"));
-    tabs->addTab(parameters_page, QStringLiteral("当前步骤参数"));
+    parameters_layout->addWidget(new QLabel(QStringLiteral("当前步骤参数"), parameters_page));
     auto * geometry_page = new QWidget(tabs);
     auto * geometry_layout = new QVBoxLayout(geometry_page);
     tabs->addTab(geometry_page, QStringLiteral("二维几何示意"));
@@ -163,7 +167,7 @@ struct MissionEditor::Impl
       {"takeoff", "hover", "waypoint", "navigate", "track", "search", "land",
         "precision_land"});
     parameters_layout->addWidget(type);
-    add_type = new QComboBox(structured); add_type->setObjectName("draftAddType");
+    add_type = new QComboBox(sequence_page); add_type->setObjectName("draftAddType");
     for (int i = 0; i < type->count(); ++i) {add_type->addItem(type->itemText(i));}
     sequence_layout->addWidget(new QLabel(QStringLiteral("追加步骤类型"), sequence_page));
     sequence_layout->addWidget(add_type);
@@ -190,17 +194,21 @@ struct MissionEditor::Impl
         }, true);
     }
     sequence_layout->addLayout(actions);
-    auto * scroll = new QScrollArea(structured); scroll->setWidgetResizable(true);
+    auto * scroll = new QScrollArea(parameters_page); scroll->setWidgetResizable(true);
     fields = new QWidget(scroll); form = new QFormLayout(fields); scroll->setWidget(fields);
     fields->setObjectName("draftFields"); fields->setStyleSheet(
       "QWidget#draftFields {background:#ffffff;}");
-    form->setSizeConstraint(QLayout::SetMinimumSize);
+    form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     parameters_layout->addWidget(scroll, 1);
     auto * apply = new QHBoxLayout;
     button(apply, "draftApply", QStringLiteral("应用表单"), [this] {apply_form();}, true);
     button(apply, "draftResetForm", QStringLiteral("重置表单"), [this] {show_fields();}, true);
-    parameters_layout->addLayout(apply); split->setStretchFactor(0, 1);
-    editor_tabs->addTab(raw, QStringLiteral("高级 YAML"));
+    parameters_layout->addLayout(apply);
+    split->setStretchFactor(0, 0); split->setStretchFactor(1, 1);
+    split->setSizes({250, 700}); remember_splitter(split, "mission-editor");
+    tabs->addTab(raw, QStringLiteral("高级 YAML"));
     auto * export_box = new QGroupBox(QStringLiteral("独立草稿目录 · 非任务服务目录"), owner);
     auto * export_layout = new QVBoxLayout(export_box);
     auto * folder = new QHBoxLayout;
@@ -230,7 +238,12 @@ struct MissionEditor::Impl
       export_row, "draftExport", QStringLiteral("导出已校验草稿"), [this] {
         export_to(name->text());
       });
-    export_layout->addLayout(export_row); layout->addWidget(export_box);
+    export_layout->addLayout(export_row);
+    auto * export_toggle = new QToolButton(owner);
+    export_toggle->setObjectName("toggleDraftExport");
+    export_toggle->setText(QStringLiteral("导出与目录设置")); export_toggle->setCheckable(true);
+    export_box->hide(); layout->addWidget(export_toggle); layout->addWidget(export_box);
+    QObject::connect(export_toggle, &QToolButton::toggled, export_box, &QWidget::setVisible);
     status = new QLabel(QStringLiteral("未校验 · 本地草稿不发送任何 ROS 请求"), owner);
     status->setMinimumWidth(0); status->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     status->setObjectName("draftStatus"); status->setTextFormat(Qt::PlainText); status->setWordWrap(

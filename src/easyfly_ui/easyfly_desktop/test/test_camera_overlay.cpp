@@ -137,3 +137,28 @@ TEST(CameraOverlay, DenseLabelsDoNotOverlapOrLeaveImage)
   const auto clipped = ui::camera_label_rect(bounds, QRect(0, 0, 50, 30), QSize(180, 24), {});
   EXPECT_TRUE(QRect(0, 0, 50, 30).contains(clipped));
 }
+
+TEST(CameraOverlay, ClassicalShapesRequireExactHeaderDimensionsAndFreshness)
+{
+  Sample sample;
+  auto message = std::make_shared<easyfly_msgs::msg::EllipseObservationArray>();
+  message->header = sample.tracks->header; message->image_width = 640; message->image_height = 480;
+  message->valid = true;
+  easyfly_msgs::msg::EllipseObservation value; value.center_x = 320; value.center_y = 240;
+  value.major_axis_px = 100; value.minor_axis_px = 50; value.angle_rad = .5; value.score = .9;
+  message->observations.push_back(value);
+  sample.snapshot->camera_perception[0].ellipses = {message, desktop_test::evidence()};
+  const auto render = [&] {
+      return ui::camera_overlay(
+        *sample.snapshot, sample.frame, 0,
+        ui::CameraOverlayMode::Ellipses, sample.now);
+    };
+  auto result = render(); ASSERT_TRUE(result.matched); ASSERT_EQ(result.boxes.size(), 1U);
+  EXPECT_EQ(result.boxes[0].shape, ui::CameraOverlayMode::Ellipses);
+  EXPECT_FALSE(result.boxes[0].axial_depth);
+  message->image_width = 639; EXPECT_FALSE(render().matched); message->image_width = 640;
+  message->valid = false; EXPECT_FALSE(render().matched); message->valid = true;
+  message->header.frame_id = "other"; EXPECT_FALSE(render().matched);
+  message->header.frame_id = sample.frame.source_frame; sample.now += .6;
+  EXPECT_FALSE(render().matched);
+}

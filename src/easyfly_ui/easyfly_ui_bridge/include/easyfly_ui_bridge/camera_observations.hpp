@@ -36,6 +36,12 @@ public:
     easyfly_msgs::msg::Target3DArray::ConstSharedPtr message,
     double now, uint64_t epoch);
   CameraObservations snapshot(const ClockState & clock, double now);
+  void ellipses(
+    easyfly_msgs::msg::EllipseObservationArray::ConstSharedPtr message,
+    double now, uint64_t epoch);
+  void color_lines(
+    easyfly_msgs::msg::ColorLineObservationArray::ConstSharedPtr message,
+    double now, uint64_t epoch);
   void clear();
 
 private:
@@ -43,6 +49,7 @@ private:
   std::deque<Observation<sensor_msgs::msg::Image>> images_;
   size_t bytes_{0};
   int64_t image_watermark_{0}, detection_watermark_{0}, track_watermark_{0}, target_watermark_{0};
+  int64_t ellipse_watermark_{0}, color_line_watermark_{0};
 };
 }  // namespace easyfly_ui_bridge
 #endif  // EASYFLY_UI_BRIDGE__CAMERA_OBSERVATIONS_HPP_

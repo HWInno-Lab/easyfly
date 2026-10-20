@@ -23,6 +23,8 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QSplitter>
+#include <QToolButton>
+#include <QGridLayout>
 #include <QTimer>
 #include <QVBoxLayout>
 #include <QVariant>
@@ -40,6 +42,8 @@
 #include <vector>
 
 #include "easyfly_desktop/rviz_view.hpp"
+
+#include "layout_state.hpp"
 #include "rviz_layers.hpp"
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
 #include <ament_index_cpp/get_package_share_directory.hpp>
@@ -418,32 +422,40 @@ struct RvizView::Impl
   explicit Impl(RvizView * parent)
   : widget(parent)
   {
-    auto * layout = new QHBoxLayout(widget); layout->setContentsMargins(0, 0, 0, 0);
+    auto * layout = new QVBoxLayout(widget); layout->setContentsMargins(0, 0, 0, 0);
+    auto * toolbar = new QHBoxLayout; layout->addLayout(toolbar);
     auto * splitter = new QSplitter(Qt::Horizontal, widget);
     splitter->setObjectName("embeddedRvizSplitter"); splitter->setChildrenCollapsible(false);
-    layout->addWidget(splitter);
+    layout->addWidget(splitter, 1);
     auto * scroll = new QScrollArea(splitter);
     scroll->setObjectName("embeddedRvizControlsScroll"); scroll->setWidgetResizable(true);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroll->setMinimumWidth(240);
+    scroll->setMinimumWidth(240); scroll->setMaximumWidth(320);
     auto * controls = new QWidget;
     controls->setObjectName("embeddedRvizControls");
     auto * controls_layout = new QVBoxLayout(controls);
-    auto * source_group = new QGroupBox(QStringLiteral("观测预设"), controls);
-    auto * source_layout = new QVBoxLayout(source_group);
-    preset = new QComboBox(source_group); preset->setObjectName("embeddedRvizPreset");
+    controls_layout->setContentsMargins(8, 4, 8, 4); controls_layout->setSpacing(6);
+    preset = new QComboBox(widget); preset->setObjectName("embeddedRvizPreset");
     preset->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
     preset->setMinimumContentsLength(12);
     preset->addItems(
       {QStringLiteral("基础飞行 · map / MAVROS 位姿"),
-        QStringLiteral("导航观测 · odom / 机位 /path")}); source_layout->addWidget(preset);
-    start = new QPushButton(QStringLiteral("打开只读三维"), source_group);
-    start->setObjectName("startEmbeddedRviz"); source_layout->addWidget(start);
-    auto * stop = new QPushButton(QStringLiteral("释放三维"), source_group);
-    stop->setObjectName("stopEmbeddedRviz"); source_layout->addWidget(stop);
-    controls_layout->addWidget(source_group);
+        QStringLiteral("导航观测 · odom / 机位 /path")}); toolbar->addWidget(preset, 1);
+    start = new QPushButton(QStringLiteral("打开只读三维"), widget);
+    start->setObjectName("startEmbeddedRviz"); toolbar->addWidget(start);
+    auto * stop = new QPushButton(QStringLiteral("释放三维"), widget);
+    stop->setObjectName("stopEmbeddedRviz"); toolbar->addWidget(stop);
+    auto * focus = new QToolButton(widget); focus->setText(QStringLiteral("专注观察"));
+    focus->setObjectName("embeddedRvizFocusMode"); focus->setCheckable(true);
+    toolbar->addWidget(focus);
+    QObject::connect(
+      focus, &QToolButton::toggled, widget, [scroll, focus](bool on) {
+        scroll->setVisible(!on);
+        focus->setText(on ? QStringLiteral("恢复面板") : QStringLiteral("专注观察"));
+      });
     auto * layer_group = new QGroupBox(QStringLiteral("显示图层"), controls);
-    auto * layer_layout = new QVBoxLayout(layer_group);
+    auto * layer_layout = new QGridLayout(layer_group); layer_layout->setVerticalSpacing(4);
+    int layer_index = 0;
     auto * warning = new QLabel(
       QStringLiteral(
         "实验性只读三维 · 原始话题的最后收到几何，不代表新鲜状态或可飞许可。\n"
@@ -463,7 +475,8 @@ struct RvizView::Impl
       box->setChecked(
         name == QStringLiteral("网格") || name == QStringLiteral("位姿") ||
         name == QStringLiteral("实际轨迹"));
-      layers.emplace(name, box); layer_layout->addWidget(box);
+      layers.emplace(name, box);
+      layer_layout->addWidget(box, layer_index / 2, layer_index % 2); ++layer_index;
       QObject::connect(
         box, &QCheckBox::toggled, widget, [this, name](bool checked) {
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
@@ -477,28 +490,32 @@ struct RvizView::Impl
     }
     controls_layout->addWidget(layer_group);
     auto * view_group = new QGroupBox(QStringLiteral("视角"), controls);
-    auto * view_layout = new QVBoxLayout(view_group);
+    auto * view_layout = new QHBoxLayout(view_group);
     view = new QComboBox(view_group); view->setObjectName("embeddedRvizView");
     view->addItems({QStringLiteral("环绕视角"), QStringLiteral("俯视视角")});
     view_layout->addWidget(view);
     auto * reset = new QPushButton(QStringLiteral("重置视角"), view_group);
     reset->setObjectName("resetEmbeddedRvizView"); view_layout->addWidget(reset);
     controls_layout->addWidget(view_group);
-    controls_layout->addWidget(warning);
+    auto * help = new QToolButton(controls); help->setText(QStringLiteral("图层与坐标说明"));
+    help->setCheckable(true); warning->hide();
+    QObject::connect(help, &QToolButton::toggled, warning, &QWidget::setVisible);
+    controls_layout->addWidget(help); controls_layout->addWidget(warning);
     status = new QPlainTextEdit(controls); status->setObjectName("embeddedRvizStatus");
-    status->setReadOnly(true); status->setFixedHeight(160);
+    status->setReadOnly(true); status->setFixedHeight(110);
     status->setLineWrapMode(QPlainTextEdit::WidgetWidth);
     controls_layout->addWidget(status); controls_layout->addStretch(); scroll->setWidget(controls);
     canvas = new QWidget(splitter); canvas->setObjectName("embeddedRvizCanvasHost");
     canvas->setMinimumSize(320, 240);
     canvas_layout = new QVBoxLayout(canvas); canvas_layout->setContentsMargins(0, 0, 0, 0);
-    placeholder = new QLabel(QStringLiteral("三维画布\n选择左侧预设，手动打开只读三维。"), canvas);
+    placeholder = new QLabel(QStringLiteral("三维画布\n选择上方预设，手动打开只读三维。"), canvas);
     placeholder->setObjectName("embeddedRvizPlaceholder");
     placeholder->setAlignment(Qt::AlignCenter);
     placeholder->setWordWrap(true); placeholder->setTextFormat(Qt::PlainText);
     canvas_layout->addWidget(placeholder, 1);
-    splitter->setStretchFactor(0, 0); splitter->setStretchFactor(1, 1);
-    splitter->setSizes({280, 800});
+    splitter->addWidget(canvas); splitter->addWidget(scroll);
+    splitter->setStretchFactor(0, 1); splitter->setStretchFactor(1, 0);
+    splitter->setSizes({900, 260}); remember_splitter(splitter, "rviz");
     QObject::connect(start, &QPushButton::clicked, widget, [this] {open();});
     QObject::connect(stop, &QPushButton::clicked, widget, [this] {close();});
     QObject::connect(

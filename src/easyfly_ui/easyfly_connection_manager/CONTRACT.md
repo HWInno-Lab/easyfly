@@ -1,7 +1,7 @@
 # Managed connection contract
 
 Configuration schema2; newline IPC envelope v=1; desktop capability protocol2;
-UiSnapshot ABI / bridge SONAME1. An installed desktop protocol manifest is required.
+UiSnapshot ABI / bridge SONAME3. An installed desktop protocol manifest is required.
 The optional Qt connection-page plugin has C ABI1. The application entry execs the
 desktop in connection-lobby mode; the lobby creates no observer or ROS context.
 The configured workspace loads the same page inside MainWindow navigation. A lobby
@@ -114,3 +114,34 @@ networked QGC share only the selected executable, not startup authorization or i
 Scene preview reads a bounded, package-contained world only after catalog SHA validation;
 it displays limited static primitive geometry, omitting models/meshes/includes. It is
 not a simulator image or evidence of a running scene.
+
+Algorithm options are an optional strict profile object. Defaults are omitted from
+canonical JSON so unchanged legacy profile hashes remain stable. The shared schema
+in easyfly_params builds the form and validates backend launch inputs. Only local
+SITL creates the explicitly selected ellipse/color-line nodes; ordinary computation
+libraries have no independent process. Options are frozen with the session and
+applied on restart. No runtime plugin discovery, remote process control or algorithm
+hot switching is provided. The desktop displays bounded, exact-frame geometry and
+checks fresh task backend discovery before new confirmation; backend admission and
+ownership remain authoritative.
+
+
+SLAM 配置使用共享算法 schema：profile / fast_lio / openvins / disabled，默认随运行方案。
+FAST-LIO 显式启用要求非 base_sim；输入限定绝对 ROS 话题，迭代/采样为整数、体素与距离为浮点数。
+profile.launch → perception_sitl → scoped FAST-LIO include 传递同一份校验后的数据，关闭时不创建
+FAST-LIO 或其 map→odom 组件；不发飞行请求。新增字段默认值省略，读取旧算法对象时仅为新字段
+补默认值，保留既有完整旧字段约束与哈希；非默认 SLAM 配置仍纳入身份摘要。
+
+
+OpenVINS is an opt-in `slam=openvins` startup selection for local SITL only. It
+uses the fixed `gazebo_mono` calibration, excludes FAST-LIO, and rejects custom
+FAST-LIO parameters. The `base_sim` profile cannot select it. Dependency checks
+resolve `ov_msckf` and `easyfly_openvins_integration` only for this branch.
+`EASYFLY_LOCALIZATION_BACKEND` carries the configured choice to the desktop;
+it is a label, not DDS identity or flight admission. The desktop observes the
+bounded `/localization/openvins/status` contract with wall and source freshness,
+clock epochs, session/generation display and multiple-publisher rejection.
+Navigation remains unavailable for OpenVINS until IMU/base and odom/map frame
+integration is implemented. The coordinator rejects goals even with fresh
+ESTIMATING status and refuses runtime changes of its read-only backend parameter.
+The UI blocks new navigation/tracking/search mission confirmation for this choice.

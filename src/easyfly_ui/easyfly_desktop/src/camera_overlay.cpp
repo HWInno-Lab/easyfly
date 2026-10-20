@@ -161,6 +161,52 @@ CameraOverlay camera_overlay(
   {
     result.status = QStringLiteral("该相机没有明确感知绑定，未叠框"); return result;
   }
+  if (mode == CameraOverlayMode::Ellipses || mode == CameraOverlayMode::ColorLines) {
+    const auto render = [&](const auto & observation) {
+        if (!same_frame(observation, frame, snapshot, now) || !observation.value->valid ||
+          observation.value->image_width != static_cast<uint32_t>(frame.image.width()) ||
+          observation.value->image_height != static_cast<uint32_t>(frame.image.height()) ||
+          observation.value->observations.size() > 32 ||
+          now - observation.evidence.first_source_steady > .5 ||
+          snapshot.clock.now_ns - frame.stamp_ns > 500000000LL) {return false;}
+        return true;
+      };
+    const double w = frame.image.width(), h = frame.image.height();
+    if (mode == CameraOverlayMode::Ellipses) {
+      if (!render(observations.ellipses)) {return result;}
+      for (const auto & value : observations.ellipses.value->observations) {
+        CameraOverlayBox box; box.shape = mode; box.class_name = QStringLiteral("椭圆");
+        box.confidence = value.score; box.angle_degrees = value.angle_rad * 180 / 3.141592653589793;
+        box.normalized = QRectF(
+          (value.center_x - value.major_axis_px / 2) / w,
+          (value.center_y - value.minor_axis_px / 2) / h, value.major_axis_px / w,
+          value.minor_axis_px / h);
+        box.label = QStringLiteral("椭圆 %1×%2px / %3°").arg(
+          number(value.major_axis_px, 1),
+          number(value.minor_axis_px, 1), number(box.angle_degrees, 1));
+        box.depth_status = QStringLiteral("图像几何，无米制深度"); result.boxes.push_back(box);
+      }
+    } else {
+      if (!render(observations.color_lines)) {return result;}
+      for (const auto & value : observations.color_lines.value->observations) {
+        CameraOverlayBox box; box.shape = mode; box.class_name = QStringLiteral("彩线");
+        box.confidence = value.score;
+        box.segment =
+          QLineF(value.start_x / w, value.start_y / h, value.end_x / w, value.end_y / h);
+        box.normalized = QRectF(box.segment.p1(), box.segment.p2()).normalized();
+        box.label = QStringLiteral("彩线 %1px / 偏移 %2").arg(
+          number(value.length_px, 1),
+          number(value.offset_x_normalized, 2));
+        box.depth_status = QStringLiteral("图像几何，无导航动作"); result.boxes.push_back(box);
+      }
+    }
+    result.matched = true;
+    result.status = QStringLiteral("同帧%1 · %2个%3").arg(
+      mode == CameraOverlayMode::Ellipses ? QStringLiteral("椭圆") : QStringLiteral("彩线"))
+      .arg(result.boxes.size())
+      .arg(result.boxes.empty() ? QStringLiteral("（有效空）") : QString{});
+    return result;
+  }
   if (mode == CameraOverlayMode::Detections) {
     const auto & detections = observations.detections;
     if (!same_frame(

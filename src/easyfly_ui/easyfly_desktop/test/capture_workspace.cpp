@@ -15,8 +15,18 @@
 #include <QDir>
 #include <QLabel>
 #include <QListWidget>
+#include <QPushButton>
+#include <QDialog>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QFile>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QTemporaryDir>
+#include <QToolButton>
 #include <QTabWidget>
 #include <QVBoxLayout>
+#include "easyfly_desktop/mission_editor.hpp"
 #include "support.hpp"
 #include "connection_page.hpp"
 
@@ -37,12 +47,33 @@ int main(int argc, char ** argv)
   static_cast<QVBoxLayout *>(window.centralWidget()->layout())->insertWidget(0, mark);
   window.show(); QTest::qWait(2500);
   const QDir output(parser.value("output-directory")); if (!output.mkpath(".")) {return 2;}
-  bool ok = true;
+  bool ok = true; QJsonArray geometry;
+  auto * editor = window.findChild<easyfly_desktop::MissionEditor *>();
+  window.findChild<QPushButton *>("draftNew")->click();
+  if (!desktop_test::until([&] {return editor->dirty() && !editor->busy();})) {return 2;}
   const auto shot = [&](const QString & name) {
       state->data = desktop_test::sample(); QTest::qWait(130);
       ok = window.grab().save(output.filePath(name + ".png")) && ok;
+      QJsonArray widgets;
+      for (const auto * id :
+        {"navigation", "missionCatalogPage", "saveConnection", "startConnection",
+          "cameraCanvas", "cameraControlsScroll", "perceptionObjectTabs", "draftSteps",
+          "draftFields"})
+      {
+        auto * widget = window.findChild<QWidget *>(id);
+        if (widget) {
+          const auto point = widget->mapTo(&window, QPoint());
+          widgets.append(
+            QJsonObject{{"name", id}, {"visible", widget->isVisible()},
+              {"x", point.x()}, {"y", point.y()}, {"width", widget->width()},
+              {"height", widget->height()}});
+        }
+      }
+      geometry.append(
+        QJsonObject{{"screenshot", name}, {"width", window.width()},
+          {"height", window.height()}, {"widgets", widgets}});
     };
-  for (const auto & size : {QSize(1440, 900), QSize(1024, 720)}) {
+  for (const auto & size : {QSize(1440, 900), QSize(1366, 768), QSize(1024, 720)}) {
     window.resize(size); const auto suffix = QString::number(size.width());
     for (const auto & key :
       {"connection", "overview", "tasks", "perception", "space", "records", "settings"})
@@ -53,16 +84,40 @@ int main(int argc, char ** argv)
       }
       shot(QString(key) + "-" + suffix);
     }
+    window.show_page("perception");
+    auto * results = window.findChild<QToolButton *>("togglePerceptionResults"); results->click();
+    shot("perception-results-" + suffix);
+    auto * focus = window.findChild<QToolButton *>("cameraFocusMode"); focus->click();
+    shot("perception-focus-" + suffix); focus->click(); results->click();
     window.show_connection_page(); auto * tabs = window.findChild<QTabWidget *>(
       "connectionConfigurationTabs");
     for (int i = 0; i < tabs->count(); ++i) {
       tabs->setCurrentIndex(i); shot("connection-tab-" + QString::number(i) + "-" + suffix);
     }
+    if (size.width() == 1366) {
+      window.findChild<QPushButton *>("manageConnections")->click(); QTest::qWait(80);
+      auto * dialog = window.findChild<QDialog *>("connectionProfilesDialog");
+      ok = dialog->grab().save(output.filePath("profile-management.png")) && ok; dialog->hide();
+    }
+    tabs->setCurrentIndex(1);
+    auto * advanced = window.findChild<QPushButton *>("toggleAlgorithmAdvanced"); advanced->click();
+    shot("algorithm-advanced-" + suffix); advanced->click();
     window.show_page("tasks"); tabs = window.findChild<QTabWidget *>("taskCenterTabs");
+    tabs->setCurrentIndex(0);
+    auto * execution = window.findChild<QToolButton *>("toggleTaskExecution");
+    execution->click(); shot("task-execution-" + suffix); execution->click();
     for (int i = 0; i < tabs->count(); ++i) {
       tabs->setCurrentIndex(i); shot("task-tab-" + QString::number(i) + "-" + suffix);
     }
   }
+  QFile report(output.filePath("layout-geometry.json"));
+  if (!report.open(QIODevice::WriteOnly)) {return 2;}
+  report.write(QJsonDocument(geometry).toJson()); report.close();
+  QTemporaryDir drafts;
+  editor->prepare_directory(drafts.path() + "/drafts");
+  if (!desktop_test::until([&] {return !editor->busy();})) {return 2;}
+  editor->export_file("fixture.yaml");
+  if (!desktop_test::until([&] {return !editor->dirty();})) {return 2;}
   window.close();
   if (!desktop_test::until([&] {return window.cleanup_complete();})) {return 2;}
   return ok ? 0 : 2;

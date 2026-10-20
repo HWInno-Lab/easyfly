@@ -1,0 +1,12 @@
+ellipse_detection:
+  ros__parameters:
+    optical_frame: camera_color_optical_frame
+    max_age_seconds: 0.5
+    opencv_threads: 2
+    max_detections: 32
+    min_axis_px: 12.0
+    max_axis_ratio: 8.0
+    max_radial_error: 0.06
+    max_area_error: 0.15
+    canny_low: 50.0
+    canny_high: 150.0

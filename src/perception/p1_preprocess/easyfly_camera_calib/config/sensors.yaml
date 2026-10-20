@@ -7,6 +7,7 @@
 #   camera_link: 相机物理安装坐标系 (FLU, 与机体平行)
 #   *_optical_frame: 光学惯例, x右 y下 z前 (RDF) — camera_info/图像/点云所在系
 #   livox_frame: 雷达坐标系 (x前 y左 z上, livox 驱动惯例)
+#   livox_imu_frame: 内置 IMU 实际采样原点, 轴与 livox_frame 平行
 # rotation_rpy: 绕固定轴 ZYX 顺序的欧拉角 [rad] (tf2 惯例)
 
 sensors:
@@ -51,8 +52,10 @@ sensors:
       translation: [0.0, 0.0, 0.13]      # SDF: mid360 安装 0.08 + sensor pose 0.05
       rotation_rpy: [0.0, 0.0, 0.0]      # 水平安装
 
-    # 雷达内置 IMU 相对雷达坐标系的外参 (FAST-LIO extrinsic_lidar_to_imu 需要)
-    # 与 mid360.sdf 中 imu_sensor pose 一致
+    # livox_frame → livox_imu_frame: IMU 原点在激光坐标系中的位置。
+    # SDF IMU pose 相对 lidar_link；此处须减去 ray sensor 的 (0, 0, 0.05)。
+    # FAST-LIO 需要逆变换 T_imu_lidar，使用独立 Gazebo 参数覆盖，不直接复制此值。
     imu_extrinsic:
-      translation: [-0.011, -0.02329, 0.04412]
+      child: livox_imu_frame
+      translation: [-0.011, -0.02329, -0.00588]
       rotation_rpy: [0.0, 0.0, 0.0]

@@ -1,13 +1,16 @@
 """P2 目标检测节点启动 (可独立于 perception_sitl 调试)."""
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
+    process_nice = DeclareLaunchArgument(
+        'process_nice', default_value='0', choices=['0', '10'],
+        description='CPU scheduling budget; simulation VIO uses 10 for perception work')
     use_sim_time_arg = DeclareLaunchArgument(
         "use_sim_time", default_value="true", description="使用 ROS 仿真时钟")
     config_file_arg = DeclareLaunchArgument(
@@ -34,6 +37,8 @@ def generate_launch_description():
         namespace="",
         package="rclcpp_components",
         executable="component_container",
+        prefix=PythonExpression(["'nice -n 10' if '", LaunchConfiguration('process_nice'),
+                                 "' == '10' else ''"]),
         composable_node_descriptions=[
             ComposableNode(
                 package="easyfly_object_detection",
@@ -59,6 +64,7 @@ def generate_launch_description():
         output="screen",
     )
     return LaunchDescription([
+        process_nice,
         use_sim_time_arg,
         config_file_arg,
         use_gpu_arg,

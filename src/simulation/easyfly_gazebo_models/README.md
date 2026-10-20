@@ -43,7 +43,14 @@ S0 保留原模型、纹理和材质；S2 的运行模型改动单独记录如�
 从固定指纹的本地归档复现导入。
 
 `easyfly/runtime_models/` 仅含原版 PX4 GPS 与项目 MID360 的圆柱外观版本。
-MID360 传感器、IMU、质量和惯量保持原值；来源不清的外观 mesh 没有导入该集合。
+初始 S2 整理保留 MID360 的传感器参数；2026-10-19 修正了运行版的 IMU 噪声格式和
+采样坐标系，实际安装位姿、质量和惯量保持原值。来源不清的外观 mesh 没有导入该集合。
+运行版使用 SDFormat 1.6 的六轴 Gaussian 噪声，每样本标准差为角速度
+`0.00017 rad/s`、加速度 `0.017 m/s²`；固定初始偏置标准差为 `0.00001 rad/s`、
+`0.001 m/s²`，未配置动态偏置扩散。`/livox/imu` 声明 `livox_imu_frame`，
+由统一标定发布其相对 `livox_frame` 的真实原点。旧 mesh 模型与历史快照保持原样。
+可重建配方为 `tools/scenes/prepare_runtime_assets.py:configure_mid360_imu`；
+变更前后 SHA256 记录于 `licenses/runtime/ORIGINS.json`。
 `easyfly_airframe_v1` 引用项目维护的 Iris；其 SDF 显式修正非零 IMU 噪声密度，
 并接入 1000Hz 原始样本的四点均值与 PX4 FIFO 量程限制。详见
 `licenses/runtime/imu-noise-reference.json` 和 `imu-sampling-reference.json`。
@@ -150,3 +157,10 @@ their own scene qualification; the asset itself does not grant flight readiness.
 manifest, original notice, attribution and file inventory without downloading,
 executing upstream code or overwriting outputs. Source inch units and internal
 transforms remain unchanged; only new world instance positions are authored.
+
+
+The curated MID-360 IMU uses the project-local `libeasyfly_gazebo_ros_imu.so` from
+`easyfly_gazebo_plugins/safe_imu`. It publishes coherent measurement snapshots
+with their own source timestamps and a bounded reliable writer history. Legacy
+MID-360 source assets are retained; updated curated hashes and the reproducible
+recipe are recorded in `licenses/runtime/ORIGINS.json`.

@@ -1,18 +1,25 @@
 <?xml version="1.0"?>
-<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>easyfly_ellipse_detection</name>
   <version>0.1.0</version>
-  <description>TODO: easyfly_ellipse_detection</description>
+  <description>Image-space ellipse observations with bounded, freshness-checked ROS transport.</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
-
   <buildtool_depend>ament_cmake</buildtool_depend>
-
+  <depend>easyfly_image_detection_common</depend>
+  <depend>easyfly_ellipse</depend>
+  <depend>easyfly_msgs</depend>
+  <depend>rclcpp</depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>rosgraph_msgs</test_depend>
+  <test_depend>python3-numpy</test_depend>
+  <test_depend>python3-opencv</test_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-
-  <export>
-    <build_type>ament_cmake</build_type>
-  </export>
+  <export><build_type>ament_cmake</build_type></export>
 </package>

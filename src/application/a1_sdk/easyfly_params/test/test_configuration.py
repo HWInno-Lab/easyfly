@@ -158,3 +158,52 @@ def test_integer_contract_fields_reject_equal_floats(tmp_path, field, value):
     path.write_text(yaml.safe_dump(contracts))
     with pytest.raises(ValueError, match="must be an integer"):
         load_profile("base_sim", tmp_path / "config")
+
+
+def test_algorithm_schema_rejects_invalid_ranges_and_preserves_ros_parameter_types():
+    from easyfly_params.algorithms import validate, detector_parameters
+    options = validate(dict(ellipse_enabled=True, hue_min=170, hue_max=10))
+    assert options['ellipse_enabled'] is True
+    assert type(detector_parameters(options, 'ellipse')['min_axis_px']) is float
+    assert type(detector_parameters(options, 'color_line')['hue_min']) is int
+    for change in (dict(morphology_kernel=2), dict(min_axis_px=3),
+                   dict(max_radial_error=.3), dict(canny_low=200, canny_high=100),
+                   dict(opencv_threads=True), dict(provider='unknown'), dict(shell='bad')):
+        with pytest.raises(ValueError):
+            validate(change)
+
+
+def test_slam_selection_inputs_and_typed_parameters_are_bounded():
+    from easyfly_params.algorithms import validate, slam_enabled, slam_parameters
+    options = validate(dict(slam='fast_lio', slam_lidar_topic='/scanner/lidar',
+                            slam_imu_topic='/scanner/imu', slam_point_filter_num=4,
+                            slam_filter_size_map=.25))
+    params = slam_parameters(options)
+    assert params['common.lid_topic'] == '/scanner/lidar'
+    assert params['common.imu_topic'] == '/scanner/imu'
+    assert type(params['point_filter_num']) is int
+    assert type(params['mapping.det_range']) is float
+    assert params['filter_size_map'] == .25
+    assert slam_enabled(options, 'navigation_dev')
+    with pytest.raises(ValueError, match='FAST-LIO'):
+        slam_enabled(options, 'base_sim')
+    assert not slam_enabled(validate({}), 'base_sim')
+    assert slam_enabled(validate({}), 'full_perception')
+    assert not slam_enabled(validate(dict(slam='disabled')), 'navigation_dev')
+    for change in (dict(slam='orb_slam'), dict(slam_lidar_topic='relative/topic'),
+                   dict(slam_imu_topic='/imu;command'), dict(slam_lidar_topic=''),
+                   dict(slam_max_iteration=1.5), dict(slam_point_filter_num=True),
+                   dict(slam_filter_size_map=0), dict(slam_blind=5, slam_det_range=5)):
+        with pytest.raises(ValueError):
+            validate(change)
+
+
+def test_openvins_selection_is_fixed_profile_and_not_a_fastlio_alias():
+    from easyfly_params.algorithms import validate, localization_backend
+    assert localization_backend(validate(dict(slam='openvins')), 'full_perception') == 'openvins'
+    assert localization_backend(validate({}), 'navigation_dev') == 'fast_lio'
+    with pytest.raises(ValueError, match='OpenVINS'):
+        localization_backend(validate(dict(slam='openvins')), 'base_sim')
+    for change in (dict(slam_imu_topic='/other/imu'), dict(slam_filter_size_map=.25)):
+        with pytest.raises(ValueError, match='FAST-LIO 参数'):
+            localization_backend(validate(dict(slam='openvins', **change)), 'navigation_dev')

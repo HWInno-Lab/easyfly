@@ -19,7 +19,7 @@
 #include "easyfly_desktop/image_pipeline.hpp"
 namespace easyfly_desktop
 {
-enum class CameraOverlayMode {Raw, Detections, Tracks};
+enum class CameraOverlayMode {Raw, Detections, Tracks, Ellipses, ColorLines};
 struct CameraOverlayBox
 {
   QRectF normalized;
@@ -27,6 +27,9 @@ struct CameraOverlayBox
   int id{-1};
   double confidence{0};
   bool tracking{false};
+  CameraOverlayMode shape{CameraOverlayMode::Detections};
+  double angle_degrees{0};
+  QLineF segment;
   std::optional<double> axial_depth;
 };
 struct CameraOverlay

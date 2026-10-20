@@ -212,6 +212,16 @@ class EasyflyIrisSdfTest(unittest.TestCase):
                     f"principal moments violate the rigid-body triangle inequality: {moments}",
                 )
 
+    def test_color_writer_history_covers_bounded_vio_reader(self):
+        plugin = self.model.find(".//sensor[@name='color']/plugin")
+        topics = plugin.findall('ros/qos/topic')
+        self.assertEqual({t.get('name') for t in topics},
+                         {'/camera/color/image_raw', '/camera/color/camera_info'})
+        for topic in topics:
+            history = topic.find('publisher/history')
+            self.assertEqual(history.text, 'keep_last')
+            self.assertEqual(int(history.get('depth')), 32)
+
     def test_camera_visual_is_pose_only_and_adds_no_rigid_body(self):
         base_link = self.model.find("link[@name='base_link']")
         self.assertIsNotNone(base_link)
@@ -363,6 +373,46 @@ class EasyflyIrisSdfTest(unittest.TestCase):
                 self.assertIsNotNone(camera_name)
                 self.assertEqual(f"/camera/{camera_name}/image_raw", topic)
                 self.assertEqual(plugin.findtext("frame_name"), frame)
+
+
+class Mid360VioContract(unittest.TestCase):
+    """Cross-check physical SDF origins against TF, URDF and FAST-LIO consumers."""
+
+    def test_physical_imu_origin_and_inverse_lidar_extrinsic(self):
+        src = SDF_PATH.parents[4]
+        mid = ET.parse(src / 'simulation/easyfly_gazebo_models/easyfly/'
+                       'runtime_models/mid360/mid360.sdf')
+        lidar = mid.find(".//sensor[@name='laser_livox']")
+        imu = mid.find(".//sensor[@name='imu_sensor']")
+        lidar_pose = [float(v) for v in lidar.findtext('pose').split()]
+        imu_pose = [float(v) for v in imu.findtext('pose').split()]
+        self.assertEqual(lidar_pose[3:], [0, 0, 0])
+        self.assertEqual(imu_pose[3:], [0, 0, 0])
+        config = yaml.safe_load(SENSORS_YAML_PATH.read_text())['sensors']['lidar']
+        expected = [imu_pose[k] - lidar_pose[k] for k in range(3)]
+        _assert_vector_close(self, config['imu_extrinsic']['translation'], expected)
+        self.assertEqual(imu.findtext('plugin/frame_name'), config['imu_extrinsic']['child'])
+        joint = ET.parse(URDF_PATH).find(".//joint[@name='livox_imu_joint']")
+        self.assertEqual(joint.find('parent').get('link'), config['mount']['child'])
+        self.assertEqual(joint.find('child').get('link'), config['imu_extrinsic']['child'])
+        _assert_vector_close(self, [float(v) for v in joint.find('origin').get('xyz').split()],
+                             expected)
+        fastlio = yaml.safe_load((src / 'perception/p3_tracking/easyfly_fast_lio_integration/'
+                                'config/gazebo_mid360_extrinsics.yaml').read_text())
+        _assert_vector_close(self, fastlio['/**']['ros__parameters']['mapping.extrinsic_T'],
+                             [-v for v in expected])
+
+    def test_mid360_has_all_six_schema_noises(self):
+        path = SDF_PATH.parents[4] / 'simulation/easyfly_gazebo_models/easyfly/' \
+            'runtime_models/mid360/mid360.sdf'
+        imu = ET.parse(path).find(".//sensor[@name='imu_sensor']/imu")
+        self.assertIsNone(imu.find('noise'))
+        for quantity in ['angular_velocity', 'linear_acceleration']:
+            for axis in 'xyz':
+                noise = imu.find(f'{quantity}/{axis}/noise')
+                self.assertIsNotNone(noise)
+                self.assertEqual(noise.get('type'), 'gaussian')
+                self.assertGreater(float(noise.findtext('stddev')), 0)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@
   "connection_page_abi": 1,
   "schema_version": 1,
   "connection_protocol": 2,
-  "snapshot_abi": 1,
+  "snapshot_abi": 3,
   "managed_default_read_only": true,
   "recording": @CONNECTION_MEDIA_JSON@,
   "rviz_embed": @CONNECTION_RVIZ_JSON@

@@ -13,14 +13,19 @@
 
 #pragma once
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QProcessEnvironment>
 #include <QString>
 #include <QVector>
 
 namespace easyfly_connection_manager
 {
+QJsonArray algorithm_fields();
+QJsonObject algorithm_defaults();
+void validate_algorithms(const QJsonObject & options);
 struct Profile
 {
+  QJsonObject algorithms{algorithm_defaults()};
   QString id, name;
   int domain{0};
   bool local_only{true}, simulation_time{true};

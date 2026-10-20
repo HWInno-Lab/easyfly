@@ -219,3 +219,59 @@ def test_stalled_clock_and_stop_timeout_keep_owner_and_reject_stale_stop(tmp_pat
     assert value['diagnosis'] == 'stop_unknown' and value['process_running']
     worker.stop()
     worker.process.send_signal.assert_not_called()
+
+
+def test_algorithm_options_reach_owned_launch_as_typed_data():
+    import json
+    p = profile()
+    p['algorithms'] = dict(ellipse_enabled=True, color_line_enabled=True, camera='down',
+                           strategy='ego', hue_min=40, hue_max=80)
+    p['down_topic'] = '/down/image'
+    args = command(p)
+    assert 'algorithm_image_topic:=/down/image' in args
+    raw = next(value.split(':=', 1)[1] for value in args if value.startswith('algorithms_json:='))
+    options = json.loads(raw)
+    assert options['ellipse_enabled'] and options['color_line_enabled']
+    assert options['strategy'] == 'ego' and options['hue_min'] == 40
+    p['algorithms']['morphology_kernel'] = 2
+    with pytest.raises(ValueError):
+        command(p)
+
+
+@pytest.mark.parametrize('selection,expected', [
+    ('profile', ['fast_lio', 'easyfly_fast_lio_integration']),
+    ('openvins', ['ov_msckf', 'easyfly_openvins_integration']),
+    ('disabled', [])])
+def test_localization_dependencies_are_selected_without_fallback(monkeypatch, selection, expected):
+    import ament_index_python.packages as packages
+    import easyfly_px4_sitl.hrt_compatibility as hrt
+    original = packages.get_package_share_directory
+    requested = []
+
+    def lookup(name):
+        if name == 'easyfly_params':
+            return original(name)
+        requested.append(name)
+        return '/inert/' + name
+
+    def stop_before_simulation(_):
+        raise RuntimeError('inspection stopped before PX4 selection')
+
+    monkeypatch.setattr(packages, 'get_package_share_directory', lookup)
+    monkeypatch.setattr(hrt, 'select_px4_directory', stop_before_simulation)
+    p = profile()
+    p['algorithms'] = dict(slam=selection)
+    with pytest.raises(RuntimeError, match='inspection stopped'):
+        check(p)
+    assert requested == expected
+
+
+def test_openvins_command_preserves_selection_and_rejects_base_profile():
+    import json
+    p = profile()
+    p['algorithms'] = dict(slam='openvins')
+    argument = next(value for value in command(p) if value.startswith('algorithms_json:='))
+    assert json.loads(argument.split(':=', 1)[1])['slam'] == 'openvins'
+    p['selected_profile'] = 'base_sim'
+    with pytest.raises(ValueError, match='OpenVINS'):
+        command(p)

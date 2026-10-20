@@ -12,6 +12,8 @@
   - /livox/lidar, /livox/imu (M0 仿真插件)
   - /odom (M1 easyfly_coord_transform, 需 /uav_state 即 mavros)
 """
+import json
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, TimerAction
 from launch.substitutions import (
@@ -34,19 +36,36 @@ def _select_fastlio_config(context):
 def _launch_fast_lio(context):
     """Create the node after the included launch context is fully scoped."""
     selected_config = _select_fastlio_config(context)
+    raw_options = LaunchConfiguration('fastlio_options_json', default='').perform(context)
+    overrides = {}
+    if raw_options:
+        from easyfly_params.algorithms import validate, slam_parameters
+        overrides = slam_parameters(validate(json.loads(raw_options)))
+    profile = LaunchConfiguration('sensor_profile', default='native').perform(context)
+    if profile not in ('native', 'gazebo_mid360'):
+        raise ValueError('unsupported FAST-LIO sensor_profile: ' + profile)
+    files = [PathJoinSubstitution([
+        get_package_share_directory('fast_lio'), 'config', selected_config])]
+    if profile == 'gazebo_mid360':
+        files.append(PathJoinSubstitution([
+            get_package_share_directory('easyfly_fast_lio_integration'),
+            'config', 'gazebo_mid360_extrinsics.yaml']))
     return [Node(
         package='fast_lio',
         executable='fastlio_mapping',
-        parameters=[PathJoinSubstitution([
-            get_package_share_directory('fast_lio'), 'config', selected_config]),
-            {'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        parameters=[*files,
+            dict(overrides, use_sim_time=LaunchConfiguration('use_sim_time'))],
         output='screen',
     )]
 
 
 def _launch_map_odom_tf(context):
     """Resolve the clock before this include's scope is popped by a parent."""
-    simulation = ParameterValue(LaunchConfiguration('use_sim_time'), value_type=bool).evaluate(context)
+    simulation = ParameterValue(
+        LaunchConfiguration('use_sim_time'), value_type=bool).evaluate(context)
+    parameters = [{"use_sim_time": simulation}]
+    if LaunchConfiguration('sensor_profile', default='native').perform(context) == 'gazebo_mid360':
+        parameters.append({"body_to_base_translation": [0.011, 0.02329, -0.12412]})
     container = ComposableNodeContainer(
         name="fastlio_integration_container",
         namespace="",
@@ -57,7 +76,7 @@ def _launch_map_odom_tf(context):
                 package="easyfly_fast_lio_integration",
                 plugin="easyfly_fast_lio_integration::MapOdomTf",
                 name="map_odom_tf",
-                parameters=[{"use_sim_time": simulation}],
+                parameters=parameters,
             ),
         ],
         output="screen",
@@ -90,6 +109,11 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_sim_time,
+        DeclareLaunchArgument('sensor_profile', default_value='native',
+                              choices=['native', 'gazebo_mid360'],
+                              description='Select physical sensor extrinsics explicitly'),
+        DeclareLaunchArgument('fastlio_options_json', default_value='',
+                              description='Validated FAST-LIO input and mapping overrides'),
         declare_config,
         declare_legacy_config,
         fast_lio_node,

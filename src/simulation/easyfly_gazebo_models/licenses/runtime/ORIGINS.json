@@ -27,13 +27,31 @@
     }
   ],
   "original_mid360_sdf_sha256": "5f1139f1d4bc97a057671a0eb616de37ad5aff41f585bbcce6ebe501824c32ef",
-  "curated_mid360_sdf_sha256": "dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d",
-  "mid360_change": "Only the visual geometry is replaced by a project primitive; no original mesh is imported.",
+  "curated_mid360_sdf_sha256": "a2435213a2311dd79d317d56f33c43aa407191833aa37503fe23d2acbf65ad7f",
+  "mid360_change": "Curated primitive visual, valid per-axis IMU noise/frame and project-local coherent measurement-snapshot ROS IMU plugin. Original source retained; see ordered mid360_updates.",
   "gazebo_package": "gazebo-common=11.10.2+dfsg-1",
   "gazebo_material_sha256": "e6050d698bd8fb0f7479318ef6dccb2de1b3c484cf48c10b78b8b617026cc2e2",
   "iris_authors": [
     "Lorenz Meier",
     "Thomas Gubler"
   ],
-  "gps_author": "Nuno Marques"
+  "gps_author": "Nuno Marques",
+  "initial_curated_mid360_sdf_sha256": "dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d",
+  "mid360_updates": [
+    {
+      "date": "2026-10-19",
+      "before_sha256": "dc8bca004a10624a1efc9a47cf906049788f95596e1ec0e2e206d4bace3af81d",
+      "after_sha256": "eb65dddd10dd2a5b8b45302aee3c1fdc241a6637e89b94bc593ee98d29182e28",
+      "changes": "SDFormat 1.6 per-axis Gaussian IMU noise; livox_imu_frame at physical sensor origin; removed unused plugin updateRateHZ. Legacy source unchanged.",
+      "recipe": "tools/scenes/prepare_runtime_assets.py:configure_mid360_imu"
+    },
+    {
+      "date": "2026-10-19",
+      "before_sha256": "eb65dddd10dd2a5b8b45302aee3c1fdc241a6637e89b94bc593ee98d29182e28",
+      "after_sha256": "a2435213a2311dd79d317d56f33c43aa407191833aa37503fe23d2acbf65ad7f",
+      "changes": "Project-local ROS IMU plugin uses one measurement snapshot and its source stamp; sensor physics/rate/noise unchanged.",
+      "recipe": "tools/scenes/prepare_runtime_assets.py:configure_mid360_imu"
+    }
+  ],
+  "initial_mid360_change": "Only the visual geometry is replaced by a project primitive; no original mesh is imported."
 }

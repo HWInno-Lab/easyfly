@@ -25,6 +25,7 @@
 #include <QScrollBar>
 #include <QTemporaryDir>
 #include <QTabWidget>
+#include <QToolButton>
 #include <QTest>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -259,7 +260,7 @@ TEST(DraftEditor, NewPreviewFormRequiresConsentAndInvalidEditStaysLocal)
         return checked(editor);
       }));
   EXPECT_TRUE(editor.dirty()); EXPECT_EQ(editor.findChild<QListWidget *>("draftSteps")->count(), 3);
-  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(1);
+  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(0);
   auto * field = editor.findChild<QLineEdit *>("draftField_altitude"); ASSERT_NE(field, nullptr);
   field->setFocus(); field->selectAll(); QTest::keyClicks(field, "2.25");
   EXPECT_TRUE(body->isReadOnly()); EXPECT_FALSE(
@@ -341,7 +342,7 @@ TEST(DraftEditor, AddReorderDeleteAndRejectOutOfRangeForm)
       }));
   list->setCurrentRow(2); editor.findChild<QPushButton *>("draftDelete")->click(); accept(editor);
   ASSERT_TRUE(desktop_test::until([&] {return checked(editor) && list->count() == 3;}));
-  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(1);
+  editor.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(0);
   auto * field = editor.findChild<QLineEdit *>("draftField_altitude"); ASSERT_NE(field, nullptr);
   field->setFocus(); field->selectAll(); QTest::keyClicks(field, "51");
   auto * body = editor.findChild<QPlainTextEdit *>("draftBody");
@@ -402,15 +403,12 @@ TEST(DraftEditor, MainWindowOfflineDirtyExitRequiresDefaultStayAndNoRpc)
     window.grab().save(
       QString(
         EASYFLY_DRAFT_SCREENSHOT_DIRECTORY) + "/editor-offline.png"));
-  window.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(1); QTest::qWait(100);
+  window.findChild<QTabWidget *>("draftTabs")->setCurrentIndex(0); QTest::qWait(100);
   EXPECT_TRUE(
     window.grab().save(
       QString(EASYFLY_DRAFT_SCREENSHOT_DIRECTORY) + "/editor-parameters-offline.png"));
-  auto * ancestor = editor->parentWidget();
-  while (ancestor && !qobject_cast<QScrollArea *>(ancestor)) {ancestor = ancestor->parentWidget();}
-  auto * scroll = qobject_cast<QScrollArea *>(ancestor);
-  ASSERT_NE(scroll, nullptr); scroll->verticalScrollBar()->setValue(
-    scroll->verticalScrollBar()->maximum());
+  window.findChild<QToolButton *>("toggleDraftExport")->click();
+  EXPECT_TRUE(window.findChild<QPushButton *>("draftExport")->isVisible());
   QTest::qWait(100);
   EXPECT_TRUE(
     window.grab().save(

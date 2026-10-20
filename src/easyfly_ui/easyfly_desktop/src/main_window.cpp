@@ -63,6 +63,7 @@
 #include "easyfly_desktop/presentation.hpp"
 #include "widgets.hpp"
 #include "theme.hpp"
+#include "layout_state.hpp"
 
 namespace easyfly_desktop
 {
@@ -184,7 +185,7 @@ struct MainWindow::Impl
   std::string details_name;
   uint64_t rendered_details{0}, rendered_details_session{0};
   QPushButton * inspect{nullptr};
-  QLabel * details_summary{nullptr};
+  QLabel * details_summary{nullptr}, *task_dependencies{nullptr};
   QPlainTextEdit * mission_content{nullptr};
   QTabWidget * document_tabs{nullptr};
   TextTable * steps_model{nullptr};
@@ -217,6 +218,7 @@ struct MainWindow::Impl
   CameraCanvas * overview_camera{nullptr}, *camera_canvas{nullptr}; MapCanvas * map{nullptr};
   MapCanvas * overview_map{nullptr};
   TextTable * capability_model{nullptr}, *target_model{nullptr}, *obstacle_model{nullptr};
+  TextTable * algorithm_model{nullptr};
   TextTable * parameter_model{nullptr}, *event_model{nullptr};
   QPlainTextEdit * diagnostics{nullptr};
 
@@ -251,9 +253,13 @@ struct MainWindow::Impl
     auto * content = new QWidget(scroll); content->setObjectName("pageContent");
     content->setAttribute(Qt::WA_StyledBackground, true);
     auto * layout = new QVBoxLayout(content);
-    layout->setContentsMargins(18, 12, 18, 16); layout->setSpacing(12);
+    layout->setContentsMargins(12, 8, 12, 10); layout->setSpacing(8);
     auto * heading = label(title, "pageHeading", content); heading->setProperty("heading", true);
-    layout->addWidget(heading); layout->addWidget(label(subtitle, "pageSubtitle", content));
+    auto * heading_row = new QHBoxLayout;
+    heading->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    heading_row->addWidget(heading);
+    heading_row->addWidget(label(subtitle, "pageSubtitle", content), 1);
+    layout->addLayout(heading_row);
     scroll->setWidget(content); pages->addWidget(scroll); return layout;
   }
   void build()
@@ -276,11 +282,11 @@ struct MainWindow::Impl
     auto * top_bar = new QWidget(root); top_bar->setObjectName("topBar");
     top_bar->setAttribute(Qt::WA_StyledBackground, true);
     auto * header = new QHBoxLayout(top_bar);
-    header->setContentsMargins(8, 8, 12, 8);
+    header->setContentsMargins(8, 4, 10, 4);
     auto * brand = new QLabel(top_bar); brand->setObjectName("brand");
-    brand->setFixedSize(148, 46); brand->setAlignment(Qt::AlignCenter);
+    brand->setFixedSize(112, 32); brand->setAlignment(Qt::AlignCenter);
     const auto logo = brand_pixmap();
-    brand->setPixmap(logo.scaled(136, 44, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    brand->setPixmap(logo.scaled(104, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     brand->setAccessibleName(QStringLiteral("EasyFly Logo"));
     // Bound the X11 _NET_WM_ICON payload; do not send the full 2752x1536 source.
     window->setWindowIcon(
@@ -310,8 +316,9 @@ struct MainWindow::Impl
     layout->addWidget(top_bar);
     warning = label({}, "warningBanner", root);
     warning->hide(); layout->addWidget(warning);
-    auto * splitter = new QSplitter(Qt::Horizontal, root);
-    navigation = new QListWidget(splitter); navigation->setObjectName("navigation");
+    auto * workspace = new QHBoxLayout; workspace->setContentsMargins(0, 0, 0, 0);
+    workspace->setSpacing(8);
+    navigation = new QListWidget(root); navigation->setObjectName("navigation");
     navigation->addItems(
       {QStringLiteral("运行总览"), mission_options.enabled ? QStringLiteral("仿真任务") :
         QStringLiteral("任务查询"), QStringLiteral("相机与感知"),
@@ -322,17 +329,16 @@ struct MainWindow::Impl
     for (int i = 0; i < navigation->count(); ++i) {
       navigation->item(i)->setIcon(dashboard_icon(icons[i]));
     }
-    navigation->setIconSize(QSize(20, 20));
-    navigation->setMaximumWidth(175); navigation->setMinimumWidth(145);
-    pages = new QStackedWidget(splitter); splitter->addWidget(navigation);
-    splitter->addWidget(pages);
-    splitter->setStretchFactor(1, 1); layout->addWidget(splitter, 1);
+    navigation->setIconSize(QSize(16, 16));
+    navigation->setFixedWidth(148);
+    pages = new QStackedWidget(root); workspace->addWidget(navigation);
+    workspace->addWidget(pages, 1); layout->addLayout(workspace, 1);
     QObject::connect(
       navigation, &QListWidget::currentRowChanged, pages,
       &QStackedWidget::setCurrentIndex);
     overview_page(); mission_page(); perception_page(); spatial_page(); diagnostics_page();
     tools_page();
-    auto * draft_scroll = new QScrollArea(pages); draft_scroll->setWidgetResizable(true);
+    auto * draft_scroll = new QWidget(pages);
     std::vector<std::string> protected_paths{EASYFLY_DRAFT_SOURCE_ROOT, EASYFLY_DRAFT_INSTALL_ROOT};
     std::map<std::string, std::string> installed_packages;
     try {
@@ -350,7 +356,7 @@ struct MainWindow::Impl
     } catch (const std::exception &) {
       // Source/install trees remain protected even if the package index is unavailable offline.
     }
-    auto * draft_page = new QWidget(draft_scroll);
+    auto * draft_page = draft_scroll;
     storage_protected_paths = protected_paths;
     auto * draft_layout = new QVBoxLayout(draft_page);
     editor = new MissionEditor(
@@ -367,7 +373,7 @@ struct MainWindow::Impl
       import_options, import_factory, import_box,
       [this] {return editor->exported_draft();});
     import_layout->addWidget(import_panel); draft_layout->addWidget(import_box);
-    draft_scroll->setWidget(draft_page); pages->addWidget(draft_scroll);
+    pages->addWidget(draft_scroll);
     navigation->setCurrentRow(0);
     request_note = label(
       QStringLiteral(
@@ -423,7 +429,11 @@ struct MainWindow::Impl
     auto * local = old(3); auto * diagnostic = old(4); auto * tools = old(5);
     auto * draft = old(6);
     task_tabs = new QTabWidget; task_tabs->setObjectName("taskCenterTabs");
-    task_tabs->addTab(catalog, QStringLiteral("任务库"));
+    auto * task_workspace = new QSplitter(Qt::Horizontal);
+    task_workspace->setObjectName("taskExecutionSplitter");
+    task_workspace->setChildrenCollapsible(false); task_workspace->addWidget(catalog);
+    catalog->show();
+    task_tabs->addTab(task_workspace, QStringLiteral("任务与执行"));
     task_tabs->addTab(draft, QStringLiteral("任务编辑"));
     auto * import_box = import_panel->parentWidget();
     auto * import_scroll = new QScrollArea; import_scroll->setWidgetResizable(true);
@@ -431,7 +441,24 @@ struct MainWindow::Impl
     task_tabs->addTab(import_scroll, QStringLiteral("校验与导入"));
     auto * execution_scroll = new QScrollArea; execution_scroll->setWidgetResizable(true);
     execution_scroll->setWidget(execution_page);
-    task_tabs->addTab(execution_scroll, QStringLiteral("执行与查询"));
+    execution_scroll->setFrameShape(QFrame::NoFrame);
+    execution_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    execution_scroll->setMinimumWidth(300);
+    task_workspace->addWidget(execution_scroll);
+    task_workspace->setStretchFactor(0, 1); task_workspace->setStretchFactor(1, 0);
+    task_workspace->setSizes({720, 350}); remember_splitter(task_workspace, "mission-execution");
+    auto * execution_toggle = new QToolButton(task_tabs);
+    execution_toggle->setObjectName("toggleTaskExecution");
+    execution_toggle->setText(QStringLiteral("执行与查询")); execution_toggle->setCheckable(true);
+    execution_toggle->setChecked(mission_options.enabled);
+    execution_scroll->setVisible(execution_toggle->isChecked());
+    task_tabs->setCornerWidget(execution_toggle);
+    QObject::connect(
+      execution_toggle, &QToolButton::toggled, execution_scroll,
+      &QWidget::setVisible);
+    QObject::connect(
+      task_tabs, &QTabWidget::currentChanged, execution_toggle,
+      [execution_toggle](int index) {execution_toggle->setVisible(index == 0);});
     space_tabs = new QTabWidget; space_tabs->setObjectName("spaceViewTabs");
     space_tabs->addTab(local, QStringLiteral("局部二维"));
     if (!rviz_view && RvizView::available()) {
@@ -528,10 +555,10 @@ struct MainWindow::Impl
     const auto metric =
       [&](const QString & title, const QString & icon, const char * name, int col) {
         auto * card = new QFrame(pages); card->setProperty("dashboardCard", true);
-        auto * content = new QVBoxLayout(card); content->setContentsMargins(12, 9, 12, 9);
+        auto * content = new QVBoxLayout(card); content->setContentsMargins(10, 6, 10, 6);
         auto * heading = new QHBoxLayout;
-        auto * glyph = new QLabel(card); glyph->setPixmap(dashboard_icon(icon).pixmap(22, 22));
-        glyph->setFixedSize(24, 24); heading->addWidget(glyph);
+        auto * glyph = new QLabel(card); glyph->setPixmap(dashboard_icon(icon).pixmap(16, 16));
+        glyph->setFixedSize(18, 18); heading->addWidget(glyph);
         auto * caption = label(title, "metricTitle", card);
         caption->setProperty("metricTitle", true);
         heading->addWidget(caption, 1); content->addLayout(heading);
@@ -551,15 +578,15 @@ struct MainWindow::Impl
     auto * split = new QSplitter(Qt::Horizontal, pages); split->setObjectName("overviewSplitter");
     split->setChildrenCollapsible(false);
     split->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
-    split->setMinimumHeight(430);
+    split->setMinimumHeight(330);
     overview_map_tabs = new QTabWidget(split); overview_map_tabs->setObjectName("overviewMapTabs");
     overview_map_tabs->setMinimumWidth(320);
     overview_map_tabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
-    overview_map_tabs->setMinimumHeight(380);
+    overview_map_tabs->setMinimumHeight(290);
     auto * local = new QWidget(overview_map_tabs); auto * local_layout = new QVBoxLayout(local);
     local_layout->setContentsMargins(4, 4, 4, 4);
     overview_map = new MapCanvas(local); overview_map->setObjectName("overviewMapCanvas");
-    overview_map->setMinimumHeight(340); local_layout->addWidget(overview_map, 1);
+    overview_map->setMinimumHeight(240); local_layout->addWidget(overview_map, 1);
     local_layout->addWidget(
       label(
         QStringLiteral(
@@ -572,15 +599,16 @@ struct MainWindow::Impl
     auto * instrument_box = new QGroupBox(QStringLiteral("姿态与航向 · 只读"), side);
     auto * instrument_layout = new QVBoxLayout(instrument_box);
     instruments = new FlightInstrumentCanvas(instrument_box);
-    instruments->setMinimumHeight(160);
+    instruments->setMinimumHeight(120);
     instruments->setObjectName("overviewInstruments"); instrument_layout->addWidget(instruments);
     side_layout->addWidget(instrument_box);
     auto * box = new QGroupBox(QStringLiteral("选中相机 · 当前视角"), side);
     auto * camera_layout = new QVBoxLayout(box);
     overview_camera = new CameraCanvas(box); overview_camera->setObjectName("overviewCamera");
-    overview_camera->setMinimumHeight(145); camera_layout->addWidget(overview_camera);
+    overview_camera->setMinimumHeight(120); camera_layout->addWidget(overview_camera);
     side_layout->addWidget(box, 1);
-    split->setStretchFactor(0, 1); split->setStretchFactor(1, 0); split->setSizes({740, 320});
+    split->setStretchFactor(0, 1); split->setStretchFactor(1, 0); split->setSizes({740, 300});
+    remember_splitter(split, "overview");
     layout->addWidget(split, 1);
 
     auto * evidence_panel = new QWidget(pages);
@@ -642,12 +670,13 @@ struct MainWindow::Impl
   }
   void mission_page()
   {
-    auto * layout =
-      page(
-      QStringLiteral("任务库"),
-      QStringLiteral(
-        "刷新目录，选择任务查看步骤与参数。"
-        "任务执行和进度查询位于“执行与查询”。"));
+    auto * catalog_page = new QWidget(pages); catalog_page->setObjectName("missionCatalogPage");
+    auto * layout = new QVBoxLayout(catalog_page); pages->addWidget(catalog_page);
+    layout->setContentsMargins(10, 8, 10, 8); layout->setSpacing(6);
+    layout->addWidget(
+      label(
+        QStringLiteral("任务目录与步骤"),
+        "missionCatalogHeading", catalog_page));
     execution_page = new QWidget; execution_layout = new QVBoxLayout(execution_page);
     auto * refresh = button(QStringLiteral("刷新目录（只读）"), "listMissions", pages);
     layout->addWidget(refresh);
@@ -698,6 +727,9 @@ struct MainWindow::Impl
       });
     details_summary = label(QStringLiteral("尚未读取任务详情"), "missionDetailsSummary", pages);
     layout->addWidget(details_summary);
+    task_dependencies = label(
+      QStringLiteral("读取任务后检查算法依赖接口。"), "taskAlgorithmDependencies", pages);
+    layout->addWidget(task_dependencies);
     steps_model = new TextTable(
       {QStringLiteral("顺序"), QStringLiteral("步骤"),
         QStringLiteral("有效参数（含校验器默认值）"), QStringLiteral("超时 s")}, pages);
@@ -715,7 +747,7 @@ struct MainWindow::Impl
     mission_content = new QPlainTextEdit(pages); mission_content->setObjectName("missionContent");
     mission_content->setReadOnly(true); mission_content->setMinimumHeight(160);
     document_tabs->addTab(mission_content, QStringLiteral("原始正文（只读）"));
-    layout->addWidget(document_tabs);
+    layout->addWidget(document_tabs, 1);
     auto * mission_limits = label(
       QStringLiteral(
         "详情是读取时的已校验副本，不保证稍后目录内容未变"
@@ -771,48 +803,61 @@ struct MainWindow::Impl
     global_mission = label({}, "globalPhaseMission", pages); execution_layout->addWidget(
       global_mission);
     execution_layout->addStretch();
-    layout->addStretch();
   }
   void perception_page()
   {
     auto * page = new QWidget(pages); page->setObjectName("cameraPerceptionPage");
-    auto * row = new QHBoxLayout(page); row->setContentsMargins(0, 0, 0, 0);
-    auto * splitter = new QSplitter(Qt::Horizontal, page);
+    auto * row = new QVBoxLayout(page); row->setContentsMargins(0, 0, 0, 0);
+    auto * toolbar = new QHBoxLayout;
+    auto * content = new QSplitter(Qt::Vertical, page);
+    content->setObjectName("cameraResultsSplitter"); content->setChildrenCollapsible(false);
+    auto * splitter = new QSplitter(Qt::Horizontal, content);
     splitter->setObjectName("cameraPerceptionSplitter"); splitter->setChildrenCollapsible(false);
     auto * scroll = new QScrollArea(splitter); scroll->setObjectName("cameraControlsScroll");
     scroll->setWidgetResizable(true); scroll->setFrameShape(QFrame::NoFrame);
     scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scroll->setMinimumWidth(260); scroll->setMaximumWidth(560);
+    scroll->setMinimumWidth(240); scroll->setMaximumWidth(320);
     auto * controls = new QWidget(scroll); controls->setObjectName("cameraControls");
     controls->setAttribute(Qt::WA_StyledBackground, true);
     auto * layout = new QVBoxLayout(controls);
-    layout->setContentsMargins(16, 12, 16, 16); layout->setSpacing(12);
-    auto * heading = label(QStringLiteral("相机与实测感知"), "cameraHeading", controls);
-    heading->setProperty("heading", true); layout->addWidget(heading);
-    layout->addWidget(
-      label(
-        QStringLiteral(
-          "前视 / 下视独立选择，不自动替代。感知模式只显示匹配同帧；"
-          "总览与录像仍用实时原图。"), "cameraSubtitle", controls));
+    layout->setContentsMargins(10, 8, 10, 8); layout->setSpacing(8);
+    toolbar->addWidget(new QLabel(QStringLiteral("图像源"), page));
     camera = new QComboBox(controls); camera->setObjectName("cameraSelector");
     camera->addItems({QStringLiteral("前视相机"), QStringLiteral("下视相机（可选）")});
-    layout->addWidget(camera);
+    toolbar->addWidget(camera);
     overlay_mode = new QComboBox(controls); overlay_mode->setObjectName("cameraOverlayMode");
     overlay_mode->addItems(
       {QStringLiteral("实时原图（默认）"),
         QStringLiteral("同帧检测框 · 无身份保证"),
         QStringLiteral("同帧跟踪框 · 原始 SORT ID")});
-    layout->addWidget(overlay_mode);
+    overlay_mode->addItems(
+      {QStringLiteral("同帧椭圆 · 图像几何"),
+        QStringLiteral("同帧彩线 · 图像几何")});
+    toolbar->addWidget(overlay_mode, 1);
     overlay_evidence = label({}, "cameraOverlayEvidence", controls);
-    layout->addWidget(overlay_evidence);
-    overlay_model = new TextTable(
-      {"ID", QStringLiteral("类别"), QStringLiteral("置信度"),
-        QStringLiteral("光轴深度 m"), QStringLiteral("深度关联")}, controls);
-    auto * overlay_table = table(overlay_model, "cameraOverlayTable", controls);
-    overlay_table->hide(); layout->addWidget(overlay_table);
+    layout->addWidget(overlay_evidence); overlay_evidence->hide();
     QObject::connect(
-      overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged), window,
-      [overlay_table](int index) {overlay_table->setVisible(index != 0);});
+      overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged),
+      overlay_evidence, [this](int mode) {overlay_evidence->setVisible(mode != 0);});
+    overlay_model = new TextTable(
+      {"ID", QStringLiteral("类别"), QStringLiteral("分数（算法各自定义）"),
+        QStringLiteral("光轴深度 m"), QStringLiteral("深度关联 / 图像几何")}, controls);
+    auto * overlay_table = table(overlay_model, "cameraOverlayTable", controls);
+    auto * objects = new QTabWidget(content); objects->setObjectName("perceptionObjectTabs");
+    objects->setMinimumHeight(150); objects->addTab(overlay_table, QStringLiteral("同帧图像结果"));
+    auto * results = new QToolButton(page); results->setText(QStringLiteral("数据表"));
+    results->setObjectName("togglePerceptionResults"); results->setCheckable(true);
+    toolbar->addWidget(results);
+    auto * focus = new QToolButton(page); focus->setText(QStringLiteral("专注观察"));
+    focus->setObjectName("cameraFocusMode"); focus->setCheckable(true);
+    toolbar->addWidget(focus); row->addLayout(toolbar); objects->hide();
+    QObject::connect(results, &QToolButton::toggled, objects, &QWidget::setVisible);
+    QObject::connect(
+      focus, &QToolButton::toggled, page, [scroll, objects, results, focus](bool on) {
+        scroll->setVisible(!on); objects->setVisible(!on && results->isChecked());
+        results->setEnabled(!on);
+        focus->setText(on ? QStringLiteral("恢复面板") : QStringLiteral("专注观察"));
+      });
     QObject::connect(
       overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged), window, [this] {
         overlay_submitted_stamp = -1;
@@ -834,6 +879,7 @@ struct MainWindow::Impl
       });
     camera_canvas = new CameraCanvas(splitter); camera_canvas->setObjectName("cameraCanvas");
     camera_canvas->setMinimumWidth(320);
+    layout->addWidget(label(QStringLiteral("图像状态"), "cameraImageHeading", controls));
     image_evidence = label({}, "imageEvidence", controls); layout->addWidget(image_evidence);
     target_summary = label({}, "targetSummary", controls); obstacle_summary = label(
       {},
@@ -846,29 +892,43 @@ struct MainWindow::Impl
       {"ID", QStringLiteral(
           "类型"), "X (m)", "Y (m)", "Z (m)", QStringLiteral("尺寸 X/Y/Z m"), QStringLiteral(
           "动态")}, controls);
+    layout->addWidget(label(QStringLiteral("目标观测"), "cameraTargetsHeading", controls));
     layout->addWidget(target_summary);
-    auto * objects = new QTabWidget(controls); objects->setObjectName("perceptionObjectTabs");
     objects->addTab(table(target_model, "targetTable", controls), QStringLiteral("目标"));
+    layout->addWidget(label(QStringLiteral("障碍观测"), "cameraObstaclesHeading", controls));
     layout->addWidget(obstacle_summary);
     objects->addTab(table(obstacle_model, "obstacleTable", controls), QStringLiteral("障碍"));
-    layout->addWidget(objects);
-    layout->addWidget(
-      label(
-        QStringLiteral(
-          "蓝框=检测；琥珀框=上游跟踪，可能包"
-          "含预测框；SORT编号不是真实身份，"
-          "不与稳定ID或其他源互换。深度为上游融合光轴深度，不是斜距；"
-          "需要同帧、唯一ID/类别和像素中心匹配，无效不填零。\n"
-          "上游未报告实际深度帧时间/TF回退；这里只核对"
-          "事件关联，不证明RGB-D同步或定位精度。\n"
-          "标签/降落专用、预测与语义"
-          "类别图层未接入；实测目标"
-          "不能冒充这些来源。"), "perceptionLimit",
-        controls));
+
+    auto * limits = label(
+      QStringLiteral(
+        "蓝框=检测；琥珀框=上游跟踪，可能包"
+        "含预测框；SORT编号不是真实身份，"
+        "不与稳定ID或其他源互换。深度为上游融合光轴深度，不是斜距；"
+        "需要同帧、唯一ID/类别和像素中心匹配，无效不填零。\n"
+        "上游未报告实际深度帧时间/TF回退；这里只核对"
+        "事件关联，不证明RGB-D同步或定位精度。\n"
+        "标签/降落专用、预测与语义"
+        "类别图层未接入；实测目标"
+        "不能冒充这些来源。"), "perceptionLimit",
+      controls);
+    auto * help = new QToolButton(controls); help->setText(QStringLiteral("显示来源与深度说明"));
+    help->setCheckable(true); limits->hide();
+    QObject::connect(help, &QToolButton::toggled, limits, &QWidget::setVisible);
+    layout->addWidget(help); layout->addWidget(limits);
+    algorithm_model = new TextTable(
+      {QStringLiteral("模块/能力"), QStringLiteral("当前观测"), QStringLiteral(
+          "说明")}, window);
+    objects->addTab(
+      table(algorithm_model, "algorithmStatusTable", objects),
+      QStringLiteral("算法与任务接口"));
     layout->addStretch(); scroll->setWidget(controls);
-    splitter->addWidget(scroll); splitter->addWidget(camera_canvas);
-    splitter->setStretchFactor(0, 0); splitter->setStretchFactor(1, 1);
-    splitter->setSizes({300, 900}); row->addWidget(splitter); pages->addWidget(page);
+    splitter->addWidget(camera_canvas); splitter->addWidget(scroll);
+    splitter->setStretchFactor(0, 1); splitter->setStretchFactor(1, 0);
+    splitter->setSizes({900, 260}); content->addWidget(splitter); content->addWidget(objects);
+    content->setStretchFactor(0, 1); content->setStretchFactor(1, 0);
+    content->setSizes({600, 180});
+    remember_splitter(splitter, "camera"); remember_splitter(content, "camera-results");
+    row->addWidget(content, 1); pages->addWidget(page);
   }
   void spatial_page()
   {
@@ -1546,6 +1606,9 @@ struct MainWindow::Impl
     if (steps_model) {steps_model->replace({});}
     if (mission_content) {mission_content->clear();}
     if (details_summary) {details_summary->setText(QStringLiteral("尚无与所选任务匹配的详情"));}
+    if (task_dependencies) {
+      task_dependencies->setText(QStringLiteral("读取任务后检查算法依赖接口。"));
+    }
   }
   void details_view(double now)
   {
@@ -1566,6 +1629,10 @@ struct MainWindow::Impl
           response ? text(response->message, 2048) : text(observation.evidence.reason, 2048)));
       return;
     }
+    const auto dependency = missing_mission_backends(*current, now);
+    task_dependencies->setText(
+      dependency.isEmpty() ? QStringLiteral(
+        "已读取任务所需接口已发现；输入有效性与飞行准入仍由后端检查。") : dependency);
     const auto & format = current->mission_format;
     details_summary->setText(
       QStringLiteral(
@@ -1731,10 +1798,16 @@ struct MainWindow::Impl
   {
     const auto & s = *current; const auto & observations = s.camera_perception[channel];
     const bool tracking = overlay_mode->currentIndex() == 2;
-    const auto & image = tracking ? observations.track_image : observations.detection_image;
+    const bool ellipse = overlay_mode->currentIndex() == 3;
+    const bool line = overlay_mode->currentIndex() == 4;
+    const auto & image =
+      ellipse ? observations.ellipse_image : line ? observations.color_line_image :
+      tracking ? observations.track_image : observations.detection_image;
     const auto & evidence =
+      ellipse ? observations.ellipses.evidence : line ? observations.color_lines.evidence :
       tracking ? observations.tracks.evidence : observations.detections.evidence;
     const auto topic =
+      ellipse ? observations.binding.ellipse_topic : line ? observations.binding.color_line_topic :
       tracking ? observations.binding.tracks_topic : observations.binding.detections_topic;
     const auto q = display_quality(evidence, s, now, 1, true);
     const auto image_quality = display_quality(image.evidence, s, now, 1, true);
@@ -1774,7 +1847,7 @@ struct MainWindow::Impl
       overlay_observations.has_value();
     const auto overlay = ready ? camera_overlay(
       s, *converted, channel,
-      tracking ? CameraOverlayMode::Tracks : CameraOverlayMode::Detections, now,
+      static_cast<CameraOverlayMode>(overlay_mode->currentIndex()), now,
       &*overlay_observations) : CameraOverlay{};
     // Render only the metadata saved with the completed conversion. The newest
     // observation may advance while this worker is decoding an older image.
@@ -1804,7 +1877,10 @@ struct MainWindow::Impl
       rows.push_back(
         {box.id < 0 ? QStringLiteral("—") : QStringLiteral("SORT #%1").arg(box.id),
           box.class_name, number(box.confidence, 3), box.axial_depth ? number(*box.axial_depth) :
-          QStringLiteral("—"), box.depth_status});
+          QStringLiteral(
+            "—"),
+          (box.shape == CameraOverlayMode::Ellipses || box.shape == CameraOverlayMode::ColorLines) ?
+          box.label + " · " + box.depth_status : box.depth_status});
     }
     overlay_model->replace(std::move(rows));
   }
@@ -1865,6 +1941,71 @@ struct MainWindow::Impl
       details << text(r.evidence.endpoint, 256) + " · " + text(r.evidence.reason, 2048);
     }
     capability_model->replace(std::move(capabilities));
+    QVector<QStringList> algorithms;
+    algorithms.push_back(
+      {QStringLiteral("启动定位源"),
+        text(s.selected_localization_backend, 64),
+        s.selected_localization_backend == "openvins" ?
+        QStringLiteral("仅观测；导航已禁用，等待 odom 对齐与地图接入") :
+        QStringLiteral("启动配置；实际健康状态需单独观测")});
+    const auto & localization = s.localization;
+    const auto localization_quality = display_quality(localization.evidence, s, now, .5, true);
+    QString localization_state = QStringLiteral("等待状态");
+    QString localization_detail = text(localization.evidence.reason, 2048);
+    if (localization.value) {
+      const auto & m = *localization.value;
+      const QStringList states{QStringLiteral("等待输入"), QStringLiteral("初始化中"),
+        QStringLiteral("估计中（仅表示输出新鲜）"), QStringLiteral("数据过期"),
+        QStringLiteral("需要重启整个定位会话"), QStringLiteral("失败")};
+      localization_state = m.state < states.size() ? states[m.state] : QStringLiteral("状态无效");
+      localization_detail = QStringLiteral("会话 %1 / 代次 %2 · %3 · %4")
+        .arg(text(m.session_id, 128)).arg(m.generation)
+        .arg(text(m.reason, 2048)).arg(text(m.tracked_frame, 128));
+    }
+    algorithms.push_back(
+      {QStringLiteral("OpenVINS 定位观测"),
+        quality_text(localization_quality) + " · " + localization_state, localization_detail});
+    const bool graph_fresh = s.running && !s.stopped && s.backend_graph_observed > 0 &&
+      now >= s.backend_graph_observed && now - s.backend_graph_observed <= 2;
+    for (const auto & entry : s.task_backends) {
+      const auto status = entry.second ?
+        QStringLiteral("接口已发现") : QStringLiteral("未发现接口");
+      algorithms.push_back(
+        {text(entry.first, 64), graph_fresh ? status : QStringLiteral("观测已过期"),
+          QStringLiteral("接口发现不代表输入数据/飞行准入就绪")});
+    }
+    if (algorithms.isEmpty()) {
+      algorithms.push_back(
+        {QStringLiteral("任务接口"), QStringLiteral("等待观测"),
+          QStringLiteral("检查连接与运行方案")});
+    }
+    for (size_t i = 0; i < s.camera_perception.size(); ++i) {
+      const auto & observation = s.camera_perception[i];
+      if (!observation.binding.detections_topic.empty()) {
+        algorithms.push_back(
+          {QStringLiteral("目标检测输出"),
+            quality_text(display_quality(observation.detections.evidence, s, now, 1, true)),
+            text(observation.binding.detections_topic, 128)});
+      }
+      if (!observation.binding.tracks_topic.empty()) {
+        algorithms.push_back(
+          {QStringLiteral("SORT 跟踪输出"),
+            quality_text(display_quality(observation.tracks.evidence, s, now, 1, true)),
+            text(observation.binding.tracks_topic, 128)});
+      }
+      for (bool ellipse : {true, false}) {
+        const auto & evidence =
+          ellipse ? observation.ellipses.evidence : observation.color_lines.evidence;
+        const auto topic =
+          ellipse ? observation.binding.ellipse_topic : observation.binding.color_line_topic;
+        if (topic.empty()) {continue;}
+        algorithms.push_back(
+          {ellipse ? QStringLiteral("椭圆检测") : QStringLiteral("彩线检测"),
+            quality_text(display_quality(evidence, s, now, .5, true)),
+            QStringLiteral("%1 · 仅图像几何").arg(text(topic, 128))});
+      }
+    }
+    algorithm_model->replace(std::move(algorithms));
     connection->setText(
       QStringLiteral("DDS：%1 · 飞控：%2 · 权限：%3")
       .arg(
@@ -2005,13 +2146,10 @@ MainWindow::~MainWindow() = default;
 void MainWindow::set_connection_page(QWidget * page, bool lobby)
 {
   if (!page || impl_->connection_page) {return;}
-  auto * scroll = new QScrollArea(impl_->pages);
-  scroll->setWidgetResizable(true); scroll->setFrameShape(QFrame::NoFrame);
-  scroll->setObjectName("connectionPageScroll"); scroll->setWidget(page);
   impl_->connection_page = page; impl_->connection_lobby = lobby;
   impl_->connection_page_index = 0;
   auto * previous = impl_->pages->widget(0); impl_->pages->removeWidget(previous);
-  previous->deleteLater(); impl_->pages->insertWidget(0, scroll);
+  previous->deleteLater(); impl_->pages->insertWidget(0, page);
   setProperty("connectionPageAvailable", true);
   impl_->configuration->hide();
   impl_->qgc_path->setReadOnly(true);

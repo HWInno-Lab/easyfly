@@ -196,11 +196,13 @@ def _managed_preflight(context, **kwargs):
     # Validate selection first. Loading the private native middleware must
     # precede launch_ros's first component service/client DDS initialization.
     actions = simulation_preflight(context, **kwargs)
-    if _value(context, 'scene'):
+    selected_vio = (_value(context, 'localization_backend') == 'openvins' and
+                    _value(context, 'slam_enabled') != 'false')
+    if _value(context, 'scene') or selected_vio:
         import os
         from easyfly_fastdds_compat.runtime import activate
         from launch.actions import SetEnvironmentVariable
-        middleware = activate()
+        middleware = activate(openvins=selected_vio)
         actions.insert(0, SetEnvironmentVariable('LD_LIBRARY_PATH', os.environ['LD_LIBRARY_PATH']))
         actions.insert(1, SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'))
         actions[2:2] = [SetEnvironmentVariable(key, value)

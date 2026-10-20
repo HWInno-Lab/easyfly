@@ -4,6 +4,11 @@ find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
+find_package(easyfly_params REQUIRED)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+  "${easyfly_params_DIR}/../config/algorithm_ui.json")
+file(READ "${easyfly_params_DIR}/../config/algorithm_ui.json" ALGORITHM_UI_SCHEMA)
+configure_file(cmake/algorithm_schema.hpp.in algorithm_schema.hpp @ONLY)
 # Record an installation default as JSON data, never as shell source.
 execute_process(COMMAND ${Python3_EXECUTABLE}
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/write_installation.py
@@ -18,6 +23,7 @@ add_library(connection_components STATIC
   src/profile.cpp src/rpc.cpp src/supervisor.cpp src/manager_window.cpp src/native_window.cpp
   include/easyfly_connection_manager/rpc.hpp)
 target_include_directories(connection_components PUBLIC include)
+target_include_directories(connection_components PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(connection_components PUBLIC Qt5::Widgets Qt5::Network ${X11_LIBRARIES})
 target_include_directories(connection_components PRIVATE ${X11_INCLUDE_DIR})
 target_compile_options(connection_components PRIVATE -Wall -Wextra -Wpedantic)

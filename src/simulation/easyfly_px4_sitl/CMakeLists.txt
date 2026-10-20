@@ -14,6 +14,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_imu_compatibility test/test_imu_compatibility.py)
   ament_add_pytest_test(test_scoped_timer test/test_scoped_timer.py TIMEOUT 15)
   ament_add_pytest_test(test_telemetry test/test_telemetry.py)
+  ament_add_pytest_test(test_openvins_runtime_policy test/test_openvins_runtime_policy.py TIMEOUT 30)
   ament_add_pytest_test(test_scene_alignment test/test_scene_alignment.py)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(

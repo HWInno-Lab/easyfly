@@ -125,10 +125,22 @@ def inventory(px4_directory=''):
 def check(profile):
     """Offline dependencies/resources first; never launch or prepare assets here."""
     from ament_index_python.packages import get_package_share_directory
+    from easyfly_params.algorithms import validate, localization_backend
+    algorithms = validate(profile.get('algorithms', {}))
+    for kind in ('ellipse', 'color_line'):
+        if algorithms[kind + '_enabled']:
+            get_package_share_directory('easyfly_' + kind + '_detection')
     if profile['mode'] not in ('sitl', 'communication'):
         raise ValueError('后端仅支持本机通信或本机仿真')
     fcu, gcs = urls(profile)
     if profile['mode'] == 'sitl':
+        backend = localization_backend(algorithms, profile['selected_profile'])
+        if backend == 'fast_lio':
+            get_package_share_directory('fast_lio')
+            get_package_share_directory('easyfly_fast_lio_integration')
+        elif backend == 'openvins':
+            get_package_share_directory('ov_msckf')
+            get_package_share_directory('easyfly_openvins_integration')
         if not profile['simulation_time'] or profile['fcu']['transport'] != 'udp':
             raise ValueError('仿真必须使用模拟时间和 UDP')
         from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
@@ -165,11 +177,19 @@ def command(profile):
     if gcs:
         common.append(f'gcs_url:={gcs}')
     if profile['mode'] == 'sitl':
+        from easyfly_params.algorithms import validate, localization_backend
+        algorithms = validate(profile.get('algorithms', {}))
+        localization_backend(algorithms, profile['selected_profile'])
+        topic = (profile.get('down_topic', '/camera_down/color/image_raw')
+                 if algorithms['camera'] == 'down' else
+                 profile.get('front_topic', '/camera/color/image_raw'))
         return ['ros2', 'launch', 'easyfly_sim_launcher', 'profile.launch.py',
                 'profile:=' + profile['selected_profile'],
                 'scene:=' + profile['simulation']['scene'],
                 'headless:=' + str(not profile['simulation']['gazebo_gui']).lower(),
-                'detection_use_gpu:=false', 'rviz:=false', *common]
+                'algorithms_json:=' + json.dumps(algorithms, separators=(',', ':')),
+                'algorithm_image_topic:=' + (topic or '/camera/color/image_raw'),
+                'rviz:=false', *common]
     return ['ros2', 'launch', 'easyfly_mavlink_bridge', 'mavlink_bridge.launch.py',
             'use_sim_time:=' + str(profile['simulation_time']).lower(), *common]
 

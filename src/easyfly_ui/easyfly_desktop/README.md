@@ -892,3 +892,5 @@ The media-OFF build has no player target or OpenCV dependency in the base window
 `test_playback` covers file integrity/limits, large exact timestamps, multi-segment
 selection, malformed mappings/dimensions/timing, unsafe files, post-load changes,
 request supersession, GUI pause/seek/events/close and standalone linkage/CLI gates.
+
+工作区的页面安排、配置入口、专注观察与分栏偏好见 [布局与使用](LAYOUT.md)。

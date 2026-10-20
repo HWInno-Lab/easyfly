@@ -58,6 +58,16 @@ class NavigationCoordinatorNode : public rclcpp::Node {
 public:
   explicit NavigationCoordinatorNode(const rclcpp::NodeOptions & options)
   : Node("navigation_coordinator", options) {
+    rcl_interfaces::msg::ParameterDescriptor descriptor;
+    descriptor.read_only = true;
+    const auto localization = declare_parameter<std::string>(
+      "localization_backend", "fast_lio", descriptor);
+    if (localization != "fast_lio" && localization != "openvins" && localization != "disabled")
+      throw std::invalid_argument("unsupported localization backend");
+    navigation_enabled_ = localization == "fast_lio";
+    if (!navigation_enabled_) RCLCPP_WARN(get_logger(),
+      "Navigation unavailable for selected localization backend: %s; frame/map integration required",
+      localization.c_str());
     combined_planner_ = make_planner("astar", {1000000, 0});
     strategy_ = declare_parameter<std::string>("strategy", "astar");
     if (strategy_ != "astar" && strategy_ != "ego" && strategy_ != "combined")
@@ -99,7 +109,7 @@ public:
         bool available = strategy_ == "astar" ? astar_client_->action_server_is_ready() :
           ego_client_->action_server_is_ready() && session_client_->service_is_ready();
         bool expected = false;
-        if (!validGoal(*goal) || !available || !reserved_.compare_exchange_strong(expected, true))
+        if (!navigation_enabled_ || !validGoal(*goal) || !available || !reserved_.compare_exchange_strong(expected, true))
           return rclcpp_action::GoalResponse::REJECT;
         return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
       },
@@ -158,6 +168,7 @@ public:
     timer_ = create_wall_timer(std::chrono::milliseconds(50), [this]() {tick();});
   }
 private:
+  bool navigation_enabled_{false};
   static std::string goalId(const std::shared_ptr<Context> & c) {
     std::ostringstream id;
     for (auto byte : c->parent->get_goal_id())

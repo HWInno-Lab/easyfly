@@ -1,0 +1,18 @@
+color_line_detection:
+  ros__parameters:
+    optical_frame: camera_color_optical_frame
+    max_age_seconds: 0.5
+    opencv_threads: 2
+    max_detections: 32
+    # OpenCV HSV hue [0,179]. min > max crosses 179 -> 0 (red).
+    hue_min: 170
+    hue_max: 10
+    saturation_min: 100
+    saturation_max: 255
+    value_min: 60
+    value_max: 255
+    morphology_kernel: 3
+    min_area_px: 80.0
+    min_length_px: 25.0
+    min_aspect_ratio: 3.0
+    min_fill_ratio: 0.5

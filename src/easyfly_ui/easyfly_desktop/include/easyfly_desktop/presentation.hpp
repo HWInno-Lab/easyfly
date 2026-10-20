@@ -23,6 +23,7 @@ namespace easyfly_desktop
 QString text(const std::string & value, std::size_t limit = 4096);
 QString quality_text(bridge::Quality quality);
 QString number(double value, int precision = 2);
+QString missing_mission_backends(const bridge::UiSnapshot & snapshot, double now);
 QString mission_step_parameters(const easyfly_mission_fsm::MissionStep & step);
 struct FlightInstruments
 {

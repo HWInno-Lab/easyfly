@@ -29,6 +29,7 @@
 #include <QTest>
 #include <QTemporaryDir>
 #include <QTabWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 #include <chrono>
@@ -76,22 +77,22 @@ void expect_side_by_side(ui::RvizView & view)
   ASSERT_NE(controls, nullptr); ASSERT_NE(canvas, nullptr);
   EXPECT_EQ(splitter->orientation(), Qt::Horizontal);
   EXPECT_FALSE(splitter->childrenCollapsible());
-  const QRect left(scroll->mapToGlobal(QPoint()), scroll->size());
-  const QRect right(canvas->mapToGlobal(QPoint()), canvas->size());
+  const QRect left(canvas->mapToGlobal(QPoint()), canvas->size());
+  const QRect right(scroll->mapToGlobal(QPoint()), scroll->size());
   EXPECT_LT(left.right(), right.left()) << "view=" << view.width() <<
     " minimum=" << view.minimumSizeHint().width() << " left=" << left.width() <<
-    " canvas=" << right.width(); EXPECT_GE(right.width(), 320);
-  EXPECT_GE(right.height(), 240);
+    " canvas=" << right.width(); EXPECT_GE(left.width(), 320);
+  EXPECT_GE(left.height(), 240);
   for (const auto * child : view.findChildren<QWidget *>()) {
     if (qobject_cast<const QPushButton *>(child) || qobject_cast<const QComboBox *>(child) ||
       qobject_cast<const QCheckBox *>(child) || qobject_cast<const QPlainTextEdit *>(child))
     {
-      EXPECT_TRUE(controls->isAncestorOf(child)); EXPECT_FALSE(canvas->isAncestorOf(child));
+      EXPECT_FALSE(canvas->isAncestorOf(child));
     }
   }
   if (auto * panel = view.findChild<QWidget *>("embeddedRvizRenderPanel")) {
     EXPECT_EQ(panel->parentWidget(), canvas);
-    EXPECT_FALSE(left.intersects(QRect(panel->mapToGlobal(QPoint()), panel->size())));
+    EXPECT_FALSE(right.intersects(QRect(panel->mapToGlobal(QPoint()), panel->size())));
     EXPECT_EQ(panel->geometry(), canvas->rect());
   }
 }
@@ -165,7 +166,7 @@ TEST(RvizView, CommandLineRequiresSupportedBuildAndNeverAutoStartsRenderer)
     (process.readAllStandardError() + process.readAllStandardOutput()).contains(
       "Available Renderers"));
 }
-TEST(RvizView, LeftControlsRightCanvasAtSupportedWindowSizes)
+TEST(RvizView, CanvasAndRightControlsAtSupportedWindowSizes)
 {
   if (!ui::RvizView::available()) {GTEST_SKIP() << "RViz is not included in this build";}
   auto state = std::make_shared<desktop_test::FakeState>(); state->data = desktop_test::sample();
@@ -174,8 +175,13 @@ TEST(RvizView, LeftControlsRightCanvasAtSupportedWindowSizes)
   window.show(); window.show_page("space");
   window.findChild<QTabWidget *>("spaceViewTabs")->setCurrentIndex(1);
   auto * view = window.findChild<ui::RvizView *>(); ASSERT_NE(view, nullptr);
-  for (const auto & size : {QSize(1024, 720), QSize(1440, 900)}) {
+  for (const auto & size : {QSize(1024, 720), QSize(1366, 768), QSize(1440, 900)}) {
     window.resize(size); QTest::qWait(60); expect_side_by_side(*view);
+    const auto width = view->findChild<QWidget *>("embeddedRvizCanvasHost")->width();
+    auto * focus = view->findChild<QToolButton *>("embeddedRvizFocusMode");
+    focus->click(); QTest::qWait(20);
+    EXPECT_GT(view->findChild<QWidget *>("embeddedRvizCanvasHost")->width(), width);
+    focus->click(); QTest::qWait(20); expect_side_by_side(*view);
     EXPECT_FALSE(view->snapshot().running);
     EXPECT_TRUE(view->findChild<QWidget *>("embeddedRvizPlaceholder")->isVisible());
   }
@@ -351,6 +357,13 @@ TEST_F(RvizRender, RepeatedOpenCloseAndLayerSwitches)
         [&] {
           send(i % 2); return view.snapshot().status.contains("messages received");
         }));
+    if (i == 0 || i == 19) {
+      auto * focus = view.findChild<QToolButton *>("embeddedRvizFocusMode");
+      const auto frames = view.snapshot().frames; focus->click();
+      ASSERT_TRUE(wait([&] {send(i % 2); return view.snapshot().frames > frames;}));
+      EXPECT_TRUE(view.snapshot().running); focus->click(); QTest::qWait(30);
+      expect_side_by_side(view);
+    }
     for (auto * layer : view.findChildren<QCheckBox *>()) {
       if (layer->isEnabled()) {layer->setChecked(false); layer->setChecked(true);}
     }

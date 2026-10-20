@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "inventory_date": "2026-10-18",
+  "inventory_date": "2026-10-19",
   "source_commit_before_catalog": "2b69165b2708944cf974e925bd9a87c70acec072",
   "scope": "Classified third-party roots plus retained ROS driver/model boundaries; not an exhaustive SBOM or runtime loader registry.",
   "algorithm_categories": [
@@ -275,6 +275,38 @@
         "models/yolo11n.onnx",
         "models/yolo11n.pt"
       ]
+    },
+    {
+      "id": "open_vins",
+      "primary_path": "src/third_party/algorithms/localization/open_vins",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "localization",
+        "visual_inertial",
+        "mono",
+        "stereo"
+      ],
+      "integration_style": "explicit_guarded_ros_launch_and_localization_status",
+      "consumers": [
+        "easyfly_openvins_integration"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/localization/open_vins.provenance.json",
+        "src/perception/p3_tracking/easyfly_openvins_integration/README.md",
+        "src/perception/p3_tracking/easyfly_openvins_integration/CONTRACT.md"
+      ],
+      "version_evidence": "Official commit and 2.7.0 package metadata; selected runtime source files locked by SHA256",
+      "exact_upstream_import_revision": "69488123ed9362dd44b6f28e7f4680abbff1442b",
+      "known_local_patch_commits": [],
+      "patches": [
+        "tools/algorithms/patches/openvins/0001-ros2-visualizer-lifetime.patch",
+        "tools/algorithms/patches/openvins/0002-install-notices.patch"
+      ],
+      "unresolved": [
+        "Only Gazebo mono profile qualified; device-specific D435i calibration pending.",
+        "Default navigation/UI backend selection and flight admission are not integrated."
+      ],
+      "related_paths": []
     }
   ],
   "system_compute_dependencies": [

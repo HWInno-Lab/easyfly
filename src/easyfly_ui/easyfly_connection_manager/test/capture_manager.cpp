@@ -17,6 +17,9 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonDocument>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QTabWidget>
 #include <QTimer>
 #include <cstdio>
@@ -47,6 +50,19 @@ int main(int argc, char ** argv)
         for (int i = 0; i < tabs->count(); ++i) {
           tabs->setCurrentIndex(i); QApplication::processEvents();
           if (!window.grab().save(output + QString("/page-%1.png").arg(i))) {app.exit(2); return;}
+        }
+        tabs->setCurrentIndex(1);
+        auto * expand = window.findChild<QPushButton *>("toggleSlamAdvanced");
+        if (!expand) {app.exit(2); return;}
+        expand->click();
+        for (const auto & size : {QSize(1200, 740), QSize(850, 570)}) {
+          window.resize(size); QApplication::processEvents();
+          auto * area = qobject_cast<QScrollArea *>(tabs->currentWidget());
+          area->ensureWidgetVisible(window.findChild<QWidget *>("slamAdvanced"), 0, 10);
+          QApplication::processEvents();
+          if (area->horizontalScrollBar()->maximum() != 0 ||
+          !window.grab().save(output + QString("/slam-advanced-%1.png").arg(size.width())))
+          {app.exit(2); return;}
         }
         app.quit();
       });

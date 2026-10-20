@@ -14,16 +14,23 @@
 
 """Launch the configured multi-object tracking backend."""
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 
 def generate_launch_description():
+    process_nice = DeclareLaunchArgument(
+        'process_nice', default_value='0', choices=['0', '10'],
+        description='CPU scheduling budget; simulation VIO uses 10 for perception work')
     container = ComposableNodeContainer(
         name="tracking_container",
         namespace="",
         package="rclcpp_components",
         executable="component_container",
+        prefix=PythonExpression(["'nice -n 10' if '", LaunchConfiguration('process_nice'),
+                                 "' == '10' else ''"]),
         composable_node_descriptions=[
             ComposableNode(
                 package="easyfly_multi_object_tracking",
@@ -34,4 +41,4 @@ def generate_launch_description():
         ],
         output="screen",
     )
-    return LaunchDescription([container])
+    return LaunchDescription([process_nice, container])

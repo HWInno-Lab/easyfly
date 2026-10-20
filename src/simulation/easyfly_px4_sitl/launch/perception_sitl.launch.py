@@ -29,6 +29,7 @@ from launch.actions import (
     ExecuteProcess,
     GroupAction,
     IncludeLaunchDescription,
+    OpaqueFunction,
     SetEnvironmentVariable,
 )
 from launch.conditions import IfCondition, UnlessCondition
@@ -41,6 +42,39 @@ from easyfly_px4_sitl.imu_compatibility import require_native_imu
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
 from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
+
+
+def _openvins(context):
+    # Resolve the optional dependency only after the selected branch is entered.
+    share = get_package_share_directory('easyfly_openvins_integration')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        share + '/launch/openvins.launch.py'),
+        launch_arguments={'sensor_profile': 'gazebo_mono', 'start_alignment': 'true',
+                          'wait_for_inputs': LaunchConfiguration('openvins_wait_for_inputs',
+                                                                 default='true')}.items())]
+
+
+def _backend_condition(backend):
+    return IfCondition(PythonExpression([
+        "'", LaunchConfiguration('slam_enabled', default='true'), "' == 'true' and '",
+        LaunchConfiguration('localization_backend', default='fast_lio'), "' == '", backend, "'"]))
+
+
+def _localization_timesync_mode():
+    # PASSTHROUGH preserves FCU measurement stamps only for this reviewed SITL
+    # backend. Default FAST-LIO keeps the existing NONE/diagnostic policy.
+    return PythonExpression([
+        "'PASSTHROUGH' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
+        "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
+        "' == 'true' else '", LaunchConfiguration('timesync_mode', default='NONE'), "'"])
+
+
+def _perception_nice():
+    # Keep CPU-heavy consumers behind the simulated measurement/control path.
+    return PythonExpression([
+        "'10' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
+        "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
+        "' == 'true' else '0'"])
 
 
 def _resolve_px4_dir():
@@ -83,6 +117,19 @@ def generate_launch_description():
     local_planner_ceiling_arg = DeclareLaunchArgument(
         "local_planner_virtual_ceil_height", default_value="3.2",
         description="Absolute odom planning ceiling; existing default is unchanged")
+    slam_arg = DeclareLaunchArgument(
+        'slam_enabled', default_value='true', choices=['true', 'false'],
+        description='Enable the selected localization backend; false disables localization/navigation')
+    localization_arg = DeclareLaunchArgument(
+        'localization_backend', default_value='fast_lio',
+        choices=['fast_lio', 'openvins', 'disabled'],
+        description='Exactly one backend; OpenVINS is observation only, navigation unavailable')
+    openvins_wait_arg = DeclareLaunchArgument(
+        'openvins_wait_for_inputs', default_value='true', choices=['true', 'false'],
+        description='Wait for bounded startup input readiness; false for isolated diagnostics')
+    fastlio_options_arg = DeclareLaunchArgument(
+        'fastlio_options_json', default_value='',
+        description='Validated UI FAST-LIO input and mapping overrides; empty keeps YAML defaults')
     semantic_capture_arg = DeclareLaunchArgument(
         "semantic_capture_shutdown", default_value="false",
         description="Opt-in stack capture for semantic_map only; normal simulation stays unchanged")
@@ -131,6 +178,10 @@ def generate_launch_description():
              "--ros-args", "--param", ["gazebo:publish_rate:=", scene_value('clock_rate_hz'), ".0"]],
         output="screen",
         name="gzserver",
+        additional_env={'EASYFLY_GAZEBO_LOCKSTEP': PythonExpression([
+            "'1' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
+            "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
+            "' == 'true' else '0'"])},
     )
 
     spawn_model = ExecuteProcess(
@@ -225,17 +276,20 @@ def generate_launch_description():
             "input_qos_reliability": LaunchConfiguration(
                 "detection_input_qos_reliability"),
             "input_qos_depth": LaunchConfiguration("detection_input_qos_depth"),
+            "process_nice": _perception_nice(),
         }.items())
 
     # ---- P4 多目标跟踪 (M4): SORT ----
     tracking = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_multi_object_tracking") + "/launch/tracking.launch.py"))
+            get_package_share_directory("easyfly_multi_object_tracking") + "/launch/tracking.launch.py"),
+        launch_arguments={"process_nice": _perception_nice()}.items())
 
     # ---- P5 像素转 3D (M5): 目标世界系定位 ----
     pixel_to_3d = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_pixel_to_3d") + "/launch/pixel_to_3d.launch.py"))
+            get_package_share_directory("easyfly_pixel_to_3d") + "/launch/pixel_to_3d.launch.py"),
+        launch_arguments={"process_nice": _perception_nice()}.items())
 
     # ---- P3 SLAM (M3): fast_lio + map→odom TF ----
     fastlio_include = IncludeLaunchDescription(
@@ -244,18 +298,28 @@ def generate_launch_description():
         launch_arguments={
             "use_sim_time": "true",
             "fastlio_config_file": "mid360.yaml",
+            "sensor_profile": "gazebo_mid360",
+            "fastlio_options_json": LaunchConfiguration("fastlio_options_json", default=""),
             # Explicitly clear the legacy alias inside the scoped child.
             "config_file": "",
         }.items())
     fastlio = GroupAction(
+        condition=_backend_condition('fast_lio'),
         scoped=True,
         forwarding=False,
         launch_configurations={
             "use_sim_time": "true",
             "fastlio_config_file": "mid360.yaml",
+            "sensor_profile": "gazebo_mid360",
+            "fastlio_options_json": LaunchConfiguration("fastlio_options_json", default=""),
             "config_file": "",
         },
         actions=[fastlio_include])
+    openvins = GroupAction(condition=_backend_condition('openvins'), scoped=True,
+                           forwarding=False,
+                           launch_configurations={'openvins_wait_for_inputs': LaunchConfiguration(
+                               'openvins_wait_for_inputs', default='true')},
+                           actions=[OpaqueFunction(function=_openvins)])
 
     # ---- C2 通信桥接 (mavros + mavlink_bridge): 提供 /uav_state (P1/P3 依赖) ----
     mavlink_bridge = IncludeLaunchDescription(
@@ -263,6 +327,7 @@ def generate_launch_description():
             get_package_share_directory("easyfly_mavlink_bridge") + "/launch/mavlink_bridge.launch.py"),
         launch_arguments={"use_sim_time": "true", "fcu_url": LaunchConfiguration("fcu_url"),
                           "gcs_url": LaunchConfiguration("gcs_url"),
+                          "timesync_mode": _localization_timesync_mode(),
                           "target_system": LaunchConfiguration("target_system")}.items())
 
     # ---- E 执行层 (Q26): 飞控 + 任务状态机, 一键可飞 ----
@@ -300,7 +365,7 @@ def generate_launch_description():
         actions=[gui_only])
     bridge_delayed = TimerAction(period=8.0, actions=[mavlink_bridge])
     p1_nodes = TimerAction(period=12.0, actions=[calib_tf, coord_tf])
-    p2_nodes = TimerAction(period=14.0, actions=[detection, fastlio])
+    p2_nodes = TimerAction(period=14.0, actions=[detection, fastlio, openvins])
     p4_nodes = TimerAction(period=16.0, actions=[tracking])
     p5_nodes = TimerAction(period=18.0, actions=[pixel_to_3d])
     exec_nodes = TimerAction(period=10.0, actions=[flight_control, mission_fsm])
@@ -310,7 +375,8 @@ def generate_launch_description():
     follow = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_target_tracking") + "/launch/follow.launch.py"))
-    m41_nodes = TimerAction(period=22.0, actions=[follow])
+    m41_nodes = TimerAction(
+        period=22.0, actions=[follow], condition=_backend_condition('fast_lio'))
     # M4.2: 全局规划节点 (常驻 idle 无副作用, 经 /navigate action 发起)
     navigation_strategy_arg = DeclareLaunchArgument(
         "navigation_strategy", default_value="astar", choices=["astar", "ego", "combined"])
@@ -318,7 +384,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_global_planner") + "/launch/navigate.launch.py"),
         launch_arguments={"use_sim_time": "true",
-                          "strategy": LaunchConfiguration("navigation_strategy")}.items())
+                          "strategy": LaunchConfiguration("navigation_strategy"),
+                          "localization_backend": PythonExpression([
+                              "'", LaunchConfiguration('localization_backend'), "' if '",
+                              LaunchConfiguration('slam_enabled'),
+                              "' == 'true' else 'disabled'"])}.items())
     m42_nodes = TimerAction(period=24.0, actions=[navigate])
     # M4.3: EGO-Planner 局部规划 (ego_planner_node + traj_server)。
     # position_cmd 是飞控指令流；急停恢复使用 traj_server 专用 trajectory_ack。
@@ -329,7 +399,8 @@ def generate_launch_description():
             "use_sim_time": "true",
             "virtual_ceil_height": LaunchConfiguration("local_planner_virtual_ceil_height"),
         }.items())
-    m43_nodes = TimerAction(period=26.0, actions=[local_planner])
+    m43_nodes = TimerAction(
+        period=26.0, actions=[local_planner], condition=_backend_condition('fast_lio'))
 
     actions = [
         *selection_arguments('full_perception'),
@@ -347,6 +418,10 @@ def generate_launch_description():
         detection_qos_depth_arg,
         local_planner_ceiling_arg,
         semantic_capture_arg,
+        slam_arg,
+        localization_arg,
+        openvins_wait_arg,
+        fastlio_options_arg,
         navigation_strategy_arg,
         heartbeat_configuration_action(px4_sitl, px4_dir),
         gzserver,

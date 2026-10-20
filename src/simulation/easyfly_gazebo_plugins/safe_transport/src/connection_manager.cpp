@@ -22,6 +22,7 @@
 #include "gazebo/transport/TopicManager.hh"
 #include "gazebo/transport/ConnectionManager.hh"
 #include "easyfly_transport/compat.hpp"
+#include "easyfly_transport/update_signal.hpp"
 
 #include "gazebo/gazebo_config.h"
 
@@ -31,6 +32,13 @@ using namespace transport;
 namespace
 {
 // Keep the pinned Gazebo class layout while making lifecycle polling defined.
+// Process-lifetime side state preserves the pinned Gazebo class ABI. Singleton
+// teardown may still notify; do not destroy its mutex before Gazebo finalizes.
+easyfly_transport::UpdateSignal & UpdateWake()
+{
+  static auto * signal = new easyfly_transport::UpdateSignal;
+  return *signal;
+}
 bool ReadFlag(const bool & flag) {return __atomic_load_n(&flag, __ATOMIC_ACQUIRE);}
 void WriteFlag(bool & flag, bool value) {__atomic_store_n(&flag, value, __ATOMIC_RELEASE);}
 }
@@ -281,6 +289,7 @@ void ConnectionManager::Stop()
 {
   boost::recursive_mutex::scoped_lock lock(this->connectionMutex);
   WriteFlag(this->stop, true);
+  this->TriggerUpdate();
 }
 
 //////////////////////////////////////////////////
@@ -337,9 +346,11 @@ void ConnectionManager::Run()
 
   while (!ReadFlag(this->stop) && this->masterConn && this->masterConn->IsOpen())
   {
+    // Local callbacks may queue another publication from inside RunUpdate.
+    // A bare notify there predates timed_wait and used to be lost for 100 ms.
+    const auto observed = UpdateWake().Generation();
     this->RunUpdate();
-    this->updateCondition.timed_wait(lock,
-       boost::posix_time::milliseconds(100));
+    UpdateWake().Wait(observed);
   }
   this->RunUpdate();
 
@@ -772,5 +783,6 @@ ConnectionPtr ConnectionManager::FindConnection(const std::string &_host,
 //////////////////////////////////////////////////
 void ConnectionManager::TriggerUpdate()
 {
+  UpdateWake().Notify();
   this->updateCondition.notify_all();
 }

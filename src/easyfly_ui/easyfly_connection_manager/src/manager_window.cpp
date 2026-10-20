@@ -12,6 +12,7 @@
 // limitations under the License.
 
 #include <QCheckBox>
+#include <QDialog>
 #include <QButtonGroup>
 #include <QFrame>
 #include <QGridLayout>
@@ -20,6 +21,7 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QTabWidget>
+#include <QDoubleSpinBox>
 #include <QScrollArea>
 #include <QJsonArray>
 #include <QStandardItemModel>
@@ -76,13 +78,17 @@ struct ManagerWindow::Impl
   RpcClient rpc;
   QTimer timer;
   QListWidget * list;
+  QComboBox * connection_selector;
   QLineEdit * name, * front, * down;
   QSpinBox * domain;
   QComboBox * scope, * profile;
+  QMap<QString, QWidget *> algorithm_controls;
+  QWidget * algorithms_page{nullptr};
+  QLabel * slam_summary{nullptr};
   QCheckBox * simulation;
   QLabel * note, * summary, * effective;
   QPlainTextEdit * diagnostics;
-  QPushButton * save, * remove, * start, * stop, * stop_backend, * start_qgc,
+  QPushButton * save, * profile_save, * remove, * start, * stop, * stop_backend, * start_qgc,
     * stop_qgc;
   QComboBox * mode, * scene, * transport, * device, * baud;
   QLineEdit * px4, * bind_host, * remote_host, * gcs_host, * qgc_path;
@@ -96,6 +102,9 @@ struct ManagerWindow::Impl
   QPushButton * refresh_serial, * choose_px4, * choose_qgc;
   QProcess catalog_process;
   QByteArray catalog_output;
+  bool catalog_ready{false};
+  quint64 catalog_generation{0};
+  QString catalog_error;
   QButtonGroup * mode_cards;
   QList<QToolButton *> mode_buttons;
   QLabel * backend_card, * dds_card, * flight_card, * qgc_card;
@@ -143,41 +152,42 @@ struct ManagerWindow::Impl
     title->setStyleSheet("font-size:22px;font-weight:600;color:#17263b");
     title->setVisible(!embedded);
     main->addWidget(title);
-    auto * hint = new QLabel(
-      QStringLiteral(
-        "选择工作方式、保存配置，再启动"
-        "仿真或连接 DDS。飞控和 QGC 配置均"
-        "在此完成；关闭 EasyFly 保留后台"
-        "。"), central);
-    hint->setWordWrap(true); main->addWidget(hint);
-    auto * state_row = new QHBoxLayout; state_row->setSpacing(12);
+    auto * state_row = new QHBoxLayout; state_row->setSpacing(6);
     const auto card = [state_row, central](const char * id, const QString & text) {
         auto * frame = new QFrame(central); frame->setObjectName("connectionStatusCard");
-        auto * box = new QVBoxLayout(frame); auto * value = new QLabel(text, frame);
+        auto * box = new QVBoxLayout(frame); box->setContentsMargins(8, 4, 8, 4);
+        auto * value = new QLabel(text, frame);
         value->setObjectName(id); value->setTextFormat(Qt::PlainText); value->setWordWrap(true);
         box->addWidget(value); state_row->addWidget(frame, 1); return value;
       };
-    backend_card = card("connectionBackendCard", QStringLiteral("仿真 / 通信\n状态未知"));
-    dds_card = card("connectionDdsCard", QStringLiteral("DDS 观测\n尚未连接"));
-    flight_card = card("connectionFlightCard", QStringLiteral("飞控\n尚未确认"));
-    qgc_card = card("connectionQgcCard", QStringLiteral("QGC 转发\n尚未确认"));
+    backend_card = card("connectionBackendCard", QStringLiteral("仿真 / 通信 · 状态未知"));
+    dds_card = card("connectionDdsCard", QStringLiteral("DDS · 尚未连接"));
+    flight_card = card("connectionFlightCard", QStringLiteral("飞控 · 尚未确认"));
+    qgc_card = card("connectionQgcCard", QStringLiteral("QGC 转发 · 尚未确认"));
     main->addLayout(state_row);
-    auto * split = new QSplitter(central); main->addWidget(split, 1);
-    auto * left = new QWidget(split);
-    left->setMinimumWidth(160); left->setMaximumWidth(260);
+    auto * profile_toolbar = new QHBoxLayout;
+    profile_toolbar->addWidget(new QLabel(QStringLiteral("当前配置"), central));
+    connection_selector = new QComboBox(central);
+    connection_selector->setObjectName("connectionSelector");
+    connection_selector->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    connection_selector->setMinimumContentsLength(16);
+    profile_toolbar->addWidget(connection_selector, 1);
+    auto * manage = new QPushButton(QStringLiteral("管理配置…"), central);
+    manage->setObjectName("manageConnections"); profile_toolbar->addWidget(manage);
+    main->addLayout(profile_toolbar);
+    auto * left = new QDialog(owner);
+    left->setObjectName("connectionProfilesDialog");
+    left->setWindowTitle(QStringLiteral("管理连接配置")); left->resize(620, 420);
+    QObject::connect(
+      manage, &QPushButton::clicked, left, [left] {
+        left->show(); left->raise(); left->activateWindow();
+      });
     auto * left_layout = new QVBoxLayout(left);
     list = new QListWidget(left); list->setObjectName("connectionList");
     list->setMinimumWidth(120);
     list->setTextElideMode(Qt::ElideRight);
     list->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     left_layout->addWidget(list);
-    scene_preview = new QLabel(left); scene_preview->setObjectName("scenePreview");
-    scene_preview->setMinimumSize(160, 120); scene_preview->setMaximumHeight(150);
-    scene_preview->setAlignment(Qt::AlignCenter); left_layout->addWidget(scene_preview);
-    scene_preview->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
-    preview_caption = new QLabel(QStringLiteral("场景静态几何预览"), left);
-    preview_caption->setWordWrap(true); left_layout->addWidget(preview_caption);
-    preview_caption->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     auto * actions = new QHBoxLayout; left_layout->addLayout(actions);
     const auto button =
       [this](const QString & text, const char * id, QLayout * layout) {
@@ -193,9 +203,16 @@ struct ManagerWindow::Impl
     auto * export_button = button(
       QStringLiteral(
         "导出"), "exportConnections", transfer);
-    auto * right = new QWidget(split); auto * layout = new QVBoxLayout(right);
-    auto * group = new QGroupBox(QStringLiteral("连接配置"), right);
-    auto * general = new QFormLayout(group); layout->addWidget(group);
+    profile_save = button(QStringLiteral("保存名称与配置"), "saveManagedProfile", left_layout);
+    QObject::connect(profile_save, &QPushButton::clicked, owner, [this] {save_current();});
+    auto * done = new QPushButton(QStringLiteral("返回配置页"), left);
+    left_layout->addWidget(done);
+    QObject::connect(done, &QPushButton::clicked, left, &QDialog::hide);
+    auto * right = new QWidget(central); main->addWidget(right, 1);
+    auto * layout = new QVBoxLayout(right); layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(6);
+    auto * group = new QGroupBox(QStringLiteral("配置名称"), left);
+    auto * general = new QFormLayout(group); left_layout->insertWidget(0, group);
     name = new QLineEdit(group); name->setObjectName("connectionName");
     name->setMaxLength(64);
     mode = new QComboBox(group); mode->setObjectName("connectionMode");
@@ -208,28 +225,13 @@ struct ManagerWindow::Impl
     general->addRow(QStringLiteral("名称"), name);
     mode->hide();
     auto * choices = new QHBoxLayout; mode_cards = new QButtonGroup(owner);
-    const QStringList titles{QStringLiteral("本机仿真\n启动场景与飞机"),
-      QStringLiteral("已有平台\n直接连接 DDS"), QStringLiteral("本机飞控\nUDP / TCP / 串口")};
+    const QStringList titles{QStringLiteral("本机仿真"),
+      QStringLiteral("连接 DDS"), QStringLiteral("本机飞控 · UDP / TCP / 串口")};
     for (int i = 0; i < titles.size(); ++i) {
       auto * choice = new QToolButton(owner); choice->setObjectName("connectionModeCard");
       choice->setText(titles[i]); choice->setCheckable(true);
-      choice->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-      QPixmap symbol(32, 28); symbol.fill(Qt::transparent); QPainter glyph(&symbol);
-      glyph.setRenderHint(QPainter::Antialiasing); glyph.setPen(QPen(QColor("#2563eb"), 2));
-      if (i == 0) {
-        glyph.drawRoundedRect(QRectF(3, 2, 26, 18), 3, 3);
-        glyph.drawLine(16, 20, 16, 25); glyph.drawLine(9, 25, 23, 25);
-      } else if (i == 1) {
-        glyph.drawLine(16, 9, 7, 20); glyph.drawLine(16, 9, 25, 20);
-        glyph.drawEllipse(QPointF(16, 6), 4, 4); glyph.drawEllipse(QPointF(6, 22), 4, 4);
-        glyph.drawEllipse(QPointF(26, 22), 4, 4);
-      } else {
-        glyph.drawRoundedRect(QRectF(7, 5, 18, 18), 3, 3); glyph.drawRect(12, 10, 8, 8);
-        for (int pin : {10, 16, 22}) {
-          glyph.drawLine(pin, 1, pin, 5); glyph.drawLine(pin, 23, pin, 27);
-        }
-      }
-      glyph.end(); choice->setIcon(QIcon(symbol)); choice->setIconSize(QSize(32, 28));
+      choice->setToolButtonStyle(Qt::ToolButtonTextOnly);
+      choice->setToolTip(mode->itemText(i));
       choice->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
       mode_cards->addButton(choice, i); mode_buttons.push_back(choice); choices->addWidget(choice);
       QObject::connect(choice, &QToolButton::clicked, owner, [this, i] {mode->setCurrentIndex(i);});
@@ -237,12 +239,18 @@ struct ManagerWindow::Impl
     layout->addLayout(choices);
     auto * tabs = new QTabWidget(right); layout->addWidget(tabs, 1);
     tabs->setObjectName("connectionConfigurationTabs");
-    if (embedded) {tabs->setMinimumHeight(240);}
+    tabs->setMinimumHeight(150);
     const auto page = [tabs](const QString & title) {
         auto * area = new QScrollArea(tabs); area->setWidgetResizable(true);
+        area->setFrameShape(QFrame::NoFrame);
+        area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         auto * widget = new QWidget(area); area->setWidget(widget);
         tabs->addTab(area, title);
-        return new QFormLayout(widget);
+        auto * form = new QFormLayout(widget);
+        form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+        form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+        form->setContentsMargins(16, 12, 16, 12); form->setVerticalSpacing(10);
+        return form;
       };
     const auto line =
       [this](const char * id, QFormLayout * form, const QString & label) {
@@ -289,9 +297,22 @@ struct ManagerWindow::Impl
     supported->setWordWrap(true); form->addRow(supported);
 
     auto * sim_form = page(QStringLiteral("仿真场景"));
+    auto * preview_box = new QWidget(owner); auto * preview_layout = new QHBoxLayout(preview_box);
+    preview_layout->setContentsMargins(0, 0, 0, 0);
+    scene_preview = new QLabel(preview_box); scene_preview->setObjectName("scenePreview");
+    scene_preview->setFixedSize(220, 130); scene_preview->setAlignment(Qt::AlignCenter);
+    preview_caption = new QLabel(QStringLiteral("场景静态几何预览"), preview_box);
+    preview_caption->setWordWrap(true); preview_caption->setMinimumWidth(0);
+    preview_caption->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    preview_layout->addWidget(scene_preview); preview_layout->addWidget(preview_caption, 1);
+    auto * preview_toggle = new QPushButton(QStringLiteral("场景预览"), owner);
+    preview_toggle->setObjectName("toggleScenePreview"); preview_toggle->setCheckable(true);
+    preview_box->hide();
+    QObject::connect(preview_toggle, &QPushButton::toggled, preview_box, &QWidget::setVisible);
     scene = new QComboBox(owner); scene->setObjectName("connectionScene");
     sim_form->addRow(QStringLiteral("场景"), scene);
-    scene_note = new QLabel(owner); scene_note->setWordWrap(true);
+    scene_note = new QLabel(owner); scene_note->setObjectName("connectionSceneStatus");
+    scene_note->setWordWrap(true);
     scene_note->setTextFormat(
       Qt::PlainText);
     sim_form->addRow(scene_note);
@@ -336,6 +357,7 @@ struct ManagerWindow::Impl
     show_advanced(false);
     QObject::connect(advanced_sim, &QPushButton::toggled, owner, show_advanced);
 
+    sim_form->addRow(preview_toggle); sim_form->addRow(preview_box);
     fcu_form = page(QStringLiteral("飞控链路"));
     transport = new QComboBox(owner); transport->setObjectName(
       "connectionTransport");
@@ -481,9 +503,104 @@ struct ManagerWindow::Impl
     }
     delete profile_row.fieldItem;
     sim_form->insertRow(0, QStringLiteral("运行方案 / 观测标签"), profile);
+    auto * algorithms_form = page(QStringLiteral("算法配置"));
+    algorithms_page = algorithms_form->parentWidget();
+    algorithms_page->setObjectName("algorithmSettings");
+    algorithms_page->setStyleSheet("QWidget#algorithmSettings {background: white;}");
+    auto * algorithm_hint = new QLabel(
+      QStringLiteral(
+        "随本机仿真会话统一启停，保存后重启生效。\n"
+        "几何检测仅输出图像结果；降落准备不包含完整精降。"), owner);
+    algorithm_hint->setWordWrap(true);
+    auto * algorithm_header = new QWidget(owner);
+    auto * algorithm_header_layout = new QHBoxLayout(algorithm_header);
+    algorithm_header_layout->setContentsMargins(0, 0, 0, 0);
+    algorithm_header_layout->addWidget(algorithm_hint, 1);
+    algorithms_form->addRow(algorithm_header);
+    algorithms_form->setContentsMargins(12, 8, 12, 8); algorithms_form->setVerticalSpacing(6);
+    auto * common = new QWidget(owner); auto * common_grid = new QGridLayout(common);
+    common_grid->setContentsMargins(0, 0, 0, 0);
+    common_grid->setColumnStretch(0, 1); common_grid->setColumnStretch(1, 1);
+    auto * advanced = new QWidget(owner); auto * advanced_grid = new QGridLayout(advanced);
+    advanced_grid->setContentsMargins(0, 0, 0, 0);
+    advanced_grid->setColumnStretch(0, 1); advanced_grid->setColumnStretch(1, 1);
+    QMap<QString, QFormLayout *> algorithm_forms;
+    auto * slam_box = new QGroupBox(QStringLiteral("SLAM · 定位与建图"), owner);
+    auto * slam_form = new QFormLayout(slam_box);
+    slam_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    slam_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    algorithm_forms["slam"] = slam_form;
+    algorithms_form->addRow(slam_box);
+    slam_summary = new QLabel(slam_box); slam_summary->setObjectName("slamConfigurationSummary");
+    slam_summary->setWordWrap(true); slam_summary->setTextFormat(Qt::PlainText);
+    slam_summary->setMinimumWidth(0);
+    slam_summary->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    auto * slam_toggle = new QPushButton(QStringLiteral("SLAM 高级参数"), slam_box);
+    slam_toggle->setObjectName("toggleSlamAdvanced"); slam_toggle->setCheckable(true);
+    auto * slam_advanced = new QWidget(slam_box); slam_advanced->setObjectName("slamAdvanced");
+    auto * slam_grid = new QGridLayout(slam_advanced); slam_grid->setContentsMargins(0, 0, 0, 0);
+    slam_grid->setColumnStretch(0, 1); slam_grid->setColumnStretch(1, 1);
+    const QStringList slam_groups{"slam_sampling", "slam_mapping"};
+    const QStringList slam_titles{QStringLiteral("采样与计算"), QStringLiteral("地图与距离")};
+    for (int i = 0; i < slam_groups.size(); ++i) {
+      auto * box = new QGroupBox(slam_titles[i], slam_advanced);
+      auto * form = new QFormLayout(box);
+      form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+      form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+      algorithm_forms[slam_groups[i]] = form; slam_grid->addWidget(box, 0, i);
+    }
+    slam_advanced->hide();
+    QObject::connect(slam_toggle, &QPushButton::toggled, slam_advanced, &QWidget::setVisible);
+    const QStringList groups{"overview", "input", "ellipse", "color_line"};
+    const QStringList group_titles{QStringLiteral("启用与策略"), QStringLiteral("图像输入"),
+      QStringLiteral("椭圆检测参数"), QStringLiteral("彩线检测参数")};
+    for (int i = 0; i < groups.size(); ++i) {
+      auto * box = new QGroupBox(group_titles[i], owner);
+      auto * group_form = new QFormLayout(box);
+      group_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+      group_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+      algorithm_forms[groups[i]] = group_form;
+      (i < 2 ? common_grid : advanced_grid)->addWidget(box, 0, i % 2);
+    }
+    algorithms_form->addRow(common);
+    auto * advanced_toggle = new QPushButton(QStringLiteral("高级检测参数"), owner);
+    advanced_toggle->setObjectName("toggleAlgorithmAdvanced"); advanced_toggle->setCheckable(true);
+    advanced->setObjectName("algorithmAdvanced"); advanced->hide();
+    algorithm_header_layout->addWidget(advanced_toggle); algorithms_form->addRow(advanced);
+    QObject::connect(advanced_toggle, &QPushButton::toggled, advanced, &QWidget::setVisible);
+    for (const auto & item : algorithm_fields()) {
+      const auto field = item.toObject(); const auto key = field["key"].toString();
+      const auto kind = field["kind"].toString(); QWidget * control = nullptr;
+      if (kind == "bool") {control = new QCheckBox(owner);} else if (kind == "choice") {
+        auto * combo = new QComboBox(owner);
+        combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+        combo->setMinimumContentsLength(8);
+        for (const auto & choice : field["choices"].toArray()) {
+          const auto pair = choice.toArray();
+          combo->addItem(pair[1].toString(), pair[0].toString());
+        }
+        control = combo;
+      } else if (kind == "string" || kind == "topic") {
+        auto * edit = new QLineEdit(owner);
+        edit->setMaxLength(kind == "topic" ? 256 : 128); control = edit;
+      } else {
+        auto * number = new QDoubleSpinBox(owner);
+        number->setDecimals(kind == "int" ? 0 : 3);
+        number->setRange(field["min"].toDouble(), field["max"].toDouble());
+        number->setSingleStep(kind == "int" ? 1 : .01); control = number;
+      }
+      control->setObjectName("algorithm_" + key); algorithm_controls[key] = control;
+      algorithm_forms.value(field["group"].toString(), algorithm_forms["overview"])->addRow(
+        field["label"].toString(), control);
+    }
+    slam_form->addRow(slam_summary); slam_form->addRow(slam_toggle);
+    slam_form->addRow(slam_advanced);
+    auto * algorithm_tab = tabs->widget(tabs->count() - 1);
+    tabs->removeTab(tabs->count() - 1);
+    tabs->insertTab(1, algorithm_tab, QStringLiteral("算法配置"));
     urls_label = new QLabel(right); urls_label->setTextFormat(Qt::PlainText);
     urls_label->setWordWrap(true);
-    layout->addWidget(urls_label);
+    fcu_form->addRow(urls_label);
     command_grid = new QGridLayout; auto * commands = command_grid; layout->addLayout(commands);
     save = button(QStringLiteral("保存配置"), "saveConnection", commands);
     start = button(QStringLiteral("启动仿真并连接 DDS"), "startConnection", commands);
@@ -498,12 +615,11 @@ struct ManagerWindow::Impl
     }
     stop_backend = button(QStringLiteral("停止仿真 / 通信"), "stopBackend", commands);
     stop_backend->setProperty("danger", true);
-    auto * tools = new QHBoxLayout; layout->addLayout(tools);
+    auto * tools = new QHBoxLayout; gcs_form->addRow(tools);
     start_qgc = button(QStringLiteral("打开并连接 QGC"), "startQgc", tools);
     stop_qgc = button(QStringLiteral("关闭本次 QGC"), "stopQgc", tools);
-    auto * logs =
-      button(QStringLiteral("打开运行日志目录"), "openConnectionLogs", tools);
     auto * recovery_tools = new QHBoxLayout; layout->addLayout(recovery_tools);
+    auto * logs = button(QStringLiteral("运行日志"), "openConnectionLogs", recovery_tools);
     auto * recover = button(
       QStringLiteral("重新连接 / 恢复会话"), "recoverConnection", recovery_tools);
     recovery_tools->addStretch();
@@ -556,6 +672,13 @@ struct ManagerWindow::Impl
       });
     catalog_process.setProcessChannelMode(QProcess::SeparateChannels);
     QObject::connect(
+      &catalog_process, &QProcess::errorOccurred, owner, [this](QProcess::ProcessError error) {
+        if (error == QProcess::FailedToStart) {
+          catalog_error = QStringLiteral("无法读取场景目录：") + catalog_process.errorString();
+          update();
+        }
+      });
+    QObject::connect(
       &catalog_process, &QProcess::readyReadStandardOutput, owner, [this] {
         catalog_output += catalog_process.readAllStandardOutput();
         if (catalog_output.size() > 262144) {catalog_process.kill();}
@@ -566,33 +689,28 @@ struct ManagerWindow::Impl
       [this](int code, QProcess::ExitStatus) {
         const auto result = QJsonDocument::fromJson(catalog_output).object();
         if (code || !result["scenes"].isArray()) {
-          scene_note->setText(
+          if (catalog_error.isEmpty()) {
+            catalog_error =
             QStringLiteral("场景检查失败：") + result["error"].toString(
               QString::fromUtf8(catalog_process.readAllStandardError()).right(
-                1024))); return;
+                1024));
+          }
+          update(); return;
         }
         const auto selected_scene = scene->currentData().toString();
         const bool previous_loading = loading; loading = true; scene->clear();
-        int ready = 0;
         for (const auto & value : result["scenes"].toArray()) {
           const auto row = value.toObject();
-          const bool available = row["status"] == "registered";
-          scene->addItem(
-            row["id"].toString() +
-            (available ? QStringLiteral(" · 已登记") : QStringLiteral(" · 暂不可用")),
-            row["id"]);
+          scene->addItem(row["id"].toString(), row["id"]);
           scene->setItemData(scene->count() - 1, row, Qt::UserRole + 1);
-          if (available) {++ready;}
         }
-        const int index = scene->findData(selected_scene);
+        int index = scene->findData(selected_scene);
+        if (index < 0 && !selected_scene.isEmpty()) {
+          scene->addItem(selected_scene, selected_scene); index = scene->count() - 1;
+        }
         if (index >= 0) {scene->setCurrentIndex(index);}
         loading = previous_loading;
-        scene_note->setText(
-          QStringLiteral(
-            "已加载 %1 个场景，%2 个已登记；"
-            "启动前校验当前资源、许可和运行"
-            "配置。")
-          .arg(scene->count()).arg(ready)); update();
+        catalog_ready = true; catalog_error.clear(); update();
       });
     summary = new QLabel(right);
     summary->setObjectName("connectionActualState");
@@ -602,32 +720,32 @@ struct ManagerWindow::Impl
     effective = new QLabel(right); effective->setTextFormat(Qt::PlainText);
     effective->setObjectName("connectionEffectiveConfig");
     effective->setWordWrap(true);
-    layout->insertWidget(0, effective);
+    effective->setMaximumHeight(60); layout->insertWidget(0, effective);
     diagnostics = new QPlainTextEdit(right); diagnostics->setObjectName(
       "connectionDiagnostics");
     diagnostics->setReadOnly(true); diagnostics->setMaximumBlockCount(200);
     auto * details = new QPushButton(QStringLiteral("展开连接诊断"), right);
     details_toggle = details;
-    details->setCheckable(true); layout->addWidget(details);
+    details->setCheckable(true); recovery_tools->addWidget(details);
     diagnostics->hide();
     summary->hide(); effective->hide();
     QObject::connect(
       details, &QPushButton::toggled, diagnostics,
       &QWidget::setVisible);
     QObject::connect(details, &QPushButton::toggled, owner, [this](bool) {update();});
-    layout->addWidget(diagnostics, 1);
+    diagnostics->setMaximumHeight(110); layout->addWidget(diagnostics);
     note = new QLabel(central); note->setObjectName("connectionNotice");
     note->setTextFormat(
       Qt::PlainText);
-    note->setWordWrap(true); main->addWidget(note);
-    split->setSizes({260, 780});
+    note->setWordWrap(true); note->setMaximumHeight(54); main->addWidget(note);
+    main->setContentsMargins(8, 6, 8, 6); main->setSpacing(6);
     owner->setStyleSheet(
       "QFrame#connectionStatusCard {background:#ffffff;border:1px solid #dce3eb;"
-      "border-top:3px solid #d8e7fc;border-radius:9px;padding:5px;}"
+      "border-radius:5px;padding:0;}"
       "QToolButton#connectionModeCard {background:#ffffff;border:1px solid #dce3eb;"
-      "border-radius:8px;padding:9px;color:#526176;}"
+      "border-radius:5px;padding:6px;color:#526176;}"
       "QToolButton#connectionModeCard:checked {backgroun"
-      "d:#e5efff;border:2px solid #2563eb;color:#164b9b;}"
+      "d:#e5efff;border:1px solid #2563eb;color:#164b9b;}"
       "QToolButton#connectionModeCard:disabled {color:#64748b;}"
       "QPushButton#newConnection,QPushButton#copyConnection,QPushButton#deleteConnection,"
       "QPushButton#importConnections,QPushButton#exportConnections {padding:6px;font-size:12px;}"
@@ -648,6 +766,9 @@ struct ManagerWindow::Impl
       profiles.push_back(initial);
     }
     QObject::connect(
+      connection_selector, qOverload<int>(&QComboBox::currentIndexChanged),
+      owner, [this](int row) {if (!loading) {list->setCurrentRow(row);}});
+    QObject::connect(
       list, &QListWidget::currentRowChanged, owner, [this](int row) {
         if (loading || row < 0) {return;}
         if (selected >= 0 && selected < profiles.size() && dirty() &&
@@ -656,11 +777,24 @@ struct ManagerWindow::Impl
           QStringLiteral("放弃当前未保存的编辑并切换？"), QMessageBox::Yes | QMessageBox::No,
           QMessageBox::No) != QMessageBox::Yes)
         {
-          QSignalBlocker guard(list); list->setCurrentRow(selected); return;
+          QSignalBlocker guard(list); list->setCurrentRow(selected);
+          QSignalBlocker combo_guard(connection_selector);
+          connection_selector->setCurrentIndex(selected); return;
         }
         load(row);
       });
     const auto changed = [this] {if (!loading) {update();}};
+    for (auto * widget : algorithm_controls) {
+      if (auto * value = qobject_cast<QCheckBox *>(widget)) {
+        QObject::connect(value, &QCheckBox::toggled, owner, changed);
+      } else if (auto * value = qobject_cast<QComboBox *>(widget)) {
+        QObject::connect(value, qOverload<int>(&QComboBox::currentIndexChanged), owner, changed);
+      } else if (auto * value = qobject_cast<QLineEdit *>(widget)) {
+        QObject::connect(value, &QLineEdit::textChanged, owner, changed);
+      } else if (auto * value = qobject_cast<QDoubleSpinBox *>(widget)) {
+        QObject::connect(value, qOverload<double>(&QDoubleSpinBox::valueChanged), owner, changed);
+      }
+    }
     for (auto * edit :
       {name, front, down, px4, bind_host, remote_host, gcs_host, qgc_path})
     {
@@ -925,21 +1059,21 @@ struct ManagerWindow::Impl
   void load_scenes()
   {
     if (catalog_process.state() != QProcess::NotRunning) {return;}
-    catalog_output.clear();
-    scene_note->setText(QStringLiteral("正在检查已安装场景与资源…"));
+    catalog_output.clear(); catalog_ready = false; catalog_error.clear();
+    const auto generation = ++catalog_generation;
     catalog_process.start(
       backend_program(), {"--catalog", "--px4-directory", px4->text()});
+    update();
     QTimer::singleShot(
-      15000, owner, [this] {
-        if (catalog_process.state() != QProcess::NotRunning) {
-          catalog_process.kill(); scene_note->setText(
-            QStringLiteral(
-              "场景检查超时，请检查安装与资源"
-              "目录。"));
+      15000, owner, [this, generation] {
+        if (generation == catalog_generation && catalog_process.state() != QProcess::NotRunning) {
+          catalog_error = QStringLiteral("场景检查超时，请检查安装与资源目录。");
+          catalog_process.kill(); update();
         }
       });
   }
-  void notice(const QString & text) {note->setText(text.left(2048));}
+  void notice(const QString & text)
+  {note->setText(text.left(2048)); note->setToolTip(text.left(2048));}
   ~Impl()
   {
     timer.stop();
@@ -976,6 +1110,19 @@ struct ManagerWindow::Impl
     p.parameter_edit = parameter_edit->isChecked();
     p.recording = recording->isChecked();
     p.rviz_embed = rviz_embed->isChecked();
+    if (p.mode == "sitl") {
+      for (auto it = algorithm_controls.cbegin(); it != algorithm_controls.cend(); ++it) {
+        if (auto * value = qobject_cast<QCheckBox *>(it.value())) {
+          p.algorithms[it.key()] = value->isChecked();
+        } else if (auto * value = qobject_cast<QComboBox *>(it.value())) {
+          p.algorithms[it.key()] = value->currentData().toString();
+        } else if (auto * value = qobject_cast<QLineEdit *>(it.value())) {
+          p.algorithms[it.key()] = value->text();
+        } else if (auto * value = qobject_cast<QDoubleSpinBox *>(it.value())) {
+          p.algorithms[it.key()] = value->value();
+        }
+      }
+    } else {p.algorithms = algorithm_defaults();}
     return p;
   }
   bool dirty() const
@@ -986,7 +1133,7 @@ struct ManagerWindow::Impl
   void arrange_commands(int width)
   {
     if (!command_grid) {return;}
-    const int columns = width < 1000 ? 2 : 4;
+    const int columns = width < 760 ? 2 : 4;
     if (command_columns == columns) {return;}
     command_columns = columns;
     const QList<QWidget *> buttons{save, start, stop, stop_backend};
@@ -1006,7 +1153,7 @@ struct ManagerWindow::Impl
   }
   void load(int row)
   {
-    selected = row; loading = true;
+    selected = row; loading = true; connection_selector->setCurrentIndex(row);
     const auto p = profiles.value(row);
     name->setText(p.name); domain->setValue(p.domain); scope->setCurrentIndex(
       p.local_only ? 0 : 1);
@@ -1036,13 +1183,26 @@ struct ManagerWindow::Impl
     parameter_edit->setChecked(p.parameter_edit); recording->setChecked(
       p.recording);
     rviz_embed->setChecked(p.rviz_embed);
+    for (auto it = algorithm_controls.cbegin(); it != algorithm_controls.cend(); ++it) {
+      const auto setting = p.algorithms[it.key()];
+      if (auto * value = qobject_cast<QCheckBox *>(it.value())) {
+        value->setChecked(setting.toBool());
+      } else if (auto * value = qobject_cast<QComboBox *>(it.value())) {
+        value->setCurrentIndex(value->findData(setting.toString()));
+      } else if (auto * value = qobject_cast<QLineEdit *>(it.value())) {
+        value->setText(setting.toString());
+      } else if (auto * value = qobject_cast<QDoubleSpinBox *>(it.value())) {
+        value->setValue(setting.toDouble());
+      }
+    }
     loading = false; update();
   }
   void refresh(int row)
   {
-    loading = true; list->clear();
+    loading = true; list->clear(); connection_selector->clear();
     for (const auto & p : profiles) {
       const auto label = p.name + QStringLiteral(" · domain %1").arg(p.domain);
+      connection_selector->addItem(label);
       list->addItem(label); list->item(list->count() - 1)->setToolTip(label);
     }
     loading = false;
@@ -1096,16 +1256,16 @@ struct ManagerWindow::Impl
       !actual["recovery_error"].toString().isEmpty() ||
       (actual["backend_running"].toBool() && !actual["backend_fresh"].toBool());
     backend_card->setText(
-      QStringLiteral("仿真 / 通信\n%1").arg(
+      QStringLiteral("仿真 / 通信 · %1").arg(
         actual["backend_running"].toBool() ?
         (backend_fault ? QStringLiteral("运行异常") : QStringLiteral("运行中")) :
         QStringLiteral("未运行")));
     dds_card->setText(
-      QStringLiteral("DDS 观测\n%1").arg(
+      QStringLiteral("DDS · %1").arg(
         actual["workspace_fresh"].toBool() && live["observer_running"].toBool() ?
         QStringLiteral("观测中") : QStringLiteral("未连接")));
     flight_card->setText(
-      QStringLiteral("飞控\n%1").arg(
+      QStringLiteral("飞控 · %1").arg(
         actual["backend_fresh"].toBool() ?
         (actual["backend"].toObject()["connected"].toBool() ? QStringLiteral("已连接") :
         QStringLiteral("未连接")) : actual["workspace_fresh"].toBool() &&
@@ -1115,7 +1275,7 @@ struct ManagerWindow::Impl
     const auto active_gcs = actual["profile"].toObject().value("gcs").toObject();
     const bool forwarding = active_gcs.value("enabled").toBool();
     qgc_card->setText(
-      QStringLiteral("QGC\n%1").arg(
+      QStringLiteral("QGC · %1").arg(
         actual["qgc_running"].toBool() ?
         QStringLiteral("本次进程运行") : forwarding ?
         QStringLiteral("转发已配置") : QStringLiteral("转发关闭")));
@@ -1178,6 +1338,24 @@ struct ManagerWindow::Impl
     for (auto * field : QList<QWidget *>{device, baud, refresh_serial}) {
       row_visible(field, serial);
     }
+    for (auto * control : algorithm_controls) {control->setEnabled(edit && sim);}
+    const auto slam_choice = qobject_cast<QComboBox *>(algorithm_controls["slam"])->currentData();
+    const bool fastlio_parameters = slam_choice != "openvins" && slam_choice != "disabled";
+    for (auto it = algorithm_controls.begin(); it != algorithm_controls.end(); ++it) {
+      if (it.key().startsWith("slam_")) {it.value()->setEnabled(edit && sim && fastlio_parameters);}
+    }
+    slam_summary->setText(
+      !sim ? QStringLiteral("外部平台通过 DDS 观测，算法由平台管理。") :
+      slam_choice == "openvins" ? QStringLiteral(
+        "OpenVINS 使用 Gazebo 前视彩色图像和 Livox IMU，发布独立局部位姿与状态。"
+        "当前仅观测：导航任务被禁用，尚未完成 odom 坐标对齐和地图接入；D435i 实机仍需标定。") :
+      slam_choice == "disabled" ? QStringLiteral(
+        "此配置不启动 SLAM，建图与导航所需的点云/定位可能不可用。") :
+      profile->currentData() == "base_sim" ? QStringLiteral(
+        "基础仿真不启动 SLAM；使用 FAST-LIO 请在运行环境选择感知、导航或降落准备方案。") :
+      QStringLiteral(
+        "此配置随仿真启动 FAST-LIO（MID-360），输出 "
+        "/Odometry 和 /cloud_registered。"));
     choose_px4->setEnabled(edit && sim);
     choose_qgc->setEnabled(edit);
     qgc_path->setEnabled(edit);
@@ -1209,8 +1387,10 @@ struct ManagerWindow::Impl
         form_profile().fcu_url(),
         gcs_enabled->isChecked() ? form_profile().gcs_url() : QStringLiteral(
           "关闭")));
-    save->setEnabled(edit); remove->setEnabled(edit);
+    save->setEnabled(edit);
+    profile_save->setEnabled(save->isEnabled()); remove->setEnabled(edit);
     bool valid = false;
+    start->setToolTip({});
     try {
       form_profile().validate(); valid = true;
     } catch (const std::exception & error) {start->setToolTip(error.what());}
@@ -1260,17 +1440,49 @@ struct ManagerWindow::Impl
         .arg(scene_info["name"].toString(scene->currentData().toString())));
       preview_caption->setToolTip(preview_caption->text());
     }
-    if (sim && !scene_info.isEmpty()) {
-      const bool supported = scene_info["status"] == "registered" &&
-        scene_info["profiles"].toArray().contains(profile->currentData().toString());
+    if (sim) {
+      int compatible_count = 0;
+      const auto selected_profile = profile->currentData().toString();
+      for (int i = 0; i < scene->count(); ++i) {
+        const auto row = scene->itemData(i, Qt::UserRole + 1).toJsonObject();
+        const bool compatible = row["status"] == "registered" &&
+          row["profiles"].toArray().contains(selected_profile);
+        compatible_count += compatible;
+        const auto suffix = row.isEmpty() ? QStringLiteral(" · 未找到") :
+          row["status"] != "registered" ? QStringLiteral(" · 草稿，暂不可用") :
+          compatible ? QStringLiteral(" · 可用") : QStringLiteral(" · 不适用当前方案");
+        scene->setItemText(i, scene->itemData(i).toString() + suffix);
+      }
+      const bool supported = catalog_ready && scene_info["status"] == "registered" &&
+        scene_info["profiles"].toArray().contains(selected_profile);
       valid = valid && supported;
-      scene_note->setText(
-        supported ? QStringLiteral(
-          "场景与运行配置匹配；启动前再次"
-          "校验当前资源与许可。") :
-        QStringLiteral(
-          "此场景未登记或不支持当前运行配"
-          "置，请选择匹配的已登记场景。"));
+      if (!catalog_error.isEmpty()) {
+        scene_note->setText(catalog_error);
+      } else if (!catalog_ready) {
+        scene_note->setText(QStringLiteral("正在读取已安装场景目录…"));
+      } else if (scene_info.isEmpty()) {
+        scene_note->setText(QStringLiteral("当前场景不在已安装目录中，请重新选择场景或刷新目录。"));
+      } else if (scene_info["status"] != "registered") {
+        scene_note->setText(
+          QStringLiteral(
+            "此场景是未完成登记的草稿，暂不可启动。"
+            "请选择标记为“可用”的场景。"));
+      } else if (!supported) {
+        QStringList supported_names;
+        for (const auto & value : scene_info["profiles"].toArray()) {
+          const int index = profile->findData(value.toString());
+          supported_names << (index < 0 ? value.toString() : profile->itemText(index));
+        }
+        scene_note->setText(
+          QStringLiteral("此场景不支持“%1”；已登记支持：%2。当前方案可用场景：%3 个。")
+          .arg(profile->currentText(), supported_names.join(QStringLiteral("、")))
+          .arg(compatible_count));
+      } else {
+        scene_note->setText(
+          QStringLiteral("当前方案可用场景：%1 个。所选场景匹配；启动前再次校验资源与许可。")
+          .arg(compatible_count));
+      }
+      if (!supported) {start->setToolTip(scene_note->text());}
     }
     const bool persisted = healthy && !dirty() && selected >= 0 &&
       persisted_hashes.value(profiles[selected].id) ==

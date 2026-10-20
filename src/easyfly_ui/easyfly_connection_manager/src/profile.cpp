@@ -29,6 +29,7 @@
 #include <stdexcept>
 
 #include "easyfly_connection_manager/profile.hpp"
+#include "algorithm_schema.hpp"
 
 namespace easyfly_connection_manager
 {
@@ -72,6 +73,53 @@ void file_check(const QString & path)
 }
 }  // namespace
 
+QJsonArray algorithm_fields()
+{
+  static const auto fields =
+    QJsonDocument::fromJson(algorithm_ui_schema).object()["fields"].toArray();
+  return fields;
+}
+QJsonObject algorithm_defaults()
+{
+  QJsonObject result;
+  for (const auto & item : algorithm_fields()) {
+    const auto field = item.toObject(); result[field["key"].toString()] = field["default"];
+  }
+  return result;
+}
+void validate_algorithms(const QJsonObject & options)
+{
+  require(options.keys() == algorithm_defaults().keys(), QStringLiteral("算法配置字段不匹配"));
+  for (const auto & item : algorithm_fields()) {
+    const auto field = item.toObject(); const auto value = options[field["key"].toString()];
+    const auto kind = field["kind"].toString(); bool valid = false;
+    if (kind == "bool") {valid = value.isBool();} else if (kind == "choice") {
+      for (const auto & choice : field["choices"].toArray()) {
+        valid = valid || value == choice.toArray().at(0);
+      }
+    } else if (kind == "topic") {
+      valid = value.isString() && topic(value.toString(), false);
+    } else if (kind == "string") {
+      valid = value.isString() && value.toString().size() <= 128 &&
+        (value.toString().isEmpty() || QRegularExpression("^[A-Za-z][A-Za-z0-9_/]*$")
+        .match(value.toString()).hasMatch());
+    } else {
+      const auto number = value.toDouble();
+      valid = value.isDouble() && std::isfinite(number) &&
+        number >= field["min"].toDouble() && number <= field["max"].toDouble() &&
+        (kind != "int" || number == std::floor(number));
+    }
+    require(valid, QStringLiteral("算法参数无效：") + field["label"].toString());
+  }
+  require(
+    options["canny_low"].toDouble() < options["canny_high"].toDouble() &&
+    options["saturation_min"].toInt() <= options["saturation_max"].toInt() &&
+    options["value_min"].toInt() <= options["value_max"].toInt() &&
+    options["morphology_kernel"].toInt() % 2 == 1, QStringLiteral("算法阈值顺序或形态学核无效"));
+  require(
+    options["slam_blind"].toDouble() < options["slam_det_range"].toDouble(),
+    QStringLiteral("SLAM 最小有效距离必须小于最大探测距离"));
+}
 Profile Profile::create(const QString & name)
 {
   Profile p; p.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -90,6 +138,26 @@ Profile Profile::create(const QString & name)
 }
 void Profile::validate() const
 {
+  validate_algorithms(algorithms);
+  require(
+    (algorithms["slam"] != "fast_lio" && algorithms["slam"] != "openvins") ||
+    selected_profile != "base_sim",
+    QStringLiteral("FAST-LIO / OpenVINS 需要选择感知、导航或降落准备运行方案"));
+  if (algorithms["slam"] == "openvins") {
+    const auto defaults = algorithm_defaults();
+    for (auto it = defaults.begin(); it != defaults.end(); ++it) {
+      require(
+        !it.key().startsWith("slam_") || algorithms[it.key()] == it.value(),
+        QStringLiteral("OpenVINS 使用固定 Gazebo 标定配置，不能应用 FAST-LIO 参数"));
+    }
+  }
+  require(
+    mode == "sitl" || algorithms == algorithm_defaults(),
+    QStringLiteral("算法启动配置仅适用于本机仿真；外部算法通过 DDS 观测"));
+  require(
+    !(algorithms["ellipse_enabled"].toBool() || algorithms["color_line_enabled"].toBool()) ||
+    !(algorithms["camera"] == "down" ? down_topic : front_topic).isEmpty(),
+    QStringLiteral("启用几何检测前须配置对应相机图像话题"));
   require(
     QRegularExpression(
       "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$")
@@ -192,7 +260,7 @@ QString Profile::gcs_url() const
 }
 QJsonObject Profile::json() const
 {
-  return {{"id", id}, {"name", name}, {"mode", mode}, {"domain", domain},
+  QJsonObject result{{"id", id}, {"name", name}, {"mode", mode}, {"domain", domain},
     {"scope", local_only ? "local" : "lan"}, {"rmw", "rmw_fastrtps_cpp"},
     {"discovery", "default"}, {"simulation_time", simulation_time},
     {"selected_profile", selected_profile}, {"front_topic", front_topic},
@@ -215,16 +283,39 @@ QJsonObject Profile::json() const
         {"mission_import", mission_import},
         {"parameter_edit", parameter_edit}, {"recording", recording},
         {"rviz_embed", rviz_embed}}}};
+  if (algorithms != algorithm_defaults()) {
+    auto stored = algorithms;
+    for (const auto & item : algorithm_fields()) {
+      const auto field = item.toObject(); const auto key = field["key"].toString();
+      if (field["omit_when_default"].toBool() && stored[key] == field["default"]) {
+        stored.remove(key);
+      }
+    }
+    result["algorithms"] = stored;
+  }
+  return result;
 }
 Profile Profile::from_json(const QJsonObject & object)
 {
   Profile p;
   auto normalized = object;
+  const auto custom_algorithms = normalized.take("algorithms");
+  if (!custom_algorithms.isUndefined()) {
+    require(custom_algorithms.isObject(), QStringLiteral("算法配置必须是对象"));
+    p.algorithms = custom_algorithms.toObject();
+    for (const auto & item : algorithm_fields()) {
+      const auto field = item.toObject(); const auto key = field["key"].toString();
+      if (field["omit_when_default"].toBool() && !p.algorithms.contains(key)) {
+        p.algorithms[key] = field["default"];
+      }
+    }
+    validate_algorithms(p.algorithms);
+  }
   auto legacy = p.json();
   for (const auto & key : {"simulation", "fcu", "gcs", "features"}) {
     legacy.remove(key);
   }
-  const bool old = object.keys() == legacy.keys() &&
+  const bool old = normalized.keys() == legacy.keys() &&
     object["mode"] == "observe";
   if (old) {
     for (const auto & key : {"simulation", "fcu", "gcs", "features"}) {
@@ -232,7 +323,7 @@ Profile Profile::from_json(const QJsonObject & object)
     }
   }
   require(
-    normalized.keys() == p.json().keys(),
+    normalized.keys() == Profile{}.json().keys(),
     QStringLiteral("配置字段缺失或存在不支持字段"));
   for (const auto & key : {"id", "name", "mode", "scope", "rmw", "discovery",
       "selected_profile", "front_topic", "down_topic"})
@@ -369,7 +460,7 @@ QString desktop_program()
       const auto protocol =
         QJsonDocument::fromJson(manifest.readAll()).object();
       if (protocol["connection_protocol"] != 2 ||
-        protocol["snapshot_abi"] != 1 ||
+        protocol["snapshot_abi"] != 3 ||
         protocol["managed_default_read_only"] != true) {continue;}
       const auto path = prefix + "/lib/easyfly_desktop/easyfly_desktop";
       if (QFileInfo(path).isFile() && QFileInfo(path).isExecutable()) {
@@ -413,6 +504,12 @@ QProcessEnvironment session_environment(
   env.insert("EASYFLY_CONNECTION_NAME", profile.name);
   env.insert("EASYFLY_CONNECTION_SESSION", session);
   env.insert("EASYFLY_CONNECTION_HASH", profile.hash());
+  env.insert(
+    "EASYFLY_LOCALIZATION_BACKEND", profile.mode == "sitl" ?
+    (profile.selected_profile == "base_sim" ? "disabled" :
+    profile.algorithms["slam"] == "profile" ? "fast_lio" : profile.algorithms["slam"].toString()) :
+    "external");
+  env.insert("EASYFLY_CLASSICAL_CAMERA", profile.algorithms["camera"].toString());
   return env;
 }
 QVector<Profile> read_profiles(const QString & path)

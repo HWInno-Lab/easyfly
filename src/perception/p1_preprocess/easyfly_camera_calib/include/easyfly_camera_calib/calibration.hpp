@@ -158,10 +158,18 @@ inline Calibration parseCalibration(const std::string & text)
     result.has_camera = true;
   }
   if (const auto lidar = sensors["lidar"]) {
-    fields(lidar, {"mount", "imu_extrinsic"}); result.mounts.push_back(mount(lidar["mount"]));
+    fields(lidar, {"mount", "imu_extrinsic"});
+    const auto lidar_mount = mount(lidar["mount"]); result.mounts.push_back(lidar_mount);
     if (const auto imu = lidar["imu_extrinsic"]) {
-      fields(imu, {"translation", "rotation_rpy"});
-      vector3(imu["translation"], 100); vector3(imu["rotation_rpy"], 3.141592653589793);
+      fields(imu, {"child", "translation", "rotation_rpy"});
+      const auto t = vector3(imu["translation"], 100);
+      const auto r = vector3(imu["rotation_rpy"], 3.141592653589793);
+      // Older configs only validated the extrinsic and did not publish an IMU TF.
+      if (imu["child"]) {
+        const auto child = imu["child"].as<std::string>();
+        require(validFrame(child) && child != lidar_mount.child, "invalid IMU frame");
+        result.mounts.push_back({lidar_mount.child, child, t, r});
+      }
     }
   }
   validateGraph(result.mounts); return result;

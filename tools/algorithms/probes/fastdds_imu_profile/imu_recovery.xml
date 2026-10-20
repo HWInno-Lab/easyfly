@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Experiment only: ROS Humble / Fast DDS 2.6.11, Gazebo /livox/imu. -->
+<!-- No default participant, history, reliability, timeout or timestamp changes. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <publisher profile_name="/livox/imu">
+    <times>
+      <heartbeatPeriod><sec>0</sec><nanosec>50000000</nanosec></heartbeatPeriod>
+    </times>
+  </publisher>
+</profiles>

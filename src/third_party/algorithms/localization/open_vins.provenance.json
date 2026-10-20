@@ -1,0 +1,873 @@
+{
+  "schema_version": 1,
+  "project": "OpenVINS ROS2 runtime subset",
+  "current_path": "src/third_party/algorithms/localization/open_vins",
+  "upstream_url": "https://github.com/rpng/open_vins.git",
+  "exact_upstream_revision": "69488123ed9362dd44b6f28e7f4680abbff1442b",
+  "package_version": "2.7.0",
+  "selected_roots": [
+    "LICENSE",
+    "ReadMe.md",
+    "ov_core",
+    "ov_init",
+    "ov_msckf",
+    "config"
+  ],
+  "excluded_content": "Remaining upstream roots, including 377 MB ov_data, evaluation and documentation packages; no claim to import the full upstream repository. No nested Git checkout.",
+  "acquisition": {
+    "method": "Git archive of selected roots from the recorded pristine official checkout",
+    "local_archive": "artifacts/new-algorithms/openvins-integration-20261019/openvins-runtime-source.tar",
+    "sha256": "d34b02e75b8859bb560da35f89297140b5516923ac53b8794ede4561245ad580",
+    "remote_release_archive_sha256": null,
+    "note": "Locally produced git archive identity; not a remote release/archive authentication claim."
+  },
+  "license_evidence": {
+    "root": "open_vins/LICENSE",
+    "root_text": "GNU GPL version 3",
+    "package_declaration": "GNU General Public License v3.0",
+    "source_headers": "GPLv3-or-later; retained unmodified notices",
+    "inline_notices_preserved": true,
+    "installation": "LICENSE and ReadMe.md installed with ov_core, ov_init, ov_msckf"
+  },
+  "patches": [
+    {
+      "path": "tools/algorithms/patches/openvins/0001-ros2-visualizer-lifetime.patch",
+      "sha256": "0837ee3579d2aeb7c07c46dcbeea8dc88499d2295677fe5f8d0e097ed3437839"
+    },
+    {
+      "path": "tools/algorithms/patches/openvins/0002-install-notices.patch",
+      "sha256": "ee5a00ee6620ab4a2af9eb4bed024c07bdd55cc51fda9cd9168d4684a648fb71"
+    },
+    {
+      "path": "tools/algorithms/patches/openvins/0003-owned-update-and-init-workers.patch",
+      "sha256": "60492b74d72046de7525a43f4eabf315e46a63dc1c8725174c0a7ccfb8200aa8"
+    }
+  ],
+  "consumers": [
+    "easyfly_openvins_integration"
+  ],
+  "required_dependencies": [
+    "ROS2 Humble",
+    "Eigen3",
+    "OpenCV matching cv_bridge",
+    "Boost",
+    "Ceres"
+  ],
+  "private_dependency_evidence": "artifacts/new-algorithms/openvins-build-20261019/dependencies/manifest.json",
+  "verification_tool": "tools/algorithms/verify_openvins_source.py",
+  "verification_evidence": "artifacts/new-algorithms/openvins-integration-20261019/",
+  "files": {
+    "LICENSE": {
+      "upstream_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "current_sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+    },
+    "ReadMe.md": {
+      "upstream_sha256": "2553e1d5d570a391a1f8376ae4037760d84d45668d781ccf6683ccfc2a54a044",
+      "current_sha256": "2553e1d5d570a391a1f8376ae4037760d84d45668d781ccf6683ccfc2a54a044"
+    },
+    "config/euroc_mav/estimator_config.yaml": {
+      "upstream_sha256": "b706f0082106e49e20c3292147d238b7e225b0df414106b9d4ac009bbb123f3b",
+      "current_sha256": "b706f0082106e49e20c3292147d238b7e225b0df414106b9d4ac009bbb123f3b"
+    },
+    "config/euroc_mav/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "408ea8b60b5f9e7c8251e6d302f04c0675bfefdd31229bb1afd139bc8f4a0287",
+      "current_sha256": "408ea8b60b5f9e7c8251e6d302f04c0675bfefdd31229bb1afd139bc8f4a0287"
+    },
+    "config/euroc_mav/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "b9e11b7bcda102f7c8c384c97318d67f3916b58942f9073722f83c22bd7073f7",
+      "current_sha256": "b9e11b7bcda102f7c8c384c97318d67f3916b58942f9073722f83c22bd7073f7"
+    },
+    "config/kaist/estimator_config.yaml": {
+      "upstream_sha256": "c10ed237686b7857de3833fd7bcb47afc55af49bb2e9c3528f4ffa40597e49f3",
+      "current_sha256": "c10ed237686b7857de3833fd7bcb47afc55af49bb2e9c3528f4ffa40597e49f3"
+    },
+    "config/kaist/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "41942635c5aeb0a861f3e6086225b392ef0fa3060bd1eb8a5edf10ba01beec28",
+      "current_sha256": "41942635c5aeb0a861f3e6086225b392ef0fa3060bd1eb8a5edf10ba01beec28"
+    },
+    "config/kaist/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "ed739a3d8f8bab38f0c207c1fa4203584c5980b4936ec5ad645164b37a225459",
+      "current_sha256": "ed739a3d8f8bab38f0c207c1fa4203584c5980b4936ec5ad645164b37a225459"
+    },
+    "config/kaist_vio/estimator_config.yaml": {
+      "upstream_sha256": "a7212a7b0e7e2df3ddefe402f12b5cbd155b368b43253f96a306d6638ba648d5",
+      "current_sha256": "a7212a7b0e7e2df3ddefe402f12b5cbd155b368b43253f96a306d6638ba648d5"
+    },
+    "config/kaist_vio/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "c4c8ae37b17199363b5647dcff973e6cdb8b974d4f4a81edae0335bdc1debf56",
+      "current_sha256": "c4c8ae37b17199363b5647dcff973e6cdb8b974d4f4a81edae0335bdc1debf56"
+    },
+    "config/kaist_vio/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "d80f5690eabce47d25ee08cccde25bcf1821acbf34c0f26a9e66af2cb81046af",
+      "current_sha256": "d80f5690eabce47d25ee08cccde25bcf1821acbf34c0f26a9e66af2cb81046af"
+    },
+    "config/rpng_aruco/estimator_config.yaml": {
+      "upstream_sha256": "58a617f9a050fd339f3072e4ca65d3c771f493fd9e5ffaeae4689ecc6e322ff1",
+      "current_sha256": "58a617f9a050fd339f3072e4ca65d3c771f493fd9e5ffaeae4689ecc6e322ff1"
+    },
+    "config/rpng_aruco/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "329282baca5f2c8c68956f5400844d004b4f5810715e9b7e9c501892078a0c7c",
+      "current_sha256": "329282baca5f2c8c68956f5400844d004b4f5810715e9b7e9c501892078a0c7c"
+    },
+    "config/rpng_aruco/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "2c2d34cd0eeb7d1719d970e2d50cb714f83cd2f40fb375dd5d4250a7b32e3a56",
+      "current_sha256": "2c2d34cd0eeb7d1719d970e2d50cb714f83cd2f40fb375dd5d4250a7b32e3a56"
+    },
+    "config/rpng_ironsides/estimator_config.yaml": {
+      "upstream_sha256": "db078e28b70a1fcddbc2fe8cea94483cc42c175a421176e6e308aa5dca481c52",
+      "current_sha256": "db078e28b70a1fcddbc2fe8cea94483cc42c175a421176e6e308aa5dca481c52"
+    },
+    "config/rpng_ironsides/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "675b871dc0425de4ab0ca90712e172105eee135eb380ba37c44ef36076a0a191",
+      "current_sha256": "675b871dc0425de4ab0ca90712e172105eee135eb380ba37c44ef36076a0a191"
+    },
+    "config/rpng_ironsides/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "9ce260b6775f31e7c6a7257ef06db9caec673fc77f2dc18d5c48101ab2e65d4d",
+      "current_sha256": "9ce260b6775f31e7c6a7257ef06db9caec673fc77f2dc18d5c48101ab2e65d4d"
+    },
+    "config/rpng_ironsides/mask_ironsides0.png": {
+      "upstream_sha256": "d631733cc3379af6878bbdb21a1bf202121183e149f55ac185cdcae1709a221f",
+      "current_sha256": "d631733cc3379af6878bbdb21a1bf202121183e149f55ac185cdcae1709a221f"
+    },
+    "config/rpng_ironsides/mask_ironsides0.xcf": {
+      "upstream_sha256": "47a52105a62146bb88bf2d74c4f14c2e1e6df26657d32bb220cb9c7ce3195f26",
+      "current_sha256": "47a52105a62146bb88bf2d74c4f14c2e1e6df26657d32bb220cb9c7ce3195f26"
+    },
+    "config/rpng_ironsides/mask_ironsides1.png": {
+      "upstream_sha256": "b1f3d17dfa9212afc8929f84c7718c3b463ed7669fcb9945351333829c1e1119",
+      "current_sha256": "b1f3d17dfa9212afc8929f84c7718c3b463ed7669fcb9945351333829c1e1119"
+    },
+    "config/rpng_ironsides/mask_ironsides1.xcf": {
+      "upstream_sha256": "8601cf012ac20d29e4f2cdfbfc0ec48a164e5e749fe91b5490cf5219ac6c70a4",
+      "current_sha256": "8601cf012ac20d29e4f2cdfbfc0ec48a164e5e749fe91b5490cf5219ac6c70a4"
+    },
+    "config/rpng_plane/estimator_config.yaml": {
+      "upstream_sha256": "513894dca40bdbbfce06d7649ead8f1a37bf68da3675169a9e3a3b0d34d81acb",
+      "current_sha256": "513894dca40bdbbfce06d7649ead8f1a37bf68da3675169a9e3a3b0d34d81acb"
+    },
+    "config/rpng_plane/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "442d6a05c1520d49476e638304f86167eaffd6d9d5dbe4cffbb5727a147810ca",
+      "current_sha256": "442d6a05c1520d49476e638304f86167eaffd6d9d5dbe4cffbb5727a147810ca"
+    },
+    "config/rpng_plane/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "48d27994105a8fcfaab4073cb94b8ea62247549355761ac2c43dd77e4bd1ae2b",
+      "current_sha256": "48d27994105a8fcfaab4073cb94b8ea62247549355761ac2c43dd77e4bd1ae2b"
+    },
+    "config/rpng_sim/estimator_config.yaml": {
+      "upstream_sha256": "37e2d29790355eb71c9daf32027748c7c2a93b6ab5caba31020126650774a7b9",
+      "current_sha256": "37e2d29790355eb71c9daf32027748c7c2a93b6ab5caba31020126650774a7b9"
+    },
+    "config/rpng_sim/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "329282baca5f2c8c68956f5400844d004b4f5810715e9b7e9c501892078a0c7c",
+      "current_sha256": "329282baca5f2c8c68956f5400844d004b4f5810715e9b7e9c501892078a0c7c"
+    },
+    "config/rpng_sim/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "296d673bd33c5f0981f4342eba79b8b8fe761e5e8d6fd8f2c98674fb5f2922f7",
+      "current_sha256": "296d673bd33c5f0981f4342eba79b8b8fe761e5e8d6fd8f2c98674fb5f2922f7"
+    },
+    "config/rs_d455/estimator_config.yaml": {
+      "upstream_sha256": "6f63de02e0d766ac2dfb1abd679edefddea1c25225218c8186ef13c1be27111f",
+      "current_sha256": "6f63de02e0d766ac2dfb1abd679edefddea1c25225218c8186ef13c1be27111f"
+    },
+    "config/rs_d455/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "5da0c13c64eb76b13519b7dee463c335766ed027bfe1cabe208ccb4357586e1f",
+      "current_sha256": "5da0c13c64eb76b13519b7dee463c335766ed027bfe1cabe208ccb4357586e1f"
+    },
+    "config/rs_d455/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "48d27994105a8fcfaab4073cb94b8ea62247549355761ac2c43dd77e4bd1ae2b",
+      "current_sha256": "48d27994105a8fcfaab4073cb94b8ea62247549355761ac2c43dd77e4bd1ae2b"
+    },
+    "config/rs_d455/launch_d455.example": {
+      "upstream_sha256": "8001f80bd22432e60441845f3bfd49e36745f25758960c894677a6f40916dd8d",
+      "current_sha256": "8001f80bd22432e60441845f3bfd49e36745f25758960c894677a6f40916dd8d"
+    },
+    "config/rs_t265/estimator_config.yaml": {
+      "upstream_sha256": "494156c82196662bb52311bd497722576be3ff9210e6e3b3a758d0bdae3e2d6d",
+      "current_sha256": "494156c82196662bb52311bd497722576be3ff9210e6e3b3a758d0bdae3e2d6d"
+    },
+    "config/rs_t265/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "54c0c2d0772dc9aa4ad89696c097fac0833aeb13e68758de004589457809a70c",
+      "current_sha256": "54c0c2d0772dc9aa4ad89696c097fac0833aeb13e68758de004589457809a70c"
+    },
+    "config/rs_t265/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "d915f4f24bc5170e4d42472b64c3f26ffdb633c579ea8a5b41623271fdda1f23",
+      "current_sha256": "d915f4f24bc5170e4d42472b64c3f26ffdb633c579ea8a5b41623271fdda1f23"
+    },
+    "config/rs_t265/launch_t265.example": {
+      "upstream_sha256": "465579d2e272d977813200fff2c0eacdf5afb94dc604fbfa5eea0830b55cc00c",
+      "current_sha256": "465579d2e272d977813200fff2c0eacdf5afb94dc604fbfa5eea0830b55cc00c"
+    },
+    "config/rs_t265/mask_t265_cam0.png": {
+      "upstream_sha256": "a2d08ab8756b3f9793c3520413d15bc85b18d566c8339a9596977e08825233ce",
+      "current_sha256": "a2d08ab8756b3f9793c3520413d15bc85b18d566c8339a9596977e08825233ce"
+    },
+    "config/rs_t265/mask_t265_cam0.xcf": {
+      "upstream_sha256": "6b01b0e83fc50c8d5d622803ed3ed203bc4f0439d74dbe3cd75bbee4c3e955cb",
+      "current_sha256": "6b01b0e83fc50c8d5d622803ed3ed203bc4f0439d74dbe3cd75bbee4c3e955cb"
+    },
+    "config/rs_t265/mask_t265_cam1.png": {
+      "upstream_sha256": "7af8f5c77479f3fcb65627248e0df204172d03445df46c2c75f0a2af0081c6ac",
+      "current_sha256": "7af8f5c77479f3fcb65627248e0df204172d03445df46c2c75f0a2af0081c6ac"
+    },
+    "config/rs_t265/mask_t265_cam1.xcf": {
+      "upstream_sha256": "fd0995a2b4cd193a7f06ec696fd2e7f50bffa49fb0603dffa85c9451bc305f68",
+      "current_sha256": "fd0995a2b4cd193a7f06ec696fd2e7f50bffa49fb0603dffa85c9451bc305f68"
+    },
+    "config/tum_vi/estimator_config.yaml": {
+      "upstream_sha256": "be7df3758fb38fbee102efdb6f2c98a7250416fe54e6045ff13b64a58972a060",
+      "current_sha256": "be7df3758fb38fbee102efdb6f2c98a7250416fe54e6045ff13b64a58972a060"
+    },
+    "config/tum_vi/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "cb598952ee3766492a332eaae8567fe2b63a9bf6d63b9c0a7b9d988471600a3d",
+      "current_sha256": "cb598952ee3766492a332eaae8567fe2b63a9bf6d63b9c0a7b9d988471600a3d"
+    },
+    "config/tum_vi/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "072d26e3dd20844ae7402f508c51cf7e899a401634ba6b0db0e08cd2880b7dab",
+      "current_sha256": "072d26e3dd20844ae7402f508c51cf7e899a401634ba6b0db0e08cd2880b7dab"
+    },
+    "config/tum_vi/mask_tumvi0.png": {
+      "upstream_sha256": "62dfc1053f336d1adb4ae01519579532370d1b211894566a7a4ec167dd8c3f4f",
+      "current_sha256": "62dfc1053f336d1adb4ae01519579532370d1b211894566a7a4ec167dd8c3f4f"
+    },
+    "config/tum_vi/mask_tumvi0.xcf": {
+      "upstream_sha256": "7910a772c496196e5274a4a45acb9a4ff23eb082b5316003cd01a602c4c4db4e",
+      "current_sha256": "7910a772c496196e5274a4a45acb9a4ff23eb082b5316003cd01a602c4c4db4e"
+    },
+    "config/tum_vi/mask_tumvi1.png": {
+      "upstream_sha256": "67ff644599f862f2437026d9c43ef0a0887907470179a53e34447fb95cbd35ba",
+      "current_sha256": "67ff644599f862f2437026d9c43ef0a0887907470179a53e34447fb95cbd35ba"
+    },
+    "config/tum_vi/mask_tumvi1.xcf": {
+      "upstream_sha256": "e82668cb89509ed0a4de9edb22b0e2785ae5637f9efc13b5d2ddbdec2309f6b0",
+      "current_sha256": "e82668cb89509ed0a4de9edb22b0e2785ae5637f9efc13b5d2ddbdec2309f6b0"
+    },
+    "config/uzhfpv_indoor/estimator_config.yaml": {
+      "upstream_sha256": "a5a6a86ae1ea2372aa01e70ddb8db81c1b8e4110dc25783e3cc9041878c6d156",
+      "current_sha256": "a5a6a86ae1ea2372aa01e70ddb8db81c1b8e4110dc25783e3cc9041878c6d156"
+    },
+    "config/uzhfpv_indoor/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac",
+      "current_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac"
+    },
+    "config/uzhfpv_indoor/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "d94c73ba11927dadcc76e691f9a560c2f4efc60070aefb6a12e6c95f38399826",
+      "current_sha256": "d94c73ba11927dadcc76e691f9a560c2f4efc60070aefb6a12e6c95f38399826"
+    },
+    "config/uzhfpv_indoor_45/estimator_config.yaml": {
+      "upstream_sha256": "a5a6a86ae1ea2372aa01e70ddb8db81c1b8e4110dc25783e3cc9041878c6d156",
+      "current_sha256": "a5a6a86ae1ea2372aa01e70ddb8db81c1b8e4110dc25783e3cc9041878c6d156"
+    },
+    "config/uzhfpv_indoor_45/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac",
+      "current_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac"
+    },
+    "config/uzhfpv_indoor_45/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "7c4da84ea194b0b6b7d92524cb7730501953fc2204b97338bd7d7b2734c45df7",
+      "current_sha256": "7c4da84ea194b0b6b7d92524cb7730501953fc2204b97338bd7d7b2734c45df7"
+    },
+    "config/uzhfpv_outdoor/estimator_config.yaml": {
+      "upstream_sha256": "9c7b9ee96b11bbbd468e17f1f7936a899c4f42ab471762d9672d508c971d3a96",
+      "current_sha256": "9c7b9ee96b11bbbd468e17f1f7936a899c4f42ab471762d9672d508c971d3a96"
+    },
+    "config/uzhfpv_outdoor/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac",
+      "current_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac"
+    },
+    "config/uzhfpv_outdoor/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "bf21f11e5da367af2f8f7fcec7968812f775fc1e85f7086466f8b8fa0801c3f7",
+      "current_sha256": "bf21f11e5da367af2f8f7fcec7968812f775fc1e85f7086466f8b8fa0801c3f7"
+    },
+    "config/uzhfpv_outdoor/mask_uzhfpv_outdoor_mask0.png": {
+      "upstream_sha256": "ffdbba2723852dfc34769d067e7c0abb8a7bd5d2a7e021cecd76b86576980f55",
+      "current_sha256": "ffdbba2723852dfc34769d067e7c0abb8a7bd5d2a7e021cecd76b86576980f55"
+    },
+    "config/uzhfpv_outdoor/mask_uzhfpv_outdoor_mask0.xcf": {
+      "upstream_sha256": "ac260a47f101eff946861464c083d6154fbee4e835e8ededb058a65d64a3ca36",
+      "current_sha256": "ac260a47f101eff946861464c083d6154fbee4e835e8ededb058a65d64a3ca36"
+    },
+    "config/uzhfpv_outdoor/mask_uzhfpv_outdoor_mask1.png": {
+      "upstream_sha256": "6fff3a49454f3f1748af6e4ea61c2fa6c8428b5f8b98e9e57ce840270329c17f",
+      "current_sha256": "6fff3a49454f3f1748af6e4ea61c2fa6c8428b5f8b98e9e57ce840270329c17f"
+    },
+    "config/uzhfpv_outdoor/mask_uzhfpv_outdoor_mask1.xcf": {
+      "upstream_sha256": "f51b7267b07d71797f685c643cc9fd811f706448a276c3c1d0f48b7704874d4a",
+      "current_sha256": "f51b7267b07d71797f685c643cc9fd811f706448a276c3c1d0f48b7704874d4a"
+    },
+    "config/uzhfpv_outdoor_45/estimator_config.yaml": {
+      "upstream_sha256": "6267f909da10612a30987c30888fd16837d2413a837f6a56f1ef2b2966a74cdb",
+      "current_sha256": "6267f909da10612a30987c30888fd16837d2413a837f6a56f1ef2b2966a74cdb"
+    },
+    "config/uzhfpv_outdoor_45/kalibr_imu_chain.yaml": {
+      "upstream_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac",
+      "current_sha256": "c2628ea491e0fad2804e37952d3a808c161d98a67bfab698cc82359ed377b0ac"
+    },
+    "config/uzhfpv_outdoor_45/kalibr_imucam_chain.yaml": {
+      "upstream_sha256": "f4370bf366928e2708fab63a6066acc15f84a32b2ff687182b51712f33671aa0",
+      "current_sha256": "f4370bf366928e2708fab63a6066acc15f84a32b2ff687182b51712f33671aa0"
+    },
+    "ov_core/CMakeLists.txt": {
+      "upstream_sha256": "6e460c54c8e60a2fdc6bdecee1795e97954dafd38be0fffe66983e80af2917a6",
+      "current_sha256": "6e460c54c8e60a2fdc6bdecee1795e97954dafd38be0fffe66983e80af2917a6"
+    },
+    "ov_core/cmake/ROS1.cmake": {
+      "upstream_sha256": "2baee6794ce1d6f8cc1503717fe54da7e31a08a96ca514b6fdd70a9160189065",
+      "current_sha256": "2baee6794ce1d6f8cc1503717fe54da7e31a08a96ca514b6fdd70a9160189065"
+    },
+    "ov_core/cmake/ROS2.cmake": {
+      "upstream_sha256": "78bd6085127d305897bc53e0393534902d0436a71f2805d757157f2a6275dca7",
+      "current_sha256": "8fa100b84d243fb9758b12534f4447d04c2c8ac9b264868ec744a7f374a3a745"
+    },
+    "ov_core/package.xml": {
+      "upstream_sha256": "09dc2ca52f2c655eb065ed2828d97d6f99321c367950ee7d2fa2892aa667414a",
+      "current_sha256": "09dc2ca52f2c655eb065ed2828d97d6f99321c367950ee7d2fa2892aa667414a"
+    },
+    "ov_core/rosdoc.yaml": {
+      "upstream_sha256": "7a42f867e7060cbb7739901f3e46e022ef348c988784d762f79d780aeeed746c",
+      "current_sha256": "7a42f867e7060cbb7739901f3e46e022ef348c988784d762f79d780aeeed746c"
+    },
+    "ov_core/src/cam/CamBase.h": {
+      "upstream_sha256": "02b4e51e3bc8c678e32f91737054b18da1830c4bdb707227e8c472a86181f415",
+      "current_sha256": "02b4e51e3bc8c678e32f91737054b18da1830c4bdb707227e8c472a86181f415"
+    },
+    "ov_core/src/cam/CamEqui.h": {
+      "upstream_sha256": "ab63c91de2d01a663f721ed55de1a251568b752e12c0d2069badc99074814e0b",
+      "current_sha256": "ab63c91de2d01a663f721ed55de1a251568b752e12c0d2069badc99074814e0b"
+    },
+    "ov_core/src/cam/CamRadtan.h": {
+      "upstream_sha256": "f0c21847eb3e2c989c2f9cfde579f4321fd2c3913ea34f166f391098f455a82d",
+      "current_sha256": "f0c21847eb3e2c989c2f9cfde579f4321fd2c3913ea34f166f391098f455a82d"
+    },
+    "ov_core/src/cpi/CpiBase.h": {
+      "upstream_sha256": "3c59f2cda240617d8061cdb39efd7bc5a15a6af5959328ed23a9df7c6ac9eb2d",
+      "current_sha256": "3c59f2cda240617d8061cdb39efd7bc5a15a6af5959328ed23a9df7c6ac9eb2d"
+    },
+    "ov_core/src/cpi/CpiV1.cpp": {
+      "upstream_sha256": "9efcb6d30f05746f1c1c569e42774727dbfadc5c5f7c2a02fb8bf1f15374ada9",
+      "current_sha256": "9efcb6d30f05746f1c1c569e42774727dbfadc5c5f7c2a02fb8bf1f15374ada9"
+    },
+    "ov_core/src/cpi/CpiV1.h": {
+      "upstream_sha256": "68fec348d9f20a820e8a406ef6a392c780d3818b84eb6ad6f4b659543a06d0c2",
+      "current_sha256": "68fec348d9f20a820e8a406ef6a392c780d3818b84eb6ad6f4b659543a06d0c2"
+    },
+    "ov_core/src/cpi/CpiV2.cpp": {
+      "upstream_sha256": "2380ba95165db4d1cdcfeb03315bd10ba4c6b8ee9334b3686c67dbbbc9a364d1",
+      "current_sha256": "2380ba95165db4d1cdcfeb03315bd10ba4c6b8ee9334b3686c67dbbbc9a364d1"
+    },
+    "ov_core/src/cpi/CpiV2.h": {
+      "upstream_sha256": "690813cde7c2a0a9a8ecfa6a6bf8bf4ae43f9a6cd41f5e29ff4e040eb17c8e3b",
+      "current_sha256": "690813cde7c2a0a9a8ecfa6a6bf8bf4ae43f9a6cd41f5e29ff4e040eb17c8e3b"
+    },
+    "ov_core/src/dummy.cpp": {
+      "upstream_sha256": "62e7f7a503df9b92c3b744356c8b0af8c18b92f89a3ff72eb2c3cf7d527c9953",
+      "current_sha256": "62e7f7a503df9b92c3b744356c8b0af8c18b92f89a3ff72eb2c3cf7d527c9953"
+    },
+    "ov_core/src/feat/Feature.cpp": {
+      "upstream_sha256": "dccfa63da40b5f54a7aea3ae42dfdca9d4622b9f0320bf567e5cffdd59e9305c",
+      "current_sha256": "dccfa63da40b5f54a7aea3ae42dfdca9d4622b9f0320bf567e5cffdd59e9305c"
+    },
+    "ov_core/src/feat/Feature.h": {
+      "upstream_sha256": "75a926e10ee9e0e29f0c769dda165e3daf20ed8c7ab21021f5aab509d40b3e61",
+      "current_sha256": "75a926e10ee9e0e29f0c769dda165e3daf20ed8c7ab21021f5aab509d40b3e61"
+    },
+    "ov_core/src/feat/FeatureDatabase.cpp": {
+      "upstream_sha256": "2ebdd23caadabd6ad76588b4d8de6fcfcab5fae7409e7fab7a1872af60439239",
+      "current_sha256": "2ebdd23caadabd6ad76588b4d8de6fcfcab5fae7409e7fab7a1872af60439239"
+    },
+    "ov_core/src/feat/FeatureDatabase.h": {
+      "upstream_sha256": "d944dfa7830809aaa035ed143d307597622f40e52226c14c1f46413a99be5b44",
+      "current_sha256": "d944dfa7830809aaa035ed143d307597622f40e52226c14c1f46413a99be5b44"
+    },
+    "ov_core/src/feat/FeatureHelper.h": {
+      "upstream_sha256": "ad6972e451b1b8836712a10f9770616c62a7921b96bfbefddfc317ddf7b24bc8",
+      "current_sha256": "ad6972e451b1b8836712a10f9770616c62a7921b96bfbefddfc317ddf7b24bc8"
+    },
+    "ov_core/src/feat/FeatureInitializer.cpp": {
+      "upstream_sha256": "a016e3eeedbe371c56ce43b16f279a58b043ceeb3cc17078ed2b6c4d3ad1058e",
+      "current_sha256": "a016e3eeedbe371c56ce43b16f279a58b043ceeb3cc17078ed2b6c4d3ad1058e"
+    },
+    "ov_core/src/feat/FeatureInitializer.h": {
+      "upstream_sha256": "bd7f23052983882b7e9f9074c742c45f30b1130814388dc2991daba34420c9a8",
+      "current_sha256": "bd7f23052983882b7e9f9074c742c45f30b1130814388dc2991daba34420c9a8"
+    },
+    "ov_core/src/feat/FeatureInitializerOptions.h": {
+      "upstream_sha256": "7ca685b9cd2d5d4fe547d873a912965b3f10b3edbadde4545ee8fb77ae9f7e73",
+      "current_sha256": "7ca685b9cd2d5d4fe547d873a912965b3f10b3edbadde4545ee8fb77ae9f7e73"
+    },
+    "ov_core/src/plot/LICENSE": {
+      "upstream_sha256": "1aab4c57ac46613a21c39795e80ff5e96ee5695521e045adc046a1cb22ef406c",
+      "current_sha256": "1aab4c57ac46613a21c39795e80ff5e96ee5695521e045adc046a1cb22ef406c"
+    },
+    "ov_core/src/plot/matplotlibcpp.h": {
+      "upstream_sha256": "2cd1ef263f3896a59dbbaa144a923e05db5f9c4e1ddc72af636cd86e8b2e07df",
+      "current_sha256": "2cd1ef263f3896a59dbbaa144a923e05db5f9c4e1ddc72af636cd86e8b2e07df"
+    },
+    "ov_core/src/sim/BsplineSE3.cpp": {
+      "upstream_sha256": "3f9d342e789613e461e4845931289ef3b151adcd1da15f09d10a7ecc033f9ddd",
+      "current_sha256": "3f9d342e789613e461e4845931289ef3b151adcd1da15f09d10a7ecc033f9ddd"
+    },
+    "ov_core/src/sim/BsplineSE3.h": {
+      "upstream_sha256": "c33bb0da97e1d1eb454271146948802bf924d16797f468eaab3c8094545fee3d",
+      "current_sha256": "c33bb0da97e1d1eb454271146948802bf924d16797f468eaab3c8094545fee3d"
+    },
+    "ov_core/src/test_profile.cpp": {
+      "upstream_sha256": "e9286ba4033ec00972586842cbd6cf0355af20f6005d8f6c71906156fa6a7774",
+      "current_sha256": "e9286ba4033ec00972586842cbd6cf0355af20f6005d8f6c71906156fa6a7774"
+    },
+    "ov_core/src/test_tracking.cpp": {
+      "upstream_sha256": "a430103c7d4ff87bf1d58e3098867fc47e69491dd79f55ce1ae36d936064356e",
+      "current_sha256": "a430103c7d4ff87bf1d58e3098867fc47e69491dd79f55ce1ae36d936064356e"
+    },
+    "ov_core/src/test_webcam.cpp": {
+      "upstream_sha256": "0ad8fd58fad0005812ddf70156469bffc8acba77c0a4b47c43fe9ef2f14f9ed5",
+      "current_sha256": "0ad8fd58fad0005812ddf70156469bffc8acba77c0a4b47c43fe9ef2f14f9ed5"
+    },
+    "ov_core/src/track/Grider_FAST.h": {
+      "upstream_sha256": "cde7dfde9703f4c8a93a038d7effea377357ded4ad8885b8a62f35a8b580f4b2",
+      "current_sha256": "cde7dfde9703f4c8a93a038d7effea377357ded4ad8885b8a62f35a8b580f4b2"
+    },
+    "ov_core/src/track/Grider_GRID.h": {
+      "upstream_sha256": "f06b3b67cd2f509cf4ee0c8211e7581fd15ad3bc2437290d387e69f8546fe778",
+      "current_sha256": "f06b3b67cd2f509cf4ee0c8211e7581fd15ad3bc2437290d387e69f8546fe778"
+    },
+    "ov_core/src/track/TrackAruco.cpp": {
+      "upstream_sha256": "a67709aa8d026529aa9d19dacc3388ca658e6b788addb74400fcadf290f2ac1c",
+      "current_sha256": "a67709aa8d026529aa9d19dacc3388ca658e6b788addb74400fcadf290f2ac1c"
+    },
+    "ov_core/src/track/TrackAruco.h": {
+      "upstream_sha256": "5b099da03b663c3067f727a7dc60041194ea15e47b73964cb8a42206ce57f318",
+      "current_sha256": "5b099da03b663c3067f727a7dc60041194ea15e47b73964cb8a42206ce57f318"
+    },
+    "ov_core/src/track/TrackBase.cpp": {
+      "upstream_sha256": "699d95687ad614dc449cc061a9f35afdd7e0a6e648c70357c0ef39fea13dede9",
+      "current_sha256": "699d95687ad614dc449cc061a9f35afdd7e0a6e648c70357c0ef39fea13dede9"
+    },
+    "ov_core/src/track/TrackBase.h": {
+      "upstream_sha256": "3761988460a4ee5cbcfb5b550f3603e83a3104e468f8d011c5db1a3599a80b98",
+      "current_sha256": "3761988460a4ee5cbcfb5b550f3603e83a3104e468f8d011c5db1a3599a80b98"
+    },
+    "ov_core/src/track/TrackDescriptor.cpp": {
+      "upstream_sha256": "e040ac088f9439c23bdfd798a1da9644f99eee7fe5e63fc0538132e8624a8715",
+      "current_sha256": "e040ac088f9439c23bdfd798a1da9644f99eee7fe5e63fc0538132e8624a8715"
+    },
+    "ov_core/src/track/TrackDescriptor.h": {
+      "upstream_sha256": "3cd95659c7d9754116f325fa93e5107a88a81d3aed176459d82a3d1cbdea2369",
+      "current_sha256": "3cd95659c7d9754116f325fa93e5107a88a81d3aed176459d82a3d1cbdea2369"
+    },
+    "ov_core/src/track/TrackKLT.cpp": {
+      "upstream_sha256": "05af28f9b547ae07f619eb01f37b7682216d6ec3b8a5db491834b34790aeeaea",
+      "current_sha256": "05af28f9b547ae07f619eb01f37b7682216d6ec3b8a5db491834b34790aeeaea"
+    },
+    "ov_core/src/track/TrackKLT.h": {
+      "upstream_sha256": "596b4d3621f53439d33e17b968e6e14bffbf131ce61ccd598de1ed4b13bcdcc8",
+      "current_sha256": "596b4d3621f53439d33e17b968e6e14bffbf131ce61ccd598de1ed4b13bcdcc8"
+    },
+    "ov_core/src/track/TrackSIM.cpp": {
+      "upstream_sha256": "af761beeb45e67c5c14a2a8738b08639859293e825c11012db3f45328880e1db",
+      "current_sha256": "af761beeb45e67c5c14a2a8738b08639859293e825c11012db3f45328880e1db"
+    },
+    "ov_core/src/track/TrackSIM.h": {
+      "upstream_sha256": "9323bb6fd16bd8cc291a1a11a0d6936b77b269884d409b29bed166f9054a8eda",
+      "current_sha256": "9323bb6fd16bd8cc291a1a11a0d6936b77b269884d409b29bed166f9054a8eda"
+    },
+    "ov_core/src/types/IMU.h": {
+      "upstream_sha256": "17e7536f0dd8094e9427114b80e45ba632a210d6168b463d5808c1ea0fe4605e",
+      "current_sha256": "17e7536f0dd8094e9427114b80e45ba632a210d6168b463d5808c1ea0fe4605e"
+    },
+    "ov_core/src/types/JPLQuat.h": {
+      "upstream_sha256": "2b6fd48feae5d0b1443b16b79ea95aced479e88c02242af5bfecf70cdf153c92",
+      "current_sha256": "2b6fd48feae5d0b1443b16b79ea95aced479e88c02242af5bfecf70cdf153c92"
+    },
+    "ov_core/src/types/Landmark.cpp": {
+      "upstream_sha256": "6b52cd26f96272d0d5ce250bb0cf1c42126d11b41568c6f9d2e669aa7ed0c85f",
+      "current_sha256": "6b52cd26f96272d0d5ce250bb0cf1c42126d11b41568c6f9d2e669aa7ed0c85f"
+    },
+    "ov_core/src/types/Landmark.h": {
+      "upstream_sha256": "da434d1030e7c4f95bb4af51c2261a5fe91231a5f2e8659ab7c3c5e7ce5d99f0",
+      "current_sha256": "da434d1030e7c4f95bb4af51c2261a5fe91231a5f2e8659ab7c3c5e7ce5d99f0"
+    },
+    "ov_core/src/types/LandmarkRepresentation.h": {
+      "upstream_sha256": "6300697bf6f15300741989e5bfbdcf4f646fce6acddb885a6b1e741b150f0458",
+      "current_sha256": "6300697bf6f15300741989e5bfbdcf4f646fce6acddb885a6b1e741b150f0458"
+    },
+    "ov_core/src/types/PoseJPL.h": {
+      "upstream_sha256": "25886235f0c608a7ce4da951520fa95aaeffc67ad790a14207e45d0d0ee9ca3d",
+      "current_sha256": "25886235f0c608a7ce4da951520fa95aaeffc67ad790a14207e45d0d0ee9ca3d"
+    },
+    "ov_core/src/types/Type.h": {
+      "upstream_sha256": "99b89f7cf00c414c4a24f27b2ba3e5831c1435147cdf656a0858974e63377257",
+      "current_sha256": "99b89f7cf00c414c4a24f27b2ba3e5831c1435147cdf656a0858974e63377257"
+    },
+    "ov_core/src/types/Vec.h": {
+      "upstream_sha256": "0092f5e5b6bf296bd3758e096d3e8f43272192729b845148c723b61c19736e3c",
+      "current_sha256": "0092f5e5b6bf296bd3758e096d3e8f43272192729b845148c723b61c19736e3c"
+    },
+    "ov_core/src/utils/colors.h": {
+      "upstream_sha256": "dc7adaee5e5b6a6427173f85ece9c6a0e75984c3edc05f83d9e8f28d16fec41f",
+      "current_sha256": "dc7adaee5e5b6a6427173f85ece9c6a0e75984c3edc05f83d9e8f28d16fec41f"
+    },
+    "ov_core/src/utils/dataset_reader.h": {
+      "upstream_sha256": "d3be3da836a88be3c71a30568080b833cabf5e59857d3123f8543808dbdcd9d3",
+      "current_sha256": "d3be3da836a88be3c71a30568080b833cabf5e59857d3123f8543808dbdcd9d3"
+    },
+    "ov_core/src/utils/opencv_lambda_body.h": {
+      "upstream_sha256": "6777ee289c5ea66b463c045a1104cadc577816a4196686f43a26ca8c389fc9ed",
+      "current_sha256": "6777ee289c5ea66b463c045a1104cadc577816a4196686f43a26ca8c389fc9ed"
+    },
+    "ov_core/src/utils/opencv_yaml_parse.h": {
+      "upstream_sha256": "33edbdd3675a18484b58405103ca3b63b537d115831be086ebed701d106d974f",
+      "current_sha256": "33edbdd3675a18484b58405103ca3b63b537d115831be086ebed701d106d974f"
+    },
+    "ov_core/src/utils/print.cpp": {
+      "upstream_sha256": "4629a1f9c34bbc33ae20f596a60b80d9ecd5c6212cf7abbafcb36e3fa6fd6b97",
+      "current_sha256": "4629a1f9c34bbc33ae20f596a60b80d9ecd5c6212cf7abbafcb36e3fa6fd6b97"
+    },
+    "ov_core/src/utils/print.h": {
+      "upstream_sha256": "5924f94926bd8f350ecad90f5682ea172cef0dd46e809f0c2bae5f71d2944b57",
+      "current_sha256": "5924f94926bd8f350ecad90f5682ea172cef0dd46e809f0c2bae5f71d2944b57"
+    },
+    "ov_core/src/utils/quat_ops.h": {
+      "upstream_sha256": "2e01cbd84740d6ba4f446ec12d4e2927d367fc07fcc4ec6ada85f4b0d81d3e9a",
+      "current_sha256": "2e01cbd84740d6ba4f446ec12d4e2927d367fc07fcc4ec6ada85f4b0d81d3e9a"
+    },
+    "ov_core/src/utils/sensor_data.h": {
+      "upstream_sha256": "5eee5beaddc13647630c61e2b4304785f228373f10dbbce7e9fe8e2dfe40f7b7",
+      "current_sha256": "5eee5beaddc13647630c61e2b4304785f228373f10dbbce7e9fe8e2dfe40f7b7"
+    },
+    "ov_init/CMakeLists.txt": {
+      "upstream_sha256": "54de6cbdf52cb7226a6130db877b1fd37caf7c28a897a99f6abc5e2f2e9dcf8c",
+      "current_sha256": "54de6cbdf52cb7226a6130db877b1fd37caf7c28a897a99f6abc5e2f2e9dcf8c"
+    },
+    "ov_init/cmake/ROS1.cmake": {
+      "upstream_sha256": "ef7814d1042a524db1711ade2584ea481cbc16ce5a9e7072a769e2844237f4d3",
+      "current_sha256": "ef7814d1042a524db1711ade2584ea481cbc16ce5a9e7072a769e2844237f4d3"
+    },
+    "ov_init/cmake/ROS2.cmake": {
+      "upstream_sha256": "ea9290ba0dbeb22e6013ba9b5d042a404e56e279a05d0d09441d5cfff4696b2c",
+      "current_sha256": "c439df2d70475ff1d3378c025e6e80f42da3527722626f183f1c783493de6247"
+    },
+    "ov_init/launch/display.rviz": {
+      "upstream_sha256": "213ea1f5f46d97b15fe0cfe15174a355e5b117c84d7111451759a937c4aa2cea",
+      "current_sha256": "213ea1f5f46d97b15fe0cfe15174a355e5b117c84d7111451759a937c4aa2cea"
+    },
+    "ov_init/launch/dynamic.launch": {
+      "upstream_sha256": "0ed98d0ac5dd076d8e071d88c72a6cf2a9b7d655bbaa15cb2c008cc4309f6f88",
+      "current_sha256": "0ed98d0ac5dd076d8e071d88c72a6cf2a9b7d655bbaa15cb2c008cc4309f6f88"
+    },
+    "ov_init/launch/mle.launch": {
+      "upstream_sha256": "3159d7664a4674fd3fe196221ef41d7d29d413dca37dfa4c4dd7a31e7dfd34dd",
+      "current_sha256": "3159d7664a4674fd3fe196221ef41d7d29d413dca37dfa4c4dd7a31e7dfd34dd"
+    },
+    "ov_init/package.xml": {
+      "upstream_sha256": "8b0a1202cfb8786c55b0a7c7b374cc32f9498163c8aac8046b81a8dd70e909d4",
+      "current_sha256": "8b0a1202cfb8786c55b0a7c7b374cc32f9498163c8aac8046b81a8dd70e909d4"
+    },
+    "ov_init/rosdoc.yaml": {
+      "upstream_sha256": "d43254967f571016bfe203df60062112960ac60d5515a1dbfde1f060ddd527bc",
+      "current_sha256": "d43254967f571016bfe203df60062112960ac60d5515a1dbfde1f060ddd527bc"
+    },
+    "ov_init/src/ceres/Factor_GenericPrior.cpp": {
+      "upstream_sha256": "c388c428fa58125281f1e3d2d93093eddbac10da917e4a72e5e41bdbf6130e67",
+      "current_sha256": "c388c428fa58125281f1e3d2d93093eddbac10da917e4a72e5e41bdbf6130e67"
+    },
+    "ov_init/src/ceres/Factor_GenericPrior.h": {
+      "upstream_sha256": "2273f1445a59ca53efc9408f9f9a5df441db24512fdfe228f6c12d3771a66a57",
+      "current_sha256": "2273f1445a59ca53efc9408f9f9a5df441db24512fdfe228f6c12d3771a66a57"
+    },
+    "ov_init/src/ceres/Factor_ImageReprojCalib.cpp": {
+      "upstream_sha256": "828404bf550be35ced68f950ca6dd684566ca2063ad19a6ef3429226801a892c",
+      "current_sha256": "828404bf550be35ced68f950ca6dd684566ca2063ad19a6ef3429226801a892c"
+    },
+    "ov_init/src/ceres/Factor_ImageReprojCalib.h": {
+      "upstream_sha256": "baabd80f52f73e4182b55dd62c95184f5e0132a8619416edf10e24f651966eb3",
+      "current_sha256": "baabd80f52f73e4182b55dd62c95184f5e0132a8619416edf10e24f651966eb3"
+    },
+    "ov_init/src/ceres/Factor_ImuCPIv1.cpp": {
+      "upstream_sha256": "495ef7e88a4628a02cff5c51cbd4fedc456745d2bf8bff9f94bde3496b5985d6",
+      "current_sha256": "495ef7e88a4628a02cff5c51cbd4fedc456745d2bf8bff9f94bde3496b5985d6"
+    },
+    "ov_init/src/ceres/Factor_ImuCPIv1.h": {
+      "upstream_sha256": "8112b267baa3780038c7960b56f66c9d7119212835cfae63dd9cba03c834fd57",
+      "current_sha256": "8112b267baa3780038c7960b56f66c9d7119212835cfae63dd9cba03c834fd57"
+    },
+    "ov_init/src/ceres/State_JPLQuatLocal.cpp": {
+      "upstream_sha256": "c72d5af943daf9692a5ca8dc1467ea571cb5c1f0a5972323e145d4e9295ec57b",
+      "current_sha256": "c72d5af943daf9692a5ca8dc1467ea571cb5c1f0a5972323e145d4e9295ec57b"
+    },
+    "ov_init/src/ceres/State_JPLQuatLocal.h": {
+      "upstream_sha256": "d648965c7267ef2e867f507f0bbdce1bd05eaee63af34c949cd60f958cb8a199",
+      "current_sha256": "d648965c7267ef2e867f507f0bbdce1bd05eaee63af34c949cd60f958cb8a199"
+    },
+    "ov_init/src/dummy.cpp": {
+      "upstream_sha256": "5083f27573e5efcaffabd84550042ad47dd2d81f3f23655f8d839153f2d06ea9",
+      "current_sha256": "5083f27573e5efcaffabd84550042ad47dd2d81f3f23655f8d839153f2d06ea9"
+    },
+    "ov_init/src/dynamic/DynamicInitializer.cpp": {
+      "upstream_sha256": "d223bff748a3836c035c7829a5d054240a76db7aa938283f7a52429533bb0d3e",
+      "current_sha256": "d223bff748a3836c035c7829a5d054240a76db7aa938283f7a52429533bb0d3e"
+    },
+    "ov_init/src/dynamic/DynamicInitializer.h": {
+      "upstream_sha256": "023085ca5fb42c5f9ce19abba65ee9c43056dab2bf0e93f5112048d6c5f97bf5",
+      "current_sha256": "023085ca5fb42c5f9ce19abba65ee9c43056dab2bf0e93f5112048d6c5f97bf5"
+    },
+    "ov_init/src/init/InertialInitializer.cpp": {
+      "upstream_sha256": "211601b4cf1ccc65392fe38e7c59ab5a3c61041d70984978028d3f166073df00",
+      "current_sha256": "211601b4cf1ccc65392fe38e7c59ab5a3c61041d70984978028d3f166073df00"
+    },
+    "ov_init/src/init/InertialInitializer.h": {
+      "upstream_sha256": "7be2af85b8e6bcda2a15d04907e5e9a6ccd5b18594891b510608edf6f959fb0d",
+      "current_sha256": "7be2af85b8e6bcda2a15d04907e5e9a6ccd5b18594891b510608edf6f959fb0d"
+    },
+    "ov_init/src/init/InertialInitializerOptions.h": {
+      "upstream_sha256": "0c7a3b54dcb47c8fa24dc50974a1a3955fe4d55120860bcac5473585ef0a0fb5",
+      "current_sha256": "0c7a3b54dcb47c8fa24dc50974a1a3955fe4d55120860bcac5473585ef0a0fb5"
+    },
+    "ov_init/src/sim/SimulatorInit.cpp": {
+      "upstream_sha256": "91e571e8862790dc2d074fd4956bde841176f15f6cd96cd3b4eb72b484898a49",
+      "current_sha256": "91e571e8862790dc2d074fd4956bde841176f15f6cd96cd3b4eb72b484898a49"
+    },
+    "ov_init/src/sim/SimulatorInit.h": {
+      "upstream_sha256": "ccd3234dd813c1f27307c341127081eaa23864542c53414446daa96c6dbe2a94",
+      "current_sha256": "ccd3234dd813c1f27307c341127081eaa23864542c53414446daa96c6dbe2a94"
+    },
+    "ov_init/src/static/StaticInitializer.cpp": {
+      "upstream_sha256": "9c0113c7acab30b5d98efc0368217031af64ad3b23d64bac924ad373f2f83511",
+      "current_sha256": "9c0113c7acab30b5d98efc0368217031af64ad3b23d64bac924ad373f2f83511"
+    },
+    "ov_init/src/static/StaticInitializer.h": {
+      "upstream_sha256": "3b9fdabe344f6661c7ea84f99e53ba150ba4d01d4315d784db20c738333559cd",
+      "current_sha256": "3b9fdabe344f6661c7ea84f99e53ba150ba4d01d4315d784db20c738333559cd"
+    },
+    "ov_init/src/test_dynamic_init.cpp": {
+      "upstream_sha256": "0137d56d1bebff018116f7bae4142c33015287574b599eb8bdcbb881d32d763d",
+      "current_sha256": "0137d56d1bebff018116f7bae4142c33015287574b599eb8bdcbb881d32d763d"
+    },
+    "ov_init/src/test_dynamic_mle.cpp": {
+      "upstream_sha256": "285a40541faac69938a760971a1c90109622e8d28ecd29909c84481d7af92aba",
+      "current_sha256": "285a40541faac69938a760971a1c90109622e8d28ecd29909c84481d7af92aba"
+    },
+    "ov_init/src/test_simulation.cpp": {
+      "upstream_sha256": "1971fa1f217f69906ff650cd88f619cafffafc3a856b0609bc1e42c0c23d6cfb",
+      "current_sha256": "1971fa1f217f69906ff650cd88f619cafffafc3a856b0609bc1e42c0c23d6cfb"
+    },
+    "ov_init/src/utils/helper.h": {
+      "upstream_sha256": "34786cbb1084c89c548c1829ffbec325ac20d5b2d62c88a00cf7c55f50bae0e1",
+      "current_sha256": "34786cbb1084c89c548c1829ffbec325ac20d5b2d62c88a00cf7c55f50bae0e1"
+    },
+    "ov_msckf/CMakeLists.txt": {
+      "upstream_sha256": "7c93751315e4e7aa9fe170a6df8f878cd4797a66c15a92a71385ea8cf398b316",
+      "current_sha256": "7c93751315e4e7aa9fe170a6df8f878cd4797a66c15a92a71385ea8cf398b316"
+    },
+    "ov_msckf/cmake/ROS1.cmake": {
+      "upstream_sha256": "7d35077fb75a3583bc2e8ca21a1f3f22d83e7e42f3d8752f7380ce565b0c7dff",
+      "current_sha256": "7d35077fb75a3583bc2e8ca21a1f3f22d83e7e42f3d8752f7380ce565b0c7dff"
+    },
+    "ov_msckf/cmake/ROS2.cmake": {
+      "upstream_sha256": "6c241f89a3c4aaf0f558d13a79c58e72bb9d218a78ef02e53bf6cb33566abeec",
+      "current_sha256": "be38e4dfb3529f8f8da5bdf936b842b63ab67efe3ebcc9d9d3a2f8600253185d"
+    },
+    "ov_msckf/launch/display.rviz": {
+      "upstream_sha256": "eb5fc2d0839c8d77fe0668ea6acaac5b4d550ede797f8f7f3c0776103da23ebe",
+      "current_sha256": "eb5fc2d0839c8d77fe0668ea6acaac5b4d550ede797f8f7f3c0776103da23ebe"
+    },
+    "ov_msckf/launch/display_driving.rviz": {
+      "upstream_sha256": "5950c8f4f09d7825f52dcc0016679e130be30e2e6b463e5fdf92c96673b5f37a",
+      "current_sha256": "5950c8f4f09d7825f52dcc0016679e130be30e2e6b463e5fdf92c96673b5f37a"
+    },
+    "ov_msckf/launch/display_ros2.rviz": {
+      "upstream_sha256": "16fe96b58b2d234bc3e5ea44c141f4f14cc42cc84fe27f24928f10026d314acb",
+      "current_sha256": "16fe96b58b2d234bc3e5ea44c141f4f14cc42cc84fe27f24928f10026d314acb"
+    },
+    "ov_msckf/launch/serial.launch": {
+      "upstream_sha256": "2d5bd569fb1eb4c609eea13b960a623a42bb985cd67492692a410bf83fc17545",
+      "current_sha256": "2d5bd569fb1eb4c609eea13b960a623a42bb985cd67492692a410bf83fc17545"
+    },
+    "ov_msckf/launch/simulation.launch": {
+      "upstream_sha256": "f06233ed6e2013c624382e5f416ae6856d5420bed825ab2a74e66a8c305270a7",
+      "current_sha256": "f06233ed6e2013c624382e5f416ae6856d5420bed825ab2a74e66a8c305270a7"
+    },
+    "ov_msckf/launch/subscribe.launch": {
+      "upstream_sha256": "80b0e3d3f3febab3561853acb6f89b92a66b1647ed1ce52d16b7e463a4b38ece",
+      "current_sha256": "80b0e3d3f3febab3561853acb6f89b92a66b1647ed1ce52d16b7e463a4b38ece"
+    },
+    "ov_msckf/launch/subscribe.launch.py": {
+      "upstream_sha256": "57662b9ff2d3d5176559383d2c9189c3ac95deb0ddefb5e5da0428f52840d3a2",
+      "current_sha256": "57662b9ff2d3d5176559383d2c9189c3ac95deb0ddefb5e5da0428f52840d3a2"
+    },
+    "ov_msckf/package.xml": {
+      "upstream_sha256": "cfe44bbf7877d627fed5d24a299d0a50cfc0ae8f30037472eff7302cacda2c59",
+      "current_sha256": "cfe44bbf7877d627fed5d24a299d0a50cfc0ae8f30037472eff7302cacda2c59"
+    },
+    "ov_msckf/rosdoc.yaml": {
+      "upstream_sha256": "aabbc2be4db345ca369d656d477be2af53d632429a65ec1c1172275cd47f7d39",
+      "current_sha256": "aabbc2be4db345ca369d656d477be2af53d632429a65ec1c1172275cd47f7d39"
+    },
+    "ov_msckf/scripts/run_ros_eth.sh": {
+      "upstream_sha256": "959371f6a103d4ded90b8918b38ef05e97956d90a3b94f400c95bbc0467c7ffc",
+      "current_sha256": "959371f6a103d4ded90b8918b38ef05e97956d90a3b94f400c95bbc0467c7ffc"
+    },
+    "ov_msckf/scripts/run_ros_kaist.sh": {
+      "upstream_sha256": "e8640555698c3811003237bc3be7eaeff9bdb2cd8be27c68ff7c9eee8916716c",
+      "current_sha256": "e8640555698c3811003237bc3be7eaeff9bdb2cd8be27c68ff7c9eee8916716c"
+    },
+    "ov_msckf/scripts/run_ros_tumvi.sh": {
+      "upstream_sha256": "1fb3d374487343b71296b6080592fa62dc6fd173088fc8485fbb379b9cffd524",
+      "current_sha256": "1fb3d374487343b71296b6080592fa62dc6fd173088fc8485fbb379b9cffd524"
+    },
+    "ov_msckf/scripts/run_ros_uzhfpv.sh": {
+      "upstream_sha256": "b882f0f554d06ceb18a2d5fbe69dd53900243fc1139296ddeed861279d0b5ee0",
+      "current_sha256": "b882f0f554d06ceb18a2d5fbe69dd53900243fc1139296ddeed861279d0b5ee0"
+    },
+    "ov_msckf/scripts/run_sim_calib.sh": {
+      "upstream_sha256": "dca03f6a6ef60ad39fd5aecef320f2f1d09919b5ec551b1f589943030dcd6d37",
+      "current_sha256": "dca03f6a6ef60ad39fd5aecef320f2f1d09919b5ec551b1f589943030dcd6d37"
+    },
+    "ov_msckf/scripts/run_sim_cams.sh": {
+      "upstream_sha256": "017c3436844fd49ecda9aff349832c1ff7bddfc26e1009e60261c0ca2de44618",
+      "current_sha256": "017c3436844fd49ecda9aff349832c1ff7bddfc26e1009e60261c0ca2de44618"
+    },
+    "ov_msckf/scripts/run_sim_featrep.sh": {
+      "upstream_sha256": "1a61fe25f1e98973b66938ae6fafd018855c637d7e9da8334634ad321e584209",
+      "current_sha256": "1a61fe25f1e98973b66938ae6fafd018855c637d7e9da8334634ad321e584209"
+    },
+    "ov_msckf/src/core/VioManager.cpp": {
+      "upstream_sha256": "13d0c40710f2d267e8b5967c9a91d026c12a79fec174b63154942ae97b896182",
+      "current_sha256": "2a4b1de6db2db48a2289240574fa41d334fae610cbaaf9d258038140c4b91c5d"
+    },
+    "ov_msckf/src/core/VioManager.h": {
+      "upstream_sha256": "7afa93033a85656f16a32bba9324887bfdc4a1272c3fe53567d16bd28da4c1e2",
+      "current_sha256": "7ea9ac29d4597785f023dc91373254c734545a7287bca7c38d59d9ae2293cbbf"
+    },
+    "ov_msckf/src/core/VioManagerHelper.cpp": {
+      "upstream_sha256": "c095a93de47de41e4dc22026dd110fb629272770339b232e030e0d7ebfe11355",
+      "current_sha256": "0aca523d19a15c94dd06451319c23cacba3ada991af5441725961460be0f28ae"
+    },
+    "ov_msckf/src/core/VioManagerOptions.h": {
+      "upstream_sha256": "68ceb7fbf67d52e24eab4552ac202ab0299e6dad9cfbcc497a5d4752e13e4aac",
+      "current_sha256": "68ceb7fbf67d52e24eab4552ac202ab0299e6dad9cfbcc497a5d4752e13e4aac"
+    },
+    "ov_msckf/src/dummy.cpp": {
+      "upstream_sha256": "bdd0c10ab86468fae96d8bf8d365b606d39835ca7ac70d1cd4b7dcfcdbe555b2",
+      "current_sha256": "bdd0c10ab86468fae96d8bf8d365b606d39835ca7ac70d1cd4b7dcfcdbe555b2"
+    },
+    "ov_msckf/src/ros/ROS1Visualizer.cpp": {
+      "upstream_sha256": "7061cd84d132c2256ae911e1ab3cb7af77216ff0e606b4ac982437d9d8a63427",
+      "current_sha256": "7061cd84d132c2256ae911e1ab3cb7af77216ff0e606b4ac982437d9d8a63427"
+    },
+    "ov_msckf/src/ros/ROS1Visualizer.h": {
+      "upstream_sha256": "36501cfc3a3896c5b0edb8b320057f68e772747aad226a360a80562e4921c546",
+      "current_sha256": "36501cfc3a3896c5b0edb8b320057f68e772747aad226a360a80562e4921c546"
+    },
+    "ov_msckf/src/ros/ROS2Visualizer.cpp": {
+      "upstream_sha256": "4ae487016093b0e2a6c90a3514e852f06ba3d64830194dc350f22f3c89295205",
+      "current_sha256": "91ac144bca2d3d0d235c3eafc9dc42de0dda319deb9c658ed2d8679a0f600fdc"
+    },
+    "ov_msckf/src/ros/ROS2Visualizer.h": {
+      "upstream_sha256": "3676928f699452727af01a6471e6bc0a45c06f4b73b7859ee994fbe292161ca7",
+      "current_sha256": "b7514de023d6252e5348a415e8fdf1a97e4477e691edac4f26d5bc142e12fefe"
+    },
+    "ov_msckf/src/ros/ROSVisualizerHelper.cpp": {
+      "upstream_sha256": "5ac52b19febd79c1a51f87792c198df4802c346ce46791f2b1dec09493efdd63",
+      "current_sha256": "5ac52b19febd79c1a51f87792c198df4802c346ce46791f2b1dec09493efdd63"
+    },
+    "ov_msckf/src/ros/ROSVisualizerHelper.h": {
+      "upstream_sha256": "6d7c4eda0df29fec68c5b4cb46b5b7f48a994617732eff492ed43e898195843e",
+      "current_sha256": "6d7c4eda0df29fec68c5b4cb46b5b7f48a994617732eff492ed43e898195843e"
+    },
+    "ov_msckf/src/ros1_serial_msckf.cpp": {
+      "upstream_sha256": "b13bdb55739e0c4d5137d72091aadfbbf2bec65cdd6363a0b948322eb39eddf8",
+      "current_sha256": "b13bdb55739e0c4d5137d72091aadfbbf2bec65cdd6363a0b948322eb39eddf8"
+    },
+    "ov_msckf/src/run_simulation.cpp": {
+      "upstream_sha256": "e64eed514d8b60a624210175b8f0f4cb9c621a97022e8a6de7b41b3afafaf57a",
+      "current_sha256": "5280d1ffbf89adc33722e6a3ad0cf64e98905ad05149a7fcd375b581f172542d"
+    },
+    "ov_msckf/src/run_subscribe_msckf.cpp": {
+      "upstream_sha256": "6a81931f2a0bfec726dd54b5d159484cc9c8c16a062bcf9d15b99943994e4546",
+      "current_sha256": "d3aa5d407115e04386a7d48f37513064ba00acf474b9b33880c5c4f4f3f47ea9"
+    },
+    "ov_msckf/src/sim/Simulator.cpp": {
+      "upstream_sha256": "c87eaf8abae5495b5a19fc38e2b7bd28f74c63602e2bad4502a3ebf3c3c90369",
+      "current_sha256": "c87eaf8abae5495b5a19fc38e2b7bd28f74c63602e2bad4502a3ebf3c3c90369"
+    },
+    "ov_msckf/src/sim/Simulator.h": {
+      "upstream_sha256": "8d3978c7fc927b88e8f43110b2ce16e1335a8f33bd61b1562f92a70305f4a5fa",
+      "current_sha256": "8d3978c7fc927b88e8f43110b2ce16e1335a8f33bd61b1562f92a70305f4a5fa"
+    },
+    "ov_msckf/src/state/Propagator.cpp": {
+      "upstream_sha256": "3ab1402699142475fa588bdb2a1c4c55ee7f66a1b86b8ee703c66bce76d46210",
+      "current_sha256": "3ab1402699142475fa588bdb2a1c4c55ee7f66a1b86b8ee703c66bce76d46210"
+    },
+    "ov_msckf/src/state/Propagator.h": {
+      "upstream_sha256": "6043416dde719d3df7ad943b01103c5eb968e996ccac1a88a8e29bce18bb1d86",
+      "current_sha256": "6043416dde719d3df7ad943b01103c5eb968e996ccac1a88a8e29bce18bb1d86"
+    },
+    "ov_msckf/src/state/State.cpp": {
+      "upstream_sha256": "f9e523eeb63a83bc96e7be7dbb7ad1ecf0300e8195b939fcd233f8c5f9763050",
+      "current_sha256": "f9e523eeb63a83bc96e7be7dbb7ad1ecf0300e8195b939fcd233f8c5f9763050"
+    },
+    "ov_msckf/src/state/State.h": {
+      "upstream_sha256": "25ea7fb25ddf726ce0d41200d7f824b7d3668dcf60dd568f09073fca93142b8f",
+      "current_sha256": "25ea7fb25ddf726ce0d41200d7f824b7d3668dcf60dd568f09073fca93142b8f"
+    },
+    "ov_msckf/src/state/StateHelper.cpp": {
+      "upstream_sha256": "efbc95a15fbd931178af75a5b65b60cbf563c6f0f311624d7b6c1e010be37945",
+      "current_sha256": "efbc95a15fbd931178af75a5b65b60cbf563c6f0f311624d7b6c1e010be37945"
+    },
+    "ov_msckf/src/state/StateHelper.h": {
+      "upstream_sha256": "76ecd50030f82ef8601392460e09a2c7b3886078a62502ba5cf0c738056ad6ed",
+      "current_sha256": "76ecd50030f82ef8601392460e09a2c7b3886078a62502ba5cf0c738056ad6ed"
+    },
+    "ov_msckf/src/state/StateOptions.h": {
+      "upstream_sha256": "f3fec7fcbb213b145a2a7cfa4a051ff948e3c0f03f914edfa5b58c5ba82eb525",
+      "current_sha256": "f3fec7fcbb213b145a2a7cfa4a051ff948e3c0f03f914edfa5b58c5ba82eb525"
+    },
+    "ov_msckf/src/test_sim_meas.cpp": {
+      "upstream_sha256": "f8ce7e77e8d23bdced3f9feb5f78d090978f1d838dba6fd1d425b9aa6f06a713",
+      "current_sha256": "f8ce7e77e8d23bdced3f9feb5f78d090978f1d838dba6fd1d425b9aa6f06a713"
+    },
+    "ov_msckf/src/test_sim_repeat.cpp": {
+      "upstream_sha256": "7c7670fa3f5fae4bd1c5caee10979edfe5682c2eac2d5b91b8978cf8282bef94",
+      "current_sha256": "7c7670fa3f5fae4bd1c5caee10979edfe5682c2eac2d5b91b8978cf8282bef94"
+    },
+    "ov_msckf/src/update/UpdaterHelper.cpp": {
+      "upstream_sha256": "f68fc2e1dd04a6a33e94c576839dc4643114d2100ddb69f1b00da09bd7b12714",
+      "current_sha256": "f68fc2e1dd04a6a33e94c576839dc4643114d2100ddb69f1b00da09bd7b12714"
+    },
+    "ov_msckf/src/update/UpdaterHelper.h": {
+      "upstream_sha256": "43215c2af373cbf5b44b5d84702b71dfbc6ad6b10088781b2020cc90f7dfeb95",
+      "current_sha256": "43215c2af373cbf5b44b5d84702b71dfbc6ad6b10088781b2020cc90f7dfeb95"
+    },
+    "ov_msckf/src/update/UpdaterMSCKF.cpp": {
+      "upstream_sha256": "b0c2c51bb7e5a0593702cba93c006304fd9408be0c5b1bbfd79499248a6327b5",
+      "current_sha256": "b0c2c51bb7e5a0593702cba93c006304fd9408be0c5b1bbfd79499248a6327b5"
+    },
+    "ov_msckf/src/update/UpdaterMSCKF.h": {
+      "upstream_sha256": "c1a505fc73320ca8ace4912c707c1d8a3ec0c763bfcbfc23bcc631224a5d78b6",
+      "current_sha256": "c1a505fc73320ca8ace4912c707c1d8a3ec0c763bfcbfc23bcc631224a5d78b6"
+    },
+    "ov_msckf/src/update/UpdaterOptions.h": {
+      "upstream_sha256": "4c081974f4bdcb4c2c618b79d5ba8e25af2dcfafa5ef7b976c0d7aace19309c0",
+      "current_sha256": "4c081974f4bdcb4c2c618b79d5ba8e25af2dcfafa5ef7b976c0d7aace19309c0"
+    },
+    "ov_msckf/src/update/UpdaterSLAM.cpp": {
+      "upstream_sha256": "6f44e7dbab3b1787821597d275e7c4a59a8d447eac25e4dcfdeb4a70c1bd7e3c",
+      "current_sha256": "6f44e7dbab3b1787821597d275e7c4a59a8d447eac25e4dcfdeb4a70c1bd7e3c"
+    },
+    "ov_msckf/src/update/UpdaterSLAM.h": {
+      "upstream_sha256": "20c98ae549756e5d5505ef88e0a9d6a21f11709ea5a1afe5c950c1ec232c5de8",
+      "current_sha256": "20c98ae549756e5d5505ef88e0a9d6a21f11709ea5a1afe5c950c1ec232c5de8"
+    },
+    "ov_msckf/src/update/UpdaterZeroVelocity.cpp": {
+      "upstream_sha256": "adeacc26e9286acb4cab7fb31eab383b23a5362a8dd1d28878c83c2934881ea1",
+      "current_sha256": "adeacc26e9286acb4cab7fb31eab383b23a5362a8dd1d28878c83c2934881ea1"
+    },
+    "ov_msckf/src/update/UpdaterZeroVelocity.h": {
+      "upstream_sha256": "7dab2e1899488a54b444cf1a4f35518dab85ecb7b6e41e172deeb085e9a21220",
+      "current_sha256": "7dab2e1899488a54b444cf1a4f35518dab85ecb7b6e41e172deeb085e9a21220"
+    },
+    "ov_msckf/src/utils/NoiseManager.h": {
+      "upstream_sha256": "ad42c71158e521771ac45ddd0434db85d36c0438dfd6550f842990e875d7f322",
+      "current_sha256": "ad42c71158e521771ac45ddd0434db85d36c0438dfd6550f842990e875d7f322"
+    }
+  }
+}

@@ -202,8 +202,20 @@ int main(int argc, char ** argv)
   easyfly_ui_bridge::BridgeConfig config;
   config.use_sim_time = !parser.isSet("system-time"); config.selected_profile = parser.value(
     "profile").toStdString();
+  const auto localization = qEnvironmentVariable("EASYFLY_LOCALIZATION_BACKEND");
+  config.selected_localization_backend = localization.isEmpty() ? "external" :
+    localization.toStdString();
   config.image_topics =
   {parser.value("front-topic").toStdString(), parser.value("down-topic").toStdString()};
+  const int geometry_camera = qEnvironmentVariable("EASYFLY_CLASSICAL_CAMERA") == "down" ? 1 : 0;
+  auto & geometry_binding = config.camera_perception[geometry_camera];
+  if (geometry_binding.image_topic != config.image_topics[geometry_camera]) {
+    geometry_binding.detections_topic.clear(); geometry_binding.tracks_topic.clear();
+    geometry_binding.targets_topic.clear();
+  }
+  geometry_binding.image_topic = config.image_topics[geometry_camera];
+  geometry_binding.ellipse_topic = "/ellipse_observations";
+  geometry_binding.color_line_topic = "/color_line_observations";
   int duration = 0;
   if (parser.isSet("quit-after-ms")) {
     bool valid = false; duration = parser.value("quit-after-ms").toInt(&valid);

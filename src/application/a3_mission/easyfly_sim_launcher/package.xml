@@ -20,6 +20,8 @@
   <exec_depend>easyfly_px4_sitl</exec_depend>
   <exec_depend>easyfly_mavlink_bridge</exec_depend>
   <exec_depend>easyfly_params</exec_depend>
+  <exec_depend>easyfly_ellipse_detection</exec_depend>
+  <exec_depend>easyfly_color_line_detection</exec_depend>
   <exec_depend>easyfly_mission_srvs</exec_depend>
   <exec_depend>easyfly_mission_scripts</exec_depend>
   <exec_depend>ament_index_python</exec_depend>

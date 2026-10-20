@@ -1,0 +1,371 @@
+{
+  "schema_version": 1,
+  "fields": [
+    {
+      "key": "slam",
+      "label": "SLAM 算法",
+      "kind": "choice",
+      "default": "profile",
+      "group": "slam",
+      "choices": [
+        [
+          "profile",
+          "跟随运行方案"
+        ],
+        [
+          "fast_lio",
+          "FAST-LIO（MID-360）"
+        ],
+        [
+          "openvins",
+          "OpenVINS（Gazebo 单目，仅观测）"
+        ],
+        [
+          "disabled",
+          "关闭 SLAM"
+        ]
+      ],
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_lidar_topic",
+      "label": "雷达输入（Livox CustomMsg）",
+      "kind": "topic",
+      "default": "/livox/lidar",
+      "group": "slam",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_imu_topic",
+      "label": "IMU 输入（sensor_msgs/Imu）",
+      "kind": "topic",
+      "default": "/livox/imu",
+      "group": "slam",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_point_filter_num",
+      "label": "点云采样间隔",
+      "kind": "int",
+      "default": 3,
+      "min": 1,
+      "max": 20,
+      "group": "slam_sampling",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_max_iteration",
+      "label": "最大迭代次数",
+      "kind": "int",
+      "default": 3,
+      "min": 1,
+      "max": 10,
+      "group": "slam_sampling",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_filter_size_surf",
+      "label": "扫描体素大小 / m",
+      "kind": "number",
+      "default": 0.5,
+      "min": 0.05,
+      "max": 2,
+      "group": "slam_sampling",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_filter_size_map",
+      "label": "地图体素大小 / m",
+      "kind": "number",
+      "default": 0.5,
+      "min": 0.05,
+      "max": 2,
+      "group": "slam_mapping",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_blind",
+      "label": "最小有效距离 / m",
+      "kind": "number",
+      "default": 0.3,
+      "min": 0.05,
+      "max": 5,
+      "group": "slam_mapping",
+      "omit_when_default": true
+    },
+    {
+      "key": "slam_det_range",
+      "label": "最大探测距离 / m",
+      "kind": "number",
+      "default": 100,
+      "min": 5,
+      "max": 200,
+      "group": "slam_mapping",
+      "omit_when_default": true
+    },
+    {
+      "key": "ellipse_enabled",
+      "label": "随会话启动椭圆检测",
+      "kind": "bool",
+      "default": false,
+      "group": "overview"
+    },
+    {
+      "key": "color_line_enabled",
+      "label": "随会话启动彩线检测",
+      "kind": "bool",
+      "default": false,
+      "group": "overview"
+    },
+    {
+      "key": "provider",
+      "label": "目标检测计算设备",
+      "kind": "choice",
+      "default": "cpu",
+      "choices": [
+        [
+          "cpu",
+          "CPU"
+        ],
+        [
+          "cuda",
+          "请求 CUDA（不可用时回退 CPU）"
+        ],
+        [
+          "auto",
+          "使用检测器配置"
+        ]
+      ],
+      "group": "overview"
+    },
+    {
+      "key": "strategy",
+      "label": "导航策略",
+      "kind": "choice",
+      "default": "profile",
+      "choices": [
+        [
+          "profile",
+          "跟随运行方案"
+        ],
+        [
+          "astar",
+          "A*"
+        ],
+        [
+          "ego",
+          "EGO"
+        ],
+        [
+          "combined",
+          "A* + EGO"
+        ]
+      ],
+      "group": "overview"
+    },
+    {
+      "key": "camera",
+      "label": "几何检测输入相机",
+      "kind": "choice",
+      "default": "front",
+      "choices": [
+        [
+          "front",
+          "前视相机"
+        ],
+        [
+          "down",
+          "下视相机"
+        ]
+      ],
+      "group": "input"
+    },
+    {
+      "key": "optical_frame",
+      "label": "图像光学坐标系（空为相机默认）",
+      "kind": "string",
+      "default": "",
+      "group": "input"
+    },
+    {
+      "key": "max_age_seconds",
+      "label": "检测结果最大年龄 / 秒",
+      "kind": "number",
+      "default": 0.5,
+      "min": 0.05,
+      "max": 2,
+      "group": "input"
+    },
+    {
+      "key": "opencv_threads",
+      "label": "OpenCV 线程数",
+      "kind": "int",
+      "default": 2,
+      "min": 1,
+      "max": 8,
+      "group": "input"
+    },
+    {
+      "key": "max_detections",
+      "label": "单帧检测数量上限",
+      "kind": "int",
+      "default": 32,
+      "min": 1,
+      "max": 32,
+      "group": "input"
+    },
+    {
+      "key": "min_axis_px",
+      "label": "椭圆最小轴长 / 像素",
+      "kind": "number",
+      "default": 12,
+      "min": 4,
+      "max": 4096,
+      "group": "ellipse"
+    },
+    {
+      "key": "max_axis_ratio",
+      "label": "椭圆最大轴比",
+      "kind": "number",
+      "default": 8,
+      "min": 1,
+      "max": 20,
+      "group": "ellipse"
+    },
+    {
+      "key": "max_radial_error",
+      "label": "椭圆径向误差上限",
+      "kind": "number",
+      "default": 0.06,
+      "min": 0.001,
+      "max": 0.25,
+      "group": "ellipse"
+    },
+    {
+      "key": "max_area_error",
+      "label": "椭圆面积误差上限",
+      "kind": "number",
+      "default": 0.15,
+      "min": 0.001,
+      "max": 0.5,
+      "group": "ellipse"
+    },
+    {
+      "key": "canny_low",
+      "label": "椭圆边缘低阈值",
+      "kind": "number",
+      "default": 50,
+      "min": 0.001,
+      "max": 4095,
+      "group": "ellipse"
+    },
+    {
+      "key": "canny_high",
+      "label": "椭圆边缘高阈值",
+      "kind": "number",
+      "default": 150,
+      "min": 0.002,
+      "max": 4096,
+      "group": "ellipse"
+    },
+    {
+      "key": "hue_min",
+      "label": "彩线色相下界（可跨红色边界）",
+      "kind": "int",
+      "default": 170,
+      "min": 0,
+      "max": 179,
+      "group": "color_line"
+    },
+    {
+      "key": "hue_max",
+      "label": "彩线色相上界",
+      "kind": "int",
+      "default": 10,
+      "min": 0,
+      "max": 179,
+      "group": "color_line"
+    },
+    {
+      "key": "saturation_min",
+      "label": "彩线饱和度下界",
+      "kind": "int",
+      "default": 100,
+      "min": 0,
+      "max": 255,
+      "group": "color_line"
+    },
+    {
+      "key": "saturation_max",
+      "label": "彩线饱和度上界",
+      "kind": "int",
+      "default": 255,
+      "min": 0,
+      "max": 255,
+      "group": "color_line"
+    },
+    {
+      "key": "value_min",
+      "label": "彩线明度下界",
+      "kind": "int",
+      "default": 60,
+      "min": 0,
+      "max": 255,
+      "group": "color_line"
+    },
+    {
+      "key": "value_max",
+      "label": "彩线明度上界",
+      "kind": "int",
+      "default": 255,
+      "min": 0,
+      "max": 255,
+      "group": "color_line"
+    },
+    {
+      "key": "morphology_kernel",
+      "label": "彩线形态学核（奇数）",
+      "kind": "int",
+      "default": 3,
+      "min": 1,
+      "max": 15,
+      "group": "color_line"
+    },
+    {
+      "key": "min_area_px",
+      "label": "彩线最小面积 / 像素²",
+      "kind": "number",
+      "default": 80,
+      "min": 1,
+      "max": 2073600,
+      "group": "color_line"
+    },
+    {
+      "key": "min_length_px",
+      "label": "彩线最小长度 / 像素",
+      "kind": "number",
+      "default": 25,
+      "min": 2,
+      "max": 4096,
+      "group": "color_line"
+    },
+    {
+      "key": "min_aspect_ratio",
+      "label": "彩线最小长宽比",
+      "kind": "number",
+      "default": 3,
+      "min": 1,
+      "max": 100,
+      "group": "color_line"
+    },
+    {
+      "key": "min_fill_ratio",
+      "label": "彩线最小填充率",
+      "kind": "number",
+      "default": 0.5,
+      "min": 0.01,
+      "max": 1,
+      "group": "color_line"
+    }
+  ]
+}

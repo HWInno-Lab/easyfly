@@ -41,6 +41,8 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <easyfly_msgs/action/execute_mission.hpp>
+#include <easyfly_msgs/action/takeoff.hpp>
+#include <easyfly_msgs/action/land.hpp>
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
 #include <easyfly_msgs/srv/manage_reviewed_mission.hpp>
 #include <easyfly_core/ownership_registry.hpp>
@@ -645,6 +647,8 @@ class TimelineStack : public ManagedStack
 {
 protected:
   QProcess parameters;
+  std::vector<std::shared_ptr<void>> step_backends;
+  std::atomic<int> unexpected_steps{0};
   rclcpp::Publisher<rosgraph_msgs::msg::Clock>::SharedPtr clock_pub;
   rclcpp::Publisher<easyfly_msgs::msg::UAVState>::SharedPtr state_pub;
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr image_pub;
@@ -686,6 +690,20 @@ protected:
   void SetUp() override
   {
     ManagedStack::SetUp(); if (::testing::Test::HasFatalFailure()) {return;}
+    // Discovery-only endpoints satisfy the real observer's new dependency check.
+    // The mock mission never dispatches children; any child goal is rejected and counted.
+    const auto discovery = [this](auto sample, const char * name) {
+        using Step = decltype(sample);
+        step_backends.push_back(
+          rclcpp_action::create_server<Step>(
+            node, name,
+            [this](const auto &, auto) {
+              ++unexpected_steps; return rclcpp_action::GoalResponse::REJECT;
+            },
+            [](auto) {return rclcpp_action::CancelResponse::REJECT;}, [](auto) {}));
+      };
+    discovery(easyfly_msgs::action::Takeoff{}, "/takeoff");
+    discovery(easyfly_msgs::action::Land{}, "/land");
     began = b::detail::steady_seconds();
     flight_caps = node->create_service<easyfly_msgs::srv::GetCapabilities>(
       "/platform/flight_control/capabilities",
@@ -745,6 +763,7 @@ protected:
   void TearDown() override
   {
     hold_start = false; finish_cancel = true;
+    EXPECT_EQ(unexpected_steps.load(), 0); step_backends.clear();
     ManagedStack::TearDown(); telemetry.reset(); clock_pub.reset(); state_pub.reset();
     image_pub.reset(); event_pub.reset();
     flight_caps.reset();

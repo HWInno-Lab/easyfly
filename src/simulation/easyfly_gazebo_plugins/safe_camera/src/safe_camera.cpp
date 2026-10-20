@@ -212,8 +212,9 @@ void EasyFlyGazeboRosCamera::Load(gazebo::sensors::SensorPtr _sensor, sdf::Eleme
           camera_info_topic, rclcpp::SensorDataQoS().reliable())));
 
     RCLCPP_INFO(
-      impl_->ros_node_->get_logger(), "Publishing camera info to [%s]",
-      impl_->camera_info_pub_.back()->get_topic_name());
+      impl_->ros_node_->get_logger(), "Publishing camera info to [%s]; history depth=%zu",
+      impl_->camera_info_pub_.back()->get_topic_name(),
+      impl_->camera_info_pub_.back()->get_actual_qos().depth());
 
   } else {
     for (uint64_t i = 0; i < impl_->num_cameras_; ++i) {

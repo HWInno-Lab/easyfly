@@ -1,0 +1,19 @@
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+/**:
+  ros__parameters:
+    reference_pose_topic: /mavros/local_position/pose
+    reference_pose_frame: map
+    reference_attitude_topic: /mavros/imu/data
+    reference_attitude_frame: base_link
+    reference_health_topic: /uav_state
+    # T_imu_base: inverse of the installed base_link -> livox_imu_frame extrinsic.
+    body_to_base_translation: [0.011, 0.02329, -0.12412]
+    body_to_base_orientation: [0.0, 0.0, 0.0, 1.0]
+    freshness: 0.5
+    reference_gap: 0.15
+    initialization_samples: 5
+    initialization_span: 0.2
+    initialization_position_error: 0.15
+    initialization_angle_error: 0.15
+    position_error: 1.0
+    angle_error: 0.35

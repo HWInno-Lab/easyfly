@@ -1,0 +1,15 @@
+%YAML:1.0
+# Derived from EasyFly SDF and calibrated TF. Simulation only.
+cam0:
+  T_imu_cam:
+    - [0.0, 0.0, 1.0, 0.29350]
+    - [-1.0, 0.0, 0.0, 0.02329]
+    - [0.0, -1.0, 0.0, 0.09588]
+    - [0.0, 0.0, 0.0, 1.0]
+  cam_overlaps: []
+  camera_model: pinhole
+  distortion_model: radtan
+  distortion_coeffs: [0.0, 0.0, 0.0, 0.0]
+  intrinsics: [337.3570508552852, 337.3570508552852, 320.5, 240.5]
+  resolution: [640, 480]
+  rostopic: /openvins/input/camera
