@@ -1,9 +1,20 @@
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #include <gtest/gtest.h>
 #include <plan_manage/navigation_session_contract.h>
-
-#include <limits>
-
 #include <plan_manage/emergency_stop_gate.h>
+#include <limits>
 
 namespace ego_planner
 {
@@ -22,10 +33,10 @@ TEST(EmergencyRecoveryGate, PreviousSessionAckCannotRecoverNewSession) {
   EmergencyRecoveryGate gate;
   gate.beginStop(7);
   ASSERT_TRUE(gate.markStopPublished(true, 1.0, 42));
-  const auto deliver = [&](const std::string &session) {
-    return matchesNavigationSession(session, "new-session") &&
-      gate.acknowledgeStop(42, 11, true, 1.0, 1.0);
-  };
+  const auto deliver = [&](const std::string & session) {
+      return matchesNavigationSession(session, "new-session") &&
+             gate.acknowledgeStop(42, 11, true, 1.0, 1.0);
+    };
   EXPECT_FALSE(deliver("old-session"));
   EXPECT_FALSE(deliver(""));
   EXPECT_FALSE(gate.downstreamAcknowledged());
@@ -197,12 +208,15 @@ TEST(EmergencyRecoveryGate, ClockJumpRequiresStopRepublish)
 
 TEST(EmergencyRecoveryGate, NewGoalGenerationCannotBeClearedAsOldGoal)
 {
-  EXPECT_TRUE(EmergencyRecoveryGate::shouldClearReachedTarget(
-    4, 4, true, 0.2, 1.0));
-  EXPECT_FALSE(EmergencyRecoveryGate::shouldClearReachedTarget(
-    4, 5, true, 0.2, 1.0));
-  EXPECT_FALSE(EmergencyRecoveryGate::shouldClearReachedTarget(
-    4, 4, true, 2.0, 1.0));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::shouldClearReachedTarget(
+      4, 4, true, 0.2, 1.0));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::shouldClearReachedTarget(
+      4, 5, true, 0.2, 1.0));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::shouldClearReachedTarget(
+      4, 4, true, 2.0, 1.0));
 }
 
 TEST(EmergencyRecoveryGate, RequiresFreshMatchingDownstreamAck)
@@ -220,39 +234,51 @@ TEST(EmergencyRecoveryGate, RequiresFreshMatchingDownstreamAck)
 
 TEST(EmergencyRecoveryGate, DedicatedAckSourceRejectsNoFakeOrMultiplePublishers)
 {
-  EXPECT_TRUE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, true, true, true));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, true, true, true));
   // No discovered publisher, more than one publisher, a different endpoint
   // GID/node/type, or a spoofed source field must all keep EMERGENCY_STOP.
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    false, true, true, true, true));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, false, true, true, true));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, false, true, true));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, true, false, true));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, true, true, false));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      false, true, true, true, true));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, false, true, true, true));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, false, true, true));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, true, false, true));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, true, true, false));
 }
 
 TEST(EmergencyRecoveryGate, DedicatedAckSourceRequiresCompleteNodeFqn)
 {
-  EXPECT_TRUE(EmergencyRecoveryGate::endpointFqnMatches(
-    "traj_server", "/drone_0", "/drone_0/traj_server"));
-  EXPECT_FALSE(EmergencyRecoveryGate::endpointFqnMatches(
-    "traj_server", "/drone_1", "/drone_0/traj_server"));
-  EXPECT_FALSE(EmergencyRecoveryGate::endpointFqnMatches(
-    "other", "/drone_0", "/drone_0/traj_server"));
-  EXPECT_TRUE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, "traj_server", "/drone_0", "/drone_0/traj_server",
-    "traj_utils/msg/TrajectoryAck", "/drone_0/traj_server"));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, "traj_server", "/drone_0", "/drone_0/traj_server",
-    "traj_utils/msg/TrajectoryAck", "/traj_server"));
-  EXPECT_FALSE(EmergencyRecoveryGate::validTrajectoryAckSource(
-    true, true, "traj_server", "/drone_1", "/drone_0/traj_server",
-    "traj_utils/msg/TrajectoryAck", "/drone_0/traj_server"));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::endpointFqnMatches(
+      "traj_server", "/drone_0", "/drone_0/traj_server"));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::endpointFqnMatches(
+      "traj_server", "/drone_1", "/drone_0/traj_server"));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::endpointFqnMatches(
+      "other", "/drone_0", "/drone_0/traj_server"));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, "traj_server", "/drone_0", "/drone_0/traj_server",
+      "traj_utils/msg/TrajectoryAck", "/drone_0/traj_server"));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, "traj_server", "/drone_0", "/drone_0/traj_server",
+      "traj_utils/msg/TrajectoryAck", "/traj_server"));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::validTrajectoryAckSource(
+      true, true, "traj_server", "/drone_1", "/drone_0/traj_server",
+      "traj_utils/msg/TrajectoryAck", "/drone_0/traj_server"));
 }
 
 TEST(EmergencyRecoveryGate, AckRejectsZeroOldFutureAndRollbackStamps)
@@ -396,16 +422,21 @@ TEST(EmergencyRecoveryGate, ActivationSequenceIsMonotonicPerPublisherAndAttempt)
 
 TEST(EmergencyRecoveryGate, OdomDepthTimeoutNeedsFreshSensorsAndNewGeneration)
 {
-  EXPECT_FALSE(EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
-    true, true, true, true, 4, 4));
-  EXPECT_FALSE(EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
-    true, false, true, true, 4, 5));
-  EXPECT_FALSE(EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
-    true, true, true, false, 4, 5));
-  EXPECT_TRUE(EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
-    true, true, true, true, 4, 5));
-  EXPECT_TRUE(EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
-    false, false, false, false, 4, 4));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
+      true, true, true, true, 4, 4));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
+      true, false, true, true, 4, 5));
+  EXPECT_FALSE(
+    EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
+      true, true, true, false, 4, 5));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
+      true, true, true, true, 4, 5));
+  EXPECT_TRUE(
+    EmergencyRecoveryGate::canRecoverOdomDepthTimeout(
+      false, false, false, false, 4, 4));
 }
 
 }  // namespace ego_planner

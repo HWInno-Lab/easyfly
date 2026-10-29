@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Validate fixed-camera landing observations; never publish flight commands."""
+"""Validate original-time landing observations; never publish flight commands."""
 
 from collections import Counter, deque
 from functools import wraps
@@ -23,6 +23,7 @@ import time
 
 from easyfly_msgs.msg import LandingGuidanceTarget, LandingTarget, UAVState
 from easyfly_msgs.srv import GetCapabilities
+from geometry_msgs.msg import TransformStamped
 from rcl_interfaces.msg import ParameterDescriptor
 import rclpy
 from rclpy.impl.implementation_singleton import rclpy_implementation
@@ -32,6 +33,7 @@ from rclpy.qos import DurabilityPolicy, QoSProfile, ReliabilityPolicy
 from rclpy.signals import SignalHandlerOptions
 
 from .geometry import finite, rotation, transform
+from .extrinsics import Mount, MountHistory
 
 
 def stamp(header):
@@ -123,6 +125,7 @@ class LandingTransform(Node):
         self.quaternion = parameter(
             "camera_quaternion_xyzw", [0.0, 0.0, 0.0, 0.0]
         )
+        self.dynamic_camera = parameter("dynamic_camera", False)
         self.plane_z = parameter("landing_plane_z_m", float("nan"))
         self.plane_tolerance = parameter("plane_height_tolerance_m", 0.15)
         self.tilt = parameter("plane_tilt_limit_rad", 0.175)
@@ -160,7 +163,12 @@ class LandingTransform(Node):
                 raise ValueError(
                     "explicit tag, extrinsic and landing plane required"
                 )
-            rotation(self.quaternion)
+            if not self.dynamic_camera:
+                rotation(self.quaternion)
+        self.mount_history = MountHistory(
+            self.optical_frame, self.source_age, self.pair_gap
+        ) if self.dynamic_camera else None
+        self.mount_sub = None
         self.states = deque(maxlen=64)
         self.watermark = 0
         self.published_watermark = 0
@@ -209,6 +217,42 @@ class LandingTransform(Node):
                 reliability=ReliabilityPolicy.BEST_EFFORT,
             ),
         )
+        if self.dynamic_camera:
+            self.mount_sub = self.create_subscription(
+                TransformStamped, "/landing/camera_mount",
+                lambda message: self.receive_mount(message, generation),
+                QoSProfile(depth=1, reliability=ReliabilityPolicy.BEST_EFFORT,
+                           durability=DurabilityPolicy.VOLATILE),
+            )
+
+    def receive_mount(self, message, generation):
+        """Observe measured extrinsics; never use a command or latest-TF guess."""
+        if generation != self.generation or not self.processing_valid():
+            return
+        if not self.clock_valid():
+            return
+        received = time.monotonic()
+        p, q = message.transform.translation, message.transform.rotation
+        try:
+            endpoints = self.get_publishers_info_by_topic('/landing/camera_mount')
+            if len(endpoints) > 1:
+                self.mount_history.invalidate('dynamic_mount_source_missing_or_ambiguous')
+            if not endpoints:
+                return  # Wait for graph discovery; no measurement is admitted.
+            gid = bytes(endpoints[0].endpoint_gid)
+            if not 16 <= len(gid) <= 32 or not any(gid):
+                self.mount_history.invalidate('invalid_dynamic_mount_publisher_identity')
+            accepted = self.mount_history.receive(
+                Mount(stamp(message.header), received, (p.x, p.y, p.z),
+                      (q.x, q.y, q.z, q.w)),
+                message.header.frame_id, message.child_frame_id,
+                gid.hex(), self.get_clock().now().nanoseconds,
+                received,
+            )
+            if accepted:
+                self.try_pending()
+        except ValueError as error:
+            self.invalid(str(error))
 
     def receive_state(self, message, generation):
         """Ignore a callback already scheduled from a retired reader."""
@@ -233,6 +277,9 @@ class LandingTransform(Node):
         self.invalid("receiver_processing_gap")
         self.destroy_subscription(self.state_sub)
         self.destroy_subscription(self.target_sub)
+        if self.mount_sub is not None:
+            self.destroy_subscription(self.mount_sub)
+            self.mount_history.samples.clear()
         self.create_receivers()
         self.get_logger().warning(
             "receiver_processing_gap: volatile readers rebuilt; generation="
@@ -406,6 +453,8 @@ class LandingTransform(Node):
             self.pending = None
             self.last_good = None
             self.last_receipt = 0.0
+            if self.mount_history is not None:
+                self.mount_history.samples.clear()
         return valid
 
     def fresh(self, header, receipt, age):
@@ -605,14 +654,26 @@ class LandingTransform(Node):
                 ),
             }
         p, q = message.pose.position, message.pose.orientation
+        translation, quaternion = self.translation, self.quaternion
+        if self.mount_history is not None:
+            try:
+                if self.count_publishers('/landing/camera_mount') != 1:
+                    raise ValueError('dynamic_mount_source_missing_or_ambiguous')
+                translation, quaternion = self.mount_history.at(
+                    stamp(message.header), self.get_clock().now().nanoseconds,
+                    time.monotonic(),
+                )
+            except ValueError as error:
+                self.invalid(str(error), preserve_pending=not self.mount_history.failure)
+                return
         center = normal = None
         try:
             self.observation_quality(message)
             center, normal = transform(
                 (p.x, p.y, p.z),
                 (q.x, q.y, q.z, q.w),
-                self.translation,
-                self.quaternion,
+                translation,
+                quaternion,
                 (state.position_x, state.position_y, state.position_z),
                 (state.roll, state.pitch, state.yaw),
             )
@@ -648,7 +709,8 @@ class LandingTransform(Node):
             output.plane_normal.z,
         ) = normal
         output.valid = True
-        output.reason = "fixed_camera_source_paired_observation"
+        output.reason = ("dynamic_camera_original_time_paired_observation" if self.dynamic_camera
+                         else "fixed_camera_source_paired_observation")
         self.published_watermark = stamp(message.header)
         self.pending_sources = deque(
             (item for item in self.pending_sources
@@ -666,6 +728,14 @@ class LandingTransform(Node):
             return
         self.try_pending()
         clock_valid = self.clock_valid()
+        if self.mount_history is not None and self.last_good is not None:
+            try:
+                if self.count_publishers('/landing/camera_mount') != 1:
+                    raise ValueError('dynamic_mount_source_missing_or_ambiguous')
+                self.mount_history.at(stamp(self.last_good.header),
+                                      self.get_clock().now().nanoseconds, time.monotonic())
+            except ValueError as error:
+                self.invalid(str(error))
         if (
             not clock_valid
             or self.last_good is None
@@ -687,7 +757,8 @@ class LandingTransform(Node):
     def capabilities(self, _request, response):
         """Expose observation readiness separately from the landing controller."""
         response.header.stamp = self.get_clock().now().to_msg()
-        response.names = ["fixed_camera_landing_observation"]
+        response.names = ["dynamic_camera_landing_observation" if self.dynamic_camera
+                          else "fixed_camera_landing_observation"]
         response.implemented = [True]
         response.ready = [
             self.enabled
@@ -699,12 +770,19 @@ class LandingTransform(Node):
             )
         ]
         response.details = [
+            "Observation only; requires an explicit plane and original-time measured mounts."
+            if self.dynamic_camera else
             "Observation only; requires explicit fixed extrinsic and static plane."
         ]
         return response
 
 
 def main(args=None):
+    """Run the installed observation node."""
+    run_observer(LandingTransform, args=args)
+
+
+def run_observer(node_factory, args=None):
     """Run the observation node with bounded, ordinary executor cleanup."""
     # Native take can still be converting a message when rclpy's default signal
     # handler invalidates its context. Defer shutdown until our executor exits;
@@ -722,7 +800,7 @@ def main(args=None):
     try:
         for stop_signal in (signal.SIGINT, signal.SIGTERM):
             previous[stop_signal] = signal.signal(stop_signal, request_stop)
-        node = LandingTransform()
+        node = node_factory()
         executor = DiagnosticExecutor(node) if node.diagnostics else SingleThreadedExecutor()
         executor.add_node(node)
         while not stopping and rclpy.ok():

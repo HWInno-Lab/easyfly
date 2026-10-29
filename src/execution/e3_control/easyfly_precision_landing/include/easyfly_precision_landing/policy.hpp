@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <deque>
+#include <utility>
 #include <limits>
 #include <string>
 
@@ -40,6 +42,12 @@ struct Config
   double acquire_timeout{5.0};
   double lost_timeout{2.0};
   int settle_observations{5};
+  bool moving_target{false};
+  double moving_max_speed{0.06};
+  double moving_fit_error{0.04};
+  double moving_land_timeout{8.0};
+  // Declared pad clearance after aircraft footprint; not tag edge size.
+  double moving_usable_radius{0.65};
 
   bool valid() const
   {
@@ -50,6 +58,14 @@ struct Config
     for (const auto value : positive) {
       if (!std::isfinite(value) || value <= 0) {return false;}
     }
+    if (moving_target && (!std::isfinite(moving_max_speed) ||
+      !std::isfinite(moving_fit_error) || !std::isfinite(moving_land_timeout) ||
+      !std::isfinite(moving_usable_radius) || moving_max_speed <= 0 || moving_max_speed > 0.1 ||
+      moving_fit_error <= 0 || moving_fit_error > 0.05 ||
+      moving_land_timeout < 2 || moving_land_timeout > 10 ||
+      moving_usable_radius > 1.0 || moving_usable_radius <=
+      align_tolerance + 2 * moving_fit_error + moving_max_speed * moving_land_timeout))
+    {return false;}
     return std::isfinite(plane_z) && horizontal_speed <= 1.0 && descent_speed <= 0.5 &&
            align_tolerance <= 0.3 && handoff_height >= 0.15 && handoff_height <= 1.0 &&
            descent_floor_height >= 0.15 && descent_floor_height < handoff_height &&
@@ -104,6 +120,9 @@ public:
     losing_ = false;
     have_board_ = false;
     descending_ = false;
+    motion_.clear();
+    motion_ready_ = false;
+    motion_failed_ = false;
   }
 
   Decision step(
@@ -124,6 +143,17 @@ public:
       out.reason = "invalid_configuration_or_flight_boundary";
       return out;
     }
+    if (config_.moving_target && observation.valid && observation.stamp_ns > watermark_ &&
+      finite({observation.x, observation.y, observation.z}))
+    {
+      observe_motion(observation);
+    }
+    if (motion_failed_) {
+      out.failed = true;
+      out.phase = "failed";
+      out.reason = "moving_target_exceeds_declared_motion_profile";
+      return out;
+    }
     const bool good = observation.valid && observation.stamp_ns > 0 &&
       observation.stamp_ns >= watermark_ &&
       finite({observation.x, observation.y, observation.z}) &&
@@ -136,7 +166,8 @@ public:
       std::abs(observation.normal_z) >= std::cos(config_.tilt_limit) &&
       std::abs(observation.z - config_.plane_z) <= config_.plane_tolerance &&
       std::hypot(observation.x - anchor_.x, observation.y - anchor_.y) <= config_.max_radius &&
-      (!have_board_ || std::hypot(observation.x - board_.x, observation.y - board_.y) <=
+      (config_.moving_target || !have_board_ ||
+      std::hypot(observation.x - board_.x, observation.y - board_.y) <=
       config_.target_jump);
     if (!good) {
       if (!losing_) {
@@ -213,7 +244,8 @@ public:
       command_.x += dx * step / distance;
       command_.y += dy * step / distance;
     }
-    const bool aligned = settled_ >= config_.settle_observations;
+    const bool aligned = settled_ >= config_.settle_observations &&
+      (!config_.moving_target || motion_ready_);
     out.phase = aligned ? "descend" : "align";
     if (aligned && out.height_above_target <= config_.handoff_height) {
       out.handoff = true;
@@ -239,6 +271,46 @@ public:
   }
 
 private:
+  void observe_motion(const Observation & observation)
+  {
+    const double stamp = static_cast<double>(observation.stamp_ns) * 1e-9;
+    if (!motion_.empty() && stamp - motion_.back().first > config_.target_max_age) {
+      motion_.clear();
+      motion_ready_ = false;
+    }
+    motion_.emplace_back(stamp, Pose{observation.x, observation.y, observation.z});
+    while (motion_.size() > 128 ||
+      (motion_.size() > 2 && stamp - motion_.front().first > 1.0))
+    {motion_.pop_front();}
+    if (motion_.size() < 8 || stamp - motion_.front().first < 0.7) {return;}
+    double t = 0, x = 0, y = 0;
+    const double origin = motion_.front().first;
+    for (const auto & row : motion_) {
+      t += row.first - origin;
+      x += row.second.x;
+      y += row.second.y;
+    }
+    const double count = static_cast<double>(motion_.size());
+    t /= count; x /= count; y /= count;
+    double denominator = 0, vx = 0, vy = 0;
+    for (const auto & row : motion_) {
+      const double dt = row.first - origin - t;
+      denominator += dt * dt;
+      vx += dt * (row.second.x - x);
+      vy += dt * (row.second.y - y);
+    }
+    vx /= denominator; vy /= denominator;
+    if (std::hypot(vx, vy) > config_.moving_max_speed) {motion_failed_ = true;}
+    for (const auto & row : motion_) {
+      const double dt = row.first - origin - t;
+      if (std::hypot(row.second.x - x - vx * dt, row.second.y - y - vy * dt) >
+        config_.moving_fit_error) {motion_failed_ = true;}
+    }
+    motion_ready_ = !motion_failed_;
+  }
+
+  std::deque<std::pair<double, Pose>> motion_;
+  bool motion_ready_{false}, motion_failed_{false};
   static bool finite(const Pose & pose)
   {
     return std::isfinite(pose.x) && std::isfinite(pose.y) && std::isfinite(pose.z);

@@ -1,4 +1,4 @@
-# Managed simulation Fast DDS compatibility
+# EasyFly Fast DDS compatibility
 
 This package builds the complete upstream Fast DDS **v2.6.11**, with checked
 listener changes: snapshot reader and writer listeners under their existing
@@ -43,7 +43,11 @@ A first build downloads about 8 MB and builds the native middleware once.
 Managed scene launch and explicit `scene_sitl` activate this library **before**
 DDS initialization, validate its installed fingerprint and reject a process
 already using another Fast DDS library. Children inherit its private search
-path. The activation is process-local; empty-scene legacy launch is unchanged.
+path. The activation is process-local. Sourcing this package now also prepends its private
+library directory through an ament environment hook, so ordinary executables,
+legacy launch and CTest use the same fixes before ROS initialization. This hook
+does not select an RMW implementation or change DDS profiles. Existing processes
+must be restarted to use the new library.
 Ordinary tests exercise native endpoints and guards, never Gazebo, PX4 or flight.
 This fixes the captured DDS race; it does not uniquely attribute old crashes
 whose native stacks were not retained.
@@ -95,3 +99,41 @@ actual bytes/hashes in the run evidence. Native QoS and subprocess inheritance
 tests cover the 2-second named policies and unchanged 100-ms default.
 The explicit middleware failure comes from
 [Humble rmw_response.cpp](https://github.com/ros2/rmw_fastrtps/blob/humble/rmw_fastrtps_shared_cpp/src/rmw_response.cpp).
+
+The retained kernel journal identifies the B-06 battery and B-11 EGO shutdown
+faults at system ELF PC `0x409126` (`EDP::unpairWriterProxy + 406`), and the B-06
+ALG-9 search exit at `0x280ec7` (`StatefulReader::matched_writer_remove + 503`).
+The native old-library regressions reproduce both exact PCs. This extends the
+attribution beyond the original warehouse core; the failed logs remain retained.
+
+Three B-10 Observer faults instead map to `History::get_change_nts + 47`
+(`0x2672af`). Fast DDS 2.6.11 retains a vector iterator across a listener callback
+that can erase/reallocate that vector. We backport upstream
+[PR #6473](https://github.com/eProsima/Fast-DDS/pull/6473), commit
+`be16b70ffe548a8b920cf6ad88f265a11d47371e`: restart the lookup from the current
+history begin after the callback, keeping the next sequence watermark. The
+upstream Apache-2.0 regression is retained with its copyright. On the old
+library it loses sequence 4 after the callback erases sequences 1 and 2; with
+the patch it delivers exactly 1, 2, 3, 4. The regression exposes the invalid
+iterator without requiring an allocator-dependent crash.
+
+A discovery-pressure run also captured two native threads deadlocked during
+participant destruction: the flow thread held its queue mutex and waited for
+the writer's locator selector while flushing; the removal thread held that
+selector and waited for the flow mutex. This is the lock cycle discussed in
+[upstream PR #3468](https://github.com/eProsima/Fast-DDS/pull/3468), which was
+closed without merging. Our patch flushes and resets the message sender after
+each cache delivery while the writer and recursive selector locks are still
+held. No endpoint pointer remains pending across their unlock. It is a local
+fix, not a backport of an accepted upstream change.
+
+`test_flow_flush` sends four actual samples with intraprocess delivery disabled.
+Its Linux/glibc test-only mutex instrumentation observes the real native send:
+the preceding private library performs four flushes after releasing the selector;
+the fixed library receives all four samples with zero unlocked flushes. The
+instrumentation never enters the installed library. The same real SITL graph
+and six-process endpoint churn then exit normally, with all five UI layers
+present in 198 consecutive samples. This trades cross-cache packet batching
+for a bounded lock lifetime; per-cache fragmentation, reliability and transport
+configuration are unchanged. High-throughput multi-writer performance has not
+been benchmarked beyond the recorded simulation and native regressions.

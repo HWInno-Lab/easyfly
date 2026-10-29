@@ -10,20 +10,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef SUPPORT_HPP_
 #define SUPPORT_HPP_
 #include <QApplication>
 #include <QFont>
 #include <QTest>
-
 #include <algorithm>
 #include <chrono>
 #include <map>
 #include <memory>
 #include <string>
 #include <utility>
-
 #include "easyfly_desktop/main_window.hpp"
 namespace desktop_test
 {

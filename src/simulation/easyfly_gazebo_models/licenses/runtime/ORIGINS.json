@@ -53,5 +53,13 @@
       "recipe": "tools/scenes/prepare_runtime_assets.py:configure_mid360_imu"
     }
   ],
-  "initial_mid360_change": "Only the visual geometry is replaced by a project primitive; no original mesh is imported."
+  "initial_mid360_change": "Only the visual geometry is replaced by a project primitive; no original mesh is imported.",
+  "original_mid360_sdf_path": "licenses/runtime/mid360-original.sdf",
+  "current_base_mid360_sdf_sha256": "c3e66db5e2c9e0bf31ed86b7b6ee65728a3000794cd03553e6ed1315fc0c1405",
+  "base_mid360_change": {
+    "recorded_on": "2026-10-28",
+    "change": "Previously applied project-local coherent ROS IMU plugin name replacement, exactly one XML attribute; source physics and all other bytes unchanged. Original bytes now separately retained.",
+    "patch": "licenses/runtime/mid360-base-imu.patch",
+    "patch_sha256": "40a71b802c5e0d3bb5b6432c7eb69533ab71d3b7b44c1773d92d794d0c7794ea"
+  }
 }

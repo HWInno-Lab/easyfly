@@ -270,3 +270,201 @@ def test_backend_conditions_are_exclusive_and_optional_dependencies_are_lazy(mon
     actions = module._openvins(LaunchContext())
     assert requested == ['easyfly_openvins_integration']
     assert len(actions) == 1
+
+
+def test_openvins_navigation_requires_explicit_simulation_profile_selection():
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(
+        profile='navigation_dev', algorithms_json=json.dumps(dict(slam='openvins')))
+    for enabled in ['false', 'true']:
+        context.launch_configurations['openvins_navigation'] = enabled
+        group = next(a for a in module._launch_profile(context) if isinstance(a, GroupAction))
+        include = next(a for a in group.get_sub_entities() if isinstance(a, IncludeLaunchDescription))
+        assert dict(include.launch_arguments)['openvins_navigation'] == enabled
+    context.launch_configurations['profile'] = 'landing_dev'
+    with pytest.raises(ValueError, match='requires navigation_dev'):
+        module._launch_profile(context)
+    context.launch_configurations.update(
+        profile='navigation_dev', algorithms_json=json.dumps(dict(slam='fast_lio')))
+    with pytest.raises(ValueError, match='requires navigation_dev'):
+        module._launch_profile(context)
+
+
+@pytest.mark.parametrize('profile', ['base_sim', 'full_perception', 'navigation_dev', 'landing_dev'])
+def test_gcopter_selection_is_scoped_to_navigation_profile(profile):
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(
+        profile=profile, gcopter_evidence_directory='/tmp/reviewed-gcopter-evidence',
+        algorithms_json=json.dumps(dict(slam='profile', strategy='gcopter')))
+    if profile != 'navigation_dev':
+        with pytest.raises(ValueError, match='GCOPTER'):
+            module._launch_profile(context)
+        return
+    group = next(action for action in module._launch_profile(context)
+                 if isinstance(action, GroupAction))
+    include = next(action for action in group.get_sub_entities()
+                   if isinstance(action, IncludeLaunchDescription))
+    arguments = dict(include.launch_arguments)
+    assert arguments['navigation_strategy'] == 'gcopter'
+    assert arguments['gcopter_evidence_directory'] == '/tmp/reviewed-gcopter-evidence'
+    assert not any(isinstance(action, ExecuteProcess) for action in group.get_sub_entities())
+
+
+@pytest.mark.parametrize('profile', ['base_sim', 'full_perception', 'navigation_dev', 'landing_dev'])
+def test_super_selection_is_scoped_to_navigation_profile(profile):
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(
+        profile=profile, super_evidence_directory='/tmp/reviewed-super-evidence',
+        algorithms_json=json.dumps(dict(slam='profile', strategy='super')))
+    if profile != 'navigation_dev':
+        with pytest.raises(ValueError, match='SUPER'):
+            module._launch_profile(context)
+        return
+    group = next(action for action in module._launch_profile(context)
+                 if isinstance(action, GroupAction))
+    include = next(action for action in group.get_sub_entities()
+                   if isinstance(action, IncludeLaunchDescription))
+    arguments = dict(include.launch_arguments)
+    assert arguments['navigation_strategy'] == 'super'
+    assert arguments['super_evidence_directory'] == '/tmp/reviewed-super-evidence'
+    assert not any(isinstance(action, ExecuteProcess) for action in group.get_sub_entities())
+
+
+def test_comparison_acceleration_reaches_real_ego_parameters():
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(profile='navigation_dev',
+        local_planner_max_acceleration='2.0',
+        algorithms_json=json.dumps(dict(slam='fast_lio', strategy='ego')))
+    group = next(a for a in module._launch_profile(context) if isinstance(a, GroupAction))
+    include = next(a for a in group.get_sub_entities() if isinstance(a, IncludeLaunchDescription))
+    root = expand_include(include, context)
+    for entity in nested_entities(root.entities):
+        if not isinstance(entity, IncludeLaunchDescription):
+            continue
+        location = perform_substitutions(context, entity.launch_description_source._LaunchDescriptionSource__location)
+        if location.endswith('local_planner.launch.py'):
+            description = expand_include(entity, context)
+            node = next(a for a in description.entities if isinstance(a, Node)
+                and perform_substitutions(context, normalize_to_list_of_substitutions(a.node_executable)) == 'ego_planner_node')
+            parameters = evaluate_parameters(context, node._Node__parameters)[0]
+            assert parameters['manager/max_acc'] == 2.0
+            assert parameters['optimization/max_acc'] == 2.0
+            return
+    pytest.fail('missing actual EGO launch')
+
+
+def test_comparison_cannot_raise_default_acceleration_bound():
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(profile='navigation_dev', local_planner_max_acceleration='20.0')
+    with pytest.raises(ValueError, match='acceleration'):
+        module._launch_profile(context)
+
+
+@pytest.mark.parametrize('profile,strategy,slam',[
+    ('navigation_dev','gcopter','fast_lio'),('full_perception','gcopter','fast_lio'),
+    ('navigation_dev','super','fast_lio'),('navigation_dev','gcopter','openvins')])
+def test_fuel_explicit_task_selection_and_scope(profile,strategy,slam):
+    import json
+    module=load_entrypoint();context=LaunchContext()
+    context.launch_configurations.update(profile=profile,fuel_evidence_directory='/tmp/fuel-reviewed-evidence',
+        algorithms_json=json.dumps(dict(slam=slam,strategy=strategy,exploration='fuel')))
+    if (profile,strategy,slam)!=('navigation_dev','gcopter','fast_lio'):
+        with pytest.raises(ValueError):module._launch_profile(context)
+        return
+    actions=module._launch_profile(context)
+    group=next(a for a in actions if isinstance(a,GroupAction))
+    include=next(a for a in group.get_sub_entities() if isinstance(a,IncludeLaunchDescription))
+    arguments=dict(include.launch_arguments)
+    assert arguments['exploration_backend']=='fuel'
+    assert arguments['fuel_evidence_directory']=='/tmp/fuel-reviewed-evidence'
+
+
+def test_fuel_default_keeps_existing_navigation():
+    module=load_entrypoint();context=LaunchContext()
+    context.launch_configurations.update(profile='navigation_dev')
+    group=next(a for a in module._launch_profile(context) if isinstance(a,GroupAction))
+    include=next(a for a in group.get_sub_entities() if isinstance(a,IncludeLaunchDescription))
+    assert 'exploration_backend' not in dict(include.launch_arguments)
+
+
+@pytest.mark.parametrize('profile,strategy,value,accepted', [
+    ('navigation_dev', 'super', 'true', True),
+    ('navigation_dev', 'super', 'false', True),
+    ('navigation_dev', 'gcopter', 'true', False),
+    ('full_perception', 'astar', 'true', False),
+    ('navigation_dev', 'super', 'automatic', False),
+])
+def test_committed_super_requires_explicit_compatible_selection(profile, strategy, value, accepted):
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(
+        profile=profile, super_execute_committed=value,
+        algorithms_json=json.dumps(dict(slam='fast_lio', strategy=strategy)))
+    if not accepted:
+        with pytest.raises(ValueError):
+            module._launch_profile(context)
+        return
+    group = next(action for action in module._launch_profile(context)
+                 if isinstance(action, GroupAction))
+    include = next(action for action in group.get_sub_entities()
+                   if isinstance(action, IncludeLaunchDescription))
+    assert dict(include.launch_arguments)['super_execute_committed'] == value
+
+
+@pytest.mark.parametrize('profile,strategy,exploration,value,accepted', [
+    ('navigation_dev', 'gcopter', 'none', 'true', True),
+    ('navigation_dev', 'gcopter', 'none', 'false', True),
+    ('navigation_dev', 'super', 'none', 'true', False),
+    ('full_perception', 'gcopter', 'none', 'true', False),
+    ('navigation_dev', 'gcopter', 'fuel', 'true', False),
+    ('navigation_dev', 'gcopter', 'none', 'automatic', False),
+])
+def test_dynamic_gcopter_requires_explicit_compatible_selection(
+        profile, strategy, exploration, value, accepted):
+    import json
+    module = load_entrypoint()
+    context = LaunchContext()
+    context.launch_configurations.update(
+        profile=profile, gcopter_dynamic_navigation=value,
+        algorithms_json=json.dumps(dict(slam='fast_lio', strategy=strategy,
+                                        exploration=exploration)))
+    if not accepted:
+        with pytest.raises(ValueError):
+            module._launch_profile(context)
+        return
+    group = next(a for a in module._launch_profile(context) if isinstance(a, GroupAction))
+    include = next(a for a in group.get_sub_entities() if isinstance(a, IncludeLaunchDescription))
+    assert dict(include.launch_arguments)['gcopter_dynamic_navigation'] == value
+
+
+@pytest.mark.parametrize('exploration,extended,dynamic,speed,accepted', [
+    ('fuel','true','false','1.2',True),('fuel','false','false','1.2',True),
+    ('none','true','false','1.2',False),('fuel','true','true','1.2',False),
+    ('fuel','automatic','false','1.2',False),('fuel','true','false','nan',False),
+    ('fuel','true','false','3.0',False),('fuel','true','false','0.0',False),
+])
+def test_extended_fuel_fixed_map_native_profile(exploration,extended,dynamic,speed,accepted):
+    import json
+    module=load_entrypoint();context=LaunchContext()
+    context.launch_configurations.update(profile='navigation_dev', fuel_extended_profile=extended,
+        gcopter_dynamic_navigation=dynamic, fuel_native_max_speed=speed,
+        fuel_evidence_directory='/tmp/fuel-profile-evidence',
+        algorithms_json=json.dumps(dict(slam='fast_lio',strategy='gcopter',exploration=exploration)))
+    if not accepted:
+        with pytest.raises(ValueError):module._launch_profile(context)
+        return
+    group=next(a for a in module._launch_profile(context) if isinstance(a,GroupAction))
+    include=next(a for a in group.get_sub_entities() if isinstance(a,IncludeLaunchDescription))
+    arguments=dict(include.launch_arguments)
+    assert arguments['fuel_extended_profile']==extended
+    assert arguments['fuel_native_max_speed']==speed

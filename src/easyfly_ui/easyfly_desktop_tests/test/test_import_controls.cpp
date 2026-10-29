@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include <gtest/gtest.h>
 #include <QDir>
 #include <QFile>
@@ -42,7 +42,6 @@
 #include <easyfly_msgs/srv/import_mission.hpp>
 #include <easyfly_mission_format/mission_format.hpp>
 #include "easyfly_desktop/import_controls.hpp"
-// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include "support.hpp"
 namespace ui = easyfly_desktop;
 namespace c = easyfly_ui_control;
@@ -283,7 +282,6 @@ TEST(ImportStack, ExportedDraftRealServiceReadbackAndReadOnlyCatalogView)
     QMessageBox::Yes);
   ASSERT_TRUE(desktop_test::until([&] {return window.cleanup_complete();}));
 }
-
 // C04: actual editor/importer/observer/service, isolated private files, no flight backend.
 class ImportChain : public ::testing::Test
 {

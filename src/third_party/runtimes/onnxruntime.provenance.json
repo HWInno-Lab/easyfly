@@ -151,11 +151,20 @@
   "public_api_hides_sdk_types": true,
   "default_root_overridable_via": "ORT_ROOT",
   "local_patch_history": [
-    "ALG-5 updated local EASYFLY_SETUP.md path/responsibility; original SDK archive unavailable."
+    "ALG-5 updated local EASYFLY_SETUP.md path/responsibility; original SDK archive unavailable.",
+    "2026-10-28 D-04: independently retrieve pinned official archive and compare every archive file and symlink; SDK bytes unchanged."
   ],
   "known_limits": [
     "CUDA dependencies remain host requirements; actual provider must be reported.",
     "Bundled TensorRT provider is not an implemented EasyFly TensorRT backend.",
     "No SDK refetch or upgrade in ALG-8.5."
-  ]
+  ],
+  "verified_official_archive": {
+    "retrieved_on": "2026-10-28",
+    "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.23.2/onnxruntime-linux-x64-gpu-1.23.2.tgz",
+    "sha256": "2083e361072a79ce16a90dcd5f5cb3ab92574a82a3ce0ac01e5cfa3158176f53",
+    "all_payload_files_identical": true,
+    "compared_entries": 32,
+    "scope": "Fresh official release retrieval matches existing local SDK; original historical download log and independent archive signature are not claimed."
+  }
 }

@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <limits>
 #include "easyfly_desktop/camera_overlay.hpp"
@@ -137,7 +136,6 @@ TEST(CameraOverlay, DenseLabelsDoNotOverlapOrLeaveImage)
   const auto clipped = ui::camera_label_rect(bounds, QRect(0, 0, 50, 30), QSize(180, 24), {});
   EXPECT_TRUE(QRect(0, 0, 50, 30).contains(clipped));
 }
-
 TEST(CameraOverlay, ClassicalShapesRequireExactHeaderDimensionsAndFreshness)
 {
   Sample sample;

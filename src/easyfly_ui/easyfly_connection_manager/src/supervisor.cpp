@@ -41,6 +41,7 @@
 #include "easyfly_connection_manager/supervisor.hpp"
 #include "easyfly_connection_manager/profile.hpp"
 #include "native_window.hpp"
+#include "qgc_settings.hpp"
 
 namespace easyfly_connection_manager
 {
@@ -603,6 +604,7 @@ struct Supervisor::Impl
     if (profile.recording) {arguments << "--enable-recording";}
     if (profile.rviz_embed) {arguments << "--enable-rviz-embed";}
     if (profile.parameter_edit) {arguments << "--enable-parameter-edit";}
+    if (profile.peripheral_control) {arguments << "--enable-peripheral-control";}
     if (profile.mission_control || profile.mission_import) {
       const auto profiles = private_directory(data_directory() + "/profiles");
       const auto root = private_directory(profiles + "/" + profile.id);
@@ -674,14 +676,8 @@ struct Supervisor::Impl
       const auto org = private_directory(config + "/" + organization);
       QSettings settings(org + "/QGroundControl.ini", QSettings::IniFormat);
       settings.setValue("savePath", saved);
-      settings.beginGroup("AutoConnect");
-      for (const auto & key : {"autoConnectPixhawk", "autoConnectSiKRadio", "autoConnectRTKGPS",
-          "autoConnectLibrePilot", "autoConnectZeroConf"}) {settings.setValue(key, false);}
-      settings.setValue("autoConnectUDP", true);
-      settings.setValue("udpListenPort", profile.gcs_port);
-      settings.setValue("udpTargetHostIP", "127.0.0.1");
-      settings.setValue("udpTargetHostPort", profile.gcs_bind_port);
-      settings.endGroup(); settings.sync();
+      configure_qgc_udp(settings, profile.gcs_port, profile.gcs_bind_port);
+      settings.sync();
       if (settings.status() != QSettings::NoError) {
         throw std::runtime_error("无法保存本次 QGC 的独立设置");
       }

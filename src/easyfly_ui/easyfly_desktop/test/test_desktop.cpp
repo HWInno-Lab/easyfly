@@ -10,9 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <QComboBox>
 #include <QColor>
 #include <QDir>
@@ -38,13 +36,11 @@
 #include <QTabWidget>
 #include <QTimer>
 #include <QVBoxLayout>
-
 #include <algorithm>
 #include <cmath>
 #include <limits>
 #include <iostream>
 #include <stdexcept>
-
 #include "easyfly_desktop/presentation.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_ui_bridge/camera_observations.hpp"
@@ -161,7 +157,8 @@ TEST_F(Desktop, ConnectionPageSharesNavigationWithoutRestartingObservation)
   EXPECT_TRUE(widget<QWidget>("configurationPanel")->isHidden());
   EXPECT_EQ(window->findChildren<ui::RvizView *>().size(), ui::RvizView::available() ? 1 : 0);
   EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 3);
-  EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->count(), 2);
+  EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->count(), 3);
+  EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->widget(2)->objectName(), "geographicView");
 }
 TEST_F(Desktop, TaskCatalogAndExecutionStayTogetherWithoutWastingNavigationSpace)
 {
@@ -748,6 +745,47 @@ TEST_F(Desktop, SelectionPendingFailureAndReconnectNeverReuseOldMissionDetails)
   EXPECT_TRUE(widget<QPlainTextEdit>("missionContent")->toPlainText().isEmpty());
   EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 0);
 }
+TEST_F(Desktop, CatalogRefreshPreservesDetailsRequestedForTheSameSelection)
+{
+  open(); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  auto * list = widget<QListWidget>("missionList"); list->setCurrentRow(0);
+  state->answer = false; click("listMissions");
+  const auto refresh_id = state->sequence;
+  ASSERT_TRUE(until([&] {return content("catalogQuality").contains(QStringLiteral("等待"));}));
+  state->answer = true; click("inspectMission");
+  ASSERT_TRUE(until([&] {return content("missionDetailsSummary").contains("SHA-256");}));
+  const auto detail_calls = state->details_calls;
+  auto response = std::make_shared<easyfly_msgs::srv::ManageMission::Response>();
+  response->success = true; response->missions = {"demo.yaml"};
+  auto received = evidence(); received.request_id = refresh_id;
+  state->data->missions[b::Key::MissionList] = {response, received};
+  ASSERT_TRUE(until([&] {return !content("catalogQuality").contains(QStringLiteral("等待"));}));
+  ASSERT_NE(list->currentItem(), nullptr);
+  EXPECT_EQ(list->currentItem()->text(), "demo.yaml");
+  EXPECT_TRUE(content("missionDetailsSummary").contains("SHA-256"));
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 3);
+  EXPECT_EQ(state->details_calls, detail_calls);
+}
+TEST_F(Desktop, CatalogRefreshRemovingSelectionClearsItsDetails)
+{
+  open(); click("listMissions");
+  ASSERT_TRUE(until([&] {return widget<QListWidget>("missionList")->count() == 1;}));
+  auto * list = widget<QListWidget>("missionList"); list->setCurrentRow(0); click("inspectMission");
+  ASSERT_TRUE(until([&] {return content("missionDetailsSummary").contains("SHA-256");}));
+  state->answer = false; click("listMissions");
+  const auto refresh_id = state->sequence;
+  ASSERT_TRUE(until([&] {return content("catalogQuality").contains(QStringLiteral("等待"));}));
+  auto response = std::make_shared<easyfly_msgs::srv::ManageMission::Response>();
+  response->success = true; response->missions = {"second.yaml"};
+  auto received = evidence(); received.request_id = refresh_id;
+  state->data->missions[b::Key::MissionList] = {response, received};
+  ASSERT_TRUE(until([&] {return !content("catalogQuality").contains(QStringLiteral("等待"));}));
+  EXPECT_EQ(list->currentItem(), nullptr);
+  EXPECT_FALSE(content("missionDetailsSummary").contains("SHA-256"));
+  EXPECT_EQ(widget<QTableView>("missionSteps")->model()->rowCount(), 0);
+  EXPECT_FALSE(widget<QPushButton>("inspectMission")->isEnabled());
+}
 TEST_F(Desktop, AllStepTypesAndHistoricalPreviewStayReadonly)
 {
   state->details_content =
@@ -857,7 +895,6 @@ TEST_F(Desktop, OverviewFreshAttitudeAndInvalidationScreenshots)
       }));
   ASSERT_TRUE(window->grab().save(output.filePath("overview-paused.png")));
 }
-
 TEST_F(Desktop, ClassicalLineViewShowsSameFrameGeometryAndClearsOnInvalidation)
 {
   const auto now = b::detail::steady_seconds();
@@ -896,7 +933,6 @@ TEST_F(Desktop, ClassicalLineViewShowsSameFrameGeometryAndClearsOnInvalidation)
   ASSERT_TRUE(until([&] {return !canvas->property("has_frame").toBool();}));
   EXPECT_EQ(canvas->property("overlay_count").toInt(), 0);
 }
-
 TEST_F(Desktop, OpenvinsStatusShowsSessionAndDoesNotClaimNavigationReadiness)
 {
   state->data->selected_localization_backend = "openvins";
@@ -923,9 +959,7 @@ TEST_F(Desktop, OpenvinsStatusShowsSessionAndDoesNotClaimNavigationReadiness)
   state->data->localization.evidence.quality = b::Quality::Invalid;
   ASSERT_TRUE(until([&]() {return contents().contains(QStringLiteral("需要重启整个定位会话"));}));
 }
-
-
-TEST_F(Desktop, OpenvinsPreventsNavigationMissionEvenIfActionIsDiscovered)
+TEST_F(Desktop, VisualNavigationNeedsExplicitModeAndFreshMatchingSession)
 {
   auto plan = std::make_shared<easyfly_mission_fsm::MissionValidation>();
   easyfly_mission_fsm::MissionStep step; step.type = "navigate";
@@ -933,6 +967,34 @@ TEST_F(Desktop, OpenvinsPreventsNavigationMissionEvenIfActionIsDiscovered)
   state->data->selected_localization_backend = "openvins";
   const auto now = b::detail::steady_seconds();
   EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).contains("OpenVINS"));
+  state->data->selected_localization_backend = "fast_livo2";
+  EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).contains("FAST-LIVO2"));
+  state->data->selected_localization_backend = "orbslam3";
+  EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).contains("ORB-SLAM3"));
   state->data->selected_localization_backend = "fast_lio";
   EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).isEmpty());
+  for (const auto & backend : {"openvins", "fast_livo2", "orbslam3"}) {
+    state->data->selected_localization_backend = backend;
+    state->data->selected_profile = "navigation_dev";
+    state->data->localization_navigation_enabled = true;
+    auto raw = std::make_shared<easyfly_msgs::msg::LocalizationStatus>();
+    raw->session_id = "live"; raw->generation = 7;
+    auto nav = std::make_shared<easyfly_msgs::msg::LocalizationStatus>();
+    nav->session_id = raw->session_id; nav->generation = raw->generation;
+    nav->backend_id = std::string(backend) + "_navigation";
+    nav->header.frame_id = "odom"; nav->tracked_frame = "base_link";
+    nav->header.stamp.sec = 10; nav->pose_stamp.sec = 10;
+    nav->state = nav->ESTIMATING; nav->pose_valid = nav->tracking_quality_available = true;
+    state->data->clock = {b::Quality::ValidAtObservation, 10000000000LL, 0};
+    state->data->localization = {raw, evidence()};
+    state->data->navigation_localization = {nav, evidence()};
+    EXPECT_TRUE(ui::missing_mission_backends(*state->data, now).isEmpty());
+    nav->generation = 8;
+    EXPECT_FALSE(ui::missing_mission_backends(*state->data, now).isEmpty());
+    nav->generation = 7; nav->pose_stamp.sec = 9;
+    EXPECT_FALSE(ui::missing_mission_backends(*state->data, now).isEmpty());
+    nav->pose_stamp.sec = 10;
+    state->data->navigation_localization.evidence.quality = b::Quality::Stale;
+    EXPECT_FALSE(ui::missing_mission_backends(*state->data, now).isEmpty());
+  }
 }

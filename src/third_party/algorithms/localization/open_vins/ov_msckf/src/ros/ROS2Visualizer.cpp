@@ -46,6 +46,7 @@ ROS2Visualizer::ROS2Visualizer(std::shared_ptr<rclcpp::Node> node, std::shared_p
 
   // Setup pose and path publisher
   pub_poseimu = node->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("poseimu", 2);
+  pub_tracking = node->create_publisher<diagnostic_msgs::msg::DiagnosticArray>("visual_tracking", 32);
   PRINT_DEBUG("Publishing: %s\n", pub_poseimu->get_topic_name());
   pub_odomimu = node->create_publisher<nav_msgs::msg::Odometry>("odomimu", 2);
   PRINT_DEBUG("Publishing: %s\n", pub_odomimu->get_topic_name());
@@ -176,13 +177,29 @@ void ROS2Visualizer::setup_subscribers(std::shared_ptr<ov_core::YamlParser> pars
 
   // We need a valid parser
   assert(parser != nullptr);
+  rcl_interfaces::msg::ParameterDescriptor input_descriptor;
+  input_descriptor.read_only = true;
+  // The executable auto-declares CLI overrides. Preserve that startup value,
+  // then re-declare it read-only before installing any input callbacks.
+  bool requested_input_timing = false;
+  if (_node->has_parameter("strict_input_timing")) {
+    requested_input_timing = _node->get_parameter("strict_input_timing").as_bool();
+    _node->undeclare_parameter("strict_input_timing");
+  }
+  strict_input_timing = _node->declare_parameter<bool>(
+    "strict_input_timing", requested_input_timing, input_descriptor, true);
+  if (strict_input_timing && (!_node->get_parameter("use_sim_time").as_bool() ||
+      _app->get_params().state_options.num_cameras != 1))
+    throw std::invalid_argument("strict input timing requires managed monocular simulation");
 
   // Create imu subscriber (handle legacy ros param info)
   std::string topic_imu;
   _node->declare_parameter<std::string>("topic_imu", "/imu0");
   _node->get_parameter("topic_imu", topic_imu);
   parser->parse_external("relative_config_imu", "imu0", "rostopic", topic_imu);
-  sub_imu = _node->create_subscription<sensor_msgs::msg::Imu>(topic_imu, rclcpp::SensorDataQoS(),
+  rclcpp::QoS imu_qos = rclcpp::SensorDataQoS();
+  if (strict_input_timing) imu_qos = rclcpp::QoS(1000).reliable();
+  sub_imu = _node->create_subscription<sensor_msgs::msg::Imu>(topic_imu, imu_qos,
                                                               std::bind(&ROS2Visualizer::callback_inertial, this, std::placeholders::_1));
   PRINT_INFO("subscribing to IMU: %s\n", topic_imu.c_str());
 
@@ -223,7 +240,8 @@ void ROS2Visualizer::setup_subscribers(std::shared_ptr<ov_core::YamlParser> pars
       // auto sub = _node->create_subscription<sensor_msgs::msg::Image>(
       //    cam_topic, rclcpp::SensorDataQoS(), std::bind(&ROS2Visualizer::callback_monocular, this, std::placeholders::_1, i));
       auto sub = _node->create_subscription<sensor_msgs::msg::Image>(
-          cam_topic, 10, [this, i](const sensor_msgs::msg::Image::SharedPtr msg0) { callback_monocular(msg0, i); });
+          cam_topic, rclcpp::QoS(strict_input_timing ? 32 : 10),
+          [this, i](const sensor_msgs::msg::Image::SharedPtr msg0) { callback_monocular(msg0, i); });
       subs_cam.push_back(sub);
       PRINT_INFO("subscribing to cam (mono): %s\n", cam_topic.c_str());
     }
@@ -447,7 +465,41 @@ void ROS2Visualizer::visualize_final() {
   PRINT_INFO(REDPURPLE "TIME: %.3f seconds\n\n" RESET, (rT2 - rT1).total_microseconds() * 1e-6);
 }
 
+bool ROS2Visualizer::admit_strict_input(const builtin_interfaces::msg::Time &stamp, bool inertial) {
+  if (!strict_input_timing) return true;
+  if (strict_input_failed) return false;
+  const int64_t now = _node->get_clock()->now().nanoseconds();
+  if (now == 0 && last_input_imu_ns == 0 && last_input_camera_ns == 0) return false;
+  const int64_t source = static_cast<int64_t>(stamp.sec)*1000000000LL + stamp.nanosec;
+  auto &previous = inertial ? last_input_imu_ns : last_input_camera_ns;
+  auto &receipt = inertial ? last_input_imu_receipt : last_input_camera_receipt;
+  const auto received = std::chrono::steady_clock::now();
+  const double receipt_gap = std::chrono::duration<double>(received - receipt).count();
+  const int64_t maximum_gap = inertial ? 25000000LL : 250000000LL;
+  // Discovery can deliver writer history before the first live sample. Drop
+  // expired startup history without feeding it or establishing a stream epoch.
+  // Once a stream has accepted data, the original hard failure rules apply.
+  if (previous == 0 && !_app->initialized() && stamp.sec >= 0 &&
+      stamp.nanosec < 1000000000u && source > 0 && now - source > 500000000LL)
+    return false;
+  if (stamp.sec < 0 || stamp.nanosec >= 1000000000u || source <= 0 || now <= 0 ||
+      source - now > 200000000LL || now - source > 500000000LL ||
+      (previous && (source <= previous || source - previous > maximum_gap || receipt_gap > 0.5))) {
+    strict_input_failed = true;
+    RCLCPP_ERROR(_node->get_logger(),
+      "strict input timing failure (%s): source_ns=%ld previous_ns=%ld clock_ns=%ld receipt_gap=%.6f; "
+      "reject before filter update; restart the whole localization session",
+      inertial ? "imu" : "camera", source, previous, now, receipt_gap);
+    _node->get_node_base_interface()->get_context()->shutdown("strict estimator input timing failure");
+    return false;
+  }
+  previous = source;
+  receipt = received;
+  return true;
+}
+
 void ROS2Visualizer::callback_inertial(const sensor_msgs::msg::Imu::SharedPtr msg) {
+  if (!admit_strict_input(msg->header.stamp, true)) return;
 
   // convert into correct format
   ov_core::ImuData message;
@@ -490,7 +542,29 @@ void ROS2Visualizer::callback_inertial(const sensor_msgs::msg::Imu::SharedPtr ms
       while (!camera_queue.empty() && camera_queue.at(0).timestamp < timestamp_imu_inC) {
         auto rT0_1 = boost::posix_time::microsec_clock::local_time();
         double update_dt = 100.0 * (timestamp_imu_inC - camera_queue.at(0).timestamp);
+        const auto previous_tracks = _app->current_track_ids(camera_queue.at(0).sensor_ids);
         _app->feed_measurement_camera(camera_queue.at(0));
+        diagnostic_msgs::msg::DiagnosticArray observed;
+        const double camera_time = camera_queue.at(0).timestamp;
+        observed.header.stamp = ROSVisualizerHelper::get_time_from_seconds(
+          camera_time + _app->get_state()->_calib_dt_CAMtoIMU->value()(0));
+        diagnostic_msgs::msg::DiagnosticStatus quality;
+        quality.name = "openvins/visual_tracking";
+        quality.hardware_id = "open_vins";
+        const auto current_tracks = _app->current_track_ids(camera_queue.at(0).sensor_ids);
+        size_t tracks = 0;
+        for (auto id : current_tracks) {
+          if (std::find(previous_tracks.begin(), previous_tracks.end(), id) != previous_tracks.end()) ++tracks;
+        }
+        quality.level = tracks ? diagnostic_msgs::msg::DiagnosticStatus::OK :
+                                 diagnostic_msgs::msg::DiagnosticStatus::WARN;
+        quality.message = "Observed current 2D tracks; not a navigation certificate";
+        diagnostic_msgs::msg::KeyValue count, initialized;
+        count.key = "tracked_features"; count.value = std::to_string(tracks);
+        initialized.key = "initialized"; initialized.value = _app->initialized() ? "1" : "0";
+        quality.values = {count, initialized};
+        observed.status.push_back(quality);
+        pub_tracking->publish(observed);
         visualize();
         camera_queue.pop_front();
         auto rT0_2 = boost::posix_time::microsec_clock::local_time();
@@ -508,6 +582,7 @@ void ROS2Visualizer::callback_inertial(const sensor_msgs::msg::Imu::SharedPtr ms
 }
 
 void ROS2Visualizer::callback_monocular(const sensor_msgs::msg::Image::SharedPtr msg0, int cam_id0) {
+  if (!admit_strict_input(msg0->header.stamp, false)) return;
 
   // Check if we should drop this image
   double timestamp = msg0->header.stamp.sec + msg0->header.stamp.nanosec * 1e-9;

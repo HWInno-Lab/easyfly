@@ -11,10 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #pragma once
-#include "easyfly_object_detection/types.hpp"
 #include "easyfly_detection_api/detector.hpp"
+#include "easyfly_object_detection/types.hpp"
 namespace easyfly_object_detection
 {
 using easyfly::detection::DetectorBase;

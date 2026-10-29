@@ -100,7 +100,7 @@ bootstrap 禁止所有飞行 Goal；已注册场景使用其受管入口，草�
 飞行检查保留相对场景参考的 0.2m / 0.1rad 偏差门槛。
 修改后请用 `colcon build` 完成安装和环境钩子生成；单独 `cmake --install` 可能覆盖
 colcon 的 package.dsv 钩子，造成选中了新包前缀却加载旧库。
-完整原始证据与当前缺口见工作区 `schedule-v5-scene.md` 的 S2 记录。
+历史场景结论与当前缺口见工作区 `schedule-v6.md`；原 artifacts 证据已按用户要求清理，复验需重建环境。
 
 `scene_sitl --cycles 2` explicitly runs the registered bounded reference mission
 twice in the same owned simulator. Every cycle requires two new real navigation
@@ -338,3 +338,8 @@ This command reproduces and verifies the committed data before preparing cache
 versions; it neither downloads nor starts any process in the simulation stack.
 The original hospital world has three anomalous source heights. It remains draft
 and managed launch refuses it pending a separate geometry/runtime qualification.
+
+## 随包验收说明
+
+[ACCEPTANCE.md](ACCEPTANCE.md) 记录当前软件／仿真支持范围、保留失败和安装后的检查入口。
+原始录包与故障证据独立归档，正常使用不需要本机历史 artifacts 目录。

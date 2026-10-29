@@ -50,6 +50,11 @@ if(BUILD_TESTING)
   set_tests_properties(test_managed_stack PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=115;ROS_LOCALHOST_ONLY=1")
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/../easyfly_desktop/test)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
   ament_lint_auto_find_test_dependencies()
 endif()
 install(FILES README.md DESTINATION share/${PROJECT_NAME})

@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "mode": "ellipse",
+  "use_sim_time": true,
+  "target": [
+    2.0,
+    0.0,
+    1.5
+  ],
+  "plane_z": 0.0,
+  "corridor_min": [
+    -2.0,
+    -2.0,
+    0.8
+  ],
+  "corridor_max": [
+    4.0,
+    2.0,
+    3.0
+  ],
+  "max_speed": 0.3,
+  "max_acceleration": 0.3,
+  "timeout_s": 120.0,
+  "optical_frame": "camera_down_optical_frame",
+  "observation_topic": "/ellipse_observations",
+  "depth_topic": "/camera_down/depth/image_raw",
+  "camera_info_topic": "/camera_down/camera_info",
+  "use_predictions": true
+}

@@ -234,7 +234,7 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
             ready_catalog.scenes['test']['runtime']['entrypoint'])) for v in spawn)
     else:
         assert any(v.endswith('/empty.world' if profile == 'base_sim' else '/perception_demo.world') for v in server)
-        assert spawn[spawn.index('-z')+1] == '0.83'
+        assert spawn[spawn.index('-z')+1] == '0.1'
         assert spawn[spawn.index('-Y')+1] == '0.0'
     assert context.launch_configurations[PREFIX+'model_path']
     assert context.launch_configurations[PREFIX+'ground_model_frame']==('map' if managed else 'odom')

@@ -16,7 +16,7 @@ import stat
 import pytest
 
 from easyfly_connection_manager.backend import (
-    can_stop, check, command, private, urls, preview_geometry)
+    can_stop, check, command, prepare_algorithm_runtime, private, urls, preview_geometry)
 
 
 def test_scene_preview_uses_only_bounded_static_geometry():
@@ -241,6 +241,8 @@ def test_algorithm_options_reach_owned_launch_as_typed_data():
 @pytest.mark.parametrize('selection,expected', [
     ('profile', ['fast_lio', 'easyfly_fast_lio_integration']),
     ('openvins', ['ov_msckf', 'easyfly_openvins_integration']),
+    ('fast_livo2', ['easyfly_fast_livo2_integration']),
+    ('orbslam3', ['easyfly_orbslam3_integration']),
     ('disabled', [])])
 def test_localization_dependencies_are_selected_without_fallback(monkeypatch, selection, expected):
     import ament_index_python.packages as packages
@@ -274,4 +276,74 @@ def test_openvins_command_preserves_selection_and_rejects_base_profile():
     assert json.loads(argument.split(':=', 1)[1])['slam'] == 'openvins'
     p['selected_profile'] = 'base_sim'
     with pytest.raises(ValueError, match='OpenVINS'):
+        command(p)
+
+
+@pytest.mark.parametrize('backend,flag', [
+    ('openvins', 'openvins_navigation'), ('fast_livo2', 'fastlivo_navigation'),
+    ('orbslam3', 'orbslam3_navigation')])
+@pytest.mark.parametrize('selected', ['navigation_dev', 'full_perception', 'landing_dev'])
+def test_navigation_profile_connects_selected_backend_only(tmp_path, backend, flag, selected):
+    p = profile()
+    p['selected_profile'] = selected
+    p['algorithms'] = dict(slam=backend)
+    runtime = prepare_algorithm_runtime(p, private(tmp_path / 'session'))
+    args = command(p, runtime)
+    flags = [value for value in args if value.endswith('_navigation:=true')]
+    assert flags == ([flag + ':=true'] if selected == 'navigation_dev' else [])
+    assert not any(value.startswith(('load_atlas:=', 'sensor_mode:=')) for value in args)
+
+
+@pytest.mark.parametrize('name,options,argument', [
+    ('orbslam3', dict(slam='orbslam3'), 'orbslam3_runtime_directory'),
+    ('fuel', dict(exploration='fuel', strategy='gcopter'), 'fuel_evidence_directory')])
+def test_algorithm_storage_is_private_per_session_and_preserved(tmp_path, name, options, argument):
+    from pathlib import Path
+    p = profile()
+    p['algorithms'] = options
+    with pytest.raises(ValueError, match='算法运行目录'):
+        command(p)
+    runtime = prepare_algorithm_runtime(p, private(tmp_path / 'session1'))
+    path = Path(runtime[name])
+    assert path == tmp_path / 'session1' / 'algorithms' / name
+    assert stat.S_IMODE(path.stat().st_mode) == 0o700
+    args = command(p, runtime)
+    assert argument + ':=' + str(path) in args
+    assert not any('_enable_navigation:=' in value for value in args)
+    assert not any('load_atlas:=' in value for value in args)
+    evidence = path / 'existing-evidence'
+    evidence.write_text('preserve')
+    with pytest.raises(FileExistsError):
+        prepare_algorithm_runtime(p, tmp_path / 'session1')
+    assert evidence.read_text() == 'preserve'
+    second = prepare_algorithm_runtime(p, private(tmp_path / 'session2'))
+    assert runtime != second and not list(Path(second[name]).iterdir())
+    link = tmp_path / 'link'
+    link.symlink_to(path, target_is_directory=True)
+    with pytest.raises(ValueError, match='算法运行目录'):
+        command(p, {name: str(link)})
+
+
+def test_unselected_algorithms_do_not_create_storage(tmp_path):
+    p = profile()
+    directory = tmp_path / 'session'
+    assert prepare_algorithm_runtime(p, directory) == {}
+    assert not directory.exists()
+    assert not any('_directory:=' in value for value in command(p))
+
+
+@pytest.mark.parametrize('options,selected', [
+    (dict(exploration='fuel'), 'navigation_dev'),
+    (dict(exploration='fuel', strategy='gcopter', slam='disabled'), 'navigation_dev'),
+    (dict(exploration='fuel', strategy='gcopter', slam='orbslam3'), 'navigation_dev'),
+    (dict(exploration='fuel', strategy='gcopter'), 'full_perception'),
+    (dict(strategy='super'), 'full_perception')])
+def test_incompatible_planning_selection_fails_before_storage(tmp_path, options, selected):
+    p = profile()
+    p.update(algorithms=options, selected_profile=selected)
+    directory = tmp_path / 'session'
+    with pytest.raises(ValueError, match='FUEL|GCOPTER'):
+        prepare_algorithm_runtime(p, directory)
+    assert not directory.exists()
+    with pytest.raises(ValueError, match='FUEL|GCOPTER'):
         command(p)

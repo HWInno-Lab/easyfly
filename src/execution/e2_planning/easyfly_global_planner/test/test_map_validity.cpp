@@ -11,18 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <limits>
-
 #include "easyfly_global_planner/map_validity.hpp"
-
 namespace easyfly_global_planner
 {
 namespace
 {
-
 nav_msgs::msg::OccupancyGrid validGrid()
 {
   nav_msgs::msg::OccupancyGrid grid;
@@ -36,7 +31,6 @@ nav_msgs::msg::OccupancyGrid validGrid()
   grid.data = {0, 0, -1, 100};
   return grid;
 }
-
 TEST(MapValidityTest, RejectsSemanticMapReset)
 {
   auto invalid = validGrid();
@@ -44,41 +38,33 @@ TEST(MapValidityTest, RejectsSemanticMapReset)
   invalid.data.assign(4, -1);
   EXPECT_FALSE(occupancyGridReady(invalid));
 }
-
 TEST(MapValidityTest, RejectsRecentButMalformedOrUnknownGrid)
 {
   auto recent_unknown = validGrid();
   recent_unknown.data.assign(4, -1);
   EXPECT_FALSE(occupancyGridReady(recent_unknown));
-
   auto malformed = validGrid();
   malformed.data.resize(3);
   EXPECT_FALSE(occupancyGridReady(malformed));
 }
-
 TEST(MapValidityTest, RejectsUnexpectedFrameOrNonFiniteGeometry)
 {
   auto wrong_frame = validGrid();
   wrong_frame.header.frame_id = "map";
   EXPECT_FALSE(occupancyGridReady(wrong_frame));
-
   auto nan_resolution = validGrid();
   nan_resolution.info.resolution = std::numeric_limits<float>::quiet_NaN();
   EXPECT_FALSE(occupancyGridReady(nan_resolution));
-
   auto inf_origin = validGrid();
   inf_origin.info.origin.position.x = std::numeric_limits<double>::infinity();
   EXPECT_FALSE(occupancyGridReady(inf_origin));
-
   auto nan_origin = validGrid();
   nan_origin.info.origin.position.y = std::numeric_limits<double>::quiet_NaN();
   EXPECT_FALSE(occupancyGridReady(nan_origin));
 }
-
 TEST(MapValidityTest, AcceptsStampedGridWithKnownCells)
 {
   EXPECT_TRUE(occupancyGridReady(validGrid()));
 }
-
 }  // namespace
 }  // namespace easyfly_global_planner

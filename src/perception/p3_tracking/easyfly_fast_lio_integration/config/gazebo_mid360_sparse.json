@@ -1,0 +1,5 @@
+{
+  "slam": "fast_lio",
+  "slam_filter_size_surf": 0.1,
+  "slam_filter_size_map": 0.1
+}

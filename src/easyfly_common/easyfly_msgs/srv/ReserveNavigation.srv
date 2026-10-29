@@ -1,0 +1,7 @@
+# Parent mission UUID and the next authorized child NavigateTo UUID (32 lowercase hex).
+string mission_id
+string child_goal_id
+bool active
+---
+bool success
+string message

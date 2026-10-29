@@ -5,11 +5,12 @@
   <description>Gazebo sensor plugins for EasyFly (Livox/RealSense/Velodyne emulation)</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>MIT</license>
-  <!-- Apache-2.0 covers the sourced safe_camera, safe_transport and safe_imu derivatives. -->
+  <!-- Apache-2.0 covers the sourced safe_camera, safe_transport, safe_imu and safe_sensors derivatives. -->
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>ament_index_cpp</depend>
   <depend>sensor_msgs</depend>
   <depend>gazebo_dev</depend>
   <depend>livox_ros_driver2</depend>
@@ -19,11 +20,17 @@
   <depend>camera_info_manager</depend>
   <depend>image_transport</depend>
   <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
   <depend>libssl-dev</depend>
 
   <exec_depend>rosidl_default_runtime</exec_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>rcl</test_depend>
+  <test_depend>ament_index_python</test_depend>
+  <test_depend>easyfly_gazebo_models</test_depend>
+  <test_depend>easyfly_fastdds_compat</test_depend>
 
   <export><build_type>ament_cmake</build_type></export>
 </package>

@@ -246,5 +246,12 @@
   "limitations": [
     "Exact upstream import revision unknown; local project commit is not an upstream version lock.",
     "Directory relocation does not select these sources instead of the installed SDK; verify actual driver resolution."
-  ]
+  ],
+  "recovered_original_source": {
+    "local_original_directory": "MID-360S SDK_ROS/Livox_SDK2",
+    "all_220_tracked_files_exact": true,
+    "original_download_url": null,
+    "upstream_import_commit": null
+  },
+  "reconstruction_manifest": "livox_sdk2.sources/manifest.json"
 }

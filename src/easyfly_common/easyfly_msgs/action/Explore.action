@@ -1,0 +1,17 @@
+# Explicit bounded exploration task in odom, ENU. No automatic takeoff.
+geometry_msgs/Point min_bound
+geometry_msgs/Point max_bound
+# Each consecutive min/max pair describes a forbidden box; robot clearance is added.
+geometry_msgs/Point[] forbidden_boxes
+bool return_home
+float64 timeout_sec
+---
+bool success
+string reason
+float64 coverage
+uint32 completed_viewpoints
+---
+string phase
+float64 coverage
+uint32 completed_viewpoints
+geometry_msgs/Point next_viewpoint

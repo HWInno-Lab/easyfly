@@ -1,0 +1,5 @@
+{
+  "source": "artifacts/v01-v16-20261025/sitl/v15-super-over-speed-1.2-source-time/super-oVssYM/job-1.request",
+  "raw_sha256": "87d6d83a44d8e8bfe6679ec8aab9788e1990cea91750438dd7ca299f978abe13",
+  "scope": "unaltered native worker request from failed SUPER 1.2 m/s over-wall flight; source-time tracking reached 0.201579m; request caps unchanged"
+}

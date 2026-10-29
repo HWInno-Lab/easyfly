@@ -12,9 +12,9 @@ find_package(jsoncpp REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(${PROJECT_NAME} SHARED src/model.cpp src/mission_details.cpp src/observer.cpp
-  src/camera_observations.cpp)
+  src/camera_observations.cpp src/special_observations.cpp)
 # Algorithm observations change UiSnapshot's ABI; reject older bridge libraries.
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 3.0.0 SOVERSION 3)
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 5.0.0 SOVERSION 5)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -31,6 +31,8 @@ ament_export_dependencies(rclcpp easyfly_core easyfly_msgs sensor_msgs rosgraph_
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(mavros_msgs REQUIRED)
+  ament_add_gtest(test_special_observations test/test_special_observations.cpp)
+  target_link_libraries(test_special_observations ${PROJECT_NAME})
   ament_add_gtest(test_model test/test_model.cpp)
   target_link_libraries(test_model ${PROJECT_NAME})
   ament_add_gtest(test_camera_observations test/test_camera_observations.cpp)

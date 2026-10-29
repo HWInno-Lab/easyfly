@@ -76,7 +76,7 @@ def generate_launch_description():
     )
 
     mavros_node = Node(
-        package="mavros",
+        package="easyfly_mavros_runtime",
         executable="mavros_node",
         output="screen",
         parameters=[

@@ -115,8 +115,8 @@ def test_source_defaults_match_frozen_contracts():
             "kTrajectoryStreamTimeout = 0.5",
             "kTrajectoryStreamTimeout = 2.0",
         ),
-        (5, "'grid_map/ground_height': 0.5", "'grid_map/ground_height': 0.0"),
-        (5, "default_value='3.2'", "default_value='5.0'"),
+        (5, '"grid_map/ground_height": 0.5', '"grid_map/ground_height": 0.0'),
+        (5, 'default_value="3.2"', 'default_value="5.0"'),
     ],
 )
 def test_cross_package_drift_rejected(tmp_path, index, old, new):

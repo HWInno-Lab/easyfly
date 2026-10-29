@@ -11,30 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <cmath>
 #include <limits>
-
 #include "easyfly_global_planner/segment_acceptance.hpp"
-
 namespace easyfly_global_planner
 {
 namespace
 {
-
 TEST(SegmentAcceptanceTest, KeepsSmallConfiguredTolerance)
 {
   EXPECT_DOUBLE_EQ(normalizeSegmentAcceptance(0.05), 0.05);
 }
-
 TEST(SegmentAcceptanceTest, ClampsToleranceToSafeUpperBound)
 {
   EXPECT_DOUBLE_EQ(normalizeSegmentAcceptance(0.5), kMaxSegmentAcceptance);
   EXPECT_DOUBLE_EQ(normalizeSegmentAcceptance(0.10), kMaxSegmentAcceptance);
 }
-
 TEST(SegmentAcceptanceTest, UsesSafeDefaultForInvalidTolerance)
 {
   EXPECT_DOUBLE_EQ(normalizeSegmentAcceptance(0.0), kDefaultSegmentAcceptance);
@@ -46,6 +39,5 @@ TEST(SegmentAcceptanceTest, UsesSafeDefaultForInvalidTolerance)
     normalizeSegmentAcceptance(std::numeric_limits<double>::infinity()),
     kDefaultSegmentAcceptance);
 }
-
 }  // namespace
 }  // namespace easyfly_global_planner

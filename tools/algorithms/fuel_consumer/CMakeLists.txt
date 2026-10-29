@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(fuel_installed_consumer LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 17)
+find_package(easyfly_fuel_core REQUIRED)
+add_executable(fuel_consumer main.cpp)
+target_link_libraries(fuel_consumer PRIVATE easyfly_fuel_core::fuel_core)

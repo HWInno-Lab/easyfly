@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(super_installed_consumer LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+find_package(easyfly_super_planner REQUIRED)
+add_executable(consumer main.cpp)
+target_link_libraries(consumer PRIVATE easyfly_super_planner::super_execution_core)

@@ -1,5 +1,5 @@
 # Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
-"""Opt-in activation before DDS initialization, without replacing system files."""
+"""Verify the workspace-private DDS runtime without replacing system files."""
 import ctypes
 import hashlib
 import os
@@ -95,7 +95,7 @@ def check_loaded(library, maps):
             raise RuntimeError('Unpatched Fast DDS is already loaded; start a fresh managed simulation process')
 
 
-def activate(prefix=None, openvins=False):
+def activate(prefix=None, openvins=False, image_streams=False):
     if os.environ.get('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp') != 'rmw_fastrtps_cpp':
         raise RuntimeError('Managed scene DDS compatibility requires rmw_fastrtps_cpp')
     if prefix is None:
@@ -108,8 +108,9 @@ def activate(prefix=None, openvins=False):
     profile = Path(prefix) / 'share/easyfly_fastdds_compat/config/component_services.xml'
     selected_environment = dict(os.environ)
     vio_environment = {}
-    if openvins:
-        vio_profile = Path(prefix) / 'share/easyfly_fastdds_compat/config/openvins_simulation.xml'
+    if openvins or image_streams:
+        filename = 'openvins_simulation.xml' if openvins else 'raw_image_transport.xml'
+        vio_profile = Path(prefix) / 'share/easyfly_fastdds_compat/config' / filename
         vio_environment = openvins_profile_environment(vio_profile, selected_environment, profile)
         selected_environment.update(vio_environment)
     profile_environment = component_profile_environment(profile, selected_environment)
@@ -119,7 +120,8 @@ def activate(prefix=None, openvins=False):
     os.environ['LD_LIBRARY_PATH'] = ':'.join(paths)
     os.environ['RMW_IMPLEMENTATION'] = 'rmw_fastrtps_cpp'
     return dict(path=str(library), sha256=digest, implementation='rmw_fastrtps_cpp',
-                source_version='2.6.11', openvins_defaults_selected=bool(vio_environment),
-                fix='reader_writer_listener_snapshot',
+                source_version='2.6.11', openvins_defaults_selected=bool(vio_environment) and openvins,
+                image_stream_defaults_selected=bool(vio_environment) and image_streams,
+                fix='listener_snapshot_history_iterator_and_flow_flush',
                 component_profiles_sha256=hashlib.sha256(profile.read_bytes()).hexdigest(),
                 profile_environment=profile_environment)

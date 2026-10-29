@@ -2,6 +2,24 @@
   "schema_version": 1,
   "fields": [
     {
+      "key": "exploration",
+      "label": "自主探索任务",
+      "kind": "choice",
+      "default": "none",
+      "choices": [
+        [
+          "none",
+          "关闭"
+        ],
+        [
+          "fuel",
+          "FUEL（Gazebo 有界探索）"
+        ]
+      ],
+      "group": "overview",
+      "omit_when_default": true
+    },
+    {
       "key": "slam",
       "label": "SLAM 算法",
       "kind": "choice",
@@ -18,11 +36,19 @@
         ],
         [
           "openvins",
-          "OpenVINS（Gazebo 单目，仅观测）"
+          "OpenVINS（Gazebo 单目）"
+        ],
+        [
+          "fast_livo2",
+          "FAST-LIVO2（Gazebo 三传感器融合）"
         ],
         [
           "disabled",
           "关闭 SLAM"
+        ],
+        [
+          "orbslam3",
+          "ORB-SLAM3（Gazebo RGB-D）"
         ]
       ],
       "omit_when_default": true
@@ -159,6 +185,14 @@
         [
           "combined",
           "A* + EGO"
+        ],
+        [
+          "gcopter",
+          "GCOPTER 三维轨迹"
+        ],
+        [
+          "super",
+          "SUPER 实验性三维规划"
         ]
       ],
       "group": "overview"

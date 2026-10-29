@@ -1,0 +1,76 @@
+{
+  "accepted": true,
+  "scope": "bounded Gazebo/PX4 simulation only",
+  "world_sha256": "1a2df19cb1ac30e6cf354a6b8506cdb23916c1cb7c756f56020edef0f171802a",
+  "cases": [
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/channel-repeat",
+      "result_sha256": "0a18feb48af7cb3222f9d1d6ad892987e9c97471587b5cf166c8358c874740d3",
+      "strategy": "gcopter",
+      "scenario": "channel",
+      "normal_shutdown_seconds": 1.4162516850046813
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/narrow-repeat",
+      "result_sha256": "2af053b19e1359d533d7cd02928987d70deb1b56a1e6917d0f8b207bef982a1c",
+      "strategy": "gcopter",
+      "scenario": "narrow",
+      "normal_shutdown_seconds": 1.6166944920114474
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/no-solution-repeat",
+      "result_sha256": "98346b2fd585c17942b6ff57f0aa4a189dcf04077596a6e76809662193d842cc",
+      "strategy": "gcopter",
+      "scenario": "no-solution",
+      "normal_shutdown_seconds": 1.516267142011202
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/map-loss-moving",
+      "result_sha256": "5f54a564e2c39ee708465fa7fa6c4a99501a975c6eb12bbb3456d28074e52569",
+      "strategy": "gcopter",
+      "scenario": "map-loss",
+      "normal_shutdown_seconds": 0.8152853369974764
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/cancel-moving",
+      "result_sha256": "0f1abee01f33f1d73b683234373fcd0c938e77866ce6f3da728b985903b45bda",
+      "strategy": "gcopter",
+      "scenario": "cancel",
+      "normal_shutdown_seconds": 0.8152963940083282
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/backend-exit-moving",
+      "result_sha256": "6d482bc1d7131c2a5494312df0ed34f229c3cd9804b1e9c606e7e90aab58ed84",
+      "strategy": "gcopter",
+      "scenario": "backend-exit",
+      "normal_shutdown_seconds": 1.5170909989974461
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/clock-final-matrix/map-change-visible",
+      "result_sha256": "43bc612161a7becf05a06d3ecee385e81e0793b3c430c988434c1542c916838c",
+      "strategy": "gcopter",
+      "scenario": "map-change",
+      "normal_shutdown_seconds": 0.8667402420105645
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/channel-cold-repeat-final",
+      "result_sha256": "cf094dc47689f02a7ed7a897ecaf4490eadb5beec9c42275bc53eb737dbc42aa",
+      "strategy": "gcopter",
+      "scenario": "channel",
+      "normal_shutdown_seconds": 1.616603007001686
+    },
+    {
+      "case": "artifacts/new-algorithms/new2-gcopter-20261021/legacy-combined-regression",
+      "result_sha256": "1bb2c2c58ac157166952f0b6066844f7c6ae8659f1abd7d1eed8d8dfd7b14f38",
+      "strategy": "combined",
+      "scenario": "smoke",
+      "normal_shutdown_seconds": 1.0656417550053447
+    }
+  ],
+  "report": "docs/development/gcopter-simulation-acceptance.md",
+  "hardware": false,
+  "exclusions": [
+    "new low obstacles outside native lidar field of view",
+    "high-speed or hardware operation"
+  ]
+}

@@ -58,6 +58,7 @@ class OpenVinsGuard(Node):
             camera_frame='camera_color_optical_frame', imu_frame='livox_imu_frame',
             output_frame='openvins_odom', raw_pose_frame='global',
             image_encoding='rgb8', width=640, height=480,
+            defer_camera_until_calibration=False,
             intrinsics=[337.3570508552852, 337.3570508552852, 320.5, 240.5],
             max_imu_gap=.025, max_camera_gap=.25, receipt_timeout=.5, pose_timeout=.5,
             max_source_age=.5, future_tolerance=.2, max_pending=4)
@@ -99,8 +100,9 @@ class OpenVinsGuard(Node):
         self.camera_group = CameraAdmissionGroup(
             lambda: self.gate.failure is not None or
             len(self.gate.pending) < self.p['max_pending'])
-        self.create_subscription(Image, self.p['camera_topic'], self.on_camera, reliable,
-                                 callback_group=self.camera_group)
+        self.image_qos, self.camera_subscription = reliable, None
+        if not self.p['defer_camera_until_calibration']:
+            self.subscribe_camera()
         self.create_subscription(Imu, self.p['imu_topic'], self.on_imu, imu_qos)
         self.create_subscription(CameraInfo, self.p['camera_info_topic'], self.on_info, reliable)
         if not observe_only:
@@ -108,6 +110,12 @@ class OpenVinsGuard(Node):
                                      self.on_pose, 100)
         self.last_state = None
         self.create_timer(.05, self.report, clock=Clock(clock_type=ClockType.STEADY_TIME))
+
+    def subscribe_camera(self):
+        if self.camera_subscription is None:
+            self.camera_subscription = self.create_subscription(
+                Image, self.p['camera_topic'], self.on_camera, self.image_qos,
+                callback_group=self.camera_group)
 
     def update_clock(self):
         stamp = self.get_clock().now().nanoseconds
@@ -149,6 +157,7 @@ class OpenVinsGuard(Node):
         if accepted and self.gate.failure is None and not self.observe_only:
             self.imu_pub.publish(msg)
             self.forward(images)
+        self.subscribe_camera_when_dependencies_ready()
 
     def on_info(self, msg):
         self.update_clock()
@@ -163,6 +172,22 @@ class OpenVinsGuard(Node):
             self.gate.fail('camera_calibration_mismatch', reset=False)
             return
         self.forward(self.gate.info(stamp_ns(msg), time.monotonic()))
+        self.subscribe_camera_when_dependencies_ready()
+
+    def subscribe_camera_when_dependencies_ready(self):
+        # Both dependencies must reach this reader before opening the camera
+        # epoch. DDS can discover CameraInfo before IMU in a new guard process,
+        # even after a separate startup observer has confirmed healthy inputs.
+        # Once subscribed, the original timing/pairing and failure latch apply.
+        if self.p['defer_camera_until_calibration'] and self.gate.failure is None and \
+                self.gate.imu_stamp and self.gate.infos and self.camera_subscription is None:
+            stamp = self.gate.infos[-1]
+            imu_fresh = (time.monotonic() - self.gate.imu_receipt <= self.p['receipt_timeout']
+                         and self.gate.clock - self.gate.imu_stamp <=
+                         self.p['max_source_age'] * 1e9)
+            if imu_fresh and 0 < stamp <= self.gate.clock + self.p['future_tolerance'] * 1e9 and \
+                    self.gate.clock - stamp <= self.p['max_source_age'] * 1e9:
+                self.subscribe_camera()
 
     def on_pose(self, msg):
         self.update_clock()
@@ -214,14 +239,14 @@ class OpenVinsGuard(Node):
 
 
 def main():
-    from .shutdown import init_owned_context
+    from .shutdown import init_owned_context, spin_owned_executor
     init_owned_context()
     node = None
     executor = SingleThreadedExecutor()
     try:
         node = OpenVinsGuard()
         executor.add_node(node)
-        executor.spin()
+        spin_owned_executor(executor)
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         pass
     finally:

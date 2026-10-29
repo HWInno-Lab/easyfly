@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QCoreApplication>
 #include <QTimer>
 #include <QTextStream>
@@ -18,7 +17,6 @@
 #include <QUdpSocket>
 #include <QHostAddress>
 #include <unistd.h>
-
 int main(int argc, char ** argv)
 {
   QCoreApplication app(argc, argv);

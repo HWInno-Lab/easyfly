@@ -27,3 +27,8 @@ ros2 launch easyfly_ellipse_detection detection.launch.py
 可直接通过 `ros2 run easyfly_ellipse_detection ellipse_detection_node --ros-args --params-file ...`
 启动；节点层的 input_topic/output_topic/capabilities_service 可按命名空间需求覆盖。
 测试包含真实 ROS 进程和合成图像，以及坏输入、过期、时钟暂停/回退、参数拒绝与干净退出。
+
+独立的 `easyfly_visual_navigation visual_mission --execute` 现提供显式米制视觉任务，
+并可消费类别和预测作为扩大避让范围的约束。其源时间、深度、坐标、控制所有权和
+仿真范围见 [视觉导航说明](../../../execution/e3_control/easyfly_visual_navigation/README.md)。
+本包仍只产生原有观测，启动本包不会自动开始飞行。

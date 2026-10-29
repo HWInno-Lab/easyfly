@@ -233,6 +233,8 @@ def state():
     msg.pose_valid = True
     msg.velocity_valid = True
     msg.attitude_valid = True
+    msg.battery_valid = True
+    msg.battery_remaining = 1.0
     return msg
 
 
@@ -246,11 +248,20 @@ def test_fresh_state_requires_source_and_receipt():
     assert not MODULE.state_ready(msg, 21.0, 10000000000, 20.5, False)
 
 
-@pytest.mark.parametrize('field', ['connected', 'pose_valid', 'velocity_valid', 'attitude_valid'])
+@pytest.mark.parametrize('field', [
+    'connected', 'pose_valid', 'velocity_valid', 'attitude_valid', 'battery_valid'])
 def test_independent_health_flags_are_required(field):
     """Reject a numerically plausible sample whose source health is invalid."""
     msg = state()
     setattr(msg, field, False)
+    assert not MODULE.state_ready(msg, 20.0, 10000000000, 20.1, False)
+
+
+@pytest.mark.parametrize('remaining', [float('nan'), float('inf'), -0.01, 1.01])
+def test_invalid_battery_cannot_pass_preflight(remaining):
+    """Wait for the same valid battery range required by mission admission."""
+    msg = state()
+    msg.battery_remaining = remaining
     assert not MODULE.state_ready(msg, 20.0, 10000000000, 20.1, False)
 
 

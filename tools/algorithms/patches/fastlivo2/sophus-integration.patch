@@ -1,0 +1,52 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -141,14 +141,14 @@
+ add_custom_target(other SOURCES ${SOPHUS_OTHER_FILES} ${SOPHUS_HEADER_FILES})
+ 
+ # Create 'test' make target using ctest
+-option(BUILD_SOPHUS_TESTS "Build tests." ON)
++option(BUILD_SOPHUS_TESTS "Build upstream tests (not included in the selected source archive)." OFF)
+ if(BUILD_SOPHUS_TESTS)
+     enable_testing()
+     add_subdirectory(test)
+ endif()
+ 
+ # Create examples make targets using ctest
+-option(BUILD_SOPHUS_EXAMPLES "Build examples." ON)
++option(BUILD_SOPHUS_EXAMPLES "Build upstream examples (not included in the selected source archive)." OFF)
+ if(BUILD_SOPHUS_EXAMPLES)
+     add_subdirectory(examples)
+ endif()
+@@ -202,3 +202,5 @@
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/sophus
+   )
+ endif()
++
++install(FILES LICENSE.txt DESTINATION share/Sophus)
+--- a/package.xml
++++ b/package.xml
+@@ -1,22 +1 @@
+-<?xml version="1.0"?>
+-<package format="2">
+-  <name>sophus</name>
+-  <version>1.22.10</version>
+-  <description>
+-   C++ implementation of Lie Groups using Eigen.
+-  </description>
+-  <url type="repository">https://github.com/strasdat/sophus</url>
+-  <url type="bugtracker">https://github.com/strasdat/sophus/issues</url>
+-  <maintainer email="d.stonier@gmail.com">Daniel Stonier</maintainer>
+-  <author>Hauke Strasdat</author>
+-  <license>MIT</license>
+-
+-  <buildtool_depend>cmake</buildtool_depend>
+-
+-  <build_depend>eigen</build_depend>
+-  <build_export_depend>eigen</build_export_depend>
+-
+-  <export>
+-    <build_type>cmake</build_type>
+-  </export>
+-</package>
++<package format="3"><name>sophus</name><version>1.22.10</version><description>Pinned Sophus header library</description><maintainer email="dev@easyfly.local">EasyFly</maintainer><license>MIT</license><buildtool_depend>cmake</buildtool_depend><depend>eigen</depend><depend>fmt</depend><export><build_type>cmake</build_type></export></package>
+\ 文件末尾没有换行符

@@ -8,7 +8,7 @@ from rclpy.executors import SingleThreadedExecutor
 
 from .gate import Gate
 from .node import OpenVinsGuard
-from .shutdown import init_owned_context
+from .shutdown import init_owned_context, shutdown_requested, spin_owned_executor
 
 
 class Readiness:
@@ -85,9 +85,8 @@ def main():
     try:
         node = StartupObserver()
         executor.add_node(node)
-        while node.result is None:
-            executor.spin_once(timeout_sec=.1)
-        code = 0 if node.result == 'ready' else 2
+        spin_owned_executor(executor, lambda: node.result is None)
+        code = 130 if shutdown_requested() else 0 if node.result == 'ready' else 2
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         # An interrupted readiness check must never start the estimator.
         code = 130

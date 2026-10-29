@@ -5,6 +5,7 @@ bridge.launch.py — 启动 ego_to_mavros 桥接节点
 """
 from launch import LaunchDescription
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument
 
@@ -32,7 +33,7 @@ def generate_launch_description():
         name='ego_to_mavros_bridge',
         output='screen',
         parameters=[{
-            'drone_id': LaunchConfiguration('drone_id'),
+            'drone_id': ParameterValue(LaunchConfiguration('drone_id'), value_type=str),
             'setpoint_rate': LaunchConfiguration('setpoint_rate'),
             'cmd_timeout': LaunchConfiguration('cmd_timeout'),
             'enable_yaw_cmd': LaunchConfiguration('enable_yaw_cmd'),

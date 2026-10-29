@@ -120,8 +120,10 @@ canonical JSON so unchanged legacy profile hashes remain stable. The shared sche
 in easyfly_params builds the form and validates backend launch inputs. Only local
 SITL creates the explicitly selected ellipse/color-line nodes; ordinary computation
 libraries have no independent process. Options are frozen with the session and
-applied on restart. No runtime plugin discovery, remote process control or algorithm
-hot switching is provided. The desktop displays bounded, exact-frame geometry and
+applied on restart. No runtime plugin discovery or algorithm hot switching is provided.
+A separate explicit TLS service and Qt client now manage allowlisted remote algorithm
+presets with durable session/request identities and fresh ground interlocks; see REMOTE.md.
+Ordinary DDS observation never starts or adopts remote processes. The desktop displays bounded, exact-frame geometry and
 checks fresh task backend discovery before new confirmation; backend admission and
 ownership remain authoritative.
 

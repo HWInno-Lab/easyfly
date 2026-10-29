@@ -14,7 +14,7 @@ pixel_to_3d:
   # ---- 深度有效性 ----
   min_depth: 0.3        # 有效深度下限 [m]
   max_depth: 19.5       # 有效深度上限 [m] (Q23: 相机 far 已 10→20, 同步放宽)
-  min_valid_ratio: 0.1  # bbox 内有效像素比例下限 (低于则 position_valid=false)
+  min_valid_ratio: 0.1  # bbox 中心区域有效像素比例下限 (低于则 position_valid=false)
 
   # ---- 可视化 ----
   publish_markers: true

@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -27,14 +26,14 @@ namespace fs = std::filesystem;
 TEST(ConfirmationLedgerTest, BoundedNoEvictionAndMalformedIdsDoNotConsumeCapacity)
 {
   ConfirmationLedger ledger;
-  EXPECT_FALSE(ledger.consume("bad\nid")); EXPECT_TRUE(ledger.consume(""));
+  EXPECT_FALSE(ledger.consume("bad\nid")); EXPECT_FALSE(ledger.consume(""));
   for (int i = 0; i < 256; ++i) {
     std::ostringstream id; id << std::hex << std::setw(32) << std::setfill('0') << i;
     EXPECT_TRUE(ledger.consume(id.str())); EXPECT_FALSE(ledger.consume(id.str()));
   }
   EXPECT_FALSE(ledger.consume(std::string(32, 'f')));
   EXPECT_FALSE(ledger.consume(std::string(32, '0')));  // Old IDs were not evicted.
-  EXPECT_TRUE(ledger.consume(""));  // Does not silently attribute direct library calls to a GUI.
+  EXPECT_FALSE(ledger.consume(""));  // No alternate path bypasses the confirmation ledger.
 }
 class JournalTest : public ::testing::Test
 {

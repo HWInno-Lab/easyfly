@@ -61,6 +61,27 @@ def test_coupled_exit_emits_shutdown_once_and_respects_parent_shutdown():
     assert module.session_exit_handler()(None, context) == []
 
 
+def test_navigation_failure_stops_only_localization_workers(monkeypatch):
+    from types import SimpleNamespace
+    from launch.events.process import SignalProcess
+    spec = importlib.util.spec_from_file_location(
+        'navigation_launch', PACKAGE / 'launch/openvins.launch.py')
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, 'get_package_share_directory', lambda name: str(PACKAGE))
+    context = LaunchContext()
+    context.launch_configurations.update(sensor_profile='gazebo_mono', start_alignment='true',
+                                         enable_navigation='true')
+    processes = [a for a in module.session_nodes(context) if isinstance(a, Node)]
+    assert len(processes) == 4
+    assert processes[-1].node_executable == 'openvins_navigation'
+    handler = module.session_exit_handler(processes)
+    events = handler(SimpleNamespace(action=processes[1]), context)
+    assert len(events) == 3
+    assert all(isinstance(a.event, SignalProcess) for a in events)
+    assert handler(SimpleNamespace(action=processes[0]), context) == []
+
+
 def test_startup_launches_one_session_only_after_success(monkeypatch):
     from types import SimpleNamespace
     spec = importlib.util.spec_from_file_location(
@@ -112,3 +133,13 @@ def test_managed_alignment_is_in_same_lifetime_and_matches_calibrated_imu_origin
         xyz += [float(x) for x in joint.find('origin').get('xyz').split()]
         child = joint.find('parent').get('link')
     np.testing.assert_allclose(xyz+translation, np.zeros(3), atol=1e-12)
+
+
+def test_observation_and_navigation_share_sensor_and_initialization_calibration():
+    base = PACKAGE / 'config/gazebo_mono'
+    profiles = [yaml.safe_load((base / name).read_text().split('\n', 1)[1])
+                for name in ('estimator_config.yaml', 'estimator_config_navigation.yaml')]
+    for key in ('gravity_mag', 'init_max_disparity', 'init_max_features', 'histogram_method',
+                'relative_config_imu', 'relative_config_imucam'):
+        assert profiles[0][key] == profiles[1][key], key
+    assert profiles[0]['init_dyn_use'] is False

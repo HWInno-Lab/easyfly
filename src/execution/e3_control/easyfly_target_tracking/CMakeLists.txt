@@ -38,6 +38,11 @@ install(DIRECTORY config launch
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_waypoint_lifecycle test/test_waypoint_lifecycle.cpp)
@@ -47,6 +52,9 @@ if(BUILD_TESTING)
   target_include_directories(test_target_frame PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_target_frame easyfly_msgs)
+  ament_add_gtest(test_follow_offset test/test_follow_offset.cpp)
+  target_include_directories(test_follow_offset PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 
 ament_export_include_directories(include)

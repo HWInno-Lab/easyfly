@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0 -->
+<!-- Explicit same-host raw-image transport; opt in for every local image endpoint. -->
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+  <transport_descriptors>
+    <transport_descriptor>
+      <transport_id>video_udp</transport_id>
+      <type>UDPv4</type>
+    </transport_descriptor>
+    <transport_descriptor>
+      <transport_id>video_shm</transport_id>
+      <type>SHM</type>
+      <maxMessageSize>4194304</maxMessageSize>
+      <segment_size>67108864</segment_size>
+      <port_queue_capacity>512</port_queue_capacity>
+    </transport_descriptor>
+  </transport_descriptors>
+  <participant profile_name="video_simulation" is_default_profile="true">
+    <rtps>
+      <userTransports>
+        <transport_id>video_udp</transport_id>
+        <transport_id>video_shm</transport_id>
+      </userTransports>
+      <useBuiltinTransports>false</useBuiltinTransports>
+    </rtps>
+  </participant>
+</profiles>

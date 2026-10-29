@@ -6,6 +6,7 @@
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
 #include <easyfly_msgs/action/execute_mission.hpp>
 #include <easyfly_msgs/msg/mission_status.hpp>
+#include <easyfly_msgs/msg/mission_step_feedback.hpp>
 #include <easyfly_msgs/srv/set_flight_mode.hpp>
 #include "easyfly_mission_fsm/legacy_mission.hpp"
 #include <atomic>
@@ -38,6 +39,7 @@ class MissionFSM : public rclcpp::Node {
   rclcpp_action::Server<ExecuteMission>::SharedPtr as_mission_;
   rclcpp::Client<easyfly_msgs::srv::SetFlightMode>::SharedPtr cli_set_mode_;
   rclcpp::Publisher<easyfly_msgs::msg::MissionStatus>::SharedPtr pub_status_;
+  rclcpp::Publisher<easyfly_msgs::msg::MissionStepFeedback>::SharedPtr pub_step_feedback_;
   rclcpp::TimerBase::SharedPtr timer_safety_;
   std::atomic<bool> mission_active_{false}, cancel_requested_{false}, shutdown_{false};
   std::atomic<bool> rtl_triggered_{false};

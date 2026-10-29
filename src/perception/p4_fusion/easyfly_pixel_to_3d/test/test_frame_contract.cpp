@@ -11,14 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include "easyfly_pixel_to_3d/frame_contract.hpp"
-
 namespace
 {
-
 std_msgs::msg::Header sourceHeader()
 {
   std_msgs::msg::Header source;
@@ -27,20 +23,16 @@ std_msgs::msg::Header sourceHeader()
   source.frame_id = "camera_color_optical_frame";
   return source;
 }
-
 }  // namespace
-
 TEST(FrameContract, ChangesFrameWithoutChangingTimestamp)
 {
   const auto source = sourceHeader();
   const auto output = easyfly_pixel_to_3d::targetFrameHeader(source, "odom");
-
   EXPECT_EQ(output.frame_id, "odom");
   EXPECT_EQ(output.stamp.sec, source.stamp.sec);
   EXPECT_EQ(output.stamp.nanosec, source.stamp.nanosec);
   EXPECT_EQ(source.frame_id, "camera_color_optical_frame");
 }
-
 TEST(FrameContract, AppliesSameFrameAndTimestampToArrayAndTargets)
 {
   const auto source = sourceHeader();
@@ -49,9 +41,7 @@ TEST(FrameContract, AppliesSameFrameAndTimestampToArrayAndTargets)
   output.targets.resize(2);
   output.targets[0].header = source;
   output.targets[1].header = source;
-
   easyfly_pixel_to_3d::applyTargetFrameContract(output, source, "odom");
-
   EXPECT_EQ(output.header.frame_id, "odom");
   EXPECT_EQ(output.header.stamp.sec, source.stamp.sec);
   EXPECT_EQ(output.header.stamp.nanosec, source.stamp.nanosec);

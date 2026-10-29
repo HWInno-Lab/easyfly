@@ -22,3 +22,17 @@ bspline_opt通过导出target引用依赖，以支持安装根搬迁。
 用于已经运行的旧安装/配置链接。它不提交、不参与新包发现，也不是第二份源码。
 新检出应从分类目录构建；旧主安装/构建缓存未被隔离验证覆盖，旧会话结束并切换后才清理桥接。
 复验与范围见 [ALG-8.2](../../../algorithms/alg8-2-validation.md)。
+
+## SUPER 实验性后端
+
+`super/` 固定官方 hku-mars/SUPER 提交 `2ad3419c127a617c6d7df6925e81a14175a9c096`，
+含同提交 ROG-Map 和完整实际调用的 A*、CIRI、主/备用 MINCO-S4 流程。
+原生导出 `rog_map::easyfly_rog_map`、`super_planner::easyfly_super_planner`；
+自有 `easyfly_super_planner` 通过安装 target 消费，未启用上游演示控制器或导入预编译库。
+源文件、原始选取归档与补丁见 [来源清单](super.provenance.json)。
+保留主源码 LGPL-3.0-or-later 与包元数据 BSD 的差异，详见各组件 `NOTICE.md`。
+
+EasyFly 当前执行模式为已知空闲区域内的完整终点规划：原生 `PlanFromRest` 必须成功，
+原样探索轨迹通过完整地图、连续碰撞和运动边界验证后执行；原生备用输出留存诊断，
+尚未接管飞控。未知格、图外及输入过期均拒绝。Gazebo 范围、失败与限制见
+[验收记录](../../../../docs/development/super-simulation-acceptance.md)。默认后端保持原值。

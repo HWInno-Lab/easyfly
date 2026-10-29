@@ -1,5 +1,18 @@
-#ifndef EGO_PLANNER_TRAJECTORY_SEED_SAFETY_H
-#define EGO_PLANNER_TRAJECTORY_SEED_SAFETY_H
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef PLAN_MANAGE__TRAJECTORY_SEED_SAFETY_H_
+#define PLAN_MANAGE__TRAJECTORY_SEED_SAFETY_H_
 
 #include <algorithm>
 #include <cmath>
@@ -31,7 +44,7 @@ inline bool boundRandomMidpointAltitude(
   const double hard_upper_bound,
   const double seed_lower_bound,
   const double seed_upper_bound,
-  double &bounded_z)
+  double & bounded_z)
 {
   const bool hard_lower_unbounded =
     std::isinf(hard_lower_bound) && hard_lower_bound < 0.0;
@@ -42,15 +55,16 @@ inline bool boundRandomMidpointAltitude(
   const bool seed_upper_unbounded =
     std::isinf(seed_upper_bound) && seed_upper_bound > 0.0;
   if (!std::isfinite(start_z) || !std::isfinite(target_z) ||
-      !std::isfinite(candidate_z) ||
-      (!std::isfinite(hard_lower_bound) && !hard_lower_unbounded) ||
-      (!std::isfinite(hard_upper_bound) && !hard_upper_unbounded) ||
-      (!std::isfinite(seed_lower_bound) && !seed_lower_unbounded) ||
-      (!std::isfinite(seed_upper_bound) && !seed_upper_unbounded) ||
-      hard_lower_bound > hard_upper_bound ||
-      seed_lower_bound > seed_upper_bound ||
-      (!hard_lower_unbounded && seed_lower_bound < hard_lower_bound) ||
-      (!hard_upper_unbounded && seed_upper_bound > hard_upper_bound)) {
+    !std::isfinite(candidate_z) ||
+    (!std::isfinite(hard_lower_bound) && !hard_lower_unbounded) ||
+    (!std::isfinite(hard_upper_bound) && !hard_upper_unbounded) ||
+    (!std::isfinite(seed_lower_bound) && !seed_lower_unbounded) ||
+    (!std::isfinite(seed_upper_bound) && !seed_upper_unbounded) ||
+    hard_lower_bound > hard_upper_bound ||
+    seed_lower_bound > seed_upper_bound ||
+    (!hard_lower_unbounded && seed_lower_bound < hard_lower_bound) ||
+    (!hard_upper_unbounded && seed_upper_bound > hard_upper_bound))
+  {
     return false;
   }
 
@@ -58,9 +72,10 @@ inline bool boundRandomMidpointAltitude(
   // themselves be inside the actual hard corridor.  They may legitimately
   // lie in the contracted seed margin; only the inserted point is clamped.
   if ((!hard_lower_unbounded &&
-       (start_z < hard_lower_bound || target_z < hard_lower_bound)) ||
-      (!hard_upper_unbounded &&
-       (start_z > hard_upper_bound || target_z > hard_upper_bound))) {
+    (start_z < hard_lower_bound || target_z < hard_lower_bound)) ||
+    (!hard_upper_unbounded &&
+    (start_z > hard_upper_bound || target_z > hard_upper_bound)))
+  {
     return false;
   }
 
@@ -78,7 +93,7 @@ inline bool boundRandomMidpointAltitude(
          (hard_upper_unbounded || bounded_z <= hard_upper_bound);
 }
 
-}  // namespace trajectory_seed_safety
+}    // namespace trajectory_seed_safety
 }  // namespace ego_planner
 
-#endif  // EGO_PLANNER_TRAJECTORY_SEED_SAFETY_H
+#endif  // PLAN_MANAGE__TRAJECTORY_SEED_SAFETY_H_

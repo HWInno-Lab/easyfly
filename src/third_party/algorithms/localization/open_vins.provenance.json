@@ -16,7 +16,7 @@
   "excluded_content": "Remaining upstream roots, including 377 MB ov_data, evaluation and documentation packages; no claim to import the full upstream repository. No nested Git checkout.",
   "acquisition": {
     "method": "Git archive of selected roots from the recorded pristine official checkout",
-    "local_archive": "artifacts/new-algorithms/openvins-integration-20261019/openvins-runtime-source.tar",
+    "local_archive": "src/third_party/source_archives/openvins-runtime-source.tar",
     "sha256": "d34b02e75b8859bb560da35f89297140b5516923ac53b8794ede4561245ad580",
     "remote_release_archive_sha256": null,
     "note": "Locally produced git archive identity; not a remote release/archive authentication claim."
@@ -41,6 +41,18 @@
     {
       "path": "tools/algorithms/patches/openvins/0003-owned-update-and-init-workers.patch",
       "sha256": "60492b74d72046de7525a43f4eabf315e46a63dc1c8725174c0a7ccfb8200aa8"
+    },
+    {
+      "path": "tools/algorithms/patches/openvins/0004-zupt-update-readiness.patch",
+      "sha256": "e00ed53b7a3c95384ac98f12b932c283177bed52c20facc463a493b623139c22"
+    },
+    {
+      "path": "tools/algorithms/patches/openvins/0005-source-stamped-tracking-diagnostics.patch",
+      "sha256": "35ac712117872a38a5d37a92e7601008157331f2d0a137fdf6db78fe4d63156b"
+    },
+    {
+      "path": "tools/algorithms/patches/openvins/0006-strict-native-input-boundary.patch",
+      "sha256": "dd71afa1652b0884cff1b84ef7ef8d72fa5ba5f7a27ca4308eed1bfdf0c7c969"
     }
   ],
   "consumers": [
@@ -663,7 +675,7 @@
     },
     "ov_msckf/cmake/ROS2.cmake": {
       "upstream_sha256": "6c241f89a3c4aaf0f558d13a79c58e72bb9d218a78ef02e53bf6cb33566abeec",
-      "current_sha256": "be38e4dfb3529f8f8da5bdf936b842b63ab67efe3ebcc9d9d3a2f8600253185d"
+      "current_sha256": "8fd2e6d020363d233cb52f0e33894ad02fd66704f2fee5cbc71c2ed21d6b43e1"
     },
     "ov_msckf/launch/display.rviz": {
       "upstream_sha256": "eb5fc2d0839c8d77fe0668ea6acaac5b4d550ede797f8f7f3c0776103da23ebe",
@@ -695,7 +707,7 @@
     },
     "ov_msckf/package.xml": {
       "upstream_sha256": "cfe44bbf7877d627fed5d24a299d0a50cfc0ae8f30037472eff7302cacda2c59",
-      "current_sha256": "cfe44bbf7877d627fed5d24a299d0a50cfc0ae8f30037472eff7302cacda2c59"
+      "current_sha256": "d6b3c5448ffd3a26c375617e7fb64f74b30dd878ee18316ed556dc5771b6a1b2"
     },
     "ov_msckf/rosdoc.yaml": {
       "upstream_sha256": "aabbc2be4db345ca369d656d477be2af53d632429a65ec1c1172275cd47f7d39",
@@ -731,11 +743,11 @@
     },
     "ov_msckf/src/core/VioManager.cpp": {
       "upstream_sha256": "13d0c40710f2d267e8b5967c9a91d026c12a79fec174b63154942ae97b896182",
-      "current_sha256": "2a4b1de6db2db48a2289240574fa41d334fae610cbaaf9d258038140c4b91c5d"
+      "current_sha256": "46c9066adcfe7ffcf5638ac3ed9d4c847ff6eba8779715f49c4961f6ca67c672"
     },
     "ov_msckf/src/core/VioManager.h": {
       "upstream_sha256": "7afa93033a85656f16a32bba9324887bfdc4a1272c3fe53567d16bd28da4c1e2",
-      "current_sha256": "7ea9ac29d4597785f023dc91373254c734545a7287bca7c38d59d9ae2293cbbf"
+      "current_sha256": "9ba59f251b50a7f1788f151fec53abb0ef3d705057f8d0d4c3496f6903843bae"
     },
     "ov_msckf/src/core/VioManagerHelper.cpp": {
       "upstream_sha256": "c095a93de47de41e4dc22026dd110fb629272770339b232e030e0d7ebfe11355",
@@ -759,11 +771,11 @@
     },
     "ov_msckf/src/ros/ROS2Visualizer.cpp": {
       "upstream_sha256": "4ae487016093b0e2a6c90a3514e852f06ba3d64830194dc350f22f3c89295205",
-      "current_sha256": "91ac144bca2d3d0d235c3eafc9dc42de0dda319deb9c658ed2d8679a0f600fdc"
+      "current_sha256": "512b7df3e5e8b62a9ddfabb824dfde6ea2df6ac815e87f975d11c1e467ccf6c9"
     },
     "ov_msckf/src/ros/ROS2Visualizer.h": {
       "upstream_sha256": "3676928f699452727af01a6471e6bc0a45c06f4b73b7859ee994fbe292161ca7",
-      "current_sha256": "b7514de023d6252e5348a415e8fdf1a97e4477e691edac4f26d5bc142e12fefe"
+      "current_sha256": "ce65e662eccb93ff3e192317b002ea845cae81b103ba890911bf22677457b576"
     },
     "ov_msckf/src/ros/ROSVisualizerHelper.cpp": {
       "upstream_sha256": "5ac52b19febd79c1a51f87792c198df4802c346ce46791f2b1dec09493efdd63",

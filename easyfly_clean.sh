@@ -13,32 +13,26 @@
 #   同时发布 /Odometry /path → RViz path 乱画、点云/飞机消失。
 # 验证: pkill 后 `pgrep -cf fastlio_mapping` 应为 0 (无输出)。
 
+# One matcher for inventory, termination and final verification. Match executable
+# positions, not incidental text in a caller's shell command or an unrelated job.
+names='fastlio_mapping|fastlivo_mapping|run_subscribe_msckf|openvins_guard|openvins_alignment|openvins_navigation|openvins_startup|fastlivo_guard|orbslam3_rgbd|super_worker|super_navigation|gcopter_worker|gcopter_navigation|gcopter_voxel_map|fuel_worker|fuel_exploration|gzserver|gzclient|easyfly_gzserver|px4|mavros_node|mavlink_bridge_node|rc_receiver_node|easyfly_flight_control|flight_control_node|easyfly_mission_fsm|mission_fsm_node|ego_planner_node|ego_to_mavros_node|traj_server|easyfly_pointcloud_filter|pointcloud_filter_node|easyfly_semantic_map|semantic_map_node|easyfly_global_planner|navigation_coordinator_node|global_planner_node|easyfly_target_tracking|target_tracking_node|component_container|component_container_mt|rviz2'
+pattern="^([^ ]*/)?($names)( |$)|^([^ ]*/)?python3([.][0-9]+)? ([^ ]*/)?($names)( |$)|^/usr/bin/python3 /opt/ros/[^/]*/bin/ros2 launch "
+matching_pids() {
+  pgrep -u "$(id -u)" -f "$pattern" 2>/dev/null || true
+}
+
 echo "清理前:"
-pgrep -af "fastlio_mapping|gzserver|gzclient|bin/px4|mavros_node|mavlink_bridge_node|rc_receiver_node|easyfly_flight_control|easyfly_mission_fsm|ego_planner_node|traj_server|easyfly_pointcloud_filter|easyfly_semantic_map|easyfly_global_planner|easyfly_target_tracking|component_container|rviz2" 2>/dev/null | head -30
-
-pkill -9 -f fastlio_mapping        2>/dev/null   # ★ 最易残留
-pkill -9 -f gzserver               2>/dev/null
-pkill -9 -f gzclient               2>/dev/null
-pkill -9 -f "px4_sitl_default/bin/px4" 2>/dev/null
-pkill -9 -f mavros_node            2>/dev/null
-pkill -9 -f mavlink_bridge_node    2>/dev/null
-pkill -9 -f rc_receiver_node       2>/dev/null
-pkill -9 -f easyfly_flight_control 2>/dev/null
-pkill -9 -f easyfly_mission_fsm    2>/dev/null
-# M4.x 规划/感知节点 (2026-09-14 踩坑: 未列入导致反复启停累积多实例,
-# 每个 ego_planner_node ~100% CPU → RTF 崩 → EKF 退化 → 飞行中 failsafe 漂飞)
-pkill -9 -f ego_planner_node       2>/dev/null
-pkill -9 -f traj_server            2>/dev/null
-pkill -9 -f easyfly_pointcloud_filter 2>/dev/null
-pkill -9 -f easyfly_semantic_map   2>/dev/null
-pkill -9 -f easyfly_global_planner 2>/dev/null
-pkill -9 -f easyfly_target_tracking 2>/dev/null
-pkill -9 -f component_container    2>/dev/null
-# 只匹配真正的 ros2 Python 入口。宽泛的 `pkill -f "ros2 launch"` 会把命令行中
-# 恰好包含该文本的测试编排 shell（甚至本脚本的调用者）一起杀掉。
-pkill -9 -f '^/usr/bin/python3 /opt/ros/[^/]*/bin/ros2 launch ' 2>/dev/null
-pkill -f    rviz2                  2>/dev/null
-sleep 2
-
-left=$(pgrep -cf "fastlio_mapping|gzserver|bin/px4|mavros_node|component_container|ego_planner_node|traj_server" 2>/dev/null || echo 0)
-echo "清理完成, 残留进程: ${left:-0}"
+pgrep -a -u "$(id -u)" -f "$pattern" 2>/dev/null || true
+# Give owned node shutdown handlers a chance to join their workers first.
+for sig in INT TERM KILL; do
+  mapfile -t pids < <(matching_pids)
+  ((${#pids[@]})) || break
+  kill -s "$sig" -- "${pids[@]}" 2>/dev/null || true
+  for ((attempt=0; attempt<20; ++attempt)); do
+    [[ -n "$(matching_pids)" ]] || break
+    sleep 0.1
+  done
+done
+mapfile -t remaining < <(matching_pids)
+echo "清理完成, 残留进程: ${#remaining[@]}"
+((${#remaining[@]} == 0))

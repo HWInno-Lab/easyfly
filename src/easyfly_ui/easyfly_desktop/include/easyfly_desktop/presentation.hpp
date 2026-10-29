@@ -10,13 +10,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef EASYFLY_DESKTOP__PRESENTATION_HPP_
 #define EASYFLY_DESKTOP__PRESENTATION_HPP_
 #include <QString>
 #include <optional>
 #include <string>
-
 #include "easyfly_desktop/source.hpp"
 namespace easyfly_desktop
 {

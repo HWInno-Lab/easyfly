@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include <gtest/gtest.h>
 #include <QCheckBox>
 #include <QComboBox>
@@ -46,9 +46,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/trigger.hpp>
 #include "easyfly_desktop/playback.hpp"
-// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include "support.hpp"
-
 namespace ui = easyfly_desktop;
 namespace b = easyfly_ui_bridge;
 namespace p = easyfly_ui_control;
@@ -82,7 +80,6 @@ protected:
   QString record_path;
   QJsonObject manifest;
   double began{0};
-
   template<typename Widget>
   Widget * widget(const char * name) {return window->findChild<Widget *>(name);}
   static QByteArray bytes(const QString & path)

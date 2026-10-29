@@ -12,6 +12,7 @@
   <exec_depend>ament_index_python</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
   <exec_depend>python3-jsonschema</exec_depend>
+  <exec_depend>mesa-utils</exec_depend>
   <exec_depend>easyfly_gazebo_worlds</exec_depend>
   <exec_depend>easyfly_gazebo_models</exec_depend>
   <exec_depend>easyfly_gazebo_plugins</exec_depend>
@@ -22,4 +23,5 @@
   <test_depend>python3-pytest</test_depend>
 
   <export><build_type>ament_cmake</build_type></export>
+  <exec_depend>easyfly_super_planner</exec_depend>
 </package>

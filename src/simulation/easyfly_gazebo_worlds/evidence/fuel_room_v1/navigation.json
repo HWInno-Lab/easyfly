@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "evidence": "artifacts/new-algorithms/new5-fuel-20261023/room-flight-4/result.json",
+  "result_sha256": "50caf6e09f07f5a26a8aed978a4c94ea0be89be5be579fde888b2ad7117d8460",
+  "independent_evaluation": "artifacts/new-algorithms/new5-fuel-20261023/room-flight-4/independent-evaluation.json",
+  "evaluation_sha256": "dd32e40df977e3c45a05f6301c08e13b96ab71f469a56d54732afde7b7f96b4a",
+  "sensor_attachment_audit": "artifacts/new-algorithms/new5-fuel-20261023/room-flight-4/sensor-attachment-audit.json",
+  "sensor_attachment_sha256": "c03f97bc0e80d3c5ae2757734b1bd13ea5cd59022a27bab393c42c1ed74993ae",
+  "mission": [
+    {
+      "mission_id": "71d7aa48f323494cbb379bd80770566c",
+      "source_maps": 560,
+      "initial_coverage": 0.5467236467236467,
+      "final_coverage": 1.0,
+      "gain": 0.4532763532763533,
+      "completed": 3,
+      "decision_count": 3,
+      "repeat_viewpoints": 0,
+      "reason": "COVERAGE_COMPLETE",
+      "source_duration_s": 56.0,
+      "wall_duration_s": 75.96444186,
+      "remaining_unknown_cells": 0,
+      "peak_rss_kib": 147600,
+      "native_cpu_sec": 0.365062,
+      "max_decision_wall_sec": 0.109357248
+    }
+  ],
+  "scope": "scene qualification; final current FUEL build qualification recorded separately"
+}

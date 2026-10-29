@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <algorithm>
 #include <limits>
 #include <stdexcept>
 #include "easyfly_astar/astar.hpp"
 #include "easyfly_global_planner/adapters/planner_factory.hpp"
-
 namespace easyfly_global_planner
 {
 namespace gp = easyfly::grid_planning;

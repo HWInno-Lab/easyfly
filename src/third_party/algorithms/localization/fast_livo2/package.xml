@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>fast_livo</name>
+  <version>0.0.0</version>
+
+  <description>
+    This is a modified version of LOAM which is original algorithm
+    is described in the following paper:
+    J. Zhang and S. Singh. LOAM: Lidar Odometry and Mapping in Real-time.
+      Robotics: Science and Systems Conference (RSS). Berkeley, CA, July 2014.
+  </description>
+
+  <maintainer email="dev@livoxtech.com">claydergc</maintainer>
+
+  <license>GPL-2.0</license>
+
+  <author email="zhangji@cmu.edu">Ji Zhang</author>
+  
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <build_depend>rclpy</build_depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>visualization_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>tf2_ros</depend>
+  <depend>libpcl-all-dev</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>pcl_conversions</depend>
+  <depend>livox_ros_driver2</depend>
+  <depend>vikit_common</depend>
+
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>libopencv-dev</build_depend>
+  <build_depend>sophus</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>fmt</build_depend>
+
+  <exec_depend>cv_bridge</exec_depend>
+  <exec_depend>image_transport</exec_depend>
+  <exec_depend>libopencv-dev</exec_depend>
+
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <!-- https://github.com/ros-perception/image_transport_tutorials/blob/humble/package.xml -->
+    <!-- <image_transport plugin="${prefix}/resized_plugins.xml"/> -->
+  </export>
+</package>

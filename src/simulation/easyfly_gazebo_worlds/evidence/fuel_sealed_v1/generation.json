@@ -1,0 +1,15 @@
+{
+  "project_authored": true,
+  "occlusion_present_before_first_scan": true,
+  "partition_center": [
+    3,
+    0,
+    2
+  ],
+  "partition_size": [
+    0.2,
+    6,
+    4
+  ],
+  "world_sha256": "6ba954f2d3574d3cf1af6b02663ebcde99d98998985d3864e207c867e902e87c"
+}

@@ -15,17 +15,24 @@ WORKSPACE = Path(__file__).resolve().parents[5]
 SOURCE_WORLDS = WORKSPACE / 'src/simulation/easyfly_gazebo_worlds'
 
 
-def test_shipped_registered_scenes_support_basic_simulation_without_promoting_drafts():
+def test_shipped_registered_scenes_preserve_declared_profiles_without_promoting_drafts():
     registered = []
+    basic = []
+    navigation_only = {'fuel_room_v1', 'fuel_warehouse_v1', 'gcopter_3d_lane_v1'}
     for path in sorted((SOURCE_WORLDS / 'scenes').glob('*.yaml')):
         scene = yaml.safe_load(path.read_text())
         if scene['status'] == 'registered':
             registered.append(scene['id'])
-            assert 'base_sim' in scene['supported_profiles'], scene['id']
+            if scene['id'] in navigation_only:
+                assert scene['supported_profiles'] == ['navigation_dev'], scene['id']
+            else:
+                assert 'base_sim' in scene['supported_profiles'], scene['id']
+                basic.append(scene['id'])
             assert 'navigation_dev' in scene['supported_profiles'], scene['id']
         else:
             assert 'base_sim' not in scene['supported_profiles'], scene['id']
-    assert len(registered) >= 11
+    assert len(basic) >= 11
+    assert navigation_only <= set(registered)
 
 
 def write_yaml(path, data):

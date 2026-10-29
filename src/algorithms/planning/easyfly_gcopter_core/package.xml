@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_gcopter_core</name><version>0.1.0</version>
+  <description>Installed, pinned upstream GCOPTER/MINCO headers without ROS1 examples.</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>MIT</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>eigen</depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

@@ -42,6 +42,32 @@ TEST(BridgeModel, ClockMissingZeroFrozenAndBackwards)
   EXPECT_EQ(wall.state(13, 10000000000LL).now_ns, 10000000000LL);
 }
 
+TEST(BridgeModel, NavigationLocalizationRequiresAlignedFreshIdentifiedTracking)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  const ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  for (const auto & backend : {"openvins", "fast_livo2", "orbslam3"}) {
+    Status m; m.backend_id = std::string(backend) + "_navigation";
+    m.session_id = "session"; m.header.frame_id = "odom"; m.tracked_frame = "base_link";
+    m.header.stamp.sec = m.pose_stamp.sec = 10;
+    m.state = Status::ESTIMATING; m.pose_valid = m.tracking_quality_available = true;
+    const auto valid = [&]() {
+        return detail::validate_navigation_localization(m, backend, clock, 0);
+      };
+    EXPECT_EQ(valid(), Quality::ValidAtObservation);
+    m.tracking_quality_available = false; EXPECT_EQ(valid(), Quality::Invalid);
+    m.tracking_quality_available = true;
+    m.pose_stamp.sec = 9; EXPECT_EQ(valid(), Quality::Stale); m.pose_stamp.sec = 10;
+    m.header.frame_id = "map"; EXPECT_EQ(valid(), Quality::Invalid); m.header.frame_id = "odom";
+    m.session_id.clear(); EXPECT_EQ(valid(), Quality::Invalid); m.session_id = "session";
+    m.state = Status::RESET_REQUIRED; m.pose_valid = false; EXPECT_EQ(valid(), Quality::Invalid);
+    m.state = Status::ESTIMATING; m.pose_valid = true;
+    EXPECT_EQ(detail::validate_navigation_localization(m, backend, clock, .6), Quality::Stale);
+    EXPECT_EQ(detail::validate_navigation_localization(m, "external", clock, 0), Quality::Invalid);
+    m.backend_id = backend; EXPECT_EQ(valid(), Quality::Invalid);
+  }
+}
+
 TEST(BridgeModel, SourceAndReceiptAgesAreIndependent)
 {
   std_msgs::msg::Header header;
@@ -203,5 +229,41 @@ TEST(BridgeModel, LocalizationStatusIsObservationNotNavigationAdmission)
   m.session_id.clear();
   EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
   m.session_id = "test"; m.reason = std::string(2049, 'x');
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+}
+
+TEST(BridgeModel, OrbSlamMapPoseRequiresUnavailableCovarianceAndBaseFrame)
+{
+  easyfly_msgs::msg::LocalizationStatus m;
+  m.backend_id = "orbslam3"; m.session_id = "orb-map-session";
+  m.header.frame_id = "orbslam3_map"; m.header.stamp.sec = 10;
+  m.tracked_frame = "base_link"; m.pose_stamp.sec = 10;
+  m.state = m.ESTIMATING; m.pose_valid = true; m.covariance_available = false;
+  m.tracking_quality_available = true;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::ValidAtObservation);
+  m.covariance_available = true;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+  m.covariance_available = false; m.tracked_frame = "livox_imu_frame";
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+  m.tracked_frame = "base_link"; m.state = m.RESET_REQUIRED; m.pose_valid = false;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+}
+
+TEST(BridgeModel, FastLivoStatusMatchesItsOwnFrameAndFreshness)
+{
+  easyfly_msgs::msg::LocalizationStatus m;
+  m.backend_id = "fast_livo2"; m.session_id = "fastlivo-session";
+  m.header.frame_id = "fastlivo_odom"; m.header.stamp.sec = 10;
+  m.tracked_frame = "livox_imu_frame"; m.pose_stamp.sec = 10;
+  m.state = m.ESTIMATING; m.pose_valid = true; m.covariance_available = true;
+  m.tracking_quality_available = true;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::ValidAtObservation);
+  m.header.frame_id = "openvins_odom";
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+  m.header.frame_id = "fastlivo_odom"; m.pose_stamp.sec = 9;
+  EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Stale);
+  m.pose_stamp.sec = 10; m.state = m.RESET_REQUIRED; m.pose_valid = false;
   EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
 }

@@ -1,0 +1,1726 @@
+--- a/.gitignore
++++ b/.gitignore
+@@ -91,3 +91,10 @@
+ borrar/*
+ 
+ */ExecMean.txt
++
++# Required source and license files otherwise hidden by upstream broad rules.
++!LICENSE
++!Thirdparty/DBoW2/DUtils/Timestamp.cpp
++!Thirdparty/DBoW2/DUtils/Timestamp.h
++!Thirdparty/g2o/g2o/stuff/timeutil.cpp
++!Thirdparty/g2o/g2o/stuff/timeutil.h
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,390 +1,100 @@
+-cmake_minimum_required(VERSION 2.8)
+-project(ORB_SLAM3)
+-
+-IF(NOT CMAKE_BUILD_TYPE)
+-  SET(CMAKE_BUILD_TYPE Release)
+-ENDIF()
+-
+-MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
+-
+-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall   -O3")
+-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3")
+-set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -march=native")
+-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -march=native")
+-
+-# Check C++11 or C++0x support
+-include(CheckCXXCompilerFlag)
+-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+-if(COMPILER_SUPPORTS_CXX11)
+-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+-   add_definitions(-DCOMPILEDWITHC11)
+-   message(STATUS "Using flag -std=c++11.")
+-elseif(COMPILER_SUPPORTS_CXX0X)
+-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+-   add_definitions(-DCOMPILEDWITHC0X)
+-   message(STATUS "Using flag -std=c++0x.")
+-else()
+-   message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
++cmake_minimum_required(VERSION 3.16)
++project(easyfly_orbslam3_core VERSION 1.0.0 LANGUAGES C CXX)
++find_package(ament_cmake REQUIRED)
++find_package(OpenCV 4.4 REQUIRED COMPONENTS core imgproc features2d calib3d highgui imgcodecs)
++find_package(Eigen3 3.1 REQUIRED NO_MODULE)
++find_package(Pangolin 0.6 REQUIRED)
++find_package(Boost REQUIRED COMPONENTS serialization)
++find_package(OpenSSL REQUIRED)
++find_package(Threads REQUIRED)
++set(CMAKE_CXX_STANDARD 17)
++set(CMAKE_CXX_STANDARD_REQUIRED ON)
++set(CMAKE_POSITION_INDEPENDENT_CODE ON)
++set(CMAKE_INSTALL_RPATH "$ORIGIN")
++configure_file(Thirdparty/g2o/config.h.in easyfly_orbslam3_g2o_config.h)
++set(ORB_G2O_SOURCES
++  Thirdparty/g2o/g2o/types/types_sba.cpp
++  Thirdparty/g2o/g2o/types/types_six_dof_expmap.cpp
++  Thirdparty/g2o/g2o/types/types_seven_dof_expmap.cpp
++  Thirdparty/g2o/g2o/core/hyper_graph_action.cpp
++  Thirdparty/g2o/g2o/core/hyper_graph.cpp
++  Thirdparty/g2o/g2o/core/marginal_covariance_cholesky.cpp
++  Thirdparty/g2o/g2o/core/matrix_structure.cpp
++  Thirdparty/g2o/g2o/core/batch_stats.cpp
++  Thirdparty/g2o/g2o/core/parameter.cpp
++  Thirdparty/g2o/g2o/core/cache.cpp
++  Thirdparty/g2o/g2o/core/optimizable_graph.cpp
++  Thirdparty/g2o/g2o/core/solver.cpp
++  Thirdparty/g2o/g2o/core/optimization_algorithm_factory.cpp
++  Thirdparty/g2o/g2o/core/estimate_propagator.cpp
++  Thirdparty/g2o/g2o/core/factory.cpp
++  Thirdparty/g2o/g2o/core/sparse_optimizer.cpp
++  Thirdparty/g2o/g2o/core/hyper_dijkstra.cpp
++  Thirdparty/g2o/g2o/core/parameter_container.cpp
++  Thirdparty/g2o/g2o/core/optimization_algorithm.cpp
++  Thirdparty/g2o/g2o/core/optimization_algorithm_with_hessian.cpp
++  Thirdparty/g2o/g2o/core/optimization_algorithm_levenberg.cpp
++  Thirdparty/g2o/g2o/core/optimization_algorithm_gauss_newton.cpp
++  Thirdparty/g2o/g2o/core/jacobian_workspace.cpp
++  Thirdparty/g2o/g2o/core/robust_kernel.cpp
++  Thirdparty/g2o/g2o/core/robust_kernel_factory.cpp
++  Thirdparty/g2o/g2o/core/robust_kernel_impl.cpp
++  Thirdparty/g2o/g2o/stuff/timeutil.cpp
++  Thirdparty/g2o/g2o/stuff/os_specific.c
++  Thirdparty/g2o/g2o/stuff/string_tools.cpp
++  Thirdparty/g2o/g2o/stuff/property.cpp
++)
++add_library(easyfly_orbslam3_g2o SHARED ${ORB_G2O_SOURCES})
++target_include_directories(easyfly_orbslam3_g2o PUBLIC
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/g2o>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3/Thirdparty/g2o>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3>)
++target_link_libraries(easyfly_orbslam3_g2o PUBLIC Eigen3::Eigen)
++file(GLOB DBOW_SOURCES CONFIGURE_DEPENDS Thirdparty/DBoW2/DBoW2/*.cpp Thirdparty/DBoW2/DUtils/*.cpp)
++add_library(easyfly_orbslam3_dbow2 SHARED ${DBOW_SOURCES})
++target_link_libraries(easyfly_orbslam3_dbow2 PUBLIC ${OpenCV_LIBS})
++file(GLOB ORB_SOURCES CONFIGURE_DEPENDS src/*.cc src/*.cpp src/CameraModels/*.cpp)
++add_library(easyfly_orbslam3 SHARED ${ORB_SOURCES})
++set(EASYFLY_ORB_GRAVITY 9.8 CACHE STRING "Gravity magnitude of the calibrated EasyFly simulation")
++if(NOT EASYFLY_ORB_GRAVITY MATCHES "^[0-9]+([.][0-9]+)?$" OR
++   EASYFLY_ORB_GRAVITY LESS_EQUAL 0 OR EASYFLY_ORB_GRAVITY GREATER 20)
++  message(FATAL_ERROR "Invalid calibrated ORB gravity")
+ endif()
+-
+-LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
+-
+-find_package(OpenCV 4.4)
+-   if(NOT OpenCV_FOUND)
+-      message(FATAL_ERROR "OpenCV > 4.4 not found.")
+-   endif()
+-
+-MESSAGE("OPENCV VERSION:")
+-MESSAGE(${OpenCV_VERSION})
+-
+-find_package(Eigen3 3.1.0 REQUIRED)
+-find_package(Pangolin REQUIRED)
+-find_package(realsense2)
+-
+-include_directories(
+-${PROJECT_SOURCE_DIR}
+-${PROJECT_SOURCE_DIR}/include
+-${PROJECT_SOURCE_DIR}/include/CameraModels
+-${PROJECT_SOURCE_DIR}/Thirdparty/Sophus
+-${EIGEN3_INCLUDE_DIR}
+-${Pangolin_INCLUDE_DIRS}
+-)
+-
+-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
+-
+-add_library(${PROJECT_NAME} SHARED
+-src/System.cc
+-src/Tracking.cc
+-src/LocalMapping.cc
+-src/LoopClosing.cc
+-src/ORBextractor.cc
+-src/ORBmatcher.cc
+-src/FrameDrawer.cc
+-src/Converter.cc
+-src/MapPoint.cc
+-src/KeyFrame.cc
+-src/Atlas.cc
+-src/Map.cc
+-src/MapDrawer.cc
+-src/Optimizer.cc
+-src/Frame.cc
+-src/KeyFrameDatabase.cc
+-src/Sim3Solver.cc
+-src/Viewer.cc
+-src/ImuTypes.cc
+-src/G2oTypes.cc
+-src/CameraModels/Pinhole.cpp
+-src/CameraModels/KannalaBrandt8.cpp
+-src/OptimizableTypes.cpp
+-src/MLPnPsolver.cpp
+-src/GeometricTools.cc
+-src/TwoViewReconstruction.cc
+-src/Config.cc
+-src/Settings.cc
+-include/System.h
+-include/Tracking.h
+-include/LocalMapping.h
+-include/LoopClosing.h
+-include/ORBextractor.h
+-include/ORBmatcher.h
+-include/FrameDrawer.h
+-include/Converter.h
+-include/MapPoint.h
+-include/KeyFrame.h
+-include/Atlas.h
+-include/Map.h
+-include/MapDrawer.h
+-include/Optimizer.h
+-include/Frame.h
+-include/KeyFrameDatabase.h
+-include/Sim3Solver.h
+-include/Viewer.h
+-include/ImuTypes.h
+-include/G2oTypes.h
+-include/CameraModels/GeometricCamera.h
+-include/CameraModels/Pinhole.h
+-include/CameraModels/KannalaBrandt8.h
+-include/OptimizableTypes.h
+-include/MLPnPsolver.h
+-include/GeometricTools.h
+-include/TwoViewReconstruction.h
+-include/SerializationUtils.h
+-include/Config.h
+-include/Settings.h)
+-
+-add_subdirectory(Thirdparty/g2o)
+-
+-target_link_libraries(${PROJECT_NAME}
+-${OpenCV_LIBS}
+-${EIGEN3_LIBS}
+-${Pangolin_LIBRARIES}
+-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.so
+-${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
+--lboost_serialization
+--lcrypto
+-)
+-
+-# If RealSense SDK is found the library is added and its examples compiled
+-if(realsense2_FOUND)
+-    include_directories(${PROJECT_NAME}
+-    ${realsense_INCLUDE_DIR}
+-    )
+-    target_link_libraries(${PROJECT_NAME}
+-    ${realsense2_LIBRARY}
+-    )
++target_compile_definitions(easyfly_orbslam3 PUBLIC EASYFLY_ORB_GRAVITY=${EASYFLY_ORB_GRAVITY})
++target_include_directories(easyfly_orbslam3 BEFORE PUBLIC
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/CameraModels>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Thirdparty/Sophus>
++  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3/include>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3/include/CameraModels>
++  $<INSTALL_INTERFACE:include/easyfly_orbslam3/Thirdparty/Sophus>)
++target_link_libraries(easyfly_orbslam3 PUBLIC easyfly_orbslam3_g2o easyfly_orbslam3_dbow2
++  Eigen3::Eigen ${OpenCV_LIBS} ${Pangolin_LIBRARIES} Boost::serialization OpenSSL::Crypto Threads::Threads)
++target_compile_options(easyfly_orbslam3 PRIVATE -Wno-deprecated-declarations)
++file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/vocabulary)
++if(NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/vocabulary/ORBvoc.txt)
++  execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${CMAKE_CURRENT_SOURCE_DIR}/Vocabulary/ORBvoc.txt.tar.gz
++    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/vocabulary COMMAND_ERROR_IS_FATAL ANY)
+ endif()
+-
+-
+-# Build examples
+-
+-# RGB-D examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D)
+-
+-add_executable(rgbd_tum
+-        Examples/RGB-D/rgbd_tum.cc)
+-target_link_libraries(rgbd_tum ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(rgbd_realsense_D435i
+-            Examples/RGB-D/rgbd_realsense_D435i.cc)
+-    target_link_libraries(rgbd_realsense_D435i ${PROJECT_NAME})
++install(TARGETS easyfly_orbslam3 easyfly_orbslam3_g2o easyfly_orbslam3_dbow2 EXPORT orbslam3Targets LIBRARY DESTINATION lib ARCHIVE DESTINATION lib)
++install(DIRECTORY include/ DESTINATION include/easyfly_orbslam3/include FILES_MATCHING PATTERN "*.h")
++install(DIRECTORY Thirdparty/ DESTINATION include/easyfly_orbslam3/Thirdparty FILES_MATCHING PATTERN "*.h" PATTERN "*.hpp")
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/easyfly_orbslam3_g2o_config.h DESTINATION include/easyfly_orbslam3)
++install(FILES ${CMAKE_CURRENT_BINARY_DIR}/vocabulary/ORBvoc.txt DESTINATION share/${PROJECT_NAME}/vocabulary)
++install(FILES LICENSE README.md Dependencies.md DESTINATION share/${PROJECT_NAME}/upstream)
++install(FILES Thirdparty/DBoW2/LICENSE.txt DESTINATION share/${PROJECT_NAME}/licenses RENAME DBoW2-LICENSE.txt)
++install(FILES Thirdparty/DBoW2/LICENSE-SOURCE.md DESTINATION share/${PROJECT_NAME}/licenses RENAME DBoW2-LICENSE-SOURCE.md)
++install(FILES Thirdparty/DBoW2/README.txt DESTINATION share/${PROJECT_NAME}/licenses RENAME DBoW2-UPSTREAM-NOTICE.txt)
++install(FILES Thirdparty/g2o/license-bsd.txt DESTINATION share/${PROJECT_NAME}/licenses RENAME g2o-license-bsd.txt)
++install(FILES Thirdparty/Sophus/LICENSE.txt DESTINATION share/${PROJECT_NAME}/licenses RENAME Sophus-LICENSE.txt)
++ament_export_targets(orbslam3Targets HAS_LIBRARY_TARGET)
++if(BUILD_TESTING)
++  find_package(ament_cmake_gtest REQUIRED)
++  ament_add_gtest(test_gazebo_gravity test/test_gazebo_gravity.cpp)
++  target_link_libraries(test_gazebo_gravity easyfly_orbslam3)
+ endif()
+-
+-
+-# RGB-D inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/RGB-D-Inertial)
+-
+-if(realsense2_FOUND)
+-    add_executable(rgbd_inertial_realsense_D435i
+-            Examples/RGB-D-Inertial/rgbd_inertial_realsense_D435i.cc)
+-    target_link_libraries(rgbd_inertial_realsense_D435i ${PROJECT_NAME})
+-endif()
+-
+-#Stereo examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo)
+-
+-add_executable(stereo_kitti
+-        Examples/Stereo/stereo_kitti.cc)
+-target_link_libraries(stereo_kitti ${PROJECT_NAME})
+-
+-add_executable(stereo_euroc
+-        Examples/Stereo/stereo_euroc.cc)
+-target_link_libraries(stereo_euroc ${PROJECT_NAME})
+-
+-add_executable(stereo_tum_vi
+-        Examples/Stereo/stereo_tum_vi.cc)
+-target_link_libraries(stereo_tum_vi ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(stereo_realsense_t265
+-            Examples/Stereo/stereo_realsense_t265.cc)
+-    target_link_libraries(stereo_realsense_t265 ${PROJECT_NAME})
+-
+-    add_executable(stereo_realsense_D435i
+-            Examples/Stereo/stereo_realsense_D435i.cc)
+-    target_link_libraries(stereo_realsense_D435i ${PROJECT_NAME})
+-endif()
+-
+-#Monocular examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular)
+-
+-add_executable(mono_tum
+-        Examples/Monocular/mono_tum.cc)
+-target_link_libraries(mono_tum ${PROJECT_NAME})
+-
+-add_executable(mono_kitti
+-        Examples/Monocular/mono_kitti.cc)
+-target_link_libraries(mono_kitti ${PROJECT_NAME})
+-
+-add_executable(mono_euroc
+-        Examples/Monocular/mono_euroc.cc)
+-target_link_libraries(mono_euroc ${PROJECT_NAME})
+-
+-add_executable(mono_tum_vi
+-        Examples/Monocular/mono_tum_vi.cc)
+-target_link_libraries(mono_tum_vi ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(mono_realsense_t265
+-            Examples/Monocular/mono_realsense_t265.cc)
+-    target_link_libraries(mono_realsense_t265 ${PROJECT_NAME})
+-
+-    add_executable(mono_realsense_D435i
+-            Examples/Monocular/mono_realsense_D435i.cc)
+-    target_link_libraries(mono_realsense_D435i ${PROJECT_NAME})
+-endif()
+-
+-#Monocular inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Monocular-Inertial)
+-
+-add_executable(mono_inertial_euroc
+-        Examples/Monocular-Inertial/mono_inertial_euroc.cc)
+-target_link_libraries(mono_inertial_euroc ${PROJECT_NAME})
+-
+-add_executable(mono_inertial_tum_vi
+-        Examples/Monocular-Inertial/mono_inertial_tum_vi.cc)
+-target_link_libraries(mono_inertial_tum_vi ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(mono_inertial_realsense_t265
+-            Examples/Monocular-Inertial/mono_inertial_realsense_t265.cc)
+-    target_link_libraries(mono_inertial_realsense_t265 ${PROJECT_NAME})
+-
+-    add_executable(mono_inertial_realsense_D435i
+-            Examples/Monocular-Inertial/mono_inertial_realsense_D435i.cc)
+-    target_link_libraries(mono_inertial_realsense_D435i ${PROJECT_NAME})
+-endif()
+-
+-#Stereo Inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Stereo-Inertial)
+-
+-add_executable(stereo_inertial_euroc
+-        Examples/Stereo-Inertial/stereo_inertial_euroc.cc)
+-target_link_libraries(stereo_inertial_euroc ${PROJECT_NAME})
+-
+-add_executable(stereo_inertial_tum_vi
+-        Examples/Stereo-Inertial/stereo_inertial_tum_vi.cc)
+-target_link_libraries(stereo_inertial_tum_vi ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(stereo_inertial_realsense_t265
+-            Examples/Stereo-Inertial/stereo_inertial_realsense_t265.cc)
+-    target_link_libraries(stereo_inertial_realsense_t265 ${PROJECT_NAME})
+-
+-    add_executable(stereo_inertial_realsense_D435i
+-            Examples/Stereo-Inertial/stereo_inertial_realsense_D435i.cc)
+-    target_link_libraries(stereo_inertial_realsense_D435i ${PROJECT_NAME})
+-endif()
+-
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples/Calibration)
+-if(realsense2_FOUND)
+-    add_executable(recorder_realsense_D435i
+-            Examples/Calibration/recorder_realsense_D435i.cc)
+-    target_link_libraries(recorder_realsense_D435i ${PROJECT_NAME})
+-
+-    add_executable(recorder_realsense_T265
+-            Examples/Calibration/recorder_realsense_T265.cc)
+-    target_link_libraries(recorder_realsense_T265 ${PROJECT_NAME})
+-endif()
+-
+-#Old examples
+-
+-# RGB-D examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/RGB-D)
+-
+-add_executable(rgbd_tum_old
+-        Examples_old/RGB-D/rgbd_tum.cc)
+-target_link_libraries(rgbd_tum_old ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(rgbd_realsense_D435i_old
+-            Examples_old/RGB-D/rgbd_realsense_D435i.cc)
+-    target_link_libraries(rgbd_realsense_D435i_old ${PROJECT_NAME})
+-endif()
+-
+-
+-# RGB-D inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/RGB-D-Inertial)
+-
+-if(realsense2_FOUND)
+-    add_executable(rgbd_inertial_realsense_D435i_old
+-            Examples_old/RGB-D-Inertial/rgbd_inertial_realsense_D435i.cc)
+-    target_link_libraries(rgbd_inertial_realsense_D435i_old ${PROJECT_NAME})
+-endif()
+-
+-#Stereo examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/Stereo)
+-
+-add_executable(stereo_kitti_old
+-        Examples_old/Stereo/stereo_kitti.cc)
+-target_link_libraries(stereo_kitti_old ${PROJECT_NAME})
+-
+-add_executable(stereo_euroc_old
+-        Examples_old/Stereo/stereo_euroc.cc)
+-target_link_libraries(stereo_euroc_old ${PROJECT_NAME})
+-
+-add_executable(stereo_tum_vi_old
+-        Examples_old/Stereo/stereo_tum_vi.cc)
+-target_link_libraries(stereo_tum_vi_old ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(stereo_realsense_t265_old
+-            Examples_old/Stereo/stereo_realsense_t265.cc)
+-    target_link_libraries(stereo_realsense_t265_old ${PROJECT_NAME})
+-
+-    add_executable(stereo_realsense_D435i_old
+-            Examples_old/Stereo/stereo_realsense_D435i.cc)
+-    target_link_libraries(stereo_realsense_D435i_old ${PROJECT_NAME})
+-endif()
+-
+-#Monocular examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/Monocular)
+-
+-add_executable(mono_tum_old
+-        Examples_old/Monocular/mono_tum.cc)
+-target_link_libraries(mono_tum_old ${PROJECT_NAME})
+-
+-add_executable(mono_kitti_old
+-        Examples_old/Monocular/mono_kitti.cc)
+-target_link_libraries(mono_kitti_old ${PROJECT_NAME})
+-
+-add_executable(mono_euroc_old
+-        Examples_old/Monocular/mono_euroc.cc)
+-target_link_libraries(mono_euroc_old ${PROJECT_NAME})
+-
+-add_executable(mono_tum_vi_old
+-        Examples_old/Monocular/mono_tum_vi.cc)
+-target_link_libraries(mono_tum_vi_old ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(mono_realsense_t265_old
+-            Examples_old/Monocular/mono_realsense_t265.cc)
+-    target_link_libraries(mono_realsense_t265_old ${PROJECT_NAME})
+-
+-    add_executable(mono_realsense_D435i_old
+-            Examples_old/Monocular/mono_realsense_D435i.cc)
+-    target_link_libraries(mono_realsense_D435i_old ${PROJECT_NAME})
+-endif()
+-
+-#Monocular inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/Monocular-Inertial)
+-
+-add_executable(mono_inertial_euroc_old
+-        Examples_old/Monocular-Inertial/mono_inertial_euroc.cc)
+-target_link_libraries(mono_inertial_euroc_old ${PROJECT_NAME})
+-
+-add_executable(mono_inertial_tum_vi_old
+-        Examples_old/Monocular-Inertial/mono_inertial_tum_vi.cc)
+-target_link_libraries(mono_inertial_tum_vi_old ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(mono_inertial_realsense_t265_old
+-            Examples_old/Monocular-Inertial/mono_inertial_realsense_t265.cc)
+-    target_link_libraries(mono_inertial_realsense_t265_old ${PROJECT_NAME})
+-
+-    add_executable(mono_inertial_realsense_D435i_old
+-            Examples_old/Monocular-Inertial/mono_inertial_realsense_D435i.cc)
+-    target_link_libraries(mono_inertial_realsense_D435i_old ${PROJECT_NAME})
+-endif()
+-
+-#Stereo Inertial examples
+-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples_old/Stereo-Inertial)
+-
+-add_executable(stereo_inertial_euroc_old
+-        Examples_old/Stereo-Inertial/stereo_inertial_euroc.cc)
+-target_link_libraries(stereo_inertial_euroc_old ${PROJECT_NAME})
+-
+-add_executable(stereo_inertial_tum_vi_old
+-        Examples_old/Stereo-Inertial/stereo_inertial_tum_vi.cc)
+-target_link_libraries(stereo_inertial_tum_vi_old ${PROJECT_NAME})
+-
+-if(realsense2_FOUND)
+-    add_executable(stereo_inertial_realsense_t265_old
+-            Examples_old/Stereo-Inertial/stereo_inertial_realsense_t265.cc)
+-    target_link_libraries(stereo_inertial_realsense_t265_old ${PROJECT_NAME})
+-
+-    add_executable(stereo_inertial_realsense_D435i_old
+-            Examples_old/Stereo-Inertial/stereo_inertial_realsense_D435i.cc)
+-    target_link_libraries(stereo_inertial_realsense_D435i_old ${PROJECT_NAME})
+-endif()
++ament_package(CONFIG_EXTRAS cmake/dependencies.cmake)
+--- /dev/null
++++ b/Thirdparty/DBoW2/LICENSE-SOURCE.md
+@@ -0,0 +1,17 @@
++# DBoW2 / DUtils license text recovery
++
++The pinned ORB-SLAM3 snapshot's README explicitly identifies the ORB-SLAM2
++DBoW2/DUtils distribution and references its missing LICENSE.txt. This file is
++restored verbatim from official ORB-SLAM2 commit
++`f2e6f51cdc8d067655d90a78c06261378e07e8f3`, path `Thirdparty/DBoW2/LICENSE.txt`:
++https://github.com/raulmur/ORB_SLAM2/blob/f2e6f51cdc8d067655d90a78c06261378e07e8f3/Thirdparty/DBoW2/LICENSE.txt
++
++The README and 12 source files match that distribution byte for byte. The two
++remaining headers differ only by Boost serialization includes and methods added
++by ORB-SLAM3; their existing original authorship notices are unchanged. Those
++additions remain subject to ORB-SLAM3's own license. This restores the upstream
++BSD-3-Clause text; it does not replace ORB-SLAM3's GPL or any per-file notice.
++
++Retrieved 2026-10-28. LICENSE.txt SHA-256:
++`ad22a7fc36c72bd4016bb3ae49437d0433eaa74e3c4768cadebcd0f3236e5aae`.
++The unrelated current dorian3d/DBoW2 license was not substituted for this version.
+--- /dev/null
++++ b/Thirdparty/DBoW2/LICENSE.txt
+@@ -0,0 +1,44 @@
++DBoW2: bag-of-words library for C++ with generic descriptors
++
++Copyright (c) 2015 Dorian Galvez-Lopez <http://doriangalvez.com> (Universidad de Zaragoza)
++All rights reserved.
++
++Redistribution and use in source and binary forms, with or without
++modification, are permitted provided that the following conditions
++are met:
++1. Redistributions of source code must retain the above copyright
++   notice, this list of conditions and the following disclaimer.
++2. Redistributions in binary form must reproduce the above copyright
++   notice, this list of conditions and the following disclaimer in the
++   documentation and/or other materials provided with the distribution.
++3. Neither the name of copyright holders nor the names of its
++   contributors may be used to endorse or promote products derived
++   from this software without specific prior written permission.
++
++THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++''AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
++TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL COPYRIGHT HOLDERS OR CONTRIBUTORS
++BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
++CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
++SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
++INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
++CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
++ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++POSSIBILITY OF SUCH DAMAGE.
++
++If you use it in an academic work, please cite:
++
++  @ARTICLE{GalvezTRO12,
++    author={G\'alvez-L\'opez, Dorian and Tard\'os, J. D.}, 
++    journal={IEEE Transactions on Robotics},
++    title={Bags of Binary Words for Fast Place Recognition in Image Sequences},
++    year={2012},
++    month={October},
++    volume={28},
++    number={5},
++    pages={1188--1197},
++    doi={10.1109/TRO.2012.2197158},
++    ISSN={1552-3098}
++  }
++
+--- a/Thirdparty/g2o/g2o/core/base_binary_edge.h
++++ b/Thirdparty/g2o/g2o/core/base_binary_edge.h
+@@ -32,7 +32,7 @@
+ 
+ #include "base_edge.h"
+ #include "robust_kernel.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o {
+ 
+--- a/Thirdparty/g2o/g2o/core/base_multi_edge.h
++++ b/Thirdparty/g2o/g2o/core/base_multi_edge.h
+@@ -35,7 +35,7 @@
+ 
+ #include "base_edge.h"
+ #include "robust_kernel.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o {
+ 
+--- a/Thirdparty/g2o/g2o/core/base_unary_edge.h
++++ b/Thirdparty/g2o/g2o/core/base_unary_edge.h
+@@ -33,7 +33,7 @@
+ 
+ #include "base_edge.h"
+ #include "robust_kernel.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o {
+ 
+--- a/Thirdparty/g2o/g2o/core/block_solver.h
++++ b/Thirdparty/g2o/g2o/core/block_solver.h
+@@ -32,7 +32,7 @@
+ #include "sparse_block_matrix.h"
+ #include "sparse_block_matrix_diagonal.h"
+ #include "openmp_mutex.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o {
+   using namespace Eigen;
+--- a/Thirdparty/g2o/g2o/core/factory.h
++++ b/Thirdparty/g2o/g2o/core/factory.h
+@@ -27,7 +27,7 @@
+ #ifndef G2O_FACTORY_H
+ #define G2O_FACTORY_H
+ 
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ #include "../stuff/misc.h"
+ #include "hyper_graph.h"
+ #include "creators.h"
+--- a/Thirdparty/g2o/g2o/core/openmp_mutex.h
++++ b/Thirdparty/g2o/g2o/core/openmp_mutex.h
+@@ -27,7 +27,7 @@
+ #ifndef G2O_OPENMP_MUTEX
+ #define G2O_OPENMP_MUTEX
+ 
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ #ifdef G2O_OPENMP
+ #include <omp.h>
+--- a/Thirdparty/g2o/g2o/core/optimization_algorithm_factory.h
++++ b/Thirdparty/g2o/g2o/core/optimization_algorithm_factory.h
+@@ -27,7 +27,7 @@
+ #ifndef G2O_OPTMIZATION_ALGORITHM_PROPERTY_H
+ #define G2O_OPTMIZATION_ALGORITHM_PROPERTY_H
+ 
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ #include "../stuff/misc.h"
+ #include "optimization_algorithm_property.h"
+ 
+--- a/Thirdparty/g2o/g2o/core/sparse_block_matrix.h
++++ b/Thirdparty/g2o/g2o/core/sparse_block_matrix.h
+@@ -38,7 +38,7 @@
+ #include "sparse_block_matrix_ccs.h"
+ #include "matrix_structure.h"
+ #include "matrix_operations.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o {
+   using namespace Eigen;
+--- a/Thirdparty/g2o/g2o/core/sparse_block_matrix_ccs.h
++++ b/Thirdparty/g2o/g2o/core/sparse_block_matrix_ccs.h
+@@ -31,7 +31,7 @@
+ #include <cassert>
+ #include <Eigen/Core>
+ 
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ #include "matrix_operations.h"
+ 
+ #ifdef _MSC_VER
+--- a/Thirdparty/g2o/g2o/core/sparse_block_matrix_diagonal.h
++++ b/Thirdparty/g2o/g2o/core/sparse_block_matrix_diagonal.h
+@@ -31,7 +31,7 @@
+ #include <Eigen/Core>
+ #include <Eigen/StdVector>
+ 
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ #include "matrix_operations.h"
+ 
+ namespace g2o {
+--- a/Thirdparty/g2o/g2o/core/sparse_optimizer.cpp
++++ b/Thirdparty/g2o/g2o/core/sparse_optimizer.cpp
+@@ -41,7 +41,7 @@
+ #include "../stuff/timeutil.h"
+ #include "../stuff/macros.h"
+ #include "../stuff/misc.h"
+-#include "../../config.h"
++#include "easyfly_orbslam3_g2o_config.h"
+ 
+ namespace g2o{
+   using namespace std;
+--- /dev/null
++++ b/cmake/dependencies.cmake
+@@ -0,0 +1,7 @@
++include(CMakeFindDependencyMacro)
++find_dependency(OpenCV 4.4 COMPONENTS core imgproc features2d calib3d highgui imgcodecs)
++find_dependency(Eigen3 3.1 NO_MODULE)
++find_dependency(Pangolin 0.6)
++find_dependency(Boost COMPONENTS serialization)
++find_dependency(OpenSSL)
++find_dependency(Threads)
+--- a/include/Atlas.h
++++ b/include/Atlas.h
+@@ -27,6 +27,8 @@
+ #include "KannalaBrandt8.h"
+ 
+ #include <set>
++#include <atomic>
++#include <cstdint>
+ #include <mutex>
+ #include <boost/serialization/vector.hpp>
+ #include <boost/serialization/export.hpp>
+@@ -48,6 +50,15 @@
+ 
+ class Atlas
+ {
++public:
++    // Runtime-only safety events: never serialized as map state.
++    std::atomic<uint64_t> correction_epoch{0}, completed_loops{0}, completed_merges{0}, relocalizations{0};
++    std::atomic<uint64_t> inertial_ready_map{uint64_t(-1)};
++    void NotifyCorrection() {
++        inertial_ready_map.store(uint64_t(-1), std::memory_order_release);
++        correction_epoch.fetch_add(1, std::memory_order_acq_rel);
++    }
++private:
+     friend class boost::serialization::access;
+ 
+     template<class Archive>
+@@ -114,6 +125,8 @@
+     void clearAtlas();
+ 
+     Map* GetCurrentMap();
++    // Read-only telemetry must not create a map or wait for a bad map to change.
++    Map* PeekCurrentMap();
+ 
+     void SetMapBad(Map* pMap);
+     void RemoveBadMaps();
+--- a/include/ImuTypes.h
++++ b/include/ImuTypes.h
+@@ -40,7 +40,12 @@
+ namespace IMU
+ {
+ 
+-const float GRAVITY_VALUE=9.81;
++#ifndef EASYFLY_ORB_GRAVITY
++#define EASYFLY_ORB_GRAVITY 9.81
++#endif
++const float GRAVITY_VALUE=EASYFLY_ORB_GRAVITY;
++// The calibrated adapter checks the value compiled into the loaded core.
++float GravityMagnitude();
+ 
+ //IMU measurement (gyro, accelerometer and timestamp)
+ class Point
+--- a/include/LoopClosing.h
++++ b/include/LoopClosing.h
+@@ -79,6 +79,7 @@
+     }   
+ 
+     void RequestFinish();
++    void StopAndJoinGlobalBA();
+ 
+     bool isFinished();
+ 
+@@ -223,7 +224,7 @@
+     bool mbFixScale;
+ 
+ 
+-    bool mnFullBAIdx;
++    unsigned int mnFullBAIdx;
+ 
+ 
+ 
+--- a/include/Settings.h
++++ b/include/Settings.h
+@@ -91,6 +91,7 @@
+         float imuFrequency() {return imuFrequency_;}
+         Sophus::SE3f Tbc() {return Tbc_;}
+         bool insertKFsWhenLost() {return insertKFsWhenLost_;}
++        bool fastImuInitialization() {return fastImuInitialization_;}
+ 
+         float depthMapFactor() {return depthMapFactor_;}
+ 
+@@ -192,6 +193,7 @@
+         float imuFrequency_;
+         Sophus::SE3f Tbc_;
+         bool insertKFsWhenLost_;
++        bool fastImuInitialization_ = false;
+ 
+         /*
+          * RGBD stuff
+--- a/include/System.h
++++ b/include/System.h
+@@ -174,6 +174,17 @@
+     // Information from most recent processed frame
+     // You can call this right after TrackMonocular (or stereo or RGBD)
+     int GetTrackingState();
++    struct RuntimeSnapshot {
++        uint64_t epoch, loops, merges, relocalizations, map_id, keyframes, map_points;
++        int state, inliers;
++        bool inertial_ready;
++        uint64_t loaded_reference_map, loaded_reference_keyframes, reused_keyframes;
++        bool inertial_map_initialized;
++    };
++    RuntimeSnapshot GetRuntimeSnapshot();
++    void UseLoadedAtlasForLocalization();
++    void UseLoadedAtlasForInertialMapping();
++    bool GetConditionalInertialInformation(Eigen::Matrix<double,15,15>& information, Eigen::Matrix3d& Rwb);
+     std::vector<MapPoint*> GetTrackedMapPoints();
+     std::vector<cv::KeyPoint> GetTrackedKeyPointsUn();
+ 
+@@ -211,6 +222,8 @@
+     // Map structure that stores the pointers to all KeyFrames and MapPoints.
+     //Map* mpMap;
+     Atlas* mpAtlas;
++    std::set<KeyFrame*> mLoadedReferenceKeyframes;
++    uint64_t mLoadedReferenceMap = uint64_t(-1);
+ 
+     // Tracker. It receives a frame and computes the associated camera pose.
+     // It also decides when to insert a new keyframe, create some new MapPoints and
+--- a/include/Tracking.h
++++ b/include/Tracking.h
+@@ -87,6 +87,8 @@
+ 
+     // Use this function if you have deactivated local mapping and you only want to localize the camera.
+     void InformOnlyTracking(const bool &flag);
++    void PrepareLoadedMap();
++    int CurrentMapInliers() const;
+ 
+     void UpdateFrameIMU(const float s, const IMU::Bias &b, KeyFrame* pCurrentKeyFrame);
+     KeyFrame* GetLastKeyFrame()
+--- /dev/null
++++ b/package.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0"?>
++<package format="3">
++  <name>easyfly_orbslam3_core</name><version>1.0.0</version>
++  <description>Pinned official ORB-SLAM3, privately named dependencies and installed targets.</description>
++  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>GPL-3.0</license>
++  <buildtool_depend>ament_cmake</buildtool_depend>
++  <test_depend>ament_cmake_gtest</test_depend>
++  <depend>libopencv-dev</depend><depend>eigen</depend><depend>boost</depend><depend>libssl-dev</depend>
++  <export><build_type>ament_cmake</build_type></export>
++</package>
+--- a/src/Atlas.cc
++++ b/src/Atlas.cc
+@@ -257,6 +257,12 @@
+     return mpCurrentMap;
+ }
+ 
++Map* Atlas::PeekCurrentMap()
++{
++    unique_lock<mutex> lock(mMutexAtlas);
++    return mpCurrentMap && !mpCurrentMap->IsBad() ? mpCurrentMap : nullptr;
++}
++
+ void Atlas::SetMapBad(Map* pMap)
+ {
+     mspMaps.erase(pMap);
+@@ -313,11 +319,13 @@
+             return elem1->GetId() < elem2->GetId();
+         }
+     };
+-    std::copy(mspMaps.begin(), mspMaps.end(), std::back_inserter(mvpBackupMaps));
+-    sort(mvpBackupMaps.begin(), mvpBackupMaps.end(), compFunctor());
+-
++    // A loaded map can become empty after MergeLocal2 transfers its contents.
++    // Never serialize its old backup vectors, or append a second snapshot.
++    mvpBackupMaps.clear();
+     std::set<GeometricCamera*> spCams(mvpCameras.begin(), mvpCameras.end());
+-    for(Map* pMi : mvpBackupMaps)
++    // SetMapBad erases from mspMaps, so traverse a stable live snapshot.
++    const std::vector<Map*> mapsForSave(mspMaps.begin(), mspMaps.end());
++    for(Map* pMi : mapsForSave)
+     {
+         if(!pMi || pMi->IsBad())
+             continue;
+@@ -328,7 +336,9 @@
+             continue;
+         }
+         pMi->PreSave(spCams);
+-    }
++        mvpBackupMaps.push_back(pMi);
++    }
++    sort(mvpBackupMaps.begin(), mvpBackupMaps.end(), compFunctor());
+     RemoveBadMaps();
+ }
+ 
+--- a/src/ImuTypes.cc
++++ b/src/ImuTypes.cc
+@@ -28,6 +28,8 @@
+ 
+ namespace IMU
+ {
++
++float GravityMagnitude() { return GRAVITY_VALUE; }
+ 
+ const float eps = 1e-4;
+ 
+--- a/src/KeyFrame.cc
++++ b/src/KeyFrame.cc
+@@ -17,6 +17,7 @@
+ */
+ 
+ #include "KeyFrame.h"
++#include <stdexcept>
+ #include "Converter.h"
+ #include "ImuTypes.h"
+ #include<mutex>
+@@ -920,6 +921,33 @@
+ }
+ 
+ void KeyFrame::PostLoad(map<long unsigned int, KeyFrame*>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid, map<unsigned int, GeometricCamera*>& mpCamId){
++    // Do not turn absent IDs into null pointers using map::operator[].
++    // Validate before reconstructing connections (UpdateBestCovisibles
++    // immediately dereferences them). An incomplete archive is not repaired.
++    const auto requireKeyFrame = [&mpKFid](long unsigned int id) {
++        const auto found = mpKFid.find(id);
++        if(found == mpKFid.end() || !found->second)
++            throw std::runtime_error("atlas missing keyframe reference " + std::to_string(id));
++    };
++    if(N < 0 || mvBackupMapPointsId.size() != static_cast<size_t>(N))
++        throw std::runtime_error("atlas keyframe map point vector size mismatch");
++    for(const auto id : mvBackupMapPointsId)
++        if(id != -1 && (!mpMPid.count(id) || !mpMPid.at(id)))
++            throw std::runtime_error("atlas missing map point reference " + std::to_string(id));
++    for(const auto& connection : mBackupConnectedKeyFrameIdWeights)
++        requireKeyFrame(connection.first);
++    if(mBackupParentId >= 0) requireKeyFrame(mBackupParentId);
++    for(const auto id : mvBackupChildrensId) requireKeyFrame(id);
++    for(const auto id : mvBackupLoopEdgesId) requireKeyFrame(id);
++    for(const auto id : mvBackupMergeEdgesId) requireKeyFrame(id);
++    if(mBackupPrevKFId != -1) requireKeyFrame(mBackupPrevKFId);
++    if(mBackupNextKFId != -1) requireKeyFrame(mBackupNextKFId);
++    if(mnBackupIdCamera == static_cast<unsigned int>(-1) || !mpCamId.count(mnBackupIdCamera) ||
++       !mpCamId.at(mnBackupIdCamera) ||
++       (mnBackupIdCamera2 != static_cast<unsigned int>(-1) &&
++        (!mpCamId.count(mnBackupIdCamera2) || !mpCamId.at(mnBackupIdCamera2))))
++        throw std::runtime_error("atlas missing camera reference");
++
+     // Rebuild the empty variables
+ 
+     // Pose
+@@ -949,6 +977,7 @@
+     }
+ 
+     // Restore parent KeyFrame
++    mpParent = nullptr;
+     if(mBackupParentId>=0)
+         mpParent = mpKFid[mBackupParentId];
+ 
+@@ -974,7 +1003,8 @@
+     }
+ 
+     //Camera data
+-    if(mnBackupIdCamera >= 0)
++    mpCamera2 = nullptr;
++    if(mnBackupIdCamera != static_cast<unsigned int>(-1))
+     {
+         mpCamera = mpCamId[mnBackupIdCamera];
+     }
+@@ -982,12 +1012,14 @@
+     {
+         cout << "ERROR: There is not a main camera in KF " << mnId << endl;
+     }
+-    if(mnBackupIdCamera2 >= 0)
++    if(mnBackupIdCamera2 != static_cast<unsigned int>(-1))
+     {
+         mpCamera2 = mpCamId[mnBackupIdCamera2];
+     }
+ 
+     //Inertial data
++    mPrevKF = nullptr;
++    mNextKF = nullptr;
+     if(mBackupPrevKFId != -1)
+     {
+         mPrevKF = mpKFid[mBackupPrevKFId];
+@@ -1004,6 +1036,7 @@
+     mBackupConnectedKeyFrameIdWeights.clear();
+     mvBackupChildrensId.clear();
+     mvBackupLoopEdgesId.clear();
++    mvBackupMergeEdgesId.clear();
+ 
+     UpdateBestCovisibles();
+ }
+--- a/src/LocalMapping.cc
++++ b/src/LocalMapping.cc
+@@ -1280,6 +1280,7 @@
+         unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
+         if ((fabs(mScale - 1.f) > 0.00001) || !mbMonocular) {
+             Sophus::SE3f Twg(mRwg.cast<float>().transpose(), Eigen::Vector3f::Zero());
++            mpAtlas->NotifyCorrection();
+             mpAtlas->GetCurrentMap()->ApplyScaledRotation(Twg, mScale, true);
+             mpTracker->UpdateFrameIMU(mScale, vpKF[0]->GetImuBias(), mpCurrentKeyFrame);
+         }
+@@ -1312,6 +1313,8 @@
+     std::chrono::steady_clock::time_point t5 = std::chrono::steady_clock::now();
+ 
+     Verbose::PrintMess("Global Bundle Adjustment finished\nUpdating map ...", Verbose::VERBOSITY_NORMAL);
++
++    mpAtlas->NotifyCorrection();
+ 
+     // Get Map Mutex
+     unique_lock<mutex> lock(mpAtlas->GetCurrentMap()->mMutexMapUpdate);
+@@ -1423,6 +1426,11 @@
+ 
+     mpCurrentKeyFrame->GetMap()->IncreaseChangeIndex();
+ 
++    // BA2 is marked before InitializeIMU is called. Only this completion
++    // marker permits a first inertial pose after all gauge changes finish.
++    if(mpCurrentKeyFrame->GetMap()->GetIniertialBA2())
++        mpAtlas->inertial_ready_map.store(mpCurrentKeyFrame->GetMap()->GetId(), std::memory_order_release);
++
+     return;
+ }
+ 
+@@ -1475,6 +1483,7 @@
+     if ((fabs(mScale-1.f)>0.002)||!mbMonocular)
+     {
+         Sophus::SE3f Tgw(mRwg.cast<float>().transpose(),Eigen::Vector3f::Zero());
++        mpAtlas->NotifyCorrection();
+         mpAtlas->GetCurrentMap()->ApplyScaledRotation(Tgw,mScale,true);
+         mpTracker->UpdateFrameIMU(mScale,mpCurrentKeyFrame->GetImuBias(),mpCurrentKeyFrame);
+     }
+--- a/src/LoopClosing.cc
++++ b/src/LoopClosing.cc
+@@ -181,6 +181,7 @@
+                             MergeLocal2();
+                         else
+                             MergeLocal();
++                        mpAtlas->completed_merges.fetch_add(1);
+ 
+ #ifdef REGISTER_TIMES
+                         std::chrono::steady_clock::time_point time_EndMerge = std::chrono::steady_clock::now();
+@@ -968,6 +969,7 @@
+ 
+ void LoopClosing::CorrectLoop()
+ {
++    mpAtlas->NotifyCorrection();
+     //cout << "Loop detected!" << endl;
+ 
+     // Send a stop signal to Local Mapping
+@@ -986,8 +988,12 @@
+ 
+         if(mpThreadGBA)
+         {
+-            mpThreadGBA->detach();
+-            delete mpThreadGBA;
++            std::thread* old_worker = mpThreadGBA;
++            mpThreadGBA = nullptr;
++            lock.unlock();  // The worker takes mMutexGBA on exit.
++            if(old_worker->joinable()) old_worker->join();
++            delete old_worker;
++            lock.lock();
+         }
+         cout << "  Done!!" << endl;
+     }
+@@ -1191,6 +1197,7 @@
+ 
+     mpAtlas->InformNewBigChange();
+ 
++    mpAtlas->completed_loops.fetch_add(1);
+     // Add loop edge
+     mpLoopMatchedKF->AddLoopEdge(mpCurrentKF);
+     mpCurrentKF->AddLoopEdge(mpLoopMatchedKF);
+@@ -1198,6 +1205,7 @@
+     // Launch a new thread to perform Global Bundle Adjustment (Only if few keyframes, if not it would take too much time)
+     if(!pLoopMap->isImuInitialized() || (pLoopMap->KeyFramesInMap()<200 && mpAtlas->CountMaps()==1))
+     {
++        StopAndJoinGlobalBA();
+         mbRunningGBA = true;
+         mbFinishedGBA = false;
+         mbStopGBA = false;
+@@ -1214,6 +1222,7 @@
+ 
+ void LoopClosing::MergeLocal()
+ {
++    mpAtlas->NotifyCorrection();
+     int numTemporalKFs = 25; //Temporal KFs in the local window if the map is inertial.
+ 
+     //Relationship to rebuild the essential graph, it is used two times, first in the local window and later in the rest of the map
+@@ -1237,8 +1246,12 @@
+ 
+         if(mpThreadGBA)
+         {
+-            mpThreadGBA->detach();
+-            delete mpThreadGBA;
++            std::thread* old_worker = mpThreadGBA;
++            mpThreadGBA = nullptr;
++            lock.unlock();  // The worker takes mMutexGBA on exit.
++            if(old_worker->joinable()) old_worker->join();
++            delete old_worker;
++            lock.lock();
+         }
+         bRelaunchBA = true;
+     }
+@@ -1763,6 +1776,7 @@
+     if(bRelaunchBA && (!pCurrentMap->isImuInitialized() || (pCurrentMap->KeyFramesInMap()<200 && mpAtlas->CountMaps()==1)))
+     {
+         // Launch a new thread to perform Global Bundle Adjustment
++        StopAndJoinGlobalBA();
+         mbRunningGBA = true;
+         mbFinishedGBA = false;
+         mbStopGBA = false;
+@@ -1782,6 +1796,8 @@
+ 
+ void LoopClosing::MergeLocal2()
+ {
++    mpAtlas->NotifyCorrection();
++    const uint64_t mergeEpoch = mpAtlas->correction_epoch.load();
+     //cout << "Merge detected!!!!" << endl;
+ 
+     int numTemporalKFs = 11; //TODO (set by parameter): Temporal KFs in the local window if the map is inertial.
+@@ -1810,8 +1826,12 @@
+ 
+         if(mpThreadGBA)
+         {
+-            mpThreadGBA->detach();
+-            delete mpThreadGBA;
++            std::thread* old_worker = mpThreadGBA;
++            mpThreadGBA = nullptr;
++            lock.unlock();  // The worker takes mMutexGBA on exit.
++            if(old_worker->joinable()) old_worker->join();
++            delete old_worker;
++            lock.lock();
+         }
+         bRelaunchBA = true;
+     }
+@@ -2055,6 +2075,12 @@
+     if(!good)
+         cout << "BAD ESSENTIAL GRAPH 6!!" << endl;*/
+ 
++    // Only completion of the full native inertial merge BA restores the
++    // initialization marker. The early small-map return above does not.
++    // Public consumers still latch any correction after pose admission.
++    if(pCurrentMap->isImuInitialized() && pCurrentMap->GetIniertialBA2() &&
++       mpAtlas->correction_epoch.load() == mergeEpoch)
++        mpAtlas->inertial_ready_map.store(pCurrentMap->GetId(), std::memory_order_release);
+     // Release Local Mapping.
+     mpLocalMapper->Release();
+ 
+@@ -2325,6 +2351,7 @@
+                 usleep(1000);
+             }
+ 
++            mpAtlas->NotifyCorrection();
+             // Get Map Mutex
+             unique_lock<mutex> lock(pActiveMap->mMutexMapUpdate);
+             // cout << "LC: Update Map Mutex adquired" << endl;
+@@ -2510,6 +2537,25 @@
+     }
+ }
+ 
++void LoopClosing::StopAndJoinGlobalBA()
++{
++    std::thread* worker = nullptr;
++    {
++        unique_lock<mutex> lock(mMutexGBA);
++        mbStopGBA = true;
++        ++mnFullBAIdx;
++        worker = mpThreadGBA;
++        mpThreadGBA = nullptr;
++    }
++    if(worker) {
++        if(worker->joinable()) worker->join();
++        delete worker;
++    }
++    unique_lock<mutex> lock(mMutexGBA);
++    mbRunningGBA = false;
++    mbFinishedGBA = true;
++}
++
+ void LoopClosing::RequestFinish()
+ {
+     unique_lock<mutex> lock(mMutexFinish);
+--- a/src/Map.cc
++++ b/src/Map.cc
+@@ -18,6 +18,7 @@
+ 
+ 
+ #include "Map.h"
++#include <stdexcept>
+ 
+ #include<mutex>
+ 
+@@ -359,7 +360,10 @@
+ void Map::PreSave(std::set<GeometricCamera*> &spCams)
+ {
+     int nMPWithoutObs = 0;
+-    for(MapPoint* pMPi : mspMapPoints)
++    // EraseObservation may cull the point and erase it from mspMapPoints.
++    // Walk a stable snapshot rather than incrementing that erased set iterator.
++    const std::vector<MapPoint*> pointsForCleanup = GetAllMapPoints();
++    for(MapPoint* pMPi : pointsForCleanup)
+     {
+         if(!pMPi || pMPi->isBad())
+             continue;
+@@ -371,53 +375,64 @@
+         map<KeyFrame*, std::tuple<int,int>> mpObs = pMPi->GetObservations();
+         for(map<KeyFrame*, std::tuple<int,int>>::iterator it= mpObs.begin(), end=mpObs.end(); it!=end; ++it)
+         {
+-            if(it->first->GetMap() != this || it->first->isBad())
++            if(!it->first || it->first->GetMap() != this || it->first->isBad())
+             {
+                 pMPi->EraseObservation(it->first);
+             }
+ 
+         }
+     }
++
++    // Every serialized reference must belong to this exact live snapshot.
++    std::set<KeyFrame*> savedKeyFrames;
++    std::set<MapPoint*> savedMapPoints;
++    for(KeyFrame* keyframe : mspKeyFrames)
++        if(keyframe && !keyframe->isBad() && keyframe->GetMap() == this)
++            savedKeyFrames.insert(keyframe);
++    for(MapPoint* point : mspMapPoints)
++        if(point && !point->isBad() && point->GetMap() == this)
++            savedMapPoints.insert(point);
+ 
+     // Saves the id of KF origins
+     mvBackupKeyFrameOriginsId.clear();
+     mvBackupKeyFrameOriginsId.reserve(mvpKeyFrameOrigins.size());
+     for(int i = 0, numEl = mvpKeyFrameOrigins.size(); i < numEl; ++i)
+     {
+-        mvBackupKeyFrameOriginsId.push_back(mvpKeyFrameOrigins[i]->mnId);
++        if(savedKeyFrames.count(mvpKeyFrameOrigins[i]))
++            mvBackupKeyFrameOriginsId.push_back(mvpKeyFrameOrigins[i]->mnId);
+     }
+ 
+ 
+     // Backup of MapPoints
+     mvpBackupMapPoints.clear();
+-    for(MapPoint* pMPi : mspMapPoints)
++    for(MapPoint* pMPi : savedMapPoints)
+     {
+         if(!pMPi || pMPi->isBad())
+             continue;
+ 
+         mvpBackupMapPoints.push_back(pMPi);
+-        pMPi->PreSave(mspKeyFrames,mspMapPoints);
++        pMPi->PreSave(savedKeyFrames,savedMapPoints);
+     }
+ 
+     // Backup of KeyFrames
+     mvpBackupKeyFrames.clear();
+-    for(KeyFrame* pKFi : mspKeyFrames)
++    for(KeyFrame* pKFi : savedKeyFrames)
+     {
+         if(!pKFi || pKFi->isBad())
+             continue;
+ 
+         mvpBackupKeyFrames.push_back(pKFi);
+-        pKFi->PreSave(mspKeyFrames,mspMapPoints, spCams);
++        pKFi->PreSave(savedKeyFrames,savedMapPoints, spCams);
+     }
+ 
+     mnBackupKFinitialID = -1;
+-    if(mpKFinitial)
++    if(savedKeyFrames.count(mpKFinitial))
+     {
+         mnBackupKFinitialID = mpKFinitial->mnId;
+     }
+ 
+     mnBackupKFlowerID = -1;
+-    if(mpKFlowerID)
++    if(savedKeyFrames.count(mpKFlowerID))
+     {
+         mnBackupKFlowerID = mpKFlowerID->mnId;
+     }
+@@ -426,6 +441,8 @@
+ 
+ void Map::PostLoad(KeyFrameDatabase* pKFDB, ORBVocabulary* pORBVoc/*, map<long unsigned int, KeyFrame*>& mpKeyFrameId*/, map<unsigned int, GeometricCamera*> &mpCams)
+ {
++    mspMapPoints.clear();
++    mspKeyFrames.clear();
+     std::copy(mvpBackupMapPoints.begin(), mvpBackupMapPoints.end(), std::inserter(mspMapPoints, mspMapPoints.begin()));
+     std::copy(mvpBackupKeyFrames.begin(), mvpBackupKeyFrames.end(), std::inserter(mspKeyFrames, mspKeyFrames.begin()));
+ 
+@@ -436,7 +453,8 @@
+             continue;
+ 
+         pMPi->UpdateMap(this);
+-        mpMapPointId[pMPi->mnId] = pMPi;
++        if(!mpMapPointId.emplace(pMPi->mnId,pMPi).second)
++            throw std::runtime_error("atlas contains duplicate map point IDs");
+     }
+ 
+     map<long unsigned int, KeyFrame*> mpKeyFrameId;
+@@ -448,7 +466,8 @@
+         pKFi->UpdateMap(this);
+         pKFi->SetORBVocabulary(pORBVoc);
+         pKFi->SetKeyFrameDatabase(pKFDB);
+-        mpKeyFrameId[pKFi->mnId] = pKFi;
++        if(!mpKeyFrameId.emplace(pKFi->mnId,pKFi).second)
++            throw std::runtime_error("atlas contains duplicate keyframe IDs");
+     }
+ 
+     // References reconstruction between different instances
+@@ -470,24 +489,28 @@
+     }
+ 
+ 
++    mpKFinitial = nullptr;
++    mpKFlowerID = nullptr;
+     if(mnBackupKFinitialID != -1)
+     {
+-        mpKFinitial = mpKeyFrameId[mnBackupKFinitialID];
++        mpKFinitial = mpKeyFrameId.at(mnBackupKFinitialID);
+     }
+ 
+     if(mnBackupKFlowerID != -1)
+     {
+-        mpKFlowerID = mpKeyFrameId[mnBackupKFlowerID];
++        mpKFlowerID = mpKeyFrameId.at(mnBackupKFlowerID);
+     }
+ 
+     mvpKeyFrameOrigins.clear();
+     mvpKeyFrameOrigins.reserve(mvBackupKeyFrameOriginsId.size());
+     for(int i = 0; i < mvBackupKeyFrameOriginsId.size(); ++i)
+     {
+-        mvpKeyFrameOrigins.push_back(mpKeyFrameId[mvBackupKeyFrameOriginsId[i]]);
++        mvpKeyFrameOrigins.push_back(mpKeyFrameId.at(mvBackupKeyFrameOriginsId[i]));
+     }
+ 
+     mvpBackupMapPoints.clear();
++    mvpBackupKeyFrames.clear();
++    mvBackupKeyFrameOriginsId.clear();
+ }
+ 
+ 
+--- a/src/MapPoint.cc
++++ b/src/MapPoint.cc
+@@ -17,6 +17,7 @@
+ */
+ 
+ #include "MapPoint.h"
++#include <stdexcept>
+ #include "ORBmatcher.h"
+ 
+ #include<mutex>
+@@ -188,7 +189,7 @@
+             mObservations.erase(pKF);
+ 
+             if(mpRefKF==pKF)
+-                mpRefKF=mObservations.begin()->first;
++                mpRefKF = mObservations.empty() ? nullptr : mObservations.begin()->first;
+ 
+             // If only 2 observations or less, discard point
+             if(nObs<=2)
+@@ -586,32 +587,38 @@
+             mBackupObservationsId1[it->first->mnId] = get<0>(it->second);
+             mBackupObservationsId2[it->first->mnId] = get<1>(it->second);
+         }
+-        else
+-        {
+-            EraseObservation(pKFi);
+-        }
++        // Map::PreSave already cleaned cross-map/bad observations. Do not
++        // mutate this container (or cull its point) while serializing it.
+     }
+ 
+     // Save the id of the reference KF
+-    if(spKF.find(mpRefKF) != spKF.end())
++    if(mpRefKF && spKF.find(mpRefKF) != spKF.end())
+     {
+         mBackupRefKFId = mpRefKF->mnId;
+     }
++    else
++        throw std::runtime_error("cannot save map point without a live reference keyframe");
+ }
+ 
+ void MapPoint::PostLoad(map<long unsigned int, KeyFrame*>& mpKFid, map<long unsigned int, MapPoint*>& mpMPid)
+ {
+-    mpRefKF = mpKFid[mBackupRefKFId];
+-    if(!mpRefKF)
+-    {
+-        cout << "ERROR: MP without KF reference " << mBackupRefKFId << "; Num obs: " << nObs << endl;
+-    }
++    const auto reference = mpKFid.find(mBackupRefKFId);
++    if(reference == mpKFid.end() || !reference->second)
++        throw std::runtime_error("atlas map point has missing reference keyframe");
++    if(mBackupObservationsId1.size() != mBackupObservationsId2.size())
++        throw std::runtime_error("atlas map point observation arrays differ");
++    for(const auto& observation : mBackupObservationsId1)
++        if(!mpKFid.count(observation.first) || !mpKFid.at(observation.first) ||
++           !mBackupObservationsId2.count(observation.first))
++            throw std::runtime_error("atlas map point has incomplete observation reference");
++    mpRefKF = reference->second;
+     mpReplaced = static_cast<MapPoint*>(NULL);
+     if(mBackupReplacedId>=0)
+     {
+         map<long unsigned int, MapPoint*>::iterator it = mpMPid.find(mBackupReplacedId);
+-        if (it != mpMPid.end())
+-            mpReplaced = it->second;
++        if(it == mpMPid.end() || !it->second)
++            throw std::runtime_error("atlas map point has missing replacement reference");
++        mpReplaced = it->second;
+     }
+ 
+     mObservations.clear();
+--- a/src/Settings.cc
++++ b/src/Settings.cc
+@@ -418,6 +418,9 @@
+         gyroWalk_ = readParameter<float>(fSettings,"IMU.GyroWalk",found);
+         accWalk_ = readParameter<float>(fSettings,"IMU.AccWalk",found);
+         imuFrequency_ = readParameter<float>(fSettings,"IMU.Frequency",found);
++        // Preserve the existing legacy IMU.fastInit option in File.version 1.0.
++        const int fastInit = readParameter<int>(fSettings,"IMU.fastInit",found,false);
++        fastImuInitialization_ = found && fastInit != 0;
+ 
+         cv::Mat cvTbc = readParameter<cv::Mat>(fSettings,"IMU.T_b_c1",found);
+         Tbc_ = Converter::toSophus(cvTbc);
+--- a/src/System.cc
++++ b/src/System.cc
+@@ -19,6 +19,7 @@
+ 
+ 
+ #include "System.h"
++#include "G2oTypes.h"
+ #include "Converter.h"
+ #include <thread>
+ #include <pangolin/pangolin.h>
+@@ -503,12 +504,14 @@
+ void System::Reset()
+ {
+     unique_lock<mutex> lock(mMutexReset);
++    if(!mbReset) mpAtlas->NotifyCorrection();
+     mbReset = true;
+ }
+ 
+ void System::ResetActiveMap()
+ {
+     unique_lock<mutex> lock(mMutexReset);
++    if(!mbResetActiveMap) mpAtlas->NotifyCorrection();
+     mbResetActiveMap = true;
+ }
+ 
+@@ -521,29 +524,14 @@
+ 
+     cout << "Shutdown" << endl;
+ 
++    // Stop and join every owned worker before serializing the atlas.
++    mpLoopCloser->RequestFinish();
++    if(mpViewer) mpViewer->RequestFinish();
++    if(mptLoopClosing && mptLoopClosing->joinable()) mptLoopClosing->join();
++    mpLoopCloser->StopAndJoinGlobalBA();
+     mpLocalMapper->RequestFinish();
+-    mpLoopCloser->RequestFinish();
+-    /*if(mpViewer)
+-    {
+-        mpViewer->RequestFinish();
+-        while(!mpViewer->isFinished())
+-            usleep(5000);
+-    }*/
+-
+-    // Wait until all thread have effectively stopped
+-    /*while(!mpLocalMapper->isFinished() || !mpLoopCloser->isFinished() || mpLoopCloser->isRunningGBA())
+-    {
+-        if(!mpLocalMapper->isFinished())
+-            cout << "mpLocalMapper is not finished" << endl;*/
+-        /*if(!mpLoopCloser->isFinished())
+-            cout << "mpLoopCloser is not finished" << endl;
+-        if(mpLoopCloser->isRunningGBA()){
+-            cout << "mpLoopCloser is running GBA" << endl;
+-            cout << "break anyway..." << endl;
+-            break;
+-        }*/
+-        /*usleep(5000);
+-    }*/
++    if(mptLocalMapping && mptLocalMapping->joinable()) mptLocalMapping->join();
++    if(mpViewer && mptViewer && mptViewer->joinable()) mptViewer->join();
+ 
+     if(!mStrSaveAtlasToFile.empty())
+     {
+@@ -1318,6 +1306,86 @@
+ }
+ 
+ 
++System::RuntimeSnapshot System::GetRuntimeSnapshot()
++{
++    Map* map = mpAtlas->PeekCurrentMap();
++    uint64_t reused = 0;
++    if(map && !mLoadedReferenceKeyframes.empty())
++        for(KeyFrame* kf : map->GetAllKeyFrames())
++            if(mLoadedReferenceKeyframes.count(kf) && !kf->isBad()) ++reused;
++    return {mpAtlas->correction_epoch.load(), mpAtlas->completed_loops.load(),
++        mpAtlas->completed_merges.load(), mpAtlas->relocalizations.load(),
++        map ? map->GetId() : uint64_t(-1), map ? map->KeyFramesInMap() : 0,
++        map ? map->MapPointsInMap() : 0,
++        mpTracker->mState, mpTracker->CurrentMapInliers(),
++        map && map->isImuInitialized() && map->GetIniertialBA2() &&
++            mpAtlas->inertial_ready_map.load(std::memory_order_acquire) == map->GetId(),
++        mLoadedReferenceMap, mLoadedReferenceKeyframes.size(), reused,
++        map && map->IsInertial() && map->isImuInitialized() && map->GetIniertialBA2()};
++}
++void System::UseLoadedAtlasForLocalization()
++{
++    if(mStrLoadAtlasFromFile.empty()) throw std::runtime_error("no atlas was loaded");
++    mpLocalMapper->RequestStop();
++    while(!mpLocalMapper->isStopped()) usleep(1000);
++    Map* selected = nullptr;
++    for(Map* map : mpAtlas->GetAllMaps())
++        if(!map->IsBad() && (!selected || map->KeyFramesInMap()>selected->KeyFramesInMap())) selected=map;
++    if(!selected || selected->KeyFramesInMap()<2) throw std::runtime_error("loaded atlas has insufficient keyframes");
++    mpAtlas->ChangeMap(selected);
++    mpTracker->PrepareLoadedMap();
++}
++
++void System::UseLoadedAtlasForInertialMapping()
++{
++    if(mSensor != IMU_RGBD || mStrLoadAtlasFromFile.empty())
++        throw std::runtime_error("inertial atlas continuation requires IMU_RGBD and a loaded atlas");
++    Map* selected = nullptr;
++    for(Map* map : mpAtlas->GetAllMaps())
++        if(!map->IsBad() && map->IsInertial() && map->isImuInitialized() &&
++           map->GetIniertialBA2() && (!selected || map->KeyFramesInMap()>selected->KeyFramesInMap()))
++            selected = map;
++    if(!selected || selected->KeyFramesInMap()<10)
++        throw std::runtime_error("no completed inertial reference map with ten keyframes");
++    if(!settings_ || !settings_->camera1())
++        throw std::runtime_error("inertial atlas requires explicit camera and IMU calibration");
++    const float frequencyScale = std::sqrt(settings_->imuFrequency());
++    const IMU::Calib expected(settings_->Tbc(), settings_->noiseGyro()*frequencyScale,
++        settings_->noiseAcc()*frequencyScale, settings_->gyroWalk()/frequencyScale,
++        settings_->accWalk()/frequencyScale);
++    for(KeyFrame* kf : selected->GetAllKeyFrames())
++    {
++        if(!kf || kf->isBad()) continue;
++        if(!kf->bImu || !kf->mImuCalib.mbIsSet || !kf->mpCamera ||
++           kf->mpCamera->GetType()!=settings_->camera1()->GetType() ||
++           kf->mpCamera->size()!=settings_->camera1()->size() ||
++           !kf->mImuCalib.mTbc.matrix().isApprox(expected.mTbc.matrix(), 1e-6f) ||
++           !kf->mImuCalib.Cov.diagonal().isApprox(expected.Cov.diagonal(), 1e-5f) ||
++           !kf->mImuCalib.CovWalk.diagonal().isApprox(expected.CovWalk.diagonal(), 1e-5f))
++            throw std::runtime_error("stored inertial keyframe calibration mismatch");
++        for(size_t i=0; i<kf->mpCamera->size(); ++i)
++            if(std::abs(kf->mpCamera->getParameter(i)-settings_->camera1()->getParameter(i))>1e-5f)
++                throw std::runtime_error("stored keyframe camera calibration mismatch");
++    }
++    for(KeyFrame* kf : selected->GetAllKeyFrames())
++        if(kf && !kf->isBad()) mLoadedReferenceKeyframes.insert(kf);
++    mLoadedReferenceMap = selected->GetId();
++    // Keep the fresh active map created by the native constructor. The new
++    // IMU sequence must initialize and geometrically merge with real old KFs.
++    // Do not resurrect old frame velocities/preintegrations or enter the
++    // upstream unsupported inertial localization-only path.
++}
++
++bool System::GetConditionalInertialInformation(Eigen::Matrix<double,15,15>& information,
++                                               Eigen::Matrix3d& Rwb)
++{
++    if(mSensor != IMU_RGBD || mpTracker->mState != Tracking::OK ||
++       !mpTracker->mCurrentFrame.mpcpi) return false;
++    information = mpTracker->mCurrentFrame.mpcpi->H;
++    Rwb = mpTracker->mCurrentFrame.GetImuRotation().cast<double>();
++    return information.allFinite() && Rwb.allFinite();
++}
++
+ int System::GetTrackingState()
+ {
+     unique_lock<mutex> lock(mMutexState);
+@@ -1408,8 +1476,7 @@
+         // Save the current session
+         mpAtlas->PreSave();
+ 
+-        string pathSaveFileName = "./";
+-        pathSaveFileName = pathSaveFileName.append(mStrSaveAtlasToFile);
++        string pathSaveFileName = mStrSaveAtlasToFile;
+         pathSaveFileName = pathSaveFileName.append(".osa");
+ 
+         string strVocabularyChecksum = CalculateCheckSum(mStrVocabularyFilePath,TEXT_FILE);
+@@ -1447,8 +1514,7 @@
+     string strFileVoc, strVocChecksum;
+     bool isRead = false;
+ 
+-    string pathLoadFileName = "./";
+-    pathLoadFileName = pathLoadFileName.append(mStrLoadAtlasFromFile);
++    string pathLoadFileName = mStrLoadAtlasFromFile;
+     pathLoadFileName = pathLoadFileName.append(".osa");
+ 
+     if(type == TEXT_FILE) // File text
+--- a/src/Tracking.cc
++++ b/src/Tracking.cc
+@@ -603,6 +603,9 @@
+     //IMU parameters
+     Sophus::SE3f Tbc = settings->Tbc();
+     mInsertKFsLost = settings->insertKFsWhenLost();
++    mFastInit = settings->fastImuInitialization();
++    if(mFastInit)
++        cout << "Fast IMU initialization. Acceleration is not checked \n";
+     mImuFreq = settings->imuFrequency();
+     mImuPer = 0.001; //1.0 / (double) mImuFreq;     //TODO: ESTO ESTA BIEN?
+     float Ng = settings->noiseGyro();
+@@ -2036,11 +2039,15 @@
+         else
+         {
+             // Localization Mode: Local Mapping is deactivated (TODO Not available in inertial mode)
+-            if(mState==LOST)
++            // Localization-only mode does not execute the mapper's timed
++            // RECENTLY_LOST -> LOST transition. Search the retained atlas in
++            // both genuinely lost states, rather than getting stuck forever.
++            if(mState==LOST || mState==RECENTLY_LOST)
+             {
+                 if(mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_STEREO || mSensor == System::IMU_RGBD)
+                     Verbose::PrintMess("IMU. State LOST", Verbose::VERBOSITY_NORMAL);
+                 bOK = Relocalization();
++                if(bOK) mbVO = false; // A real old-map match restores map tracking.
+             }
+             else
+             {
+@@ -2267,8 +2274,9 @@
+             }
+         }
+ 
+-        // Reset if the camera get lost soon after initialization
+-        if(mState==LOST)
++        // A localization-only loaded map must survive unmatched startup images.
++        // Resetting it also deadlocks against the intentionally stopped local mapper.
++        if(mState==LOST && !mbOnlyTracking)
+         {
+             if(pCurrentMap->KeyFramesInMap()<=10)
+             {
+@@ -2661,6 +2669,7 @@
+ 
+ void Tracking::CreateMapInAtlas()
+ {
++    mpAtlas->NotifyCorrection();
+     mnLastInitFrameId = mCurrentFrame.mnId;
+     mpAtlas->CreateNewMap();
+     if (mSensor==System::IMU_STEREO || mSensor == System::IMU_MONOCULAR || mSensor == System::IMU_RGBD)
+@@ -3769,6 +3778,8 @@
+     }
+     else
+     {
++        mpAtlas->NotifyCorrection();
++        mpAtlas->relocalizations.fetch_add(1);
+         mnLastRelocFrameId = mCurrentFrame.mnId;
+         cout << "Relocalized!!" << endl;
+         return true;
+@@ -3778,6 +3789,7 @@
+ 
+ void Tracking::Reset(bool bLocMap)
+ {
++    mpAtlas->NotifyCorrection();
+     Verbose::PrintMess("System Reseting", Verbose::VERBOSITY_NORMAL);
+ 
+     if(mpViewer)
+@@ -3839,6 +3851,7 @@
+ 
+ void Tracking::ResetActiveMap(bool bLocMap)
+ {
++    mpAtlas->NotifyCorrection();
+     Verbose::PrintMess("Active map Reseting", Verbose::VERBOSITY_NORMAL);
+     if(mpViewer)
+     {
+@@ -4123,4 +4136,26 @@
+ }
+ #endif
+ 
++
++void Tracking::PrepareLoadedMap()
++{
++    mbOnlyTracking = true;
++    mLastFrame.mTimeStamp = 0.;
++    mbVelocity = false;
++    mbVO = false;
++    mState = LOST;
++    mLastProcessedState = LOST;
++    mpReferenceKF = mpAtlas->GetCurrentMap()->GetOriginKF();
++    if(!mpReferenceKF) throw std::runtime_error("loaded atlas has no origin keyframe");
++}
++int Tracking::CurrentMapInliers() const
++{
++    int count = 0;
++    for(size_t i=0; i<mCurrentFrame.mvpMapPoints.size(); ++i) {
++        MapPoint* point = mCurrentFrame.mvpMapPoints[i];
++        if(point && !mCurrentFrame.mvbOutlier[i] && !point->isBad() && point->Observations()>0) ++count;
++    }
++    return count;
++}
++
+ } //namespace ORB_SLAM
+--- /dev/null
++++ b/test/test_gazebo_gravity.cpp
+@@ -0,0 +1,41 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#include <gtest/gtest.h>
++#include "G2oTypes.h"
++
++double stationary_residual(float measured_acceleration) {
++    using namespace ORB_SLAM3;
++    IMU::Bias bias(0, 0, 0, 0, 0, 0);
++    IMU::Calib calibration(Sophus::SE3f(), 1e-5f, .0012f, 1e-6f, 1e-4f);
++    IMU::Preintegrated integrated(bias, calibration);
++    for (int i = 0; i < 2000; ++i) {
++        integrated.IntegrateNewMeasurement(Eigen::Vector3f(0, 0, measured_acceleration),
++            Eigen::Vector3f::Zero(), .005f);
++    }
++    ImuCamPose pose;
++    pose.Rwb.setIdentity();
++    pose.twb.setZero();
++    VertexPose first, second;
++    first.setEstimate(pose); second.setEstimate(pose);
++    VertexVelocity v1, v2;
++    v1.setEstimate(Eigen::Vector3d::Zero()); v2.setEstimate(Eigen::Vector3d::Zero());
++    VertexGyroBias gyro;
++    VertexAccBias accelerometer;
++    gyro.setEstimate(Eigen::Vector3d::Zero());
++    accelerometer.setEstimate(Eigen::Vector3d::Zero());
++    EdgeInertial edge(&integrated);
++    edge.setVertex(0, &first); edge.setVertex(1, &v1);
++    edge.setVertex(2, &gyro); edge.setVertex(3, &accelerometer);
++    edge.setVertex(4, &second); edge.setVertex(5, &v2);
++    edge.computeError();
++    return edge.error().norm();
++}
++
++TEST(GazeboGravity, StationaryTenSecondNativeInertialFactor) {
++    // The upstream preintegrator accumulates 2000 steps in float. Allow its
++    // centimetre-scale roundoff; a 0.01 m/s^2 calibration error is over 0.5 m.
++    EXPECT_LT(stationary_residual(9.8f), .025);
++}
++
++TEST(GazeboGravity, WrongGravityIsObservableInTheFactor) {
++    EXPECT_GT(stationary_residual(9.81f), .4);
++}

@@ -164,7 +164,10 @@ def simulation_preflight(context, *, px4_dir, default_world, default_roots, defa
             raise CatalogError('grid height limit requires a finite nonnegative number')
         if height_limit and (not world or not debug_roots or grid_mode!='observed_cells'):
             raise CatalogError('bounded grid requires explicit world/model roots and observed_cells')
-        pose = (0.0, 0.0, 0.83, 0.0)
+        # Built-in flat worlds have no support at 0.83 m. Avoid starting the
+        # estimator during an unnecessary 0.78 m drop and saturated ground impact.
+        height = 0.1 if (world or default_world) in ('empty.world', 'perception_demo.world') else 0.83
+        pose = (0.0, 0.0, height, 0.0)
         debug_pose = _value(context, 'debug_spawn_pose')
         if debug_pose:
             if not world or not debug_roots:
@@ -196,13 +199,14 @@ def _managed_preflight(context, **kwargs):
     # Validate selection first. Loading the private native middleware must
     # precede launch_ros's first component service/client DDS initialization.
     actions = simulation_preflight(context, **kwargs)
-    selected_vio = (_value(context, 'localization_backend') == 'openvins' and
+    selected_vio = (_value(context, 'localization_backend') in ('openvins', 'fast_livo2', 'orbslam3') and
                     _value(context, 'slam_enabled') != 'false')
-    if _value(context, 'scene') or selected_vio:
+    selected_camera = _value(context, 'fuel_extended_profile') == 'true'
+    if _value(context, 'scene') or selected_vio or selected_camera:
         import os
         from easyfly_fastdds_compat.runtime import activate
         from launch.actions import SetEnvironmentVariable
-        middleware = activate(openvins=selected_vio)
+        middleware = activate(openvins=selected_vio, image_streams=True) if selected_camera else activate(openvins=selected_vio)
         actions.insert(0, SetEnvironmentVariable('LD_LIBRARY_PATH', os.environ['LD_LIBRARY_PATH']))
         actions.insert(1, SetEnvironmentVariable('RMW_IMPLEMENTATION', 'rmw_fastrtps_cpp'))
         actions[2:2] = [SetEnvironmentVariable(key, value)

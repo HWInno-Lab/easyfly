@@ -85,6 +85,7 @@ def analyze(directory):
                                      int(native['metadata']['discarded']) == 0 and
                                      int(native['event_metadata']['discarded']) == 0 and
                                      'discarded=0' in producer_metadata and
+                                     int(native['producer_metadata'].get('publish_failures', 0)) == 0 and
                                      'discarded=0' in camera['metadata'] and
                                      (not localization or
                                       (len(guards) == 1 and bool(states) and

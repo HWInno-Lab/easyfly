@@ -7,6 +7,9 @@ find_package(easyfly_ui_control REQUIRED)
 find_package(easyfly_mission_format REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets Network)
+find_package(SQLite3 REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(GEOGRAPHICLIB REQUIRED IMPORTED_TARGET geographiclib)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
@@ -20,6 +23,7 @@ if(EASYFLY_ENABLE_RVIZ_EMBED)
   find_package(rviz_common 11.2.26 EXACT REQUIRED)
   find_package(rviz_rendering 11.2.26 EXACT REQUIRED)
   find_package(rviz_default_plugins 11.2.26 EXACT REQUIRED)
+  find_package(easyfly_rviz_plugins REQUIRED)
 endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -29,11 +33,13 @@ add_library(desktop_widgets STATIC
   include/easyfly_desktop/parameter_controls.hpp
   include/easyfly_desktop/import_controls.hpp
   include/easyfly_desktop/rviz_view.hpp
-  src/source.cpp src/presentation.cpp src/mission_presentation.cpp src/image_pipeline.cpp src/widgets.cpp
+  src/source.cpp src/presentation.cpp src/mission_presentation.cpp src/special_observation_panel.cpp
+  src/peripheral_panel.cpp src/image_pipeline.cpp src/widgets.cpp
   src/camera_overlay.cpp
   assets/easyfly_assets.qrc src/branding.cpp
   src/theme.cpp src/tools.cpp src/mission_controls.cpp src/mission_draft.cpp
   src/mission_geometry.cpp src/mission_editor.cpp src/parameter_controls.cpp src/import_controls.cpp
+  src/geography.cpp src/geographic_view.cpp src/aircraft_display.cpp
   src/rviz_view.cpp src/rviz_geometry.cpp src/rviz_layers.cpp src/recording.cpp
   src/recording_panel.cpp src/main_window.cpp)
 target_include_directories(desktop_widgets PUBLIC
@@ -48,7 +54,7 @@ get_filename_component(EASYFLY_DRAFT_INSTALL_ROOT "${CMAKE_INSTALL_PREFIX}/.." A
 target_compile_definitions(desktop_widgets PRIVATE
   EASYFLY_DRAFT_SOURCE_ROOT="${EASYFLY_DRAFT_SOURCE_ROOT}"
   EASYFLY_DRAFT_INSTALL_ROOT="${EASYFLY_DRAFT_INSTALL_ROOT}")
-target_link_libraries(desktop_widgets PUBLIC Qt5::Widgets)
+target_link_libraries(desktop_widgets PUBLIC Qt5::Widgets SQLite::SQLite3 PkgConfig::GEOGRAPHICLIB)
 if(EASYFLY_ENABLE_MEDIA)
   target_compile_definitions(desktop_widgets PUBLIC EASYFLY_ENABLE_MEDIA)
   target_include_directories(desktop_widgets SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
@@ -57,7 +63,7 @@ endif()
 if(EASYFLY_ENABLE_RVIZ_EMBED)
   target_compile_definitions(desktop_widgets PUBLIC EASYFLY_ENABLE_RVIZ_EMBED)
   target_link_libraries(desktop_widgets PUBLIC rviz_common::rviz_common rviz_rendering::rviz_rendering
-    rviz_default_plugins::rviz_default_plugins)
+    rviz_default_plugins::rviz_default_plugins easyfly_rviz_plugins::odometry_display)
 endif()
 add_executable(easyfly_desktop src/main.cpp src/connection_page.cpp)
 target_link_libraries(easyfly_desktop desktop_widgets Qt5::Network)
@@ -78,7 +84,8 @@ if(EASYFLY_ENABLE_MEDIA)
   install(TARGETS local_playback EXPORT desktopTargets ARCHIVE DESTINATION lib)
 endif()
 install(DIRECTORY include/ DESTINATION include)
-install(FILES README.md OPERATIONS.md ALGORITHMS.md LAYOUT.md DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY assets/geography assets/aircraft DESTINATION share/${PROJECT_NAME}/assets)
+install(FILES README.md OPERATIONS.md ALGORITHMS.md LAYOUT.md GEOGRAPHY.md DESTINATION share/${PROJECT_NAME})
 set(CONNECTION_MEDIA_JSON false)
 set(CONNECTION_RVIZ_JSON false)
 if(EASYFLY_ENABLE_MEDIA)
@@ -105,6 +112,14 @@ if(BUILD_TESTING)
   target_include_directories(capture_workspace PRIVATE src test)
   target_link_libraries(capture_workspace desktop_widgets Qt5::Test Qt5::Network)
   ament_target_dependencies(capture_workspace ament_index_cpp)
+  ament_add_gtest(test_geography test/test_geography.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 45)
+  target_link_libraries(test_geography desktop_widgets Qt5::Test)
+  set_tests_properties(test_geography PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+  ament_add_gtest(test_special_panel test/test_special_panel.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 30)
+  target_link_libraries(test_special_panel desktop_widgets Qt5::Test)
+  set_tests_properties(test_special_panel PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   ament_add_gtest(test_camera_overlay test/test_camera_overlay.cpp)
   target_link_libraries(test_camera_overlay desktop_widgets Qt5::Test)
   set_tests_properties(test_camera_overlay PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
@@ -121,6 +136,10 @@ if(BUILD_TESTING)
     SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 60)
   target_link_libraries(test_recording desktop_widgets Qt5::Test)
   set_tests_properties(test_recording PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+  ament_add_gtest(test_peripheral_panel test/test_peripheral_panel.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 30)
+  target_link_libraries(test_peripheral_panel desktop_widgets Qt5::Test)
+  set_tests_properties(test_peripheral_panel PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   ament_add_gtest(test_rviz_geometry test/test_rviz_geometry.cpp TIMEOUT 30)
   target_link_libraries(test_rviz_geometry desktop_widgets)
   ament_add_gtest(test_rviz_view test/test_rviz_view.cpp test/qt_test_main.cpp
@@ -178,6 +197,13 @@ if(BUILD_TESTING)
   set_tests_properties(test_desktop test_desktop_ros test_tools PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=93;ROS_LOCALHOST_ONLY=1")
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/src
+      ${CMAKE_CURRENT_SOURCE_DIR}/test)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
   ament_lint_auto_find_test_dependencies()
 endif()
 

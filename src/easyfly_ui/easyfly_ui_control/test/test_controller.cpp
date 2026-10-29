@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -63,7 +62,6 @@ protected:
   std::atomic<bool> durable_start{false}, durable_cancel{false};
   std::atomic<int> refusal{0};
   std::vector<std::string> canceled_executions;
-
   void SetUp() override
   {
     ASSERT_NE(std::getenv("ROS_DOMAIN_ID"), nullptr);
@@ -168,7 +166,7 @@ protected:
   bool start()
   {
     return ready() && control->start_confirmed(
-      review(), steady_seconds(), control->snapshot()->server_instance);
+      review(), steady_seconds(), control->snapshot()->server_instance, new_id());
   }
   bool running()
   {
@@ -205,7 +203,7 @@ TEST_F(ControlTest, ExplicitOnceDurableBeforeSendAndNoAutomaticCancelOnStop)
   create(); ASSERT_TRUE(start()); ASSERT_TRUE(running());
   EXPECT_TRUE(durable_start); EXPECT_EQ(starts, 1); EXPECT_FALSE(
     control->snapshot()->intent->resolved);
-  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance));
+  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance, new_id()));
   ASSERT_TRUE(stopped()); EXPECT_EQ(cancels, 0);
   const auto text = journalText(); EXPECT_NE(text.find("\"resolved\":false"), std::string::npos);
 }
@@ -255,7 +253,7 @@ TEST_F(ControlTest, PublicTerminalWaitsOwnershipAndPersistsCompletion)
   create(); ASSERT_TRUE(start()); ASSERT_TRUE(running()); terminal_mode = 1;
   ASSERT_TRUE(until([this] {return control->snapshot()->phase == Phase::DrainPending;}));
   EXPECT_FALSE(control->snapshot()->intent->resolved);
-  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance));
+  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance, new_id()));
   terminal_mode = 2;
   ASSERT_TRUE(until([this] {return control->snapshot()->phase == Phase::Completed;}));
   EXPECT_TRUE(control->snapshot()->intent->resolved);
@@ -289,10 +287,10 @@ TEST_F(ControlTest, MalformedIdentityOrTerminalCannotRelease)
 TEST_F(ControlTest, InvalidOrStaleReviewCannotDispatch)
 {
   create(); ASSERT_TRUE(ready()); auto r = review();
-  EXPECT_FALSE(control->start_confirmed(r, steady_seconds() - 3, instance));
-  EXPECT_FALSE(control->start_confirmed(r, steady_seconds(), std::string(32, 'd')));
+  EXPECT_FALSE(control->start_confirmed(r, steady_seconds() - 3, instance, new_id()));
+  EXPECT_FALSE(control->start_confirmed(r, steady_seconds(), std::string(32, 'd'), new_id()));
   r.content_sha256 = std::string(64, 'f');
-  ASSERT_TRUE(control->start_confirmed(r, steady_seconds(), instance));
+  ASSERT_TRUE(control->start_confirmed(r, steady_seconds(), instance, new_id()));
   ASSERT_TRUE(
     until(
       [this] {
@@ -332,7 +330,7 @@ TEST_F(ControlTest, UnsafeDirectoryThrowsBeforeAnyRemoteRequestAndPreservesRecor
 TEST_F(ControlTest, PersistFailureRefusesStartBeforeRemoteWrite)
 {
   create(); ASSERT_TRUE(ready()); fs::create_directory(root / "intent.json");
-  ASSERT_TRUE(control->start_confirmed(review(), steady_seconds(), instance));
+  ASSERT_TRUE(control->start_confirmed(review(), steady_seconds(), instance, new_id()));
   ASSERT_TRUE(until([this] {return control->snapshot()->phase == Phase::Blocked;}));
   EXPECT_EQ(starts, 0); EXPECT_EQ(cancels, 0);
 }
@@ -344,7 +342,7 @@ TEST_F(ControlTest, ConcurrentConfirmationQueuesOnlyOneIntent)
   for (int i = 0; i < 8; ++i) {
     callers.emplace_back(
       [&] {
-        if (control->start_confirmed(r, steady_seconds(), confirmed)) {++queued_count;}
+        if (control->start_confirmed(r, steady_seconds(), confirmed, new_id())) {++queued_count;}
       });
   }
   for (auto & caller : callers) {
@@ -394,4 +392,14 @@ TEST_F(ControlTest, CompletionCommitFailureCannotPublishResolvedIntent)
   EXPECT_EQ(control->snapshot()->status, "succeeded");
   EXPECT_FALSE(control->snapshot()->intent->resolved);
   EXPECT_EQ(starts, 1); EXPECT_EQ(cancels, 0);
+}
+TEST_F(ControlTest, MissingConfirmationCannotDispatchOrCreateIntent)
+{
+  create(); ASSERT_TRUE(ready());
+  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance));
+  EXPECT_FALSE(control->start_confirmed(review(), steady_seconds(), instance, ""));
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  EXPECT_EQ(starts, 0); EXPECT_EQ(cancels, 0);
+  EXPECT_FALSE(fs::exists(root / "intent.json"));
+  EXPECT_EQ(control->snapshot()->phase, Phase::Idle);
 }

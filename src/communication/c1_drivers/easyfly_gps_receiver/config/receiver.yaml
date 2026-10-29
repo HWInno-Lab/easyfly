@@ -1,0 +1,9 @@
+gps_receiver:
+  ros__parameters:
+    device: ""
+    baud: 9600
+    frame_id: gps_link
+    fix_topic: /gps/fix
+    time_topic: /gps/time_reference
+    source_timeout_s: 1.5
+    max_utc_offset_s: 60.0

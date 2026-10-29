@@ -53,6 +53,11 @@ void FlightController::initialize_precision_landing()
       return declare_parameter("precision_" + name, value, descriptor);
     };
   auto & config = precision_config_;
+  config.moving_target = declare_parameter("precision_moving_target", false, descriptor);
+  config.moving_max_speed = parameter("moving_max_speed", config.moving_max_speed);
+  config.moving_fit_error = parameter("moving_fit_error", config.moving_fit_error);
+  config.moving_land_timeout = parameter("moving_land_timeout", config.moving_land_timeout);
+  config.moving_usable_radius = parameter("moving_usable_radius", config.moving_usable_radius);
   config.horizontal_speed = parameter("horizontal_speed", config.horizontal_speed);
   config.descent_speed = parameter("descent_speed", config.descent_speed);
   config.align_tolerance = parameter("align_tolerance", config.align_tolerance);
@@ -393,6 +398,26 @@ bool FlightController::precision_control_loop()
     }
   }
   if (precision_handoff_) {
+    if (precision_config_.moving_target && precision_stop_reason_.empty() &&
+      !land_disarm_confirmed(uav, receipt))
+    {
+      const double source_elapsed = static_cast<double>(
+        now().nanoseconds() - precision_handoff_source_ns_) * 1e-9;
+      const double wall_elapsed = std::chrono::duration<double>(
+        current - precision_handoff_started_).count();
+      if (source_elapsed < 0 || source_elapsed > precision_config_.moving_land_timeout ||
+        wall_elapsed > 2 * precision_config_.moving_land_timeout)
+      {
+        precision_stop_reason_ = "moving pad bounded Land interval expired";
+      } else if (precision_target_ready() && std::hypot(
+          precision_target_.position.x - precision_handoff_board_.x,
+          precision_target_.position.y - precision_handoff_board_.y) >
+        precision_config_.moving_max_speed * source_elapsed +
+        2 * precision_config_.moving_fit_error)
+      {
+        precision_stop_reason_ = "moving pad left bounded handoff corridor";
+      }
+    }
     if (!precision_terminal_) {
       auto feedback = std::make_shared<PrecisionLand::Feedback>();
       feedback->phase = "land_handoff";
@@ -650,6 +675,8 @@ void FlightController::precision_handoff()
     return;
   }
   precision_handoff_ = true;
+  precision_handoff_source_ns_ = now().nanoseconds();
+  precision_handoff_started_ = std::chrono::steady_clock::now();
   precision_child_admission_pending_ = true;
   active_ = HOVER;
   Land::Goal request;

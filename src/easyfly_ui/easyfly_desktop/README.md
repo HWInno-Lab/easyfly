@@ -9,6 +9,10 @@ operations require separate explicit startup opt-in; no standalone flight button
 See [OPERATIONS.md](OPERATIONS.md) for the development delivery boundary, opt-in
 matrix, startup/close procedure, camera-source distinction and known limitations.
 
+The spatial page also provides an offline geographic map with explicit WGS84/ENU
+datum and an optional complete aircraft display. See [GEOGRAPHY.md](GEOGRAPHY.md)
+for map import, source attribution, coordinate and TF requirements.
+
 ## Build and run
 
 From the workspace with compatible ROS Humble/Qt/system dependencies:
@@ -295,8 +299,9 @@ resetting a canceled exit choice, preserving unresolved intent and leaving a
 user-started external tool untouched. These are fixtures, not real RViz/QGC
 simultaneous-flight acceptance. Fixture teardown finishes only its mock action
 after assertions. Screenshots
-in docs/ui/d6-4 have explicit mock labels. No PX4/Gazebo/SITL/hardware readiness is
-established by these checks; real flight and server cross-restart persistence remain deferred.
+in the separately archived docs/ui/d6-4 evidence have explicit mock labels.
+These fixtures establish no PX4/Gazebo/SITL/hardware readiness. Later real SITL
+qualification is described below; server cross-restart persistence remains deferred.
 
 A separate, manually confirmed SITL check on 2026-10-13 used localhost-only
 ROS domain117, the `base_sim` profile and a private catalog containing only
@@ -306,10 +311,14 @@ also queried as succeeded, execution_pending=false, with its exact Action UUID
 reported RELEASED. PX4 confirmed landed and disarmed, and the UI exited normally.
 This is a bounded simulation check, not hardware or full lifecycle acceptance.
 Initial native estimator/GPS admission failure, one Gazebo shutdown -6 and a
-repeated parameter-manager shutdown exception are retained as open findings.
-Actual RViz/QGC plus unresolved-task exit remains unverified; fixtures do not
-establish it. Server cross-restart persistence and independent flight buttons
-remain deferred.
+repeated parameter-manager shutdown exception remain in the historical record.
+The parameter-manager signal race has since been fixed and tested. On 2026-10-26,
+two actual C08 SITL runs verified RViz/QGC, recording, closing with an unresolved
+task, unchanged journal bytes and lookup-only reopen, then success, ownership
+drain, landing/disarm and normal exit. The separate historical Gazebo/witness
+timeouts still lack causal closure. See the installed
+`easyfly_sim_launcher/ACCEPTANCE.md` for current scope. Server cross-restart
+persistence and independent flight buttons remain deferred.
 
 The additional opt-in `ManagedStack.DISABLED_RealToolsUnresolvedExitAndLookupOnlyReopen`
 check uses actual RViz and offline-sandboxed QGC windows with real Qt/controller/
@@ -339,7 +348,11 @@ basic flight, navigation/SLAM, perception, and landing-camera viewing. The defau
 basic-flight preset displays the actual `/mavros/local_position/odom` pose as
 vehicle axes in fixed frame `map`, matching the project's MAVROS configuration.
 It keeps only one pose, needs neither FAST-LIO `/path` nor map/odom TF, and does
-not add a robot model, transform publisher, or control plugin. A differently
+not add a robot model, transform publisher, or control plugin. The installed
+`easyfly_rviz_plugins/Odometry` display preserves native RViz pose/axes behavior
+and releases retired visual scene nodes in the tested 11.2.26 implementation.
+The plugin is required by generated external presets as well as embedded
+odometry; it does not replace a system RViz library. A differently
 configured publisher needs a matching view; frame mismatch is not silently
 relabelled or repaired with an identity transform.
 The other presets retain fixed frame odom and require their actual publishers
@@ -628,10 +641,11 @@ The installed build controls availability; renderer startup is always manual. CM
 `EASYFLY_ENABLE_RVIZ_EMBED=OFF`: that binary does not link RViz/Ogre and rejects
 `--enable-rviz-embed` with exit2. Package metadata declares the superset of
 dependencies needed by the optional build. An enabled build requires the tested
-Humble `rviz_common`, `rviz_rendering` and `rviz_default_plugins` version11.2.26:
+Humble `rviz_common`, `rviz_rendering` and `rviz_default_plugins` version11.2.26,
+plus the workspace `easyfly_rviz_plugins` package:
 
 ```bash
-colcon build --packages-select easyfly_desktop --cmake-args -DEASYFLY_ENABLE_RVIZ_EMBED=ON
+colcon build --packages-up-to easyfly_desktop --cmake-args -DEASYFLY_ENABLE_RVIZ_EMBED=ON
 source install/setup.bash
 ros2 run easyfly_desktop easyfly_desktop --enable-rviz-embed
 ```
@@ -729,12 +743,14 @@ this is not complete GPU-memory release. In-process plugin/graphics faults can
 still terminate the UI: no crash isolation or real-flight safety claim is made.
 
 `test_rviz_geometry` has eleven pure conversion/validity checks.
-`test_rviz_view` has four headless checks and eleven actual X11 checks. Layout
+`test_rviz_view` has four headless checks and fourteen actual X11 checks. Layout
 checks cover 1024×720 and 1440×900, with active-render splitter resizing and
 non-overlapping canvas/control geometry. Native checks additionally cover typed
 layers, default-off subscriptions, actual local QoS, real fixture TF, paused-clock
 duplicate expiry, invalid/future data, reset recovery and reception/replacement
-while GUI processing is withheld. Ordinary
+while GUI processing is withheld. The odometry lifetime regression includes
+retired parents and detached covariance roots across repeated real rendered
+updates; it checks exact scene-node retention after pending updates settle. Ordinary
 CTest uses offscreen Qt and **skips** real rendering checks. Run those separately
 in an isolated localhost domain with xcb (the fixtures publish only synthetic
 observations and clock, never flight actions):
@@ -894,3 +910,82 @@ selection, malformed mappings/dimensions/timing, unsafe files, post-load changes
 request supersession, GUI pause/seek/events/close and standalone linkage/CLI gates.
 
 工作区的页面安排、配置入口、专注观察与分栏偏好见 [布局与使用](LAYOUT.md)。
+
+### Unified FUEL exploration steps
+
+The task editor supports YAML v1 `explore`: XYZ min/max bounds, an explicit
+return-to-exploration-start checkbox, timeout and up to 16 forbidden boxes. Each
+forbidden-box editor line is `xmin ymin zmin xmax ymax zmax` in meters. Invalid
+input stays in the editor; applying or normalizing a step preserves all boxes.
+The geometry tab shows XY projections with vertical ranges and labeled forbidden
+boxes; it does not invent an exploration path or certify traversability.
+
+Execution requires navigation_dev, FAST-LIO, GCOPTER and the FUEL backend. The
+backend still checks fresh map, localization and flight state. Task execution uses
+the managed Explore action and waits for recursive ownership release. The known
+B-01 FUEL map issue remains separately deferred; format/SDK/UI integration does
+not close that algorithm defect.
+
+### Specialized read-only observations
+
+The camera/perception tabs now show bounded AprilTag observations, the selected
+optical landing target, odom landing guidance, owned PrecisionLand/Explore feedback,
+model predictions and independent classified obstacle copies. Optical Z and yaw
+are not relabeled as altitude/ENU heading. The executor relays real child feedback
+once per SDK receipt with parent/child Goal IDs; the UI displays action phase/error
+only for its matching unresolved local mission, never from global phase alone.
+
+Each stream uses depth 1, bounded records/strings, one source and a 0.5-second
+freshness deadline. Duplicates do not renew freshness. Conflicting/older messages,
+clock changes, stopped streams and malformed input clear the current valid display.
+Prediction reference and original observation times remain separate; variance is
+model-based. Expired class association becomes unknown while valid geometry remains.
+
+The navigation RViz preset adds opt-in landing-normal, model-prediction-cross and
+classified-copy geometry layers. They have no flight publishers and clear after
+0.5 seconds. A normal is not measured board corners; a cross is not a measured
+trajectory; the copy never replaces original obstacle occupancy. Native Qt/ROS
+and X11 rendering acceptance does not certify physical detection or landing accuracy.
+
+### Explicit ROI and simulation gimbal operations
+
+`--enable-peripheral-control` is independent of mission control and does not need
+or enable a mission journal. It is rejected with system time or a managed QGC
+maintenance session. The connection manager has a separate opt-in for local SITL;
+legacy profiles omit the disabled flag and retain their existing canonical hash.
+The perception tab's “单目标／云台” panel first connects read-only observations.
+Initialize/reset/angle/tracking require the page's explicit session permission.
+Query is read-only and works without mutable permission. No backend is auto-started.
+
+For a separately launched simulation using the canonical front camera, start the
+existing backends explicitly in the same isolated ROS domain and environment:
+
+```bash
+ros2 run easyfly_single_object_tracking single_object_tracking_node --ros-args \
+  -p use_sim_time:=true -r /camera/image_raw:=/camera/color/image_raw
+ros2 launch easyfly_gimbal_control gimbal.launch.py use_sim_time:=true
+ros2 run easyfly_desktop easyfly_desktop --enable-peripheral-control
+```
+
+Drag within the image to select a normalized ROI; letterboxing is excluded. Clicking
+initialize binds the exact image last painted in that panel, its optical frame,
+source stamp, session and epoch. It never substitutes a newer received frame.
+The frontend requires a fresh canonical front image (0.5 seconds) and at least
+8×8 pixels. The backend matches that header in its bounded recent-image cache,
+then performs CSRT work. Admission is not tracking success. Independent IDs,
+initializing/tracking/lost/idle and unknown confidence remain explicit. A lost
+tracker needs explicit reinitialization; reset does not affect the multi-object
+tracker. Only a frame-matching actual CSRT box is drawn.
+
+Gimbal controls show body FLU directions and degrees, check the simulation model
+identity and connection, and display actual observed angles independently of the
+service response. Target selection never silently switches to another ID. Target
+loss or disconnection does not restart an old tracking request. These operations
+never command the aircraft or change the fixed downward-camera transform.
+
+There is one in-flight peripheral request. Timeouts remain unknown and block further
+submissions; there is no automatic retry. A real late response reports admission
+separately from current telemetry. Stopping observation sends no reset, angle or
+tracking command. These services have no durable request identity: process restart
+cannot recover attribution for an old unknown response; inspect backend state before
+any new explicit operation. The physical gimbal backend remains unimplemented.

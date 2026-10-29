@@ -8,6 +8,9 @@ find_package(geometry_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 
 set(msg_files
+  "msg/VoxelGrid.msg"
+  "msg/PolynomialTrajectory.msg"
+  "msg/SepticTrajectory.msg"
   "msg/NavigationSession.msg"
   "msg/UAVState.msg"
   "msg/FlightStatus.msg"
@@ -20,6 +23,8 @@ set(msg_files
   "msg/ColorLineObservationArray.msg"
   "msg/TrackInfo.msg"
   "msg/TrackInfoArray.msg"
+  "msg/VehicleIdentity.msg"
+  "msg/VehicleIdentityArray.msg"
   "msg/Target3D.msg"
   "msg/Target3DArray.msg"
   "msg/TargetPrediction.msg"
@@ -38,11 +43,15 @@ set(msg_files
   "msg/GimbalState.msg"
   "msg/SwarmInfo.msg"
   "msg/MissionStatus.msg"
+  "msg/MissionStepFeedback.msg"
 )
 
 set(srv_files
+  "srv/SetExplorationView.srv"
+  "srv/ReserveNavigation.srv"
   "srv/GetPerception.srv"
   "srv/GetCapabilities.srv"
+  "srv/GetTrajectoryState.srv"
   "srv/ManageMission.srv"
   "srv/GetMissionDetails.srv"
   "srv/ManageReviewedMission.srv"
@@ -61,6 +70,7 @@ set(srv_files
 )
 
 set(action_files
+  "action/Explore.action"
   "action/Takeoff.action"
   "action/Land.action"
   "action/PrecisionLand.action"

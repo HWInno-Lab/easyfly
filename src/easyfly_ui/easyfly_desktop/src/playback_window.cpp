@@ -10,8 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#include "easyfly_desktop/playback_window.hpp"
 #include <QAbstractTableModel>
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -32,6 +30,7 @@
 #include <QVBoxLayout>
 #include <algorithm>
 #include <limits>
+#include "easyfly_desktop/playback_window.hpp"
 #include "theme.hpp"
 namespace easyfly_desktop
 {

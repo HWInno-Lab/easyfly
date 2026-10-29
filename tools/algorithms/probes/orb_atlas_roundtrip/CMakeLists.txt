@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(orb_atlas_roundtrip LANGUAGES CXX)
+find_package(easyfly_orbslam3_core REQUIRED)
+add_executable(orb_atlas_roundtrip main.cpp)
+target_compile_features(orb_atlas_roundtrip PRIVATE cxx_std_17)
+target_link_libraries(orb_atlas_roundtrip PRIVATE easyfly_orbslam3_core::easyfly_orbslam3)

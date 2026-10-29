@@ -75,6 +75,19 @@ int integer(const YAML::Node & node, int low, int high)
       [](char c) {return c >= '0' && c <= '9';}), "expected decimal integer");
   return static_cast<int>(number(node, low, high));
 }
+std::array<double, 3> point(const YAML::Node & node)
+{
+  require(node.IsSequence() && node.size() == 3, "expected XYZ triple");
+  return {{number(node[0], -1000, 1000), number(node[1], -1000, 1000),
+    number(node[2], -1000, 1000)}};
+}
+bool boolean(const YAML::Node & node)
+{
+  require(
+    node.IsScalar() && node.Tag() != "!" && node.Tag() != "tag:yaml.org,2002:str" &&
+    (node.Scalar() == "true" || node.Scalar() == "false"), "expected true or false");
+  return node.Scalar() == "true";
+}
 MissionValidation yaml(const std::string & text)
 {
   const auto docs = YAML::LoadAll(text);
@@ -107,6 +120,7 @@ MissionValidation yaml(const std::string & text)
       {"search",
         {"center_x", "center_y", "area_width", "area_height", "altitude", "max_speed",
           "pattern"}},
+      {"explore", {"min_bound", "max_bound", "forbidden_boxes", "return_home"}},
       {"land", {}}, {"precision_land", {"tag_id"}}};
     const auto spec = fields.find(step.type);
     require(spec != fields.end(), "unsupported step type: " + step.type);
@@ -121,6 +135,30 @@ MissionValidation yaml(const std::string & text)
       if (step.type == "waypoint") {
         step.yaw = optional(node, "yaw", 0, -3.141592653589793, 3.141592653589793);
         step.acceptance_radius = optional(node, "acceptance_radius", .5, .05, 5);
+      }
+    } else if (step.type == "explore") {
+      step.min_bound = point(node["min_bound"]); step.max_bound = point(node["max_bound"]);
+      step.return_home = boolean(node["return_home"]);
+      require(step.timeout >= 5 && step.timeout <= 900, "explore timeout must be 5..900s");
+      for (size_t axis = 0; axis < 3; ++axis) {
+        require(
+          step.max_bound[axis] - step.min_bound[axis] >= .8,
+          "explore extent must be at least 0.8m per axis");
+      }
+      require(
+        step.min_bound[2] >= .5 && step.max_bound[2] <= 2.5,
+        "explore vertical bounds must be within 0.5..2.5m");
+      if (node["forbidden_boxes"]) {
+        const auto boxes = node["forbidden_boxes"];
+        require(boxes.IsSequence() && boxes.size() <= 16, "expected at most 16 forbidden boxes");
+        for (const auto & box : boxes) {
+          keys(box, {"min", "max"});
+          ExplorationBox value{point(box["min"]), point(box["max"])};
+          for (size_t axis = 0; axis < 3; ++axis) {
+            require(value.min[axis] < value.max[axis], "forbidden box requires min < max");
+          }
+          step.forbidden_boxes.push_back(value);
+        }
       }
     } else if (step.type == "precision_land") {
       step.tag_id = integer(node["tag_id"], 0, 2147483647);

@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <unistd.h>
 #include <atomic>
 #include <chrono>
@@ -24,11 +23,11 @@
 #include <stdexcept>
 #include <thread>
 #include <utility>
+#include "easyfly_ui_control/importer.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <easyfly_msgs/srv/import_mission.hpp>
 #include <easyfly_msgs/srv/get_mission_details.hpp>
 #include <easyfly_mission_format/mission_format.hpp>
-#include "easyfly_ui_control/importer.hpp"
 #include "import_journal.hpp"
 #include "confirmation_ledger.hpp"
 namespace easyfly_ui_control
@@ -65,7 +64,6 @@ struct MissionImporter::Impl
   ImportConfig config;
   ImportSnapshot data;
   mutable std::mutex mutex;
-  std::unique_lock<std::mutex> * run_lock{nullptr};
   std::condition_variable wake;
   bool closing{false}, inhibited{false}, refresh_queued{false};
   std::optional<Command> queued, command;
@@ -94,12 +92,12 @@ struct MissionImporter::Impl
   ~Impl() {stop(); if (worker.joinable()) {worker.join();}}
   void stop() {std::lock_guard<std::mutex> lock(mutex); closing = true; wake.notify_all();}
   bool unresolved() const {return data.intent && !data.intent->resolved;}
-  void outside(const std::function<void()> & work)
+  void outside(std::unique_lock<std::mutex> & lock, const std::function<void()> & work)
   {
     // Validation/fsync must not hold the mutex used by GUI polls/inhibit/stop.
-    run_lock->unlock();
-    try {work();} catch (...) {run_lock->lock(); throw;}
-    run_lock->lock();
+    lock.unlock();
+    try {work();} catch (...) {lock.lock(); throw;}
+    lock.lock();
   }
   void block(const std::string & reason)
   {
@@ -113,11 +111,11 @@ struct MissionImporter::Impl
       data.phase = ImportPhase::Rejected; data.destination.reset();
     }
   }
-  void resolve(bool success, const std::string & status)
+  void resolve(std::unique_lock<std::mutex> & lock, bool success, const std::string & status)
   {
     auto intent = *data.intent; intent.resolved = true; intent.success = success;
     intent.status = status;
-    try {outside([&] {journal->save(intent);});} catch (const std::exception &) {
+    try {outside(lock, [&] {journal->save(intent);});} catch (const std::exception &) {
       block("cannot durably confirm import result; record retained; no replay"); return;
     }
     data.intent = intent; data.phase = success ? ImportPhase::Completed : ImportPhase::Rejected;
@@ -172,7 +170,7 @@ struct MissionImporter::Impl
     return ImportDestination{r.server_instance_id, r.catalog_id, r.catalog_directory, r.enabled,
       r.request_capacity, r.retained_requests, now()};
   }
-  void response(Stage stage, const Api::Response & r)
+  void response(std::unique_lock<std::mutex> & lock, Stage stage, const Api::Response & r)
   {
     if (r.status == "busy") {
       failure("import worker busy; lookup only for an existing intent"); return;
@@ -191,14 +189,14 @@ struct MissionImporter::Impl
         {
           block("instance/catalog changed during readback; record retained"); return;
         }
-        data.destination = *d; resolve(true, "imported"); return;
+        data.destination = *d; resolve(lock, true, "imported"); return;
       }
       if (inhibited || !command || !same(*d, command->destination) || !d->enabled ||
         d->retained >= d->capacity)
       {failure("confirmed destination changed/disabled/full or inhibited; no create sent"); return;}
       const auto & doc = command->document;
       easyfly_mission_fsm::MissionValidation validation;
-      outside([&] {validation = easyfly_mission_fsm::validateMissionText(doc.content);});
+      outside(lock, [&] {validation = easyfly_mission_fsm::validateMissionText(doc.content);});
       if (!validation.valid() || easyfly_mission_fsm::missionFormatName(doc.content) != "yaml_v1") {
         failure("shared v1 validation failed before import; no create sent"); return;
       }
@@ -207,11 +205,11 @@ struct MissionImporter::Impl
       }
       ImportIntent intent{scope, d->instance, d->catalog, new_id(), doc.name, doc.hash, "submitted",
         false, false};
-      try {outside([&] {journal->save(intent);});} catch (const std::exception &) {
+      try {outside(lock, [&] {journal->save(intent);});} catch (const std::exception &) {
         block("cannot durably prepare import intent; no create sent; inspect local record"); return;
       }
       data.intent = intent; data.destination = *d;
-      if (closing || inhibited) {resolve(false, "not_dispatched"); return;}
+      if (closing || inhibited) {resolve(lock, false, "not_dispatched"); return;}
       dispatch(Stage::Create); return;
     }
     const auto & i = *data.intent;
@@ -224,7 +222,7 @@ struct MissionImporter::Impl
     if (!r.success && !r.published && (r.status == "exists" || r.status == "rejected" ||
       r.status == "invalid" || r.status == "disabled" || r.status == "request_capacity"))
     {
-      resolve(false, r.status); return;
+      resolve(lock, false, r.status); return;
     }
     block("inconsistent original import outcome; retained fault lock");
   }
@@ -238,7 +236,7 @@ struct MissionImporter::Impl
     {block("published file readback differed or was invalid; no overwrite/rollback"); return;}
     dispatch(Stage::FinalSession);
   }
-  void tick()
+  void tick(std::unique_lock<std::mutex> & lock)
   {
     if (pending) {
       auto p = *pending;
@@ -249,7 +247,7 @@ struct MissionImporter::Impl
         pending.reset();
         try {
           if (p.stage == Stage::Details) {readback(*p.details.get());} else {
-            response(p.stage, *p.api.get());
+            response(lock, p.stage, *p.api.get());
           }
         } catch (const std::exception &) {failure("import reply failed; no create retry");}
       } else if (now() - p.sent >= config.response_timeout) {
@@ -284,10 +282,9 @@ struct MissionImporter::Impl
       executor = std::make_unique<rclcpp::executors::SingleThreadedExecutor>(eo);
       executor->add_node(node);
       std::unique_lock<std::mutex> lock(mutex);
-      run_lock = &lock;
       scope = "domain=" + std::to_string(context->get_domain_id()) + ";localhost=1";
       std::optional<ImportIntent> loaded;
-      outside([&] {loaded = journal->load();}); data.intent = loaded;
+      outside(lock, [&] {loaded = journal->load();}); data.intent = loaded;
       if (data.intent && data.intent->scope != scope) {
         block("import journal ROS scope changed; no remote calls");
       } else if (unresolved()) {
@@ -299,7 +296,7 @@ struct MissionImporter::Impl
       data.ready = true;
       while (!closing) {
         lock.unlock(); executor->spin_some(std::chrono::milliseconds(5)); lock.lock();
-        if (!closing) {tick();}
+        if (!closing) {tick(lock);}
         wake.wait_for(lock, std::chrono::milliseconds(10), [this] {return closing;});
       }
     } catch (const std::exception &) {

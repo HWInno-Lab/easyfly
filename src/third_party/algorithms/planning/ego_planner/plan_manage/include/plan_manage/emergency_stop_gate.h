@@ -1,5 +1,18 @@
-#ifndef EGO_PLANNER_EMERGENCY_STOP_GATE_H_
-#define EGO_PLANNER_EMERGENCY_STOP_GATE_H_
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef PLAN_MANAGE__EMERGENCY_STOP_GATE_H_
+#define PLAN_MANAGE__EMERGENCY_STOP_GATE_H_
 
 #include <algorithm>
 #include <cmath>
@@ -91,15 +104,16 @@ public:
       return RecoveryAction::kHold;
     }
     if (have_target && std::isfinite(goal_distance) &&
-        std::isfinite(no_replan_threshold) && no_replan_threshold > 0.0 &&
-        goal_distance < no_replan_threshold) {
+      std::isfinite(no_replan_threshold) && no_replan_threshold > 0.0 &&
+      goal_distance < no_replan_threshold)
+    {
       return RecoveryAction::kWaitForTarget;
     }
     return RecoveryAction::kResumePlanning;
   }
 
 private:
-  bool stop_pending_{false};
+  bool stop_pending_ {false};
 };
 
 // ROS-free stability gate for leaving EMERGENCY_STOP.  The FSM owns the ROS
@@ -120,18 +134,18 @@ class EmergencyRecoveryGate
 public:
   struct Params
   {
-    int stable_cycles{5};
-    double hold_seconds{0.5};
-    double max_speed{0.1};
-    double max_clock_jump{1.0};
-    double ack_timeout{0.5};
-    double ack_retry_period{0.5};
-    double ack_retry_max_period{5.0};
+    int stable_cycles {5};
+    double hold_seconds {0.5};
+    double max_speed {0.1};
+    double max_clock_jump {1.0};
+    double ack_timeout {0.5};
+    double ack_retry_period {0.5};
+    double ack_retry_max_period {5.0};
   };
 
   EmergencyRecoveryGate()
   {
-    configure(Params{});
+    configure(Params {});
   }
 
   explicit EmergencyRecoveryGate(const Params & params)
@@ -229,9 +243,9 @@ public:
   // arrived, and to retry again if that stream disappears during recovery.
   bool stopPublicationDue(const double now) const noexcept
   {
-    if (!std::isfinite(now) || now < 0.0) return false;
-    if (!std::isfinite(last_stop_attempt_time_)) return true;
-    if (now < last_stop_attempt_time_) return true;
+    if (!std::isfinite(now) || now < 0.0) {return false;}
+    if (!std::isfinite(last_stop_attempt_time_)) {return true;}
+    if (now < last_stop_attempt_time_) {return true;}
     if (!stop_published_ || !downstream_acknowledged_) {
       return now - last_stop_attempt_time_ >= retryDelay();
     }
@@ -359,7 +373,7 @@ public:
       (expected_node_fqn.front() == '/' ? expected_node_fqn : "/" + expected_node_fqn);
     return unique_publisher && gid_matches &&
            endpointFqnMatches(
-             endpoint_node_name, endpoint_node_namespace, normalized_expected) &&
+      endpoint_node_name, endpoint_node_namespace, normalized_expected) &&
            endpoint_topic_type == expected_topic_type &&
            source_node_fqn == normalized_expected;
   }
@@ -450,7 +464,7 @@ public:
   bool targetUnchanged(const std::uint64_t current_generation) const noexcept
   {
     return have_generation_snapshot_ &&
-      current_generation == target_generation_snapshot_;
+           current_generation == target_generation_snapshot_;
   }
 
   static bool shouldClearReachedTarget(
@@ -461,8 +475,8 @@ public:
     const double no_replan_threshold) noexcept
   {
     return stop_generation == current_generation && have_target &&
-      std::isfinite(goal_distance) && std::isfinite(no_replan_threshold) &&
-      no_replan_threshold > 0.0 && goal_distance < no_replan_threshold;
+           std::isfinite(goal_distance) && std::isfinite(no_replan_threshold) &&
+           no_replan_threshold > 0.0 && goal_distance < no_replan_threshold;
   }
 
   int stableCyclesSeen() const noexcept {return stable_cycles_seen_;}
@@ -473,7 +487,7 @@ public:
     const std::uint64_t current_generation) noexcept
   {
     return !latched || (odom_fresh && cloud_fresh && have_target &&
-      current_generation != stop_generation);
+           current_generation != stop_generation);
   }
 
 private:
@@ -486,7 +500,7 @@ private:
     const double value, const double fallback, const double minimum,
     const double maximum) noexcept
   {
-    if (!std::isfinite(value) || value < minimum || value > maximum) return fallback;
+    if (!std::isfinite(value) || value < minimum || value > maximum) {return fallback;}
     return value;
   }
 
@@ -528,28 +542,28 @@ private:
   static constexpr int kMaxRetryCount = 7;
 
   Params params_;
-  bool stop_published_{false};
-  bool have_expected_stop_traj_id_{false};
-  bool downstream_acknowledged_{false};
-  bool have_generation_snapshot_{false};
-  std::uint64_t target_generation_snapshot_{0};
-  std::uint64_t activation_sequence_baseline_{0};
-  std::uint64_t last_ack_sequence_{0};
-  std::uint64_t attempt_last_activation_sequence_{0};
-  std::uint64_t attempt_id_{0};
-  int stop_retry_count_{0};
-  std::uint32_t expected_stop_traj_id_{0};
-  int stable_cycles_seen_{0};
-  double stop_time_{std::numeric_limits<double>::quiet_NaN()};
-  double stable_start_time_{std::numeric_limits<double>::quiet_NaN()};
-  double last_time_{std::numeric_limits<double>::quiet_NaN()};
-  double last_stop_attempt_time_{std::numeric_limits<double>::quiet_NaN()};
-  double last_ack_time_{std::numeric_limits<double>::quiet_NaN()};
-  double last_ack_stamp_{std::numeric_limits<double>::quiet_NaN()};
+  bool stop_published_ {false};
+  bool have_expected_stop_traj_id_ {false};
+  bool downstream_acknowledged_ {false};
+  bool have_generation_snapshot_ {false};
+  std::uint64_t target_generation_snapshot_ {0};
+  std::uint64_t activation_sequence_baseline_ {0};
+  std::uint64_t last_ack_sequence_ {0};
+  std::uint64_t attempt_last_activation_sequence_ {0};
+  std::uint64_t attempt_id_ {0};
+  int stop_retry_count_ {0};
+  std::uint32_t expected_stop_traj_id_ {0};
+  int stable_cycles_seen_ {0};
+  double stop_time_ {std::numeric_limits<double>::quiet_NaN()};
+  double stable_start_time_ {std::numeric_limits<double>::quiet_NaN()};
+  double last_time_ {std::numeric_limits<double>::quiet_NaN()};
+  double last_stop_attempt_time_ {std::numeric_limits<double>::quiet_NaN()};
+  double last_ack_time_ {std::numeric_limits<double>::quiet_NaN()};
+  double last_ack_stamp_ {std::numeric_limits<double>::quiet_NaN()};
   std::string attempt_publisher_key_;
   std::unordered_map<std::string, std::uint64_t> publisher_sequences_;
 };
 
 }  // namespace ego_planner
 
-#endif  // EGO_PLANNER_EMERGENCY_STOP_GATE_H_
+#endif  // PLAN_MANAGE__EMERGENCY_STOP_GATE_H_

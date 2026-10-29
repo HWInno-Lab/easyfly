@@ -46,4 +46,13 @@ install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME}
 )
 
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_bridge_ros test/test_bridge_ros.py TIMEOUT 70)
+endif()
+
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
+
 ament_package()

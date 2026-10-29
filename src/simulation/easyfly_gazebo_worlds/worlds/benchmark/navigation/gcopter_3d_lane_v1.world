@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.6">
+  <world name="default">
+    <gravity>0 0 -9.8</gravity>
+    <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
+    <physics name="default_physics" type="ode">
+      <max_step_size>.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+    <scene>
+      <ambient>.5 .5 .5 1</ambient>
+      <background>.7 .7 .7 1</background>
+      <shadows>false</shadows>
+    </scene>
+    <light name="sun" type="directional">
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>.8 .8 .8 1</diffuse>
+      <direction>-.2 .1 -1</direction>
+    </light>
+    <model name="arena_floor">
+      <static>true</static>
+      <pose>1.000000 0.000000 -0.050000 0.000000 0.000000 0.000000</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>14.400000 10.400000 0.100000</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>14.400000 10.400000 0.100000</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.65 .65 .65 1</ambient>
+            <diffuse>.65 .65 .65 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="boundary_west">
+      <static>true</static>
+      <pose>-6.100000 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.200000 10.400000 4.000000</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.200000 10.400000 4.000000</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.25 .45 .65 1</ambient>
+            <diffuse>.25 .45 .65 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="boundary_east">
+      <static>true</static>
+      <pose>8.100000 0.000000 2.000000 0.000000 0.000000 0.000000</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>0.200000 10.400000 4.000000</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.200000 10.400000 4.000000</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.25 .45 .65 1</ambient>
+            <diffuse>.25 .45 .65 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="boundary_south">
+      <static>true</static>
+      <pose>1.000000 -5.100000 2.000000 0.000000 0.000000 0.000000</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>14.000000 0.200000 4.000000</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>14.000000 0.200000 4.000000</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.25 .45 .65 1</ambient>
+            <diffuse>.25 .45 .65 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="boundary_north">
+      <static>true</static>
+      <pose>1.000000 5.100000 2.000000 0.000000 0.000000 0.000000</pose>
+      <link name="body">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>14.000000 0.200000 4.000000</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>14.000000 0.200000 4.000000</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>.25 .45 .65 1</ambient>
+            <diffuse>.25 .45 .65 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+  </world>
+</sdf>

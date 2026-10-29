@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "private_key_file": "/absolute/keys/a/private.key",
+  "bind": ["127.0.0.1", 9020],
+  "input_topic": "/vehicle_a/odom",
+  "peers": [
+    {
+      "public_key_file": "/absolute/keys/b/public.key",
+      "endpoint": ["127.0.0.1", 9021],
+      "output_topic": "/mesh/b/odom"
+    },
+    {
+      "public_key_file": "/absolute/keys/c/public.key",
+      "endpoint": null,
+      "output_topic": "/mesh/c/odom"
+    }
+  ]
+}

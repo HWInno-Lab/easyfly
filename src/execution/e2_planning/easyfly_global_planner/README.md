@@ -26,3 +26,10 @@ A*、脱困与视线剪枝位于 `easyfly_astar`；本包通过 `GridPlanner` �
 
 回归使用合成地图/遥测与显式 waypoint mock；既有导航链还使用真实协调器、EGO、
 轨迹服务器和飞控软件节点。测试不启动 PX4/Gazebo，不代表实际飞行认证。
+
+
+GCOPTER 的显式滚动导航通过 `navigate.launch.py strategy:=gcopter
+ gcopter_dynamic_navigation:=true` 开启，需配套开启 GCOPTER 地图与所有者的动态模式。
+父目标保持到全局到达；每段实际终态与精确 STOP 确认后才接续，实际无进展、观测不足、
+300 s 总墙钟／8 次重规划／20 次会话预算耗尽均失败退出。默认固定地图行为不变。
+参数、观测清障和地图坐标约束见相邻 `easyfly_trajectory_optimizer/README.md`。

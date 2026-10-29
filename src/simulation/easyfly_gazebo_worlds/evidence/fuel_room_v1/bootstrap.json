@@ -1,0 +1,102 @@
+{
+  "passed": true,
+  "evidence": "artifacts/new-algorithms/new5-fuel-20261023/bootstrap-room-5/result.json",
+  "sha256": "73bd114844ffde317d048ec8f46c1fed900ca70603930d0c8ff5bb441ddda298",
+  "disarmed_state": {
+    "source_ns": 21200000000,
+    "frame": "odom",
+    "ros_now_ns": 21300000000,
+    "receipt": 63211.804679068,
+    "steady_now": 63211.929911375,
+    "armed": false,
+    "connected": true,
+    "mode": 2,
+    "mode_name": "AUTO.LOITER",
+    "position": [
+      0.003909957595169544,
+      0.0029607999604195356,
+      0.028289794921875
+    ],
+    "velocity": [
+      -0.001482121180742979,
+      -0.0026907918509095907,
+      0.0008766815881244838
+    ],
+    "pose_valid": true,
+    "velocity_valid": true,
+    "battery_valid": true,
+    "battery_voltage": 16.200000762939453,
+    "battery_remaining": 1.0,
+    "yaw": -0.010024086413058828
+  },
+  "native_pose": {
+    "stamp_ns": "21201000000",
+    "mono_ns": "63211782671262",
+    "x": "7.1921316461375231e-11",
+    "y": "1.435343298686997e-08",
+    "z": "0.054371070825795426",
+    "qx": "-1.3048488954482564e-07",
+    "qy": "6.5300046983277525e-10",
+    "qz": "3.4253712213736706e-14",
+    "qw": "0.99999999999999156"
+  },
+  "source_stamp_difference_s": 0.001,
+  "sensor_attachment_audit": "artifacts/new-algorithms/new5-fuel-20261023/bootstrap-room-5/sensor-attachment-audit.json",
+  "sensor_attachment_sha256": "c6fc032398b6a2be34dba24998aa3cdce99430cfcd14fa6d560f00ce5b8c105f",
+  "world_to_navigation": {
+    "translation": [
+      0.003909957379374198,
+      0.002960785608428609,
+      -0.026081275903920426
+    ],
+    "yaw": -0.010024086413127166
+  },
+  "native_sensors": [
+    {
+      "file": "artifacts/new-algorithms/new5-fuel-20261023/bootstrap-room-5/rays-1.bin",
+      "sha256": "5284dffd9f18f23357daa8a829b94c5736143037281252d26dd73502585a8d9b",
+      "actual_range_max_m": 3.0,
+      "rays": 20000
+    },
+    {
+      "file": "artifacts/new-algorithms/new5-fuel-20261023/bootstrap-room-5/rays-2.bin",
+      "sha256": "de91560f440d5b680babef4a9a33070c70c9ea7e931df824e9e3568eb02bea6e",
+      "actual_range_max_m": 3.0,
+      "rays": 20000
+    },
+    {
+      "file": "artifacts/new-algorithms/new5-fuel-20261023/bootstrap-room-5/rays-3.bin",
+      "sha256": "5dc678bf4a4ed4ae3a6d749bb36b3e0b1980ef33c2fe1f0f068745c4d4549b72",
+      "actual_range_max_m": 3.0,
+      "rays": 20000
+    }
+  ],
+  "world_geometry_witnesses": [
+    {
+      "model": "west",
+      "actual_world_pose": [
+        -2.9,
+        0.0,
+        2.0,
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "collision_observed": true,
+      "info_sha256": "49ca01a10cc4022d139f0204e470bc8ad14e1e7bb40682c60d0ba3f18b8f3d62"
+    },
+    {
+      "model": "east",
+      "actual_world_pose": [
+        7.3,
+        0.0,
+        2.0,
+        0.0,
+        -0.0,
+        0.0
+      ],
+      "collision_observed": true,
+      "info_sha256": "7550b244ad4035c38dea3f143e47e586a5c1635504b1aba404f39aaff02fc3f4"
+    }
+  ]
+}

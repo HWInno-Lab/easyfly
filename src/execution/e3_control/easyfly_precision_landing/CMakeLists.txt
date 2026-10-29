@@ -6,9 +6,10 @@ find_package(ament_cmake_python REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS scripts/landing_transform_node scripts/landing_gateway_node
-  scripts/prepare_down_camera.py
+  scripts/landing_camera_mount_node scripts/prepare_down_camera.py
   DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY launch config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DYNAMIC.md DESTINATION share/${PROJECT_NAME})
 
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include")
   install(DIRECTORY include/ DESTINATION include)
@@ -23,6 +24,9 @@ if(BUILD_TESTING)
   ament_add_gtest(test_policy test/test_policy.cpp)
   target_include_directories(test_policy PRIVATE include)
   ament_add_pytest_test(test_geometry test/test_geometry.py)
+  ament_add_pytest_test(test_extrinsics test/test_extrinsics.py TIMEOUT 15)
+  ament_add_pytest_test(test_dynamic_mount_ros test/test_dynamic_mount_ros.py TIMEOUT 30
+    ENV ROS_DOMAIN_ID=232)
   ament_add_pytest_test(test_configuration test/test_configuration.py TIMEOUT 15)
   ament_add_pytest_test(test_simulation_setup test/test_simulation_setup.py TIMEOUT 15)
   ament_add_pytest_test(test_simulation_scenarios test/test_simulation_scenarios.py TIMEOUT 15)
@@ -40,6 +44,8 @@ if(BUILD_TESTING)
     test/test_simulation_land_cancel_faults.py TIMEOUT 15)
   ament_add_pytest_test(test_signal_order test/test_signal_order.py TIMEOUT 15
     ENV ROS_DOMAIN_ID=125 ROS_LOG_DIR=/tmp/easyfly_d5_signal_order)
+  ament_add_pytest_test(test_signal_rebuild_ros test/test_signal_rebuild_ros.py TIMEOUT 20
+    ENV ROS_DOMAIN_ID=129)
   ament_add_pytest_test(test_signal_take_ros test/test_signal_take_ros.py TIMEOUT 30
     ENV ROS_DOMAIN_ID=126 ROS_LOG_DIR=/tmp/easyfly_d5_signal_take)
   ament_add_pytest_test(test_ground_reference test/test_ground_reference.py TIMEOUT 15)

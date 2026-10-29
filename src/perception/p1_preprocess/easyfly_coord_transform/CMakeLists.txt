@@ -16,6 +16,7 @@ add_library(${PROJECT_NAME}_nodes SHARED
   src/odom_tf_publisher.cpp
 )
 target_compile_options(${PROJECT_NAME}_nodes PRIVATE -Wall -Wextra)
+target_include_directories(${PROJECT_NAME}_nodes PRIVATE include)
 ament_target_dependencies(${PROJECT_NAME}_nodes
   rclcpp rclcpp_components tf2_ros geometry_msgs nav_msgs easyfly_msgs)
 rclcpp_components_register_node(${PROJECT_NAME}_nodes
@@ -35,6 +36,8 @@ install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_odom_tf_ros test/test_odom_tf_ros.py TIMEOUT 70)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()

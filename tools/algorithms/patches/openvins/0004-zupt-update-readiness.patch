@@ -1,0 +1,22 @@
+--- a/ov_msckf/src/core/VioManager.cpp
++++ b/ov_msckf/src/core/VioManager.cpp
+@@ -232,6 +232,9 @@
+     }
+     if (did_zupt_update) {
+       assert(state->_timestamp == timestamp);
++      // ZUPT is a completed filter update too. Keep the publication readiness
++      // bookkeeping current even before a nonzero-motion visual update.
++      timelastupdate = timestamp;
+       propagator->clean_old_imu_measurements(timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
+       updaterZUPT->clean_old_imu_measurements(timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
+       propagator->invalidate_cache();
+@@ -305,6 +308,9 @@
+     }
+     if (did_zupt_update) {
+       assert(state->_timestamp == message.timestamp);
++      // Otherwise initialized() stays false forever while every stationary
++      // update succeeds, suppressing real state/covariance publications.
++      timelastupdate = message.timestamp;
+       propagator->clean_old_imu_measurements(message.timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
+       updaterZUPT->clean_old_imu_measurements(message.timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
+       propagator->invalidate_cache();

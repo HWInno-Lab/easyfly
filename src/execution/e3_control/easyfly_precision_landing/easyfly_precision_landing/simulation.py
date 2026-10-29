@@ -53,7 +53,11 @@ from rclpy.action import ActionClient
 from rclpy.parameter import Parameter
 from rclpy.signals import SignalHandlerOptions
 from rclpy.qos import qos_profile_sensor_data
-from sensor_msgs.msg import CameraInfo, Image
+from sensor_msgs.msg import CameraInfo, Image, JointState
+from geometry_msgs.msg import TransformStamped
+from gazebo_msgs.msg import ModelStates, LinkStates
+from std_srvs.srv import Trigger
+from easyfly_precision_landing import dynamic_fixture
 from easyfly_msgs.srv import GetActionOwnership, GetCapabilities
 from gazebo_msgs.srv import GetEntityState
 from PIL import Image as CameraImage
@@ -168,6 +172,14 @@ def geometry_details(message, selected_tag_id):
             "reprojection_error_px": message.reprojection_error_px,
             **pose_details(message.pose),
         }}
+    if isinstance(message, LandingGuidanceTarget):
+        return {'guidance': dict(
+            position=[message.position.x, message.position.y, message.position.z],
+            normal=[message.plane_normal.x, message.plane_normal.y, message.plane_normal.z],
+            frame=message.header.frame_id, source_frame=message.source_header.frame_id,
+            original_stamp_ns=message.source_header.stamp.sec*1000000000 +
+            message.source_header.stamp.nanosec, tag_id=message.tag_id,
+            tag_size_m=message.tag_size_m)}
     return {}
 
 
@@ -275,6 +287,8 @@ def parse_arguments(argv=None):
         action="store_true",
         help="execute the formal demo through mission FSM and SDK",
     )
+    parser.add_argument("--dynamic-fixture", action="store_true",
+                        help="measured physical gimbal and explicit slow moving collision pad")
     parser.add_argument("--fixture-scale", type=float, default=1.0)
     parser.add_argument(
         "--scenario", choices=(*SCENARIOS, *ALL_FAULT_SCENARIOS), default="nominal",
@@ -287,6 +301,8 @@ def parse_arguments(argv=None):
     args = parser.parse_args(argv)
     if args.scenario != "nominal" and not args.direct_action:
         parser.error("lifecycle scenarios require explicit --direct-action")
+    if args.dynamic_fixture and (args.mission or args.fixture_scale != 1.0):
+        parser.error("dynamic fixture currently requires direct-action or start-only at scale 1")
     if args.prepare_only and (args.mission or args.direct_action):
         parser.error("prepare-only cannot request motion")
     if args.startup_duration is not None and (
@@ -348,6 +364,8 @@ def main():
         ],
         check=True,
     )
+    if args.dynamic_fixture:
+        dynamic_fixture.camera(model)
     reference_assets = {
         "model://mid360": Path(get_package_share_directory("easyfly_gazebo_models"))
         / "mid360/mid360.sdf",
@@ -356,6 +374,8 @@ def main():
     }
     expected_ground_z = fixture_ground_z(model, include_models=reference_assets)
     config = yaml.safe_load((share / "config/d5_simulation.yaml").read_text())
+    if args.dynamic_fixture:
+        dynamic_fixture.configure(config)
     if args.ingress_timing_diagnostics:
         config["landing_detection"]["ros__parameters"]["timing_trace_path"] = str(
             directory / "landing-ingress.tsv")
@@ -380,6 +400,8 @@ def main():
         Path(get_package_share_directory("easyfly_gazebo_worlds"))
         / "precision_landing.world"
     )
+    if args.dynamic_fixture:
+        dynamic_fixture.pad(world)
     board_pose = world.find("./world/model[@name='static_tag_7']/pose")
     # Generated simulation only: stamped ground truth, independent of tag pose.
     # The service also offers set-state, but this entry never calls that service.
@@ -387,7 +409,7 @@ def main():
         "name": "d5_ground_reference", "filename": "libgazebo_ros_state.so",
     })
     ET.SubElement(ET.SubElement(reference_plugin, "ros"), "namespace").text = "/d5_reference"
-    ET.SubElement(reference_plugin, "update_rate").text = "1.0"
+    ET.SubElement(reference_plugin, "update_rate").text = "50.0" if args.dynamic_fixture else "1.0"
     board_values = [float(value) for value in board_pose.text.split()]
     # Keep the whole tilted, scaled white margin above the ground plane.
     board_values[2] = max(
@@ -548,6 +570,24 @@ def main():
         parameter_overrides=[Parameter("use_sim_time", value=True)],
     )
     subscriptions = []
+    if args.dynamic_fixture:
+        report['dynamic_observations'] = []
+
+        def dynamic_observation(message, topic):
+            from rosidl_runtime_py.convert import message_to_ordereddict
+            rows = report['dynamic_observations']
+            if len(rows) >= 40000:
+                raise RuntimeError('dynamic evidence capacity exhausted')
+            rows.append(dict(topic=topic, clock_ns=node.get_clock().now().nanoseconds,
+                             receipt=time.monotonic(), message=message_to_ordereddict(message)))
+        for message_type, topic in [(JointState, '/landing/gimbal/joint_states'),
+                                    (TransformStamped, '/landing/camera_mount'),
+                                    (ModelStates, '/d5_reference/model_states'),
+                                    (LinkStates, '/d5_reference/link_states')]:
+            subscriptions.append(node.create_subscription(
+                message_type, topic,
+                lambda message, topic=topic: dynamic_observation(message, topic),
+                qos_profile_sensor_data))
     hover_observer = [None]
     closing = [False]
     observer_timing = {}
@@ -1078,6 +1118,12 @@ def main():
                 "world:=" + str(world_path),
                 "gzclient:=false",
                 "model_sdf:=" + str(model),
+                *(["debug_clock_rate_hz:=100", "debug_model_path:=" + ":".join([
+                    str(Path(get_package_share_directory("easyfly_px4_sitl")) / "models"),
+                    get_package_share_directory("easyfly_gazebo_models"),
+                    str(Path(staging["staging"]) /
+                        "Tools/simulation/gazebo-classic/sitl_gazebo-classic/models")])]
+                  if args.dynamic_fixture else []),
             ],
         )
         # Do not start MAVROS/flight against an existing session if its guard
@@ -1303,6 +1349,17 @@ def main():
             )
             wait(stable_hover, 30)
             report["hover_z_m"] = latest["/uav_state"].position_z
+        if args.dynamic_fixture and not startup_only:
+            motion = node.create_client(Trigger, '/landing_fixture/start_motion')
+            try:
+                wait(motion.service_is_ready, 10)
+                future = motion.call_async(Trigger.Request())
+                wait(future.done, 3)
+                if not future.result().success:
+                    raise RuntimeError('moving pad start was not acknowledged')
+                report['pad_motion_start_ns'] = node.get_clock().now().nanoseconds
+            finally:
+                node.destroy_client(motion)
         if not args.mission:
             if args.scenario in LAND_CANCEL_FAULT_SCENARIOS:
                 action('/land', Land, Land.Goal(), 15)
@@ -1368,7 +1425,11 @@ def main():
         report["final_state_receipt_age_s"] = (
             time.monotonic() - receipts["/uav_state"]
         )
-        report["final_horizontal_error_m"] = (
+        # A moving marker's initial position is not its touchdown position.
+        # Native time-paired contact is audited separately, never fed to control.
+        position_metric = ("displacement_from_initial_tag_m" if args.dynamic_fixture
+                           else "final_horizontal_error_m")
+        report[position_metric] = (
             math.hypot(
                 final_state.position_x - report["prelanding_target"]["x"],
                 final_state.position_y - report["prelanding_target"]["y"],
@@ -1477,6 +1538,7 @@ def main():
                         "mission_feedback",
                         "command_samples",
                         "observation_samples",
+                        "dynamic_observations",
                     )
                 }
             ),

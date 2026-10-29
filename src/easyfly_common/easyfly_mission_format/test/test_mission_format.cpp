@@ -82,3 +82,42 @@ TEST(MissionFormat, PrecisionLandingRequiresExplicitTagAndKeepsLegacyGrammar) {
   }
   EXPECT_FALSE(validateMissionText("type=precision_land\ntag_id=7\n").valid());
 }
+
+TEST(MissionFormat, ExploreBoundsAndForbiddenBoxesAreStrict)
+{
+  const std::string fields = "type: explore, min_bound: [-2,-2,0.5], max_bound: [2,2,2.5], "
+    "return_home: false";
+  auto parsed = validateMissionText(
+    prefix() + "- {" + fields +
+    ", forbidden_boxes: [{min: [1,1,0.5], max: [1.5,1.5,2]}]}\n");
+  ASSERT_TRUE(parsed.valid()) << parsed.error;
+  EXPECT_FALSE(parsed.steps[0].return_home);
+  ASSERT_EQ(parsed.steps[0].forbidden_boxes.size(), 1u);
+  EXPECT_DOUBLE_EQ(parsed.steps[0].forbidden_boxes[0].max[2], 2);
+  for (const auto & invalid : {"timeout: 4.99", "timeout: 901", "forbidden_boxes: true",
+      "forbidden_boxes: [{min: [1,1,1], max: [1,2,2]}]",
+      "forbidden_boxes: [{min: [1,1,1], max: [2,2,2], extra: 1}]"})
+  {
+    EXPECT_FALSE(validateMissionText(prefix() + "- {" + fields + ", " + invalid + "}\n").valid());
+  }
+  for (const auto & invalid : {
+    "min_bound: [-2,-2,0], max_bound: [2,2,2.5], return_home: true",
+    "min_bound: [-2,-2,0.5], max_bound: [2,2,2.6], return_home: true",
+    "min_bound: [-2,-2,0.5], max_bound: [2,2,1.2], return_home: true",
+    "min_bound: [-2,-2,0.5], max_bound: [2,2,2.5], return_home: 'true'",
+    "min_bound: [-2,-2,0.5], max_bound: [2,2,2.5], return_home: 1",
+    "min_bound: [-2,-2], max_bound: [2,2,2.5], return_home: true",
+    "min_bound: [-2,-2,.nan], max_bound: [2,2,2.5], return_home: true"})
+  {
+    EXPECT_FALSE(validateMissionText(prefix() + "- {type: explore, " + invalid + "}\n").valid());
+  }
+  std::string boxes = "[";
+  for (int i = 0; i < 17; ++i) {
+    boxes += (i ? ", " : "") + std::string("{min: [0,0,0], max: [1,1,1]}");
+  }
+  EXPECT_FALSE(
+    validateMissionText(
+      prefix() + "- {" + fields + ", forbidden_boxes: " + boxes +
+      "]}\n").valid());
+  EXPECT_FALSE(validateMissionText("type=explore\n").valid());
+}

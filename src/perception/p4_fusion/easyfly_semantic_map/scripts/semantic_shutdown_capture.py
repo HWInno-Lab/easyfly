@@ -78,10 +78,12 @@ def main():
         signal.signal(stop_signal, lambda sig, frame: pending.append(sig))
     command = [debugger_path, '--batch', '--return-child-result', '-ex',
                'set pagination off', '-ex', 'set debuginfod enabled off', '-ex',
-               'set startup-with-shell off', '-ex',
                'handle SIGINT nostop noprint pass', '-ex',
                'handle SIGTERM nostop noprint pass', '-ex', 'run', '-ex',
                'thread apply all bt 24', '--args', str(executable), *sys.argv[2:]]
+    # GDB quotes --args for its default startup shell. Disabling that shell
+    # leaves escape characters in paths containing spaces and splits ROS args.
+    # Pass an argv list to GDB; never assemble an interpolated shell command.
     debugger = subprocess.Popen(command, start_new_session=True)
     began = time.monotonic()
     inferior = None

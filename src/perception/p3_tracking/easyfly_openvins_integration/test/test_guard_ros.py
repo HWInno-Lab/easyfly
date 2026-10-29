@@ -46,7 +46,8 @@ class Harness:
                                       self.poses.append, 100)
         self.process = None
 
-    def start(self, suffix='first', receipt_timeout=2.0, pause_executor=False):
+    def start(self, suffix='first', receipt_timeout=2.0, pause_executor=False,
+              defer_calibration=False):
         prefix = Path(get_package_prefix('easyfly_openvins_integration'))
         config = Path(get_package_share_directory('easyfly_openvins_integration')) / \
             'config/guard.yaml'
@@ -68,10 +69,12 @@ class Harness:
             self.process = subprocess.Popen(executable + [
                 '--ros-args',
                 '--params-file', str(config), '-p', 'use_sim_time:=true',
+                '-p', 'defer_camera_until_calibration:='+str(defer_calibration).lower(),
                 '-p', f'receipt_timeout:={receipt_timeout}',
                 '-r', '__ns:=/openvins'], stdout=log, stderr=subprocess.STDOUT)
         self.until(lambda: self.clock.get_subscription_count() and
-                   self.image.get_subscription_count() and self.imu.get_subscription_count() and
+                   (defer_calibration or self.image.get_subscription_count()) and
+                   self.imu.get_subscription_count() and
                    self.info.get_subscription_count() and self.raw_pose.get_subscription_count())
         self.until(lambda: self.node.count_publishers('/openvins/input/camera') > 0 and
                    self.status is not None)
@@ -232,6 +235,49 @@ def test_missing_dependencies_expire_while_image_admission_is_paused(harness):
     assert h.status.reason == 'pending_camera_expired'
     assert not h.status.pose_valid
     assert h.status.camera_forwarded == 0
+
+
+@pytest.mark.parametrize('harness', [dict(receipt_timeout=.5, defer_calibration=True)],
+                         indirect=True)
+def test_metadata_reader_precedes_images_but_runtime_missing_pairs_still_expire(harness):
+    h = harness
+    h.set_clock(10.15)
+    session = h.status.session_id
+    h.image_at(10.02, include_info=False)
+    h.spin(.65)
+    assert h.image.get_subscription_count() == 0
+    assert h.status.state == LocalizationStatus.WAITING_INPUT
+    assert h.status.generation == 0 and h.status.camera_forwarded == 0
+    h.image_at(10.0)  # Metadata may be discovered before the first IMU reader match.
+    h.spin(.1)
+    for i in range(4):
+        h.image_at(10.02 + .033*i)
+    h.spin(.65)  # Longer than the unchanged .5 s runtime dependency timeout.
+    assert h.status.generation == 0 and h.status.camera_forwarded == 0, h.status
+    assert h.status.state == LocalizationStatus.WAITING_INPUT
+    assert h.image.get_subscription_count() == 0
+    for i in range(31):
+        msg = timestamp(Imu(), 10 + .005*i)
+        msg.header.frame_id = 'livox_imu_frame'
+        msg.linear_acceleration.z = 9.81
+        h.imu.publish(msg)
+    h.until(lambda: h.image.get_subscription_count() > 0)
+    h.spin(.1)
+    for i in range(4):
+        h.image_at(10.02 + .033*i)
+    h.until(lambda: len(h.images) >= 2)
+    assert h.status.session_id == session and h.status.generation == 0
+    h.set_clock(10.45)
+    for i in range(60):
+        msg = timestamp(Imu(), 10.155 + .005*i)
+        msg.header.frame_id = 'livox_imu_frame'
+        msg.linear_acceleration.z = 9.81
+        h.imu.publish(msg)
+    for i in range(8):
+        h.image_at(10.153 + .033*i, include_info=False)
+    h.until(lambda: h.status.generation > 0)
+    assert h.status.state == LocalizationStatus.RESET_REQUIRED
+    assert h.status.reason == 'pending_camera_expired'
 
 
 @pytest.mark.parametrize('fault,expected', [

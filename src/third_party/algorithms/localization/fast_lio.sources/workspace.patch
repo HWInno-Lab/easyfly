@@ -1,0 +1,1051 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -9,7 +9,11 @@
+ ADD_COMPILE_OPTIONS(-std=c++14)
+ set(CMAKE_CXX_FLAGS "-std=c++14 -O3")
+ 
+-add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
++# Keep runtime outputs separate from source/install trees when explicitly configured.
++# Default retains the upstream layout; relocation validation supplies an isolated writable root.
++set(FASTLIO_OUTPUT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}" CACHE PATH "Writable FAST-LIO Log/ and PCD/ root")
++file(MAKE_DIRECTORY "${FASTLIO_OUTPUT_ROOT}/Log" "${FASTLIO_OUTPUT_ROOT}/PCD")
++add_definitions(-DROOT_DIR=\"${FASTLIO_OUTPUT_ROOT}/\")
+ 
+ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fexceptions")
+ set(CMAKE_CXX_STANDARD 14)
+@@ -125,4 +129,30 @@
+   DESTINATION share/${PROJECT_NAME}
+ )
+ 
+-ament_package()
+\ No newline at end of file
++install(FILES LICENSE NOTICE.md README.md DESTINATION share/${PROJECT_NAME})
++
++if(BUILD_TESTING)
++  find_package(ament_cmake_gtest REQUIRED)
++  find_package(ament_cmake_pytest REQUIRED)
++  add_library(fastlio_signal_probe SHARED test/signal_probe.cpp)
++  ament_target_dependencies(fastlio_signal_probe rclcpp)
++  target_link_libraries(fastlio_signal_probe pthread)
++  ament_add_pytest_test(test_signal_shutdown test/test_signal_shutdown.py TIMEOUT 60
++    ENV "FASTLIO_TEST_EXECUTABLE=$<TARGET_FILE:fastlio_mapping>"
++        "FASTLIO_TEST_LIBRARY=$<TARGET_FILE:fastlio_signal_probe>"
++        "FASTLIO_TEST_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/config/mid360.yaml")
++  ament_add_gtest(test_scan_queue test/test_scan_queue.cpp)
++  target_include_directories(test_scan_queue PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
++  ament_add_gtest(test_source_time test/test_source_time.cpp)
++  target_include_directories(test_source_time PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
++  ament_add_gtest(test_extrinsic_validation test/test_extrinsic_validation.cpp)
++  target_include_directories(test_extrinsic_validation PRIVATE
++    ${CMAKE_CURRENT_SOURCE_DIR}/include)
++  ament_add_gtest(test_map_snapshot test/test_map_snapshot.cpp
++    include/ikd-Tree/ikd_Tree.cpp TIMEOUT 60)
++  target_include_directories(test_map_snapshot PRIVATE
++    ${CMAKE_CURRENT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS})
++  target_link_libraries(test_map_snapshot ${PCL_LIBRARIES} pthread)
++endif()
++
++ament_package()
+--- /dev/null
++++ b/NOTICE.md
+@@ -0,0 +1,27 @@
++# FAST-LIO source and license record
++
++The retained root `LICENSE` is the upstream GNU GPL version 2 text. The previous
++package metadata listed only BSD; it now records the root text and the BSD
++notices present in individual files. This metadata correction does not replace
++or relicense those files. Original copyright, conditions and disclaimers in
++`src/laserMapping.cpp`, `include/IKFoM_toolkit` and other embedded code remain
++authoritative for their respective files.
++
++The current sources can be reconstructed from selected files of
++`Ericsii/FAST_LIO_ROS2` commit `59b082f0d196764d6d3dc784ccb602c26b2de597`,
++the exact ikd-Tree files from `hku-mars/ikd-Tree` commit
++`e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4`, and the recorded workspace patch.
++Several ROS2 commits have identical selected inputs; this establishes a
++reconstruction base, not a uniquely recovered historical checkout.
++
++The ikd-Tree revision contains its README and two source files but no separate
++license file. Its newer upstream license cannot be silently applied backwards.
++That historical licensing gap remains recorded in the adjacent provenance
++manifest. The IKFoM subtree matches the selected ROS2 base and retains its
++original BSD notices, including the nested MTK notices.
++
++The selected archive, patch and per-file hashes are delivered in
++`../fast_lio.sources/`. They exclude generated logs, maps and unrelated local
++repository history. Local integration, source-time, input-queue, shutdown and
++map-publication changes are represented in the patch; source identity does not
++by itself establish permission for every distribution scenario.
+--- a/README.md
++++ b/README.md
+@@ -89,7 +89,7 @@
+ 
+ ```bash
+     cd <ros2_ws>/src # cd into a ros2 workspace folder
+-    git clone https://github.com/Ericsii/FAST_LIO_ROS2.git --recursive
++    git clone https://github.com/Ericsii/FAST_LIO.git --recursive
+     cd ..
+     rosdep install --from-paths src --ignore-src -y
+     colcon build --symlink-install
+@@ -193,3 +193,67 @@
+ ## 6.Acknowledgments
+ 
+ Thanks for LOAM(J. Zhang and S. Singh. LOAM: Lidar Odometry and Mapping in Real-time), [Livox_Mapping](https://github.com/Livox-SDK/livox_mapping), [LINS](https://github.com/ChaoqinRobotics/LINS---LiDAR-inertial-SLAM) and [Loam_Livox](https://github.com/hku-mars/loam_livox).
++
++### EasyFly bounded scan backlog (2026-10-25)
++
++The ROS LiDAR receive history and the pending processing queue each retain at
++most two scans. If processing falls behind, a new scan replaces the oldest
++unprocessed scan and cancels its pending synchronization selection. Cloud and
++acquisition time share one queue entry, so dropping/resetting a cloud cannot
++leave an old timestamp at the front. IMU samples already received remain in
++the separate integration queue; the IMU DDS depth is 200 instead of 10 to
++cover short processing stalls. Original source stamps, EKF/map operations and
++UI/planning freshness limits are unchanged. This favors recent localization
++over exhaustive processing of old scans and does not promise freshness under
++unbounded CPU starvation or lossless sensor delivery.
++
++A real sparse-scene discovery-pressure run retained fresh raw LiDAR but
++produced FAST-LIO/TF data 7–9 seconds old. Evidence and before/after checks are
++in `artifacts/b06-b14-20261025/`. The queue tests cover a waiting scan replaced
++during a processing blackout and cloud/timestamp pairing after queue reset.
++
++The path still keeps one historical point per ten observations, but its final
++point is replaced by each latest real observation. Publication is limited to
++5 Hz by steady time and occurs only when a new scan has been processed. Both
++the path header and final pose retain that scan's source time. This avoids
++waiting for ten slowly processed scans before publishing a fresh path; stopped
++input still expires normally. The regression checks the latest tip and retained
++historical density. The final real sparse-scene run with concurrent endpoint
++churn kept all five layers visible in 198 samples on the same RViz instance.
++
++### EasyFly native signal shutdown (2026-10-26)
++
++Keep the SIGINT/SIGTERM handlers installed by `rclcpp::init`. ROS dispatches
++shutdown from its dedicated signal thread; calling `rclcpp::shutdown()` or
++iostream operations directly from a POSIX signal handler can deadlock when
++the interrupted thread holds a lock needed by shutdown. The previous custom
++SIGINT handler is removed; sensor timestamps and estimation are unchanged.
++
++`test_signal_shutdown` starts the real native process with a test-only preload
++library. It checks ordinary SIGINT/SIGTERM and SIGINT delivered while a worker
++holds a mutex needed by a shutdown callback, with both wall time and a frozen
++simulation clock. The probe is not installed. The captured old binary deadlocks
++in the critical-section case; both current installations exit normally. The
++first V-08 hour's specific interrupted lock was not captured, so this regression
++does not identify that incident's exact lock. Full product lifecycle verification
++is recorded separately under `artifacts/v01-v16-20261025/`.
++
++### EasyFly local map publication
++
++`/Laser_map` publishes a snapshot of the current native ikd-tree local map.
++Repeated timer ticks replace the previous publication buffer; they no longer
++append another copy of the latest scan. Spatial retention and downsampling
++remain those of the estimator's existing local map. `/cloud_registered`, pose
++estimation, calibration and source timestamps retain their existing behavior.
++
++The snapshot uses the existing single foreground executor and excludes the
++background tree rebuild, including reclamation of the old tree. A busy rebuild
++defers that visualization publication instead of blocking localization. The
++map-save service writes the most recent published local snapshot, so it omits
++points already removed from the local map and duplicate historical scans. Use
++an explicit sensor recording when lossless scan history is required.
++
++The registered `test_map_snapshot` covers replacement of an empty result,
++repeated snapshots without accumulation, and current point membership after
++native deletion, insertion and asynchronous rebuilding. Validation evidence is
++maintained separately in the V-08 run directory.
+--- a/config/mid360.yaml
++++ b/config/mid360.yaml
+@@ -19,7 +19,7 @@
+         preprocess:
+             lidar_type: 1                # 1 for Livox serials LiDAR, 2 for Velodyne LiDAR, 3 for ouster LiDAR, 4 for any other pointcloud input
+             scan_line:  4
+-            blind: 0.5
++            blind: 0.3
+             timestamp_unit: 3
+             scan_rate: 10
+ 
+@@ -30,11 +30,9 @@
+             b_gyr_cov: 0.0001
+             fov_degree:    360.0
+             det_range:     100.0
+-            extrinsic_est_en:  true      # true: enable the online estimation of IMU-LiDAR extrinsic
++            extrinsic_est_en:  false      # true: enable the online estimation of IMU-LiDAR extrinsic
+             extrinsic_T: [ -0.011, -0.02329, 0.04412 ]
+-            extrinsic_R: [ 1., 0., 0.,
+-                            0., 1., 0.,
+-                            0., 0., 1.]
++            extrinsic_R: [ 1., 0., 0., 0., 1., 0., 0., 0., 1.]
+ 
+         publish:
+             path_en: true                # true: publish Path
+@@ -45,6 +43,6 @@
+             scan_bodyframe_pub_en: true  # true: output the point cloud scans in IMU-body-frame
+ 
+         pcd_save:
+-            pcd_save_en: true
++            pcd_save_en: false
+             interval: -1                 # how many LiDAR frames saved in each pcd file; 
+                                         # -1 : all frames will be saved in ONE pcd file, may lead to memory crash when having too much frames.
+\ No newline at end of file
+--- a/include/common_lib.h
++++ b/include/common_lib.h
+@@ -8,6 +8,7 @@
+ #include <fast_lio/msg/pose6_d.hpp>
+ #include <sensor_msgs/msg/imu.hpp>
+ #include <nav_msgs/msg/odometry.hpp>
++#include "source_time.hpp"
+ 
+ using namespace std;
+ using namespace Eigen;
+@@ -261,10 +262,9 @@
+ 
+ rclcpp::Time get_ros_time(double timestamp)
+ {
+-    int32_t sec = std::floor(timestamp);
+-    auto nanosec_d = (timestamp - std::floor(timestamp)) * 1e9;
+-    uint32_t nanosec = nanosec_d;
+-    return rclcpp::Time(sec, nanosec);
+-}
+-
+-#endif
+\ No newline at end of file
++    // Round the complete source time. Truncating its fractional second can
++    // stamp TF 1 ns before the very cloud it describes and require a future TF.
++    return rclcpp::Time(easyfly_fastlio::source_nanoseconds(timestamp));
++}
++
++#endif
+--- /dev/null
++++ b/include/extrinsic_validation.hpp
+@@ -0,0 +1,51 @@
++#pragma once
++
++#include <cmath>
++#include <string>
++#include <vector>
++
++namespace fast_lio
++{
++
++// The Eigen initializers used by FAST-LIO index these arrays directly.  Keep
++// the validation separate from the node constructor so it can be regression
++// tested without starting ROS or a sensor pipeline.
++inline bool validate_extrinsics(
++    const std::vector<double> &extrinsic_t,
++    const std::vector<double> &extrinsic_r,
++    std::string *error = nullptr)
++{
++    auto fail = [error](const std::string &message) {
++        if (error != nullptr) {
++            *error = message;
++        }
++        return false;
++    };
++
++    if (extrinsic_t.size() != 3U) {
++        return fail("mapping.extrinsic_T must contain exactly 3 values (got " +
++                    std::to_string(extrinsic_t.size()) + ")");
++    }
++    if (extrinsic_r.size() != 9U) {
++        return fail("mapping.extrinsic_R must contain exactly 9 values (got " +
++                    std::to_string(extrinsic_r.size()) + ")");
++    }
++
++    for (const double value : extrinsic_t) {
++        if (!std::isfinite(value)) {
++            return fail("mapping.extrinsic_T contains a non-finite value");
++        }
++    }
++    for (const double value : extrinsic_r) {
++        if (!std::isfinite(value)) {
++            return fail("mapping.extrinsic_R contains a non-finite value");
++        }
++    }
++
++    if (error != nullptr) {
++        error->clear();
++    }
++    return true;
++}
++
++}  // namespace fast_lio
+--- a/include/ikd-Tree/ikd_Tree.cpp
++++ b/include/ikd-Tree/ikd_Tree.cpp
+@@ -658,6 +658,29 @@
+ }
+ 
+ template <typename PointType>
++bool KD_TREE<PointType>::Snapshot(PointVector &Storage)
++{
++    if (pthread_mutex_trylock(&rebuild_ptr_mutex_lock) != 0)
++        return false;
++    // This lock covers the rebuild's traversal, replacement and reclamation.
++    // Do not hold working_flag_mutex here: flatten's Push_Down can take it
++    // when a subtree rebuild has been scheduled by the foreground thread.
++    try
++    {
++        PointVector current;
++        flatten(Root_Node, current, NOT_RECORD);
++        Storage.swap(current);
++    }
++    catch (...)
++    {
++        pthread_mutex_unlock(&rebuild_ptr_mutex_lock);
++        throw;
++    }
++    pthread_mutex_unlock(&rebuild_ptr_mutex_lock);
++    return true;
++}
++
++template <typename PointType>
+ void KD_TREE<PointType>::acquire_removed_points(PointVector &removed_points)
+ {
+     pthread_mutex_lock(&points_deleted_rebuild_mutex_lock);
+--- a/include/ikd-Tree/ikd_Tree.h
++++ b/include/ikd-Tree/ikd_Tree.h
+@@ -333,6 +333,10 @@
+     void Delete_Points(PointVector &PointToDel);
+     int Delete_Point_Boxes(vector<BoxPointType> &BoxPoints);
+     void flatten(KD_TREE_NODE *root, PointVector &Storage, delete_point_storage_set storage_type);
++    // Foreground calls must be serialized with Add/Delete/Search, as in the
++    // mapper's single executor. Skip a busy background rebuild rather than
++    // blocking localization to obtain a visualization snapshot.
++    bool Snapshot(PointVector &Storage);
+     void acquire_removed_points(PointVector &removed_points);
+     BoxPointType tree_range();
+     PointVector PCL_Storage;
+--- /dev/null
++++ b/include/path_tip.hpp
+@@ -0,0 +1,16 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#ifndef EASYFLY_FASTLIO_PATH_TIP_HPP_
++#define EASYFLY_FASTLIO_PATH_TIP_HPP_
++#include <cstddef>
++#include <vector>
++namespace easyfly_fastlio {
++// Preserve the existing one-in-ten history density, but always expose the most
++// recent real observation at the tip. No timer fabricates a new source stamp.
++template<class Pose>
++void update_path_tip(std::vector<Pose>& poses, std::size_t& observations, const Pose& pose) {
++    if (poses.empty() || observations % 10 == 0) { poses.push_back(pose); }
++    else { poses.back() = pose; }
++    ++observations;
++}
++}  // namespace easyfly_fastlio
++#endif
+--- /dev/null
++++ b/include/scan_queue.hpp
+@@ -0,0 +1,33 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#ifndef EASYFLY_FASTLIO_SCAN_QUEUE_HPP_
++#define EASYFLY_FASTLIO_SCAN_QUEUE_HPP_
++#include <cstddef>
++#include <deque>
++#include <utility>
++
++namespace easyfly_fastlio {
++// Keep acquisition time inseparable from its cloud. Under processing pressure
++// discard the oldest unprocessed scan; IMU history is owned separately and is
++// still integrated from the last processed scan through the next scan's end.
++template<class Cloud> class ScanQueue {
++public:
++    struct Scan { Cloud cloud; double stamp; };
++    static constexpr std::size_t capacity = 2;
++    bool push(Cloud cloud, double stamp) {
++        const bool replaced_front = scans_.size() == capacity;
++        if (replaced_front) { scans_.pop_front(); ++dropped_; }
++        scans_.push_back({std::move(cloud), stamp});
++        return replaced_front;
++    }
++    bool empty() const { return scans_.empty(); }
++    std::size_t size() const { return scans_.size(); }
++    std::size_t dropped() const { return dropped_; }
++    const Scan& front() const { return scans_.front(); }
++    void pop_front() { scans_.pop_front(); }
++    void clear() { scans_.clear(); }
++private:
++    std::deque<Scan> scans_;
++    std::size_t dropped_{0};
++};
++}  // namespace easyfly_fastlio
++#endif
+--- /dev/null
++++ b/include/source_time.hpp
+@@ -0,0 +1,17 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#pragma once
++#include <cmath>
++#include <cstdint>
++#include <limits>
++#include <stdexcept>
++
++namespace easyfly_fastlio {
++inline int64_t source_nanoseconds(double seconds) {
++    const double ns = seconds * 1e9;
++    if (!std::isfinite(ns) || ns < 0 ||
++        ns >= static_cast<double>(std::numeric_limits<int64_t>::max())) {
++        throw std::invalid_argument("invalid source time");
++    }
++    return std::llround(ns);
++}
++}
+--- a/package.xml
++++ b/package.xml
+@@ -12,7 +12,9 @@
+ 
+   <maintainer email="dev@livoxtech.com">claydergc</maintainer>
+ 
+-  <license>BSD</license>
++  <!-- Root LICENSE and individual source notices; see NOTICE.md for scope. -->
++  <license>GPL-2.0</license>
++  <license>BSD-3-Clause</license>
+ 
+   <author email="zhangji@cmu.edu">Ji Zhang</author>
+ 
+@@ -23,13 +25,14 @@
+   <depend>rclcpp</depend>
+   <depend>std_msgs</depend>
+   <depend>sensor_msgs</depend>
+-  <depend>common_interfaces</depend>
+   <depend>tf2</depend>
+   <depend>pcl_ros</depend>
+   <depend>pcl_conversions</depend>
+   <depend>livox_ros_driver2</depend>
+ 
+   <exec_depend>rosidl_default_runtime</exec_depend>
++  <test_depend>ament_cmake_gtest</test_depend>
++  <test_depend>ament_cmake_pytest</test_depend>
+   <member_of_group>rosidl_interface_packages</member_of_group>
+ 
+   <export>
+--- a/src/laserMapping.cpp
++++ b/src/laserMapping.cpp
+@@ -32,6 +32,8 @@
+ // CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ // POSSIBILITY OF SUCH DAMAGE.
++#include "scan_queue.hpp"
++#include "path_tip.hpp"
+ #include <omp.h>
+ #include <mutex>
+ #include <math.h>
+@@ -39,12 +41,15 @@
+ #include <fstream>
+ #include <csignal>
+ #include <chrono>
++#include <cstdlib>
+ #include <unistd.h>
+ #include <Python.h>
+ #include <so3_math.h>
+ #include <rclcpp/rclcpp.hpp>
++#include <stdexcept>
+ #include <Eigen/Core>
+ #include "IMU_Processing.hpp"
++#include "extrinsic_validation.hpp"
+ #include <nav_msgs/msg/odometry.hpp>
+ #include <nav_msgs/msg/path.hpp>
+ #include <visualization_msgs/msg/marker.hpp>
+@@ -95,7 +100,7 @@
+ int    effct_feat_num = 0, time_log_counter = 0, scan_count = 0, publish_count = 0;
+ int    iterCount = 0, feats_down_size = 0, NUM_MAX_ITERATIONS = 0, laserCloudValidNum = 0, pcd_save_interval = -1, pcd_index = 0;
+ bool   point_selected_surf[100000] = {0};
+-bool   lidar_pushed, flg_first_scan = true, flg_exit = false, flg_EKF_inited;
++bool   lidar_pushed, flg_first_scan = true, flg_EKF_inited;
+ bool   scan_pub_en = false, dense_pub_en = false, scan_body_pub_en = false;
+ bool    is_first_lidar = true;
+ 
+@@ -104,8 +109,7 @@
+ vector<PointVector>  Nearest_Points; 
+ vector<double>       extrinT(3, 0.0);
+ vector<double>       extrinR(9, 0.0);
+-deque<double>                     time_buffer;
+-deque<PointCloudXYZI::Ptr>        lidar_buffer;
++easyfly_fastlio::ScanQueue<PointCloudXYZI::Ptr> lidar_buffer;
+ deque<sensor_msgs::msg::Imu::ConstSharedPtr> imu_buffer;
+ 
+ PointCloudXYZI::Ptr featsFromMap(new PointCloudXYZI());
+@@ -142,14 +146,6 @@
+ 
+ shared_ptr<Preprocess> p_pre(new Preprocess());
+ shared_ptr<ImuProcess> p_imu(new ImuProcess());
+-
+-void SigHandle(int sig)
+-{
+-    flg_exit = true;
+-    std::cout << "catch sig %d" << sig << std::endl;
+-    sig_buffer.notify_all();
+-    rclcpp::shutdown();
+-}
+ 
+ inline void dump_lio_state_to_log(FILE *fp)  
+ {
+@@ -290,6 +286,7 @@
+     {
+         std::cerr << "lidar loop back, clear buffer" << std::endl;
+         lidar_buffer.clear();
++        lidar_pushed = false;
+     }
+     if (is_first_lidar)
+     {
+@@ -298,8 +295,7 @@
+ 
+     PointCloudXYZI::Ptr  ptr(new PointCloudXYZI());
+     p_pre->process(msg, ptr);
+-    lidar_buffer.push_back(ptr);
+-    time_buffer.push_back(cur_time);
++    if (lidar_buffer.push(ptr, cur_time)) { lidar_pushed = false; }
+     last_timestamp_lidar = cur_time;
+     s_plot11[scan_count] = omp_get_wtime() - preprocess_start_time;
+     mtx_buffer.unlock();
+@@ -318,6 +314,7 @@
+     {
+         std::cerr << "lidar loop back, clear buffer" << std::endl;
+         lidar_buffer.clear();
++        lidar_pushed = false;
+     }
+     if(is_first_lidar)
+     {
+@@ -339,8 +336,7 @@
+ 
+     PointCloudXYZI::Ptr  ptr(new PointCloudXYZI());
+     p_pre->process(msg, ptr);
+-    lidar_buffer.push_back(ptr);
+-    time_buffer.push_back(last_timestamp_lidar);
++    if (lidar_buffer.push(ptr, last_timestamp_lidar)) { lidar_pushed = false; }
+     
+     s_plot11[scan_count] = omp_get_wtime() - preprocess_start_time;
+     mtx_buffer.unlock();
+@@ -389,8 +385,8 @@
+     /*** push a lidar scan ***/
+     if(!lidar_pushed)
+     {
+-        meas.lidar = lidar_buffer.front();
+-        meas.lidar_beg_time = time_buffer.front();
++        meas.lidar = lidar_buffer.front().cloud;
++        meas.lidar_beg_time = lidar_buffer.front().stamp;
+         if (meas.lidar->points.size() <= 1) // time too little
+         {
+             lidar_end_time = meas.lidar_beg_time + lidar_mean_scantime;
+@@ -429,7 +425,6 @@
+     }
+ 
+     lidar_buffer.pop_front();
+-    time_buffer.pop_front();
+     lidar_pushed = false;
+     return true;
+ }
+@@ -580,17 +575,15 @@
+ 
+ void publish_map(rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pubLaserCloudMap)
+ {
+-    PointCloudXYZI::Ptr laserCloudFullRes(dense_pub_en ? feats_undistort : feats_down_body);
+-    int size = laserCloudFullRes->points.size();
+-    PointCloudXYZI::Ptr laserCloudWorld( \
+-                    new PointCloudXYZI(size, 1));
+-
+-    for (int i = 0; i < size; i++)
+-    {
+-        RGBpointBodyToWorld(&laserCloudFullRes->points[i], \
+-                            &laserCloudWorld->points[i]);
+-    }
+-    *pcl_wait_pub += *laserCloudWorld;
++    // Publish the estimator's current local map. Re-appending the latest scan
++    // on every timer tick retained duplicate points for the entire session.
++    PointVector current_map;
++    if (!ikdtree.Snapshot(current_map))
++        return;
++    pcl_wait_pub->points.swap(current_map);
++    pcl_wait_pub->width = static_cast<uint32_t>(pcl_wait_pub->points.size());
++    pcl_wait_pub->height = 1;
++    pcl_wait_pub->is_dense = true;
+ 
+     sensor_msgs::msg::PointCloud2 laserCloudmsg;
+     pcl::toROSMsg(*pcl_wait_pub, laserCloudmsg);
+@@ -599,11 +592,6 @@
+     laserCloudmsg.header.frame_id = "camera_init";
+     pubLaserCloudMap->publish(laserCloudmsg);
+ 
+-    // sensor_msgs::msg::PointCloud2 laserCloudMap;
+-    // pcl::toROSMsg(*featsFromMap, laserCloudMap);
+-    // laserCloudMap.header.stamp = get_ros_time(lidar_end_time);
+-    // laserCloudMap.header.frame_id = "camera_init";
+-    // pubLaserCloudMap->publish(laserCloudMap);
+ }
+ 
+ void save_to_pcd()
+@@ -646,8 +634,8 @@
+ 
+     geometry_msgs::msg::TransformStamped trans;
+     trans.header.frame_id = "camera_init";
+-    trans.header.stamp = odomAftMapped.header.stamp;
+     trans.child_frame_id = "body";
++    trans.header.stamp = get_ros_time(lidar_end_time);
+     trans.transform.translation.x = odomAftMapped.pose.pose.position.x;
+     trans.transform.translation.y = odomAftMapped.pose.pose.position.y;
+     trans.transform.translation.z = odomAftMapped.pose.pose.position.z;
+@@ -664,13 +652,17 @@
+     msg_body_pose.header.stamp = get_ros_time(lidar_end_time); // ros::Time().fromSec(lidar_end_time);
+     msg_body_pose.header.frame_id = "camera_init";
+ 
+-    /*** if path is too large, the rvis will crash ***/
+-    static int jjj = 0;
+-    jjj++;
+-    if (jjj % 10 == 0) 
+-    {
+-        path.poses.push_back(msg_body_pose);
++    // Decimate the stored history, not the freshness of its latest observation.
++    static std::size_t observations = 0;
++    easyfly_fastlio::update_path_tip(path.poses, observations, msg_body_pose);
++    path.header.stamp = msg_body_pose.header.stamp;
++    static auto last_publish = std::chrono::steady_clock::time_point::min();
++    const auto now = std::chrono::steady_clock::now();
++    if (last_publish == std::chrono::steady_clock::time_point::min() ||
++        now - last_publish >= std::chrono::milliseconds(200))
++    {
+         pubPath->publish(path);
++        last_publish = now;
+     }
+ }
+ 
+@@ -870,6 +862,15 @@
+         this->get_parameter_or<vector<double>>("mapping.extrinsic_T", extrinT, vector<double>());
+         this->get_parameter_or<vector<double>>("mapping.extrinsic_R", extrinR, vector<double>());
+ 
++        string extrinsic_error;
++        if (!fast_lio::validate_extrinsics(extrinT, extrinR, &extrinsic_error)) {
++            RCLCPP_FATAL(
++                this->get_logger(),
++                "Invalid FAST-LIO extrinsics: %s. Check mapping.extrinsic_T/R in the parameter file.",
++                extrinsic_error.c_str());
++            throw std::invalid_argument("Invalid FAST-LIO extrinsics: " + extrinsic_error);
++        }
++
+         RCLCPP_INFO(this->get_logger(), "p_pre->lidar_type %d", p_pre->lidar_type);
+ 
+         path.header.stamp = this->get_clock()->now();
+@@ -920,13 +921,18 @@
+         /*** ROS subscribe initialization ***/
+         if (p_pre->lidar_type == AVIA)
+         {
+-            sub_pcl_livox_ = this->create_subscription<livox_ros_driver2::msg::CustomMsg>(lid_topic, 20, livox_pcl_cbk);
++            sub_pcl_livox_ = this->create_subscription<livox_ros_driver2::msg::CustomMsg>(lid_topic, rclcpp::QoS(easyfly_fastlio::ScanQueue<PointCloudXYZI::Ptr>::capacity), livox_pcl_cbk);
+         }
+         else
+         {
+-            sub_pcl_pc_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(lid_topic, rclcpp::SensorDataQoS(), standard_pcl_cbk);
+-        }
+-        sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>(imu_topic, 10, imu_cbk);
++            sub_pcl_pc_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(lid_topic, rclcpp::SensorDataQoS().keep_last(easyfly_fastlio::ScanQueue<PointCloudXYZI::Ptr>::capacity), standard_pcl_cbk);
++        }
++        sub_imu_ = this->create_subscription<sensor_msgs::msg::Imu>(imu_topic, 200, imu_cbk);
++        const auto lidar_depth = sub_pcl_livox_ ? sub_pcl_livox_->get_actual_qos().depth() :
++            sub_pcl_pc_->get_actual_qos().depth();
++        RCLCPP_INFO(this->get_logger(),
++            "LiDAR DDS depth=%zu, processing capacity=2; IMU DDS depth=%zu",
++            lidar_depth, sub_imu_->get_actual_qos().depth());
+         pubLaserCloudFull_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_registered", 20);
+         pubLaserCloudFull_body_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_registered_body", 20);
+         pubLaserCloudEffect_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/cloud_effected", 20);
+@@ -1158,9 +1164,24 @@
+ {
+     rclcpp::init(argc, argv);
+ 
+-    signal(SIGINT, SigHandle);
+-
+-    rclcpp::spin(std::make_shared<LaserMappingNode>());
++    // Keep rclcpp's SIGINT/SIGTERM handler: it dispatches shutdown on its
++    // dedicated thread. Calling shutdown directly in a POSIX signal handler
++    // can reenter locks held by the interrupted thread and prevent retirement.
++
++    try
++    {
++        rclcpp::spin(std::make_shared<LaserMappingNode>());
++    }
++    catch (const std::exception &e)
++    {
++        // Parameter validation happens in the constructor. Convert invalid
++        // configuration into a controlled non-zero exit instead of allowing
++        // an uncaught exception (or an array overrun) to abort the process.
++        std::cerr << "fastlio_mapping failed to start: " << e.what() << std::endl;
++        if (rclcpp::ok())
++            rclcpp::shutdown();
++        return EXIT_FAILURE;
++    }
+ 
+     if (rclcpp::ok())
+         rclcpp::shutdown();
+@@ -1194,5 +1215,5 @@
+         fclose(fp2);
+     }
+ 
+-    return 0;
+-}
++    return EXIT_SUCCESS;
++}
+--- a/src/preprocess.cpp
++++ b/src/preprocess.cpp
+@@ -180,9 +180,9 @@
+           pl_full[i].curvature = msg->points[i].offset_time /
+                                  float(1000000);  // use curvature as time of each laser points, curvature unit: ms
+ 
+-          if ((abs(pl_full[i].x - pl_full[i - 1].x) > 1e-7)
++          if (((abs(pl_full[i].x - pl_full[i - 1].x) > 1e-7)
+               || (abs(pl_full[i].y - pl_full[i - 1].y) > 1e-7)
+-              || (abs(pl_full[i].z - pl_full[i - 1].z) > 1e-7)
++              || (abs(pl_full[i].z - pl_full[i - 1].z) > 1e-7))
+               && (pl_full[i].x * pl_full[i].x + pl_full[i].y * pl_full[i].y + pl_full[i].z * pl_full[i].z > (blind * blind)))
+           {
+             pl_surf.push_back(pl_full[i]);
+--- /dev/null
++++ b/test/signal_probe.cpp
+@@ -0,0 +1,55 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++// Test-only native process probe. No sensor input, flight or production hook.
++#include <rclcpp/rclcpp.hpp>
++#include <chrono>
++#include <csignal>
++#include <cstdio>
++#include <cstdlib>
++#include <fcntl.h>
++#include <mutex>
++#include <pthread.h>
++#include <sys/syscall.h>
++#include <thread>
++#include <unistd.h>
++
++namespace {
++void note(int fd, const char *event) {
++  char line[160];
++  const int size = std::snprintf(line, sizeof(line), "%s tid=%ld\n", event,
++    static_cast<long>(::syscall(SYS_gettid)));
++  if (size > 0) {::write(fd, line, static_cast<size_t>(size));}
++}
++void *probe(void *) {
++  const char *path = std::getenv("EASYFLY_SIGNAL_PROBE_LOG");
++  if (!path) {return nullptr;}
++  const int fd = ::open(path, O_WRONLY|O_CREAT|O_EXCL|O_CLOEXEC, 0600);
++  if (fd < 0) {return nullptr;}
++  for (int i = 0; i < 1000 && !rclcpp::ok(); ++i) {
++    std::this_thread::sleep_for(std::chrono::milliseconds(10));
++  }
++  if (!rclcpp::ok()) {note(fd, "initialization_failed"); return nullptr;}
++  std::this_thread::sleep_for(std::chrono::milliseconds(1000));
++  // Deliberately interrupt a thread holding a lock that shutdown needs. ROS's
++  // dedicated signal thread can wait until this thread resumes and releases it.
++  // A synchronous user signal handler instead deadlocks on that same thread.
++  auto mutex = std::make_shared<std::mutex>();
++  rclcpp::on_shutdown([mutex, fd] {
++    note(fd, "callback_enter");
++    std::lock_guard<std::mutex> lock(*mutex);
++    note(fd, "callback_acquired");
++  });
++  note(fd, "ready");
++  if (std::getenv("EASYFLY_SIGNAL_PROBE_CRITICAL")) {
++    std::lock_guard<std::mutex> lock(*mutex);
++    note(fd, "critical_signal");
++    ::pthread_kill(::pthread_self(), SIGINT);
++    note(fd, "signal_returned");
++  }
++  return nullptr;
++}
++__attribute__((constructor)) void start_probe() {
++  if (!std::getenv("EASYFLY_SIGNAL_PROBE_LOG")) {return;}
++  pthread_t worker;
++  if (::pthread_create(&worker, nullptr, probe, nullptr) == 0) {::pthread_detach(worker);}
++}
++}
+--- /dev/null
++++ b/test/test_extrinsic_validation.cpp
+@@ -0,0 +1,52 @@
++#include <gtest/gtest.h>
++
++#include <limits>
++#include <string>
++#include <vector>
++
++#include "extrinsic_validation.hpp"
++
++TEST(ExtrinsicValidation, AcceptsExpectedFiniteArrays)
++{
++    const std::vector<double> translation{0.0, 0.0, 0.0};
++    const std::vector<double> rotation{1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0};
++    std::string error;
++
++    EXPECT_TRUE(fast_lio::validate_extrinsics(translation, rotation, &error));
++    EXPECT_TRUE(error.empty());
++}
++
++TEST(ExtrinsicValidation, RejectsWrongArrayLengths)
++{
++    const std::vector<double> translation;
++    const std::vector<double> rotation(9U, 0.0);
++    std::string error;
++
++    EXPECT_FALSE(fast_lio::validate_extrinsics(translation, rotation, &error));
++    EXPECT_NE(error.find("exactly 3"), std::string::npos);
++
++    const std::vector<double> valid_translation(3U, 0.0);
++    const std::vector<double> short_rotation(8U, 0.0);
++    error.clear();
++    EXPECT_FALSE(fast_lio::validate_extrinsics(valid_translation, short_rotation, &error));
++    EXPECT_NE(error.find("exactly 9"), std::string::npos);
++}
++
++TEST(ExtrinsicValidation, RejectsNonFiniteValues)
++{
++    const std::vector<double> translation{
++        0.0, std::numeric_limits<double>::quiet_NaN(), 0.0};
++    const std::vector<double> rotation(9U, 0.0);
++    std::string error;
++
++    EXPECT_FALSE(fast_lio::validate_extrinsics(translation, rotation, &error));
++    EXPECT_NE(error.find("non-finite"), std::string::npos);
++
++    const std::vector<double> valid_translation(3U, 0.0);
++    const std::vector<double> infinite_rotation{
++        1.0, 0.0, 0.0, 0.0, std::numeric_limits<double>::infinity(), 0.0,
++        0.0, 0.0, 1.0};
++    error.clear();
++    EXPECT_FALSE(fast_lio::validate_extrinsics(valid_translation, infinite_rotation, &error));
++    EXPECT_NE(error.find("non-finite"), std::string::npos);
++}
+--- /dev/null
++++ b/test/test_map_snapshot.cpp
+@@ -0,0 +1,101 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#include <gtest/gtest.h>
++#include <chrono>
++#include <memory>
++#include <set>
++#include <thread>
++#include <tuple>
++#include "ikd-Tree/ikd_Tree.h"
++
++namespace {
++using Tree = KD_TREE<pcl::PointXYZINormal>;
++using Points = Tree::PointVector;
++using Keys = std::set<std::tuple<float, float, float, float>>;
++
++Points grid(int first_x, int last_x, int rows)
++{
++    Points points;
++    for (int x = first_x; x < last_x; ++x)
++        for (int y = 0; y < rows; ++y)
++        {
++            pcl::PointXYZINormal point{};
++            point.x = x + 0.25f;
++            point.y = y + 0.25f;
++            point.z = 0.25f;
++            point.intensity = static_cast<float>(x * 1000 + y);
++            points.push_back(point);
++        }
++    return points;
++}
++
++Keys keys(const Points &points)
++{
++    Keys result;
++    for (const auto &point : points)
++        result.emplace(point.x, point.y, point.z, point.intensity);
++    return result;
++}
++
++bool snapshot(Tree &tree, Points &points)
++{
++    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(5);
++    do
++    {
++        if (tree.Snapshot(points))
++            return true;
++        std::this_thread::sleep_for(std::chrono::milliseconds(1));
++    } while (std::chrono::steady_clock::now() < deadline);
++    return false;
++}
++
++TEST(MapSnapshot, EmptyMapReplacesPreviousOutput)
++{
++    // The native tree has a large fixed rebuild journal; never put it on the stack.
++    auto tree = std::make_unique<Tree>();
++    auto output = grid(0, 1, 1);
++    ASSERT_TRUE(snapshot(*tree, output));
++    EXPECT_TRUE(output.empty());
++}
++
++TEST(MapSnapshot, RepeatedPublicationKeepsOnlyCurrentMapPoints)
++{
++    auto tree = std::make_unique<Tree>();
++    const auto input = grid(0, 40, 50);
++    tree->Build(input);
++    const auto expected = keys(input);
++    Points output;
++    for (int publication = 0; publication < 100; ++publication)
++    {
++        ASSERT_TRUE(snapshot(*tree, output));
++        EXPECT_EQ(output.size(), expected.size());
++        EXPECT_EQ(keys(output), expected);
++    }
++}
++
++TEST(MapSnapshot, ReflectsDeletesAndInsertionsDuringNativeRebuilding)
++{
++    auto tree = std::make_unique<Tree>(0.2f, 0.6f, 0.5f);
++    tree->Build(grid(0, 80, 100));
++    // Exceed the native asynchronous-rebuild threshold and delete half the map.
++    // Subsequent snapshots must not retain any removed historical scan points.
++    BoxPointType box{};
++    box.vertex_min[0] = box.vertex_min[1] = box.vertex_min[2] = -1.f;
++    box.vertex_max[0] = 40.f;
++    box.vertex_max[1] = 101.f;
++    box.vertex_max[2] = 1.f;
++    std::vector<BoxPointType> boxes{box};
++    EXPECT_EQ(tree->Delete_Point_Boxes(boxes), 4000);
++    auto additional = grid(90, 96, 100);
++    auto expected = keys(grid(40, 80, 100));
++    const auto added_keys = keys(additional);
++    expected.insert(added_keys.begin(), added_keys.end());
++    Points output;
++    for (int scan = 0; scan < 40; ++scan)
++    {
++        tree->Add_Points(additional, true);
++        ASSERT_TRUE(snapshot(*tree, output));
++        EXPECT_EQ(output.size(), expected.size());
++        EXPECT_EQ(keys(output), expected);
++    }
++}
++}  // namespace
+--- /dev/null
++++ b/test/test_scan_queue.cpp
+@@ -0,0 +1,53 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#include <gtest/gtest.h>
++#include <memory>
++#include "scan_queue.hpp"
++#include "path_tip.hpp"
++
++TEST(ScanQueue, ProcessingBlackoutRetainsRecentPairedScans) {
++    easyfly_fastlio::ScanQueue<std::shared_ptr<int>> queue;
++    auto retired = std::make_shared<int>(0);
++    queue.push(retired, 10.);
++    auto pending = queue.front();  // A scan waiting for its final IMU sample.
++    bool pending_valid = true;
++    for (int i = 1; i <= 100; ++i) {
++        if (queue.push(std::make_shared<int>(i), 10. + .1 * i)) {
++            pending_valid = false;
++        }
++        ASSERT_LE(queue.size(), 2u);
++    }
++    EXPECT_FALSE(pending_valid);
++    EXPECT_EQ(*pending.cloud, 0);  // Existing ownership never becomes dangling.
++    EXPECT_EQ(queue.dropped(), 99u);
++    EXPECT_EQ(*queue.front().cloud, 99);
++    EXPECT_DOUBLE_EQ(queue.front().stamp, 19.9);
++    queue.pop_front();
++    EXPECT_EQ(*queue.front().cloud, 100);
++    EXPECT_DOUBLE_EQ(queue.front().stamp, 20.);
++    queue.pop_front();
++    EXPECT_TRUE(queue.empty());
++}
++
++TEST(ScanQueue, ResetCannotPairANewCloudWithAnOldTimestamp) {
++    easyfly_fastlio::ScanQueue<int> queue;
++    queue.push(1, 100.); queue.push(2, 100.1);
++    queue.clear(); queue.push(3, 1.);
++    EXPECT_EQ(queue.size(), 1u);
++    EXPECT_EQ(queue.front().cloud, 3);
++    EXPECT_DOUBLE_EQ(queue.front().stamp, 1.);
++    queue.pop_front(); EXPECT_TRUE(queue.empty());
++}
++
++TEST(PathTip, DecimatesHistoryWithoutHoldingAnOldObservationAtTheTip) {
++    std::vector<int> poses;
++    std::size_t observations = 0;
++    for (int source = 1; source <= 105; ++source) {
++        easyfly_fastlio::update_path_tip(poses, observations, source);
++        ASSERT_FALSE(poses.empty());
++        EXPECT_EQ(poses.back(), source);
++        EXPECT_EQ(poses.size(), static_cast<std::size_t>((source + 9) / 10));
++    }
++    EXPECT_EQ(poses.front(), 10);
++    EXPECT_EQ(poses[9], 100);
++    EXPECT_EQ(poses.back(), 105);
++}
+--- /dev/null
++++ b/test/test_signal_shutdown.py
+@@ -0,0 +1,53 @@
++# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++"""Real native process shutdown, including an interrupted critical section."""
++import os
++import signal
++import subprocess
++import time
++
++import pytest
++
++
++@pytest.mark.parametrize('sim_time', [False, True])
++@pytest.mark.parametrize('mode', ['critical', 'SIGINT', 'SIGTERM'])
++def test_native_signal_shutdown(tmp_path, sim_time, mode):
++    events = tmp_path / 'events.log'
++    environment = dict(os.environ, ROS_LOCALHOST_ONLY='1', ROS_DOMAIN_ID='231',
++                       LD_PRELOAD=os.environ['FASTLIO_TEST_LIBRARY'],
++                       EASYFLY_SIGNAL_PROBE_LOG=str(events))
++    environment.pop('EASYFLY_SIGNAL_PROBE_CRITICAL', None)
++    if mode == 'critical':
++        environment['EASYFLY_SIGNAL_PROBE_CRITICAL'] = '1'
++    command = [os.environ['FASTLIO_TEST_EXECUTABLE'], '--ros-args', '--params-file',
++               os.environ['FASTLIO_TEST_CONFIG'], '-p',
++               'use_sim_time:=' + str(sim_time).lower()]
++    with (tmp_path / 'console.log').open('w+') as console:
++        process = subprocess.Popen(command, env=environment, stdout=console,
++                                   stderr=subprocess.STDOUT)
++        try:
++            deadline = time.monotonic() + 10
++            while time.monotonic() < deadline:
++                if events.exists() and 'ready ' in events.read_text():
++                    break
++                assert process.poll() is None, 'native process exited before probe readiness'
++                time.sleep(.01)
++            else:
++                pytest.fail('native process never became ready')
++            if mode != 'critical':
++                process.send_signal(getattr(signal, mode))
++            try:
++                process.wait(timeout=5)
++            except subprocess.TimeoutExpired:
++                pytest.fail('native shutdown deadlocked: ' + events.read_text())
++            console.seek(0)
++            assert process.returncode == 0, console.read()
++            lines = events.read_text().splitlines()
++            assert any(line.startswith('callback_acquired ') for line in lines)
++            if mode == 'critical':
++                assert any(line.startswith('signal_returned ') for line in lines)
++                tids = {line.split()[0]: line.split('tid=')[1] for line in lines}
++                assert tids['critical_signal'] != tids['callback_enter']
++        finally:
++            if process.poll() is None:
++                process.kill()
++                process.wait(timeout=3)
+--- /dev/null
++++ b/test/test_source_time.cpp
+@@ -0,0 +1,19 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#include <gtest/gtest.h>
++#include "source_time.hpp"
++
++TEST(SourceTime, PreservesNativeMillisecondAcquisitionTimes) {
++    for (int64_t ms = 1; ms < 200000; ++ms) {
++        EXPECT_EQ(easyfly_fastlio::source_nanoseconds(ms / 1000.0), ms * 1000000);
++    }
++    EXPECT_EQ(easyfly_fastlio::source_nanoseconds(36.421), 36421000000LL);
++}
++
++TEST(SourceTime, RoundsAndNormalizesAtSecondBoundary) {
++    EXPECT_EQ(easyfly_fastlio::source_nanoseconds(1.9999999996), 2000000000LL);
++    EXPECT_EQ(easyfly_fastlio::source_nanoseconds(1.000000001), 1000000001LL);
++    EXPECT_THROW(easyfly_fastlio::source_nanoseconds(NAN), std::invalid_argument);
++    EXPECT_THROW(easyfly_fastlio::source_nanoseconds(INFINITY), std::invalid_argument);
++    EXPECT_THROW(easyfly_fastlio::source_nanoseconds(-1.), std::invalid_argument);
++    EXPECT_THROW(easyfly_fastlio::source_nanoseconds(1e20), std::invalid_argument);
++}

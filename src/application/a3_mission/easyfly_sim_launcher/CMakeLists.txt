@@ -7,7 +7,7 @@ ament_python_install_package(${PROJECT_NAME})
 
 install(DIRECTORY launch
   DESTINATION share/${PROJECT_NAME})
-install(FILES README.md DESTINATION share/${PROJECT_NAME})
+install(FILES README.md ACCEPTANCE.md DESTINATION share/${PROJECT_NAME})
 install(PROGRAMS scripts/d5_simulation DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/scene_catalog DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/scene_generator DESTINATION lib/${PROJECT_NAME})
@@ -19,6 +19,8 @@ install(PROGRAMS scripts/battery_sitl.py
 
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
+  find_package(easyfly_fastdds_compat REQUIRED)
+  get_filename_component(_dds_prefix "${easyfly_fastdds_compat_DIR}/../../.." ABSOLUTE)
   ament_add_pytest_test(test_profile_launch test/test_profile_launch.py)
   ament_add_pytest_test(test_navigation_sitl test/test_navigation_sitl.py TIMEOUT 15)
   ament_add_pytest_test(test_battery_sitl test/test_battery_sitl.py TIMEOUT 15)
@@ -31,7 +33,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_asset_composition test/test_asset_composition.py TIMEOUT 60
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_scene_launch test/test_scene_launch.py TIMEOUT 30
-    APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
+    APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR}
+    ENV "LD_LIBRARY_PATH=${_dds_prefix}/lib/easyfly_fastdds_compat:$ENV{LD_LIBRARY_PATH}")
   ament_add_pytest_test(test_indoor_scene test/test_indoor_scene.py TIMEOUT 30
     APPEND_ENV PYTHONPATH=${CMAKE_CURRENT_SOURCE_DIR})
   ament_add_pytest_test(test_scene_generator test/test_scene_generator.py TIMEOUT 30

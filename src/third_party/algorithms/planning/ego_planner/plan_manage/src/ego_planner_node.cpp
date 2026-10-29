@@ -1,14 +1,14 @@
-#include "rclcpp/rclcpp.hpp"
 #include <plan_manage/ego_replan_fsm.h>
 #include <pthread.h>
 #include <signal.h>
 #include <cerrno>
 #include <chrono>
 #include <stdexcept>
+#include "rclcpp/rclcpp.hpp"
 
-using namespace ego_planner;
+using ego_planner::EGOReplanFSM;
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
   // This executable owns shutdown. Block before ROS creates any threads, so
   // SIGINT/SIGTERM cannot invalidate the context during endpoint construction
@@ -23,13 +23,13 @@ int main(int argc, char **argv)
   }
   bool stopped = false;
   auto stop_requested = [&stop_signals, &stopped]() {
-    if (stopped) {return true;}
-    const timespec immediate{0, 0};
-    const int received = sigtimedwait(&stop_signals, nullptr, &immediate);
-    if (received == SIGINT || received == SIGTERM) {stopped = true; return true;}
-    if (received < 0 && (errno == EAGAIN || errno == EINTR)) {return false;}
-    throw std::runtime_error("could not poll planner shutdown signals");
-  };
+      if (stopped) {return true;}
+      const timespec immediate{0, 0};
+      const int received = sigtimedwait(&stop_signals, nullptr, &immediate);
+      if (received == SIGINT || received == SIGTERM) {stopped = true; return true;}
+      if (received < 0 && (errno == EAGAIN || errno == EINTR)) {return false;}
+      throw std::runtime_error("could not poll planner shutdown signals");
+    };
 
   rclcpp::init(argc, argv, rclcpp::InitOptions(), rclcpp::SignalHandlerOptions::None);
   {

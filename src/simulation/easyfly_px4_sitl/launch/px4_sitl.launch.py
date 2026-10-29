@@ -34,6 +34,7 @@ from easyfly_px4_sitl.imu_compatibility import require_native_imu
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
 from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
+from easyfly_px4_sitl.rendering import renderer_environment
 
 
 def _resolve_px4_dir():
@@ -100,6 +101,7 @@ def generate_launch_description():
              "--ros-args", "--param", ["gazebo:publish_rate:=", scene_value('clock_rate_hz'), ".0"]],
         output="screen",
         name="gzserver",
+        additional_env=renderer_environment(),
     )
 
     # ---- 3. 生成 SDF 并生成模型（使用 spawn_model 风格） ----

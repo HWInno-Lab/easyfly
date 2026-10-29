@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <condition_variable>
+#include <deque>
+#include <algorithm>
 #include <thread>
 #include "safety.hpp"
 #include "easyfly_csrt/track_core.hpp"
@@ -69,6 +71,12 @@ public:
           m->header);
         latest_ = m;
         receipt_ = receipt;
+        history_.push_back({m, receipt}); history_bytes_ += m->data.size();
+        while (history_.size() > 16 || history_bytes_ > 64U * 1024 * 1024 ||
+        (!history_.empty() && receipt - history_.front().receipt > age_))
+        {
+          history_bytes_ -= history_.front().image->data.size(); history_.pop_front();
+        }
         pending_ = true;
         cv_.notify_one();
       });
@@ -94,10 +102,17 @@ public:
           publish();
           response->accepted = true;
         } else if (r->operation == "initialize") {
-          if (!good_clock() || !latest_ ||
-          !ef_safety::fresh(latest_->header, now().nanoseconds(), receipt_, age_, frame_) ||
-          ef_safety::stamp(r->image_header) != ef_safety::stamp(latest_->header) ||
-          r->image_header.frame_id != latest_->header.frame_id ||
+          const bool clock_ok = good_clock();
+          const auto found = std::find_if(
+            history_.begin(), history_.end(), [&](const auto & frame) {
+              return frame.image->header == r->image_header;
+            });
+          const auto selected = found == history_.end() ? nullptr : found->image;
+          const double selected_receipt = found == history_.end() ? 0 : found->receipt;
+          if (!clock_ok || !selected ||
+          !ef_safety::fresh(
+            selected->header, now().nanoseconds(), selected_receipt, age_,
+            frame_) ||
           !ef_single::roi(
             r->roi_x, r->roi_y, r->roi_width,
             r->roi_height) || r->class_name.size() > 128 || next_id_ == INT32_MAX)
@@ -106,8 +121,8 @@ public:
           } else {
             auto box =
             ef_single::pixels(
-              r->roi_x, r->roi_y, r->roi_width, r->roi_height, latest_->width,
-              latest_->height);
+              r->roi_x, r->roi_y, r->roi_width, r->roi_height, selected->width,
+              selected->height);
 
             if (box.width < 8 || box.height < 8) {
               response->message = "roi_too_small";
@@ -116,9 +131,9 @@ public:
               box_ = box;
               initialize_ = true;
               pending_ = true;
-              init_image_ = latest_;
-              init_receipt_ = receipt_;
-              state_.header = latest_->header;
+              init_image_ = selected;
+              init_receipt_ = selected_receipt;
+              state_.header = selected->header;
 
               state_.track_id = next_id_++;
               state_.phase = state_.phase == "lost" ? "relocalizing" : "initializing";
@@ -204,6 +219,7 @@ private:
   void invalidate(const std::string & reason)
   {
     ++generation_;
+    history_.clear(); history_bytes_ = 0; init_image_.reset();
     initialize_ = false;
     pending_ = false;
     state_.valid = false;
@@ -353,6 +369,9 @@ private:
   ef_safety::ClockGate clock_;
 
   sensor_msgs::msg::Image::ConstSharedPtr latest_, init_image_;
+  struct RetainedFrame {sensor_msgs::msg::Image::ConstSharedPtr image; double receipt;};
+  std::deque<RetainedFrame> history_;
+  size_t history_bytes_{0};
 
   easyfly_msgs::msg::SingleTrackState state_;
 

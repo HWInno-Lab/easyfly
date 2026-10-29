@@ -10,10 +10,8 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <algorithm>
 #include <cmath>
-
 #include "easyfly_desktop/presentation.hpp"
 namespace easyfly_desktop
 {
@@ -109,7 +107,6 @@ QString phase_event(const bridge::UiSnapshot & s, double now)
   }
   const auto & v = *event.value;
   return QStringLiteral(
-
     "最近全局阶段：%1 · %2\n索"
     "引/总数（原值）：%3 / %4 "
     "· 进度（上游）：%5%\n%6\n"

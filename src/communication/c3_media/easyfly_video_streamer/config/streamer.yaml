@@ -1,0 +1,22 @@
+video_sender:
+  ros__parameters:
+    image_topic: /camera/color/image_raw
+    bind: 127.0.0.1
+    port: 8088
+    fps: 10
+    max_width: 1280
+    max_height: 720
+    jpeg_quality: 80
+    source_timeout_s: 2.0
+    max_clients: 2
+    bytes_per_second: 2097152
+    token_file: ""
+    certificate: ""
+    private_key: ""
+video_receiver:
+  ros__parameters:
+    url: http://127.0.0.1:8088/stream.mjpg
+    output_topic: /stream/image
+    source_timeout_s: 2.0
+    token_file: ""
+    ca_file: ""

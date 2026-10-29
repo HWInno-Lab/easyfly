@@ -29,7 +29,7 @@
 
 `ground_initialized frame=... method=spatial_support` 日志记录实际采用的方法、全帧内点数、
 独立网格数、支持点数与净空。`test_ground_spatial_support` 覆盖对应拒绝路径，
-实际仓库运行证据见工作区 `schedule-v5-scene.md`。
+历史仓库运行结论见工作区 `schedule-v6.md`；原 artifacts 证据已清理，当前复验需重新部署。
 
 ## 地面模型参考系
 

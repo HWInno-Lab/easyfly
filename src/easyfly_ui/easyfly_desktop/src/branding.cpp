@@ -10,20 +10,16 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QImage>
 #include <QPixmap>
 #include <QResource>
 #include <algorithm>
-
 #include "widgets.hpp"
-
 // A direct reference retains the qrc object when desktop_widgets is a static library.
 static void initialize_easyfly_resources()
 {
   Q_INIT_RESOURCE(easyfly_assets);
 }
-
 namespace easyfly_desktop
 {
 QPixmap brand_pixmap()

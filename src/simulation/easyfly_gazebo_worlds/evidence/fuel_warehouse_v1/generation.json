@@ -1,0 +1,86 @@
+{
+  "generator": "project authored static geometry, present before first scan",
+  "world_sha256": "3670960b0174d03fdc34c489466b6ebb93a6b54296275acca7b5e668b5b149e5",
+  "boxes": [
+    [
+      "west",
+      [
+        -2.9,
+        0,
+        2
+      ],
+      [
+        0.2,
+        6,
+        4
+      ]
+    ],
+    [
+      "east",
+      [
+        7.3,
+        0,
+        2
+      ],
+      [
+        0.2,
+        6,
+        4
+      ]
+    ],
+    [
+      "south",
+      [
+        2.2,
+        -2.9,
+        2
+      ],
+      [
+        10,
+        0.2,
+        4
+      ]
+    ],
+    [
+      "north",
+      [
+        2.2,
+        2.9,
+        2
+      ],
+      [
+        10,
+        0.2,
+        4
+      ]
+    ],
+    [
+      "rack_south",
+      [
+        3.5,
+        -2.05,
+        1.35
+      ],
+      [
+        3.0,
+        0.5,
+        2.7
+      ]
+    ],
+    [
+      "rack_north",
+      [
+        4.4,
+        2.05,
+        1.35
+      ],
+      [
+        2.4,
+        0.5,
+        2.7
+      ]
+    ]
+  ],
+  "physical_ray_max_m": 3,
+  "scope": "bounded static exploration, no sensor/truth injection"
+}

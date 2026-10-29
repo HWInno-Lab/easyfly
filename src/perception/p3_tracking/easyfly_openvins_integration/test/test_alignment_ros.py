@@ -31,8 +31,15 @@ def set_pose(pose, p, q):
 
 
 class Harness:
-    def __init__(self, directory, initial_mode='PASSTHROUGH'):
-        rclpy.init()
+    def __init__(self, directory, initial_mode='PASSTHROUGH', backend='openvins', orb_inertial=False):
+        self.backend = backend
+        self.require_covariance = backend != 'orbslam3' or orb_inertial
+        self.frame = {'openvins':'openvins_odom', 'fast_livo2':'fastlivo_odom', 'orbslam3':'orbslam3_map'}[backend]
+        self.remaps = []
+        if backend != 'openvins':
+            for topic in ['pose', 'status', 'base_pose', 'aligned_pose', 'alignment_status']:
+                self.remaps += ['-r', '/localization/openvins/'+topic+':=/localization/fast_livo2/'+topic]
+        rclpy.init(args=['--ros-args', *self.remaps])
         self.node = rclpy.create_node('alignment_contract_fixture')
         self.clock = self.node.create_publisher(Clock, '/clock', QoSProfile(
             depth=1, reliability=ReliabilityPolicy.BEST_EFFORT))
@@ -70,7 +77,9 @@ class Harness:
         self.log = (directory / 'alignment.log').open('w')
         self.process = subprocess.Popen([
             str(prefix / 'lib/easyfly_openvins_integration/openvins_alignment'), '--ros-args',
-            '-p', 'use_sim_time:=true'], stdout=self.log, stderr=subprocess.STDOUT)
+            '-p', 'use_sim_time:=true', '-p', 'source_backend:='+backend,
+            '-p', 'source_frame:='+self.frame,
+            '-p', 'require_source_covariance:='+('true' if self.require_covariance else 'false'), *self.remaps], stdout=self.log, stderr=subprocess.STDOUT)
         self.until(lambda: all(pub.get_subscription_count() for pub in (
             self.clock, self.pose, self.status, self.reference, self.attitude, self.health)))
         self.until(lambda: self.observed is not None and self.clock_requests > 0)
@@ -88,7 +97,7 @@ class Harness:
             assert time.monotonic() < deadline, self.observed
             self.spin(.02)
 
-    def send(self, t, session='fixture-a', ref_shift=0.):
+    def send(self, t, session='fixture-a', ref_shift=0., generation=0):
         clock = Clock()
         clock.clock.sec, clock.clock.nanosec = divmod(round((t+.02)*1e9), 10**9)
         self.clock.publish(clock)
@@ -117,14 +126,17 @@ class Harness:
         health.connected = health.pose_valid = health.attitude_valid = True
         self.health.publish(health)
         msg = timestamp(PoseWithCovarianceStamped(), t)
-        msg.header.frame_id = 'openvins_odom'
+        msg.header.frame_id = self.frame
         set_pose(msg.pose.pose, p, q)
         msg.pose.covariance = (np.eye(6)*.01).ravel().tolist()
+        if not self.require_covariance:
+            msg.pose.covariance = [-1.]+[0.]*35
         self.pose.publish(msg)
         status = timestamp(LocalizationStatus(), t+.02)
-        status.header.frame_id, status.tracked_frame = 'openvins_odom', 'livox_imu_frame'
-        status.backend_id, status.session_id = 'openvins', session
-        status.state, status.pose_valid, status.covariance_available = 2, True, True
+        status.header.frame_id, status.tracked_frame = self.frame, 'livox_imu_frame'
+        status.backend_id, status.session_id = self.backend, session
+        status.state, status.pose_valid, status.covariance_available = 2, True, self.require_covariance
+        status.generation = generation
         status.pose_stamp = msg.header.stamp
         self.status.publish(status)
         self.spin(.08)
@@ -151,9 +163,10 @@ class Harness:
             rclpy.shutdown()
 
 
-@pytest.mark.parametrize('fault', ['session', 'reference_jump', 'clock_rollback', 'clock_policy'])
-def test_aligned_observation_is_session_pinned_and_never_publishes_tf(tmp_path, fault):
-    fixture = Harness(tmp_path)
+@pytest.mark.parametrize('fault', ['session', 'generation', 'reference_jump', 'clock_rollback', 'clock_policy'])
+@pytest.mark.parametrize('backend', ['openvins', 'fast_livo2', 'orbslam3'])
+def test_aligned_observation_is_session_pinned_and_never_publishes_tf(tmp_path, fault, backend):
+    fixture = Harness(tmp_path, backend=backend)
     try:
         expected = fixture.ready()
         msg = fixture.aligned[-1]
@@ -163,7 +176,9 @@ def test_aligned_observation_is_session_pinned_and_never_publishes_tf(tmp_path, 
         q = msg.pose.orientation
         assert angle_between([q.x, q.y, q.z, q.w], fixture.expected_orientation) < 1e-7
         assert msg.header.frame_id == 'odom'
-        assert fixture.base[-1].header.frame_id == 'openvins_odom'
+        assert fixture.base[-1].header.frame_id == fixture.frame
+        if backend == 'orbslam3':
+            assert fixture.base[-1].pose.covariance[0] == -1.
         assert not fixture.observed.covariance_available
         assert not fixture.observed.velocity_valid
         assert fixture.node.count_publishers('/tf') == 0
@@ -173,7 +188,9 @@ def test_aligned_observation_is_session_pinned_and_never_publishes_tf(tmp_path, 
         fixture.spin(.65)
         assert fixture.observed.state == 3
         assert len(fixture.aligned) == count
-        if fault == 'session':
+        if fault == 'generation':
+            fixture.send(1.56, generation=1)
+        elif fault == 'session':
             fixture.send(1.56, session='fixture-b')
         elif fault == 'reference_jump':
             fixture.send(1.56, ref_shift=5.)
@@ -203,5 +220,21 @@ def test_receipt_time_reference_policy_cannot_authorize_outputs(tmp_path):
         for i in range(8):
             fixture.send(1.24+i*.08)
         fixture.until(lambda: fixture.observed.state == 2 and fixture.aligned)
+    finally:
+        fixture.close()
+
+
+def test_inertial_orb_requires_actual_covariance_and_latches_source_epoch(tmp_path):
+    fixture = Harness(tmp_path, backend='orbslam3', orb_inertial=True)
+    try:
+        fixture.ready()
+        covariance = np.array(fixture.base[-1].pose.covariance).reshape(6, 6)
+        assert np.linalg.eigvalsh(covariance).min() > 0
+        assert not fixture.observed.covariance_available  # Alignment uncertainty remains unknown.
+        fixture.send(1.56, generation=1)
+        fixture.until(lambda: fixture.observed.state == 4)
+        count = len(fixture.aligned)
+        fixture.send(1.64, generation=1)
+        assert len(fixture.aligned) == count
     finally:
         fixture.close()

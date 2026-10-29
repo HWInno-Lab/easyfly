@@ -1,0 +1,45 @@
+{
+  "passed": true,
+  "evidence": "artifacts/new-algorithms/new5-fuel-20261023/warehouse-flight-3/result.json",
+  "result_sha256": "896436d8fa6f89733e550d8cb191c7316a27ce310a77b8cb063b71d2ba4862e2",
+  "independent_evaluation": "artifacts/new-algorithms/new5-fuel-20261023/warehouse-flight-3/independent-evaluation.json",
+  "evaluation_sha256": "c4d185b5d34643bd98c7a9199cc9a768b07d7d4d9ec8a377345c8001dd4df2cb",
+  "sensor_attachment_audit": "artifacts/new-algorithms/new5-fuel-20261023/warehouse-flight-3/sensor-attachment-audit.json",
+  "sensor_attachment_sha256": "003e2ffce8d7a54fa1ef002b779c317d6a44b2a00bf705fcd01285f4fe718471",
+  "mission": [
+    {
+      "mission_id": "cc5346aba7fe4a30bbdbfa6f80671ecd",
+      "source_maps": 540,
+      "initial_coverage": 0.5470085470085471,
+      "final_coverage": 1.0,
+      "gain": 0.45299145299145294,
+      "completed": 3,
+      "decision_count": 3,
+      "repeat_viewpoints": 0,
+      "reason": "COVERAGE_COMPLETE",
+      "source_duration_s": 54.0,
+      "wall_duration_s": 74.50742965899997,
+      "remaining_unknown_cells": 0,
+      "peak_rss_kib": 146736,
+      "native_cpu_sec": 0.33384,
+      "exploration_path": {
+        "distance_m": 7.40968886950125,
+        "revisited_distance_m": 0.0,
+        "revisited_fraction": 0.0,
+        "spatial_radius_m": 0.25,
+        "minimum_prior_arc_distance_m": 2.0,
+        "movement_sampling_m": 0.05
+      },
+      "return_path": {
+        "distance_m": 4.607432881296877,
+        "revisited_distance_m": 0.0,
+        "revisited_fraction": 0.0,
+        "spatial_radius_m": 0.25,
+        "minimum_prior_arc_distance_m": 2.0,
+        "movement_sampling_m": 0.05
+      },
+      "max_decision_wall_sec": 0.111565345
+    }
+  ],
+  "scope": "scene qualification; final current FUEL build qualification recorded separately"
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>vikit_common</name>
+  <version>0.0.0</version>
+  <description>Common utilities for visual-inertial navigation</description>
+
+  <maintainer email="your@email.com">Your Name</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  
+  <depend>eigen</depend>
+  <depend>opencv</depend>
+  <depend>sophus</depend>
+  
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

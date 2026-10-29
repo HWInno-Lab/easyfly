@@ -1,18 +1,19 @@
+#include <chrono>
+#include <cmath>
+#include <cstdint>
+#include <limits>
+#include <utility>
+#include <vector>
 #include "bspline_opt/uniform_bspline.h"
 #include "plan_manage/bspline_runtime_validator.h"
 #include "plan_manage/swarm_bspline_validator.h"
-
 #include "traj_utils/msg/bspline.hpp"
 #include "traj_utils/msg/trajectory_ack.hpp"
 #include "easyfly_msgs/msg/navigation_session.hpp"
 #include "quadrotor_msgs/msg/position_command.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "rclcpp/logging.hpp"
-#include <cmath>
-#include <cstdint>
-#include <limits>
-#include <utility>
-#include <vector>
+#include "nav_msgs/msg/odometry.hpp"
 rclcpp::Publisher<quadrotor_msgs::msg::PositionCommand>::SharedPtr pos_cmd_pub;
 rclcpp::Publisher<traj_utils::msg::TrajectoryAck>::SharedPtr trajectory_ack_pub;
 
@@ -24,8 +25,8 @@ using ego_planner::UniformBspline;
 
 bool receive_traj_ = false;
 bool navigation_managed = false;
-std::string navigation_session_id;
-std::string trajectory_session_id;
+std::string navigation_session_id;  // NOLINT(runtime/string): process state.
+std::string trajectory_session_id;  // NOLINT(runtime/string): process state.
 vector<UniformBspline> traj_;
 double traj_duration_;
 rclcpp::Time start_time_;
@@ -34,29 +35,51 @@ uint32_t traj_id_;
 // yaw control
 double last_yaw_, last_yaw_dot_;
 double time_forward_;
+// EasyFly: front-camera VIO must not turn into an unobserved view on reversal.
+// Opt-in simulation policy; the default path-facing yaw is unchanged.
+bool hold_navigation_yaw = false;
+bool held_yaw_valid = false;
+double measured_yaw = 0.0;
+double held_yaw = 0.0;
+int64_t yaw_stamp_ns = 0;
+std::chrono::steady_clock::time_point yaw_received;
 std::shared_ptr<rclcpp::Clock> node_clock;
-std::string output_frame = "odom";
-std::string position_cmd_topic = "position_cmd";
-std::string trajectory_ack_topic = "trajectory_ack";
-std::string source_node_name = "traj_server";
+std::string output_frame = "odom";  // NOLINT(runtime/string): process state.
+std::string position_cmd_topic = "position_cmd";  // NOLINT(runtime/string): process state.
+std::string trajectory_ack_topic = "trajectory_ack";  // NOLINT(runtime/string): process state.
+std::string source_node_name = "traj_server";  // NOLINT(runtime/string): process state.
 std::uint64_t activation_sequence = 0;
+
+bool measuredYawFresh()
+{
+  if (!node_clock || yaw_stamp_ns <= 0) {return false;}
+  const double source_age = (node_clock->now().nanoseconds() - yaw_stamp_ns) * 1e-9;
+  const double receipt_age = std::chrono::duration<double>(
+    std::chrono::steady_clock::now() - yaw_received).count();
+  return source_age >= -0.2 && source_age <= 0.5 && receipt_age >= 0.0 && receipt_age <= 0.5;
+}
 
 void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
 {
   // Foreign/late session traffic must not invalidate the current session.
   if (msg && (msg->navigation_session_id.size() > 128 ||
-      (navigation_managed && (navigation_session_id.empty() ||
-       msg->navigation_session_id != navigation_session_id)))) return;
-  if (!msg)
-  {
-    if (node_clock)
-    {
-      RCLCPP_ERROR_THROTTLE(
-          rclcpp::get_logger("traj_server"), *node_clock, 2000,
-          "reject null B-spline message");
+    (navigation_managed && (navigation_session_id.empty() ||
+    msg->navigation_session_id != navigation_session_id)))) {return;}
+  if (hold_navigation_yaw) {
+    if (!measuredYawFresh()) {receive_traj_ = false; return;}
+    if (!held_yaw_valid) {
+      held_yaw = measured_yaw;
+      last_yaw_ = held_yaw;
+      last_yaw_dot_ = 0.0;
+      held_yaw_valid = true;
     }
-    else
-    {
+  }
+  if (!msg) {
+    if (node_clock) {
+      RCLCPP_ERROR_THROTTLE(
+        rclcpp::get_logger("traj_server"), *node_clock, 2000,
+        "reject null B-spline message");
+    } else {
       RCLCPP_ERROR(rclcpp::get_logger("traj_server"), "reject null B-spline message");
     }
     receive_traj_ = false;
@@ -68,27 +91,22 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
   // trajectory storage, or index the knot vector before this shared ingress
   // contract has bounded and checked every field.
   const auto validation = ego_planner::swarm_validation::validateCubicBspline(*msg);
-  if (!validation.valid())
-  {
-    if (node_clock)
-    {
+  if (!validation.valid()) {
+    if (node_clock) {
       RCLCPP_ERROR_THROTTLE(
-          rclcpp::get_logger("traj_server"), *node_clock, 2000,
-          "reject malformed B-spline: %s",
-          ego_planner::swarm_validation::validationErrorName(validation.error));
-    }
-    else
-    {
+        rclcpp::get_logger("traj_server"), *node_clock, 2000,
+        "reject malformed B-spline: %s",
+        ego_planner::swarm_validation::validationErrorName(validation.error));
+    } else {
       RCLCPP_ERROR(
-          rclcpp::get_logger("traj_server"), "reject malformed B-spline: %s",
-          ego_planner::swarm_validation::validationErrorName(validation.error));
+        rclcpp::get_logger("traj_server"), "reject malformed B-spline: %s",
+        ego_planner::swarm_validation::validationErrorName(validation.error));
     }
     receive_traj_ = false;
     return;
   }
 
-  if (!node_clock)
-  {
+  if (!node_clock) {
     RCLCPP_ERROR(rclcpp::get_logger("traj_server"), "reject B-spline before node clock is ready");
     receive_traj_ = false;
     return;
@@ -96,17 +114,15 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
 
   // parse pos traj; sizes are bounded by validateBspline above.
   Eigen::MatrixXd pos_pts(
-      3, static_cast<Eigen::Index>(msg->pos_pts.size()));
+    3, static_cast<Eigen::Index>(msg->pos_pts.size()));
 
   Eigen::VectorXd knots(
-      static_cast<Eigen::Index>(msg->knots.size()));
-  for (std::size_t i = 0; i < msg->knots.size(); ++i)
-  {
+    static_cast<Eigen::Index>(msg->knots.size()));
+  for (std::size_t i = 0; i < msg->knots.size(); ++i) {
     knots(i) = msg->knots[i];
   }
 
-  for (std::size_t i = 0; i < msg->pos_pts.size(); ++i)
-  {
+  for (std::size_t i = 0; i < msg->pos_pts.size(); ++i) {
     pos_pts(0, i) = msg->pos_pts[i].x;
     pos_pts(1, i) = msg->pos_pts[i].y;
     pos_pts(2, i) = msg->pos_pts[i].z;
@@ -117,16 +133,15 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
   UniformBspline candidate_velocity = candidate_position.getDerivative();
   UniformBspline candidate_acceleration = candidate_velocity.getDerivative();
   const auto runtime_validation =
-      ego_planner::swarm_validation::validateCubicRuntimeTrajectory(
-          candidate_position, candidate_velocity, candidate_acceleration,
-          msg->pos_pts.size(), msg->knots.size(), validation.duration);
-  if (!runtime_validation.valid())
-  {
+    ego_planner::swarm_validation::validateCubicRuntimeTrajectory(
+    candidate_position, candidate_velocity, candidate_acceleration,
+    msg->pos_pts.size(), msg->knots.size(), validation.duration);
+  if (!runtime_validation.valid()) {
     RCLCPP_ERROR_THROTTLE(
-        rclcpp::get_logger("traj_server"), *node_clock, 2000,
-        "reject runtime B-spline candidate: %s",
-        ego_planner::swarm_validation::runtimeValidationErrorName(
-            runtime_validation.error));
+      rclcpp::get_logger("traj_server"), *node_clock, 2000,
+      "reject runtime B-spline candidate: %s",
+      ego_planner::swarm_validation::runtimeValidationErrorName(
+        runtime_validation.error));
     receive_traj_ = false;
     return;
   }
@@ -138,12 +153,11 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
   //   yaw_pts(i, 0) = msg->yaw_pts[i];
   // }
 
-  //UniformBspline yaw_traj(yaw_pts, msg->order, msg->yaw_dt);
+  // UniformBspline yaw_traj(yaw_pts, msg->order, msg->yaw_dt);
 
   const rclcpp::Time candidate_start_time(
-      msg->start_time, node_clock->get_clock_type());
-  if (candidate_start_time.nanoseconds() == 0)
-  {
+    msg->start_time, node_clock->get_clock_type());
+  if (candidate_start_time.nanoseconds() == 0) {
     RCLCPP_ERROR(rclcpp::get_logger("traj_server"), "reject B-spline with zero start_time");
     receive_traj_ = false;
     return;
@@ -155,7 +169,8 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
   {
     // Wrapping to one would make an old ACK indistinguishable from a fresh
     // activation on the same publisher GID. Reject before activation.
-    RCLCPP_ERROR(rclcpp::get_logger("traj_server"),
+    RCLCPP_ERROR(
+      rclcpp::get_logger("traj_server"),
       "trajectory ACK activation_sequence exhausted; reject candidate");
     receive_traj_ = false;
     return;
@@ -200,8 +215,13 @@ void bsplineCallback(const std::shared_ptr<traj_utils::msg::Bspline> msg)
   }
 }
 
-std::pair<double, double> calculate_yaw(double t_cur, Eigen::Vector3d &pos, rclcpp::Time &time_now, rclcpp::Time &time_last)
+std::pair<double, double> calculate_yaw(
+  double t_cur, Eigen::Vector3d & pos,
+  rclcpp::Time & time_now, rclcpp::Time & time_last)
 {
+  if (hold_navigation_yaw) {
+    return {held_yaw, 0.0};
+  }
   constexpr double PI = 3.1415926;
   constexpr double YAW_DOT_MAX_PER_SEC = PI;
   // constexpr double YAW_DOT_DOT_MAX_PER_SEC = PI;
@@ -209,84 +229,76 @@ std::pair<double, double> calculate_yaw(double t_cur, Eigen::Vector3d &pos, rclc
   double yaw = 0;
   double yawdot = 0;
   const double dt = (time_now - time_last).seconds();
-  if (dt <= 1e-6)
-  {
+  if (dt <= 1e-6) {
     return {last_yaw_, 0.0};
   }
 
-  Eigen::Vector3d dir = t_cur + time_forward_ <= traj_duration_ ? traj_[0].evaluateDeBoorT(t_cur + time_forward_) - pos : traj_[0].evaluateDeBoorT(traj_duration_) - pos;
+  Eigen::Vector3d dir = t_cur + time_forward_ <= traj_duration_ ? traj_[0].evaluateDeBoorT(
+    t_cur + time_forward_) - pos : traj_[0].evaluateDeBoorT(traj_duration_) - pos;
   double yaw_temp = dir.norm() > 0.1 ? atan2(dir(1), dir(0)) : last_yaw_;
   double max_yaw_change = YAW_DOT_MAX_PER_SEC * dt;
-  if (yaw_temp - last_yaw_ > PI)
-  {
-    if (yaw_temp - last_yaw_ - 2 * PI < -max_yaw_change)
-    {
+  if (yaw_temp - last_yaw_ > PI) {
+    if (yaw_temp - last_yaw_ - 2 * PI < -max_yaw_change) {
       yaw = last_yaw_ - max_yaw_change;
-      if (yaw < -PI)
+      if (yaw < -PI) {
         yaw += 2 * PI;
+      }
 
       yawdot = -YAW_DOT_MAX_PER_SEC;
-    }
-    else
-    {
+    } else {
       yaw = yaw_temp;
-      if (yaw - last_yaw_ > PI)
+      if (yaw - last_yaw_ > PI) {
         yawdot = -YAW_DOT_MAX_PER_SEC;
-      else
+      } else {
         yawdot = (yaw_temp - last_yaw_) / dt;
+      }
     }
-  }
-  else if (yaw_temp - last_yaw_ < -PI)
-  {
-    if (yaw_temp - last_yaw_ + 2 * PI > max_yaw_change)
-    {
+  } else if (yaw_temp - last_yaw_ < -PI) {
+    if (yaw_temp - last_yaw_ + 2 * PI > max_yaw_change) {
       yaw = last_yaw_ + max_yaw_change;
-      if (yaw > PI)
+      if (yaw > PI) {
         yaw -= 2 * PI;
+      }
 
       yawdot = YAW_DOT_MAX_PER_SEC;
-    }
-    else
-    {
+    } else {
       yaw = yaw_temp;
-      if (yaw - last_yaw_ < -PI)
+      if (yaw - last_yaw_ < -PI) {
         yawdot = YAW_DOT_MAX_PER_SEC;
-      else
+      } else {
         yawdot = (yaw_temp - last_yaw_) / dt;
+      }
     }
-  }
-  else
-  {
-    if (yaw_temp - last_yaw_ < -max_yaw_change)
-    {
+  } else {
+    if (yaw_temp - last_yaw_ < -max_yaw_change) {
       yaw = last_yaw_ - max_yaw_change;
-      if (yaw < -PI)
+      if (yaw < -PI) {
         yaw += 2 * PI;
+      }
 
       yawdot = -YAW_DOT_MAX_PER_SEC;
-    }
-    else if (yaw_temp - last_yaw_ > max_yaw_change)
-    {
+    } else if (yaw_temp - last_yaw_ > max_yaw_change) {
       yaw = last_yaw_ + max_yaw_change;
-      if (yaw > PI)
+      if (yaw > PI) {
         yaw -= 2 * PI;
+      }
 
       yawdot = YAW_DOT_MAX_PER_SEC;
-    }
-    else
-    {
+    } else {
       yaw = yaw_temp;
-      if (yaw - last_yaw_ > PI)
+      if (yaw - last_yaw_ > PI) {
         yawdot = -YAW_DOT_MAX_PER_SEC;
-      else if (yaw - last_yaw_ < -PI)
+      } else if (yaw - last_yaw_ < -PI) {
         yawdot = YAW_DOT_MAX_PER_SEC;
-      else
+      } else {
         yawdot = (yaw_temp - last_yaw_) / dt;
+      }
     }
   }
 
-  if (fabs(yaw - last_yaw_) <= max_yaw_change)
-    yaw = 0.5 * last_yaw_ + 0.5 * yaw; // nieve LPF
+  if (fabs(yaw - last_yaw_) <= max_yaw_change) {
+    yaw = 0.5 * last_yaw_ + 0.5 * yaw;  // nieve LPF
+  }
   yawdot = 0.5 * last_yaw_dot_ + 0.5 * yawdot;
   last_yaw_ = yaw;
   last_yaw_dot_ = yawdot;
@@ -308,32 +320,37 @@ void cmdCallback()
     time_last = time_now;
     return;
   }
-  double TEM_A=time_now.seconds();
-  double TEM_B=start_time_.seconds();
+  if (hold_navigation_yaw && (!held_yaw_valid || !measuredYawFresh())) {
+    receive_traj_ = false;
+    time_last = time_now;
+    return;
+  }
+  double TEM_A = time_now.seconds();
+  double TEM_B = start_time_.seconds();
   double t_cur = TEM_A - TEM_B;
 
-  Eigen::Vector3d pos(Eigen::Vector3d::Zero()), vel(Eigen::Vector3d::Zero()), acc(Eigen::Vector3d::Zero()), pos_f;
+  Eigen::Vector3d pos(Eigen::Vector3d::Zero()), vel(Eigen::Vector3d::Zero()), acc(
+    Eigen::Vector3d::Zero()), pos_f;
   std::pair<double, double> yaw_yawdot(0, 0);
 
   const double clock_step = (time_now - time_last).seconds();
-  if (clock_step < -0.001)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger("traj_server"),
-                 "ROS time moved backwards; discard current trajectory");
+  if (clock_step < -0.001) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("traj_server"),
+      "ROS time moved backwards; discard current trajectory");
     receive_traj_ = false;
     time_last = time_now;
     return;
   }
-  if (clock_step > 0.5)
-  {
-    RCLCPP_ERROR(rclcpp::get_logger("traj_server"),
-                 "ROS time jumped forward by %.3fs; discard current trajectory", clock_step);
+  if (clock_step > 0.5) {
+    RCLCPP_ERROR(
+      rclcpp::get_logger("traj_server"),
+      "ROS time jumped forward by %.3fs; discard current trajectory", clock_step);
     receive_traj_ = false;
     time_last = time_now;
     return;
   }
-  if (t_cur < traj_duration_ && t_cur >= 0.0)
-  {
+  if (t_cur < traj_duration_ && t_cur >= 0.0) {
     pos = traj_[0].evaluateDeBoorT(t_cur);
     vel = traj_[1].evaluateDeBoorT(t_cur);
     acc = traj_[2].evaluateDeBoorT(t_cur);
@@ -344,9 +361,7 @@ void cmdCallback()
 
     double tf = min(traj_duration_, t_cur + 2.0);
     pos_f = traj_[0].evaluateDeBoorT(tf);
-  }
-  else if (t_cur >= traj_duration_)
-  {
+  } else if (t_cur >= traj_duration_) {
     /* hover when finish traj_ */
     pos = traj_[0].evaluateDeBoorT(traj_duration_);
     vel.setZero();
@@ -356,27 +371,27 @@ void cmdCallback()
     yaw_yawdot.second = 0;
 
     pos_f = pos;
-  }
-  else
-  {
+  } else {
     // 轨迹开始时间允许极小的调度提前；明显负值时不发布默认零点。
-    if (t_cur >= -0.02)
-    {
+    if (t_cur >= -0.02) {
       pos = traj_[0].evaluateDeBoorT(0.0);
       vel = traj_[1].evaluateDeBoorT(0.0);
       acc = traj_[2].evaluateDeBoorT(0.0);
       pos_f = pos;
-    }
-    else
-    {
-      RCLCPP_WARN_THROTTLE(rclcpp::get_logger("traj_server"), *node_clock, 1000,
-                           "trajectory starts in the future (dt=%.3fs); hold publication", t_cur);
+    } else {
+      RCLCPP_WARN_THROTTLE(
+        rclcpp::get_logger("traj_server"), *node_clock, 1000,
+        "trajectory starts in the future (dt=%.3fs); hold publication", t_cur);
       time_last = time_now;
       return;
     }
   }
   time_last = time_now;
 
+  // Also cover the permitted <=20ms future-start sample and finished hover.
+  if (hold_navigation_yaw) {
+    yaw_yawdot = {held_yaw, 0.0};
+  }
   cmd.header.stamp = time_now;
   cmd.header.frame_id = output_frame;
   cmd.trajectory_flag = quadrotor_msgs::msg::PositionCommand::TRAJECTORY_STATUS_READY;
@@ -403,26 +418,63 @@ void cmdCallback()
   pos_cmd_pub->publish(cmd);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
-
   rclcpp::init(argc, argv);
-  auto nh = std::make_shared<rclcpp::Node>("traj_server");//这个只是说节点的名字叫这个
+  auto nh = std::make_shared<rclcpp::Node>("traj_server");  // 这个只是说节点的名字叫这个
   node_clock = nh->get_clock();
   navigation_managed = nh->declare_parameter<bool>("navigation_managed", false);
+  rcl_interfaces::msg::ParameterDescriptor yaw_descriptor;
+  yaw_descriptor.read_only = true;
+  hold_navigation_yaw = nh->declare_parameter<bool>(
+    "hold_navigation_yaw", false, yaw_descriptor);
+  if (hold_navigation_yaw && (!navigation_managed ||
+    !nh->get_parameter("use_sim_time").as_bool()))
+  {
+    throw std::invalid_argument("held navigation yaw requires managed simulation");
+  }
+  rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr yaw_sub;
+  if (hold_navigation_yaw) {
+    yaw_sub = nh->create_subscription<nav_msgs::msg::Odometry>(
+      "/odom", rclcpp::QoS(10), [](nav_msgs::msg::Odometry::ConstSharedPtr msg) {
+        const auto & q = msg->pose.pose.orientation;
+        const auto & p = msg->pose.pose.position;
+        const double norm = q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w;
+        if (msg->header.frame_id != output_frame || msg->child_frame_id != "base_link" ||
+        msg->header.stamp.sec < 0 || msg->header.stamp.nanosec >= 1000000000u ||
+        !std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z) ||
+        !std::isfinite(norm) || std::abs(norm - 1.0) > 1e-3)
+        {
+          yaw_stamp_ns = 0;
+          return;
+        }
+        const int64_t stamp = static_cast<int64_t>(msg->header.stamp.sec) * 1000000000LL +
+        msg->header.stamp.nanosec;
+        if (stamp <= yaw_stamp_ns) {
+          return;  // Repeats never renew receipt lifetime.
+        }
+        measured_yaw = std::atan2(2 * (q.w * q.z + q.x * q.y), 1 - 2 * (q.y * q.y + q.z * q.z));
+        yaw_stamp_ns = stamp;
+        yaw_received = std::chrono::steady_clock::now();
+      });
+  }
   auto session_sub = nh->create_subscription<easyfly_msgs::msg::NavigationSession>(
     "/planning/navigation_session_state", rclcpp::QoS(1).reliable().transient_local(),
     [](const easyfly_msgs::msg::NavigationSession::SharedPtr state) {
-      if (!navigation_managed || state->session_id.empty() || state->session_id.size() > 128) return;
+      if (!navigation_managed || state->session_id.empty() || state->session_id.size() > 128) {
+        return;
+      }
       if (state->active) {
         // EGO is the sole trusted lifecycle writer. Depth-one QoS may coalesce
         // STOP/START: a newer START must supersede the old session regardless.
+        if (navigation_session_id != state->session_id) {held_yaw_valid = false;}
         navigation_session_id = state->session_id;
-        if (trajectory_session_id != navigation_session_id) receive_traj_ = false;
+        if (trajectory_session_id != navigation_session_id) {receive_traj_ = false;}
       } else if (navigation_session_id == state->session_id) {
         receive_traj_ = false;
         navigation_session_id.clear();
         trajectory_session_id.clear();
+        held_yaw_valid = false;
       }
     });
 
@@ -443,7 +495,9 @@ int main(int argc, char **argv)
   }
 
   // ros::Subscriber bspline_sub = nh.subscribe("planning/bspline", 10, bsplineCallback);
-  auto bspline_sub = nh->create_subscription<traj_utils::msg::Bspline>("planning/bspline",10,bsplineCallback);
+  auto bspline_sub = nh->create_subscription<traj_utils::msg::Bspline>(
+    "planning/bspline", 10,
+    bsplineCallback);
 
   pos_cmd_pub = nh->create_publisher<quadrotor_msgs::msg::PositionCommand>(
     position_cmd_topic, 50);
@@ -451,9 +505,10 @@ int main(int argc, char **argv)
     trajectory_ack_topic, rclcpp::QoS(1).reliable().transient_local());
 
   // ros::Timer cmd_timer = nh.createTimer(ros::Duration(0.01), cmdCallback);
-  //TAG 这里是声明在类外的定时器，类内的如tare那个工程。    这里写代码过程中create_wall_timer下面画波浪线有可能是回调函数形参的问题，不一定是格式错误，做为写代码技巧记下了。
+  // TAG 这里是声明在类外的定时器，类内的如tare那个工程。
+  // 这里写代码过程中create_wall_timer下面画波浪线有可能是回调函数形参的问题，不一定是格式错误，做为写代码技巧记下了。
   auto cmd_timer = nh->create_wall_timer(std::chrono::milliseconds(10), cmdCallback);
-  
+
   /* control parameter - load from parameters with sensible defaults */
   nh->declare_parameter<double>("traj_server/pos_gain_x", 5.0);
   nh->declare_parameter<double>("traj_server/pos_gain_y", 5.0);
@@ -476,8 +531,8 @@ int main(int argc, char **argv)
   cmd.kv[1] = vel_gain[1];
   cmd.kv[2] = vel_gain[2];
 
-  nh->declare_parameter<double>("traj_server/time_forward",1.0);
-  nh->get_parameter("traj_server/time_forward",time_forward_);
+  nh->declare_parameter<double>("traj_server/time_forward", 1.0);
+  nh->get_parameter("traj_server/time_forward", time_forward_);
   nh->declare_parameter<std::string>("traj_server/output_frame", "odom");
   nh->get_parameter("traj_server/output_frame", output_frame);
   last_yaw_ = 0.0;
@@ -502,7 +557,7 @@ int main(int argc, char **argv)
   pos_cmd_pub.reset();
   node_clock.reset();
   nh.reset();
-  if (rclcpp::ok()) rclcpp::shutdown();
+  if (rclcpp::ok()) {rclcpp::shutdown();}
 
   return 0;
 }

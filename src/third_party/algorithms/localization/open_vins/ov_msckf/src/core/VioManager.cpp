@@ -49,6 +49,16 @@ using namespace ov_msckf;
 
 VioManager::~VioManager() { wait_for_initialization(); }
 
+std::vector<size_t> VioManager::current_track_ids(const std::vector<int> & camera_ids) {
+  const auto active = trackFEATS->get_last_ids();
+  std::vector<size_t> ids;
+  for (int camera : camera_ids) {
+    auto found = active.find(camera);
+    if (found != active.end()) ids.insert(ids.end(), found->second.begin(), found->second.end());
+  }
+  return ids;
+}
+
 void VioManager::wait_for_initialization() {
   if (initialization_thread.joinable())
     initialization_thread.join();
@@ -232,6 +242,9 @@ void VioManager::feed_measurement_simulation(double timestamp, const std::vector
     }
     if (did_zupt_update) {
       assert(state->_timestamp == timestamp);
+      // ZUPT is a completed filter update too. Keep the publication readiness
+      // bookkeeping current even before a nonzero-motion visual update.
+      timelastupdate = timestamp;
       propagator->clean_old_imu_measurements(timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
       updaterZUPT->clean_old_imu_measurements(timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
       propagator->invalidate_cache();
@@ -305,6 +318,9 @@ void VioManager::track_image_and_update(const ov_core::CameraData &message_const
     }
     if (did_zupt_update) {
       assert(state->_timestamp == message.timestamp);
+      // Otherwise initialized() stays false forever while every stationary
+      // update succeeds, suppressing real state/covariance publications.
+      timelastupdate = message.timestamp;
       propagator->clean_old_imu_measurements(message.timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
       updaterZUPT->clean_old_imu_measurements(message.timestamp + state->_calib_dt_CAMtoIMU->value()(0) - 0.10);
       propagator->invalidate_cache();

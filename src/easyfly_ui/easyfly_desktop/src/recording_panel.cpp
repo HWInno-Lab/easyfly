@@ -10,8 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#include "easyfly_desktop/recording_panel.hpp"
+#include <QFileInfo>
 #include <QFileDialog>
 #include <QDateTime>
 #include <QHBoxLayout>
@@ -28,6 +27,8 @@
 #include <QProcess>
 #include <QVBoxLayout>
 #include <utility>
+#include <ament_index_cpp/get_package_prefix.hpp>
+#include "easyfly_desktop/recording_panel.hpp"
 namespace easyfly_desktop
 {
 struct RecordingPanel::Impl
@@ -106,7 +107,28 @@ struct RecordingPanel::Impl
     for (int col = 0; col < 7; ++col) {index->setColumnWidth(col, widths[col]);}
     index->horizontalHeader()->setStretchLastSection(true); layout->addWidget(index, 1);
     auto * replay_row = new QHBoxLayout;
-    replay_row->addWidget(replay); replay_row->addStretch(); layout->addLayout(replay_row);
+    replay_row->addWidget(replay);
+    auto * history = new QPushButton(QStringLiteral("原始记录与历史轨迹"), p);
+    history->setObjectName("nativeHistoryOpen");
+    QString history_program;
+    try {
+      history_program = QString::fromStdString(
+        ament_index_cpp::get_package_prefix("easyfly_video_recorder")) +
+        "/lib/easyfly_video_recorder/easyfly_history";
+    } catch (const std::exception &) {
+      history_program.clear();
+    }
+    history->setEnabled(QFileInfo(history_program).isExecutable());
+    history->setToolTip(QStringLiteral("独立记录原始图像与轨迹，并在隔离环境回放 rosbag"));
+    QObject::connect(
+      history, &QPushButton::clicked, p, [this, history_program] {
+        if (!QProcess::startDetached(history_program, {})) {
+          replay_error = QStringLiteral("无法启动独立历史窗口");
+          render();
+        }
+      });
+    replay_row->addWidget(history);
+    replay_row->addStretch(); layout->addLayout(replay_row);
     layout->addWidget(
       new QLabel(
         QStringLiteral(

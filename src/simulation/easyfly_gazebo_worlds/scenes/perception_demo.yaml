@@ -33,9 +33,9 @@ spawn:
   position:
   - 0.0
   - 0.0
-  - 0.83
+  - 0.1
   yaw: 0.0
-  basis: 基础/感知入口当前 -x 0 -y 0 -z 0.83，未传 yaw；仅为源码默认，未做本轮运行确认。
+  basis: 内置平地旧入口默认 -x 0 -y 0 -z 0.1，避免估计器初始化时从 0.83 m 自由落体；2026-10-24 旧入口 EGO 导航回归通过，场景仍为草稿。
 navigation:
   frame: odom
   world_to_navigation: null

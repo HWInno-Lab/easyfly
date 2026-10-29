@@ -95,7 +95,7 @@ struct ManagerWindow::Impl
   QSpinBox * gazebo_port, * bind_port, * remote_port, * target_system,
     * gcs_port, * gcs_bind_port;
   QCheckBox * gazebo_gui, * gcs_enabled, * mission_control, * mission_import,
-    * parameter_edit;
+    * parameter_edit, * peripheral_control;
   QCheckBox * recording, * rviz_embed;
   QLabel * scene_note, * urls_label;
   QFormLayout * fcu_form;
@@ -476,6 +476,9 @@ struct ManagerWindow::Impl
     parameter_edit = feature(
       QStringLiteral(
         "启用平台元数据编辑"), "connectionParameterEdit");
+    peripheral_control = feature(
+      QStringLiteral("启用 ROI／模拟云台操作（与任务执行独立）"),
+      "connectionPeripheralControl");
     recording = feature(
       QStringLiteral(
         "显示录像页（需媒体构建，目录在"
@@ -622,6 +625,16 @@ struct ManagerWindow::Impl
     auto * logs = button(QStringLiteral("运行日志"), "openConnectionLogs", recovery_tools);
     auto * recover = button(
       QStringLiteral("重新连接 / 恢复会话"), "recoverConnection", recovery_tools);
+    auto * remote_algorithms = button(
+      QStringLiteral("远端算法管理"), "remoteAlgorithms", recovery_tools);
+    QObject::connect(
+      remote_algorithms, &QPushButton::clicked, owner, [this] {
+        const auto program = QFileInfo(supervisor_program()).absoluteDir().filePath(
+          "easyfly_remote_algorithms");
+        if (!QFileInfo(program).isExecutable() || !QProcess::startDetached(program, {})) {
+          notice(QStringLiteral("远端算法管理入口不可用，请检查当前安装。"));
+        }
+      });
     recovery_tools->addStretch();
     recover->setToolTip(
       QStringLiteral(
@@ -827,7 +840,7 @@ struct ManagerWindow::Impl
           &QSpinBox::valueChanged), owner, changed);
     }
     for (auto * item :
-      {gazebo_gui, gcs_enabled, mission_control, mission_import, parameter_edit,
+      {gazebo_gui, gcs_enabled, mission_control, mission_import, parameter_edit, peripheral_control,
         recording,
         rviz_embed})
     {
@@ -847,14 +860,16 @@ struct ManagerWindow::Impl
           simulation->setChecked(false);
         }
         if (mode->currentData() == "observe") {gcs_enabled->setChecked(false);}
-        if (mode->currentData() != "sitl") {mission_control->setChecked(false);}
+        if (mode->currentData() != "sitl") {
+          mission_control->setChecked(false); peripheral_control->setChecked(false);
+        }
         update();
       });
     QObject::connect(
       gcs_enabled, &QCheckBox::toggled, owner, [this](bool checked) {
         if (checked && !loading) {
           mission_control->setChecked(false); mission_import->setChecked(
-            false); parameter_edit->setChecked(false);
+            false); parameter_edit->setChecked(false); peripheral_control->setChecked(false);
         }
         update();
       });
@@ -946,7 +961,7 @@ struct ManagerWindow::Impl
         const auto selected = form_profile();
         if ((selected.gcs_enabled || selected.mission_control ||
         selected.mission_import ||
-        selected.parameter_edit) &&
+        selected.parameter_edit || selected.peripheral_control) &&
         QMessageBox::question(
           owner, QStringLiteral("启动所选功能"), QStringLiteral(
             "将按保存配置启动仿真/通信及所"
@@ -1108,10 +1123,19 @@ struct ManagerWindow::Impl
     p.mission_control = mission_control->isChecked();
     p.mission_import = mission_import->isChecked();
     p.parameter_edit = parameter_edit->isChecked();
+    p.peripheral_control = peripheral_control->isChecked();
     p.recording = recording->isChecked();
     p.rviz_embed = rviz_embed->isChecked();
     if (p.mode == "sitl") {
+      const auto slam = qobject_cast<QComboBox *>(algorithm_controls["slam"])->currentData();
+      const bool fixed_calibration = slam == "openvins" || slam == "fast_livo2" ||
+        slam == "orbslam3";
+      const auto defaults = algorithm_defaults();
       for (auto it = algorithm_controls.cbegin(); it != algorithm_controls.cend(); ++it) {
+        if (fixed_calibration && it.key().startsWith("slam_")) {
+          p.algorithms[it.key()] = defaults[it.key()];
+          continue;
+        }
         if (auto * value = qobject_cast<QCheckBox *>(it.value())) {
           p.algorithms[it.key()] = value->isChecked();
         } else if (auto * value = qobject_cast<QComboBox *>(it.value())) {
@@ -1180,6 +1204,7 @@ struct ManagerWindow::Impl
     gcs_bind_port->setValue(p.gcs_bind_port); qgc_path->setText(p.qgc_path);
     mission_control->setChecked(p.mission_control); mission_import->setChecked(
       p.mission_import);
+    peripheral_control->setChecked(p.peripheral_control);
     parameter_edit->setChecked(p.parameter_edit); recording->setChecked(
       p.recording);
     rviz_embed->setChecked(p.rviz_embed);
@@ -1302,7 +1327,7 @@ struct ManagerWindow::Impl
         remote_port,
         device, baud, target_system, gcs_enabled, gcs_host, gcs_port,
         gcs_bind_port, qgc_path,
-        mission_control, mission_import, parameter_edit, recording, rviz_embed})
+        mission_control, mission_import, parameter_edit, peripheral_control, recording, rviz_embed})
     {
       widget->setEnabled(edit);
     }
@@ -1340,7 +1365,8 @@ struct ManagerWindow::Impl
     }
     for (auto * control : algorithm_controls) {control->setEnabled(edit && sim);}
     const auto slam_choice = qobject_cast<QComboBox *>(algorithm_controls["slam"])->currentData();
-    const bool fastlio_parameters = slam_choice != "openvins" && slam_choice != "disabled";
+    const bool fastlio_parameters = slam_choice == "fast_lio" ||
+      (slam_choice == "profile" && profile->currentData() != "base_sim");
     for (auto it = algorithm_controls.begin(); it != algorithm_controls.end(); ++it) {
       if (it.key().startsWith("slam_")) {it.value()->setEnabled(edit && sim && fastlio_parameters);}
     }
@@ -1348,7 +1374,16 @@ struct ManagerWindow::Impl
       !sim ? QStringLiteral("外部平台通过 DDS 观测，算法由平台管理。") :
       slam_choice == "openvins" ? QStringLiteral(
         "OpenVINS 使用 Gazebo 前视彩色图像和 Livox IMU，发布独立局部位姿与状态。"
-        "当前仅观测：导航任务被禁用，尚未完成 odom 坐标对齐和地图接入；D435i 实机仍需标定。") :
+        "导航仿真方案启用受管任务；其他方案仅观测。D435i 实机仍需标定。"
+        "使用固定标定，FAST-LIO 自定义参数不随本配置保存。") :
+      slam_choice == "fast_livo2" ? QStringLiteral(
+        "FAST-LIVO2 使用 Gazebo 彩色图像、MID-360 雷达和 IMU。"
+        "导航仿真方案启用受管任务；其他方案仅观测。"
+        "使用固定标定，FAST-LIO 自定义参数不随本配置保存。") :
+      slam_choice == "orbslam3" ? QStringLiteral(
+        "ORB-SLAM3 使用 Gazebo RGB-D 图像；每次新会话创建独立运行目录。"
+        "导航仿真方案启用受管任务；其他方案仅观测。"
+        "使用固定标定，FAST-LIO 自定义参数不随本配置保存。") :
       slam_choice == "disabled" ? QStringLiteral(
         "此配置不启动 SLAM，建图与导航所需的点云/定位可能不可用。") :
       profile->currentData() == "base_sim" ? QStringLiteral(
@@ -1356,6 +1391,14 @@ struct ManagerWindow::Impl
       QStringLiteral(
         "此配置随仿真启动 FAST-LIO（MID-360），输出 "
         "/Odometry 和 /cloud_registered。"));
+    if (sim && qobject_cast<QComboBox *>(algorithm_controls["exploration"])->currentData() ==
+      "fuel")
+    {
+      slam_summary->setText(
+        slam_summary->text() + QStringLiteral(
+          "\nFUEL 需要导航开发运行方案、FAST-LIO 和 GCOPTER；"
+          "每次新会话保存独立探索记录，启动后等待显式探索任务。"));
+    }
     choose_px4->setEnabled(edit && sim);
     choose_qgc->setEnabled(edit);
     qgc_path->setEnabled(edit);
@@ -1367,6 +1410,7 @@ struct ManagerWindow::Impl
       widget->setEnabled(edit && gcs_enabled->isChecked());
     }
     mission_control->setEnabled(edit && sim && !gcs_enabled->isChecked());
+    peripheral_control->setEnabled(edit && sim && !gcs_enabled->isChecked());
     mission_import->setEnabled(edit && !gcs_enabled->isChecked());
     parameter_edit->setEnabled(
       mission_import->isEnabled());

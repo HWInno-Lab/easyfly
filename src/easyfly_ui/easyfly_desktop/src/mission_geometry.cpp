@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QMouseEvent>
 #include <QPainter>
 #include <QWheelEvent>
@@ -49,6 +48,24 @@ DraftGeometry draft_geometry(const easyfly_mission_fsm::MissionValidation & plan
       result.areas.push_back(
         {i, s.center_x - s.area_width / 2, s.center_y - s.area_height / 2,
           s.area_width, s.area_height, s.altitude}); previous.reset();
+    } else if (s.type == "explore") {
+      if (s.forbidden_boxes.size() > 16) {result.error = "禁飞盒过多"; return result;}
+      const auto add_box = [&](const std::array<double, 3> & low,
+          const std::array<double, 3> & high, bool forbidden) {
+          for (size_t axis = 0; axis < 3; ++axis) {
+            if (!bounded(low[axis]) || !bounded(high[axis]) || low[axis] >= high[axis]) {
+              return false;
+            }
+          }
+          result.areas.push_back(
+            {i, low[0], low[1], high[0] - low[0], high[1] - low[1],
+              low[2], "explore", high[2], forbidden}); return true;
+        };
+      if (!add_box(s.min_bound, s.max_bound, false)) {result.error = "探索范围无效"; return result;}
+      for (const auto & box : s.forbidden_boxes) {
+        if (!add_box(box.min, box.max, true)) {result.error = "禁飞盒无效"; return result;}
+      }
+      previous.reset();
     } else if (unlocated) {
       result.unlocated.push_back(i);
       if (s.type != "hover") {previous.reset();}
@@ -168,12 +185,17 @@ void MissionGeometryCanvas::paintEvent(QPaintEvent * event)
     const bool selected = static_cast<int>(a.step) == selected_;
     const QRectF area(world_to_screen(a.x, a.y + a.height), world_to_screen(a.x + a.width, a.y));
     painter.setPen(QPen(QColor(selected ? "#d97706" : "#0d9488"), selected ? 3 : 1.5));
-    painter.setBrush(QColor(13, 148, 136, 28)); painter.drawRect(area);
+    if (a.forbidden) {painter.setPen(QPen(QColor("#b91c1c"), 2, Qt::DashLine));}
+    painter.setBrush(a.forbidden ? QColor(185, 28, 28, 28) : QColor(13, 148, 136, 28));
+    painter.drawRect(area);
     if (data_.areas.size() <= 24 || selected) {
       if (area.width() >= 68 && area.height() >= 36) {
         painter.drawText(
           area.adjusted(3, 3, -3, -3), Qt::AlignCenter,
-          QString("#%1 search\nz=%2m").arg(a.step + 1).arg(a.z, 0, 'g', 6));
+          a.type == "search" ? QString("#%1 search\nz=%2m").arg(a.step + 1).arg(a.z, 0, 'g', 6) :
+          QString("#%1 %2\nz=%3～%4m").arg(a.step + 1)
+          .arg(a.forbidden ? QStringLiteral("禁飞盒") : QStringLiteral("探索范围"))
+          .arg(a.z, 0, 'g', 6).arg(a.max_z, 0, 'g', 6));
       } else {label(area.center(), QString("#%1 z=%2m").arg(a.step + 1).arg(a.z, 0, 'g', 6));}
     }
   }

@@ -24,7 +24,7 @@ from .reference import ReferencePairer
 def values(message, now, with_covariance=False):
     if message.header.stamp.sec < 0 or message.header.stamp.nanosec >= 10**9:
         raise ValueError('malformed source timestamp')
-    pose = message.pose.pose if with_covariance else message.pose
+    pose = message.pose.pose if isinstance(message, PoseWithCovarianceStamped) else message.pose
     p, q = pose.position, pose.orientation
     return Pose(stamp_ns(message), [p.x, p.y, p.z], [q.x, q.y, q.z, q.w], now,
                 list(message.pose.covariance) if with_covariance else None)
@@ -41,6 +41,7 @@ class OpenVinsAlignment(Node):
         super().__init__('openvins_alignment')
         fixed = ParameterDescriptor(read_only=True)
         defaults = dict(
+            source_backend='openvins', require_source_covariance=True,
             source_pose_topic='/localization/openvins/pose',
             source_status_topic='/localization/openvins/status',
             reference_pose_topic='/mavros/local_position/pose',
@@ -54,9 +55,14 @@ class OpenVinsAlignment(Node):
         defaults.update({k: f.default for k, f in AlignmentLimits.__dataclass_fields__.items()})
         self.p = {name: self.declare_parameter(name, default, fixed).value
                   for name, default in defaults.items()}
+        if self.p['source_backend'] not in ('openvins', 'fast_livo2', 'orbslam3'):
+            raise ValueError('unsupported alignment source backend')
+        if self.p['source_backend'] != 'orbslam3' and not self.p['require_source_covariance']:
+            raise ValueError('covariance policy must match the selected backend')
         topics = [value for name, value in self.p.items() if name.endswith('_topic')]
         outputs = {'/localization/openvins/base_pose', '/localization/openvins/aligned_pose',
                    '/localization/openvins/alignment_status'}
+        outputs = {self.resolve_topic_name(topic) for topic in outputs}
         if len(set(topics)) != len(topics) or outputs.intersection(topics) or any(
                 len(topic) > 256 or not re.fullmatch(
                     r'/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*', topic)
@@ -80,7 +86,8 @@ class OpenVinsAlignment(Node):
             raise ValueError('invalid alignment extrinsic')
         self.engine = Alignment(self.p['body_to_base_translation'],
                                 self.p['body_to_base_orientation'], AlignmentLimits(**{
-                                    k: self.p[k] for k in AlignmentLimits.__dataclass_fields__}))
+                                    k: self.p[k] for k in AlignmentLimits.__dataclass_fields__}),
+                                require_covariance=self.p['require_source_covariance'])
         self.pairer = ReferencePairer(self.engine)
         self.add_on_set_parameters_callback(lambda params: SetParametersResult(
             successful=False, reason='restart the whole localization session'))
@@ -123,20 +130,23 @@ class OpenVinsAlignment(Node):
         try:
             if msg.header.frame_id != self.p['source_frame']:
                 raise ValueError('source pose frame mismatch')
-            self.engine.pose(values(msg, time.monotonic(), True))
+            self.engine.pose(values(msg, time.monotonic(),
+                                    self.p['require_source_covariance']))
         except ValueError:
             self.engine.fail('invalid_source_pose_for_alignment', reset=False)
         self.publish_outputs()
 
     def on_status(self, msg):
         self.update_clock()
-        if msg.backend_id != 'openvins' or msg.header.frame_id != self.p['source_frame'] or \
+        if msg.backend_id != self.p['source_backend'] or msg.header.frame_id != self.p['source_frame'] or \
                 msg.tracked_frame != self.p['source_body'] or \
                 msg.pose_valid != (msg.state == Gate.ESTIMATING) or \
                 len(msg.reason) > 2048 or len(msg.last_rejection) > 2048 or \
                 msg.header.stamp.sec < 0 or msg.header.stamp.nanosec >= 10**9 or \
                 msg.pose_stamp.sec < 0 or msg.pose_stamp.nanosec >= 10**9 or \
-                (msg.pose_valid and (not msg.covariance_available or msg.velocity_valid)):
+                (msg.pose_valid and (
+                    msg.covariance_available != self.p['require_source_covariance'] or
+                    msg.velocity_valid)):
             self.engine.fail('invalid_localization_status_for_alignment', reset=False)
         else:
             self.engine.confirm(msg.session_id, msg.generation, msg.state,
@@ -146,7 +156,7 @@ class OpenVinsAlignment(Node):
 
     def on_reference(self, msg):
         self.update_clock()
-        if not self.clock_policy_ready(time.monotonic()):
+        if not self.clock_ever_verified:
             return  # Simulation NONE mode stamps ROS receipt time, not FCU measurements.
         try:
             if msg.header.frame_id != self.p['reference_pose_frame']:
@@ -167,7 +177,7 @@ class OpenVinsAlignment(Node):
 
     def on_attitude(self, msg):
         self.update_clock()
-        if not self.clock_policy_ready(time.monotonic()):
+        if not self.clock_ever_verified:
             return
         try:
             if msg.header.frame_id != self.p['reference_attitude_frame'] or \
@@ -230,12 +240,20 @@ class OpenVinsAlignment(Node):
     def publish_outputs(self):
         self.engine.health_valid = self.health_fields_valid and self.clock_policy_ready(
             time.monotonic())
-        self.pairer.drain(time.monotonic())
+        # Keep bounded, original-stamped reference samples while a policy query
+        # is pending. Dropping them fabricated source gaps after a delayed reply.
+        # Neither pairing nor output is authorized by an expired policy lease;
+        # changed policy still latches failure, and original receipts still expire.
+        if self.clock_policy_ready(time.monotonic()):
+            self.pairer.drain(time.monotonic())
         for base, aligned in self.engine.drain(time.monotonic()):
             msg = PoseWithCovarianceStamped()
             msg.header.stamp, msg.header.frame_id = ros_stamp(base.stamp), self.p['source_frame']
             fill_pose(msg.pose.pose, base)
-            msg.pose.covariance = base.covariance.ravel().tolist()
+            if base.covariance is None:
+                msg.pose.covariance[0] = -1.  # Contract sentinel; no covariance supplied.
+            else:
+                msg.pose.covariance = base.covariance.ravel().tolist()
             self.base_pub.publish(msg)
             if aligned is not None:
                 msg = PoseStamped()
@@ -261,7 +279,7 @@ class OpenVinsAlignment(Node):
         msg = LocalizationStatus()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = self.p['output_frame']
-        msg.backend_id, msg.session_id = 'openvins_alignment', self.engine.session_id
+        msg.backend_id, msg.session_id = self.p['source_backend']+'_alignment', self.engine.session_id
         msg.generation, msg.state, msg.reason = self.engine.generation, state, reason
         msg.tracked_frame = self.p['tracked_frame']
         msg.pose_valid = state == Gate.ESTIMATING
@@ -275,15 +293,19 @@ class OpenVinsAlignment(Node):
 
 
 def main():
-    from .shutdown import init_owned_context
+    from .shutdown import init_owned_context, spin_owned_executor
+    from rclpy.executors import SingleThreadedExecutor
     init_owned_context()
     node = None
+    executor = SingleThreadedExecutor()
     try:
         node = OpenVinsAlignment()
-        rclpy.spin(node)
+        executor.add_node(node)
+        spin_owned_executor(executor)
     except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
         pass
     finally:
+        executor.shutdown()
         if node is not None:
             node.destroy_node()
         if rclpy.ok():

@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QAction>
 #include <QCheckBox>
 #include <QCloseEvent>
@@ -47,24 +46,24 @@
 #include <QTimer>
 #include <QToolButton>
 #include <QVBoxLayout>
-
 #include <algorithm>
 #include <cmath>
 #include <map>
 #include <stdexcept>
 #include <utility>
+#include "easyfly_desktop/main_window.hpp"
+#include "easyfly_desktop/special_observation_panel.hpp"
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <ament_index_cpp/get_packages_with_prefixes.hpp>
-
 #include "easyfly_desktop/image_pipeline.hpp"
-#include "easyfly_desktop/main_window.hpp"
+#include "easyfly_desktop/peripheral_panel.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_desktop/mission_draft.hpp"
 #include "easyfly_desktop/presentation.hpp"
 #include "widgets.hpp"
+#include "easyfly_desktop/geographic_view.hpp"
 #include "theme.hpp"
 #include "layout_state.hpp"
-
 namespace easyfly_desktop
 {
 namespace
@@ -122,7 +121,6 @@ QString json_type(const std::string & encoded)
   return QStringLiteral("未知类型");
 }
 }  // namespace
-
 struct MainWindow::Impl
 {
   MainWindow * window;
@@ -193,7 +191,6 @@ struct MainWindow::Impl
   std::map<bridge::Key, uint64_t> geometry_revision;
   std::map<bridge::Key, bool> geometry_visible;
   double event_tail{-1}; std::size_t event_count{0}; uint64_t event_session{0};
-
   QStackedWidget * pages{nullptr}; QListWidget * navigation{nullptr};
   QWidget * connection_page{nullptr};
   int connection_page_index{-1};
@@ -217,22 +214,25 @@ struct MainWindow::Impl
   QWidget * configuration{nullptr};
   CameraCanvas * overview_camera{nullptr}, *camera_canvas{nullptr}; MapCanvas * map{nullptr};
   MapCanvas * overview_map{nullptr};
+  GeographicView * geography{nullptr};
   TextTable * capability_model{nullptr}, *target_model{nullptr}, *obstacle_model{nullptr};
   TextTable * algorithm_model{nullptr};
+  bool peripheral_commands{false};
+  PeripheralPanel * peripherals{nullptr};
+  SpecialObservationPanel * landing_observations{nullptr}, *prediction_observations{nullptr};
   TextTable * parameter_model{nullptr}, *event_model{nullptr};
   QPlainTextEdit * diagnostics{nullptr};
-
   Impl(
     MainWindow * owner, const bridge::BridgeConfig & options, SourceFactory source_factory,
     const ToolOptions & tools, const MissionOptions & missions, ControlFactory controls,
     const ParameterOptions & parameters, ParameterFactory parameter_controls,
     const ImportOptions & imports, ImportFactory import_controls, const RvizOptions & spatial,
-    const RecordingOptions & recording, bool auto_observe)
+    const RecordingOptions & recording, bool auto_observe, bool peripheral_enabled)
   : window(owner), config(options), factory(std::move(source_factory)), tool_options(tools),
     mission_options(missions), controls_factory(std::move(controls)), parameter_options(parameters),
     parameter_factory(std::move(parameter_controls)), import_options(imports),
     import_factory(std::move(import_controls)), spatial_options(spatial), recording_options(
-      recording)
+      recording), peripheral_commands(peripheral_enabled)
   {
     build();
     if (auto_observe) {connect_source();} else {
@@ -477,6 +477,8 @@ struct MainWindow::Impl
             "Viz 入口位于诊断与设置的高级工具。"),
           "rvizBuildUnavailable", nullptr), QStringLiteral("三维 · RViz"));
     }
+    geography = new GeographicView(space_tabs); geography->setObjectName("geographicView");
+    space_tabs->addTab(geography, QStringLiteral("地理底图 · 离线"));
     if (overview_map_tabs->count() > 1) {
       auto * previous = overview_map_tabs->widget(1); overview_map_tabs->removeTab(1);
       previous->deleteLater();
@@ -574,7 +576,6 @@ struct MainWindow::Impl
     speed = metric(QStringLiteral("速度 · m/s"), "speed", "stateSpeed", 3);
     battery = metric(QStringLiteral("电池"), "battery", "stateBattery", 4);
     layout->addLayout(metrics);
-
     auto * split = new QSplitter(Qt::Horizontal, pages); split->setObjectName("overviewSplitter");
     split->setChildrenCollapsible(false);
     split->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
@@ -610,7 +611,6 @@ struct MainWindow::Impl
     split->setStretchFactor(0, 1); split->setStretchFactor(1, 0); split->setSizes({740, 300});
     remember_splitter(split, "overview");
     layout->addWidget(split, 1);
-
     auto * evidence_panel = new QWidget(pages);
     evidence_panel->setObjectName("overviewEvidencePanel");
     auto * evidence_layout = new QVBoxLayout(evidence_panel);
@@ -898,7 +898,6 @@ struct MainWindow::Impl
     layout->addWidget(label(QStringLiteral("障碍观测"), "cameraObstaclesHeading", controls));
     layout->addWidget(obstacle_summary);
     objects->addTab(table(obstacle_model, "obstacleTable", controls), QStringLiteral("障碍"));
-
     auto * limits = label(
       QStringLiteral(
         "蓝框=检测；琥珀框=上游跟踪，可能包"
@@ -907,9 +906,8 @@ struct MainWindow::Impl
         "需要同帧、唯一ID/类别和像素中心匹配，无效不填零。\n"
         "上游未报告实际深度帧时间/TF回退；这里只核对"
         "事件关联，不证明RGB-D同步或定位精度。\n"
-        "标签/降落专用、预测与语义"
-        "类别图层未接入；实测目标"
-        "不能冒充这些来源。"), "perceptionLimit",
+        "标签／降落、模型预测与类别副本请查看专项标签页；"
+        "这些只读显示不提供飞行许可。"), "perceptionLimit",
       controls);
     auto * help = new QToolButton(controls); help->setText(QStringLiteral("显示来源与深度说明"));
     help->setCheckable(true); limits->hide();
@@ -921,6 +919,13 @@ struct MainWindow::Impl
     objects->addTab(
       table(algorithm_model, "algorithmStatusTable", objects),
       QStringLiteral("算法与任务接口"));
+    landing_observations = new SpecialObservationPanel(true, objects);
+    prediction_observations = new SpecialObservationPanel(false, objects);
+    objects->addTab(landing_observations, QStringLiteral("标签／降落"));
+    objects->addTab(prediction_observations, QStringLiteral("预测／类别"));
+    peripherals = new PeripheralPanel(peripheral_commands, objects);
+    peripherals->setObjectName("peripheralPanel");
+    objects->addTab(peripherals, QStringLiteral("单目标／云台"));
     layout->addStretch(); scroll->setWidget(controls);
     splitter->addWidget(camera_canvas); splitter->addWidget(scroll);
     splitter->setStretchFactor(0, 1); splitter->setStretchFactor(1, 0);
@@ -941,7 +946,6 @@ struct MainWindow::Impl
     layout->addWidget(
       label(
         QStringLiteral(
-
           "历史轨迹最多 300s / 4096 "
           "点。地图原点不等于起飞点"
           "或地面；局部 Z 不等于离地"
@@ -984,7 +988,6 @@ struct MainWindow::Impl
     form->addRow(
       label(
         QStringLiteral(
-
           "ROS domain 由进程启动环境"
           "固定；换 domain 请关闭后"
           "重新启动。landing_dev 为"
@@ -1140,6 +1143,7 @@ struct MainWindow::Impl
     if (tool_log->toPlainText() != logs) {tool_log->setPlainText(logs);}
     if (closing && released && !tools_active() && (!mission_panel || mission_panel->stopped()) &&
       editor->stopped() && parameter_panel->stopped() && import_panel->stopped() &&
+      peripherals->stopped() &&
       (!recording_panel || recording_panel->stopped()))
     {
       window->close();
@@ -1402,6 +1406,7 @@ struct MainWindow::Impl
   void clear_images(const QString & message)
   {
     recording_frame.reset();
+    if (peripherals) {peripherals->observe(current, {}, false, config.use_sim_time);}
     overlay_observations.reset(); overlay_submitted_stamp = -1;
     overview_camera->frame({}, message); camera_canvas->frame({}, message);
     overview_camera->setProperty("display_stamp_ns", QVariant{});
@@ -1445,7 +1450,9 @@ struct MainWindow::Impl
   {
     closing = close_window || closing; disconnecting = true; toggle->setEnabled(false);
     if (rviz_view) {rviz_view->stop();}
-    if (closing) {editor->stop(); parameter_panel->stop(); import_panel->stop();}
+    if (closing) {
+      editor->stop(); parameter_panel->stop(); import_panel->stop(); peripherals->stop();
+    }
     if (closing && mission_panel) {mission_panel->stop();}
     if (recording_panel) {
       if (closing) {recording_panel->stop();} else {
@@ -1470,6 +1477,7 @@ struct MainWindow::Impl
     if (closing && mission_panel && !mission_panel->stopped()) {return;}
     if (closing && !parameter_panel->stopped()) {return;}
     if (closing && !import_panel->stopped()) {return;}
+    if (closing && !peripherals->stopped()) {return;}
     if (closing && !editor->stopped()) {return;}
     if (closing && recording_panel && !recording_panel->stopped()) {return;}
     history = current; source.reset(); decoder.reset(); overlay_decoder.reset();
@@ -1566,14 +1574,23 @@ struct MainWindow::Impl
       {
         const auto selection =
           mission_list->currentItem() ? mission_list->currentItem()->text() : QString{};
-        mission_list->clear(); catalog_revision = r.evidence.request_id;
-        if (r.value && r.value->success) {
-          for (const auto & name : r.value->missions) {
-            if (bridge::detail::basename(name)) {mission_list->addItem(text(name, 255));}
+        {
+          // Rebuilding the same selection is not a user selection change.
+          // Its transient empty row must not erase a concurrent detail reply.
+          const QSignalBlocker blocker(mission_list);
+          mission_list->clear(); catalog_revision = r.evidence.request_id;
+          if (r.value && r.value->success) {
+            for (const auto & name : r.value->missions) {
+              if (bridge::detail::basename(name)) {mission_list->addItem(text(name, 255));}
+            }
           }
+          const auto matches = mission_list->findItems(selection, Qt::MatchExactly);
+          if (!matches.empty()) {mission_list->setCurrentItem(matches[0]);}
         }
-        const auto matches = mission_list->findItems(selection, Qt::MatchExactly);
-        if (!matches.empty()) {mission_list->setCurrentItem(matches[0]);}
+        if (!mission_list->currentItem() || mission_list->currentItem()->text() != selection) {
+          details_name.clear(); clear_details();
+        }
+        update_buttons();
       }
     }
     const auto validation = s.missions.find(bridge::Key::MissionValidation);
@@ -1942,12 +1959,23 @@ struct MainWindow::Impl
     }
     capability_model->replace(std::move(capabilities));
     QVector<QStringList> algorithms;
+    const bool visual_localization = s.selected_localization_backend == "orbslam3" ||
+      s.selected_localization_backend == "fast_livo2" ||
+      s.selected_localization_backend == "openvins";
     algorithms.push_back(
-      {QStringLiteral("启动定位源"),
-        text(s.selected_localization_backend, 64),
-        s.selected_localization_backend == "openvins" ?
-        QStringLiteral("仅观测；导航已禁用，等待 odom 对齐与地图接入") :
+      {QStringLiteral("启动定位源"), text(s.selected_localization_backend, 64),
+        visual_localization ? (s.localization_navigation_enabled ?
+        QStringLiteral("导航仿真已启用；定位、地图与飞行准入仍由后端检查") :
+        QStringLiteral("观测模式；导航已禁用")) :
         QStringLiteral("启动配置；实际健康状态需单独观测")});
+    if (visual_localization && s.localization_navigation_enabled) {
+      const auto & nav = s.navigation_localization;
+      algorithms.push_back(
+        {QStringLiteral("导航定位"), quality_text(display_quality(nav.evidence, s, now, .5, true)),
+          nav.value ? QStringLiteral("会话 %1 / 代次 %2 · %3")
+          .arg(text(nav.value->session_id, 128)).arg(nav.value->generation)
+          .arg(text(nav.value->reason, 2048)) : QStringLiteral("等待对齐后的导航状态")});
+    }
     const auto & localization = s.localization;
     const auto localization_quality = display_quality(localization.evidence, s, now, .5, true);
     QString localization_state = QStringLiteral("等待状态");
@@ -1963,7 +1991,7 @@ struct MainWindow::Impl
         .arg(text(m.reason, 2048)).arg(text(m.tracked_frame, 128));
     }
     algorithms.push_back(
-      {QStringLiteral("OpenVINS 定位观测"),
+      {QStringLiteral("定位原生观测"),
         quality_text(localization_quality) + " · " + localization_state, localization_detail});
     const bool graph_fresh = s.running && !s.stopped && s.backend_graph_observed > 0 &&
       now >= s.backend_graph_observed && now - s.backend_graph_observed <= 2;
@@ -2050,7 +2078,6 @@ struct MainWindow::Impl
     if (s.command_uncertain_observed) {
       warning->setText(
         QStringLiteral(
-
           "⚠ 曾观察到飞控 command_un"
           "certain：需人工核查。历史"
           "来源 session=%1，steady=%"
@@ -2112,12 +2139,18 @@ struct MainWindow::Impl
       if (released && !closing) {configuration->setEnabled(!mission_panel->unresolved());}
     }
     if (disconnecting) {cleanup_tick();}
-    if (!current) {return;}
+    if (!current) {peripherals->observe({}, {}, false, config.use_sim_time); return;}
     update_request_note();
     const double now = bridge::detail::steady_seconds();
     if (source && current->stopped && !disconnecting && !released) {stop_source(false);}
     state_view(now); mission_view(now); geometry_view(bridge::Key::Targets, now);
     geometry_view(bridge::Key::Obstacles, now); image_view(now); diagnostics_view(now);
+    const auto owned = mission_panel ? mission_panel->record_state() : nullptr;
+    landing_observations->observe(*current, now, owned);
+    prediction_observations->observe(*current, now, owned);
+    peripherals->observe(
+      current, recording_frame, available() && !closing && !disconnecting,
+      config.use_sim_time);
     events_view();
     if (recording_panel) {
       const int channel = camera->currentIndex();
@@ -2128,20 +2161,21 @@ struct MainWindow::Impl
           config.image_topics[channel]},
         available() && !closing && !disconnecting, config.use_sim_time, config.selected_profile);
     }
-    map->snapshot(current, now); overview_map->snapshot(current, now); update_buttons();
+    map->snapshot(current, now); overview_map->snapshot(current, now);
+    if (geography) {geography->snapshot(current, now);}
+    update_buttons();
   }
 };
-
 MainWindow::MainWindow(
   const bridge::BridgeConfig & config, SourceFactory factory, QWidget * parent,
   const ToolOptions & tools, const MissionOptions & missions, ControlFactory controls,
   const ParameterOptions & parameters, ParameterFactory parameter_controls,
   const ImportOptions & imports, ImportFactory import_controls, const RvizOptions & spatial,
-  const RecordingOptions & recording, bool auto_observe)
+  const RecordingOptions & recording, bool auto_observe, bool peripheral_enabled)
 : QMainWindow(parent), impl_(std::make_unique<Impl>(
       this, config, std::move(factory), tools, missions, std::move(controls), parameters,
       std::move(parameter_controls), imports, std::move(import_controls), spatial, recording,
-      auto_observe)) {}
+      auto_observe, peripheral_enabled)) {}
 MainWindow::~MainWindow() = default;
 void MainWindow::set_connection_page(QWidget * page, bool lobby)
 {
@@ -2252,7 +2286,7 @@ bool MainWindow::cleanup_complete() const
   return impl_->released && !impl_->tools_active() &&
          (!impl_->mission_panel || impl_->mission_panel->stopped()) &&
          (!impl_->closing || (impl_->editor->stopped() && impl_->parameter_panel->stopped() &&
-         impl_->import_panel->stopped() &&
+         impl_->import_panel->stopped() && impl_->peripherals->stopped() &&
          (!impl_->recording_panel || impl_->recording_panel->stopped())));
 }
 QJsonObject MainWindow::connection_status() const
@@ -2281,7 +2315,8 @@ QJsonObject MainWindow::connection_status() const
     summary = QStringLiteral("飞机状态不可用：") + quality_text(q);
   }
   const bool unresolved = (p.mission_panel && p.mission_panel->unresolved()) ||
-    p.import_panel->unresolved() || p.parameter_panel->busy() || p.parameter_panel->fault();
+    p.import_panel->unresolved() || p.peripherals->unresolved() || p.parameter_panel->busy() ||
+    p.parameter_panel->fault();
   return {{"summary", summary}, {"unresolved", unresolved}, {"closing", p.closing},
     {"connection_page", p.connection_page != nullptr},
     {"page", p.navigation->currentItem()->data(Qt::UserRole).toString()},

@@ -10,19 +10,19 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef EASYFLY_DESKTOP__RVIZ_GEOMETRY_HPP_
 #define EASYFLY_DESKTOP__RVIZ_GEOMETRY_HPP_
 #include <cstdint>
 #include <string>
 #include <vector>
-
 #include <easyfly_msgs/msg/obstacle_info_array.hpp>
+#include <easyfly_msgs/msg/landing_guidance_target.hpp>
+#include <easyfly_msgs/msg/target_prediction_array.hpp>
+#include <easyfly_msgs/msg/classified_obstacle_array.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <visualization_msgs/msg/marker.hpp>
-
 namespace easyfly_desktop
 {
 namespace spatial
@@ -42,6 +42,7 @@ struct Geometry
   bool valid{false};
   std::string frame, detail;
   int64_t stamp_ns{0};
+  int64_t lifetime_ns{kTtlNs};
   Primitive primitive{Primitive::Points};
   float point_size{0.06F};
   size_t input_count{0}, omitted{0};
@@ -52,6 +53,9 @@ Geometry convert(const visualization_msgs::msg::Marker & message);
 Geometry convert(const sensor_msgs::msg::PointCloud2 & message);
 Geometry convert(const nav_msgs::msg::OccupancyGrid & message);
 Geometry convert(const easyfly_msgs::msg::ObstacleInfoArray & message);
+Geometry convert(const easyfly_msgs::msg::LandingGuidanceTarget & message);
+Geometry convert(const easyfly_msgs::msg::TargetPredictionArray & message);
+Geometry convert(const easyfly_msgs::msg::ClassifiedObstacleArray & message);
 std::string validity(
   const Geometry & geometry, int64_t ros_now,
   int64_t receipt_steady, int64_t steady_now);

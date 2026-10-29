@@ -1,0 +1,4 @@
+#!/usr/bin/python3 -s
+from easyfly_swarm_planner.main import main
+
+main()

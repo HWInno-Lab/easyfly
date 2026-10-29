@@ -1,0 +1,11 @@
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+find_package(gazebo_dev REQUIRED)
+find_package(gazebo_ros REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_srvs REQUIRED)
+add_library(easyfly_landing_fixture SHARED landing_fixture.cpp)
+target_compile_features(easyfly_landing_fixture PRIVATE cxx_std_17)
+target_include_directories(easyfly_landing_fixture PRIVATE ${GAZEBO_INCLUDE_DIRS})
+ament_target_dependencies(easyfly_landing_fixture gazebo_ros sensor_msgs std_srvs)
+target_link_libraries(easyfly_landing_fixture ${GAZEBO_LIBRARIES})
+install(TARGETS easyfly_landing_fixture LIBRARY DESTINATION lib)

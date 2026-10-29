@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_orbslam3_integration</name><version>0.1.0</version>
+  <description>Guarded, explicit RGB-D ORB-SLAM3 simulation and atlas lifecycle.</description>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend><depend>sensor_msgs</depend>
+  <depend>std_srvs</depend><depend>geometry_msgs</depend>
+  <depend>diagnostic_msgs</depend><depend>easyfly_msgs</depend><depend>cv_bridge</depend>
+  <depend>easyfly_orbslam3_core</depend>
+  <exec_depend>easyfly_openvins_integration</exec_depend><exec_depend>launch_ros</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

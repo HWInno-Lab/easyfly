@@ -68,12 +68,14 @@ def validate(options):
 
 def localization_backend(options, profile):
     selection = options['slam']
-    if selection in ('fast_lio', 'openvins') and profile == 'base_sim':
-        raise ValueError('FAST-LIO / OpenVINS 需要选择感知、导航或降落准备运行方案')
-    if selection == 'openvins':
+    if selection in ('fast_lio', 'openvins', 'fast_livo2', 'orbslam3') and profile == 'base_sim':
+        raise ValueError({'fast_lio': 'FAST-LIO', 'openvins': 'OpenVINS',
+                          'fast_livo2': 'FAST-LIVO2', 'orbslam3': 'ORB-SLAM3'}[selection] +
+                         ' 需要选择感知、导航或降落准备运行方案')
+    if selection in ('openvins', 'fast_livo2', 'orbslam3'):
         defaults = {field['key']: field['default'] for field in fields()}
         if any(options[key] != defaults[key] for key in defaults if key.startswith('slam_')):
-            raise ValueError('OpenVINS 使用固定 Gazebo 标定配置，不能应用 FAST-LIO 参数')
+            raise ValueError('所选定位后端使用固定 Gazebo 标定配置，不能应用 FAST-LIO 参数')
     return ('disabled' if profile == 'base_sim' else
             'fast_lio' if selection == 'profile' else selection)
 

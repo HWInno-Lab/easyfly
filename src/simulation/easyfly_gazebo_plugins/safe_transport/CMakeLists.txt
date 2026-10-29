@@ -25,8 +25,8 @@ endif()
 get_filename_component(EASYFLY_TRANSPORT_HEADERS "${EASYFLY_IO_HEADER}" DIRECTORY)
 add_library(easyfly_transport_compat SHARED src/io_manager.cpp
   upstream/CallbackHelper.cc src/connection.cpp src/connection_manager.cpp
-  upstream/Node.cc upstream/Publication.cc upstream/PublicationTransport.cc
-  src/publisher.cpp upstream/Subscriber.cc upstream/SubscriptionTransport.cc
+  upstream/Node.cc src/publication.cpp upstream/PublicationTransport.cc
+  src/publisher.cpp upstream/Subscriber.cc src/subscription_transport.cpp
   src/topic_manager.cpp upstream/TransportIface.cc)
 target_compile_features(easyfly_transport_compat PUBLIC cxx_std_17)
 target_include_directories(easyfly_transport_compat PUBLIC include ${GAZEBO_INCLUDE_DIRS}
@@ -45,17 +45,55 @@ set_target_properties(easyfly_transport_compat PROPERTIES
 set(EASYFLY_SERVER_LIBRARIES ${GAZEBO_LIBRARIES})
 list(FILTER EASYFLY_SERVER_LIBRARIES EXCLUDE REGEX "libgazebo_transport\\.so")
 
+set(EASYFLY_PATCHED_SERVER_LIBRARIES ${EASYFLY_SERVER_LIBRARIES})
+list(FILTER EASYFLY_PATCHED_SERVER_LIBRARIES EXCLUDE REGEX "libgazebo_sensors\\.so")
+
 add_executable(easyfly_gzserver src/server_main.cpp)
-target_link_libraries(easyfly_gzserver PRIVATE easyfly_transport_compat
-  ${EASYFLY_SERVER_LIBRARIES})
-set_target_properties(easyfly_gzserver PROPERTIES INSTALL_RPATH "$ORIGIN/transport")
+target_link_libraries(easyfly_gzserver PRIVATE easyfly_transport_compat easyfly_sensor_compat
+  ${EASYFLY_PATCHED_SERVER_LIBRARIES})
+set_target_properties(easyfly_gzserver PROPERTIES INSTALL_RPATH "$ORIGIN/transport;$ORIGIN/sensors")
 install(TARGETS easyfly_gzserver RUNTIME DESTINATION lib/${PROJECT_NAME})
+add_executable(easyfly_model_query src/model_query.cpp)
+target_link_libraries(easyfly_model_query PRIVATE easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+set_target_properties(easyfly_model_query PROPERTIES INSTALL_RPATH "$ORIGIN/transport")
+install(TARGETS easyfly_model_query RUNTIME DESTINATION lib/${PROJECT_NAME})
+add_executable(easyfly_sensor_witness src/sensor_witness.cpp)
+target_link_libraries(easyfly_sensor_witness PRIVATE easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+set_target_properties(easyfly_sensor_witness PROPERTIES INSTALL_RPATH "$ORIGIN/transport")
+install(TARGETS easyfly_sensor_witness RUNTIME DESTINATION lib/${PROJECT_NAME})
+install(FILES src/sensor_witness.cpp DESTINATION share/${PROJECT_NAME}/safe_transport/src)
+install(FILES include/easyfly_transport/compat.hpp DESTINATION include/easyfly_transport)
+
 install(TARGETS easyfly_transport_compat LIBRARY DESTINATION lib/${PROJECT_NAME}/transport)
 install(FILES README.md ../safe_camera/LICENSE
   DESTINATION share/${PROJECT_NAME}/safe_transport)
 install(FILES upstream/SHA256SUMS DESTINATION share/${PROJECT_NAME}/safe_transport)
 
 if(BUILD_TESTING)
+  add_executable(test_transport_closed_subscriber test/test_closed_subscriber.cpp)
+  target_link_libraries(test_transport_closed_subscriber easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_transport_closed_subscriber COMMAND test_transport_closed_subscriber)
+  set_tests_properties(test_transport_closed_subscriber PROPERTIES TIMEOUT 15)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_library(test_witness_main OBJECT src/sensor_witness.cpp)
+  target_compile_definitions(test_witness_main PRIVATE main=easyfly_witness_main)
+  target_link_libraries(test_witness_main PRIVATE easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_executable(test_witness_retirement test/test_witness_retirement.cpp
+    $<TARGET_OBJECTS:test_witness_main>)
+  target_link_libraries(test_witness_retirement PRIVATE easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_sensor_witness COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/test_sensor_witness.py
+    $<TARGET_FILE:easyfly_gzserver> $<TARGET_FILE:easyfly_sensor_witness>
+    $<TARGET_FILE:test_witness_retirement>)
+  set_tests_properties(test_sensor_witness PROPERTIES TIMEOUT 45 RUN_SERIAL TRUE)
+  add_test(NAME test_model_query COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_CURRENT_SOURCE_DIR}/test/test_model_query.py
+    $<TARGET_FILE:easyfly_gzserver> $<TARGET_FILE:easyfly_model_query>)
+  set_tests_properties(test_model_query PROPERTIES TIMEOUT 90 RUN_SERIAL TRUE)
+  add_executable(test_server_signal_relay test/test_signal_relay.cpp)
+  target_link_libraries(test_server_signal_relay easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
+  add_test(NAME test_server_signal_relay COMMAND test_server_signal_relay)
+  set_tests_properties(test_server_signal_relay PROPERTIES TIMEOUT 10)
   add_executable(test_transport_wakeup test/test_transport_wakeup.cpp)
   target_link_libraries(test_transport_wakeup easyfly_transport_compat ${EASYFLY_SERVER_LIBRARIES})
   add_test(NAME test_transport_wakeup COMMAND test_transport_wakeup)

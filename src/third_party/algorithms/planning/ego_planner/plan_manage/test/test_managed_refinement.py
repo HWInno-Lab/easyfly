@@ -46,71 +46,110 @@ class ManagedRefinementTest(unittest.TestCase):
         """Keep the measured boundary derivative rather than fabricating a slow start."""
         self.run_case(overspeed=True)
 
-    def run_case(self, blocked=False, overspeed=False):
+    def test_short_exact_endpoint_produces_bounded_trajectory(self):
+        """A 14 cm final approach still needs to reach the exact action target."""
+        self.run_case(short=True)
+
+    def test_short_occupied_seed_still_fails_closed(self):
+        """Short motion keeps the original collision rejection."""
+        self.run_case(short=True, blocked=True)
+
+    def run_case(self, blocked=False, overspeed=False, short=False):
         """Run an isolated real planner with valid component-owned input publishers."""
-        os.environ['ROS_DOMAIN_ID'] = '185'
+        os.environ["ROS_DOMAIN_ID"] = "185"
         rclpy.init()
-        node = rclpy.create_node('managed_refinement_regression')
-        logfile = tempfile.TemporaryFile(mode='w+')
+        node = rclpy.create_node("managed_refinement_regression")
+        logfile = tempfile.TemporaryFile(mode="w+")
         process = subprocess.Popen(
-            ['ros2', 'launch', 'easyfly_local_planner', 'local_planner.launch.py',
-             'use_sim_time:=false'], stdout=logfile, stderr=subprocess.STDOUT,
-            start_new_session=True)
-        odom_pub = node.create_publisher(Odometry, '/odom', 10)
-        cloud_pub = node.create_publisher(PointCloud2, '/pointcloud_nonground', 10)
+            [
+                "ros2",
+                "launch",
+                "easyfly_local_planner",
+                "local_planner.launch.py",
+                "use_sim_time:=false",
+            ],
+            stdout=logfile,
+            stderr=subprocess.STDOUT,
+            start_new_session=True,
+        )
+        odom_pub = node.create_publisher(Odometry, "/odom", 10)
+        cloud_pub = node.create_publisher(PointCloud2, "/pointcloud_nonground", 10)
         trajectories, faults = [], []
         subscriptions = [
-            node.create_subscription(Bspline, '/planning/bspline', trajectories.append, 10),
+            node.create_subscription(Bspline, "/planning/bspline", trajectories.append, 10),
             node.create_subscription(
-                NavigationSession, '/planning/navigation_fault', faults.append,
-                QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL))]
-        client = node.create_client(SetNavigationSession, '/planning/navigation_session')
+                NavigationSession,
+                "/planning/navigation_fault",
+                faults.append,
+                QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL),
+            ),
+        ]
+        client = node.create_client(SetNavigationSession, "/planning/navigation_session")
 
         def inputs():
-            header = Header(frame_id='odom', stamp=node.get_clock().now().to_msg())
-            odom = Odometry(header=header, child_frame_id='base_link')
+            header = Header(frame_id="odom", stamp=node.get_clock().now().to_msg())
+            odom = Odometry(header=header, child_frame_id="base_link")
             odom.pose.pose.orientation.w = 1.0
             # Nearest stored UAVState to the original first planning attempt.
             odom.pose.pose.position.x = -0.03239358589053154
             odom.pose.pose.position.y = -0.02704579196870327
             odom.pose.pose.position.z = 1.325653076171875
-            odom.twist.twist.linear.x = .8 if overspeed else -0.033138200640678406
+            odom.twist.twist.linear.x = 0.8 if overspeed else -0.033138200640678406
             odom.twist.twist.linear.y = 0.08463609963655472
             odom.twist.twist.linear.z = 0.07423700392246246
+            if short:
+                odom.twist.twist.linear.x = 0.0
+                odom.twist.twist.linear.y = 0.0
+                odom.twist.twist.linear.z = 0.0
             odom_pub.publish(odom)
-            obstacle = (0., 0., 1.325) if blocked else (5.0, 5.0, 1.5)
+            obstacle = (0.0, 0.0, 1.325) if blocked else (5.0, 5.0, 1.5)
             cloud_pub.publish(create_cloud_xyz32(header, [obstacle]))
 
-        timer = node.create_timer(.02, inputs)
+        timer = node.create_timer(0.02, inputs)
 
         def until(predicate, seconds):
             deadline = time.monotonic() + seconds
             while not predicate() and time.monotonic() < deadline:
-                rclpy.spin_once(node, timeout_sec=.02)
+                rclpy.spin_once(node, timeout_sec=0.02)
             self.assertTrue(predicate())
 
         try:
-            until(client.service_is_ready, 15.)
+            until(client.service_is_ready, 15.0)
             deadline = time.monotonic() + 1.0
             while time.monotonic() < deadline:
-                rclpy.spin_once(node, timeout_sec=.02)
+                rclpy.spin_once(node, timeout_sec=0.02)
             request = SetNavigationSession.Request(
-                session_id='climbing-refinement', active=True,
-                target_x=.5, target_y=-.55, target_z=1.5, max_speed=.6)
+                session_id="climbing-refinement",
+                active=True,
+                target_x=0.5,
+                target_y=-0.55,
+                target_z=1.5,
+                max_speed=0.6,
+            )
+            if short:
+                request.target_x = -0.03239358589053154 + 0.1
+                request.target_y = -0.02704579196870327 + 0.1
+                request.target_z = 1.325653076171875
             future = client.call_async(request)
-            until(future.done, 5.)
+            until(future.done, 5.0)
             self.assertTrue(future.result().success, future.result().message)
-            until(lambda: bool(faults) if blocked or overspeed else
-                  bool(trajectories) or bool(faults), 5.)
+            until(
+                lambda: bool(faults)
+                if blocked or overspeed
+                else bool(trajectories) or bool(faults),
+                5.0,
+            )
             if blocked or overspeed:
                 self.assertTrue(faults)
                 for trajectory in trajectories:
                     points = [(p.x, p.y, p.z) for p in trajectory.pos_pts]
                     self.assertTrue(points)
-                    self.assertTrue(all(p == points[0] for p in points),
-                                    'rejected seed published a moving trajectory')
+                    self.assertTrue(
+                        all(p == points[0] for p in points),
+                        "rejected seed published a moving trajectory",
+                    )
                 return
-            self.assertFalse(faults, 'valid unobstructed seed generated a planner fault')
+            self.assertFalse(faults, "valid unobstructed seed generated a planner fault")
             self.assertTrue(trajectories)
             trajectory = trajectories[0]
             self.assertEqual(trajectory.navigation_session_id, request.session_id)
@@ -121,19 +160,22 @@ class ManagedRefinementTest(unittest.TestCase):
             bounds = []
             for i in range(len(points) - 1):
                 interval = trajectory.knots[i + 4] - trajectory.knots[i + 1]
-                self.assertGreater(interval, 0.)
+                self.assertGreater(interval, 0.0)
                 bounds.append(3 * math.dist(points[i + 1], points[i]) / interval)
             self.assertLessEqual(max(bounds), request.max_speed + 1e-9)
             duration = trajectory.knots[len(points)] - trajectory.knots[3]
-            self.assertGreater(duration, 0.)
-            self.assertLessEqual(duration, 300.)
-            endpoint = tuple((points[-3][a] + 4 * points[-2][a] + points[-1][a]) / 6
-                             for a in range(3))
-            self.assertLess(math.dist(endpoint, [.5, -.55, 1.5]), 1e-9)
-            print('strict final speed bound:', max(bounds), flush=True)
+            self.assertGreater(duration, 0.0)
+            self.assertLessEqual(duration, 300.0)
+            endpoint = tuple(
+                (points[-3][a] + 4 * points[-2][a] + points[-1][a]) / 6 for a in range(3)
+            )
+            self.assertLess(
+                math.dist(endpoint, [request.target_x, request.target_y, request.target_z]), 1e-9
+            )
+            print("strict final speed bound:", max(bounds), flush=True)
             stop = SetNavigationSession.Request(session_id=request.session_id, active=False)
             future = client.call_async(stop)
-            until(future.done, 5.)
+            until(future.done, 5.0)
             self.assertTrue(future.result().success)
         finally:
             if process.poll() is None:
@@ -153,5 +195,5 @@ class ManagedRefinementTest(unittest.TestCase):
             rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

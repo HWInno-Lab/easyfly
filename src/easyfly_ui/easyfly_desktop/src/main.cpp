@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QApplication>
 #include <QAction>
 #include <QCommandLineParser>
@@ -23,20 +22,17 @@
 #include <QProcess>
 #include <QTimer>
 #include <QUuid>
-
 #include <csignal>
 #include <cstdio>
 #include <filesystem>
 #include <memory>
 #include <utility>
-
 #include "easyfly_desktop/main_window.hpp"
 #include "connection_page.hpp"
 namespace
 {
 volatile std::sig_atomic_t exit_requested = 0;
 void request_exit(int) {exit_requested = 1;}
-
 // The management channel carries bounded status only. Images remain in the existing desktop.
 class ManagedSession : public QObject
 {
@@ -127,6 +123,9 @@ int main(int argc, char ** argv)
     {"enable-rviz-embed", QStringLiteral(
         "兼容旧配置的三维标志（需内嵌构建）；空间页默认可见，仍须手动打开")});
   parser.addOption(
+    {"enable-peripheral-control", QStringLiteral(
+        "显式提供 ROI／仿真云台操作入口，页面中仍须允许本次操作")});
+  parser.addOption(
     {"enable-mission-control", QStringLiteral("显式提供受管仿真任务入口，仍需界面确认")});
   parser.addOption(
     {"enable-parameter-edit", QStringLiteral(
@@ -156,7 +155,8 @@ int main(int argc, char ** argv)
   parser.process(app);
   const bool lobby = parser.isSet("connection-lobby");
   if (lobby && (parser.isSet("enable-mission-control") || parser.isSet("enable-mission-import") ||
-    parser.isSet("enable-parameter-edit") || parser.isSet("enable-recording") ||
+    parser.isSet("enable-parameter-edit") || parser.isSet("enable-peripheral-control") ||
+    parser.isSet("enable-recording") ||
     parser.isSet("enable-rviz-embed")))
   {
     std::fprintf(stderr, "The connection lobby does not create mutable or observation ports.\n");
@@ -165,9 +165,13 @@ int main(int argc, char ** argv)
   if (qEnvironmentVariableIsSet("EASYFLY_CONNECTION_SESSION") &&
     qEnvironmentVariable("EASYFLY_CONNECTION_OPERATIONS") != "configured" &&
     (parser.isSet("enable-mission-control") || parser.isSet("enable-mission-import") ||
-    parser.isSet("enable-parameter-edit")))
+    parser.isSet("enable-parameter-edit") || parser.isSet("enable-peripheral-control")))
   {
     std::fprintf(stderr, "Managed maintenance/observation session rejects mutable flags.\n");
+    return 2;
+  }
+  if (parser.isSet("enable-peripheral-control") && parser.isSet("system-time")) {
+    std::fprintf(stderr, "Peripheral commands are limited to explicit simulation sessions.\n");
     return 2;
   }
   easyfly_desktop::RecordingOptions recording;
@@ -205,6 +209,8 @@ int main(int argc, char ** argv)
   const auto localization = qEnvironmentVariable("EASYFLY_LOCALIZATION_BACKEND");
   config.selected_localization_backend = localization.isEmpty() ? "external" :
     localization.toStdString();
+  config.localization_navigation_enabled =
+    qEnvironmentVariable("EASYFLY_LOCALIZATION_NAVIGATION") == "true";
   config.image_topics =
   {parser.value("front-topic").toStdString(), parser.value("down-topic").toStdString()};
   const int geometry_camera = qEnvironmentVariable("EASYFLY_CLASSICAL_CAMERA") == "down" ? 1 : 0;
@@ -257,7 +263,7 @@ int main(int argc, char ** argv)
     easyfly_desktop::MainWindow window(config, easyfly_desktop::bridge_factory(), nullptr, tools,
       missions, controls, parameters, easyfly_desktop::parameter_factory(), imports,
       import_controls,
-      spatial, recording, !lobby);
+      spatial, recording, !lobby, parser.isSet("enable-peripheral-control"));
     easyfly_desktop::ConnectionPageHandle connection_page;
     if (lobby || qEnvironmentVariableIsSet("EASYFLY_CONNECTION_SOCKET")) {
       const auto runtime = lobby ? parser.value("connection-runtime") :

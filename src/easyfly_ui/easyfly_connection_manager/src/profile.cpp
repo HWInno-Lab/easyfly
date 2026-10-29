@@ -139,18 +139,29 @@ Profile Profile::create(const QString & name)
 void Profile::validate() const
 {
   validate_algorithms(algorithms);
+  const auto slam = algorithms["slam"].toString();
+  const bool fixed_calibration =
+    QStringList{"openvins", "fast_livo2", "orbslam3"}.contains(slam);
   require(
-    (algorithms["slam"] != "fast_lio" && algorithms["slam"] != "openvins") ||
-    selected_profile != "base_sim",
-    QStringLiteral("FAST-LIO / OpenVINS 需要选择感知、导航或降落准备运行方案"));
-  if (algorithms["slam"] == "openvins") {
+    !(slam == "fast_lio" || fixed_calibration) || selected_profile != "base_sim",
+    QStringLiteral("所选定位后端需要选择感知、导航或降落准备运行方案"));
+  if (fixed_calibration) {
     const auto defaults = algorithm_defaults();
     for (auto it = defaults.begin(); it != defaults.end(); ++it) {
       require(
         !it.key().startsWith("slam_") || algorithms[it.key()] == it.value(),
-        QStringLiteral("OpenVINS 使用固定 Gazebo 标定配置，不能应用 FAST-LIO 参数"));
+        QStringLiteral("所选定位后端使用固定 Gazebo 标定配置，不能应用 FAST-LIO 参数"));
     }
   }
+  const auto strategy = algorithms["strategy"].toString();
+  require(
+    (strategy != "gcopter" && strategy != "super") || selected_profile == "navigation_dev",
+    QStringLiteral("GCOPTER / SUPER 需要导航开发运行方案 navigation_dev"));
+  require(
+    algorithms["exploration"] != "fuel" ||
+    (selected_profile == "navigation_dev" && strategy == "gcopter" &&
+    (slam == "fast_lio" || slam == "profile")),
+    QStringLiteral("FUEL 需要导航开发运行方案、FAST-LIO 和 GCOPTER"));
   require(
     mode == "sitl" || algorithms == algorithm_defaults(),
     QStringLiteral("算法启动配置仅适用于本机仿真；外部算法通过 DDS 观测"));
@@ -233,10 +244,13 @@ void Profile::validate() const
       "口，避免 PX4 默认 14550 直连产生重"
       "复链路"));
   require(
+    !peripheral_control || (mode == "sitl" && simulation_time),
+    QStringLiteral("ROI／模拟云台操作只允许显式启用的本机仿真"));
+  require(
     !mission_control || (mode == "sitl" && simulation_time),
     QStringLiteral("任务执行只允许显式启用的本机仿真"));
   require(
-    !gcs_enabled || (!mission_control && !mission_import && !parameter_edit),
+    !gcs_enabled || (!mission_control && !mission_import && !parameter_edit && !peripheral_control),
     QStringLiteral("QGC 联网维护模式不能同时启用 EasyFly 可变操作"));
 }
 QString Profile::fcu_url() const
@@ -292,6 +306,10 @@ QJsonObject Profile::json() const
       }
     }
     result["algorithms"] = stored;
+  }
+  if (peripheral_control) {
+    auto features = result["features"].toObject(); features.insert("peripheral_control", true);
+    result.insert("features", features);
   }
   return result;
 }
@@ -353,7 +371,10 @@ Profile Profile::from_json(const QJsonObject & object)
   const auto nested = [&](const char * key) {
       require(normalized[key].isObject(), QStringLiteral("配置对象类型错误：") + key);
       const auto value = normalized[key].toObject();
-      const auto defaults = Profile{}.json()[key].toObject();
+      auto defaults = Profile{}.json()[key].toObject();
+      if (QString::fromUtf8(key) == "features" && value.contains("peripheral_control")) {
+        defaults.insert("peripheral_control", false);
+      }
       require(
         value.keys() == defaults.keys(), QStringLiteral(
           "配置对象字段不匹配：") + key);
@@ -391,6 +412,7 @@ Profile Profile::from_json(const QJsonObject & object)
   p.mission_control = features["mission_control"].toBool();
   p.mission_import = features["mission_import"].toBool();
   p.parameter_edit = features["parameter_edit"].toBool();
+  p.peripheral_control = features["peripheral_control"].toBool();
   p.recording = features["recording"].toBool();
   p.rviz_embed = features["rviz_embed"].toBool();
   p.validate(); return p;
@@ -510,6 +532,9 @@ QProcessEnvironment session_environment(
     profile.algorithms["slam"] == "profile" ? "fast_lio" : profile.algorithms["slam"].toString()) :
     "external");
   env.insert("EASYFLY_CLASSICAL_CAMERA", profile.algorithms["camera"].toString());
+  env.insert(
+    "EASYFLY_LOCALIZATION_NAVIGATION",
+    profile.mode == "sitl" && profile.selected_profile == "navigation_dev" ? "true" : "false");
   return env;
 }
 QVector<Profile> read_profiles(const QString & path)
@@ -540,7 +565,28 @@ QVector<Profile> read_profiles(const QString & path)
   QVector<Profile> profiles; QSet<QString> ids;
   for (const auto & item : root["profiles"].toArray()) {
     require(item.isObject(), QStringLiteral("配置条目必须是对象"));
-    auto p = Profile::from_json(item.toObject());
+    auto object = item.toObject();
+    auto algorithms = object.value("algorithms").toObject();
+    // Older forms saved FAST-LIO controls for these fixed-calibration backends.
+    // Migrate only editable files, never a frozen session or an RPC payload;
+    // leave the original file untouched until the user explicitly saves it.
+    if (object["mode"] == "sitl" &&
+      QStringList{"fast_livo2", "orbslam3"}.contains(algorithms["slam"].toString()))
+    {
+      const auto defaults = algorithm_defaults();
+      auto original = defaults;
+      for (auto it = algorithms.begin(); it != algorithms.end(); ++it) {
+        original[it.key()] = it.value();
+      }
+      validate_algorithms(original);
+      for (auto it = defaults.begin(); it != defaults.end(); ++it) {
+        if (it.key().startsWith("slam_") && algorithms.contains(it.key())) {
+          algorithms[it.key()] = it.value();
+        }
+      }
+      object["algorithms"] = algorithms;
+    }
+    auto p = Profile::from_json(object);
     require(!ids.contains(p.id), QStringLiteral("重复配置 ID"));
     ids.insert(p.id); profiles.push_back(p);
   }

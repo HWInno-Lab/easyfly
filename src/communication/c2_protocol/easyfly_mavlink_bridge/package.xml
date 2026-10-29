@@ -16,6 +16,7 @@
   <depend>sensor_msgs</depend>
 
   <exec_depend>mavros</exec_depend>
+  <exec_depend>easyfly_mavros_runtime</exec_depend>
   <exec_depend>easyfly_rc_receiver</exec_depend>
   <exec_depend>ros2launch</exec_depend>
 

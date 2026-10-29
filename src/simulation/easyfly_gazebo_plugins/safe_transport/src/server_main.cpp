@@ -34,15 +34,58 @@
 #include <gazebo/Server.hh>
 #include <gazebo/common/Console.hh>
 #include <gazebo/common/Exception.hh>
+#include <gazebo/common/Events.hh>
+#include <dlfcn.h>
+#include <atomic>
 #include <gazebo/util/LogRecord.hh>
 #include "easyfly_transport/compat.hpp"
+#include "easyfly_transport/signal_relay.hpp"
+
+extern "C" bool EasyflyCameraClockCompatibility();
+
+namespace
+{
+using Handler = void (*)(int);
+std::atomic<Handler> native_sigint{nullptr};
+}
+
+// The installed Gazebo library binds Server::SigInt directly, so overriding
+// that C++ symbol is insufficient. Redirect only its exact handler registration
+// in this standalone executable; all other sigaction calls retain libc behavior.
+extern "C" int sigaction(int signal, const struct sigaction * action,
+  struct sigaction * previous) noexcept
+{
+  using Function = int (*)(int, const struct sigaction *, struct sigaction *);
+  static auto real = reinterpret_cast<Function>(dlsym(RTLD_NEXT, "sigaction"));
+  if (!real) {errno = ENOSYS; return -1;}
+  if (signal == SIGINT && action && action->sa_handler == native_sigint.load() &&
+    native_sigint.load() != nullptr)
+  {
+    auto safe = *action;
+    safe.sa_handler = easyfly_transport::SignalRelay::notify;
+    const int result = real(signal, &safe, previous);
+    if (result == 0) {std::cerr << "EasyFly Gazebo: async-safe SIGINT handoff installed\n";}
+    return result;
+  }
+  return real(signal, action, previous);
+}
 
 int main(int argc, char ** argv)
 {
+  // Upstream Server::Run dispatches locked C++ callbacks from its handler.
+  // Keep those callbacks in the joined ordinary thread instead.
+  easyfly_transport::SignalRelay signals;
+  if (!EasyflyCameraClockCompatibility()) {return 2;}
+  std::cerr << "EasyFly Gazebo: camera scene-time compatibility active\n";
   if (!easyfly_transport::ValidateLibrary()) {
     std::cerr << "EasyFly transport: unsupported Gazebo transport fingerprint; refusing start\n";
     return 2;
   }
+  void * library = dlopen("libgazebo.so.11", RTLD_NOW | RTLD_NOLOAD);
+  auto handler = library ? reinterpret_cast<Handler>(
+    dlsym(library, "_ZN6gazebo6Server6SigIntEi")) : nullptr;
+  if (!handler) {std::cerr << "Gazebo native SIGINT entry not available\n"; return 2;}
+  native_sigint.store(handler);
   ::setenv("RMT_PORT", "1500", true);
   std::unique_ptr<gazebo::Server> server;
   int result = 0;
@@ -69,23 +112,34 @@ int main(int argc, char ** argv)
     if (!server->ParseArgs(static_cast<int>(arguments.size()), pointers.data())) {
       result = -1;
     } else {
+      signals.start([&server] {
+        // Same stop/event semantics as upstream Server::SigInt, from a
+        // normal thread which cannot interrupt a plugin while it owns a lock.
+        server->Stop();
+        gazebo::event::Events::sigInt();
+      });
       server->Run();
+      signals.finish();
       server->Fini();
     }
   } catch (gazebo::common::Exception & error) {
+    signals.finish();
     error.Print();
     if (server) {server->Fini();}
     result = -1;
   } catch (Ogre::Exception & error) {
+    signals.finish();
     gzerr << "Ogre Error:" << error.getFullDescription() << "\n";
     if (server) {server->Fini();}
     result = -1;
   } catch (const std::exception & error) {
+    signals.finish();
     std::cerr << "EasyFly gzserver failed: " << error.what() << "\n";
     if (server) {server->Fini();}
     result = -1;
   }
   // ServerPrivate contains transport owners: release it before closing cleanup.
+  signals.finish();
   server.reset();
   easyfly_transport::ShutdownConnections();
   if (!easyfly_transport::Finish()) {

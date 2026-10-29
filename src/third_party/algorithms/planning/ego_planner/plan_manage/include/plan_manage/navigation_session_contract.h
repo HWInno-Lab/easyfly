@@ -1,20 +1,38 @@
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #pragma once
 #include <string>
 #include <cmath>
 #include <limits>
-namespace ego_planner {
-inline double navigationAxisVelocityLimit(double speed, double tolerance) {
+namespace ego_planner
+{
+inline double navigationAxisVelocityLimit(double speed, double tolerance)
+{
   if (!std::isfinite(speed) || speed <= 0.0 || !std::isfinite(tolerance) ||
-      tolerance < 0.0 || tolerance > 1.0) return std::numeric_limits<double>::quiet_NaN();
+    tolerance < 0.0 || tolerance > 1.0) {return std::numeric_limits<double>::quiet_NaN();}
   // UniformBspline's feasibility checker adds 1e-4 to each axis limit.
   const double cap = (speed / std::sqrt(3.0) - 1e-4) / (1.0 + tolerance);
   return cap > 0.0 ? cap : std::numeric_limits<double>::quiet_NaN();
 }
-inline bool matchesNavigationSession(const std::string &candidate, const std::string &active) {
+inline bool matchesNavigationSession(const std::string & candidate, const std::string & active)
+{
   return candidate.size() <= 128 && candidate == active;
 }
-inline bool runtimeTrajectoryBelongsToSession(bool managed,
-  const std::string &published, const std::string &active) {
+inline bool runtimeTrajectoryBelongsToSession(
+  bool managed,
+  const std::string & published, const std::string & active)
+{
   return !managed || (!active.empty() && matchesNavigationSession(published, active));
 }
 }  // namespace ego_planner

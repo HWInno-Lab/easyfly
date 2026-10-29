@@ -1,0 +1,54 @@
+{
+  "project": "GCOPTER",
+  "repository": "https://github.com/ZJU-FAST-Lab/GCOPTER",
+  "revision": "e0444f6d47b84f972ced91746b05feb36ce1fd4f",
+  "license": "MIT",
+  "selected_roots": [
+    "gcopter/include/gcopter",
+    "README.md",
+    "LICENSE"
+  ],
+  "current_path": "src/third_party/algorithms/planning/gcopter",
+  "patches": [
+    {
+      "path": "tools/algorithms/patches/gcopter/0001-cxx17-const-comparator.patch",
+      "sha256": "224d118a7271bf8fac4b989105a4127456ff6afa4f1eca2d5ea0bbb35ee72359",
+      "reason": "C++17 std::set requires a const-invocable comparator; comparison arithmetic unchanged."
+    }
+  ],
+  "files": {
+    "LICENSE": "5449b6565f534493983f6a88557c4956686a966bdef7f575a4025a4d85f1c05c",
+    "README.md": "90afcf37a8d018c45140b4af3fe57fd989d4d6ca71a962be38c5ce6fe68fd977",
+    "include/gcopter/firi.hpp": "e47441312b31dff209a59798a8414cbdf310534720e984c73894cb7ea1beb6ee",
+    "include/gcopter/flatness.hpp": "6b7f45b5b313a3981b3eb79a63e37f8025c262d90d6edc6eeabb6503ec9390b2",
+    "include/gcopter/gcopter.hpp": "652f2b63087294207c3bbcc9d58cbde893179e8d1aeb9ad4b0c7aaa7eccbd339",
+    "include/gcopter/geo_utils.hpp": "a3e746364f3187930781979eed7dc5e98af102eab62000fd86a52f54cd25ffa9",
+    "include/gcopter/lbfgs.hpp": "fdc6b0d4c4b4c50e0368d6983dd28ffd893c824df461aebe9e3b24dd8a99b3ca",
+    "include/gcopter/minco.hpp": "60defee515dd3c96cdc54f3dbfa279b84556c92fce92b77365cc37b70649b512",
+    "include/gcopter/quickhull.hpp": "c0d2668c2c87ff9dfddc750d2bca9f91e4846f8fa78beffe44def0736b5e0e21",
+    "include/gcopter/root_finder.hpp": "c5eaa3ebed6bc65b5671db8965c0c6e3f79cb0cfa9787c89822315cdbac9d781",
+    "include/gcopter/sdlp.hpp": "d7b7bd66597ca1355d7bf16d902cf17da638ad0fd98870673f209a329ded0abf",
+    "include/gcopter/sfc_gen.hpp": "ac69935d3ee2b4192e75a2d7efbcd31082f706c8517fb951e714b860b3e6a776",
+    "include/gcopter/trajectory.hpp": "9ba9b8d43be34848f9f3bd955d5bf8c8922e85757255a7363c82fe59a8a2e9fd",
+    "include/gcopter/voxel_dilater.hpp": "80ec4e25859c5758b2f80f538267cfb1eb25ef121d394307b3802a97df63f3e7",
+    "include/gcopter/voxel_map.hpp": "4209beca9876eb1e71e459490fbdfb5152793cd6b10626faedc1123c6fab7e1f"
+  },
+  "excluded": "ROS1 example, OMPL example planner, visualization and map generators are not runtime dependencies. The actual GCOPTER/MINCO optimizer is unchanged.",
+  "upstream_files": {
+    "LICENSE": "5449b6565f534493983f6a88557c4956686a966bdef7f575a4025a4d85f1c05c",
+    "README.md": "90afcf37a8d018c45140b4af3fe57fd989d4d6ca71a962be38c5ce6fe68fd977",
+    "include/gcopter/firi.hpp": "e47441312b31dff209a59798a8414cbdf310534720e984c73894cb7ea1beb6ee",
+    "include/gcopter/flatness.hpp": "6b7f45b5b313a3981b3eb79a63e37f8025c262d90d6edc6eeabb6503ec9390b2",
+    "include/gcopter/gcopter.hpp": "652f2b63087294207c3bbcc9d58cbde893179e8d1aeb9ad4b0c7aaa7eccbd339",
+    "include/gcopter/geo_utils.hpp": "9a1e9b70c9a15ef46c2f8658df293f29051e98ab7dac5ffad129bfa8b9d87031",
+    "include/gcopter/lbfgs.hpp": "fdc6b0d4c4b4c50e0368d6983dd28ffd893c824df461aebe9e3b24dd8a99b3ca",
+    "include/gcopter/minco.hpp": "60defee515dd3c96cdc54f3dbfa279b84556c92fce92b77365cc37b70649b512",
+    "include/gcopter/quickhull.hpp": "c0d2668c2c87ff9dfddc750d2bca9f91e4846f8fa78beffe44def0736b5e0e21",
+    "include/gcopter/root_finder.hpp": "c5eaa3ebed6bc65b5671db8965c0c6e3f79cb0cfa9787c89822315cdbac9d781",
+    "include/gcopter/sdlp.hpp": "d7b7bd66597ca1355d7bf16d902cf17da638ad0fd98870673f209a329ded0abf",
+    "include/gcopter/sfc_gen.hpp": "ac69935d3ee2b4192e75a2d7efbcd31082f706c8517fb951e714b860b3e6a776",
+    "include/gcopter/trajectory.hpp": "9ba9b8d43be34848f9f3bd955d5bf8c8922e85757255a7363c82fe59a8a2e9fd",
+    "include/gcopter/voxel_dilater.hpp": "80ec4e25859c5758b2f80f538267cfb1eb25ef121d394307b3802a97df63f3e7",
+    "include/gcopter/voxel_map.hpp": "4209beca9876eb1e71e459490fbdfb5152793cd6b10626faedc1123c6fab7e1f"
+  }
+}

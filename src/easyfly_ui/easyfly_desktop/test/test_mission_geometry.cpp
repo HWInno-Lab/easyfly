@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <QComboBox>
 #include <QDir>
@@ -270,4 +269,19 @@ TEST(MissionGeometryEditor, ActualScreenshotsAndClicksNeverUseTaskRpc)
     state->list_calls + state->validate_calls + state->query_calls + state->details_calls,
     0);
   close(window);
+}
+
+TEST(MissionGeometry, ExploreShowsVolumeAndForbiddenBoxWithoutInventedRoute)
+{
+  auto s = ui::draft_default_step("explore");
+  s.forbidden_boxes.push_back({{{1, 1, .5}}, {{1.5, 1.5, 2}}});
+  const auto g = ui::draft_geometry(
+    mission::validateMissionText(
+      ui::draft_yaml(
+  {
+    ui::draft_default_step("navigate"), s, ui::draft_default_step("navigate")})));
+  ASSERT_TRUE(g.accepted); ASSERT_EQ(g.areas.size(), 2u); EXPECT_TRUE(g.links.empty());
+  EXPECT_EQ(g.areas[0].type, "explore"); EXPECT_FALSE(g.areas[0].forbidden);
+  EXPECT_DOUBLE_EQ(g.areas[0].z, .5); EXPECT_DOUBLE_EQ(g.areas[0].max_z, 2.5);
+  EXPECT_TRUE(g.areas[1].forbidden); EXPECT_DOUBLE_EQ(g.areas[1].max_z, 2);
 }

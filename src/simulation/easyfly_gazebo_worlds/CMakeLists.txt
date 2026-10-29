@@ -11,6 +11,6 @@ install(DIRECTORY scenes schemas licenses worlds evidence generators
   PATTERN "__pycache__" EXCLUDE
   PATTERN "*.pyc" EXCLUDE
   PATTERN "*.log" EXCLUDE)
-install(FILES README.md DESTINATION share/${PROJECT_NAME})
+install(FILES README.md SCENE-LIFECYCLE.md DESTINATION share/${PROJECT_NAME})
 
 ament_package()

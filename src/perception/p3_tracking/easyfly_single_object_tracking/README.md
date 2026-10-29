@@ -6,7 +6,7 @@ It does not publish `/tracks`, `/target_positions`, map inputs or flight command
 Launch `single_object_tracking.launch.py use_sim_time:=false`.
 
 Manage operations are `initialize`, `reset`, `query`. Initialize must name the
-**exact latest displayed image header** (positive stamp + optical frame), with a
+**exact displayed image header retained within the freshness bound** (positive stamp + optical frame), with a
 finite normalized top-left/size ROI fully inside the image and at least 8×8
 pixels. Every accepted new ROI gets a new monotonic ID in an independent namespace.
 Acceptance means initialization is queued, not that tracking succeeded. Lost
@@ -23,8 +23,8 @@ Source/receipt age, ROS clock progress, strictly increasing stamps and optical
 frame gate input and output. Invalid/stale input, paused/regressed/zero clock or
 expired processed output causes loss even if callbacks keep receiving images.
 DDS depth 1 plus a replaceable latest slot bound queued work. A worker-owned CSRT
-instance is joined at shutdown; cache is at most latest/ROI snapshot plus in-flight
-work, and ROI generation protects initialization/reset races.
+instance is joined at shutdown; recent source history is bounded to 16 images / 64 MiB and the configured age,
+plus the latest/ROI snapshot and in-flight work, and ROI generation protects initialization/reset races.
 
 Read-only startup parameters: `optical_frame=camera_color_optical_frame` and
 `max_age_seconds=.5` (.05..5s). `/platform/single_tracking/capabilities` separates
@@ -47,3 +47,8 @@ not permission to fly or publish flight commands.
 ## ALG-5 算法边界
 
 CSRT 模型生命周期已迁入 easyfly_csrt，并通过 easyfly_single_tracking_api 调用；ROI 服务、重定位、图像所有权、源时间/过期和 worker generation 留在本包。未知分数继续发布原 confidence=0，算法使用 nullopt。
+
+A newer camera frame may arrive while the UI decodes or displays its predecessor.
+Initialization now selects the exact requested immutable header from this bounded
+history; it never substitutes the newest frame. Missing, stale, conflicting or
+invalid input still rejects the ROI. Invalid input and clock loss clear the history.

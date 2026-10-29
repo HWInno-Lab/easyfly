@@ -10,10 +10,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QApplication>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDebug>
 #include <QFile>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -29,7 +29,6 @@
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QXmlStreamReader>
-
 #include <algorithm>
 #include <chrono>
 #include <cstdio>
@@ -40,9 +39,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-
 #include "easyfly_desktop/rviz_view.hpp"
-
 #include "layout_state.hpp"
 #include "rviz_layers.hpp"
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
@@ -68,9 +65,9 @@
 #include <rviz_common/visualization_manager.hpp>
 #include <rviz_rendering/render_window.hpp>
 #include <rviz_default_plugins/displays/path/path_display.hpp>
+#include "easyfly_rviz_plugins/odometry_display.hpp"
 #include <rviz_default_plugins/displays/odometry/odometry_display.hpp>
 #endif
-
 namespace easyfly_desktop
 {
 namespace
@@ -287,6 +284,11 @@ struct Surface
       set(pose->subProp("Shape"), "Axes Length", 0.8);
       set(pose->subProp("Shape"), "Axes Radius", 0.04);
       set(pose, "Covariance", false); pose->setEnabled(true);
+      auto * aircraft = aircraft_display(preset == 0 ? "/mavros/local_position/odom" : "/odom");
+      aircraft->setClassId("easyfly_desktop/ReadOnlyAircraft");
+      manager->addDisplay(aircraft, false);
+      aircraft->setName(QStringLiteral("完整机模"));
+      layers.emplace(QStringLiteral("完整机模"), aircraft);
       if (preset != 0) {
         add_spatial(SpatialKind::Actual, "实际轨迹", "/path", true);
         add_spatial(SpatialKind::Planned, "规划显示线", "/optimal_list", false);
@@ -294,6 +296,9 @@ struct Surface
         add_spatial(SpatialKind::Cloud, "过滤点云", "/pointcloud_filtered", false);
         add_spatial(SpatialKind::Map, "占据格中心", "/occupancy_grid", false);
         add_spatial(SpatialKind::Obstacles, "几何障碍框", "/obstacles", false);
+        add_spatial(SpatialKind::Landing, "局部降落板法向", "/landing/guidance_target", false);
+        add_spatial(SpatialKind::Predictions, "模型预测十字", "/target_predictions", false);
+        add_spatial(SpatialKind::Classified, "类别副本几何", "/obstacles_classified", false);
       }
       add("TF", "TF", false);
       manager->getViewManager()->getCurrent()->reset(); manager->startUpdate();
@@ -315,14 +320,16 @@ struct Surface
       display = new InputFrameDisplay<rviz_default_plugins::displays::PathDisplay,
           nav_msgs::msg::Path>();
     } else if (type == "Odometry") {
-      display = new InputFrameDisplay<rviz_default_plugins::displays::OdometryDisplay,
+      display = new InputFrameDisplay<easyfly_rviz_plugins::OdometryDisplay,
           nav_msgs::msg::Odometry>();
     }
+    const QString class_id = type == "Odometry" ? "easyfly_rviz_plugins/Odometry" :
+      "rviz_default_plugins/" + type;
     if (display) {
-      display->setClassId("rviz_default_plugins/" + type); manager->addDisplay(display, enabled);
+      display->setClassId(class_id); manager->addDisplay(display, enabled);
       display->setName(name);
     } else {display = manager->createDisplay("rviz_default_plugins/" + type, name, enabled);}
-    if (!display || display->getClassId() != "rviz_default_plugins/" + type) {
+    if (!display || display->getClassId() != class_id) {
       throw std::runtime_error("RViz display plugin unavailable");
     }
     layers.emplace(name, display); return display;
@@ -392,7 +399,9 @@ struct Surface
     QStringList status; status_text(manager->getRootDisplayGroup(), status);
     for (const auto & layer : result.layers) {
       status.push_back(
-        QStringLiteral("%1 · %2 · %3\n源frame=%4 · 源龄=%5s / 收龄=%6s · 替换=%7").arg(
+        QStringLiteral(
+          "%1 · %2 · %3\n源frame=%4 · 源龄=%5s / 收"
+          "龄=%6s · 替换=%7").arg(
           layer.name, layer.topic, layer.status, layer.source_frame).arg(
           layer.source_age, 0, 'f', 2).arg(layer.receipt_age, 0, 'f', 2).arg(layer.replaced));
     }
@@ -401,12 +410,13 @@ struct Surface
 };
 #endif
 }  // namespace
-
 struct RvizView::Impl
 {
   RvizView * widget;
   bool connected{false}, simulation{true};
   QString error;
+  uint64_t lifecycle_sequence{0};
+  QString lifecycle_reason, last_node;
   QComboBox * preset;
   QPushButton * start;
   QWidget * canvas;
@@ -458,16 +468,37 @@ struct RvizView::Impl
     int layer_index = 0;
     auto * warning = new QLabel(
       QStringLiteral(
-        "实验性只读三维 · 原始话题的最后收到几何，不代表新鲜状态或可飞许可。\n"
+        "实验性只读三维 · 原始话题的最后"
+        "收到几何，不代表新鲜状态或可飞许"
+        "可。\n"
+        "机模使用 base_link 机体位姿和原始时刻传感器 TF；0.5 秒过期清图，旋翼不表示实际转速。\n"
         "网格不是地图。基础预设为 MAVROS 位姿；导航预设为 /odom 机位。\n"
-        "导航几何仅按已有 TF 转换；同名 map 不表示同一原点，缺少 TF 不猜测。\n"
-        "导航图层：蓝=实际轨迹、橙=规划显示、绿=点云、紫=占据格中心、红=几何障碍。\n"
-        "导航几何源龄/收龄超过2秒清图；规划不是已接受轨迹，抽样不代表完整覆盖。\n"
-        "只操作视角，不发布飞行命令；进程内插件/显卡故障可能影响整个 UI。"), controls);
+        "导航几何仅按已有 TF 转换；同名 map "
+        "不表示同一原点，缺少 TF 不猜测。\n"
+        "导航图层：蓝=实际轨迹、橙=规划显"
+        "示、绿=点云、紫=占据格中心、红=几"
+        "何障碍。\n"
+        "导航几何源龄/收龄超过2秒清图；规"
+        "划不是已接受轨迹，抽样不代表完整"
+        "覆盖。\n"
+        "专项图层0.5秒清图：绿线=板中心法"
+        "向，青十字=模型预测，紫框=类别副"
+        "本几何（类别见感知表）。\n"
+        "只操作视角，不发布飞行命令；进程"
+        "内插件/显卡故障可能影响整个 UI。"),
+      controls);
     warning->setWordWrap(true); warning->setTextFormat(Qt::PlainText);
     for (const auto & name : {QStringLiteral("网格"), QStringLiteral("位姿"),
-        QStringLiteral("实际轨迹"), QStringLiteral("规划显示线"), QStringLiteral("SLAM点云"),
-        QStringLiteral("过滤点云"), QStringLiteral("占据格中心"), QStringLiteral("几何障碍框"),
+        QStringLiteral("完整机模"),
+        QStringLiteral("实际轨迹"),
+        QStringLiteral("规划显示线"),
+        QStringLiteral("SLAM点云"),
+        QStringLiteral("过滤点云"),
+        QStringLiteral("占据格中心"),
+        QStringLiteral("几何障碍框"),
+        QStringLiteral("局部降落板法向"),
+        QStringLiteral("模型预测十字"),
+        QStringLiteral("类别副本几何"),
         QStringLiteral("TF")})
     {
       auto * box = new QCheckBox(name, layer_group);
@@ -476,7 +507,10 @@ struct RvizView::Impl
         name == QStringLiteral("网格") || name == QStringLiteral("位姿") ||
         name == QStringLiteral("实际轨迹"));
       layers.emplace(name, box);
-      layer_layout->addWidget(box, layer_index / 2, layer_index % 2); ++layer_index;
+      if (layer_index < 8) {
+        layer_layout->addWidget(box, layer_index / 2, layer_index % 2);
+      } else {layer_layout->addWidget(box, layer_index - 4, 0, 1, 2);}
+      ++layer_index;
       QObject::connect(
         box, &QCheckBox::toggled, widget, [this, name](bool checked) {
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
@@ -497,18 +531,25 @@ struct RvizView::Impl
     auto * reset = new QPushButton(QStringLiteral("重置视角"), view_group);
     reset->setObjectName("resetEmbeddedRvizView"); view_layout->addWidget(reset);
     controls_layout->addWidget(view_group);
-    auto * help = new QToolButton(controls); help->setText(QStringLiteral("图层与坐标说明"));
+    auto * help = new QToolButton(controls);
+    help->setText(QStringLiteral("图层与坐标说明"));
     help->setCheckable(true); warning->hide();
     QObject::connect(help, &QToolButton::toggled, warning, &QWidget::setVisible);
     controls_layout->addWidget(help); controls_layout->addWidget(warning);
     status = new QPlainTextEdit(controls); status->setObjectName("embeddedRvizStatus");
     status->setReadOnly(true); status->setFixedHeight(110);
     status->setLineWrapMode(QPlainTextEdit::WidgetWidth);
-    controls_layout->addWidget(status); controls_layout->addStretch(); scroll->setWidget(controls);
+    controls_layout->addWidget(status);
+    controls_layout->addStretch();
+    scroll->setWidget(controls);
     canvas = new QWidget(splitter); canvas->setObjectName("embeddedRvizCanvasHost");
     canvas->setMinimumSize(320, 240);
     canvas_layout = new QVBoxLayout(canvas); canvas_layout->setContentsMargins(0, 0, 0, 0);
-    placeholder = new QLabel(QStringLiteral("三维画布\n选择上方预设，手动打开只读三维。"), canvas);
+    placeholder = new QLabel(
+      QStringLiteral(
+        "三维画布\n选择上方预设，手动打开"
+        "只读三维。"),
+      canvas);
     placeholder->setObjectName("embeddedRvizPlaceholder");
     placeholder->setAlignment(Qt::AlignCenter);
     placeholder->setWordWrap(true); placeholder->setTextFormat(Qt::PlainText);
@@ -527,7 +568,9 @@ struct RvizView::Impl
         reset_view();
       });
     timer = new QTimer(widget); timer->setInterval(500);
-    QObject::connect(timer, &QTimer::timeout, widget, [this] {update();}); timer->start(); update();
+    QObject::connect(timer, &QTimer::timeout, widget, [this] {update();});
+    timer->start();
+    update();
   }
   void change_view()
   {
@@ -568,25 +611,43 @@ struct RvizView::Impl
       for (const auto & layer : surface->layers) {
         layer.second->setEnabled(layers.at(layer.first)->isChecked());
       }
+      last_node = surface->snapshot().node; record_lifecycle("explicit_open");
     } catch (const std::exception & e) {
       surface.reset(); error = QString::fromUtf8(e.what()).left(2048);
+      record_lifecycle("open_failed");
     }
 #endif
     update();
   }
-  void close()
+  void record_lifecycle(const QString & reason)
+  {
+    lifecycle_reason = reason; ++lifecycle_sequence;
+    const auto now = std::chrono::duration_cast<std::chrono::nanoseconds>(
+      std::chrono::steady_clock::now().time_since_epoch()).count();
+    qInfo().noquote() << "easyfly_rviz_lifecycle sequence=" << lifecycle_sequence <<
+      "pid=" << QCoreApplication::applicationPid() << "steady_ns=" << now <<
+      "node=" << last_node << "reason=" << reason << "simulation=" << simulation;
+  }
+  void close(const QString & reason = "explicit_close")
   {
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
+    if (surface) {record_lifecycle(reason);}
     surface.reset();
+#else
+    (void)reason;
 #endif
     update();
   }
   RvizSnapshot snapshot() const
   {
+    RvizSnapshot result;
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
-    if (surface) {return surface->snapshot();}
+    if (surface) {result = surface->snapshot();}
 #endif
-    RvizSnapshot result; result.status = error; return result;
+    if (!result.running) {result.status = error;}
+    result.lifecycle_sequence = lifecycle_sequence;
+    result.lifecycle_reason = lifecycle_reason; result.last_node = last_node;
+    return result;
   }
   void update()
   {
@@ -604,8 +665,12 @@ struct RvizView::Impl
     if (!s.running) {
       status->setPlainText(
         !error.isEmpty() ? QStringLiteral("内嵌失败，保留独立 RViz / 二维视图：") +
-        error : !RvizView::available() ? QStringLiteral("此构建未启用 RViz 内嵌；使用独立 RViz。") :
-        !connected ? QStringLiteral("观测已断开；三维资源已释放，不自动重开。") :
+        error : !RvizView::available() ? QStringLiteral(
+          "此构建未启用 RViz 内嵌；使用独立 RV"
+          "iz。") :
+        !connected ? QStringLiteral(
+          "观测已断开；三维资源已释放，不自"
+          "动重开。") :
         QStringLiteral("尚未初始化渲染/ROS；由你手动打开。"));
     } else {
       status->setPlainText(
@@ -616,7 +681,7 @@ struct RvizView::Impl
 };
 RvizView::RvizView(QWidget * parent)
 : QWidget(parent), impl_(std::make_unique<Impl>(this)) {}
-RvizView::~RvizView() = default;
+RvizView::~RvizView() {impl_->close("destroyed");}
 bool RvizView::available()
 {
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
@@ -628,13 +693,15 @@ bool RvizView::available()
 void RvizView::set_connection(bool connected, bool use_sim_time)
 {
   if (impl_->connected == connected && impl_->simulation == use_sim_time) {return;}
-  if (!connected || impl_->simulation != use_sim_time) {impl_->close();}
+  if (!connected || impl_->simulation != use_sim_time) {
+    impl_->close(!connected ? "disconnected" : "clock_mode_changed");
+  }
   impl_->connected = connected; impl_->simulation = use_sim_time; impl_->update();
 }
-void RvizView::stop() {impl_->connected = false; impl_->close();}
+void RvizView::stop() {impl_->connected = false; impl_->close("stopped");}
 RvizSnapshot RvizView::snapshot() const {return impl_->snapshot();}
 void RvizView::hideEvent(QHideEvent * event)
 {
-  impl_->close(); QWidget::hideEvent(event);  // hidden pages retain no subscriptions/render loop
+  impl_->close("hidden"); QWidget::hideEvent(event);  // hidden pages retain no render loop
 }
 }  // namespace easyfly_desktop

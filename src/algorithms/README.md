@@ -7,7 +7,7 @@ ALG-8.1..8.5已完成第三方分类、来源/补丁登记与接入指南。ALG-
 
 ALG-9 之后新增 `easyfly_ellipse` 和 `easyfly_color_line`，当前合计 4 个 API、17 个计算组件。
 两种检测的功能包已实现，详情见[椭圆与彩线检测](classical-detection.md)。
-剩余算法预留包为车辆重识别、深度估计、集群规划和独立轨迹优化；ALG-9 历史结果保持原样。
+剩余算法预留包为车辆重识别、深度估计和集群规划；独立轨迹优化已接入原生 GCOPTER。ALG-9 历史结果保持原样，当前构建、DDS 修复及仿真验收以[未完成清单](../../未完成.md)所列 2026-10-25／26 的 V 轮为准。
 
 外部算法的目标目录是 `../third_party/algorithms/`，其功能分类与本目录一致：
 `preprocessing`、`detection`、`tracking`、`localization`、`fusion_mapping`、`planning`。
@@ -87,5 +87,5 @@ ALG-8 第三方分类/接入收敛 → ALG-9 整体回归。
 和默认配置。需要新增的契约能力标为待实现，不能以接口文档代替运行验证。
 已有未解决问题保留记录，不以一次重跑成功宣布修复。
 
-完整实施计划和进度分别在工作区根目录的本地 `plan-v5-algorithms.md` 与
-`schedule-v5-algorithms.md`；运行和扩展必需信息以本目录受追踪文档为准。
+统一实施计划和进度分别在工作区根目录的本地 `plan-v6.md` 与
+`schedule-v6.md`；运行和扩展必需信息以本目录受追踪文档为准。

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_mavros_runtime</name>
+  <version>0.1.0</version>
+  <description>Owned MAVROS 2.14 runtime with joined transport and plugin shutdown.</description>
+  <maintainer email="dev@easyfly.local">EasyFly Project</maintainer>
+  <license>BSD-3-Clause</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>mavros</depend>
+  <depend>mavlink</depend>
+  <depend>libmavconn</depend>
+  <depend>console_bridge</depend>
+  <depend>rclcpp</depend>
+  <depend>rclcpp_components</depend>
+  <depend>pluginlib</depend>
+  <depend>rcpputils</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2_eigen</depend>
+  <depend>diagnostic_updater</depend>
+  <depend>mavros_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>eigen</depend>
+  <build_depend>geographiclib</build_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

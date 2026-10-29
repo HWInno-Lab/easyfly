@@ -129,7 +129,10 @@ def main():
         iris_meshes=[dict(path='models/iris/meshes/'+n,sha256=digest(classic/'models/iris/meshes'/n))
                      for n in ['iris.stl','iris_prop_ccw.dae','iris_prop_cw.dae']],
         gps_files=[dict(path=p.relative_to(classic).as_posix(),sha256=digest(p)) for p in sorted((classic/'models/gps').rglob('*')) if p.is_file()],
-        original_mid360_sdf_sha256=digest(models/'mid360/mid360.sdf'),curated_mid360_sdf_sha256=digest(runtime/'mid360/mid360.sdf'),
+        original_mid360_sdf_path='licenses/runtime/mid360-original.sdf',
+        original_mid360_sdf_sha256=digest(models/'licenses/runtime/mid360-original.sdf'),
+        current_base_mid360_sdf_sha256=digest(models/'mid360/mid360.sdf'),
+        curated_mid360_sdf_sha256=digest(runtime/'mid360/mid360.sdf'),
         mid360_change='Visual geometry replaced by a project primitive; IMU uses SDFormat axis noise, livox_imu_frame and the coherent measurement-snapshot plugin; physical poses/mass/inertia retained; no original mesh imported.',
         gazebo_package='gazebo-common=11.10.2+dfsg-1',
         gazebo_material_sha256=digest(Path('/usr/share/gazebo-11/media/materials/scripts/gazebo.material')))

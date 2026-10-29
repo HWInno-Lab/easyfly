@@ -36,6 +36,7 @@
 #include <easyfly_msgs/msg/landing_guidance_target.hpp>
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
 #include <easyfly_msgs/srv/get_capabilities.hpp>
+#include <easyfly_msgs/srv/get_trajectory_state.hpp>
 #include <easyfly_msgs/srv/arm_motors.hpp>
 #include <easyfly_msgs/srv/set_flight_mode.hpp>
 #include <quadrotor_msgs/msg/position_command.hpp>
@@ -110,6 +111,8 @@ private:
   std::chrono::steady_clock::time_point precision_last_control_{};
   bool precision_reserved_{false};
   bool precision_handoff_{false};
+  int64_t precision_handoff_source_ns_{0};
+  std::chrono::steady_clock::time_point precision_handoff_started_;
   bool precision_child_admission_pending_{false};
   bool precision_child_cancel_pending_{false};
   bool precision_child_cancel_accepted_{false};
@@ -184,6 +187,8 @@ private:
   rclcpp::Client<easyfly_msgs::srv::ArmMotors>::SharedPtr cli_arm_;
   rclcpp::Client<easyfly_msgs::srv::SetFlightMode>::SharedPtr cli_mode_;
   rclcpp::Service<easyfly_msgs::srv::GetCapabilities>::SharedPtr srv_flight_capabilities_;
+  rclcpp::Service<easyfly_msgs::srv::GetTrajectoryState>::SharedPtr srv_trajectory_state_;
+  std::string controller_session_id_;
 
   // ---- 独立 callback group (client 与 action 回调分离，避免死锁) ----
   rclcpp::CallbackGroup::SharedPtr cli_cb_group_;

@@ -13,6 +13,8 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   ament_add_gtest(test_projection test/test_projection.cpp)
   target_link_libraries(test_projection ${PROJECT_NAME})
+  target_compile_definitions(test_projection PRIVATE
+    EASYFLY_PROJECTION_TEST_DATA_DIR="${CMAKE_CURRENT_SOURCE_DIR}/test/data")
 endif()
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 ament_package()

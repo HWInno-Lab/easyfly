@@ -14,7 +14,13 @@ def test_native_provenance_and_only_reviewed_changes():
     expected = original.replace('GazeboImuPlugin', 'EasyFlyNativeImuPlugin').replace(
         'updateConnection_->~Connection();', 'updateConnection_.reset();').replace(
         '_info.simTime.sec * 1000000 + _info.simTime.nsec / 1000',
-        'static_cast<int64_t>(_info.simTime.sec) * 1000000 + _info.simTime.nsec / 1000')
+        'static_cast<int64_t>(_info.simTime.sec) * 1000000 + _info.simTime.nsec / 1000').replace(
+        '  last_time_ = current_time;\n  double t',
+        '  last_time_ = current_time;\n'
+        '  // A paused or reset world has no positive integration interval. Establish\n'
+        '  // the actual new source-time baseline and emit no synthetic measurement.\n'
+        '  // The unchanged relay rejects the subsequent epoch rollback and stays halted.\n'
+        '  if (dt <= 0.0) {\n    return;\n  }\n  double t')
     assert (ROOT / 'native_imu.cpp').read_text() == expected
     assert (ROOT / 'gazebo_imu_plugin.h').read_text() == (
         ROOT / 'upstream/gazebo_imu_plugin.h').read_text().replace(

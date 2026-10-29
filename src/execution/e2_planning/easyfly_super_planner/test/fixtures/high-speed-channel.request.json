@@ -1,0 +1,5 @@
+{
+  "source": "artifacts/v01-v16-20261025/sitl/v15-super-channel-speed-1.8/super-nFqao9/job-1.request",
+  "raw_sha256": "6601be65bbd621d355f0a6eb9b1856ef4bd00e832b1b9453de048b4f2cc53c85",
+  "scope": "unaltered request from SUPER 1.8 m/s channel deadline failure"
+}

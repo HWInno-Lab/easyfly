@@ -10,11 +10,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QStringList>
 #include <cmath>
 #include <algorithm>
-
 #include "easyfly_desktop/presentation.hpp"
 namespace easyfly_desktop
 {
@@ -31,10 +29,45 @@ QString missing_mission_backends(const bridge::UiSnapshot & snapshot, double now
   const bool depends_on_localization = std::any_of(
     steps.begin(), steps.end(),
     [](const auto & step) {
-      return step.type == "navigate" || step.type == "track" || step.type == "search";
+      return step.type == "navigate" || step.type == "track" || step.type == "search" ||
+      step.type == "explore";
     });
-  if (depends_on_localization && snapshot.selected_localization_backend == "openvins") {
-    return QStringLiteral("OpenVINS 当前仅观测：导航/跟踪/搜索尚未完成 odom 对齐与地图接入");
+  if (std::any_of(steps.begin(), steps.end(), [](const auto & s) {return s.type == "explore";}) &&
+    (snapshot.selected_profile != "navigation_dev" ||
+    snapshot.selected_localization_backend != "fast_lio"))
+  {
+    return QStringLiteral("FUEL 探索需要导航仿真、FAST-LIO、GCOPTER及探索后端；请检查连接方案");
+  }
+  if (depends_on_localization &&
+    (snapshot.selected_localization_backend == "openvins" ||
+    snapshot.selected_localization_backend == "orbslam3" ||
+    snapshot.selected_localization_backend == "fast_livo2"))
+  {
+    const auto name = snapshot.selected_localization_backend == "openvins" ? "OpenVINS" :
+      snapshot.selected_localization_backend == "orbslam3" ? "ORB-SLAM3" : "FAST-LIVO2";
+    if (!snapshot.localization_navigation_enabled ||
+      snapshot.selected_profile != "navigation_dev")
+    {
+      return QStringLiteral("%1 当前为观测模式；请在连接管理中选择导航仿真并重建会话").arg(name);
+    }
+    const auto & raw = snapshot.localization;
+    const auto & nav = snapshot.navigation_localization;
+    if (!raw.value || !nav.value ||
+      display_quality(
+        raw.evidence, snapshot, now, .5,
+        true) != bridge::Quality::ValidAtObservation ||
+      display_quality(
+        nav.evidence, snapshot, now, .5,
+        true) != bridge::Quality::ValidAtObservation ||
+      bridge::detail::validate_navigation_localization(
+        *nav.value, snapshot.selected_localization_backend, snapshot.clock,
+        nav.evidence.receipt_age + snapshot_delay(snapshot, now)) !=
+      bridge::Quality::ValidAtObservation ||
+      raw.value->session_id != nav.value->session_id ||
+      raw.value->generation != nav.value->generation)
+    {
+      return QStringLiteral("%1 导航定位尚未就绪、已过期或会话不一致；请检查算法状态").arg(name);
+    }
   }
   if (depends_on_localization && snapshot.selected_localization_backend == "disabled") {
     return QStringLiteral("定位已关闭：导航/跟踪/搜索不可用");
@@ -85,6 +118,14 @@ QString mission_step_parameters(const easyfly_mission_fsm::MissionStep & step)
     field("area_width", step.area_width, "m"); field("area_height", step.area_height, "m");
     field("altitude", step.altitude, "m"); field("max_speed", step.max_speed, "m/s");
     values << "pattern=boustrophedon (geometric coverage estimate only)";
+  } else if (step.type == "explore") {
+    values << QString("min=[%1,%2,%3] m; max=[%4,%5,%6] m; 禁飞盒=%7; 返回起点=%8")
+      .arg(
+      number(step.min_bound[0], 6), number(step.min_bound[1], 6), number(step.min_bound[2], 6),
+      number(step.max_bound[0], 6), number(step.max_bound[1], 6), number(step.max_bound[2], 6))
+      .arg(step.forbidden_boxes.size()).arg(
+      step.return_home ? QStringLiteral("是") : QStringLiteral(
+        "否"));
   } else if (step.type == "precision_land") {values << QString("tag_id=%1").arg(step.tag_id);}
   return values.isEmpty() ? QStringLiteral("无任务文件参数") : values.join("; ");
 }

@@ -27,3 +27,22 @@ CMake 的 FASTLIO_OUTPUT_ROOT 可显式指定可写日志/PCD根，配置时创�
 旧主安装/构建缓存没有被这次验证覆盖；切换主安装应使用新源码重新配置构建，确认旧会话结束后再清理本地桥接。
 
 验收和复验入口见 [ALG-8.1](../../../algorithms/alg8-1-validation.md)。
+
+## ORB-SLAM3（仿真验收进行中）
+
+`orb_slam3/` 固定官方提交 `4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4`，
+以 `easyfly_orbslam3_core` 导出安装 target；`easyfly_orbslam3_integration` 提供原生
+Gazebo RGB-D 接入。私有 Pangolin v0.6 源码在 `orb_slam3_dependencies/pangolin/`，
+通过 CMake 单独构建和安装，再由 `find_package(Pangolin)` 解析；不导入预编译库。
+来源、逐文件哈希、归档与有序本地补丁见 [来源清单](orb_slam3.provenance.json)。
+`tools/algorithms/verify_orbslam3_source.py` 可零模糊重建并逐文件核对。
+
+固定轴/机体标定后，原始 SLAM 位姿通过共享定位对齐和显式导航适配器接入。
+默认不授权导航；地图坐标代次变化锁存重置，不自动对齐后继续任务。
+ORB 协方差明确不可用。线程正常停止后才能保存图谱，旧图复用必须实际重定位。
+惯性内核的 `EASYFLY_ORB_GRAVITY` 默认与登记 Gazebo 世界一致，为 9.8 m/s²；
+该编译参数随安装 target 导出，RGB-D/IMU 接入同时核对 YAML 的 `IMU.Gravity`
+和实际加载内核的重力值，防止新配置混用旧的 9.81 内核。原始 IMU 数据不作缩放。
+原生静止预积分回归覆盖这个标定差异，不能代替完整惯性回环的精度验收。
+[实施及验收记录](../../../../docs/development/orbslam3-simulation-acceptance.md) 区分
+真实回环、旧图复用、导航与故障验证。实机/目标机未验收。

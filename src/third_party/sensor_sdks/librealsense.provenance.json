@@ -3226,5 +3226,29 @@
   "limitations": [
     "Exact upstream import revision unknown; local project commit is not an upstream version lock.",
     "Directory relocation does not select these sources instead of the installed SDK; verify actual driver resolution."
-  ]
+  ],
+  "verified_current_source_snapshot": {
+    "upstream_url": "https://github.com/IntelRealSense/librealsense",
+    "tag": "v2.56.5",
+    "commit": "38a41441971387197193ad3aeae3cefe6a11f2cb",
+    "matching_files": 3221,
+    "different_files": [],
+    "upstream_files_not_delivered": [
+      ".github/ISSUE_TEMPLATE.md",
+      ".github/pull_request_template.md",
+      ".github/workflows/build-ROS2-package-CI.yaml",
+      ".github/workflows/buildsCI.yaml",
+      ".github/workflows/cppcheck-parse.py",
+      ".github/workflows/cppcheck_run.log",
+      ".github/workflows/cppcheck_run.parsed.log",
+      ".github/workflows/memory-leaks-check/CMakeLists.txt",
+      ".github/workflows/memory-leaks-check/mem-leak-test.cpp",
+      ".github/workflows/rs-all-client/CMakeLists.txt",
+      ".github/workflows/rs-all-client/main.cpp",
+      ".github/workflows/static_analysis.yaml",
+      ".gitignore"
+    ],
+    "local_extra_tracked_files": [],
+    "scope": "Current present upstream files are byte-identical to this official pinned revision; no claim that the historical import command selected that commit."
+  }
 }

@@ -97,3 +97,24 @@ def test_unsupported_battery_rate_cannot_issue_native_command(native_client):
     with pytest.raises(ValueError,match='battery rate'):
         configure_owned(42,native_client,5,battery_rate_hz=1,runner=runner)
     runner.assert_not_called()
+
+
+def test_multi_instance_native_port_and_stream_identity(native_client):
+    identity = lambda pid: (str(native_client), os.getpid(), '100')
+    status = STATUS.replace('14580', '14582').replace('14540', '14542')
+    runner = Mock(side_effect=[SimpleNamespace(returncode=0, stdout=s, stderr='')
+                              for s in ['', status, STREAMS]])
+    result = configure_owned(42, native_client, 5, instance=2, identity=identity, runner=runner)
+    assert result['instance'] == 2 and result['local_port'] == 14582
+    assert result['remote_port'] == 14542
+    assert runner.call_args_list[0].args[0][1:6] == ['--instance', '2', 'stream', '-u', '14582']
+    assert not configured_heartbeat(status, STREAMS, 5)
+    assert configured_heartbeat(status, STREAMS, 5, instance=2)
+
+
+@pytest.mark.parametrize('instance', [-1, 4, True, '1'])
+def test_invalid_instance_never_issues_native_command(native_client, instance):
+    runner = Mock()
+    with pytest.raises(ValueError, match='instance'):
+        configure_owned(42, native_client, 5, instance=instance, runner=runner)
+    runner.assert_not_called()

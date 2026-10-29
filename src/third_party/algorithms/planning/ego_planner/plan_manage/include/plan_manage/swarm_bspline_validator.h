@@ -1,10 +1,23 @@
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef PLAN_MANAGE__SWARM_BSPLINE_VALIDATOR_H_
 #define PLAN_MANAGE__SWARM_BSPLINE_VALIDATOR_H_
 
+#include <Eigen/Core>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
-#include <Eigen/Core>
 #include <limits>
 #include <vector>
 
@@ -21,9 +34,9 @@ constexpr int kMinBsplineOrder = 1;
 constexpr int kMaxBsplineOrder = 7;
 constexpr std::size_t kMaxControlPoints = 4096;
 constexpr std::size_t kMaxKnots =
-    kMaxControlPoints + static_cast<std::size_t>(kMaxBsplineOrder) + 1;
+  kMaxControlPoints + static_cast<std::size_t>(kMaxBsplineOrder) + 1;
 constexpr std::size_t kMaxSwarmTrajectories =
-    static_cast<std::size_t>(kMaxSwarmId) + 1;
+  static_cast<std::size_t>(kMaxSwarmId) + 1;
 constexpr double kMaxTrajectoryDuration = 300.0;
 // Keep ingress behaviour deterministic when a malformed parameter reaches a
 // callback.  The horizon is a distance in the planner's local world frame;
@@ -38,7 +51,7 @@ constexpr double kMaxDerivedAccelerationAbs = 100000.0;
 constexpr int kConsumedBsplineOrder = 3;
 constexpr std::size_t kConsumedMinControlPoints = 4;
 constexpr std::int64_t kMaxTrajectoryId =
-    static_cast<std::int64_t>(std::numeric_limits<std::uint32_t>::max());
+  static_cast<std::int64_t>(std::numeric_limits<std::uint32_t>::max());
 
 enum class ValidationError
 {
@@ -73,16 +86,15 @@ enum class ValidationError
 
 struct ValidationResult
 {
-  ValidationError error{ValidationError::kOk};
-  double duration{0.0};
+  ValidationError error {ValidationError::kOk};
+  double duration {0.0};
 
-  bool valid() const { return error == ValidationError::kOk; }
+  bool valid() const {return error == ValidationError::kOk;}
 };
 
 inline const char * validationErrorName(const ValidationError error)
 {
-  switch (error)
-  {
+  switch (error) {
     case ValidationError::kOk: return "ok";
     case ValidationError::kDroneId: return "drone_id";
     case ValidationError::kOrder: return "order";
@@ -123,77 +135,64 @@ inline bool validPlanningHorizon(const double horizon) noexcept
 template<typename BsplineMessage>
 ValidationResult validateBspline(const BsplineMessage & msg)
 {
-  if (msg.drone_id < 0 || msg.drone_id > kMaxSwarmId)
-  {
+  if (msg.drone_id < 0 || msg.drone_id > kMaxSwarmId) {
     return {ValidationError::kDroneId, 0.0};
   }
-  if (msg.order < kMinBsplineOrder || msg.order > kMaxBsplineOrder)
-  {
+  if (msg.order < kMinBsplineOrder || msg.order > kMaxBsplineOrder) {
     return {ValidationError::kOrder, 0.0};
   }
-  if (msg.traj_id <= 0 || msg.traj_id > kMaxTrajectoryId)
-  {
+  if (msg.traj_id <= 0 || msg.traj_id > kMaxTrajectoryId) {
     return {ValidationError::kTrajectoryId, 0.0};
   }
   if (msg.start_time.sec < 0 || msg.start_time.nanosec >= 1000000000u ||
-      (msg.start_time.sec == 0 && msg.start_time.nanosec == 0))
+    (msg.start_time.sec == 0 && msg.start_time.nanosec == 0))
   {
     return {ValidationError::kStartTime, 0.0};
   }
 
   const std::size_t point_count = msg.pos_pts.size();
-  if (point_count == 0)
-  {
+  if (point_count == 0) {
     return {ValidationError::kControlPointsEmpty, 0.0};
   }
-  if (point_count > kMaxControlPoints)
-  {
+  if (point_count > kMaxControlPoints) {
     return {ValidationError::kControlPointsTooLarge, 0.0};
   }
-  if (point_count < static_cast<std::size_t>(msg.order + 1))
-  {
+  if (point_count < static_cast<std::size_t>(msg.order + 1)) {
     return {ValidationError::kControlPointsTooShort, 0.0};
   }
 
   const std::size_t knot_count = msg.knots.size();
-  if (knot_count == 0)
-  {
+  if (knot_count == 0) {
     return {ValidationError::kKnotsEmpty, 0.0};
   }
-  if (knot_count > kMaxKnots)
-  {
+  if (knot_count > kMaxKnots) {
     return {ValidationError::kKnotsTooLarge, 0.0};
   }
   const std::size_t expected_knot_count =
-      point_count + static_cast<std::size_t>(msg.order) + 1;
-  if (knot_count != expected_knot_count)
-  {
+    point_count + static_cast<std::size_t>(msg.order) + 1;
+  if (knot_count != expected_knot_count) {
     return {ValidationError::kKnotCountMismatch, 0.0};
   }
 
-  for (const auto & point : msg.pos_pts)
-  {
+  for (const auto & point : msg.pos_pts) {
     if (!std::isfinite(point.x) || !std::isfinite(point.y) ||
-        !std::isfinite(point.z))
+      !std::isfinite(point.z))
     {
       return {ValidationError::kControlPointNonFinite, 0.0};
     }
     if (std::abs(point.x) > kMaxControlPointAbs ||
-        std::abs(point.y) > kMaxControlPointAbs ||
-        std::abs(point.z) > kMaxControlPointAbs)
+      std::abs(point.y) > kMaxControlPointAbs ||
+      std::abs(point.z) > kMaxControlPointAbs)
     {
       return {ValidationError::kControlPointOutOfRange, 0.0};
     }
   }
 
-  for (std::size_t i = 0; i < knot_count; ++i)
-  {
-    if (!std::isfinite(msg.knots[i]))
-    {
+  for (std::size_t i = 0; i < knot_count; ++i) {
+    if (!std::isfinite(msg.knots[i])) {
       return {ValidationError::kKnotNonFinite, 0.0};
     }
-    if (i > 0 && msg.knots[i] < msg.knots[i - 1])
-    {
+    if (i > 0 && msg.knots[i] < msg.knots[i - 1]) {
       return {ValidationError::kKnotNotStrictlyIncreasing, 0.0};
     }
   }
@@ -202,34 +201,29 @@ ValidationResult validateBspline(const BsplineMessage & msg)
   // derivative implementation only requires its actual denominators to be
   // positive; checking those denominators also keeps a zero repeated span
   // from reaching Eigen/B-spline evaluation.
-  for (std::size_t i = 0; i + 1 < point_count; ++i)
-  {
+  for (std::size_t i = 0; i + 1 < point_count; ++i) {
     const std::size_t denominator_index =
-        i + static_cast<std::size_t>(msg.order) + 1;
+      i + static_cast<std::size_t>(msg.order) + 1;
     if (denominator_index >= knot_count ||
-        msg.knots[denominator_index] <= msg.knots[i + 1])
+      msg.knots[denominator_index] <= msg.knots[i + 1])
     {
       return {ValidationError::kInvalidDuration, 0.0};
     }
   }
 
-  if (msg.yaw_pts.size() > kMaxControlPoints)
-  {
+  if (msg.yaw_pts.size() > kMaxControlPoints) {
     return {ValidationError::kYawTooLarge, 0.0};
   }
-  for (const auto yaw : msg.yaw_pts)
-  {
-    if (!std::isfinite(yaw))
-    {
+  for (const auto yaw : msg.yaw_pts) {
+    if (!std::isfinite(yaw)) {
       return {ValidationError::kYawNonFinite, 0.0};
     }
   }
-  if (!msg.yaw_pts.empty() && msg.yaw_pts.size() != point_count)
-  {
+  if (!msg.yaw_pts.empty() && msg.yaw_pts.size() != point_count) {
     return {ValidationError::kYawCountMismatch, 0.0};
   }
   if (!std::isfinite(msg.yaw_dt) ||
-      (!msg.yaw_pts.empty() && msg.yaw_dt <= 0.0))
+    (!msg.yaw_pts.empty() && msg.yaw_dt <= 0.0))
   {
     return {ValidationError::kYawDt, 0.0};
   }
@@ -237,10 +231,10 @@ ValidationResult validateBspline(const BsplineMessage & msg)
   // UniformBspline::getTimeSpan() uses [order, knot_count-order-1].
   const double domain_start = msg.knots[static_cast<std::size_t>(msg.order)];
   const double domain_end =
-      msg.knots[knot_count - static_cast<std::size_t>(msg.order) - 1];
+    msg.knots[knot_count - static_cast<std::size_t>(msg.order) - 1];
   const double duration = domain_end - domain_start;
   if (!std::isfinite(duration) || duration <= 0.0 ||
-      duration > kMaxTrajectoryDuration)
+    duration > kMaxTrajectoryDuration)
   {
     return {ValidationError::kInvalidDuration, 0.0};
   }
@@ -252,16 +246,13 @@ template<typename BsplineMessage>
 ValidationResult validateCubicBspline(const BsplineMessage & msg)
 {
   const ValidationResult basic = validateBspline(msg);
-  if (!basic.valid())
-  {
+  if (!basic.valid()) {
     return basic;
   }
-  if (msg.order != kConsumedBsplineOrder)
-  {
+  if (msg.order != kConsumedBsplineOrder) {
     return {ValidationError::kOrder, 0.0};
   }
-  if (msg.pos_pts.size() < kConsumedMinControlPoints)
-  {
+  if (msg.pos_pts.size() < kConsumedMinControlPoints) {
     return {ValidationError::kControlPointsTooShort, 0.0};
   }
 
@@ -275,10 +266,9 @@ ValidationResult validateCubicBspline(const BsplineMessage & msg)
   // repeated knot.  Boundary clamping is safe when the derivative checks
   // below pass; an internal repeat is rejected before it can yield 0/0 in a
   // later sample.
-  for (std::size_t i = 1; i < knot_count; ++i)
-  {
+  for (std::size_t i = 1; i < knot_count; ++i) {
     if (msg.knots[i] == msg.knots[i - 1] &&
-        msg.knots[i] > domain_start && msg.knots[i] < domain_end)
+      msg.knots[i] > domain_start && msg.knots[i] < domain_end)
     {
       return {ValidationError::kInternalKnotRepeat, 0.0};
     }
@@ -288,58 +278,49 @@ ValidationResult validateCubicBspline(const BsplineMessage & msg)
   // UniformBspline::getDerivative(), and bound the resulting control points.
   double previous_velocity[3] = {0.0, 0.0, 0.0};
   bool have_previous_velocity = false;
-  for (std::size_t i = 0; i + 1 < point_count; ++i)
-  {
+  for (std::size_t i = 0; i + 1 < point_count; ++i) {
     const double denominator = msg.knots[i + order + 1] - msg.knots[i + 1];
-    if (!std::isfinite(denominator) || denominator <= 0.0)
-    {
+    if (!std::isfinite(denominator) || denominator <= 0.0) {
       return {ValidationError::kDerivativeDenominator, 0.0};
     }
 
     double velocity[3] = {0.0, 0.0, 0.0};
     const double coordinates[2][3] = {
       {msg.pos_pts[i].x, msg.pos_pts[i].y, msg.pos_pts[i].z},
-      {msg.pos_pts[i + 1].x, msg.pos_pts[i + 1].y, msg.pos_pts[i + 1].z}};
-    for (std::size_t axis = 0; axis < 3; ++axis)
-    {
+      {msg.pos_pts[i + 1].x, msg.pos_pts[i + 1].y, msg.pos_pts[i + 1].z}
+    };
+    for (std::size_t axis = 0; axis < 3; ++axis) {
       velocity[axis] = static_cast<double>(kConsumedBsplineOrder) *
         (coordinates[1][axis] - coordinates[0][axis]) / denominator;
-      if (!std::isfinite(velocity[axis]))
-      {
+      if (!std::isfinite(velocity[axis])) {
         return {ValidationError::kDerivativeNonFinite, 0.0};
       }
-      if (std::abs(velocity[axis]) > kMaxDerivedVelocityAbs)
-      {
+      if (std::abs(velocity[axis]) > kMaxDerivedVelocityAbs) {
         return {ValidationError::kDerivativeOutOfRange, 0.0};
       }
     }
 
-    if (have_previous_velocity)
-    {
+    if (have_previous_velocity) {
       const double acceleration_denominator =
-          msg.knots[i + order] - msg.knots[i + 1];
+        msg.knots[i + order] - msg.knots[i + 1];
       if (!std::isfinite(acceleration_denominator) ||
-          acceleration_denominator <= 0.0)
+        acceleration_denominator <= 0.0)
       {
         return {ValidationError::kDerivativeDenominator, 0.0};
       }
-      for (std::size_t axis = 0; axis < 3; ++axis)
-      {
+      for (std::size_t axis = 0; axis < 3; ++axis) {
         const double acceleration =
-            2.0 * (velocity[axis] - previous_velocity[axis]) /
-            acceleration_denominator;
-        if (!std::isfinite(acceleration))
-        {
+          2.0 * (velocity[axis] - previous_velocity[axis]) /
+          acceleration_denominator;
+        if (!std::isfinite(acceleration)) {
           return {ValidationError::kDerivativeNonFinite, 0.0};
         }
-        if (std::abs(acceleration) > kMaxDerivedAccelerationAbs)
-        {
+        if (std::abs(acceleration) > kMaxDerivedAccelerationAbs) {
           return {ValidationError::kDerivativeOutOfRange, 0.0};
         }
       }
     }
-    for (std::size_t axis = 0; axis < 3; ++axis)
-    {
+    for (std::size_t axis = 0; axis < 3; ++axis) {
       previous_velocity[axis] = velocity[axis];
     }
     have_previous_velocity = true;
@@ -351,40 +332,33 @@ ValidationResult validateCubicBspline(const BsplineMessage & msg)
 template<typename MultiMessage>
 ValidationResult validateMultiBsplines(const MultiMessage & msg)
 {
-  if (msg.drone_id_from < 0 || msg.drone_id_from > kMaxSwarmId)
-  {
+  if (msg.drone_id_from < 0 || msg.drone_id_from > kMaxSwarmId) {
     return {ValidationError::kMultiDroneId, 0.0};
   }
-  if (msg.traj.empty())
-  {
+  if (msg.traj.empty()) {
     return {ValidationError::kMultiEmpty, 0.0};
   }
-  if (msg.traj.size() > kMaxSwarmTrajectories)
-  {
+  if (msg.traj.size() > kMaxSwarmTrajectories) {
     return {ValidationError::kMultiTooLarge, 0.0};
   }
 
   const std::size_t expected_trajectory_count =
     static_cast<std::size_t>(msg.drone_id_from) + 1U;
-  if (msg.traj.size() != expected_trajectory_count)
-  {
+  if (msg.traj.size() != expected_trajectory_count) {
     return {ValidationError::kMultiDroneId, 0.0};
   }
 
-  for (std::size_t index = 0; index < msg.traj.size(); ++index)
-  {
+  for (std::size_t index = 0; index < msg.traj.size(); ++index) {
     // MultiBsplines is an indexed array, and the downstream swarm buffer is
     // indexed the same way.  Do not silently replace identity with position:
     // swapped, duplicate, missing, or out-of-range IDs are rejected before
     // any candidate buffer or message snapshot can be changed.
-    if (msg.traj[index].drone_id != static_cast<int32_t>(index))
-    {
+    if (msg.traj[index].drone_id != static_cast<int32_t>(index)) {
       return {ValidationError::kMultiDroneId, 0.0};
     }
     const auto & trajectory = msg.traj[index];
     const ValidationResult result = validateCubicBspline(trajectory);
-    if (!result.valid())
-    {
+    if (!result.valid()) {
       return result;
     }
   }
@@ -406,19 +380,16 @@ inline bool finiteAndBounded(const Eigen::VectorXd & values, const double bound)
 // candidate leaves both the old slot and the vector size untouched.
 template<typename Buffer, typename Candidate, typename BlankFactory>
 bool commitSwarmCandidate(
-    Buffer & buffer, const std::size_t id, const bool candidate_ready,
-    const Candidate & candidate, BlankFactory make_blank)
+  Buffer & buffer, const std::size_t id, const bool candidate_ready,
+  const Candidate & candidate, BlankFactory make_blank)
 {
-  if (!candidate_ready || id > static_cast<std::size_t>(kMaxSwarmId))
-  {
+  if (!candidate_ready || id > static_cast<std::size_t>(kMaxSwarmId)) {
     return false;
   }
-  if (buffer.size() <= id)
-  {
+  if (buffer.size() <= id) {
     const std::size_t old_size = buffer.size();
     buffer.resize(id + 1);
-    for (std::size_t i = old_size; i <= id; ++i)
-    {
+    for (std::size_t i = old_size; i <= id; ++i) {
       buffer[i] = make_blank();
     }
   }
@@ -426,7 +397,7 @@ bool commitSwarmCandidate(
   return true;
 }
 
-}  // namespace swarm_validation
+}    // namespace swarm_validation
 }  // namespace ego_planner
 
 #endif  // PLAN_MANAGE__SWARM_BSPLINE_VALIDATOR_H_

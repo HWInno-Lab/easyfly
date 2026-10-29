@@ -60,6 +60,8 @@ def imu_to_base(position, orientation, raw_covariance, translation, orientation_
     """
     p, q = vector(position, 3), quaternion(orientation)
     r, t = rotation(q), vector(translation, 3)
+    if raw_covariance is None:
+        return p + r @ t, multiply(q, orientation_ib), None
     jacobian = np.zeros((6, 6))
     jacobian[:3, :3] = np.eye(3)
     jacobian[:3, 3:] = -r @ skew(t)

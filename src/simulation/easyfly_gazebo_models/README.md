@@ -159,8 +159,10 @@ executing upstream code or overwriting outputs. Source inch units and internal
 transforms remain unchanged; only new world instance positions are authored.
 
 
-The curated MID-360 IMU uses the project-local `libeasyfly_gazebo_ros_imu.so` from
+The curated and legacy MID-360 IMU entries use the project-local `libeasyfly_gazebo_ros_imu.so` from
 `easyfly_gazebo_plugins/safe_imu`. It publishes coherent measurement snapshots
-with their own source timestamps and a bounded reliable writer history. Legacy
-MID-360 source assets are retained; updated curated hashes and the reproducible
-recipe are recorded in `licenses/runtime/ORIGINS.json`.
+with their own source timestamps and a bounded reliable writer history. The V-16
+legacy correction changes only the plugin filename; physics, rate, noise, frame
+and visual assets stay unchanged. Its updated fingerprint and explicit change
+are recorded in `manifests/legacy_mid360.yaml`; asset provenance stays unverified.
+Curated hashes and recipe remain in `licenses/runtime/ORIGINS.json`.

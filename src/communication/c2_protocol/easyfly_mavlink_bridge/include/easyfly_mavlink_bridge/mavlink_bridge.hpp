@@ -143,6 +143,8 @@ private:
   // cb_uav_command、timer 和立即 publish 路径可并行执行；快照后再发布，
   // 禁止持锁调用 ROS publish/service。
   mutable std::mutex command_mtx_;
+  uint64_t fault_rejected_command_count_{0};
+  int64_t last_fault_rejected_source_ns_{0};
   easyfly_msgs::msg::UAVCommand last_cmd_;
   rclcpp::Time last_cmd_time_;
   std::chrono::steady_clock::time_point last_cmd_receipt_{};

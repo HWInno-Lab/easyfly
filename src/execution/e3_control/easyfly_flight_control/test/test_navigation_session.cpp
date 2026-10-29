@@ -81,4 +81,33 @@ TEST(NavigationSession, GoalSessionLengthIsBoundedAndEmptyLegacyGoalRemainsValid
     NavigationSessionTestPeer::admit(node, ""),
     rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE);
 }
+
+TEST(NavigationSession, ReadOnlyStateExposesActualWatermarkAndStableControllerIdentity) {
+  if (!rclcpp::ok()) {rclcpp::init(0, nullptr);}
+  auto controller = std::make_shared<FlightController>();
+  auto observer = std::make_shared<rclcpp::Node>("trajectory_state_observer");
+  auto client = observer->create_client<easyfly_msgs::srv::GetTrajectoryState>(
+    "/flight_control/trajectory_state");
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(controller);
+  executor.add_node(observer);
+  ASSERT_TRUE(client->wait_for_service(std::chrono::seconds(2)));
+  NavigationSessionTestPeer::waitForSession(*controller, "owned-stream");
+  NavigationSessionTestPeer::receive(*controller, "owned-stream", 11);
+  auto request = std::make_shared<easyfly_msgs::srv::GetTrajectoryState::Request>();
+  auto first = client->async_send_request(request);
+  ASSERT_EQ(
+    executor.spin_until_future_complete(first, std::chrono::seconds(2)),
+    rclcpp::FutureReturnCode::SUCCESS);
+  const auto state = first.get();
+  EXPECT_EQ(state->highest_trajectory_id, 11U);
+  EXPECT_FALSE(state->idle);
+  EXPECT_EQ(state->controller_session_id.size(), 32U);
+  auto second = client->async_send_request(request);
+  ASSERT_EQ(
+    executor.spin_until_future_complete(second, std::chrono::seconds(2)),
+    rclcpp::FutureReturnCode::SUCCESS);
+  EXPECT_EQ(second.get()->controller_session_id, state->controller_session_id);
+  EXPECT_EQ(NavigationSessionTestPeer::watermark(*controller), 11U);
+}
 }  // namespace easyfly_flight_control

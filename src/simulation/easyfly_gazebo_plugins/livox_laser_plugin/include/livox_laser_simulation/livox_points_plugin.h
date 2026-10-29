@@ -64,6 +64,7 @@ class LivoxPointsPlugin : public RayPlugin {
 
     void PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
     void PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
+    void PublishRayObservations(const std::vector<std::pair<int, AviaRotateInfo>>& points_pair);
 
     boost::shared_ptr<physics::LivoxOdeMultiRayShape> rayShape;
     gazebo::physics::CollisionPtr laserCollision;
@@ -78,6 +79,7 @@ class LivoxPointsPlugin : public RayPlugin {
     rclcpp::Node::SharedPtr rosNode;
     rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr rosPointPub2;
     rclcpp::Publisher<livox_ros_driver2::msg::CustomMsg>::SharedPtr rosCustomMsgPub;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr rosRayPub;
 
     int64_t samplesStep = 0;
     int64_t currStartIndex = 0;

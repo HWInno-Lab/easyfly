@@ -23,14 +23,27 @@ UDP/TCP/串口、开启 `gcs_url` 转发、打开联网 QGC，以及正常关闭
 | 飞控链路 | UDP/TCP/串口、网络地址和端口、串口设备、波特率、目标 MAVLink system ID |
 | DDS 连接 | ROS domain 0–232、本机/局域网、模拟/系统时间、前视/下视相机 topic |
 | QGC 转发 | 是否启用、QGC 所在主机和接收端口、MAVROS 转发本地端口、QGC 程序 |
-| 操作权限 | 显式启用仿真任务、文件导入、平台元数据编辑；录像与内嵌三维按安装能力提供固定入口 |
+| 操作权限 | 显式启用仿真任务、文件导入、平台元数据编辑及单目标／模拟云台操作；录像与内嵌三维按安装能力提供固定入口 |
 
 三种工作方式使用顶部卡片切换；配置只显示当前方式适用的字段。连接名称过长时省略显示，可通过提示查看完整值；场景预览随左栏等比缩放。
 后台报告异常时主动显示诊断原因，不用绿色运行状态掩盖故障。
 
+SLAM 参数按实际后端启用：FAST-LIO 可编辑 `slam_*`；OpenVINS、FAST-LIVO2、
+ORB-SLAM3 使用各自固定 Gazebo 标定；选择 `navigation_dev` 时允许已验的显式仿真导航，
+其他方案保持观测。桌面须同时取得同会话／代次的新鲜原始与导航状态，才允许导航、跟踪或搜索。
+从 FAST-LIO 切换后，自定义参数暂留在表单草稿中，切回时可继续编辑；保存固定标定
+后端时这些参数恢复默认值。旧版误存到 FAST-LIVO2／ORB 配置的合法 FAST-LIO 参数
+在读取时按同样规则迁移，原文件保留到显式保存；运行中的冻结会话不迁移。
+
+ORB-SLAM3 每次新会话创建 `algorithms/orbslam3`，FUEL 创建 `algorithms/fuel`，
+均位于本次运行日志目录且权限为 0700；已有同名目录拒绝复用，旧会话记录保留。
+ORB 不自动加载或覆盖旧 Atlas。FUEL 必须选择导航开发方案、FAST-LIO（或随方案）
+和 GCOPTER；可在任务中心编辑并显式执行 YAML v1 的 `explore` 步骤。
+启动平台不会自动提交探索或起飞，任务取消仍需等待子动作与控制权排空。
+
 “基础仿真（飞控状态）”支持目录中 11 个已登记场景，使用各场景登记的飞机、
 出生点和资源，不启动 SLAM 或导航规划。场景列表随运行配置标注“可用”“不适用当前方案”
-和“草稿”；不匹配时列出场景支持的方案。6 个草稿场景（包括旧 empty）仍需完成登记，
+和“草稿”；不匹配时列出场景支持的方案。6 个草稿场景（包括旧 empty）按随包场景生命周期说明保留为旧版／专项用途，
 不能通过基础仿真绕过校验。刷新目录不会替换已选场景；已删除或无法读取的场景禁止启动。
 
 场景预览从已校验的
@@ -77,7 +90,7 @@ UDP/TCP/串口、开启 `gcs_url` 转发、打开联网 QGC，以及正常关闭
 
 程序为本次 QGC 自动写入独立的 UDP 设置、配置/缓存/保存目录，关闭自动串口和其他
 发现入口，不改原 QGC 的设置。支持本机 X11/XWayland 的窗口管理，当前实际联验样本
-为 QGC 5.0.8；其他版本/定制组织名需独立验证。首次运行的单位设置属于 QGC 自身界面。
+为 QGC 4.4.3 和 5.0.8；其他版本/定制组织名需独立验证。首次运行的单位设置属于 QGC 自身界面。
 
 界面区分“进程运行”“转发端点发送/接收字节”“实际工作窗口的新鲜飞机状态”。
 端点收包不冒充 QGC 仪表显示签收。远端 QGC 在目标机器打开并匹配端口；本机不冒充
@@ -161,3 +174,29 @@ colcon --log-base "$connection_build_root/test-log" test --base-paths src \
 单元/夹具测试不启动真实飞行。`test_live_session` 使用 localhost domain97/98，固定域
 测试串行。真实 SITL/QGC、人工界面验收、长稳、四构建变体和实机分别登记，不能以组件
 通过替代。协议/所有权细节见 [CONTRACT.md](CONTRACT.md)。
+
+
+## 2026-10-26 连接仿真补验
+
+两个隔离网络主机中的真实 EasyFly 后端与桌面已完成错误 domain 隔离、20 秒断链
+后过期显示及同实例恢复、60 秒 100±20 ms 延迟／30% 丢包与恢复。QGC 4.4.3 和
+5.0.8 的实际车辆界面、双向 MAVLink 心跳／已知消息 CRC 解码和正常关闭通过；
+未知消息类型单独计数，不作为已解码消息。原始捕获无内核丢包或截断。
+
+实际 PX4／MAVROS 字节经 raw PTY 断流 20 秒后恢复，始终未解锁。此次发现的
+串口关闭死锁已在私有 MAVConn 库修复：回调互斥锁外等待 I/O 线程，取消回调先
+排空；不更改系统库。复制／软链接安装各 18 项 UDP／串口退出回归，以及两次
+补充导航通过；最终网络和 PTY 后端均 24/24 正常退出。
+
+这组结果覆盖本机隔离网络与虚拟串口，实体双机、网卡／Wi-Fi、USB 拔插、实际
+串口吞吐率和飞控／RC 仍待硬件。见[最终签收](../../../artifacts/v01-v16-20261025/v14-signoff.json)
+及[完整记录与保留事项](../../../artifacts/v01-v16-20261025/final-result.md)。
+
+### ROI / simulation gimbal opt-in
+
+The independent `features.peripheral_control` option enables the desktop's
+`--enable-peripheral-control` entry point for local SITL only. It defaults to false
+and is omitted when disabled, preserving legacy canonical profile hashes. It does
+not enable mission execution. GCS maintenance, system time, and non-SITL modes
+reject this option. The page still requires explicit permission for each connected
+session; observing the panel does not start either backend or send commands.

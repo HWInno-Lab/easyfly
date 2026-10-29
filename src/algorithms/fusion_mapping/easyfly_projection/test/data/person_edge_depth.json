@@ -1,0 +1,37 @@
+{
+  "id": 0,
+  "cls": "person",
+  "box": [
+    0.08320005238056183,
+    0.8414033651351929,
+    0.16362398862838745,
+    0.31226974725723267
+  ],
+  "roi_edges": [
+    0,
+    105,
+    328,
+    478
+  ],
+  "offset": 7919472,
+  "bytes": 64024,
+  "actual_distance": 3.6646006107330322,
+  "replay_median": 3.6646006107330322,
+  "median_matches": true,
+  "pixel": [
+    53,
+    403
+  ],
+  "valid": true,
+  "position": [
+    8.952187538146973,
+    2.4169366359710693,
+    0.7818369269371033
+  ],
+  "sha256": "7e66fdf6f14542f3046569cf170f5d7c1a6c3a8289f480be4a3932603a5da34b",
+  "provenance": "Original passive Gazebo depth bytes, person-clear real moving follow; source 49.770 seconds, v09-person-clear-depth-diagnostic. Crop includes every original pixel in the clamped detection ROI.",
+  "frame_dimensions": [
+    640,
+    480
+  ]
+}

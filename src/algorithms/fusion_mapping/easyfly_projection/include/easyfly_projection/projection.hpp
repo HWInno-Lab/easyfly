@@ -84,6 +84,16 @@ inline float medianDepth(const Box & t, const DepthView & depth, const Options &
         std::nth_element(vals.begin(), vals.begin() + vals.size() / 2, vals.end());
         return vals[vals.size() / 2];
 }
+// A detection rectangle can contain mostly background at an image boundary.
+// Sample its central half-width/half-height around the same projection ray.
+// Missing central support stays invalid; do not fall back to background pixels.
+inline float centralMedianDepth(
+  Box box, const DepthView & depth, const Options & options = {})
+{
+  box.bbox_width *= 0.5f;
+  box.bbox_height *= 0.5f;
+  return medianDepth(box, depth, options);
+}
 inline std::array<double, 3> pinhole(
   int u, int v, float depth, double fx, double fy, double cx, double cy)
 {

@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-10-28",
+  "files": [
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/include/plan_manage/ego_replan_fsm.h",
+      "original_import_sha256": "e4483ed160fa2237175a308f954ff57c0eb4a75e5586806c5f68f66c45381cc8",
+      "reviewed_workspace_sha256": "75c399a9842cf8c705413fdc0f1e3299484038014802b7cb7d19f0b6c2d151be",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/include/plan_manage/planner_manager.h",
+      "original_import_sha256": "0bf636b185bd4287334d3bb5558a640ca816fef4113035e0f5a49485c93f7118",
+      "reviewed_workspace_sha256": "7e934d1e5eccd3f41ca5fe1209846621e7e597c800e5d0cfd3b72775e77e8ea3",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/launch/advanced_param.launch.py",
+      "original_import_sha256": "c1ca59d3c007356087fcddbcfc3f45f925bbf4348f09e09263b20894f51c5f50",
+      "reviewed_workspace_sha256": "6ea5a47e0a733e2dc5c14ed0d0d58b5f9e2b00e991b83dfd7563d333a0fd9c64",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/launch/sensors.launch.py",
+      "original_import_sha256": "9420f9ae7f52d581fd42fcdae55d03ac4b0e80984cdd1cb44b18a7902a54e891",
+      "reviewed_workspace_sha256": "e36ae98ba390d2e10e40cff045e82836c352a12c1af45059fd24590c5f9b5042",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/launch/simulator.launch.py",
+      "original_import_sha256": "bd3ba1896936f835c7339241f92be436586d90177d46eb831f10822aeaa303e8",
+      "reviewed_workspace_sha256": "57674192a8dd9adc7197b64ec66119ec55aefb8cee04db088a18e09898365e08",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/launch/single_run_in_sim.launch.py",
+      "original_import_sha256": "c6028eaf835cab938962cd894c5114ab1a2427f065a6faa61f6c3f5b35774220",
+      "reviewed_workspace_sha256": "5a3ac6fd63eac74431e508485338e4c7d153d98991d6c1d4286469338c79d6d9",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/launch/single_run_real.launch.py",
+      "original_import_sha256": "34f96b79b04fb3de5f5717fa86c36a2cc8c4d4c907483bab8730e3fabc38706d",
+      "reviewed_workspace_sha256": "05a49a0af0ffa8c16db8770e823c1462eda6f53bd8618a80418396e119f8c0ac",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/src/ego_planner_node.cpp",
+      "original_import_sha256": "cf20a21093a68201e078b274f7e635d62e8a8b379313a37857528cd019b35189",
+      "reviewed_workspace_sha256": "71cf23a5a18ed6eb89d6f183b25c6a8ad07c3180bed31335b1e886fc2af0d1d0",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/src/ego_replan_fsm.cpp",
+      "original_import_sha256": "a3cdf8b4a94672ff8ddbed4a2fe4489942c401b0bb3f9f789a8180ec1218ba53",
+      "reviewed_workspace_sha256": "883dd1164422dc0b965765b950e14f5acc0d15928b6c4a6452931711a512d661",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/src/planner_manager.cpp",
+      "original_import_sha256": "9795c88f541a7e4bbac08d614983081c4035b70e6a2073b8e9cd09924a30b6a8",
+      "reviewed_workspace_sha256": "ab8b6c672505de198ca438d7787f02f9b3dca331627fb7c1ed0bc062a5a659a3",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "ego_planner",
+      "path": "plan_manage/src/traj_server.cpp",
+      "original_import_sha256": "7a0562d637781cdeb7d233d73bdcf99c60f4e8e3c4a8bf638fa8ece2547a751a",
+      "reviewed_workspace_sha256": "7de7b78647c0219c6825d4400396f2731ab84de7273e8af61674b0e0fa1425f9",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "path_searching",
+      "path": "path_searching/include/path_searching/dyn_a_star.h",
+      "original_import_sha256": "9ebf55fc4eda89cd63705cddf3747d10511a4d78d54a7e68129dc7ba6f1ed91a",
+      "reviewed_workspace_sha256": "3e7d5420f458bd56f55b2f71356ca4677903e2a2307c858502bd74d8fbe185e5",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "path_searching",
+      "path": "path_searching/src/dyn_a_star.cpp",
+      "original_import_sha256": "cb332be72e57350742dc6d2c9fa0c18535a25d53be0defbcddbeb539295b149c",
+      "reviewed_workspace_sha256": "59a7f4108431839b8753b17f9710e368e292c7cae78634f0d1d7bdfdf2aa4574",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "quadrotor_msgs",
+      "path": "quadrotor_msgs/include/quadrotor_msgs/comm_types.h",
+      "original_import_sha256": "ab98ecc33e2e4b7a42e06c7134c29148aeab0f17db9f85dd69f463570227d2e3",
+      "reviewed_workspace_sha256": "95b3fa3d793b2034545553b756ccc4fc5a5e790a8618a8a2c39a26b4f272f5e4",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "quadrotor_msgs",
+      "path": "quadrotor_msgs/include/quadrotor_msgs/decode_msgs.h",
+      "original_import_sha256": "fd82a718b54cfbe63a42f86e0436d594ffc8763abd9a21d27caf95b2892e75cb",
+      "reviewed_workspace_sha256": "4856917c84f0a73ae5841380a9e2464ce9533fb13ab3141362d706a4b58949a8",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "quadrotor_msgs",
+      "path": "quadrotor_msgs/include/quadrotor_msgs/encode_msgs.h",
+      "original_import_sha256": "8f3d60177f436bb167bd05cc14ab5673ee8cfe3470f7b2f8ceff06a48a71b79f",
+      "reviewed_workspace_sha256": "0ba07d6cbee818ed0d9c7f3ae8c9f230d9822e834c23d1c9d898dfff62c418f4",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "quadrotor_msgs",
+      "path": "quadrotor_msgs/src/decode_msgs.cpp",
+      "original_import_sha256": "6491c37845ea9865c5b87d7d8d8818ea8191a0f26ac0d6a45c05881b9663f25b",
+      "reviewed_workspace_sha256": "470400e0dbec211363c2239aac39429b9b793536a1765e0b6755a3414df512d4",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "quadrotor_msgs",
+      "path": "quadrotor_msgs/src/encode_msgs.cpp",
+      "original_import_sha256": "c4bfc8d40ebf4d3c50a59a25ea5fb415fb5bc4cb1c83930fb829e93890e8978a",
+      "reviewed_workspace_sha256": "aca4cb1924100ebfb5c116ed721dd425141090d9f2842040dad9ecb1e31bf687",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "traj_utils",
+      "path": "traj_utils/include/traj_utils/plan_container.hpp",
+      "original_import_sha256": "1507cd548345d072a38339cbe4d5cc4d6c0059a64838a8578a4b50c7d4918881",
+      "reviewed_workspace_sha256": "ed7c2c92ed2b144b0f2f0246244c9a00b912dd8c3fc8bd8371d7452205ed17aa",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "traj_utils",
+      "path": "traj_utils/include/traj_utils/planning_visualization.h",
+      "original_import_sha256": "0a9c35d6115052cfeab3f3052b00ad6749637dca29cc233d81ee8c96fa96f37d",
+      "reviewed_workspace_sha256": "7ac48b0fa7149081364d910174a1d413539b1d54b4f1f04c13af48038a711896",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "traj_utils",
+      "path": "traj_utils/include/traj_utils/polynomial_traj.h",
+      "original_import_sha256": "cfe84011c7152cebaaca0404a0f34d48a115c69374ce4721b9f498312d1e6659",
+      "reviewed_workspace_sha256": "3bbd62ca4bc703bd886a90801fcb6dd50731c6d2eecf23097acdba16fad5ae78",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "traj_utils",
+      "path": "traj_utils/src/planning_visualization.cpp",
+      "original_import_sha256": "caa1653cf171ed908741641445f9bae72c25e00528b5bf573336d720edb0b13e",
+      "reviewed_workspace_sha256": "56a1c905724e8b4e86819491d7981163b411e7a0a4468da2e840009a28c50e80",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    },
+    {
+      "package": "traj_utils",
+      "path": "traj_utils/src/polynomial_traj.cpp",
+      "original_import_sha256": "c2b7c24bf2ba04248e520357e1eb8d65bf5d667cadf9cbf6dba9355e909cbe1a",
+      "reviewed_workspace_sha256": "c5b9edc791f8abd4a73d62f28dffb2650ebb0ee1c5a8568b6706f94e5e59cccc",
+      "scope": "Copyright-header format only; technical lint remains enabled.",
+      "reason": "Present in exact recovered original import without a complete machine-readable notice; owner confirmation covers port modifications, not upstream authorship or license."
+    }
+  ]
+}

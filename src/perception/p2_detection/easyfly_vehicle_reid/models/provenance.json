@@ -1,0 +1,16 @@
+{
+  "url": "https://storage.openvinotoolkit.org/repositories/open_model_zoo/public/2022.1/vehicle-reid-0001/osnet_ain_x1_0_vehicle_reid.onnx",
+  "sha384": "0515ce72f653c39780d5b87dfed7255d396dd2b1e8b6e91fbaacdfad1da189166343157273c02f3b0fede3050ef7abb7",
+  "sha256": "4aaad3e5db648618b0df3d2ff21c61323985ff9e50194c3d2edd4fb87c92d91f",
+  "bytes": 8836743,
+  "downloaded": 1793208556.6098208,
+  "connection": "direct HTTPS; certificate verified",
+  "architecture": "OSNet AIN x1.0; vehicle appearance ReID; 512 float descriptor",
+  "upstream": "https://github.com/openvinotoolkit/open_model_zoo/tree/master/models/public/vehicle-reid-0001",
+  "license_url": "https://raw.githubusercontent.com/sovrasov/deep-person-reid/vehicle_reid/LICENSE",
+  "license": "MIT",
+  "input": "NCHW float32 RGB, 1x3x208x208; original ONNX input InstanceNormalization",
+  "output": "512 float, explicitly L2 normalized before cosine distance",
+  "runtime": "onnxruntime CPU 1.23.2; no global NumPy change",
+  "validation": "Local vehicle view/occlusion evaluation pending; upstream benchmark scores are not local acceptance."
+}

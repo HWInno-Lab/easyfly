@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "source_world": "worlds/benchmark/navigation/primitives_sparse_seed42_v1.world",
+  "source_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+  "operation": "Retain ground, native ODE physics, light and four collision boundary walls; remove procedural random obstacles. Flight fixtures are explicit spawned collision geometry.",
+  "world_sha256": "1a2df19cb1ac30e6cf354a6b8506cdb23916c1cb7c756f56020edef0f171802a",
+  "project_authored": true
+}

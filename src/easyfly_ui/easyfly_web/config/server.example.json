@@ -1,0 +1,17 @@
+{
+  "platform_id": "11111111111141118111111111111111",
+  "bind": "127.0.0.1",
+  "port": 9443,
+  "origin": "https://localhost:9443",
+  "certificate": "/absolute/tls/server.crt",
+  "private_key": "/absolute/tls/server.key",
+  "state_directory": "/absolute/private/web-state",
+  "ros_domain_id": 0,
+  "simulation_time": true,
+  "enable_execution": false,
+  "missions": ["waypoint_demo.mission"],
+  "accounts": [
+    {"name": "observer", "role": "viewer", "token_file": "/absolute/private/viewer.token"},
+    {"name": "operator", "role": "operator", "token_file": "/absolute/private/operator.token"}
+  ]
+}

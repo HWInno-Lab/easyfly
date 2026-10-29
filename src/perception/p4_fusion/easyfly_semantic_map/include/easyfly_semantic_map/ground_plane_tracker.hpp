@@ -19,7 +19,6 @@
 // absolute origin of the odometry frame and makes it possible to reject a
 // single-frame RANSAC plane which is close to the vehicle (for example a sparse
 // horizontal return at the aircraft height).
-
 #pragma once
 #include "easyfly_ground_segmentation/ground_plane_tracker.hpp"
 namespace easyfly_semantic_map

@@ -11,21 +11,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+#include <gtest/gtest.h>
 #include <cmath>
 #include <limits>
-
-#include <gtest/gtest.h>
-
 #include "easyfly_global_planner/goal_validation.hpp"
-
 namespace easyfly_global_planner
 {
 namespace
 {
-
 using Goal = easyfly_msgs::action::NavigateTo::Goal;
-
 Goal validGoal()
 {
   Goal goal;
@@ -35,12 +29,10 @@ Goal validGoal()
   goal.max_speed = 0.0;
   return goal;
 }
-
 TEST(GoalValidationTest, AllowsNaNHeightAndDefaultSpeed)
 {
   EXPECT_TRUE(validNavigateGoal(validGoal()));
 }
-
 TEST(GoalValidationTest, RejectsNonFiniteHorizontalCoordinates)
 {
   auto goal = validGoal();
@@ -50,7 +42,6 @@ TEST(GoalValidationTest, RejectsNonFiniteHorizontalCoordinates)
   goal.target_y = std::numeric_limits<double>::infinity();
   EXPECT_FALSE(validNavigateGoal(goal));
 }
-
 TEST(GoalValidationTest, RejectsInfiniteHeightAndSpeed)
 {
   auto goal = validGoal();
@@ -66,13 +57,11 @@ TEST(GoalValidationTest, RejectsInfiniteHeightAndSpeed)
   goal.max_speed = std::numeric_limits<double>::infinity();
   EXPECT_FALSE(validNavigateGoal(goal));
 }
-
 TEST(GoalValidationTest, KeepsFiniteNonPositiveSpeedContract)
 {
   auto goal = validGoal();
   goal.max_speed = -1.0;
   EXPECT_TRUE(validNavigateGoal(goal));
 }
-
 }  // namespace
 }  // namespace easyfly_global_planner

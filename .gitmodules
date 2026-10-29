@@ -1,0 +1,5 @@
+# This gitlink includes one local adaptation commit. Before submodule update,
+# restore the pinned commit offline with tools/source/restore_realsense.py.
+[submodule "src/communication/c1_drivers/realsense_ros"]
+	path = src/communication/c1_drivers/realsense_ros
+	url = https://github.com/IntelRealSense/realsense-ros.git

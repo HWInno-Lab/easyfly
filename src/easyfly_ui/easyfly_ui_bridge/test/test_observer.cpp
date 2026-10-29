@@ -164,7 +164,9 @@ protected:
           response->content_sha256 = easyfly_mission_fsm::missionContentSha256(response->content);
           if (details_mode == 2) {response->content_sha256 = std::string(64, '0');}
           if (details_mode == 3) {
-            response->success = false; response->status = "invalid"; response->message = "missing";
+            response->success = false;
+            response->status = "invalid";
+            response->message = "missing";
             response->content.clear(); response->content_sha256.clear();
           }
         }));
@@ -264,7 +266,12 @@ protected:
   RequestReceipt request(Submit submit)
   {
     RequestReceipt receipt;
-    EXPECT_TRUE(until([&] {receipt = submit(); return receipt.status == RequestStatus::Queued;}));
+    EXPECT_TRUE(
+      until(
+        [&] {
+          receipt = submit();
+          return receipt.status == RequestStatus::Queued;
+        }));
     return receipt;
   }
   void stopped(Observer & observer)
@@ -577,7 +584,11 @@ TEST_F(ObserverTest, ImagesAndGlobalEventsAreBoundedAndImmutable)
   Observer observer(configuration()); running(observer);
   sensor_msgs::msg::Image image;
   image.header.stamp = stamp(); image.header.frame_id = "camera_optical_frame";
-  image.width = 2; image.height = 2; image.step = 2; image.encoding = "mono8"; image.data.resize(4);
+  image.width = 2;
+  image.height = 2;
+  image.step = 2;
+  image.encoding = "mono8";
+  image.data.resize(4);
   image_publisher->publish(image);
   // Validate and retain the same immutable snapshot. A later independent load may
   // have been invalidated by a clock epoch change before its pointer is used.
@@ -614,7 +625,10 @@ TEST_F(ObserverTest, ImagesAndGlobalEventsAreBoundedAndImmutable)
   EXPECT_EQ(event_snapshot->last_mission_event.evidence.quality, Quality::ValidAtObservation);
   EXPECT_TRUE(event_snapshot->last_mission_event.value->header.frame_id.empty());
   const auto events_before = event_snapshot->events.size(); event_publisher->publish(event);
-  std::this_thread::sleep_for(200ms); EXPECT_EQ(observer.snapshot()->events.size(), events_before);
+  std::this_thread::sleep_for(200ms);
+  EXPECT_EQ(
+    observer.snapshot()->events.size(),
+    events_before);
   stopped(observer);
 }
 
@@ -830,5 +844,210 @@ TEST_F(ObserverTest, LocalizationSessionAndStaleStatusRemainReadOnly)
       }));
   observer.stop();
   EXPECT_EQ(observer.snapshot()->localization.evidence.quality, Quality::Stale);
-  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(commands.load(), 0); EXPECT_EQ(control_messages.load(), 0);
+  EXPECT_EQ(
+    goals.load(),
+    0);
+  EXPECT_EQ(
+    commands.load(),
+    0);
+  EXPECT_EQ(
+    control_messages.load(),
+    0);
+}
+
+TEST_F(ObserverTest, NavigationStatusRejectsWrongIdentityDuplicatePublisherAndLoss)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  for (const auto & backend : {"openvins", "fast_livo2", "orbslam3"}) {
+    const auto topic = std::string("/localization/") + backend + "/navigation_status";
+    auto publisher = node->create_publisher<Status>(
+      topic, rclcpp::QoS(1).reliable().transient_local());
+    BridgeConfig options; options.poll_observations = false;
+    options.selected_localization_backend = backend;
+    options.localization_navigation_enabled = true;
+    Observer observer(options);
+    Status m; m.backend_id = std::string(backend) + "_navigation";
+    m.session_id = "navigation-session"; m.header.frame_id = "odom";
+    m.tracked_frame = "base_link"; m.state = m.ESTIMATING;
+    m.pose_valid = m.tracking_quality_available = true;
+    const auto publish_until = [&](Quality quality) {
+        return until(
+          [&]() {
+            m.header.stamp = m.pose_stamp = stamp(); publisher->publish(m);
+            return observer.snapshot()->navigation_localization.evidence.quality == quality;
+          });
+      };
+    ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+    EXPECT_EQ(observer.snapshot()->navigation_localization.value->session_id, m.session_id);
+    m.backend_id = "wrong_navigation";
+    ASSERT_TRUE(publish_until(Quality::Invalid));
+    EXPECT_FALSE(observer.snapshot()->navigation_localization.value);
+    m.backend_id = std::string(backend) + "_navigation";
+    ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+    auto conflict = node->create_publisher<Status>(
+      topic, rclcpp::QoS(1).reliable().transient_local());
+    ASSERT_TRUE(publish_until(Quality::Invalid)); conflict.reset();
+    ASSERT_TRUE(publish_until(Quality::ValidAtObservation));
+    ASSERT_TRUE(
+      until(
+        [&]() {
+          return observer.snapshot()->navigation_localization.evidence.quality == Quality::Stale;
+        }));
+    stopped(observer);
+    EXPECT_EQ(observer.snapshot()->navigation_localization.evidence.quality, Quality::Stale);
+  }
+  EXPECT_EQ(
+    goals.load(),
+    0);
+  EXPECT_EQ(
+    commands.load(),
+    0);
+  EXPECT_EQ(
+    control_messages.load(),
+    0);
+}
+
+TEST_F(ObserverTest, OrbSlamSelectionRejectsOtherBackendIdentity)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  auto publisher = node->create_publisher<Status>(
+    "/localization/orbslam3/status", rclcpp::QoS(1).reliable().transient_local());
+  BridgeConfig options; options.poll_observations = false;
+  options.selected_localization_backend = "orbslam3";
+  Observer observer(options);
+  Status m; m.backend_id = "openvins"; m.session_id = "other-backend";
+  m.header.frame_id = "openvins_odom"; m.tracked_frame = "livox_imu_frame";
+  m.state = m.ESTIMATING; m.pose_valid = true; m.covariance_available = true;
+  ASSERT_TRUE(
+    until(
+      [&]() {
+        m.header.stamp = stamp(); m.pose_stamp = m.header.stamp; publisher->publish(m);
+        return observer.snapshot()->localization.evidence.quality == Quality::Invalid;
+      }));
+  EXPECT_FALSE(observer.snapshot()->localization.value);
+  m.backend_id = "orbslam3"; m.header.frame_id = "orbslam3_map";
+  m.session_id = "selected-backend"; m.tracking_quality_available = true;
+  m.tracked_frame = "base_link"; m.covariance_available = false;
+  ASSERT_TRUE(
+    until(
+      [&]() {
+        m.header.stamp = stamp(); m.pose_stamp = m.header.stamp; publisher->publish(m);
+        auto s = observer.snapshot();
+        return s->localization.value &&
+        s->localization.evidence.quality == Quality::ValidAtObservation;
+      }));
+  EXPECT_EQ(observer.snapshot()->selected_localization_backend, "orbslam3");
+  EXPECT_EQ(observer.snapshot()->localization.evidence.endpoint, "/localization/orbslam3/status");
+  stopped(observer);
+  EXPECT_EQ(
+    goals.load(),
+    0);
+  EXPECT_EQ(
+    commands.load(),
+    0);
+  EXPECT_EQ(
+    control_messages.load(),
+    0);
+}
+
+TEST_F(ObserverTest, FastLivoSelectionRejectsOtherBackendIdentity)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  auto publisher = node->create_publisher<Status>(
+    "/localization/fast_livo2/status", rclcpp::QoS(1).reliable().transient_local());
+  BridgeConfig options; options.poll_observations = false;
+  options.selected_localization_backend = "fast_livo2";
+  Observer observer(options);
+  Status m; m.backend_id = "openvins"; m.session_id = "other-backend";
+  m.header.frame_id = "openvins_odom"; m.tracked_frame = "livox_imu_frame";
+  m.state = m.ESTIMATING; m.pose_valid = true; m.covariance_available = true;
+  ASSERT_TRUE(
+    until(
+      [&]() {
+        m.header.stamp = stamp(); m.pose_stamp = m.header.stamp; publisher->publish(m);
+        return observer.snapshot()->localization.evidence.quality == Quality::Invalid;
+      }));
+  EXPECT_FALSE(observer.snapshot()->localization.value);
+  m.backend_id = "fast_livo2"; m.header.frame_id = "fastlivo_odom";
+  m.session_id = "selected-backend"; m.tracking_quality_available = true;
+  ASSERT_TRUE(
+    until(
+      [&]() {
+        m.header.stamp = stamp(); m.pose_stamp = m.header.stamp; publisher->publish(m);
+        auto s = observer.snapshot();
+        return s->localization.value &&
+        s->localization.evidence.quality == Quality::ValidAtObservation;
+      }));
+  EXPECT_EQ(observer.snapshot()->selected_localization_backend, "fast_livo2");
+  EXPECT_EQ(observer.snapshot()->localization.evidence.endpoint, "/localization/fast_livo2/status");
+  stopped(observer);
+  EXPECT_EQ(
+    goals.load(),
+    0);
+  EXPECT_EQ(
+    commands.load(),
+    0);
+  EXPECT_EQ(
+    control_messages.load(),
+    0);
+}
+
+TEST_F(ObserverTest, SpecializedTelemetryIsBoundedExpiresAndNeverControls)
+{
+  using Tags = easyfly_msgs::msg::TagObservationArray;
+  auto pub = node->create_publisher<Tags>("/tag_observations", 1);
+  std::atomic<int> shape{0}; std::atomic<bool> send{true};
+  auto producer = node->create_wall_timer(
+    40ms, [&] {
+      if (!send) {return;}
+      Tags m;
+      m.header.frame_id = "camera_down_optical_frame";
+      m.header.stamp = stamp();
+      m.valid = true;
+      if (shape == 1) {
+        easyfly_msgs::msg::TagObservation t; t.header = m.header; t.tag_id = 7;
+        m.observations = {t, t};
+      }
+      pub->publish(m);
+    });
+  BridgeConfig config; config.poll_observations = false; Observer observer(config);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::ValidAtObservation;
+      }));
+  ASSERT_TRUE(observer.snapshot()->special.tags.value); EXPECT_TRUE(
+    observer.snapshot()->special.tags.value->observations.empty());
+  shape = 1; ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::Invalid;
+      }));
+  EXPECT_FALSE(observer.snapshot()->special.tags.value);
+  shape = 0; ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::ValidAtObservation;
+      }));
+  auto conflicting = node->create_publisher<Tags>("/tag_observations", 1);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::Invalid;
+      }));
+  conflicting.reset(); ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::ValidAtObservation;
+      }));
+  send = false; ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->special.tags.evidence.quality == Quality::Stale;
+      }));
+  observer.stop(); EXPECT_TRUE(until([&] {return observer.snapshot()->stopped;}));
+  EXPECT_FALSE(observer.snapshot()->special.tags.value);
+  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(cancels.load(), 0); EXPECT_EQ(commands.load(), 0);
+  EXPECT_EQ(control_messages.load(), 0); EXPECT_EQ(mission_writes.load(), 0); EXPECT_EQ(
+    param_writes.load(), 0);
 }

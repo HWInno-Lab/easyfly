@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <unistd.h>
 #include <atomic>
 #include <cinttypes>
@@ -23,13 +22,12 @@
 #include <stdexcept>
 #include <thread>
 #include <utility>
+#include "easyfly_ui_control/controller.hpp"
 #include <rclcpp/rclcpp.hpp>
 #include <easyfly_msgs/srv/manage_reviewed_mission.hpp>
 #include <easyfly_mission_format/mission_format.hpp>
-#include "easyfly_ui_control/controller.hpp"
 #include "journal.hpp"
 #include "confirmation_ledger.hpp"
-
 namespace easyfly_ui_control
 {
 using Api = easyfly_msgs::srv::ManageReviewedMission;
@@ -104,7 +102,6 @@ struct MissionControl::Impl
   rclcpp::Node::SharedPtr node;
   rclcpp::Client<Api>::SharedPtr client;
   std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
-
   explicit Impl(const ControlConfig & options)
   : config(options)
   {
@@ -391,7 +388,7 @@ bool MissionControl::start_confirmed(
   if (review.content.size() > 65536 || review.mission_name.size() > 128 ||
     review.content_sha256.size() > 64 || review.message.size() > 2048 || review.status.size() > 64)
   {return false;}
-  if (!confirmation.empty() && !hex_id(confirmation, 32)) {return false;}
+  if (!hex_id(confirmation, 32)) {return false;}
   return impl_->enqueue({false, review, received, instance, confirmation});
 }
 bool MissionControl::cancel_confirmed()

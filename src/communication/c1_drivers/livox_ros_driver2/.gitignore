@@ -1,4 +1,4 @@
 .vscode
 build
-package.xml
+# The ROS 2 package manifest is a required workspace source file.
 __pycache__

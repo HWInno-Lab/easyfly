@@ -1,0 +1,7 @@
+include(CMakeFindDependencyMacro)
+find_dependency(OpenCV 4.4 COMPONENTS core imgproc features2d calib3d highgui imgcodecs)
+find_dependency(Eigen3 3.1 NO_MODULE)
+find_dependency(Pangolin 0.6)
+find_dependency(Boost COMPONENTS serialization)
+find_dependency(OpenSSL)
+find_dependency(Threads)

@@ -28,3 +28,8 @@ No actual sensor/classifier accuracy or flight safety acceptance is claimed.
 ## ALG-6 算法边界
 
 expanded-AABB 双向唯一类别匹配迁入 easyfly_obstacle_association，仅接收普通几何/类别并返回索引。core.py 继续接纳 header/geometry、复制完整原障碍、组装分类原因及 TTL；不改原障碍、占据图或飞行输入。
+
+独立的 `easyfly_visual_navigation visual_mission --execute` 现提供显式米制视觉任务，
+并可消费类别和预测作为扩大避让范围的约束。其源时间、深度、坐标、控制所有权和
+仿真范围见 [视觉导航说明](../../../execution/e3_control/easyfly_visual_navigation/README.md)。
+本包仍只产生原有观测，启动本包不会自动开始飞行。

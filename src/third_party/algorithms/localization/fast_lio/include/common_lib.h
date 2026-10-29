@@ -8,6 +8,7 @@
 #include <fast_lio/msg/pose6_d.hpp>
 #include <sensor_msgs/msg/imu.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include "source_time.hpp"
 
 using namespace std;
 using namespace Eigen;
@@ -261,10 +262,9 @@ double get_time_sec(const builtin_interfaces::msg::Time &time)
 
 rclcpp::Time get_ros_time(double timestamp)
 {
-    int32_t sec = std::floor(timestamp);
-    auto nanosec_d = (timestamp - std::floor(timestamp)) * 1e9;
-    uint32_t nanosec = nanosec_d;
-    return rclcpp::Time(sec, nanosec);
+    // Round the complete source time. Truncating its fractional second can
+    // stamp TF 1 ns before the very cloud it describes and require a future TF.
+    return rclcpp::Time(easyfly_fastlio::source_nanoseconds(timestamp));
 }
 
 #endif

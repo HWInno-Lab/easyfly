@@ -114,13 +114,18 @@ Quality validate_localization(
 {
   using Status = easyfly_msgs::msg::LocalizationStatus;
   if (m.session_id.empty() || m.session_id.size() > 128 || m.reason.size() > 2048 ||
-    m.last_rejection.size() > 2048 || m.backend_id != "openvins" ||
-    m.header.frame_id != "openvins_odom" || m.tracked_frame != "livox_imu_frame" ||
+    m.last_rejection.size() > 2048 ||
+    (m.backend_id != "openvins" && m.backend_id != "fast_livo2" && m.backend_id != "orbslam3") ||
+    m.header.frame_id !=
+    (m.backend_id == "orbslam3" ? "orbslam3_map" : m.backend_id ==
+    "fast_livo2" ? "fastlivo_odom" : "openvins_odom") ||
+    m.tracked_frame != (m.backend_id == "orbslam3" ? "base_link" : "livox_imu_frame") ||
     m.state > Status::FAILED || stamp_ns(m.pose_stamp) < 0 ||
     stamp_ns(m.camera_stamp) < 0 || stamp_ns(m.imu_stamp) < 0 ||
-    m.velocity_valid || m.tracking_quality_available ||
+    m.velocity_valid || (m.backend_id == "openvins" && m.tracking_quality_available) ||
     (m.pose_valid != (m.state == Status::ESTIMATING)) ||
-    (m.pose_valid && (stamp_ns(m.pose_stamp) <= 0 || !m.covariance_available)))
+    (m.pose_valid &&
+    (stamp_ns(m.pose_stamp) <= 0 || m.covariance_available != (m.backend_id != "orbslam3"))))
   {return Quality::Invalid;}
   if (m.state == Status::RESET_REQUIRED || m.state == Status::FAILED) {return Quality::Invalid;}
   const auto quality = source_quality(m.header, clock, receipt_age, .5, false);
@@ -130,6 +135,27 @@ Quality validate_localization(
   auto pose_header = m.header;
   pose_header.stamp = m.pose_stamp;
   return source_quality(pose_header, clock, receipt_age, .5, false);
+}
+Quality validate_navigation_localization(
+  const easyfly_msgs::msg::LocalizationStatus & m, const std::string & backend,
+  const ClockState & clock, double receipt_age)
+{
+  using Status = easyfly_msgs::msg::LocalizationStatus;
+  if ((backend != "openvins" && backend != "fast_livo2" && backend != "orbslam3") ||
+    m.backend_id != backend + "_navigation" || m.session_id.empty() ||
+    m.session_id.size() > 128 || m.reason.size() > 2048 || m.last_rejection.size() > 2048 ||
+    m.header.frame_id != "odom" || m.tracked_frame != "base_link" ||
+    m.state > Status::FAILED || m.pose_valid != (m.state == Status::ESTIMATING) ||
+    m.velocity_valid || m.covariance_available || stamp_ns(m.pose_stamp) < 0 ||
+    (m.pose_valid && (!m.tracking_quality_available || stamp_ns(m.pose_stamp) <= 0)))
+  {return Quality::Invalid;}
+  if (m.state == Status::RESET_REQUIRED || m.state == Status::FAILED) {return Quality::Invalid;}
+  const auto quality = source_quality(m.header, clock, receipt_age, .5);
+  if (quality != Quality::ValidAtObservation) {return quality;}
+  if (m.state == Status::STALE) {return Quality::Stale;}
+  if (m.state != Status::ESTIMATING) {return Quality::Unknown;}
+  auto pose_header = m.header; pose_header.stamp = m.pose_stamp;
+  return source_quality(pose_header, clock, receipt_age, .5);
 }
 StateView state_view(
   const easyfly_core::StateSnapshot & sdk, const ClockState & clock,

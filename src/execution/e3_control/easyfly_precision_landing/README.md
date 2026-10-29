@@ -186,3 +186,5 @@ simulation configuration, not evidence that the 0.2 m example is robust.
 For load diagnosis only, `--unused-camera-rate 1` reduces the generated fixture's
 unused forward color/depth cameras to 1 Hz (default 30 Hz). Down-camera rate,
 physics and lidar remain unchanged. A pass here cannot certify full sensor load.
+
+动态相机和低速移动板的显式配置、限制与当前验收状态见 [DYNAMIC.md](DYNAMIC.md)。

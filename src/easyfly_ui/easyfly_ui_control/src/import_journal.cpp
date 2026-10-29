@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -21,8 +20,8 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include <easyfly_mission_format/mission_format.hpp>
 #include "import_journal.hpp"
+#include <easyfly_mission_format/mission_format.hpp>
 namespace easyfly_ui_control
 {
 namespace

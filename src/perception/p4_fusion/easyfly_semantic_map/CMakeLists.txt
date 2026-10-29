@@ -34,7 +34,11 @@ add_library(${PROJECT_NAME}_nodes SHARED
 target_compile_options(${PROJECT_NAME}_nodes PRIVATE -Wall -Wextra)
 target_include_directories(${PROJECT_NAME}_nodes PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/include)
-target_link_libraries(${PROJECT_NAME}_nodes ${PCL_LIBRARIES} yaml-cpp easyfly_occupancy_mapping::easyfly_occupancy_mapping easyfly_obstacle_geometry::easyfly_obstacle_geometry easyfly_ground_segmentation::easyfly_ground_segmentation)
+target_link_libraries(${PROJECT_NAME}_nodes
+  ${PCL_LIBRARIES} yaml-cpp
+  easyfly_occupancy_mapping::easyfly_occupancy_mapping
+  easyfly_obstacle_geometry::easyfly_obstacle_geometry
+  easyfly_ground_segmentation::easyfly_ground_segmentation)
 ament_target_dependencies(${PROJECT_NAME}_nodes
   rclcpp rclcpp_components ament_index_cpp sensor_msgs nav_msgs visualization_msgs
   easyfly_msgs tf2 tf2_ros tf2_eigen geometry_msgs pcl_conversions)
@@ -52,7 +56,7 @@ install(DIRECTORY include/
   FILES_MATCHING PATTERN "*.hpp")
 install(DIRECTORY config launch
   DESTINATION share/${PROJECT_NAME})
-install(FILES README-ground.md DESTINATION share/${PROJECT_NAME})
+install(FILES README-ground.md README-classification.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

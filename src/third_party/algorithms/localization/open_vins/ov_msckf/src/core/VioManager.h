@@ -110,6 +110,9 @@ public:
   /// Accessor to get the current state
   std::shared_ptr<State> get_state() { return state; }
 
+  /// Current image's observed 2D tracks; call from the serialized image update worker.
+  std::vector<size_t> current_track_ids(const std::vector<int> & camera_ids);
+
   /// Accessor to get the current propagator
   std::shared_ptr<Propagator> get_propagator() { return propagator; }
 

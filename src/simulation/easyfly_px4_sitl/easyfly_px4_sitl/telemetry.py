@@ -23,19 +23,20 @@ def process_identity(pid):
     return (str((proc/'exe').resolve(strict=True)), int(fields[1]), fields[19])
 
 
-def configured_heartbeat(status, streams, rate):
+def configured_heartbeat(status, streams, rate, *, instance=0):
     """Require the actual offboard link and its configured native stream rate."""
-    return configured_stream(status, streams, rate, 'HEARTBEAT')
+    return configured_stream(status, streams, rate, 'HEARTBEAT', instance=instance)
 
 
-def configured_stream(status, streams, rate, name):
+def configured_stream(status, streams, rate, name, *, instance=0):
     """Match one named stream on the owned offboard instance, not a GCS link."""
-    for instance, block in re.findall(r'(?ms)^instance #(\d+):\n(.*?)(?=^instance #|\Z)', status):
-        if 'UDP (14580, remote port: 14540)' not in block:
+    expected_link = f'UDP ({14580 + instance}, remote port: {14540 + instance})'
+    for link_instance, block in re.findall(r'(?ms)^instance #(\d+):\n(.*?)(?=^instance #|\Z)', status):
+        if expected_link not in block:
             continue
         for stream_instance, stream_block in re.findall(
                 r'(?ms)^instance #(\d+):\n(.*?)(?=^instance #|\Z)', streams):
-            if stream_instance != instance:
+            if stream_instance != link_instance:
                 continue
             match = re.search(r'(?m)^\s*' + re.escape(name) + r'\s+([0-9.]+)\s+\(([0-9.]+)\)', stream_block)
             if match and float(match[1]) == rate and float(match[2]) == rate:
@@ -43,8 +44,11 @@ def configured_stream(status, streams, rate, name):
     return False
 
 
-def configure_owned(pid, binary, rate, *, battery_rate_hz=0, identity=process_identity, runner=subprocess.run):
+def configure_owned(pid, binary, rate, *, battery_rate_hz=0, instance=0,
+                    identity=process_identity, runner=subprocess.run):
     """Use the pinned native client; neither ACK nor a fabricated state is feedback."""
+    if type(instance) is not int or not 0 <= instance <= 3:
+        raise ValueError('reviewed simulator instance must be 0..3')
     if rate != 5:
         raise ValueError('only the reviewed 5Hz simulator heartbeat is supported')
     if battery_rate_hz not in (0, 5):
@@ -57,13 +61,13 @@ def configure_owned(pid, binary, rate, *, battery_rate_hz=0, identity=process_id
     if owned[:2] != (str(binary), os.getpid()):
         raise RuntimeError('refuse telemetry command to an unowned PX4 process')
     commands = [
-        [str(client), '--instance', '0', 'stream', '-u', '14580',
+        [str(client), '--instance', str(instance), 'stream', '-u', str(14580 + instance),
          '-s', 'HEARTBEAT', '-r', str(rate)],
-        [str(client), '--instance', '0', 'status'],
-        [str(client), '--instance', '0', 'status', 'streams'],
+        [str(client), '--instance', str(instance), 'status'],
+        [str(client), '--instance', str(instance), 'status', 'streams'],
     ]
     if battery_rate_hz:
-        commands.insert(1, [str(client), '--instance', '0', 'stream', '-u', '14580',
+        commands.insert(1, [str(client), '--instance', str(instance), 'stream', '-u', str(14580 + instance),
                             '-s', 'BATTERY_STATUS', '-r', str(battery_rate_hz)])
     outputs = []
     for command in commands:
@@ -75,11 +79,11 @@ def configure_owned(pid, binary, rate, *, battery_rate_hz=0, identity=process_id
         outputs.append(result.stdout + result.stderr)
     status, streams = outputs[-2:]
     deferred = not any((status, streams))
-    if not deferred and not (configured_heartbeat(status, streams, rate) and
-            (not battery_rate_hz or configured_stream(status, streams, battery_rate_hz, 'BATTERY_STATUS'))):
+    if not deferred and not (configured_heartbeat(status, streams, rate, instance=instance) and
+            (not battery_rate_hz or configured_stream(status, streams, battery_rate_hz, 'BATTERY_STATUS', instance=instance))):
         raise RuntimeError('native offboard telemetry rate not confirmed: ' + json.dumps(outputs))
-    return dict(pid=pid, start_ticks=owned[2], rate_hz=rate, local_port=14580,
-                remote_port=14540, native_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
+    return dict(pid=pid, start_ticks=owned[2], rate_hz=rate, local_port=14580 + instance,
+                remote_port=14540 + instance, instance=instance, native_sha256=hashlib.sha256(binary.read_bytes()).hexdigest(),
                 status=status, streams=streams, native_output_deferred=deferred,
                 battery_rate_hz=battery_rate_hz, command_returncodes=[0] * len(commands))
 

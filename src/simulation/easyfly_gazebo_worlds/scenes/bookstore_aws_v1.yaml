@@ -61,6 +61,8 @@ navigation:
   ground_model_frame: map
   grid_footprint_mode: observed_cells
 runtime:
+  # Native clock cadence must remain usable under slower software rendering.
+  clock_rate_hz: 100
   entrypoint:
     package: easyfly_px4_sitl
     path: models/easyfly_iris/easyfly_iris.sdf

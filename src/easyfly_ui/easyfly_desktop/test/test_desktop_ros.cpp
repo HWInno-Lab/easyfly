@@ -10,9 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <QLabel>
 #include <QLineEdit>
 #include <QListWidget>
@@ -20,14 +18,12 @@
 #include <QPlainTextEdit>
 #include <QTableView>
 #include <QTimer>
-
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
 #include <mutex>
 #include <thread>
 #include <vector>
-
 #include "easyfly_ui_bridge/observer.hpp"
 #include "support.hpp"
 #include <easyfly_msgs/msg/uav_command.hpp>
@@ -37,7 +33,6 @@
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
-
 using namespace std::chrono_literals;
 using namespace easyfly_ui_bridge;  // NOLINT(build/namespaces)
 using Mission = easyfly_msgs::srv::ManageMission;
@@ -57,7 +52,6 @@ bool until(Predicate predicate, double seconds = 4)
   return predicate();
 }
 }  // namespace
-
 class GuiRos : public ::testing::Test
 {
 protected:
@@ -84,7 +78,6 @@ protected:
   std::atomic<int> response_mode{0}, mission_delay_ms{0};
   std::mutex state_mutex;
   double position_x{0};
-
   builtin_interfaces::msg::Time stamp(int64_t ns = 0)
   {
     if (!ns) {ns = now_ns.load();}

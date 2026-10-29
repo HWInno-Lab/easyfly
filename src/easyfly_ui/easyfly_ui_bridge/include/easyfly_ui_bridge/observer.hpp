@@ -27,6 +27,8 @@ struct BridgeConfig
   bool poll_observations{true};
   std::string selected_profile{"navigation_dev"};
   std::string selected_localization_backend{"external"};
+  bool localization_navigation_enabled{false};
+  std::string landing_optical_frame{"camera_down_optical_frame"};
   std::array<std::string, 2> image_topics{
     "/camera/color/image_raw", "/camera_down/color/image_raw"};
   std::array<CameraPerceptionBinding, 2> camera_perception{{

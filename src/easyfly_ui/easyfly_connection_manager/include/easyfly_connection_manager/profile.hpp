@@ -40,7 +40,8 @@ struct Profile
   bool gcs_enabled{false};
   QString gcs_host{"127.0.0.1"}, qgc_path;
   int gcs_bind_port{14558}, gcs_port{14560};
-  bool mission_control{false}, mission_import{false}, parameter_edit{false};
+  bool mission_control{false}, mission_import{false}, parameter_edit{false},
+  peripheral_control{false};
   bool recording{false}, rviz_embed{false};
   static Profile create(const QString & name);
   static Profile from_json(const QJsonObject & object);

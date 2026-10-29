@@ -10,14 +10,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <algorithm>
 #include <cmath>
 #include <cstring>
 #include <limits>
 #include <vector>
-
 #include "easyfly_desktop/rviz_geometry.hpp"
 namespace geo = easyfly_desktop::spatial;
 namespace
@@ -174,4 +172,31 @@ TEST(RvizGeometry, ObstaclesRejectMixedHeadersBadSizesAndExcess)
   m = obstacles(); m.obstacles[0].size_x = 0; EXPECT_FALSE(geo::convert(m).valid);
   m = obstacles(); m.obstacles.resize(geo::kBoxes + 1, m.obstacles[0]);
   EXPECT_FALSE(geo::convert(m).valid);
+}
+
+TEST(RvizGeometry, SpecializedLayersPreserveProvenanceAndExpireAtHalfSecond)
+{
+  easyfly_msgs::msg::LandingGuidanceTarget landing; landing.header = header();
+  landing.source_header = header(); landing.source_header.frame_id = "camera_down_optical_frame";
+  landing.tag_id = 7; landing.valid = true; landing.tag_size_m = .2; landing.plane_normal.z = 1;
+  landing.position.z = .1;
+  auto g = geo::convert(landing); ASSERT_TRUE(g.valid); ASSERT_EQ(g.vertices.size(), 2u);
+  EXPECT_FLOAT_EQ(g.vertices[0].z, .1F); EXPECT_FLOAT_EQ(g.vertices[1].z, .6F);
+  EXPECT_FALSE(geo::validity(g, 10600000000LL, 1000000000LL, 1100000000LL).empty());
+  landing.source_header.stamp.sec = 9; EXPECT_FALSE(geo::convert(landing).valid);
+  easyfly_msgs::msg::TargetPredictionArray prediction; prediction.header = header();
+  easyfly_msgs::msg::TargetPrediction p; p.header = p.observation_header = header();
+  p.valid = true; p.track_id = 1; p.horizon_seconds = .5; p.position_x = 2;
+  prediction.predictions.push_back(p); g = geo::convert(prediction);
+  ASSERT_TRUE(g.valid); EXPECT_EQ(g.vertices.size(), 6u);
+  EXPECT_TRUE(g.detail.find("非实测") != std::string::npos);
+  prediction.predictions.push_back(p); EXPECT_FALSE(geo::convert(prediction).valid);
+  easyfly_msgs::msg::ClassifiedObstacleArray classified; classified.header = header();
+  classified.geometry_valid = true; easyfly_msgs::msg::ClassifiedObstacle c;
+  c.obstacle.header = header(); c.obstacle.obstacle_id = 1;
+  c.obstacle.size_x = c.obstacle.size_y = c.obstacle.size_z = 1;
+  c.obstacle.obstacle_type = "unknown"; c.association_valid = false; classified.obstacles.push_back(
+    c);
+  g = geo::convert(classified); ASSERT_TRUE(g.valid); EXPECT_EQ(g.vertices.size(), 24u);
+  classified.geometry_valid = false; EXPECT_FALSE(geo::convert(classified).valid);
 }

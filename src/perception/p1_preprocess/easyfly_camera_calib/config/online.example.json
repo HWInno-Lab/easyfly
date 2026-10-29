@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "stereo": true,
+  "use_sim_time": true,
+  "left_image": "/stereo/left/image_raw",
+  "right_image": "/stereo/right/image_raw",
+  "left_frame": "left_optical",
+  "right_frame": "right_optical",
+  "columns": 7,
+  "rows": 5,
+  "square_m": 0.04,
+  "samples": 25,
+  "timeout_s": 120
+}

@@ -78,3 +78,15 @@ def test_openvins_defaults_preserve_explicit_policy_and_network_scope(tmp_path):
                         '<participant profile_name="caller"/></profiles>')
     assert openvins_profile_environment(profile, {
         'FASTRTPS_DEFAULT_PROFILES_FILE': str(explicit)}, component) == {}
+
+
+def test_fuel_image_defaults_match_qualified_raw_image_transport():
+    import xml.etree.ElementTree as ET
+    from easyfly_fastdds_compat.runtime import openvins_profile_environment
+    config=Path(__file__).resolve().parents[1]/'config'
+    selected=openvins_profile_environment(config/'raw_image_transport.xml',{},config/'component_services.xml')
+    root=ET.parse(selected['FASTRTPS_DEFAULT_PROFILES_FILE']).getroot()
+    ns={'d':'http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles'}
+    assert root.find('.//d:segment_size',ns).text=='67108864'
+    assert root.find('.//d:maxMessageSize',ns).text=='4194304'
+    assert root.find('.//d:port_queue_capacity',ns).text=='512'

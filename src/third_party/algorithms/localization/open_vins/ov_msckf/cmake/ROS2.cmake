@@ -7,6 +7,8 @@ find_package(tf2_ros REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(rcl_interfaces REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
@@ -41,6 +43,8 @@ list(APPEND ament_libraries
         tf2_geometry_msgs
         std_msgs
         geometry_msgs
+        diagnostic_msgs
+        rcl_interfaces
         sensor_msgs
         nav_msgs
         cv_bridge

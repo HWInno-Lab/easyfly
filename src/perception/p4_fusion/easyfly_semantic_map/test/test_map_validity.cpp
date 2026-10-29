@@ -11,19 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <algorithm>
 #include <cstdint>
-
 #include "easyfly_semantic_map/map_validity.hpp"
-
 namespace easyfly_semantic_map
 {
 namespace
 {
-
 TEST(MapValidityTest, InvalidGridIsUnknownAndUnstamped)
 {
   const auto grid = makeInvalidGrid(10.0, 8.0, 0.2, "odom");
@@ -35,13 +30,11 @@ TEST(MapValidityTest, InvalidGridIsUnknownAndUnstamped)
         return cell == -1;
       }));
 }
-
 TEST(MapValidityTest, InvalidObstaclesAreEmptyAndUnstamped)
 {
   const auto obstacles = makeInvalidObstacles("odom");
   EXPECT_TRUE(zeroStamp(obstacles.header.stamp));
   EXPECT_TRUE(obstacles.obstacles.empty());
 }
-
 }  // namespace
 }  // namespace easyfly_semantic_map

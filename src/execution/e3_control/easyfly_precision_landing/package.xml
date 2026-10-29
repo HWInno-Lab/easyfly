@@ -3,7 +3,7 @@
 <package format="3">
   <name>easyfly_precision_landing</name>
   <version>0.1.0</version>
-  <description>Fixed-camera landing observations and bounded precision landing policy.</description>
+  <description>Original-time fixed or measured camera landing observations and bounded landing policy.</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
 
@@ -22,6 +22,8 @@
   <exec_depend>easyfly_gazebo_models</exec_depend>
   <exec_depend>easyfly_mavlink_bridge</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>rosidl_runtime_py</exec_depend>
   <exec_depend>action_msgs</exec_depend>
   <exec_depend>mavros_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>

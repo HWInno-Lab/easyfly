@@ -10,16 +10,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QDir>
 #include <QLibrary>
 #include <QStandardPaths>
 #include <unistd.h>
 #include <exception>
-#include <ament_index_cpp/get_package_prefix.hpp>
 #include "connection_page.hpp"
+#include <ament_index_cpp/get_package_prefix.hpp>
 #include "easyfly_desktop/main_window.hpp"
-
 namespace easyfly_desktop
 {
 ConnectionPageHandle load_connection_page(

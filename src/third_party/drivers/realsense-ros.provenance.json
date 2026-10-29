@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "upstream_url": "https://github.com/IntelRealSense/realsense-ros.git",
+  "verified_upstream_revision": "bafc21080c5c8e259dadbb309797949aee0dd950",
+  "gitlink_revision": "d69f05c1b4a3f0d5740e25d6429d4417c7f3d75d",
+  "tree": "b984e93b8af4d9f5a1240d902a7f668959b3e7bd",
+  "license": "Apache-2.0; per-file third-party notices retained",
+  "local_changes": [
+    "Remove legacy librealsense2 rosdep dependency; workspace supplies librealsense.",
+    "Keep description, RGBD plugin and MQTT bridge outside this workspace colcon build."
+  ],
+  "patch": {
+    "path": "src/third_party/drivers/realsense-workspace.patch",
+    "sha256": "36d5de3eb26ed02af4a2c13b605a145e063f3e2bb67427e21a94ebad36230e38"
+  },
+  "bundle": {
+    "path": "src/third_party/drivers/realsense-ros-d69f05c1.bundle",
+    "sha256": "5d6d261da056b2ed5146d6df16ece1c35822f92a41d7dc65645335d74738feb8",
+    "bytes": 31113324,
+    "self_contained": true
+  },
+  "acquisition": "python3 tools/source/restore_realsense.py",
+  "note": "The local gitlink commit is not claimed to be published upstream. The complete bundle supplies it without a network or local object-store prerequisite."
+}

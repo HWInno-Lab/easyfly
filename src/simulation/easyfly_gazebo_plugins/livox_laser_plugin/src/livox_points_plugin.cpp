@@ -16,16 +16,15 @@
 #include <gazebo/transport/Node.hh>
 
 #include <limits>
+#include <cstring>
 #include <string>
 #include <vector>
+#include <filesystem>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include "livox_laser_simulation/csv_reader.hpp"
 #include "livox_laser_simulation/livox_ode_multiray_shape.h"
 #include "livox_laser_simulation/ray_geometry.hpp"
-
-#ifndef SCAN_MODE_DIR
-#define SCAN_MODE_DIR "/opt/easyfly/scan_mode"
-#endif
 
 namespace gazebo {
 
@@ -56,9 +55,17 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     std::vector<std::vector<double>> datas;
     std::string file_name = sdf->Get<std::string>("csv_file_name");
 
-    // ROS2 移植: 支持绝对路径; 相对名则从编译期 SCAN_MODE_DIR 解析
-    if (file_name.find('/') == std::string::npos) {
-        file_name = std::string(SCAN_MODE_DIR) + "/" + file_name;
+    // Resolve resources from the selected installation, including relocated installs.
+    if (!std::filesystem::path(file_name).is_absolute()) {
+        try {
+            file_name = (std::filesystem::path(
+                ament_index_cpp::get_package_share_directory("easyfly_gazebo_plugins")) /
+                "livox_laser_plugin/scan_mode" / file_name).string();
+        } catch (const std::exception & error) {
+            RCLCPP_ERROR(rclcpp::get_logger("livox_laser_simulation"),
+                         "cannot resolve installed scan mode: %s", error.what());
+            return;
+        }
     }
 
     RCLCPP_INFO(rclcpp::get_logger("livox_laser_simulation"), "load csv file name: %s", file_name.c_str());
@@ -115,7 +122,10 @@ void LivoxPointsPlugin::Load(gazebo::sensors::SensorPtr _parent, sdf::ElementPtr
     }
     rclcpp::NodeOptions options;
     options.append_parameter_override("use_sim_time", true);
-    rosNode = rclcpp::Node::make_shared("livox_laser_simulation", options);
+    const std::string ros_namespace = sdf->HasElement("ros_namespace") ?
+        sdf->Get<std::string>("ros_namespace") : "";
+    rosNode = rclcpp::Node::make_shared("livox_laser_simulation", ros_namespace, options);
+    rosRayPub = rosNode->create_publisher<sensor_msgs::msg::PointCloud2>(curr_scan_topic + "/rays", 2);
     switch (publishPointCloudType) {
         case SENSOR_MSG_POINT_CLOUD2_POINTXYZ:
             rosPointPub2 = rosNode->create_publisher<sensor_msgs::msg::PointCloud2>(curr_scan_topic, 5);
@@ -157,6 +167,9 @@ void LivoxPointsPlugin::OnNewLaserScans() {
         rayShape->Update();
 
         msgs::Set(laserMsg.mutable_time(), world->SimTime());
+        if (rosRayPub && rosRayPub->get_subscription_count() > 0) {
+            PublishRayObservations(points_pair);
+        }
 
         switch (publishPointCloudType) {
             case SENSOR_MSG_POINT_CLOUD2_POINTXYZ:
@@ -390,6 +403,38 @@ void LivoxPointsPlugin::PublishPointCloud2XYZ(std::vector<std::pair<int, AviaRot
     }
 }
 
+// Read the same cached physics rays once more; never step the sensor or alter
+// its existing point messages. A maximum-range miss is genuine free-ray data.
+void LivoxPointsPlugin::PublishRayObservations(const std::vector<std::pair<int, AviaRotateInfo>> &pairs) {
+    sensor_msgs::msg::PointCloud2 cloud;
+    cloud.header.frame_id = frameName;
+    cloud.header.stamp.sec = laserMsg.time().sec();
+    cloud.header.stamp.nanosec = laserMsg.time().nsec();
+    cloud.height = 1; cloud.is_bigendian = false; cloud.is_dense = true; cloud.point_step = 24;
+    for (const auto & item : std::vector<std::pair<std::string, uint32_t>>{
+             {"x",0}, {"y",4}, {"z",8}, {"return_type",12}, {"range_min",16}, {"range_max",20}}) {
+        sensor_msgs::msg::PointField field;
+        field.name = item.first; field.offset = item.second; field.count = 1;
+        field.datatype = item.first == "return_type" ? sensor_msgs::msg::PointField::UINT8 :
+            sensor_msgs::msg::PointField::FLOAT32;
+        cloud.fields.push_back(field);
+    }
+    cloud.data.reserve(pairs.size()*24);
+    for (const auto & pair : pairs) {
+        const double range = easyfly_livox::sensorRange(rayShape->RayShapes()[pair.first]->GetLength(), minDist);
+        // 0: max-range miss, 1: valid hit, 2: invalid/inside blind range.
+        const uint8_t type = !std::isfinite(range) || range <= minDist ? 2 : range >= maxDist ? 0 : 1;
+        ignition::math::Quaterniond ray;
+        ray.Euler(ignition::math::Vector3d(0., pair.second.zenith, pair.second.azimuth));
+        const auto point = (type == 0 ? maxDist : type == 1 ? range : 0.) *
+            (ray * ignition::math::Vector3d(1.,0.,0.));
+        const float values[6] = {float(point.X()),float(point.Y()),float(point.Z()),0.,float(minDist),float(maxDist)};
+        const size_t offset = cloud.data.size(); cloud.data.resize(offset+24);
+        std::memcpy(cloud.data.data()+offset, values, 24); cloud.data[offset+12] = type;
+    }
+    cloud.width = pairs.size(); cloud.row_step = cloud.data.size(); rosRayPub->publish(cloud);
+}
+
 void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int, AviaRotateInfo>> &points_pair) {
     auto rayCount = RayCount();
     auto verticalRayCount = VerticalRayCount();
@@ -441,7 +486,11 @@ void LivoxPointsPlugin::PublishLivoxROSDriverCustomMsg(std::vector<std::pair<int
             pt.line = pair.second.line;
             pt.tag = 0x10;
             pt.reflectivity = 100;
-            pt.offset_time = (uint32_t)(1e9 / 200000 * i);
+            // rayShape->Update() samples this entire cloud at laserMsg.time().
+            // The CSV orders beam directions; it does not advance physics.
+            // A synthetic per-index delay makes estimators wait for future IMU
+            // and deskew an instantaneous cloud against unrelated poses.
+            pt.offset_time = 0;
             msg.points.push_back(pt);
         }
     }

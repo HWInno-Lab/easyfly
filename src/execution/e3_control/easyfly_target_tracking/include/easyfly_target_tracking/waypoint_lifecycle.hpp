@@ -11,15 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #pragma once
-
 #include <future>
 #include <utility>
-
 namespace easyfly_target_tracking
 {
-
 enum class WaypointLifecycleState
 {
   kIdle,
@@ -29,7 +25,6 @@ enum class WaypointLifecycleState
   kRecovering,
   kFault,
 };
-
 // Pure child-goal state machine.  A timed-out normal cancellation transitions
 // to kRecovering; the owner must retain the handle and futures until a later
 // confirmed terminal result.  Only kIdle permits a new child goal.
@@ -43,7 +38,6 @@ public:
     cancel_requested_ = false;
     return true;
   }
-
   bool resolveSend(const bool accepted)
   {
     if (state_ != WaypointLifecycleState::kSending &&
@@ -62,7 +56,6 @@ public:
     }
     return true;
   }
-
   bool requestCancel()
   {
     if (state_ == WaypointLifecycleState::kIdle) {return true;}
@@ -72,7 +65,6 @@ public:
     }
     return true;
   }
-
   bool confirmTerminal()
   {
     if (state_ != WaypointLifecycleState::kActive &&
@@ -86,13 +78,11 @@ public:
     cancel_requested_ = false;
     return true;
   }
-
   void markFault()
   {
     state_ = WaypointLifecycleState::kFault;
     cancel_requested_ = true;
   }
-
   bool enterRecovery()
   {
     if (state_ == WaypointLifecycleState::kIdle) {return false;}
@@ -100,10 +90,8 @@ public:
     cancel_requested_ = true;
     return true;
   }
-
   WaypointLifecycleState state() const {return state_;}
   bool mayIssue() const {return state_ == WaypointLifecycleState::kIdle;}
-
   // A ready result future may still throw.  The owner must clear it and retry
   // result/cancel requests while retaining the child ownership.
   bool canRetryResult() const
@@ -113,7 +101,6 @@ public:
            state_ == WaypointLifecycleState::kRecovering ||
            state_ == WaypointLifecycleState::kFault;
   }
-
   // Consume a ready result future when the caller only needs terminal
   // confirmation.  An exceptional shared_future is one-shot: retaining it
   // would make every recovery pass throw before a fresh async_get_result can
@@ -133,7 +120,6 @@ public:
       return false;
     }
   }
-
   // Ensure that cancellation has a result future to consume.  The action
   // transport is ordered deliberately: when result_fut is invalid, request
   // the result first and only then send cancel.  A cancel exception must not
@@ -181,5 +167,4 @@ private:
   WaypointLifecycleState state_{WaypointLifecycleState::kIdle};
   bool cancel_requested_{false};
 };
-
 }  // namespace easyfly_target_tracking

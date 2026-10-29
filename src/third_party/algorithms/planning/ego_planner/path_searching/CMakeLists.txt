@@ -33,20 +33,20 @@ set(dependencies
   plan_env
 )
 
-include_directories( 
-    include 
-    ${Eigen3_INCLUDE_DIRS} 
+include_directories(
+    include
+    ${Eigen3_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
     ${message_filters_INCLUDE_DIRS}
     ${pcl_msgs_INCLUDE_DIRS}
 )
 
-add_library(path_searching SHARED 
+add_library(path_searching SHARED
     src/dyn_a_star.cpp
 )
 
 ament_target_dependencies(path_searching
-    ${dependencies} 
+    ${dependencies}
 )
 
 target_include_directories(path_searching PUBLIC
@@ -72,12 +72,23 @@ install(EXPORT ${PROJECT_NAME}Targets
 )
 
 if(BUILD_TESTING)
-    find_package(ament_lint_auto REQUIRED)
-    ament_lint_auto_find_test_dependencies()
+    set(ament_cmake_uncrustify_ADDITIONAL_ARGS LANGUAGE C++)
+  find_package(ament_lint_auto REQUIRED)
+    # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
+  include(cmake/legacy_notice_scope.cmake)
+  ament_lint_auto_find_test_dependencies()
 endif()
 
 ament_export_targets(${PROJECT_NAME}Targets HAS_LIBRARY_TARGET)
 ament_export_dependencies(${dependencies})
 ament_export_include_directories(include)
+
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
 
 ament_package()

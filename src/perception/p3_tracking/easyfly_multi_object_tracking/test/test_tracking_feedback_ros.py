@@ -141,8 +141,14 @@ def test_raw_world_stable_feedback_reset_and_rejected_frames(tmp_path):
         assert abs(target.position_y - 2.) < 1e-5
         assert abs(target.position_z - 2.) < 1e-5
         send()
-        for _ in range(3):
+        for missed in range(3):
             gone, _ = send(False)
+            # Prediction keeps the display/association track alive, but it is
+            # not a current observation to pair with this frame's depth image.
+            assert not raw[gone].tracks, 'predicted box leaked into depth fusion'
+            assert not positions[gone].targets, 'predicted box produced fresh 3D'
+            if missed < 2:
+                assert stable[gone].tracks[0].track_id == 0
         assert not raw[gone].tracks and not stable[gone].tracks
         new, _ = send()
         new_raw = raw[new].tracks[0].track_id

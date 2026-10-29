@@ -87,3 +87,18 @@ test-results-v219/
 
 # Codex 本地工具配置 (个人模型偏好, 仅本地留存, 不入库)
 .codex/
+
+# Required third-party license texts are source deliverables.
+!src/**/LICENSE*.txt
+!src/**/NOTICE*.txt
+
+# Source fixtures and upstream notices must survive a clean checkout.
+!src/**/license.txt
+!src/**/ros/*.CMakeLists.txt
+!src/execution/e2_planning/easyfly_global_planner/test/data/*.txt
+!src/third_party/algorithms/planning/fuel.notices/upstream-lkh-CMakeLists.txt
+!src/third_party/algorithms/localization/orb_slam3_dependencies/pangolin/src/_embed_/fonts/AnonymousPro.txt
+!src/third_party/algorithms/localization/orb_slam3_dependencies/pangolin/include/pangolin/log/
+!src/third_party/algorithms/localization/orb_slam3_dependencies/pangolin/src/log/
+!src/third_party/sensor_sdks/librealsense/unit-tests/log/
+!src/third_party/sensor_sdks/librealsense/wrappers/android/examples/java_example/gradle/wrapper/gradle-wrapper.properties

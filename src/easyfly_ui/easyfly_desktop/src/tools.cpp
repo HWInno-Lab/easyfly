@@ -10,16 +10,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QStandardPaths>
-
 #include <utility>
-
 #include "easyfly_desktop/tools.hpp"
 namespace easyfly_desktop
 {
@@ -62,9 +59,11 @@ QString rviz_preview(const bridge::BridgeConfig & config, int preset)
   result = result.arg(preset == 3 ? "map" : "odom");
   const auto display = [&](const QString & type, const QString & name,
       const QString & endpoint, bool enabled) {
+      const QString class_id = type == "Odometry" ? "easyfly_rviz_plugins/Odometry" :
+        "rviz_default_plugins/" + type;
       result += QString(
-        "    - Class: rviz_default_plugins/%1\n      Name: %2\n      Enabled: %3\n").arg(
-        type, quoted(name), enabled ? "true" : "false");
+        "    - Class: %1\n      Name: %2\n      Enabled: %3\n").arg(
+        class_id, quoted(name), enabled ? "true" : "false");
       result += topic(endpoint);
     };
   if (preset == 3) {

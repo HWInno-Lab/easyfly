@@ -6,7 +6,7 @@ EasyFly 面向自主飞行算法开发、仿真联调和任务验证，提供 C+
 
 **首次部署与内测请先阅读 [内测手册](内测手册.md)**，其中包含完整安装准备、构建步骤、功能用例、仿真飞行入口、通过标准和问题记录模板。
 
-状态核对：**2026-10-29**。本文描述当前工作区快照；部分实现及本地验收证据尚未进入 Git。部署时须绑定完整源码、安装层和依赖清单，不能仅凭本次文档提交复现全部能力。
+状态核对：**2026-10-29**。本文描述当前工作区快照，部分实现尚未进入 Git。本次按用户要求清空 `artifacts/`，其中的验收安装、依赖缓存、离线归档与原始证据已删除；使用前需重新部署。统一计划见 [plan-v6.md](plan-v6.md)，历史结论、剩余事项和清理影响见 [schedule-v6.md](schedule-v6.md)。
 
 RealSense 驱动包含固定的本地构建适配。新克隆后先运行
 `python3 tools/source/restore_realsense.py`；它使用随源码交付的 Git bundle 离线恢复
@@ -86,9 +86,7 @@ easyfly_ws/
 
 隔离离线版本目录的安装、升级、卸载和配置迁移工具见 [交付说明](tools/delivery/README.md)。其实际验收状态以交付摘要为准。
 
-既有 `offline-r3` 归档冻结于此前交付验收，不包含本轮阶段 1–3 的全部新增功能。
-本轮运行证据来自 `artifacts/stages1-3-20261028` 的复制／符号链接安装及其明确的 underlay；
-不能把旧归档的验收结论当作最新源码的全新离线安装验收。
+旧 `offline-r3` 曾完成限定交付验收，不包含阶段 1–3 的全部新增功能，且已随本次产物清理删除。最新功能此前使用复制／符号链接安装及明确的 underlay；这些目录同样已清理，需按 plan-v6 的 R1 重建，不能据历史通过宣称当前可运行或最新自包含安装已验收。
 
 安装步骤和检查清单见 [内测手册](内测手册.md)。部署时保留精确版本与文件指纹；遇到不匹配应使用已审核输入或重新适配，不通过删除版本/SHA 校验启动。当前尚无经过完整验收的自包含 deb/AppImage 安装包。
 
@@ -96,7 +94,7 @@ easyfly_ws/
 
 ### 使用已部署的完整平台
 
-先按[内测手册第 4 节](内测手册.md#4-路线一在当前已部署内测机使用)核对本轮安装入口；应用菜单可能仍指向旧版本。打开已核对的 **EasyFly**，进入“连接与仿真”：
+清理后先重新构建或部署完整平台，再按[内测手册第 4 节](内测手册.md#4-路线一在当前已部署内测机使用)核对实际安装入口；旧菜单指向的安装已删除。打开已核对的 **EasyFly**，进入“连接与仿真”：
 
 1. 新建连接，选择“启动本机仿真”。
 2. 首次检查使用 `base_sim` 和 `primitives_sparse_seed42_v1`；需要感知、建图与导航时选择 `navigation_dev`。
@@ -115,7 +113,7 @@ ros2 run easyfly_connection_manager easyfly_connections
 
 ### 通过终端选择场景
 
-使用本次完整安装及其登记的 underlay。新构建使用安装的 `setup.bash`；本机多层验收环境按手册加载配套 `environment-copy.bash` 或 `environment-symlink.bash`。将下面两个占位路径替换为实际部署目录；兼容目录应包含 `compatibility.json` 和 `px4-input/`：
+使用重新部署的完整安装及其登记 underlay；新构建加载安装的 `setup.bash`，多层安装由部署人员提供完整环境脚本。将下面两个占位路径替换为实际存在的目录；兼容目录应包含 `compatibility.json` 和 `px4-input/`：
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -191,7 +189,7 @@ colcon test-result --test-result-base build-readonly --verbose
 
 ## 当前验证边界与剩余工作
 
-当前源码发现 **118 个包**，两种安装均核对到 115 个 ament 包与 3 个原生 CMake 库。阶段 1–3 的 24 项中 **22 项已按声明的软件／协议或原生仿真范围签收**，包括原九个骨架模块及 E-01～E-10。包数、测试条数和完成事项数分别统计。
+当前源码发现 **118 个包**，清理前的两种安装均核对到 115 个 ament 包与 3 个原生 CMake 库。阶段 1–3 的 24 项中 **22 项已按声明的软件／协议或原生仿真范围签收**，包括原九个骨架模块及 E-01～E-10。包数、测试条数和完成事项数分别统计。
 
 已有验收包括双机协同、惯性 Atlas／激光地图重用、双定位外部视觉融合、动态相机与移动板精降、独立媒体与网络服务。每个模块仍有明确的输入、场景、速度和生命周期边界；专项入口与复验条件见[内测手册第 13 节](内测手册.md#13-定位与新增能力专项)。
 
@@ -202,17 +200,18 @@ colcon test-result --test-result-base build-readonly --verbose
 | V-09：近距离卡车车尾漏检 | 跟随控制已修，识别质量问题按用户决定保留 |
 | D-04：来源、许可与组合分发材料缺口 | 按用户决定暂缓；规范检查通过不等于许可齐备 |
 | 真实云台、D435i 双目惯性产品接入、目标机／传感器／飞控／RC、HIL／实飞 | 含待实现接口与待设备验收项；仿真不能代替实体链路 |
-| 最新版本自包含离线交付 | 已验的旧 `offline-r3` 保持冻结，最新 118 包工作区尚未重新制作并验收完整离线归档 |
+| 最新版本自包含离线交付 | 旧 `offline-r3` 已清理，保留历史结论；最新 118 包仍需重建并验收完整离线归档 |
 
 14 个登记场景的既有任务矩阵、小时级运行、虚拟双机 DDS／QGC／PTY、公开数据定位基线均保留各自的验收范围。纯 CPU 四核双负载的锁步验证约为 **0.16 倍实时速度**，不代表实时吞吐；GPU 与纯软件渲染也分别验收。三／四机原生飞行性能、更广实景识别和任意高速导航属于尚未覆盖的扩展。
 
-本机完整证据见[阶段汇总](artifacts/stages1-3-20261028/summary.json)、[当前退出审计](artifacts/stages1-3-20261028/shutdown-final-review.json)和[未完成清单](未完成.md)。这些本地记录按仓库策略单独交付，源码克隆可能不含它们；本节和随包说明保留可独立阅读的结论。
+历史结论见[统一进度](schedule-v6.md)和[未完成清单](未完成.md)。原始 artifacts 证据已按用户要求删除；保留的文字摘要与哈希不能替代原日志、录包、二进制或新的复验。
 
 ## 开发与文档
 
 | 主题 | 入口 |
 | --- | --- |
 | 完整安装、内测用例、故障排查和报告 | [内测手册](内测手册.md) |
+| 统一开发计划与最新进度 | [plan-v6.md](plan-v6.md) · [schedule-v6.md](schedule-v6.md) |
 | 桌面与连接操作 | [连接管理](src/easyfly_ui/easyfly_connection_manager/README.md) · [桌面操作](src/easyfly_ui/easyfly_desktop/OPERATIONS.md) |
 | 仿真与场景 | [仿真启动器](src/application/a3_mission/easyfly_sim_launcher/README.md) · [PX4 兼容输入](src/simulation/easyfly_px4_sitl/README.md) · [Fast DDS 兼容层](src/simulation/easyfly_fastdds_compat/README.md) |
 | SDK | [C++ SDK](src/application/a1_sdk/easyfly_core/README.md) · [Python 绑定](src/application/a1_sdk/easyfly_pybind/README.md) |
@@ -225,7 +224,7 @@ colcon test-result --test-result-base build-readonly --verbose
 
 新增后端应同时提交实现、平台适配、配置、来源/许可证与对应检查。能力声明只填写实际支持项；变更公共消息或 C++ ABI 时同步重编译消费者。
 
-`docs/`、开发计划、阶段验收报告和 `artifacts/` 中的本地证据按当前策略不入 Git。源码仓库中的使用说明与本轮交付包共同构成部署依据；需要复现历史验收时，应另外取得相应原始证据。
+`docs/`、开发计划、阶段验收报告和 `artifacts/` 按当前策略不入 Git。当前工作区保留统一 v6 计划、文字报告与源码说明；原产物已清空，重新部署时须重新准备完整依赖并生成新的运行证据。
 
 ## 许可证
 

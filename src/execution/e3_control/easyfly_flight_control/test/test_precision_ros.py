@@ -40,6 +40,9 @@ from rclpy.task import Future
     "scenario",
     [
         "normal",
+        "moving_normal",
+        "moving_timeout",
+        "moving_corridor",
         "cancel_guidance",
         "loss",
         "takeover",
@@ -77,6 +80,8 @@ def test_precision_process(scenario):
         "precision_settle_observations": "3",
         "land_timeout": "5.0",
     }
+    if scenario.startswith('moving_'):
+        parameters.update(precision_moving_target='true', precision_moving_land_timeout='2.0')
     controller_name = "precision_fixture_flight_" + scenario
     command = [executable, "--ros-args", "-r", "__node:=" + controller_name]
     for name, value in parameters.items():
@@ -166,7 +171,7 @@ def test_precision_process(scenario):
         end = time.monotonic() + duration
         while time.monotonic() < end:
             if (
-                scenario in ["normal", "mode_wait"]
+                scenario in ["normal", "mode_wait", "moving_normal"]
                 and land_started is not None
                 and time.monotonic() - land_started > 0.2
             ):
@@ -198,6 +203,9 @@ def test_precision_process(scenario):
                     if scenario
                     in [
                         "normal",
+                        "moving_normal",
+                        "moving_timeout",
+                        "moving_corridor",
                         "cancel_land",
                         "timeout_land",
                         "cancel_mode_pending",
@@ -209,6 +217,8 @@ def test_precision_process(scenario):
                     ]
                     else 1.0
                 )
+                if scenario == 'moving_corridor' and land_started is not None:
+                    target.position.x = .5
                 target_pub.publish(target)
             rclpy.spin_once(node, timeout_sec=0.01)
 
@@ -270,7 +280,21 @@ def test_precision_process(scenario):
         assert ownership.wait_for_service(timeout_sec=5)
         assert capabilities.wait_for_service(timeout_sec=5)
         settle_fixture_graph()
-        observed = wait(capabilities.call_async(GetCapabilities.Request()))
+        # A discovered request endpoint does not prove the response reader has
+        # matched. Only this read-only capability query is safe to retry before
+        # flight; actions and mode/arming requests are still submitted once.
+        deadline = time.monotonic() + 6
+        observed = None
+        while time.monotonic() < deadline and observed is None:
+            probe = capabilities.call_async(GetCapabilities.Request())
+            reply_deadline = min(deadline, time.monotonic() + .5)
+            while not probe.done() and time.monotonic() < reply_deadline:
+                pump(.02)
+            if probe.done():
+                observed = probe.result()
+            else:
+                capabilities.remove_pending_request(probe)
+        assert observed is not None, 'read-only capability round trip never became ready'
         assert observed.names == ["precision_landing"]
         assert observed.implemented == [True]
         pump(0.2)
@@ -393,15 +417,19 @@ def test_precision_process(scenario):
             if scenario == "cancel_land":
                 assert wait(handle.cancel_goal_async()).goals_canceling
         wrapped = wait(result, 6)
+        if scenario in ['moving_timeout', 'moving_corridor']:
+            assert 'moving pad' in wrapped.result.message
+            assert 'child Land drained' in wrapped.result.message
+            assert any(item.status == GoalStatus.STATUS_CANCELED for item in land_status)
         expected = (
             GoalStatus.STATUS_SUCCEEDED
-            if scenario in ["normal", "mode_wait"]
+            if scenario in ["normal", "mode_wait", "moving_normal"]
             else GoalStatus.STATUS_CANCELED
             if scenario.startswith("cancel")
             else GoalStatus.STATUS_ABORTED
         )
         assert wrapped.status == expected
-        assert wrapped.result.success == (scenario in ["normal", "mode_wait"])
+        assert wrapped.result.success == (scenario in ["normal", "mode_wait", "moving_normal"])
         assert owned(handle) == GetActionOwnership.Response.RELEASED
         if scenario == "cancel_mode_pending":
             assert not wait(probe_future).goals_canceling
@@ -452,11 +480,13 @@ def test_precision_process(scenario):
             pump(0.1)
             assert len(commands) == stopped_count
         assert arm_requests == [True]  # No compensating disarm.
-        if scenario in ["normal", "mode_wait"]:
+        if scenario in ["normal", "mode_wait", "moving_normal"]:
             assert mode_requests == [3, 7]
         elif scenario in [
             "cancel_land",
             "timeout_land",
+            "moving_timeout",
+            "moving_corridor",
         ]:
             assert mode_requests == [3, 7, 3]
             assert state.armed

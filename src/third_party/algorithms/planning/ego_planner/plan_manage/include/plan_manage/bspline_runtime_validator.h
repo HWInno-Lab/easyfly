@@ -1,13 +1,24 @@
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 #ifndef PLAN_MANAGE__BSPLINE_RUNTIME_VALIDATOR_H_
 #define PLAN_MANAGE__BSPLINE_RUNTIME_VALIDATOR_H_
 
+#include <bspline_opt/uniform_bspline.h>
+#include <plan_manage/swarm_bspline_validator.h>
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
-
-#include <bspline_opt/uniform_bspline.h>
-
-#include <plan_manage/swarm_bspline_validator.h>
 
 namespace ego_planner
 {
@@ -37,22 +48,22 @@ enum class RuntimeValidationError
 
 struct RuntimeValidationResult
 {
-  RuntimeValidationError error{RuntimeValidationError::kOk};
+  RuntimeValidationError error {RuntimeValidationError::kOk};
 
-  bool valid() const { return error == RuntimeValidationError::kOk; }
+  bool valid() const {return error == RuntimeValidationError::kOk;}
 };
 
 inline const char * runtimeValidationErrorName(const RuntimeValidationError error)
 {
-  switch (error)
-  {
+  switch (error) {
     case RuntimeValidationError::kOk: return "ok";
     case RuntimeValidationError::kPositionStructure: return "position_structure";
     case RuntimeValidationError::kVelocityStructure: return "velocity_structure";
     case RuntimeValidationError::kAccelerationStructure: return "acceleration_structure";
     case RuntimeValidationError::kPositionKnotStructure: return "position_knot_structure";
     case RuntimeValidationError::kVelocityKnotStructure: return "velocity_knot_structure";
-    case RuntimeValidationError::kAccelerationKnotStructure: return "acceleration_knot_structure";
+    case RuntimeValidationError::kAccelerationKnotStructure: return
+        "acceleration_knot_structure";
     case RuntimeValidationError::kPositionNonFinite: return "position_nonfinite";
     case RuntimeValidationError::kVelocityNonFinite: return "velocity_nonfinite";
     case RuntimeValidationError::kAccelerationNonFinite: return "acceleration_nonfinite";
@@ -67,17 +78,17 @@ inline const char * runtimeValidationErrorName(const RuntimeValidationError erro
   return "unknown";
 }
 
-inline bool validRuntimeKnotVector(const Eigen::VectorXd & knots, const std::size_t expected_size)
+inline bool validRuntimeKnotVector(
+  const Eigen::VectorXd & knots,
+  const std::size_t expected_size)
 {
   if (knots.size() != static_cast<Eigen::Index>(expected_size) || knots.size() == 0 ||
-      !knots.allFinite())
+    !knots.allFinite())
   {
     return false;
   }
-  for (Eigen::Index i = 1; i < knots.size(); ++i)
-  {
-    if (knots(i) < knots(i - 1))
-    {
+  for (Eigen::Index i = 1; i < knots.size(); ++i) {
+    if (knots(i) < knots(i - 1)) {
       return false;
     }
   }
@@ -85,52 +96,46 @@ inline bool validRuntimeKnotVector(const Eigen::VectorXd & knots, const std::siz
 }
 
 inline RuntimeValidationResult validateCubicRuntimeTrajectory(
-    UniformBspline & position, UniformBspline & velocity, UniformBspline & acceleration,
-    const std::size_t expected_control_points, const std::size_t expected_knots,
-    const double expected_duration)
+  UniformBspline & position, UniformBspline & velocity, UniformBspline & acceleration,
+  const std::size_t expected_control_points, const std::size_t expected_knots,
+  const double expected_duration)
 {
   const Eigen::MatrixXd position_points = position.getControlPoint();
   const Eigen::MatrixXd velocity_points = velocity.getControlPoint();
   const Eigen::MatrixXd acceleration_points = acceleration.getControlPoint();
   if (position_points.rows() != 3 ||
-      position_points.cols() != static_cast<Eigen::Index>(expected_control_points))
+    position_points.cols() != static_cast<Eigen::Index>(expected_control_points))
   {
     return {RuntimeValidationError::kPositionStructure};
   }
   if (velocity_points.rows() != 3 ||
-      velocity_points.cols() != static_cast<Eigen::Index>(expected_control_points - 1))
+    velocity_points.cols() != static_cast<Eigen::Index>(expected_control_points - 1))
   {
     return {RuntimeValidationError::kVelocityStructure};
   }
   if (acceleration_points.rows() != 3 ||
-      acceleration_points.cols() != static_cast<Eigen::Index>(expected_control_points - 2))
+    acceleration_points.cols() != static_cast<Eigen::Index>(expected_control_points - 2))
   {
     return {RuntimeValidationError::kAccelerationStructure};
   }
 
-  if (!validRuntimeKnotVector(position.getKnot(), expected_knots))
-  {
+  if (!validRuntimeKnotVector(position.getKnot(), expected_knots)) {
     return {RuntimeValidationError::kPositionKnotStructure};
   }
-  if (!validRuntimeKnotVector(velocity.getKnot(), expected_knots - 2))
-  {
+  if (!validRuntimeKnotVector(velocity.getKnot(), expected_knots - 2)) {
     return {RuntimeValidationError::kVelocityKnotStructure};
   }
-  if (!validRuntimeKnotVector(acceleration.getKnot(), expected_knots - 4))
-  {
+  if (!validRuntimeKnotVector(acceleration.getKnot(), expected_knots - 4)) {
     return {RuntimeValidationError::kAccelerationKnotStructure};
   }
 
-  if (!finiteAndBounded(position_points, kMaxControlPointAbs))
-  {
+  if (!finiteAndBounded(position_points, kMaxControlPointAbs)) {
     return {RuntimeValidationError::kPositionNonFinite};
   }
-  if (!finiteAndBounded(velocity_points, kMaxDerivedVelocityAbs))
-  {
+  if (!finiteAndBounded(velocity_points, kMaxDerivedVelocityAbs)) {
     return {RuntimeValidationError::kVelocityNonFinite};
   }
-  if (!finiteAndBounded(acceleration_points, kMaxDerivedAccelerationAbs))
-  {
+  if (!finiteAndBounded(acceleration_points, kMaxDerivedAccelerationAbs)) {
     return {RuntimeValidationError::kAccelerationNonFinite};
   }
 
@@ -139,38 +144,34 @@ inline RuntimeValidationResult validateCubicRuntimeTrajectory(
   const double acceleration_duration = acceleration.getTimeSum();
   const double duration_tolerance = 1.0e-9 * std::max(1.0, expected_duration);
   if (!std::isfinite(position_duration) || !std::isfinite(velocity_duration) ||
-      !std::isfinite(acceleration_duration) || position_duration <= 0.0 ||
-      velocity_duration <= 0.0 || acceleration_duration <= 0.0 ||
-      std::abs(position_duration - expected_duration) > duration_tolerance ||
-      std::abs(velocity_duration - expected_duration) > duration_tolerance ||
-      std::abs(acceleration_duration - expected_duration) > duration_tolerance)
+    !std::isfinite(acceleration_duration) || position_duration <= 0.0 ||
+    velocity_duration <= 0.0 || acceleration_duration <= 0.0 ||
+    std::abs(position_duration - expected_duration) > duration_tolerance ||
+    std::abs(velocity_duration - expected_duration) > duration_tolerance ||
+    std::abs(acceleration_duration - expected_duration) > duration_tolerance)
   {
     return {RuntimeValidationError::kDuration};
   }
 
   const double sample_times[3] = {0.0, position_duration * 0.5, position_duration};
-  for (const double sample_time : sample_times)
-  {
+  for (const double sample_time : sample_times) {
     const Eigen::VectorXd position_sample = position.evaluateDeBoorT(sample_time);
-    if (!finiteAndBounded(position_sample, kMaxControlPointAbs))
-    {
+    if (!finiteAndBounded(position_sample, kMaxControlPointAbs)) {
       return {RuntimeValidationError::kPositionSample};
     }
     const Eigen::VectorXd velocity_sample = velocity.evaluateDeBoorT(sample_time);
-    if (!finiteAndBounded(velocity_sample, kMaxDerivedVelocityAbs))
-    {
+    if (!finiteAndBounded(velocity_sample, kMaxDerivedVelocityAbs)) {
       return {RuntimeValidationError::kVelocitySample};
     }
     const Eigen::VectorXd acceleration_sample = acceleration.evaluateDeBoorT(sample_time);
-    if (!finiteAndBounded(acceleration_sample, kMaxDerivedAccelerationAbs))
-    {
+    if (!finiteAndBounded(acceleration_sample, kMaxDerivedAccelerationAbs)) {
       return {RuntimeValidationError::kAccelerationSample};
     }
   }
   return {RuntimeValidationError::kOk};
 }
 
-}  // namespace swarm_validation
+}    // namespace swarm_validation
 }  // namespace ego_planner
 
 #endif  // PLAN_MANAGE__BSPLINE_RUNTIME_VALIDATOR_H_

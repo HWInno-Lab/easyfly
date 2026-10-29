@@ -10,9 +10,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include "rviz_layers.hpp"
+#include <QByteArray>
+#include <QDebug>
 #include <chrono>
+#include <algorithm>
 #include <atomic>
 #include <condition_variable>
 #include <memory>
@@ -21,7 +23,6 @@
 #include <thread>
 #include <utility>
 #include <vector>
-
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
 #include <OgreSceneNode.h>
 #include <rclcpp/rclcpp.hpp>
@@ -31,9 +32,7 @@
 #include <rviz_common/ros_integration/ros_node_abstraction_iface.hpp>
 #include <rviz_rendering/objects/billboard_line.hpp>
 #include <rviz_rendering/objects/point_cloud.hpp>
-
 #include "easyfly_desktop/rviz_geometry.hpp"
-
 namespace easyfly_desktop
 {
 namespace
@@ -47,6 +46,7 @@ struct Envelope
 {
   std::shared_ptr<const spatial::Geometry> geometry;
   int64_t receipt{0};
+  QString source_gid;
 };
 struct Mailbox
 {
@@ -76,8 +76,10 @@ public:
     return s;
   }
   void reset() override
+  {reset_with_reason("rviz_reset");}
+  void reset_with_reason(const QString & reason)
   {
-    rviz_common::Display::reset(); clear_geometry(); current_ = {};
+    rviz_common::Display::reset(); ++snapshot_.epoch; invalidate(reason); current_ = {};
     high_water_ = 0; previous_ros_ = -1;
     if (mailbox_) {
       std::lock_guard<std::mutex> lock(mailbox_->mutex);
@@ -86,14 +88,20 @@ public:
     snapshot_.source_frame.clear(); snapshot_.source_age = snapshot_.receipt_age = -1;
     snapshot_.status = QStringLiteral("无数据 / 等待新观测"); set_status();
   }
-  void fixedFrameChanged() override {reset();}
+  void fixedFrameChanged() override {reset_with_reason("fixed_frame_changed");}
   void update(float, float) override
   {
     if (!isEnabled() || !mailbox_) {return;}
     const auto raw = context_->getRosNodeAbstraction().lock()->get_raw_node();
     const auto now = raw->now().nanoseconds();
+    const bool specialized = kind_ == SpatialKind::Landing || kind_ == SpatialKind::Predictions ||
+      kind_ == SpatialKind::Classified;
+    if (specialized && raw->count_publishers(topic_.toStdString()) != 1) {
+      current_ = {}; invalidate("specialized_source_missing_or_ambiguous");
+      snapshot_.status = QStringLiteral("专项源缺失或不唯一；已清图"); set_status(); return;
+    }
     if (previous_ros_ >= 0 && (now < previous_ros_ || now - previous_ros_ > 10000000000LL)) {
-      reset(); previous_ros_ = now;
+      reset_with_reason("clock_jump"); previous_ros_ = now;
       snapshot_.status = QStringLiteral("时钟跳变 / 已清图，等待新观测"); set_status(); return;
     }
     previous_ros_ = now;
@@ -104,16 +112,42 @@ public:
     }
     if (next.geometry) {
       const auto & g = *next.geometry;
+      snapshot_.received_stamp_ns = g.stamp_ns;
+      if (!next.source_gid.isEmpty() && snapshot_.source_gid != next.source_gid) {
+        if (!snapshot_.source_gid.isEmpty()) {
+          ++snapshot_.source_changes;
+          if (specialized) {
+            current_ = {}; high_water_ = 0; invalidate("specialized_source_changed");
+          }
+        }
+        snapshot_.source_gid = next.source_gid;
+        qInfo().noquote() << "easyfly_rviz_source topic=" << topic_ <<
+          "gid=" << snapshot_.source_gid << "epoch=" << snapshot_.epoch <<
+          "steady_ns=" << steady_ns();
+      }
       if (!g.valid) {
-        current_ = {}; clear_geometry();
+        current_ = {}; invalidate("invalid_geometry: " + QString::fromStdString(g.detail));
         snapshot_.source_age = snapshot_.receipt_age = -1;
         snapshot_.source_frame = QString::fromStdString(g.frame);
         snapshot_.status = QString::fromStdString(g.detail); set_status(); return;
       }
+      if (specialized && current_.geometry && g.stamp_ns <= high_water_) {
+        const auto & previous = *current_.geometry;
+        const bool identical = g.stamp_ns == high_water_ && g.frame == previous.frame &&
+          g.detail == previous.detail && g.vertices.size() == previous.vertices.size() &&
+          std::equal(
+          g.vertices.begin(), g.vertices.end(), previous.vertices.begin(),
+          [](const auto & a, const auto & b) {return a.x == b.x && a.y == b.y && a.z == b.z;});
+        if (!identical) {
+          current_ = {}; invalidate("specialized_out_of_order_or_conflict");
+          snapshot_.status = QStringLiteral("专项数据乱序或同帧冲突；已清图"); set_status(); return;
+        }
+      }
       if (g.stamp_ns > high_water_) {
         const auto reason = spatial::validity(g, now, next.receipt, steady_ns());
         if (!reason.empty()) {
-          current_ = {}; clear_geometry(); snapshot_.source_age = snapshot_.receipt_age = -1;
+          current_ = {}; invalidate(QString::fromStdString(reason));
+          snapshot_.source_age = snapshot_.receipt_age = -1;
           snapshot_.source_frame = QString::fromStdString(g.frame);
           snapshot_.status = QString::fromStdString(reason); set_status(); return;
         }
@@ -128,7 +162,8 @@ public:
     snapshot_.receipt_age = static_cast<double>(steady_ns() - current_.receipt) / 1e9;
     const auto reason = spatial::validity(g, now, current_.receipt, steady_ns());
     if (!reason.empty()) {
-      clear_geometry(); snapshot_.status = QString::fromStdString(reason); set_status(); return;
+      invalidate(QString::fromStdString(reason));
+      snapshot_.status = QString::fromStdString(reason); set_status(); return;
     }
     Ogre::Vector3 position = Ogre::Vector3::ZERO;
     Ogre::Quaternion orientation = Ogre::Quaternion::IDENTITY;
@@ -138,8 +173,9 @@ public:
           g.stamp_ns,
           raw->get_clock()->get_clock_type()), position, orientation))
     {
-      clear_geometry(); snapshot_.status = QStringLiteral("TF 未就绪：%1 → %2").arg(
-        snapshot_.source_frame, fixed_frame_); set_status(); return;
+      snapshot_.status = QStringLiteral("TF 未就绪：%1 → %2").arg(
+        snapshot_.source_frame, fixed_frame_);
+      invalidate(snapshot_.status); set_status(); return;
     }
     scene_node_->setPosition(position); scene_node_->setOrientation(orientation);
     if (dirty_) {draw(g); dirty_ = false;}
@@ -159,11 +195,11 @@ protected:
     cloud_->setRenderMode(
       kind_ == SpatialKind::Map ? rviz_rendering::PointCloud::RM_FLAT_SQUARES :
       rviz_rendering::PointCloud::RM_POINTS);
-    scene_node_->attachObject(cloud_.get()); reset();
+    scene_node_->attachObject(cloud_.get()); reset_with_reason("initialized");
   }
   void onEnable() override
   {
-    reset(); mailbox_ = std::make_shared<Mailbox>();
+    reset_with_reason("enabled"); mailbox_ = std::make_shared<Mailbox>();
     const auto raw = context_->getRosNodeAbstraction().lock()->get_raw_node();
     // Humble's manager spins its automatic groups on the GUI update thread.
     // Explicitly exclude this bounded geometry group and give it an executor.
@@ -174,6 +210,11 @@ protected:
       case SpatialKind::Cloud: subscribe<sensor_msgs::msg::PointCloud2>(raw); break;
       case SpatialKind::Map: subscribe<nav_msgs::msg::OccupancyGrid>(raw); break;
       case SpatialKind::Obstacles: subscribe<easyfly_msgs::msg::ObstacleInfoArray>(raw); break;
+      case SpatialKind::Landing: subscribe<easyfly_msgs::msg::LandingGuidanceTarget>(raw); break;
+      case SpatialKind::Predictions: subscribe<easyfly_msgs::msg::TargetPredictionArray>(raw);
+        break;
+      case SpatialKind::Classified: subscribe<easyfly_msgs::msg::ClassifiedObstacleArray>(raw);
+        break;
     }
     rclcpp::ExecutorOptions options;
     options.context = raw->get_node_base_interface()->get_context();
@@ -195,13 +236,13 @@ protected:
             error->detail = std::string("只读观测线程退出：") +
             std::string(e.what()).substr(0, 128);
             std::lock_guard<std::mutex> lock(mailbox->mutex);
-            mailbox->pending = {std::move(error), steady_ns()};
+            mailbox->pending = {std::move(error), steady_ns(), {}};
           }
         }
       });
   }
   void onDisable() override
-  {stop_worker(); subscription_.reset(); mailbox_.reset(); reset();}
+  {stop_worker(); subscription_.reset(); mailbox_.reset(); reset_with_reason("disabled");}
 
 private:
   template<typename Message>
@@ -211,7 +252,7 @@ private:
     rclcpp::SubscriptionOptions options; options.callback_group = group_;
     subscription_ = node->create_subscription<Message>(
       topic_.toStdString(), rclcpp::QoS(1).best_effort().durability_volatile(),
-      [weak](typename Message::ConstSharedPtr message) {
+      [weak](typename Message::ConstSharedPtr message, const rclcpp::MessageInfo & info) {
         const auto mailbox = weak.lock(); if (!mailbox || !message) {return;}
         const auto receipt = steady_ns();
         uint64_t epoch;
@@ -221,7 +262,11 @@ private:
         ++mailbox->received;
         if (epoch != mailbox->epoch) {++mailbox->replaced; return;}
         if (mailbox->pending.geometry) {++mailbox->replaced;}
-        mailbox->pending = {std::move(geometry), receipt};
+        const auto & gid = info.get_rmw_message_info().publisher_gid;
+        const auto source = QString::fromLatin1(
+          QByteArray(
+            reinterpret_cast<const char *>(gid.data), RMW_GID_STORAGE_SIZE).toHex());
+        mailbox->pending = {std::move(geometry), receipt, source};
       }, options);
   }
   void stop_worker()
@@ -239,6 +284,20 @@ private:
     if (cloud_) {cloud_->clearAndRemoveAllPoints();}
     snapshot_.visible = false; snapshot_.vertices = 0; dirty_ = true;
   }
+  void invalidate(const QString & reason)
+  {
+    // Repeated stale frames do not flood the log, but a recovery followed by the
+    // same fault is a new invalidation. Ordinary redraw is never an invalidation.
+    if (snapshot_.visible || snapshot_.last_invalidation != reason) {
+      ++snapshot_.invalidations; snapshot_.last_invalidation = reason;
+      snapshot_.invalidated_at_ns = steady_ns();
+      qInfo().noquote() << "easyfly_rviz_invalidate topic=" << topic_ <<
+        "epoch=" << snapshot_.epoch << "gid=" << snapshot_.source_gid <<
+        "source_stamp=" << snapshot_.received_stamp_ns <<
+        "steady_ns=" << snapshot_.invalidated_at_ns << "reason=" << reason;
+    }
+    clear_geometry();
+  }
   void draw(const spatial::Geometry & g)
   {
     clear_geometry();
@@ -247,6 +306,9 @@ private:
     if (kind_ == SpatialKind::Obstacles) {color = Ogre::ColourValue(0.79F, 0.13F, 0.20F, 1);}
     if (kind_ == SpatialKind::Map) {color = Ogre::ColourValue(0.39F, 0.30F, 0.65F, 1);}
     if (kind_ == SpatialKind::Cloud) {color = Ogre::ColourValue(0.08F, 0.58F, 0.51F, 1);}
+    if (kind_ == SpatialKind::Landing) {color = Ogre::ColourValue(0.12F, 0.55F, 0.22F, 1);}
+    if (kind_ == SpatialKind::Predictions) {color = Ogre::ColourValue(0.07F, 0.65F, 0.74F, 1);}
+    if (kind_ == SpatialKind::Classified) {color = Ogre::ColourValue(0.65F, 0.32F, 0.66F, 1);}
     if (g.primitive == spatial::Primitive::Points) {
       std::vector<rviz_rendering::PointCloud::Point> points;
       points.reserve(g.vertices.size());

@@ -10,7 +10,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include <gtest/gtest.h>
 #include <QCheckBox>
 #include <QDir>
@@ -48,7 +48,6 @@
 #include <easyfly_core/ownership_registry.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include "easyfly_desktop/playback.hpp"
-// Platform integration fixture; kept outside the desktop's minimal dependency closure.
 #include "support.hpp"
 using namespace desktop_test;  // NOLINT(build/namespaces)
 using Action = easyfly_msgs::action::ExecuteMission;
@@ -87,7 +86,6 @@ protected:
     const std::shared_ptr<rmw_request_id_t> & header, const Reviewed::Request &,
     const Reviewed::Response::SharedPtr & response)
   {service->send_response(*header, *response);}
-
   void SetUp() override
   {
     application(); ASSERT_TRUE(directory.isValid());
@@ -396,7 +394,6 @@ TEST_F(ManagedStack, DISABLED_RealToolsUnresolvedExitAndLookupOnlyReopen)
   EXPECT_TRUE(widget<QLabel>("qgcState")->text().contains(QStringLiteral("未启动")));
   ASSERT_TRUE(close()); EXPECT_EQ(goals, 1); EXPECT_EQ(cancels, 0);
 }
-
 // Real Qt, controller, ROS relay and production mission service. Pixels/state/action are MOCK.
 // Only our local tool wrappers are stopped; the mock goal is completed later by fixture teardown.
 class ManagedMediaStack : public ManagedStack
@@ -640,7 +637,6 @@ TEST_F(ManagedMediaStack, PendingAdmissionMediaToolsExitAndLookupOnlyReopen) {
 TEST_F(ManagedMediaStack, DISABLED_RealToolsMediaExitAndLookupOnlyReopen) {
   exercise(false, true);
 }
-
 #ifdef EASYFLY_ENABLE_MEDIA
 // Real ROS observation/service/control/recording chain; publishers and Action are MOCK.
 class TimelineStack : public ManagedStack

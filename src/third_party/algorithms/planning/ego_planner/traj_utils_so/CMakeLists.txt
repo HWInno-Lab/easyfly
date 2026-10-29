@@ -78,4 +78,8 @@ ament_export_dependencies(${dependencies} Eigen3)
 rosidl_target_interfaces(${PROJECT_NAME}_lib
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
+
 ament_package()

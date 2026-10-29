@@ -16,7 +16,7 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PythonExpression
-from launch_ros.actions import ComposableNodeContainer
+from easyfly_launch.composition import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
 

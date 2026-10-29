@@ -11,13 +11,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <atomic>
 #include <stdexcept>
 #include "easyfly_global_planner/adapters/planner_factory.hpp"
 #include "easyfly_global_planner/astar.hpp"
-
 namespace gp = easyfly::grid_planning;
 TEST(AStarAdapter, NativePathAndIdentityArePreserved)
 {

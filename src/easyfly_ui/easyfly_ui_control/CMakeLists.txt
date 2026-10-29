@@ -8,7 +8,7 @@ find_package(jsoncpp REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(${PROJECT_NAME} SHARED src/journal.cpp src/controller.cpp src/parameters.cpp
-  src/import_journal.cpp src/importer.cpp)
+  src/import_journal.cpp src/importer.cpp src/peripherals.cpp)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
@@ -22,6 +22,11 @@ ament_export_targets(controlTargets HAS_LIBRARY_TARGET)
 ament_export_dependencies(rclcpp easyfly_msgs easyfly_mission_format)
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(rosgraph_msgs REQUIRED)
+  ament_add_gtest(test_peripherals test/test_peripherals.cpp TIMEOUT 45)
+  target_link_libraries(test_peripherals ${PROJECT_NAME})
+  ament_target_dependencies(test_peripherals rosgraph_msgs)
+  set_tests_properties(test_peripherals PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=132;ROS_LOCALHOST_ONLY=1")
   ament_add_gtest(test_importer test/test_importer.cpp TIMEOUT 60)
   target_include_directories(test_importer PRIVATE src)
   target_link_libraries(test_importer ${PROJECT_NAME} easyfly_mission_format::easyfly_mission_format)
@@ -41,6 +46,12 @@ if(BUILD_TESTING)
   set_tests_properties(test_controller PROPERTIES
     ENVIRONMENT "ROS_DOMAIN_ID=113;ROS_LOCALHOST_ONLY=1")
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
+      ${CMAKE_CURRENT_SOURCE_DIR}/src)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
   ament_lint_auto_find_test_dependencies()
 endif()
 ament_package()

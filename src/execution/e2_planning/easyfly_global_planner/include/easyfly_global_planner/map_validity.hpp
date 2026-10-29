@@ -11,19 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #pragma once
-
 #include <cmath>
 #include <cstddef>
-
 #include <nav_msgs/msg/occupancy_grid.hpp>
-
 namespace easyfly_global_planner
 {
-
 inline constexpr char kWorldFrame[] = "odom";
-
 // semantic_map reset protocol: zero stamp + all UNKNOWN cells is explicitly
 // not ready.  A valid map has a non-zero stamp and at least one known cell;
 // unknown cells may still occur inside an otherwise valid map.
@@ -45,5 +39,4 @@ inline bool occupancyGridReady(const nav_msgs::msg::OccupancyGrid & grid)
   }
   return false;
 }
-
 }  // namespace easyfly_global_planner

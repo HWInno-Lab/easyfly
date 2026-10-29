@@ -18,9 +18,7 @@ import json
 import math
 import time
 
-from easyfly_precision_landing.node import DiagnosticExecutor, LandingTransform, stamp
-import rclpy
-from rclpy.executors import SingleThreadedExecutor
+from easyfly_precision_landing.node import LandingTransform, run_observer, stamp
 from std_msgs.msg import Float64, String
 
 
@@ -54,19 +52,7 @@ class QueueFixture(LandingTransform):
 
 def main():
     """Own and clean only this observation process, with no flight interfaces."""
-    rclpy.init()
-    node = QueueFixture()
-    executor = DiagnosticExecutor(node) if node.diagnostics else SingleThreadedExecutor()
-    executor.add_node(node)
-    try:
-        executor.spin()
-    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
-        pass
-    finally:
-        executor.shutdown()
-        node.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
+    run_observer(QueueFixture)
 
 
 if __name__ == "__main__":

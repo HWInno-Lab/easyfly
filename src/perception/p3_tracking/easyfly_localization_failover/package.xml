@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_localization_failover</name><version>0.1.0</version>
+  <description>Explicit bounded dual native localization and PX4 external vision admission.</description>
+  <maintainer email="maintainers@easyfly.local">EasyFly Project</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend><buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend><exec_depend>geometry_msgs</exec_depend><exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend><exec_depend>std_msgs</exec_depend><exec_depend>std_srvs</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend><exec_depend>rcl_interfaces</exec_depend>
+  <exec_depend>easyfly_msgs</exec_depend><exec_depend>livox_ros_driver2</exec_depend>
+  <exec_depend>unique_identifier_msgs</exec_depend><exec_depend>python3-numpy</exec_depend><exec_depend>python3-scipy</exec_depend>
+  <exec_depend>easyfly_openvins_integration</exec_depend><exec_depend>ov_msckf</exec_depend>
+  <exec_depend>launch</exec_depend><exec_depend>launch_ros</exec_depend><exec_depend>ament_index_python</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>rosgraph_msgs</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

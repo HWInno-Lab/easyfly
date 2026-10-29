@@ -1,0 +1,33 @@
+cmake_minimum_required(VERSION 3.8)
+project(easyfly_fleet_sim)
+
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(livox_ros_driver2 REQUIRED)
+add_executable(fleet_sensor_boundary src/sensor_boundary.cpp)
+target_compile_features(fleet_sensor_boundary PRIVATE cxx_std_17)
+ament_target_dependencies(fleet_sensor_boundary rclcpp sensor_msgs rosgraph_msgs
+  std_msgs livox_ros_driver2)
+install(TARGETS fleet_sensor_boundary DESTINATION lib/${PROJECT_NAME})
+ament_python_install_package(${PROJECT_NAME})
+install(PROGRAMS scripts/fleet_sim scripts/fleet_boundary DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_sensor_boundary test/test_sensor_boundary.py TIMEOUT 30
+    ENV "NATIVE_SENSOR_BOUNDARY=$<TARGET_FILE:fleet_sensor_boundary>")
+  ament_add_pytest_test(test_isolation test/test_isolation.py TIMEOUT 30
+    APPEND_ENV PYTHONNOUSERSITE=1)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+  if(TEST cppcheck)
+    set_tests_properties(cppcheck PROPERTIES ENVIRONMENT "AMENT_CPPCHECK_ALLOW_SLOW_VERSIONS=1")
+  endif()
+endif()
+ament_package()

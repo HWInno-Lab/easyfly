@@ -1,0 +1,1504 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1,101 +1,31 @@
+-cmake_minimum_required(VERSION 3.5)
++cmake_minimum_required(VERSION 3.16)
+ project(super_planner)
+-
+-set(CMAKE_BUILD_TYPE "Release")
+-set(CMAKE_CXX_FLAGS "-O3 -Wall -g -fPIC")
+-add_compile_options(-DQT_NO_VERSION_TAGGING)
+-add_compile_options(-Werror=return-type)
+-add_compile_options(-Werror=unused-variable)
+-add_compile_options(-Werror=unused-but-set-variable)
+ set(CMAKE_CXX_STANDARD 17)
+-
+-# Define the voxelize and raycasting method
+-add_definitions(-DORIGIN_AT_CORNER)
+-add_definitions(-DFMT_HEADER_ONLY)
+-add_definitions(-DROOT_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}/\")
+-
+-
+-string(TOUPPER $ENV{ROS_DISTRO} ROS_VERSION)
+-message(STATUS "ROS version: ${ROS_VERSION}")
+-
+-message("Using ROS1")
+-# add a marco for ros1
+-add_definitions(-DUSE_ROS1)
+-find_package(catkin REQUIRED COMPONENTS
+-        roscpp
+-        std_msgs
+-        pcl_ros
+-        geometry_msgs
+-        nav_msgs
+-        message_generation
+-        quadrotor_msgs
+-        visualization_msgs
+-        message_filters
+-        rog_map
+-        yaml-cpp
+-        tf
+-)
++find_package(ament_cmake REQUIRED)
++find_package(Eigen3 REQUIRED)
++find_package(PCL REQUIRED COMPONENTS common io filters kdtree)
+ find_package(yaml-cpp REQUIRED)
+-find_package(Boost REQUIRED COMPONENTS system filesystem regex iostreams)
+-find_package(Eigen3 REQUIRED)
+-find_package(PCL REQUIRED)
+-catkin_package(
+-        INCLUDE_DIRS
+-        LIBRARIES super_planner
+-        CATKIN_DEPENDS roscpp rospy std_msgs
+-        #  DEPENDS system_lib
+-)
+-
+-include_directories(
+-        SYSTEM
+-        include
+-        ../../../devel/include
+-        ${catkin_INCLUDE_DIRS}
+-        ${Eigen3_INCLUDE_DIRS}
+-        ${PCL_INCLUDE_DIRS}
+-)
+-
+-
+-set(THIRD_PARTY
+-        ${catkin_LIBRARIES}
+-        ${PCL_LIBRARIES}
+-        ${Boost_LIBRARIES}
+-        #        super_planner
+-        yaml-cpp
+-        -ldw
+-)
+-
+-file(GLOB_RECURSE srcs CONFIGURE_DEPENDS src/*.cpp include/*.h include/*.hpp)
+-add_library(super STATIC ${srcs})
+-target_include_directories(super PUBLIC
+-        include)
+-target_link_libraries(super PUBLIC
+-)
+-
+-
+-add_executable(fsm_node
+-        Apps/fsm_node_ros1.cpp
+-)
+-target_link_libraries(fsm_node
+-        super
+-        ${THIRD_PARTY}
+-)
+-
+-#add_executable(read_replan_log
+-#        Apps/read_replan_log.cpp
+-#)
+-#target_link_libraries(read_replan_log
+-#        super
+-#        -lncurses
+-#        ${THIRD_PARTY}
+-#)
+-#
+-#
+-#add_executable(traj_opt_tuning
+-#        Apps/traj_opt_tuning.cpp
+-#)
+-#target_link_libraries(traj_opt_tuning
+-#        super
+-#        -lncurses
+-#        ${THIRD_PARTY}
+-#)
++find_package(rclcpp REQUIRED)
++find_package(std_msgs REQUIRED)
++find_package(sensor_msgs REQUIRED)
++find_package(geometry_msgs REQUIRED)
++find_package(nav_msgs REQUIRED)
++find_package(visualization_msgs REQUIRED)
++find_package(tf2_ros REQUIRED)
++find_package(pcl_conversions REQUIRED)
++find_package(rog_map REQUIRED)
++file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/*.cpp)
++list(FILTER sources EXCLUDE REGEX "/(fsm|waypoint_trajectory_optimizer).cpp$")
++add_library(easyfly_super_planner SHARED ${sources})
++target_link_options(easyfly_super_planner PRIVATE -Wl,--no-undefined)
++target_include_directories(easyfly_super_planner PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include> ${PCL_INCLUDE_DIRS})
++target_compile_definitions(easyfly_super_planner PUBLIC USE_ROS2 ORIGIN_AT_CORNER FMT_HEADER_ONLY ROOT_DIR="")
++target_compile_options(easyfly_super_planner PRIVATE -O2 -Werror=return-type)
++ament_target_dependencies(easyfly_super_planner PUBLIC rclcpp std_msgs sensor_msgs geometry_msgs nav_msgs visualization_msgs tf2_ros pcl_conversions)
++target_link_libraries(easyfly_super_planner PUBLIC Eigen3::Eigen yaml-cpp ${PCL_LIBRARIES} rog_map::easyfly_rog_map)
++install(TARGETS easyfly_super_planner EXPORT super_plannerTargets LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
++install(DIRECTORY include/ DESTINATION include)
++install(FILES NOTICE.md UPSTREAM-README.md COPYING COPYING.LESSER DESTINATION share/${PROJECT_NAME})
++ament_export_targets(super_plannerTargets HAS_LIBRARY_TARGET NAMESPACE super_planner::)
++ament_export_dependencies(Eigen3 PCL yaml-cpp rclcpp std_msgs sensor_msgs geometry_msgs nav_msgs visualization_msgs tf2_ros pcl_conversions rog_map)
++ament_package()
+--- /dev/null
++++ b/COPYING
+@@ -0,0 +1,674 @@
++                    GNU GENERAL PUBLIC LICENSE
++                       Version 3, 29 June 2007
++
++ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
++ Everyone is permitted to copy and distribute verbatim copies
++ of this license document, but changing it is not allowed.
++
++                            Preamble
++
++  The GNU General Public License is a free, copyleft license for
++software and other kinds of works.
++
++  The licenses for most software and other practical works are designed
++to take away your freedom to share and change the works.  By contrast,
++the GNU General Public License is intended to guarantee your freedom to
++share and change all versions of a program--to make sure it remains free
++software for all its users.  We, the Free Software Foundation, use the
++GNU General Public License for most of our software; it applies also to
++any other work released this way by its authors.  You can apply it to
++your programs, too.
++
++  When we speak of free software, we are referring to freedom, not
++price.  Our General Public Licenses are designed to make sure that you
++have the freedom to distribute copies of free software (and charge for
++them if you wish), that you receive source code or can get it if you
++want it, that you can change the software or use pieces of it in new
++free programs, and that you know you can do these things.
++
++  To protect your rights, we need to prevent others from denying you
++these rights or asking you to surrender the rights.  Therefore, you have
++certain responsibilities if you distribute copies of the software, or if
++you modify it: responsibilities to respect the freedom of others.
++
++  For example, if you distribute copies of such a program, whether
++gratis or for a fee, you must pass on to the recipients the same
++freedoms that you received.  You must make sure that they, too, receive
++or can get the source code.  And you must show them these terms so they
++know their rights.
++
++  Developers that use the GNU GPL protect your rights with two steps:
++(1) assert copyright on the software, and (2) offer you this License
++giving you legal permission to copy, distribute and/or modify it.
++
++  For the developers' and authors' protection, the GPL clearly explains
++that there is no warranty for this free software.  For both users' and
++authors' sake, the GPL requires that modified versions be marked as
++changed, so that their problems will not be attributed erroneously to
++authors of previous versions.
++
++  Some devices are designed to deny users access to install or run
++modified versions of the software inside them, although the manufacturer
++can do so.  This is fundamentally incompatible with the aim of
++protecting users' freedom to change the software.  The systematic
++pattern of such abuse occurs in the area of products for individuals to
++use, which is precisely where it is most unacceptable.  Therefore, we
++have designed this version of the GPL to prohibit the practice for those
++products.  If such problems arise substantially in other domains, we
++stand ready to extend this provision to those domains in future versions
++of the GPL, as needed to protect the freedom of users.
++
++  Finally, every program is threatened constantly by software patents.
++States should not allow patents to restrict development and use of
++software on general-purpose computers, but in those that do, we wish to
++avoid the special danger that patents applied to a free program could
++make it effectively proprietary.  To prevent this, the GPL assures that
++patents cannot be used to render the program non-free.
++
++  The precise terms and conditions for copying, distribution and
++modification follow.
++
++                       TERMS AND CONDITIONS
++
++  0. Definitions.
++
++  "This License" refers to version 3 of the GNU General Public License.
++
++  "Copyright" also means copyright-like laws that apply to other kinds of
++works, such as semiconductor masks.
++
++  "The Program" refers to any copyrightable work licensed under this
++License.  Each licensee is addressed as "you".  "Licensees" and
++"recipients" may be individuals or organizations.
++
++  To "modify" a work means to copy from or adapt all or part of the work
++in a fashion requiring copyright permission, other than the making of an
++exact copy.  The resulting work is called a "modified version" of the
++earlier work or a work "based on" the earlier work.
++
++  A "covered work" means either the unmodified Program or a work based
++on the Program.
++
++  To "propagate" a work means to do anything with it that, without
++permission, would make you directly or secondarily liable for
++infringement under applicable copyright law, except executing it on a
++computer or modifying a private copy.  Propagation includes copying,
++distribution (with or without modification), making available to the
++public, and in some countries other activities as well.
++
++  To "convey" a work means any kind of propagation that enables other
++parties to make or receive copies.  Mere interaction with a user through
++a computer network, with no transfer of a copy, is not conveying.
++
++  An interactive user interface displays "Appropriate Legal Notices"
++to the extent that it includes a convenient and prominently visible
++feature that (1) displays an appropriate copyright notice, and (2)
++tells the user that there is no warranty for the work (except to the
++extent that warranties are provided), that licensees may convey the
++work under this License, and how to view a copy of this License.  If
++the interface presents a list of user commands or options, such as a
++menu, a prominent item in the list meets this criterion.
++
++  1. Source Code.
++
++  The "source code" for a work means the preferred form of the work
++for making modifications to it.  "Object code" means any non-source
++form of a work.
++
++  A "Standard Interface" means an interface that either is an official
++standard defined by a recognized standards body, or, in the case of
++interfaces specified for a particular programming language, one that
++is widely used among developers working in that language.
++
++  The "System Libraries" of an executable work include anything, other
++than the work as a whole, that (a) is included in the normal form of
++packaging a Major Component, but which is not part of that Major
++Component, and (b) serves only to enable use of the work with that
++Major Component, or to implement a Standard Interface for which an
++implementation is available to the public in source code form.  A
++"Major Component", in this context, means a major essential component
++(kernel, window system, and so on) of the specific operating system
++(if any) on which the executable work runs, or a compiler used to
++produce the work, or an object code interpreter used to run it.
++
++  The "Corresponding Source" for a work in object code form means all
++the source code needed to generate, install, and (for an executable
++work) run the object code and to modify the work, including scripts to
++control those activities.  However, it does not include the work's
++System Libraries, or general-purpose tools or generally available free
++programs which are used unmodified in performing those activities but
++which are not part of the work.  For example, Corresponding Source
++includes interface definition files associated with source files for
++the work, and the source code for shared libraries and dynamically
++linked subprograms that the work is specifically designed to require,
++such as by intimate data communication or control flow between those
++subprograms and other parts of the work.
++
++  The Corresponding Source need not include anything that users
++can regenerate automatically from other parts of the Corresponding
++Source.
++
++  The Corresponding Source for a work in source code form is that
++same work.
++
++  2. Basic Permissions.
++
++  All rights granted under this License are granted for the term of
++copyright on the Program, and are irrevocable provided the stated
++conditions are met.  This License explicitly affirms your unlimited
++permission to run the unmodified Program.  The output from running a
++covered work is covered by this License only if the output, given its
++content, constitutes a covered work.  This License acknowledges your
++rights of fair use or other equivalent, as provided by copyright law.
++
++  You may make, run and propagate covered works that you do not
++convey, without conditions so long as your license otherwise remains
++in force.  You may convey covered works to others for the sole purpose
++of having them make modifications exclusively for you, or provide you
++with facilities for running those works, provided that you comply with
++the terms of this License in conveying all material for which you do
++not control copyright.  Those thus making or running the covered works
++for you must do so exclusively on your behalf, under your direction
++and control, on terms that prohibit them from making any copies of
++your copyrighted material outside their relationship with you.
++
++  Conveying under any other circumstances is permitted solely under
++the conditions stated below.  Sublicensing is not allowed; section 10
++makes it unnecessary.
++
++  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
++
++  No covered work shall be deemed part of an effective technological
++measure under any applicable law fulfilling obligations under article
++11 of the WIPO copyright treaty adopted on 20 December 1996, or
++similar laws prohibiting or restricting circumvention of such
++measures.
++
++  When you convey a covered work, you waive any legal power to forbid
++circumvention of technological measures to the extent such circumvention
++is effected by exercising rights under this License with respect to
++the covered work, and you disclaim any intention to limit operation or
++modification of the work as a means of enforcing, against the work's
++users, your or third parties' legal rights to forbid circumvention of
++technological measures.
++
++  4. Conveying Verbatim Copies.
++
++  You may convey verbatim copies of the Program's source code as you
++receive it, in any medium, provided that you conspicuously and
++appropriately publish on each copy an appropriate copyright notice;
++keep intact all notices stating that this License and any
++non-permissive terms added in accord with section 7 apply to the code;
++keep intact all notices of the absence of any warranty; and give all
++recipients a copy of this License along with the Program.
++
++  You may charge any price or no price for each copy that you convey,
++and you may offer support or warranty protection for a fee.
++
++  5. Conveying Modified Source Versions.
++
++  You may convey a work based on the Program, or the modifications to
++produce it from the Program, in the form of source code under the
++terms of section 4, provided that you also meet all of these conditions:
++
++    a) The work must carry prominent notices stating that you modified
++    it, and giving a relevant date.
++
++    b) The work must carry prominent notices stating that it is
++    released under this License and any conditions added under section
++    7.  This requirement modifies the requirement in section 4 to
++    "keep intact all notices".
++
++    c) You must license the entire work, as a whole, under this
++    License to anyone who comes into possession of a copy.  This
++    License will therefore apply, along with any applicable section 7
++    additional terms, to the whole of the work, and all its parts,
++    regardless of how they are packaged.  This License gives no
++    permission to license the work in any other way, but it does not
++    invalidate such permission if you have separately received it.
++
++    d) If the work has interactive user interfaces, each must display
++    Appropriate Legal Notices; however, if the Program has interactive
++    interfaces that do not display Appropriate Legal Notices, your
++    work need not make them do so.
++
++  A compilation of a covered work with other separate and independent
++works, which are not by their nature extensions of the covered work,
++and which are not combined with it such as to form a larger program,
++in or on a volume of a storage or distribution medium, is called an
++"aggregate" if the compilation and its resulting copyright are not
++used to limit the access or legal rights of the compilation's users
++beyond what the individual works permit.  Inclusion of a covered work
++in an aggregate does not cause this License to apply to the other
++parts of the aggregate.
++
++  6. Conveying Non-Source Forms.
++
++  You may convey a covered work in object code form under the terms
++of sections 4 and 5, provided that you also convey the
++machine-readable Corresponding Source under the terms of this License,
++in one of these ways:
++
++    a) Convey the object code in, or embodied in, a physical product
++    (including a physical distribution medium), accompanied by the
++    Corresponding Source fixed on a durable physical medium
++    customarily used for software interchange.
++
++    b) Convey the object code in, or embodied in, a physical product
++    (including a physical distribution medium), accompanied by a
++    written offer, valid for at least three years and valid for as
++    long as you offer spare parts or customer support for that product
++    model, to give anyone who possesses the object code either (1) a
++    copy of the Corresponding Source for all the software in the
++    product that is covered by this License, on a durable physical
++    medium customarily used for software interchange, for a price no
++    more than your reasonable cost of physically performing this
++    conveying of source, or (2) access to copy the
++    Corresponding Source from a network server at no charge.
++
++    c) Convey individual copies of the object code with a copy of the
++    written offer to provide the Corresponding Source.  This
++    alternative is allowed only occasionally and noncommercially, and
++    only if you received the object code with such an offer, in accord
++    with subsection 6b.
++
++    d) Convey the object code by offering access from a designated
++    place (gratis or for a charge), and offer equivalent access to the
++    Corresponding Source in the same way through the same place at no
++    further charge.  You need not require recipients to copy the
++    Corresponding Source along with the object code.  If the place to
++    copy the object code is a network server, the Corresponding Source
++    may be on a different server (operated by you or a third party)
++    that supports equivalent copying facilities, provided you maintain
++    clear directions next to the object code saying where to find the
++    Corresponding Source.  Regardless of what server hosts the
++    Corresponding Source, you remain obligated to ensure that it is
++    available for as long as needed to satisfy these requirements.
++
++    e) Convey the object code using peer-to-peer transmission, provided
++    you inform other peers where the object code and Corresponding
++    Source of the work are being offered to the general public at no
++    charge under subsection 6d.
++
++  A separable portion of the object code, whose source code is excluded
++from the Corresponding Source as a System Library, need not be
++included in conveying the object code work.
++
++  A "User Product" is either (1) a "consumer product", which means any
++tangible personal property which is normally used for personal, family,
++or household purposes, or (2) anything designed or sold for incorporation
++into a dwelling.  In determining whether a product is a consumer product,
++doubtful cases shall be resolved in favor of coverage.  For a particular
++product received by a particular user, "normally used" refers to a
++typical or common use of that class of product, regardless of the status
++of the particular user or of the way in which the particular user
++actually uses, or expects or is expected to use, the product.  A product
++is a consumer product regardless of whether the product has substantial
++commercial, industrial or non-consumer uses, unless such uses represent
++the only significant mode of use of the product.
++
++  "Installation Information" for a User Product means any methods,
++procedures, authorization keys, or other information required to install
++and execute modified versions of a covered work in that User Product from
++a modified version of its Corresponding Source.  The information must
++suffice to ensure that the continued functioning of the modified object
++code is in no case prevented or interfered with solely because
++modification has been made.
++
++  If you convey an object code work under this section in, or with, or
++specifically for use in, a User Product, and the conveying occurs as
++part of a transaction in which the right of possession and use of the
++User Product is transferred to the recipient in perpetuity or for a
++fixed term (regardless of how the transaction is characterized), the
++Corresponding Source conveyed under this section must be accompanied
++by the Installation Information.  But this requirement does not apply
++if neither you nor any third party retains the ability to install
++modified object code on the User Product (for example, the work has
++been installed in ROM).
++
++  The requirement to provide Installation Information does not include a
++requirement to continue to provide support service, warranty, or updates
++for a work that has been modified or installed by the recipient, or for
++the User Product in which it has been modified or installed.  Access to a
++network may be denied when the modification itself materially and
++adversely affects the operation of the network or violates the rules and
++protocols for communication across the network.
++
++  Corresponding Source conveyed, and Installation Information provided,
++in accord with this section must be in a format that is publicly
++documented (and with an implementation available to the public in
++source code form), and must require no special password or key for
++unpacking, reading or copying.
++
++  7. Additional Terms.
++
++  "Additional permissions" are terms that supplement the terms of this
++License by making exceptions from one or more of its conditions.
++Additional permissions that are applicable to the entire Program shall
++be treated as though they were included in this License, to the extent
++that they are valid under applicable law.  If additional permissions
++apply only to part of the Program, that part may be used separately
++under those permissions, but the entire Program remains governed by
++this License without regard to the additional permissions.
++
++  When you convey a copy of a covered work, you may at your option
++remove any additional permissions from that copy, or from any part of
++it.  (Additional permissions may be written to require their own
++removal in certain cases when you modify the work.)  You may place
++additional permissions on material, added by you to a covered work,
++for which you have or can give appropriate copyright permission.
++
++  Notwithstanding any other provision of this License, for material you
++add to a covered work, you may (if authorized by the copyright holders of
++that material) supplement the terms of this License with terms:
++
++    a) Disclaiming warranty or limiting liability differently from the
++    terms of sections 15 and 16 of this License; or
++
++    b) Requiring preservation of specified reasonable legal notices or
++    author attributions in that material or in the Appropriate Legal
++    Notices displayed by works containing it; or
++
++    c) Prohibiting misrepresentation of the origin of that material, or
++    requiring that modified versions of such material be marked in
++    reasonable ways as different from the original version; or
++
++    d) Limiting the use for publicity purposes of names of licensors or
++    authors of the material; or
++
++    e) Declining to grant rights under trademark law for use of some
++    trade names, trademarks, or service marks; or
++
++    f) Requiring indemnification of licensors and authors of that
++    material by anyone who conveys the material (or modified versions of
++    it) with contractual assumptions of liability to the recipient, for
++    any liability that these contractual assumptions directly impose on
++    those licensors and authors.
++
++  All other non-permissive additional terms are considered "further
++restrictions" within the meaning of section 10.  If the Program as you
++received it, or any part of it, contains a notice stating that it is
++governed by this License along with a term that is a further
++restriction, you may remove that term.  If a license document contains
++a further restriction but permits relicensing or conveying under this
++License, you may add to a covered work material governed by the terms
++of that license document, provided that the further restriction does
++not survive such relicensing or conveying.
++
++  If you add terms to a covered work in accord with this section, you
++must place, in the relevant source files, a statement of the
++additional terms that apply to those files, or a notice indicating
++where to find the applicable terms.
++
++  Additional terms, permissive or non-permissive, may be stated in the
++form of a separately written license, or stated as exceptions;
++the above requirements apply either way.
++
++  8. Termination.
++
++  You may not propagate or modify a covered work except as expressly
++provided under this License.  Any attempt otherwise to propagate or
++modify it is void, and will automatically terminate your rights under
++this License (including any patent licenses granted under the third
++paragraph of section 11).
++
++  However, if you cease all violation of this License, then your
++license from a particular copyright holder is reinstated (a)
++provisionally, unless and until the copyright holder explicitly and
++finally terminates your license, and (b) permanently, if the copyright
++holder fails to notify you of the violation by some reasonable means
++prior to 60 days after the cessation.
++
++  Moreover, your license from a particular copyright holder is
++reinstated permanently if the copyright holder notifies you of the
++violation by some reasonable means, this is the first time you have
++received notice of violation of this License (for any work) from that
++copyright holder, and you cure the violation prior to 30 days after
++your receipt of the notice.
++
++  Termination of your rights under this section does not terminate the
++licenses of parties who have received copies or rights from you under
++this License.  If your rights have been terminated and not permanently
++reinstated, you do not qualify to receive new licenses for the same
++material under section 10.
++
++  9. Acceptance Not Required for Having Copies.
++
++  You are not required to accept this License in order to receive or
++run a copy of the Program.  Ancillary propagation of a covered work
++occurring solely as a consequence of using peer-to-peer transmission
++to receive a copy likewise does not require acceptance.  However,
++nothing other than this License grants you permission to propagate or
++modify any covered work.  These actions infringe copyright if you do
++not accept this License.  Therefore, by modifying or propagating a
++covered work, you indicate your acceptance of this License to do so.
++
++  10. Automatic Licensing of Downstream Recipients.
++
++  Each time you convey a covered work, the recipient automatically
++receives a license from the original licensors, to run, modify and
++propagate that work, subject to this License.  You are not responsible
++for enforcing compliance by third parties with this License.
++
++  An "entity transaction" is a transaction transferring control of an
++organization, or substantially all assets of one, or subdividing an
++organization, or merging organizations.  If propagation of a covered
++work results from an entity transaction, each party to that
++transaction who receives a copy of the work also receives whatever
++licenses to the work the party's predecessor in interest had or could
++give under the previous paragraph, plus a right to possession of the
++Corresponding Source of the work from the predecessor in interest, if
++the predecessor has it or can get it with reasonable efforts.
++
++  You may not impose any further restrictions on the exercise of the
++rights granted or affirmed under this License.  For example, you may
++not impose a license fee, royalty, or other charge for exercise of
++rights granted under this License, and you may not initiate litigation
++(including a cross-claim or counterclaim in a lawsuit) alleging that
++any patent claim is infringed by making, using, selling, offering for
++sale, or importing the Program or any portion of it.
++
++  11. Patents.
++
++  A "contributor" is a copyright holder who authorizes use under this
++License of the Program or a work on which the Program is based.  The
++work thus licensed is called the contributor's "contributor version".
++
++  A contributor's "essential patent claims" are all patent claims
++owned or controlled by the contributor, whether already acquired or
++hereafter acquired, that would be infringed by some manner, permitted
++by this License, of making, using, or selling its contributor version,
++but do not include claims that would be infringed only as a
++consequence of further modification of the contributor version.  For
++purposes of this definition, "control" includes the right to grant
++patent sublicenses in a manner consistent with the requirements of
++this License.
++
++  Each contributor grants you a non-exclusive, worldwide, royalty-free
++patent license under the contributor's essential patent claims, to
++make, use, sell, offer for sale, import and otherwise run, modify and
++propagate the contents of its contributor version.
++
++  In the following three paragraphs, a "patent license" is any express
++agreement or commitment, however denominated, not to enforce a patent
++(such as an express permission to practice a patent or covenant not to
++sue for patent infringement).  To "grant" such a patent license to a
++party means to make such an agreement or commitment not to enforce a
++patent against the party.
++
++  If you convey a covered work, knowingly relying on a patent license,
++and the Corresponding Source of the work is not available for anyone
++to copy, free of charge and under the terms of this License, through a
++publicly available network server or other readily accessible means,
++then you must either (1) cause the Corresponding Source to be so
++available, or (2) arrange to deprive yourself of the benefit of the
++patent license for this particular work, or (3) arrange, in a manner
++consistent with the requirements of this License, to extend the patent
++license to downstream recipients.  "Knowingly relying" means you have
++actual knowledge that, but for the patent license, your conveying the
++covered work in a country, or your recipient's use of the covered work
++in a country, would infringe one or more identifiable patents in that
++country that you have reason to believe are valid.
++
++  If, pursuant to or in connection with a single transaction or
++arrangement, you convey, or propagate by procuring conveyance of, a
++covered work, and grant a patent license to some of the parties
++receiving the covered work authorizing them to use, propagate, modify
++or convey a specific copy of the covered work, then the patent license
++you grant is automatically extended to all recipients of the covered
++work and works based on it.
++
++  A patent license is "discriminatory" if it does not include within
++the scope of its coverage, prohibits the exercise of, or is
++conditioned on the non-exercise of one or more of the rights that are
++specifically granted under this License.  You may not convey a covered
++work if you are a party to an arrangement with a third party that is
++in the business of distributing software, under which you make payment
++to the third party based on the extent of your activity of conveying
++the work, and under which the third party grants, to any of the
++parties who would receive the covered work from you, a discriminatory
++patent license (a) in connection with copies of the covered work
++conveyed by you (or copies made from those copies), or (b) primarily
++for and in connection with specific products or compilations that
++contain the covered work, unless you entered into that arrangement,
++or that patent license was granted, prior to 28 March 2007.
++
++  Nothing in this License shall be construed as excluding or limiting
++any implied license or other defenses to infringement that may
++otherwise be available to you under applicable patent law.
++
++  12. No Surrender of Others' Freedom.
++
++  If conditions are imposed on you (whether by court order, agreement or
++otherwise) that contradict the conditions of this License, they do not
++excuse you from the conditions of this License.  If you cannot convey a
++covered work so as to satisfy simultaneously your obligations under this
++License and any other pertinent obligations, then as a consequence you may
++not convey it at all.  For example, if you agree to terms that obligate you
++to collect a royalty for further conveying from those to whom you convey
++the Program, the only way you could satisfy both those terms and this
++License would be to refrain entirely from conveying the Program.
++
++  13. Use with the GNU Affero General Public License.
++
++  Notwithstanding any other provision of this License, you have
++permission to link or combine any covered work with a work licensed
++under version 3 of the GNU Affero General Public License into a single
++combined work, and to convey the resulting work.  The terms of this
++License will continue to apply to the part which is the covered work,
++but the special requirements of the GNU Affero General Public License,
++section 13, concerning interaction through a network will apply to the
++combination as such.
++
++  14. Revised Versions of this License.
++
++  The Free Software Foundation may publish revised and/or new versions of
++the GNU General Public License from time to time.  Such new versions will
++be similar in spirit to the present version, but may differ in detail to
++address new problems or concerns.
++
++  Each version is given a distinguishing version number.  If the
++Program specifies that a certain numbered version of the GNU General
++Public License "or any later version" applies to it, you have the
++option of following the terms and conditions either of that numbered
++version or of any later version published by the Free Software
++Foundation.  If the Program does not specify a version number of the
++GNU General Public License, you may choose any version ever published
++by the Free Software Foundation.
++
++  If the Program specifies that a proxy can decide which future
++versions of the GNU General Public License can be used, that proxy's
++public statement of acceptance of a version permanently authorizes you
++to choose that version for the Program.
++
++  Later license versions may give you additional or different
++permissions.  However, no additional obligations are imposed on any
++author or copyright holder as a result of your choosing to follow a
++later version.
++
++  15. Disclaimer of Warranty.
++
++  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
++APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
++HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
++OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
++THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
++IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
++ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
++
++  16. Limitation of Liability.
++
++  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
++WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
++THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
++GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
++USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
++DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
++PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
++EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
++SUCH DAMAGES.
++
++  17. Interpretation of Sections 15 and 16.
++
++  If the disclaimer of warranty and limitation of liability provided
++above cannot be given local legal effect according to their terms,
++reviewing courts shall apply local law that most closely approximates
++an absolute waiver of all civil liability in connection with the
++Program, unless a warranty or assumption of liability accompanies a
++copy of the Program in return for a fee.
++
++                     END OF TERMS AND CONDITIONS
++
++            How to Apply These Terms to Your New Programs
++
++  If you develop a new program, and you want it to be of the greatest
++possible use to the public, the best way to achieve this is to make it
++free software which everyone can redistribute and change under these terms.
++
++  To do so, attach the following notices to the program.  It is safest
++to attach them to the start of each source file to most effectively
++state the exclusion of warranty; and each file should have at least
++the "copyright" line and a pointer to where the full notice is found.
++
++    <one line to give the program's name and a brief idea of what it does.>
++    Copyright (C) <year>  <name of author>
++
++    This program is free software: you can redistribute it and/or modify
++    it under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    This program is distributed in the hope that it will be useful,
++    but WITHOUT ANY WARRANTY; without even the implied warranty of
++    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++    GNU General Public License for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++Also add information on how to contact you by electronic and paper mail.
++
++  If the program does terminal interaction, make it output a short
++notice like this when it starts in an interactive mode:
++
++    <program>  Copyright (C) <year>  <name of author>
++    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
++    This is free software, and you are welcome to redistribute it
++    under certain conditions; type `show c' for details.
++
++The hypothetical commands `show w' and `show c' should show the appropriate
++parts of the General Public License.  Of course, your program's commands
++might be different; for a GUI interface, you would use an "about box".
++
++  You should also get your employer (if you work as a programmer) or school,
++if any, to sign a "copyright disclaimer" for the program, if necessary.
++For more information on this, and how to apply and follow the GNU GPL, see
++<http://www.gnu.org/licenses/>.
++
++  The GNU General Public License does not permit incorporating your program
++into proprietary programs.  If your program is a subroutine library, you
++may consider it more useful to permit linking proprietary applications with
++the library.  If this is what you want to do, use the GNU Lesser General
++Public License instead of this License.  But first, please read
++<http://www.gnu.org/philosophy/why-not-lgpl.html>.
+--- /dev/null
++++ b/COPYING.LESSER
+@@ -0,0 +1,165 @@
++                   GNU LESSER GENERAL PUBLIC LICENSE
++                       Version 3, 29 June 2007
++
++ Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/>
++ Everyone is permitted to copy and distribute verbatim copies
++ of this license document, but changing it is not allowed.
++
++
++  This version of the GNU Lesser General Public License incorporates
++the terms and conditions of version 3 of the GNU General Public
++License, supplemented by the additional permissions listed below.
++
++  0. Additional Definitions.
++
++  As used herein, "this License" refers to version 3 of the GNU Lesser
++General Public License, and the "GNU GPL" refers to version 3 of the GNU
++General Public License.
++
++  "The Library" refers to a covered work governed by this License,
++other than an Application or a Combined Work as defined below.
++
++  An "Application" is any work that makes use of an interface provided
++by the Library, but which is not otherwise based on the Library.
++Defining a subclass of a class defined by the Library is deemed a mode
++of using an interface provided by the Library.
++
++  A "Combined Work" is a work produced by combining or linking an
++Application with the Library.  The particular version of the Library
++with which the Combined Work was made is also called the "Linked
++Version".
++
++  The "Minimal Corresponding Source" for a Combined Work means the
++Corresponding Source for the Combined Work, excluding any source code
++for portions of the Combined Work that, considered in isolation, are
++based on the Application, and not on the Linked Version.
++
++  The "Corresponding Application Code" for a Combined Work means the
++object code and/or source code for the Application, including any data
++and utility programs needed for reproducing the Combined Work from the
++Application, but excluding the System Libraries of the Combined Work.
++
++  1. Exception to Section 3 of the GNU GPL.
++
++  You may convey a covered work under sections 3 and 4 of this License
++without being bound by section 3 of the GNU GPL.
++
++  2. Conveying Modified Versions.
++
++  If you modify a copy of the Library, and, in your modifications, a
++facility refers to a function or data to be supplied by an Application
++that uses the facility (other than as an argument passed when the
++facility is invoked), then you may convey a copy of the modified
++version:
++
++   a) under this License, provided that you make a good faith effort to
++   ensure that, in the event an Application does not supply the
++   function or data, the facility still operates, and performs
++   whatever part of its purpose remains meaningful, or
++
++   b) under the GNU GPL, with none of the additional permissions of
++   this License applicable to that copy.
++
++  3. Object Code Incorporating Material from Library Header Files.
++
++  The object code form of an Application may incorporate material from
++a header file that is part of the Library.  You may convey such object
++code under terms of your choice, provided that, if the incorporated
++material is not limited to numerical parameters, data structure
++layouts and accessors, or small macros, inline functions and templates
++(ten or fewer lines in length), you do both of the following:
++
++   a) Give prominent notice with each copy of the object code that the
++   Library is used in it and that the Library and its use are
++   covered by this License.
++
++   b) Accompany the object code with a copy of the GNU GPL and this license
++   document.
++
++  4. Combined Works.
++
++  You may convey a Combined Work under terms of your choice that,
++taken together, effectively do not restrict modification of the
++portions of the Library contained in the Combined Work and reverse
++engineering for debugging such modifications, if you also do each of
++the following:
++
++   a) Give prominent notice with each copy of the Combined Work that
++   the Library is used in it and that the Library and its use are
++   covered by this License.
++
++   b) Accompany the Combined Work with a copy of the GNU GPL and this license
++   document.
++
++   c) For a Combined Work that displays copyright notices during
++   execution, include the copyright notice for the Library among
++   these notices, as well as a reference directing the user to the
++   copies of the GNU GPL and this license document.
++
++   d) Do one of the following:
++
++       0) Convey the Minimal Corresponding Source under the terms of this
++       License, and the Corresponding Application Code in a form
++       suitable for, and under terms that permit, the user to
++       recombine or relink the Application with a modified version of
++       the Linked Version to produce a modified Combined Work, in the
++       manner specified by section 6 of the GNU GPL for conveying
++       Corresponding Source.
++
++       1) Use a suitable shared library mechanism for linking with the
++       Library.  A suitable mechanism is one that (a) uses at run time
++       a copy of the Library already present on the user's computer
++       system, and (b) will operate properly with a modified version
++       of the Library that is interface-compatible with the Linked
++       Version.
++
++   e) Provide Installation Information, but only if you would otherwise
++   be required to provide such information under section 6 of the
++   GNU GPL, and only to the extent that such information is
++   necessary to install and execute a modified version of the
++   Combined Work produced by recombining or relinking the
++   Application with a modified version of the Linked Version. (If
++   you use option 4d0, the Installation Information must accompany
++   the Minimal Corresponding Source and Corresponding Application
++   Code. If you use option 4d1, you must provide the Installation
++   Information in the manner specified by section 6 of the GNU GPL
++   for conveying Corresponding Source.)
++
++  5. Combined Libraries.
++
++  You may place library facilities that are a work based on the
++Library side by side in a single library together with other library
++facilities that are not Applications and are not covered by this
++License, and convey such a combined library under terms of your
++choice, if you do both of the following:
++
++   a) Accompany the combined library with a copy of the same work based
++   on the Library, uncombined with any other library facilities,
++   conveyed under the terms of this License.
++
++   b) Give prominent notice with the combined library that part of it
++   is a work based on the Library, and explaining where to find the
++   accompanying uncombined form of the same work.
++
++  6. Revised Versions of the GNU Lesser General Public License.
++
++  The Free Software Foundation may publish revised and/or new versions
++of the GNU Lesser General Public License from time to time. Such new
++versions will be similar in spirit to the present version, but may
++differ in detail to address new problems or concerns.
++
++  Each version is given a distinguishing version number. If the
++Library as you received it specifies that a certain numbered version
++of the GNU Lesser General Public License "or any later version"
++applies to it, you have the option of following the terms and
++conditions either of that published version or of any later version
++published by the Free Software Foundation. If the Library as you
++received it does not specify a version number of the GNU Lesser
++General Public License, you may choose any version of the GNU Lesser
++General Public License ever published by the Free Software Foundation.
++
++  If the Library as you received it specifies that a proxy can decide
++whether future versions of the GNU Lesser General Public License shall
++apply, that proxy's public statement of acceptance of any version is
++permanent authorization for you to choose that version for the
++Library.
+--- /dev/null
++++ b/NOTICE.md
+@@ -0,0 +1,9 @@
++Official hku-mars/SUPER@2ad3419c127a617c6d7df6925e81a14175a9c096. Main SUPER/ROG-Map source notices declare LGPL-3.0-or-later; upstream package.xml BSD metadata conflicts and no root standalone LGPL text is present. Bundled notices (MIT/BSD and cereal/fmt licenses) retained. No prebuilt binaries imported. Local build/integration patches are recorded separately.
++
++Delivery clarification (2026-10-28): local package metadata follows the explicit
++main-source LGPL-3.0-or-later grants. COPYING and COPYING.LESSER supply the full
++GNU GPL v3 and LGPL v3 texts (canonical base-files license texts); they are
++added delivery notices, not claimed to have existed in the original snapshot.
++The contradictory original upstream package.xml is preserved in the pinned
++source archive. Each bundled MIT/BSD/cereal/fmt notice continues to apply to
++its own files. No blanket BSD or Apache relicensing is claimed.
+--- a/include/path_search/astar.h
++++ b/include/path_search/astar.h
+@@ -26,8 +26,8 @@
+ 
+ #include "Eigen/Dense"
+ #include "vector"
+-#include "rog_map_ros/rog_map_ros1.hpp"
+-#include "rog_map_ros/rog_map_ros2.hpp"
++#include <rog_map/rog_map.h>
++
+ #include "queue"
+ #include "path_search/config.hpp"
+ #include "utils/header/type_utils.hpp"
+@@ -78,7 +78,7 @@
+ 
+     class Astar {
+ 
+-        rog_map::ROGMapROS::Ptr map_ptr_;
++        rog_map::ROGMap::Ptr map_ptr_;
+         ros_interface::RosInterface::Ptr ros_ptr_;
+ 
+         PathSearchConfig cfg_;
+@@ -138,7 +138,7 @@
+ 
+         Astar(const std::string & cfg_path,
+               const ros_interface::RosInterface::Ptr &ros_ptr,
+-              rog_map::ROGMapROS::Ptr rm);
++              rog_map::ROGMap::Ptr rm);
+ 
+         ~Astar() {};
+ 
+--- a/include/super_core/corridor_generator.h
++++ b/include/super_core/corridor_generator.h
+@@ -31,8 +31,8 @@
+ #include <data_structure/base/polytope.h>
+ #include <data_structure/base/trajectory.h>
+ 
+-#include <rog_map_ros/rog_map_ros1.hpp>
+-#include <rog_map_ros/rog_map_ros2.hpp>
++#include <rog_map/rog_map.h>
++
+ #include <utils/header/fmt_eigen.hpp>
+ 
+ #include <ros_interface/ros_interface.hpp>
+@@ -59,7 +59,7 @@
+         int iris_iter_num_;
+         double virtual_groud_height_ = 0.0;
+         double virtual_ceil_height_ = 0.0;
+-        rog_map::ROGMapROS::Ptr map_ptr_;
++        rog_map::ROGMap::Ptr map_ptr_;
+         vec_E<Vec3i> line_seed_neighbor_list;
+         CIRI::Ptr ciri_;
+         std::ofstream failed_traj_log;
+@@ -76,7 +76,7 @@
+         }
+ 
+         CorridorGenerator(const ros_interface::RosInterface::Ptr &ros_ptr,
+-                          const rog_map::ROGMapROS::Ptr & map_ptr,
++                          const rog_map::ROGMap::Ptr & map_ptr,
+                           const double bound_dis,
+                           const double seed_line_max_dis,
+                           const double min_overlap_threshold,
+--- a/include/super_core/super_planner.h
++++ b/include/super_core/super_planner.h
+@@ -59,7 +59,7 @@
+     class SuperPlanner {
+         LogOneReplan latest_replan;
+         super_planner::Config cfg_;
+-        rog_map::ROGMapROS::Ptr map_ptr_;
++        rog_map::ROGMap::Ptr map_ptr_;
+         CorridorGenerator::Ptr cg_ptr_;
+         path_search::Astar::Ptr astar_ptr_;
+         ros_interface::RosInterface::Ptr ros_ptr_;
+@@ -103,7 +103,7 @@
+ 
+         explicit SuperPlanner(const std::string &cfg_path,
+                               const ros_interface::RosInterface::Ptr &ros_ptr,
+-                              const rog_map::ROGMapROS::Ptr &map_ptr);
++                              const rog_map::ROGMap::Ptr &map_ptr);
+ 
+         ~SuperPlanner() = default;
+ 
+@@ -124,6 +124,15 @@
+         void getOneHeartbeatTime(double &start_WT_pos, bool &traj_finish);
+ 
+         Trajectory getCommittedPositionTrajectory();
++
++        // Read-only result for conservative full-goal execution adapters.
++        // The caller must independently certify the entire known-free path;
++        // native committed/backup trajectories retain their original meaning.
++        Trajectory getExplorationPositionTrajectory() {
++            std::lock_guard<std::mutex> guard(replan_lock_);
++            return last_exp_traj_info_.posTraj();
++        }
++
+ 
+         Trajectory getCommittedYawTrajectory();
+ 
+@@ -164,7 +173,7 @@
+ 
+         bool isEasyGoal(const Vec3f &goal_position);
+ 
+-        rog_map::ROGMapROS::Ptr &getMap() {
++        rog_map::ROGMap::Ptr &getMap() {
+             return map_ptr_;
+         }
+ 
+--- a/package.xml
++++ b/package.xml
+@@ -1,75 +1 @@
+-<?xml version="1.0"?>
+-<package format="2">
+-    <name>super_planner</name>
+-    <version>0.0.0</version>
+-    <description>The super_planner package</description>
+-
+-    <!-- One maintainer tag required, multiple allowed, one person per tag -->
+-    <!-- Example:  -->
+-    <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
+-    <maintainer email="renyf@connect.hku.hk">yunfan.ren</maintainer>
+-
+-
+-    <!-- One license tag required, multiple allowed, one license per tag -->
+-    <!-- Commonly used license strings: -->
+-    <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+-    <license>TODO</license>
+-
+-
+-    <!-- Url tags are optional, but multiple are allowed, one per tag -->
+-    <!-- Optional attribute type can be: website, bugtracker, or repository -->
+-    <!-- Example: -->
+-    <!-- <url type="website">http://wiki.ros.org/poly_traj_utils</url> -->
+-
+-
+-    <!-- Author tags are optional, multiple are allowed, one per tag -->
+-    <!-- Authors do not have to be maintainers, but could be -->
+-    <!-- Example: -->
+-    <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+-
+-
+-    <!-- The *depend tags are used to specify dependencies -->
+-    <!-- Dependencies can be catkin packages or system dependencies -->
+-    <!-- Examples: -->
+-    <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
+-    <!--   <depend>roscpp</depend> -->
+-    <!--   Note that this is equivalent to the following: -->
+-    <!--   <build_depend>roscpp</build_depend> -->
+-    <!--   <exec_depend>roscpp</exec_depend> -->
+-    <!-- Use build_depend for packages you need at compile time: -->
+-    <!--   <build_depend>message_generation</build_depend> -->
+-    <!-- Use build_export_depend for packages you need in order to build against this package: -->
+-    <!--   <build_export_depend>message_generation</build_export_depend> -->
+-    <!-- Use buildtool_depend for build tool packages: -->
+-    <!--   <buildtool_depend>catkin</buildtool_depend> -->
+-    <!-- Use exec_depend for packages you need at runtime: -->
+-    <!--   <exec_depend>message_runtime</exec_depend> -->
+-    <!-- Use test_depend for packages you need only for testing: -->
+-    <!--   <test_depend>gtest</test_depend> -->
+-    <!-- Use doc_depend for packages you need only for building documentation: -->
+-    <!--   <doc_depend>doxygen</doc_depend> -->
+-    <buildtool_depend>catkin</buildtool_depend>
+-    <build_depend>roscpp</build_depend>
+-    <build_depend>rospy</build_depend>
+-    <build_depend>std_msgs</build_depend>
+-    <build_depend>rog_map</build_depend>
+-    <build_depend>quadrotor_msgs</build_depend>
+-
+-
+-    <build_export_depend>roscpp</build_export_depend>
+-    <build_export_depend>rospy</build_export_depend>
+-    <build_export_depend>std_msgs</build_export_depend>
+-
+-    <exec_depend>quadrotor_msgs</exec_depend>
+-    <exec_depend>roscpp</exec_depend>
+-    <exec_depend>rospy</exec_depend>
+-    <exec_depend>std_msgs</exec_depend>
+-    <exec_depend>rog_map</exec_depend>
+-
+-
+-    <!-- The export tag contains other, unspecified, tags -->
+-    <export>
+-        <!-- Other tools can request additional information be placed here -->
+-
+-    </export>
+-</package>
++<package format="3"><name>super_planner</name><version>0.1.0</version><description>Pinned official SUPER sources with relocatable EasyFly build</description><maintainer email="maintainer@easyfly.local">EasyFly</maintainer><license>LGPL-3.0-or-later</license><buildtool_depend>ament_cmake</buildtool_depend><depend>rclcpp</depend><depend>std_msgs</depend><depend>sensor_msgs</depend><depend>geometry_msgs</depend><depend>nav_msgs</depend><depend>visualization_msgs</depend><depend>tf2_ros</depend><depend>pcl_conversions</depend><depend>rog_map</depend><depend>eigen</depend><depend>libpcl-all-dev</depend><depend>yaml-cpp</depend><export><build_type>ament_cmake</build_type></export></package>
+--- a/src/super_core/astar.cpp
++++ b/src/super_core/astar.cpp
+@@ -32,7 +32,7 @@
+ 
+     Astar::Astar(const std::string &cfg_path,
+                  const ros_interface::RosInterface::Ptr &ros_ptr,
+-                 rog_map::ROGMapROS::Ptr rm) : ros_ptr_(ros_ptr), map_ptr_(rm) {
++                 rog_map::ROGMap::Ptr rm) : ros_ptr_(ros_ptr), map_ptr_(rm) {
+         cfg_ = PathSearchConfig(cfg_path);
+         cout << rog_map::GREEN << " -- [RM] Init Astar-map." << rog_map::RESET << endl;
+         int map_buffer_size = cfg_.map_voxel_num(0) * cfg_.map_voxel_num(1) * cfg_.map_voxel_num(2);
+--- a/src/super_core/corridor_generator.cpp
++++ b/src/super_core/corridor_generator.cpp
+@@ -28,7 +28,7 @@
+ namespace super_planner {
+ 
+     CorridorGenerator::CorridorGenerator(const ros_interface::RosInterface::Ptr &ros_ptr,
+-                                         const rog_map::ROGMapROS::Ptr &map_ptr, const double bound_dis,
++                                         const rog_map::ROGMap::Ptr &map_ptr, const double bound_dis,
+                                          const double seed_line_max_dis, const double min_overlap_threshold,
+                                          const double virtual_groud_height, const double virtual_ceil_height,
+                                          const double robot_r, const int box_search_skip_num, const int iris_iter_num)
+@@ -245,7 +245,7 @@
+         }
+         latest_pc.insert(latest_pc.end(), pc.begin(), pc.end());
+         Eigen::Map<const Eigen::Matrix<double, 3, -1, Eigen::ColMajor>> pp(pc[0].data(), 3, pc.size());
+-        rog_map::TimeConsuming tc("emvp", false);
++        super_utils::TimeConsuming tc("emvp", false);
+         RET_CODE success = ciri_->comvexDecomposition(bd, pp, a, b);
+         double dt = tc.stop();
+         if (success == SUCCESS) {
+@@ -342,7 +342,7 @@
+         // save to latest pc
+         latest_pc.insert(latest_pc.end(), pc.begin(), pc.end());
+         Eigen::Map<const Eigen::Matrix<double, 3, -1, Eigen::ColMajor>> pp(pc[0].data(), 3, pc.size());
+-        rog_map::TimeConsuming tc("emvp", false);
++        super_utils::TimeConsuming tc("emvp", false);
+         RET_CODE success = ciri_->comvexDecomposition(bd, pp, a, b);
+         double dt = tc.stop();
+         if (success == SUCCESS) {
+--- a/src/super_core/super_planner.cpp
++++ b/src/super_core/super_planner.cpp
+@@ -32,7 +32,7 @@
+     SuperPlanner::SuperPlanner
+             (const std::string &cfg_path,
+              const ros_interface::RosInterface::Ptr &ros_ptr,
+-             const rog_map::ROGMapROS::Ptr &map_ptr
++             const rog_map::ROGMap::Ptr &map_ptr
+             ) : cfg_(Config(cfg_path)), ros_ptr_(ros_ptr), map_ptr_(map_ptr) {
+ 
+         ros_ptr_->setResolution(cfg_.resolution);
+@@ -92,7 +92,11 @@
+ 
+         /// 1) First, shift the start_point to free space.
+         Vec3f local_star_pt;
+-        if (!map_ptr_->getNearestCellNot(GridType::OCCUPIED, robot_state_.p, local_star_pt, 3.0)) {
++        // EasyFly admits only measured, known-free starts. Preserve that exact
++        // position instead of silently moving it to a voxel centre.
++        if (map_ptr_->isKnownFree(robot_state_.p)) {
++            local_star_pt = robot_state_.p;
++        } else if (!map_ptr_->getNearestCellNot(GridType::OCCUPIED, robot_state_.p, local_star_pt, 3.0)) {
+             ros_ptr_->error(
+                     " -- [SUPER] in [PlanFromRest] Local start point is deeply occupied, which should not happened.");
+             latest_replan.setRetCode(SUPER_RET_CODE::SUPER_NO_START_POINT);
+@@ -347,13 +351,13 @@
+         yaw = cmd_traj_info_.getYaw((eval_t))[0];
+         yaw_dot = cmd_traj_info_.getYawRate((eval_t))[0];
+ 
+-        if (isnan(yaw)) {
++        if (std::isnan(yaw)) {
+             yaw = last_yaw;
+             yaw_dot = 0;
+         } else {
+             last_yaw = yaw;
+         }
+-        if (isnan(yaw_dot)) {
++        if (std::isnan(yaw_dot)) {
+             yaw_dot = 0;
+         }
+ 
+@@ -408,6 +412,8 @@
+             // just skip the first part of the guide trajectory
+             pos_init_state.setZero();
+             pos_init_state.col(0) = local_start_p_;
++            // Measured velocity is finite and bounded by the managed owner.
++            pos_init_state.col(1) = robot_state_.v;
+             replan_process_start_TT = -1;
+             replan_state_TT = -1;
+         } else {
+@@ -791,7 +797,7 @@
+ 
+ 
+         bool free_end{true};
+-        if (cfg_.goal_yaw_en && !isnan(gi_.goal_yaw) && connected_goal) {
++        if (cfg_.goal_yaw_en && !std::isnan(gi_.goal_yaw) && connected_goal) {
+             free_end = false;
+             fina_yaw[0] = gi_.goal_yaw;
+         }
+@@ -926,7 +932,17 @@
+ 
+         Line line{shifted_robot_p, seed_point};
+         Polytope temp_poly;
+-        if (!cg_ptr_->GeneratePolytopeFromLine(line, temp_poly)) {
++        bool corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly);
++        // Voxel ray visibility does not certify the complete occupied-cell
++        // envelope used by CIRI. Retreat the seed, preserving the same radius.
++        for (int retry = 0; !corridor_ready && retry < 8; ++retry) {
++            seed_point_t = start_t + .8 * (seed_point_t - start_t);
++            if (seed_point_t <= start_t + .01) break;
++            seed_point = ref_exp_traj.getPos(seed_point_t);
++            line.second = seed_point;
++            corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly);
++        }
++        if (!corridor_ready) {
+             ros_ptr_->warn(" -- [SUPER] GeneratePolytopeFromLine failed, force return");
+             return FAILED;
+         }
+@@ -962,45 +978,49 @@
+             time_consuming_[VISUALIZATION] += t_viz.stop();
+         }
+ 
+-//        Vec3f out_p = temp_point;
+-//        double t_R = 0.0;
+-        double eval_t = eval_ps.back().first + cfg_.sample_traj_dt;
+-        last_pos = eval_ps.back().second;
+-        while (temp_poly.PointIsInside(eval_ps.back().second) && eval_t < total_dur) {
+-            Vec3f cur_pos = ref_exp_traj.getPos(eval_t);
+-
+-            if ((cur_pos - last_pos).norm() < cfg_.resolution * 0.8) {
+-                eval_t += cfg_.sample_traj_dt;
++        // Search the first contiguous trajectory interval inside THIS corridor. The
++        // visibility list still contains its first invisible point, and cannot
++        // be reused after CIRI has selected a shorter seed segment.
++        const double step = std::min(cfg_.sample_traj_dt, .05);
++        seed_point_t = start_t;
++        double corridor_entry = -1.0;
++        for (double t = start_t; t < total_dur; t += step) {
++            if (!temp_poly.PointIsInside(ref_exp_traj.getPos(t))) {
++                if (corridor_entry >= 0.0) break;
+                 continue;
+             }
+-            temp_vel = ref_exp_traj.getVel(out_t);
+-            double v_norm = temp_vel.norm();
+-            min_stop_dis.push_back(v_norm * v_norm / 2.0 / cfg_.exp_traj_cfg.max_acc);
+-            eval_ps.emplace_back(eval_t, cur_pos);
+-            last_pos = cur_pos;
+-            eval_t += cfg_.sample_traj_dt;
+-        }
+-        eval_ps.pop_back();
+-        seed_point = eval_ps.back().second;
+-        seed_point_t = eval_ps.back().first;
++            if (corridor_entry < 0.0) corridor_entry = t;
++            seed_point_t = t;
++        }
++        if (corridor_entry < 0.0 || seed_point_t - corridor_entry <= .01) {
++            ros_ptr_->warn(" -- [SUPER] No backup interval inside corridor");
++            return FAILED;
++        }
++        seed_point = ref_exp_traj.getPos(seed_point_t);
+ 
+         //        bool use_new{true};
+         //        if (use_new) {
+-        double t0 = ros_ptr_->getSimTime() -
+-                    ref_exp_traj.getStartWallTime() + 0.01;
++        double t0 = std::max(corridor_entry, ros_ptr_->getSimTime() -
++                    ref_exp_traj.getStartWallTime() + 0.01);
+         double te = seed_point_t;
+         //            cout << "t0: " << t0 << endl;
+         //            cout << "te: " << te << endl;
+         //            cout << "exp_traj_dur: " << ref_exp_traj.optimized_exp_traj.getTotalDuration() << endl;
+         double vel_e_n = ref_exp_traj.getVel(te).norm();
+         double heu_ts = std::max((t0 + te) / 2, te - vel_e_n / cfg_.back_traj_cfg.max_acc);
+-        double heu_dur = te - heu_ts;
++        // te bounds the departure time on the exploration path, not the
++        // duration of the subsequent braking polynomial. Near a corridor
++        // boundary te-heu_ts can be a few milliseconds and initializes MINCO
++        // with enormous jerk. Start from a finite braking-time estimate; the
++        // optimizer and its unchanged dynamic/corridor checks decide feasibility.
++        double heu_dur = std::max({te - heu_ts, .5,
++            2.0 * vel_e_n / cfg_.back_traj_cfg.max_acc,
++            2.0 * std::sqrt(vel_e_n / cfg_.back_traj_cfg.max_jerk)});
+         Vec3f heu_p = seed_point;
+         time_consuming_[BACK_TRAJ_FRONTEND] = t_back_frontend.stop();
+         TimeConsuming t_back_opt("t_back_opt", false);
+         double opt_ts = heu_ts;
+         Trajectory temp_pos_traj;
+-        auto sfc0 = back_traj_info.getSFC();
+         bool temp_ret = back_traj_opt_->optimize(ref_exp_traj.posTraj(),
+                                                  t0,
+                                                  te,
+@@ -1020,19 +1040,6 @@
+             latest_replan.setBackupCondition(init_ts, init_times, init_ps,
+                                              t0, te,
+                                              back_traj_info.getSFC());
+-            Trajectory traj;
+-            double out_ts;
+-            back_traj_opt_->optimize(ref_exp_traj.posTraj(),
+-                                     t0,
+-                                     te,
+-                                     init_ts,
+-                                     sfc0,
+-                                     init_times,
+-                                     init_ps,
+-                                     traj,
+-                                     out_ts
+-            );
+-
+         }
+ 
+         if (!temp_ret) {
+@@ -1044,7 +1051,7 @@
+             Vec4f yaw_goal{0, 0, 0, 0};
+             bool free_end{true};
+             if (cfg_.goal_yaw_en) {
+-                if (!isnan(gi_.goal_yaw)) {
++                if (!std::isnan(gi_.goal_yaw)) {
+                     free_end = false;
+                     yaw_goal[0] = gi_.goal_yaw;
+                 }
+--- a/include/super_core/config.hpp
++++ b/include/super_core/config.hpp
+@@ -47,6 +47,7 @@
+         bool visualization_en{true};
+         bool detailed_log_en{false};
+         bool backup_traj_en;
++        bool backup_in_known_free;
+         bool use_fov_cut, print_log;
+         bool goal_vel_en,goal_yaw_en;
+         bool visual_process;
+@@ -85,6 +86,7 @@
+             loader.LoadParam("super_planner/detailed_log_en", detailed_log_en, false);
+             loader.LoadParam("super_planner/visualization_en", visualization_en, false);
+             loader.LoadParam("super_planner/backup_traj_en", backup_traj_en, false);
++            loader.LoadParam("super_planner/backup_in_known_free", backup_in_known_free, false);
+             loader.LoadParam("super_planner/goal_vel_en", goal_vel_en, false);
+             loader.LoadParam("super_planner/goal_yaw_en", goal_yaw_en, false);
+             loader.LoadParam("super_planner/visual_process", visual_process, false);
+--- a/include/super_core/corridor_generator.h
++++ b/include/super_core/corridor_generator.h
+@@ -105,7 +105,7 @@
+                                    const double & dis,
+                                    Polytope & polytope);
+ 
+-        bool GeneratePolytopeFromLine(Line &line, Polytope &polytope);
++        bool GeneratePolytopeFromLine(Line &line, Polytope &polytope, bool known_free = false);
+ 
+         double getCiriComputationTime() {
+             if (ciri_cnt == 0) {
+--- a/include/traj_opt/config.hpp
++++ b/include/traj_opt/config.hpp
+@@ -102,6 +102,14 @@
+             loader.LoadParam("traj_opt/boundary/max_vel", max_vel, -1.0);
+             loader.LoadParam("traj_opt/boundary/max_acc", max_acc, -1.0);
+             loader.LoadParam("traj_opt/boundary/max_jerk", max_jerk, -1.0);
++            // A braking trajectory may need stricter tracking limits than the
++            // exploration candidate. Defaults retain the original boundaries.
++            const double shared_acc=max_acc, shared_jerk=max_jerk;
++            loader.LoadParam("traj_opt" + ns + "max_acc", max_acc, shared_acc);
++            loader.LoadParam("traj_opt" + ns + "max_jerk", max_jerk, shared_jerk);
++            if (!std::isfinite(max_acc) || !std::isfinite(max_jerk) ||
++                max_acc<=0. || max_acc>shared_acc || max_jerk<=0. || max_jerk>shared_jerk)
++                throw std::invalid_argument("per-trajectory limits must tighten shared boundaries");
+             loader.LoadParam("traj_opt/boundary/max_omg", max_omg, -1.0);
+             loader.LoadParam("traj_opt/boundary/max_acc_thr", max_acc_thr, -1.0);
+             loader.LoadParam("traj_opt/boundary/min_acc_thr", min_acc_thr, -1.0);
+--- a/src/super_core/corridor_generator.cpp
++++ b/src/super_core/corridor_generator.cpp
+@@ -301,12 +301,19 @@
+         return true;
+     }
+ 
+-    bool CorridorGenerator::GeneratePolytopeFromLine(Line &line, Polytope &polytope) {
++    bool CorridorGenerator::GeneratePolytopeFromLine(Line &line, Polytope &polytope, bool known_free) {
+         Eigen::Vector3d box_max, box_min;
+         vec_E<Vec3f> pc, pts{line.first, line.second};
+         getSeedBBox(line.first, line.second, box_min, box_max);
+         map_ptr_->boundBoxByLocalMap(box_min, box_max);
+         map_ptr_->boxSearch(box_min, box_max, OCCUPIED, pc);
++        // Executable backups require a corridor wholly inside observed free
++        // space. Keep unknown voxel cubes in CIRI's obstacle set as well.
++        if (known_free) {
++            vec_E<Vec3f> unknown;
++            map_ptr_->boxSearch(box_min, box_max, UNKNOWN, unknown);
++            pc.insert(pc.end(), unknown.begin(), unknown.end());
++        }
+         box_min.z() += robot_r_;
+         box_max.z() -= robot_r_;
+         MatD4f planes;
+--- a/src/super_core/super_planner.cpp
++++ b/src/super_core/super_planner.cpp
+@@ -874,7 +874,10 @@
+             if (!map_ptr_->isLineFree(back_traj_info.getRobotPos(),
+                                       temp_point,
+                                       min_dis,
+-                                      cfg_.seed_line_neighbour)) {
++                                      cfg_.seed_line_neighbour) ||
++                (cfg_.backup_in_known_free &&
++                 (!map_ptr_->isKnownFree(temp_point) ||
++                  !map_ptr_->isLineFree(back_traj_info.getRobotPos(), temp_point, false, true)))) {
+                 all_traj_visible = false;
+                 break;
+             }
+@@ -887,7 +890,7 @@
+                 Vec3f seed_pt = ref_exp_traj.getPos(dur);
+                 Line line{back_traj_info.getRobotPos(), seed_pt};
+                 Polytope temp_poly;
+-                if (cg_ptr_->GeneratePolytopeFromLine(line, temp_poly)) {
++                if (cg_ptr_->GeneratePolytopeFromLine(line, temp_poly, cfg_.backup_in_known_free)) {
+                     back_traj_info.setSFC(temp_poly);
+                     {
+                         TimeConsuming t_viz("tviz", false);
+@@ -932,7 +935,7 @@
+ 
+         Line line{shifted_robot_p, seed_point};
+         Polytope temp_poly;
+-        bool corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly);
++        bool corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly, cfg_.backup_in_known_free);
+         // Voxel ray visibility does not certify the complete occupied-cell
+         // envelope used by CIRI. Retreat the seed, preserving the same radius.
+         for (int retry = 0; !corridor_ready && retry < 8; ++retry) {
+@@ -940,7 +943,7 @@
+             if (seed_point_t <= start_t + .01) break;
+             seed_point = ref_exp_traj.getPos(seed_point_t);
+             line.second = seed_point;
+-            corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly);
++            corridor_ready = cg_ptr_->GeneratePolytopeFromLine(line, temp_poly, cfg_.backup_in_known_free);
+         }
+         if (!corridor_ready) {
+             ros_ptr_->warn(" -- [SUPER] GeneratePolytopeFromLine failed, force return");

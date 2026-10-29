@@ -298,7 +298,10 @@ private:
     raw.header = msg->header;
     raw.tracks.reserve(tracks.size());
     for (const auto & t : tracks) {
-      if (!t.confirmed && t.missed_updates > 0) {continue;}
+      // A predicted box is not observed in this image. Pairing it with fresh
+      // depth can turn background into a plausible but false 3D target.
+      // Keep prediction in the stable/display stream below, not in fusion.
+      if (t.missed_updates > 0) {continue;}
       easyfly_msgs::msg::TrackInfo ti;
       ti.header = msg->header;
       ti.track_id = static_cast<int>(t.raw_id);

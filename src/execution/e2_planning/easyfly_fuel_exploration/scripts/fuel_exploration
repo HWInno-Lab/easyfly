@@ -1,0 +1,3 @@
+#!/usr/bin/env python3
+from easyfly_fuel_exploration.node import main
+main()

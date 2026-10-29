@@ -131,7 +131,7 @@ def _evaluate_mavros_policy(use_sim_time, **overrides):
     mavros_node = next(
         action
         for action in launch_description.entities
-        if isinstance(action, Node) and action.node_package == "mavros"
+        if isinstance(action, Node) and action.node_package == "easyfly_mavros_runtime"
     )
     mavros_node._perform_substitutions(context)
 

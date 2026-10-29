@@ -10,14 +10,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef EASYFLY_DESKTOP__MAIN_WINDOW_HPP_
 #define EASYFLY_DESKTOP__MAIN_WINDOW_HPP_
 #include <QMainWindow>
 #include <QJsonObject>
-
 #include <memory>
-
 #include "easyfly_desktop/source.hpp"
 #include "easyfly_desktop/tools.hpp"
 #include "easyfly_desktop/mission_controls.hpp"
@@ -38,7 +35,8 @@ public:
     ControlFactory controls = control_factory(), const ParameterOptions & parameters = {},
     ParameterFactory parameter_controls = parameter_factory(), const ImportOptions & imports = {},
     ImportFactory import_controls = import_factory(), const RvizOptions & spatial = {},
-    const RecordingOptions & recording = {}, bool auto_observe = true);
+    const RecordingOptions & recording = {}, bool auto_observe = true,
+    bool peripheral_commands = false);
   ~MainWindow() override;
   bool cleanup_complete() const;
   // Bounded read-only management status; no mission content, paths or control handles.

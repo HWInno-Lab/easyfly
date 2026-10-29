@@ -7,7 +7,7 @@
   "modified_file": "src/cpp/rtps/builtin/discovery/endpoint/EDP.cpp",
   "original_sha256": "c98c42fd227b5e0e7bd7ce7a093a611e234c31e4d5e06b1ed88a1c2d83d41a1d",
   "modified_sha256": "6efc6392bea2bba8c5a8f3b6a471e0c062f244ef28932f1d298b61746c7357e5",
-  "change": "Snapshot reader/writer listeners under their endpoint mutex before unmatch callbacks; synchronize writer setter. Release endpoint lock before callbacks/PDP updates. Existing endpoint traversal retains DDS owner. Snapshot reliable/best-effort reader discovery listeners under the same mutex for add, QoS update and removal; callback lock scope unchanged.",
+  "change": "Snapshot reader/writer listeners under their endpoint mutex before unmatch callbacks; synchronize writer setter. Release endpoint lock before callbacks/PDP updates. Existing endpoint traversal retains DDS owner. Snapshot reliable/best-effort reader discovery listeners under the same mutex for add, QoS update and removal; callback lock scope unchanged. Reset the StatefulReader history iterator after each user callback (upstream #6473). Flush flow-controller message groups before releasing the held writer/locator locks; reset sender before unlock to remove the captured teardown lock cycle.",
   "additional_modified_files": [
     {
       "path": "include/fastdds/rtps/writer/RTPSWriter.h",
@@ -17,12 +17,24 @@
     {
       "path": "src/cpp/rtps/reader/StatefulReader.cpp",
       "original_sha256": "aca08de4053e27fdf21ae1f60336b6c027616bb98226edda136e9b13666666d6",
-      "modified_sha256": "605e7710db34068442fb291a1f299bfc4597fc74c626b35e1c1fd4965de6f03b"
+      "modified_sha256": "929625f22df359dff7632f12d4d793bc312426f1fbfbc463544a723296ea8ee2"
     },
     {
       "path": "src/cpp/rtps/reader/StatelessReader.cpp",
       "original_sha256": "c526380b5631d71411bc54d0f202e283fb8a4745683cc7cb3803e6071504ac77",
       "modified_sha256": "153a3f2a5ff14e65b5013d9331866f1ddc1190d32360efcfb4254b5c3bdb4350"
+    },
+    {
+      "path": "src/cpp/rtps/flowcontrol/FlowControllerImpl.hpp",
+      "original_sha256": "0163a5d100240caf175ef1b58d16b63ba90efe8b97d8a556bf7f67cdf40db348",
+      "modified_sha256": "e68be35bd0de5f19c103fd723e02032c6f82944b16e4e15a7ba6f29e6baf4a86"
+    }
+  ],
+  "backports": [
+    {
+      "url": "https://github.com/eProsima/Fast-DDS/pull/6473",
+      "commit": "be16b70ffe548a8b920cf6ad88f265a11d47371e",
+      "regression_commit": "e8ab5d0e8ce2db38a9286f8a2e54bfd690df920d"
     }
   ]
 }

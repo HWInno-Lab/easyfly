@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef CONFIRMATION_LEDGER_HPP_
 #define CONFIRMATION_LEDGER_HPP_
 #include <set>
@@ -24,7 +23,6 @@ class ConfirmationLedger
 public:
   bool consume(const std::string & id)
   {
-    if (id.empty()) {return true;}  // Explicit non-GUI API: logged as unattributed.
     if (!hex_id(id, 32) || consumed_.size() >= 256 || consumed_.count(id)) {return false;}
     consumed_.insert(id); return true;
   }

@@ -1,0 +1,2 @@
+onnxruntime==1.23.2
+# Uses ROS-compatible system NumPy and OpenCV; do not replace their NumPy ABI.

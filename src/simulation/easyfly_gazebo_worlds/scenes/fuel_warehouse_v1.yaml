@@ -1,0 +1,92 @@
+schema_version: 1
+id: fuel_warehouse_v1
+name: FUEL bounded warehouse with racks
+status: registered
+category: indoor/warehouse
+tags:
+- procedural
+- static
+- controlled
+- three_dimensional
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/benchmark/exploration/fuel_warehouse_v1.world
+  sha256: 3670960b0174d03fdc34c489466b6ebb93a6b54296275acca7b5e668b5b149e5
+provenance:
+  status: recorded
+  source_url: null
+  revision: fuel_warehouse_v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  - package: easyfly_gazebo_worlds
+    path: evidence/fuel_warehouse_v1/generation.json
+  note: Project static geometry present before the first scan. Native disarmed alignment
+    and real 3m physical lidar qualified; default sensor unchanged.
+asset_sets: []
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0
+  - 0
+  - 0.1
+  yaw: 0.0
+  basis: Generated flat floor and reserved route capsule, independently checked by
+    native ODE; geometry and coordinate evidence recorded per scene.
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 0.00036296412289141754
+    - 0.0038035828843114407
+    - -0.03679294526459545
+    yaw: -0.014574465724387869
+  recommended_region:
+    min:
+    - -1.4
+    - -1.8
+    - 1.4
+    max:
+    - 6.4
+    - 1.8
+    - 2.4
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris_fuel/easyfly_iris_fuel.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  - easyfly_fuel_sensor_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Explicit short-range native physical ray benchmark variant, horizontal omni CSV
+    FOV; no post-sensor cropping or fabricated free space.
+  heartbeat_rate_hz: 5
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/fuel_warehouse_v1/generation.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/fuel_warehouse_v1/bootstrap.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/fuel_warehouse_v1/navigation.json

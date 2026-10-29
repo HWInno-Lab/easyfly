@@ -439,7 +439,13 @@ void MavlinkBridge::publish_state()
 
 void MavlinkBridge::cb_uav_command(const easyfly_msgs::msg::UAVCommand::SharedPtr msg)
 {
-  if (command_fault_) {return;}
+  if (command_fault_) {
+    std::lock_guard<std::mutex> lk(command_mtx_);
+    ++fault_rejected_command_count_;
+    last_fault_rejected_source_ns_ = static_cast<int64_t>(msg->header.stamp.sec) * 1000000000 +
+      msg->header.stamp.nanosec;
+    return;
+  }
   if (msg->header.frame_id != "odom") {
     RCLCPP_ERROR_THROTTLE(
       get_logger(), *get_clock(), 1000,
@@ -668,6 +674,13 @@ easyfly_msgs::srv::GetCapabilities::Response MavlinkBridge::command_capabilities
   const bool arm_available = client_arming_->service_is_ready();
   const bool ready = !fault && context && mode_available && arm_available;
   const auto clock = now();
+  uint64_t rejected_count;
+  int64_t rejected_source;
+  {
+    std::lock_guard<std::mutex> lk(command_mtx_);
+    rejected_count = fault_rejected_command_count_;
+    rejected_source = last_fault_rejected_source_ns_;
+  }
   std::ostringstream details;
   details << std::boolalpha << "{\"reason\":\""
           << (fault ? "command_fault_locked" :
@@ -675,7 +688,9 @@ easyfly_msgs::srv::GetCapabilities::Response MavlinkBridge::command_capabilities
           << "\",\"command_fault\":" << fault << ",\"ready\":" << ready
           << ",\"context_ok\":" << context << ",\"clock_ns\":" << clock.nanoseconds()
           << ",\"mode_service_ready\":" << mode_available
-          << ",\"arming_service_ready\":" << arm_available << "}";
+          << ",\"arming_service_ready\":" << arm_available
+          << ",\"fault_rejected_command_count\":" << rejected_count
+          << ",\"last_fault_rejected_source_ns\":" << rejected_source << "}";
   easyfly_msgs::srv::GetCapabilities::Response response;
   response.header.stamp = clock;
   response.header.frame_id = "odom";

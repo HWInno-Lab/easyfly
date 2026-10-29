@@ -49,33 +49,29 @@
 #include <pcl/segmentation/extract_clusters.h>
 #include <pcl/segmentation/sac_segmentation.h>
 #include <pcl/search/kdtree.h>
-
 #include <array>
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstdint>
+#include <deque>
 #include <exception>
 #include <limits>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <vector>
-
 #include <std_msgs/msg/header.hpp>
-
 #include <tf2_eigen/tf2_eigen.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_components/register_node_macro.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
-
 #include <sensor_msgs/msg/point_cloud2.hpp>
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <visualization_msgs/msg/marker_array.hpp>
 #include <easyfly_msgs/msg/obstacle_info_array.hpp>
 #include <easyfly_msgs/msg/uav_state.hpp>
 #include <easyfly_msgs/srv/get_obstacles.hpp>
-
 #include "easyfly_ground_segmentation/ground_plane_tracker.hpp"
 #include "easyfly_ground_segmentation/ground_candidate_selection.hpp"
 #include "easyfly_ground_segmentation/ground_spatial_support.hpp"
@@ -87,7 +83,6 @@
 #include "easyfly_semantic_map/map_validity.hpp"
 #include "easyfly_semantic_map/dynamic_obstacle_tracker.hpp"
 #include "easyfly_obstacle_geometry/clustering.hpp"
-
 namespace easyfly_semantic_map
 {
 using easyfly::occupancy::normalizeGridInflationRadius;
@@ -105,11 +100,8 @@ using easyfly::ground::GroundPlaneTracker;
 using easyfly::ground::groundPlaneInWorld;
 using easyfly::ground::groundBasisContinuous;
 using easyfly::ground::groundBasisStampFresh;
-
-
 using easyfly_msgs::msg::ObstacleInfo;
 using easyfly_msgs::msg::ObstacleInfoArray;
-
 // Resource limits are deliberately finite even when a YAML file is malformed
 // or an upstream publisher sends an unexpectedly large cloud.  The configured
 // limits below are validated against these hard caps before any PCL conversion
@@ -120,7 +112,6 @@ constexpr double kMinimumNongroundVoxelSize = 0.02;
 // Keep the semantic producer's total output (current cloud plus any
 // prediction points) within GridMap's trusted-cloud input limit.
 constexpr int kDownstreamTrustedCloudPointLimit = 200000;
-
 class SemanticMapNode : public rclcpp::Node
 {
 public:
@@ -141,7 +132,6 @@ public:
     }
     const auto ground_frame = declare_parameter<std::string>("ground_model_frame", "");
     if (!ground_frame.empty()) {params_.ground_model_frame = ground_frame;}
-
     DynamicObstacleTrackerConfig dynamic_config;
     dynamic_config.association_gate = params_.dynamic_association_gate;
     dynamic_config.association_ambiguity_distance =
@@ -175,7 +165,6 @@ public:
     dynamic_config.max_dynamic_bbox_size_y = params_.dynamic_max_bbox_size_y;
     dynamic_config.max_dynamic_bbox_size_z = params_.dynamic_max_bbox_size_z;
     dynamic_tracker_ = DynamicObstacleTracker(dynamic_config);
-
     GroundPlaneTracker::Params ground_params;
     ground_params.max_tilt_rad = params_.plane_max_tilt_rad;
     ground_params.min_inliers = static_cast<std::size_t>(
@@ -193,10 +182,8 @@ public:
     ground_params.max_innovation_angle_rad = params_.ground_max_innovation_angle_rad;
     ground_params.smoothing_alpha = params_.ground_smoothing_alpha;
     ground_tracker_ = GroundPlaneTracker(ground_params);
-
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
     tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
-
     // Keep the last map state for late subscribers.  This is important
     // during reset: a planner that discovers the publisher after the
     // reset must receive invalid/not-ready, not an old valid map.
@@ -217,19 +204,16 @@ public:
         state_received_ = true;
         state_arrival_ = std::chrono::steady_clock::now();
       });
-
     // Use a wall timer only to schedule the watchdog; elapsed time is
     // measured with the node's ROS clock so simulation time pauses and
     // resets are handled consistently with the published cloud stamps.
     input_watchdog_timer_ = create_wall_timer(
       std::chrono::milliseconds(500),
       std::bind(&SemanticMapNode::checkInputWatchdog, this));
-
     // Publish the explicit invalid/not-ready protocol immediately.  A
     // consumer that was already running must not retain a previous map
     // while this node is rebuilding after a restart.
     invalidateMap();
-
     // 服务独立回调组 (响应内做 TF 查询, 不阻塞点云回调)
     srv_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
     srv_ = create_service<easyfly_msgs::srv::GetObstacles>(
@@ -238,11 +222,19 @@ public:
         &SemanticMapNode::onGetObstacles, this,
         std::placeholders::_1, std::placeholders::_2),
       rmw_qos_profile_services_default, srv_group_);
-
     sub_ = create_subscription<sensor_msgs::msg::PointCloud2>(
       params_.input_topic, 10,
-      [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr msg) {onCloud(msg);});
-
+      [this](sensor_msgs::msg::PointCloud2::ConstSharedPtr msg) {
+        if (pending_clouds_.size() == 10) {
+          pending_clouds_.pop_front();
+          invalidateMap("点云 TF 待定队列已满");
+        }
+        pending_clouds_.push_back({msg, std::chrono::steady_clock::now()});
+        flushPendingClouds();
+      });
+    transform_timer_ = create_wall_timer(
+      std::chrono::milliseconds(10),
+      [this]() {flushPendingClouds();});
     RCLCPP_INFO(
       get_logger(),
       "semantic_map 启动: %s → %s (world=%s, 聚类容差 %.2fm, min %d 点, "
@@ -362,7 +354,6 @@ private:
     double dynamic_max_bbox_size_y{2.5};
     double dynamic_max_bbox_size_z{2.5};
   };
-
   void loadParams()
   {
     declare_parameter<std::string>("config_file", "");
@@ -614,7 +605,6 @@ private:
       params_.dynamic_association_cost_margin = 0.10;
     }
   }
-
   /// 与 pixel_to_3d 同款双路容错 TF 查询
   bool lookupTf(
     const std::string & target, const std::string & source,
@@ -622,24 +612,62 @@ private:
   {
     try {
       auto tf = tf_buffer_->lookupTransform(
-        target, source, stamp,
-        rclcpp::Duration::from_seconds(0.05));
+        target, source, stamp);
       out = tf2::transformToEigen(tf);
       return true;
-    } catch (const tf2::TransformException &) {
-      try {
-        auto tf = tf_buffer_->lookupTransform(target, source, tf2::TimePointZero);
-        out = tf2::transformToEigen(tf);
-        return true;
-      } catch (const tf2::TransformException & e2) {
-        RCLCPP_WARN_THROTTLE(
-          get_logger(), *get_clock(), 5000,
-          "TF %s←%s 不可用: %s", target.c_str(), source.c_str(), e2.what());
-        return false;
-      }
+    } catch (const tf2::TransformException & error) {
+      RCLCPP_WARN_THROTTLE(
+        get_logger(), *get_clock(), 5000,
+        "TF %s←%s 不可用: %s", target.c_str(), source.c_str(), error.what());
+      return false;
     }
   }
-
+  void flushPendingClouds()
+  {
+    while (!pending_clouds_.empty()) {
+      const auto entry = pending_clouds_.front();
+      if (!entry.cloud) {
+        pending_clouds_.pop_front();
+        onCloud(entry.cloud);
+        continue;
+      }
+      rclcpp::Time stamp;
+      if (!validateCloudStamp(*entry.cloud, now().nanoseconds(), stamp)) {
+        pending_clouds_.pop_front();
+        onCloud(entry.cloud);
+        continue;
+      }
+      if (std::chrono::steady_clock::now() - entry.received > std::chrono::seconds(1)) {
+        std::string error;
+        for (const auto & frames : std::vector<std::pair<std::string, std::string>>{
+            {params_.world_frame, entry.cloud->header.frame_id},
+            {params_.world_frame, params_.base_frame},
+            {params_.ground_model_frame, params_.world_frame}})
+        {
+          if (!frames.first.empty() && !tf_buffer_->canTransform(
+              frames.first, frames.second, stamp, rclcpp::Duration::from_seconds(0), &error))
+          {
+            RCLCPP_WARN_THROTTLE(
+              get_logger(), *get_clock(), 5000,
+              "源时间 TF 缺失 %s←%s @ %.9f: %s", frames.first.c_str(),
+              frames.second.c_str(), stamp.seconds(), error.c_str());
+          }
+        }
+        pending_clouds_.pop_front();
+        invalidateMap("点云对应源时间的 TF 等待超时");
+        continue;
+      }
+      if (!tf_buffer_->canTransform(params_.world_frame, entry.cloud->header.frame_id, stamp) ||
+        !tf_buffer_->canTransform(params_.world_frame, params_.base_frame, stamp) ||
+        (!params_.ground_model_frame.empty() &&
+        !tf_buffer_->canTransform(params_.ground_model_frame, params_.world_frame, stamp)))
+      {
+        return;
+      }
+      pending_clouds_.pop_front();
+      onCloud(entry.cloud);
+    }
+  }
   GroundVehiclePose groundVehiclePose(
     const double x, const double y, const double z)
   {
@@ -656,14 +684,12 @@ private:
       std::chrono::steady_clock::now() - state_arrival_).count();
     return pose;
   }
-
   enum class ClockSampleStatus
   {
     kNotStarted,
     kUsable,
     kJumped,
   };
-
   ClockSampleStatus sampleRosClock(int64_t & now_ns)
   {
     now_ns = this->now().nanoseconds();
@@ -700,19 +726,18 @@ private:
     if (jumped) {return ClockSampleStatus::kJumped;}
     return now_ns > 0 ? ClockSampleStatus::kUsable : ClockSampleStatus::kNotStarted;
   }
-
   void noteInputArrival(const int64_t now_ns)
   {
     std::lock_guard<std::mutex> lk(input_mtx_);
     input_seen_ = true;
     last_input_ros_ns_ = now_ns;
   }
-
   void checkInputWatchdog()
   {
     int64_t now_ns = 0;
     const auto clock_status = sampleRosClock(now_ns);
     if (clock_status == ClockSampleStatus::kJumped) {
+      pending_clouds_.clear();
       invalidateMap("ROS 时钟重置/回退/异常前跳，清除 semantic_map");
       return;
     }
@@ -720,7 +745,6 @@ private:
     // no meaningful age to compare; the node already published its
     // initial invalid state in the constructor.
     if (clock_status != ClockSampleStatus::kUsable) {return;}
-
     int64_t last_input_ns = 0;
     bool input_seen = false;
     {
@@ -729,14 +753,12 @@ private:
       last_input_ns = last_input_ros_ns_;
     }
     if (!input_seen || last_input_ns <= 0) {return;}
-
     const int64_t timeout_ns = static_cast<int64_t>(
       params_.input_timeout * 1e9);
     if (now_ns - last_input_ns > timeout_ns) {
       invalidateMap("pointcloud 输入超时，清除 semantic_map");
     }
   }
-
   bool validateCloudStamp(
     const sensor_msgs::msg::PointCloud2 & msg, const int64_t now_ns,
     rclcpp::Time & stamp) const
@@ -754,7 +776,6 @@ private:
     return std::isfinite(age_s) && age_s <= params_.cloud_stamp_timeout &&
            age_s >= -params_.cloud_stamp_future_tolerance;
   }
-
   void publishEmptyNonground(const rclcpp::Time & stamp)
   {
     // Keep the frame and stamp in the same ROS clock domain as valid
@@ -769,12 +790,10 @@ private:
     empty.is_dense = true;
     nonground_pub_->publish(empty);
   }
-
   void publishEmptyNonground()
   {
     publishEmptyNonground(this->now());
   }
-
   void publishInvalidMap()
   {
     {
@@ -787,7 +806,6 @@ private:
       makeInvalidGrid(
         params_.grid_width, params_.grid_height, params_.grid_resolution,
         params_.world_frame));
-
     visualization_msgs::msg::MarkerArray markers;
     visualization_msgs::msg::Marker clear;
     clear.header.frame_id = params_.world_frame;
@@ -796,7 +814,6 @@ private:
     markers.markers.push_back(clear);
     marker_pub_->publish(markers);
   }
-
   void publishReadyEmptyMap(
     const std_msgs::msg::Header & header,
     const pcl::PointCloud<pcl::PointXYZI> * nonground = nullptr,
@@ -831,12 +848,10 @@ private:
       publishEmptyNonground(stamp);
     }
   }
-
   void invalidateMap(const char * reason = nullptr)
   {
     grid_history_.reset();
     resetObstacleTracking();
-
     bool publish_transition = false;
     {
       std::lock_guard<std::mutex> lk(latest_mtx_);
@@ -850,30 +865,32 @@ private:
     // during sensor startup).  Clear local buffers every time, but emit
     // the invalid protocol and warning only on the valid→invalid (or
     // initial) transition to avoid flooding downstream consumers.
-    if (!publish_transition) {return;}
+    if (!publish_transition) {
+      if (reason != nullptr) {
+        RCLCPP_WARN_THROTTLE(
+          get_logger(), *get_clock(), 5000, "地图尚未就绪: %s", reason);
+      }
+      return;
+    }
     if (reason != nullptr) {RCLCPP_WARN(get_logger(), "%s", reason);}
     publishInvalidMap();
     publishEmptyNonground();
   }
-
   void resetObstacleTracking()
   {
     dynamic_tracker_.reset();
     last_obstacle_stamp_ns_ = 0;
   }
-
   easyfly::obstacle_geometry::ClusteringParams clusteringParams() const
   {
     return {params_.cluster_tolerance, params_.cluster_min_points,
       params_.cluster_max_points, params_.max_obstacle_size};
   }
-
   std::vector<DynamicObstacleObservation> extractCurrentDynamicObservations(
     const pcl::PointCloud<pcl::PointXYZI>::ConstPtr & cloud) const
   {
     return easyfly::obstacle_geometry::extractCurrentDynamicObservations(cloud, clusteringParams());
   }
-
   void onCloud(const sensor_msgs::msg::PointCloud2::ConstSharedPtr & msg)
   {
     int64_t now_ns = 0;
@@ -904,7 +921,6 @@ private:
       invalidateMap("输入点云超过单帧资源上限，清除 semantic_map");
       return;
     }
-
     // Validate the message stamp before PCL conversion, TF lookup,
     // RANSAC, ground-model update, or sliding-window insertion.  A stamp
     // from another clock epoch must never contaminate trusted state.
@@ -922,7 +938,6 @@ private:
       return;
     }
     last_obstacle_stamp_ns_ = stamp_ns;
-
     // → PCL (input frame) → world 系 → 可信地面平面分类 → 当前帧障碍
     // 地面候选仍逐帧由 RANSAC 提取；只有 GroundPlaneTracker 自身保留模型历史。
     pcl::PointCloud<pcl::PointXYZI>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZI>);
@@ -943,7 +958,6 @@ private:
         return;
       }
     }
-
     Eigen::Isometry3d T;
     if (!lookupTf(params_.world_frame, msg->header.frame_id, stamp, T)) {
       invalidateMap("输入点云 TF 不可用，清除 semantic_map");
@@ -1011,7 +1025,6 @@ private:
       invalidateMap("可信地面模型未就绪，清除 semantic_map");
       return;
     }
-
     GroundPlaneUpdate plane_update = GroundPlaneUpdate::kRejected;
     double candidate_ground_z = std::numeric_limits<double>::quiet_NaN();
     const GroundVehiclePose vehicle_pose = groundVehiclePose(
@@ -1033,16 +1046,18 @@ private:
       try {
         // Query a fresh dynamic basis. No timeless/stale TF fallback: a map
         // reset or missing SLAM alignment invalidates the navigation cloud.
-        auto tf = tf_buffer_->lookupTransform(
+        auto latest = tf_buffer_->lookupTransform(
           params_.ground_model_frame, params_.world_frame, tf2::TimePointZero);
         if (!groundBasisStampFresh(
-            static_cast<double>(now_ns) / 1e9, rclcpp::Time(tf.header.stamp).seconds(),
+            static_cast<double>(now_ns) / 1e9, rclcpp::Time(latest.header.stamp).seconds(),
             params_.ground_init_state_timeout))
         {
           invalidateMap("地面模型坐标变换过期，清除 semantic_map");
           return;
         }
-        world_to_ground = tf2::transformToEigen(tf);
+        auto measured = tf_buffer_->lookupTransform(
+          params_.ground_model_frame, params_.world_frame, stamp);
+        world_to_ground = tf2::transformToEigen(measured);
       } catch (const tf2::TransformException &) {
         invalidateMap("地面模型坐标变换不可用，清除 semantic_map");
         return;
@@ -1069,8 +1084,8 @@ private:
     const auto fit = easyfly::ground::fitGroundCandidate(
       *ground_cloud, ground_vehicle,
       {params_.plane_distance_threshold, params_.plane_min_inliers,
-       params_.ground_min_clearance, params_.ground_spatial_support_enabled,
-       params_.plane_min_inlier_ratio});
+        params_.ground_min_clearance, params_.ground_spatial_support_enabled,
+        params_.plane_min_inlier_ratio});
     if (fit.has_candidate) {
       const auto & candidate = fit.candidate;
       candidate_ground_z = candidate.model.zAt(ground_vehicle.x, ground_vehicle.y);
@@ -1128,7 +1143,6 @@ private:
         candidate_ground_z,
         ground_tracker_.model().zAt(ground_vehicle.x, ground_vehicle.y));
     }
-
     const GroundPlaneModel classification_ground =
       groundPlaneInWorld(ground_tracker_.model(), world_to_ground);
     if (!classification_ground.valid()) {
@@ -1178,7 +1192,6 @@ private:
         classification_ground.zAt(vehicle_pose.x, vehicle_pose.y),
         cloud->size(), above_count, obs->size());
     }
-
     // Voxelize the current valid frame.  No non-ground point is carried
     // into this callback from an earlier frame; GridMap owns the only
     // short-term persistence layer downstream.
@@ -1195,7 +1208,6 @@ private:
       invalidateMap("当前非地面点云超过资源上限，清除 semantic_map");
       return;
     }
-
     // Dynamic velocity evidence is intentionally derived from clusters in
     // this callback's frame only.  Empty/clusterless valid frames reset the
     // tracker, so stale velocity and IDs cannot cross a gap or timestamp
@@ -1216,7 +1228,6 @@ private:
     pcl::PointCloud<pcl::PointXYZI>::Ptr merged(current_nonground);
     pcl::PointCloud<pcl::PointXYZI>::Ptr merged_nonground(
       new pcl::PointCloud<pcl::PointXYZI>(*current_nonground));
-
     // A valid but too-small current frame is a ready empty observation;
     // publish it immediately rather than waiting for or mixing history.
     if (merged->size() < static_cast<size_t>(params_.cluster_min_points)) {
@@ -1226,10 +1237,8 @@ private:
       publishReadyEmptyMap(empty_header, merged_nonground.get(), &classification_ground);
       return;
     }
-
     // 欧式聚类 (当前有效帧)
     const auto clusters = easyfly::obstacle_geometry::clusterCloud(merged, clusteringParams());
-
     if (params_.verbose) {
       std::string stat = "current=" + std::to_string(merged->size()) +
         " nonground=" + std::to_string(merged_nonground->size()) +
@@ -1248,7 +1257,6 @@ private:
       }
       RCLCPP_INFO(get_logger(), "%s", stat.c_str());
     }
-
     // 簇 → ObstacleInfo (轴对齐包围盒)
     ObstacleInfoArray arr;
     arr.header.stamp = msg->header.stamp;
@@ -1278,7 +1286,6 @@ private:
       const auto & f = geometry.fields;
       const float center_x = f[0], center_y = f[1], center_z = f[2];
       const float size_x = f[3], size_y = f[4], size_z = f[5];
-
       ObstacleInfo o;
       o.header = arr.header;
       o.obstacle_id = static_cast<int32_t>(arr.obstacles.size());
@@ -1301,7 +1308,6 @@ private:
           o.center_x, o.center_y, o.center_z,
           o.size_x, o.size_y, o.size_z});
     }
-
     // Apply current-frame tracker results only after a one-to-one,
     // finite-distance match.  The output boxes are current-frame boxes;
     // no historical cluster center can become the dynamic track's
@@ -1368,7 +1374,6 @@ private:
         arr.obstacles[i].obstacle_id = unique_ids[i];
       }
     }
-
     // Add only a bounded, confirmed forward sweep.  If the trusted cloud
     // is already at its configured memory budget, keep the current static
     // evidence and omit the optional prediction rather than truncating a
@@ -1459,18 +1464,15 @@ private:
           "动态障碍预测包络(最多8条):%s", dynamic_detail.c_str());
       }
     }
-
     if (arr.obstacles.empty()) {
       publishReadyEmptyMap(arr.header, merged_nonground.get(), &classification_ground);
       return;
     }
-
     sensor_msgs::msg::PointCloud2 nonground_msg;
     pcl::toROSMsg(*merged_nonground, nonground_msg);
     nonground_msg.header.stamp = msg->header.stamp;
     nonground_msg.header.frame_id = params_.world_frame;
     nonground_pub_->publish(nonground_msg);
-
     {
       std::lock_guard<std::mutex> lk(latest_mtx_);
       latest_ = arr;
@@ -1494,7 +1496,6 @@ private:
     }
     publishMarkers(arr.header, boxes);
   }
-
   // ---- 2D 占据栅格: 簇足迹 (膨胀后) 标记为占据 + 持久化衰减 ----
   // 本帧有簇 → 该格 100; 本帧无簇 → 每帧衰减 20 (≈1s 后归零)。
   // 聚类逐帧闪烁 (8↔25 簇波动), 直接发布单帧会让规划器偶尔拿到缺障碍
@@ -1523,7 +1524,6 @@ private:
     grid.info.origin.orientation.w = 1.0;
     const size_t n = static_cast<size_t>(grid.info.width) * grid.info.height;
     grid.data.assign(n, 0);
-
     const double inf = params_.inflate_radius;
     if (grid_footprint_mode_ == "observed_cells" && nonground != nullptr &&
       !rasterizeObservedFootprints(
@@ -1536,11 +1536,9 @@ private:
       return;
     }
     easyfly::occupancy::rasterizeClusterBoxes(boxes, geometry, inf, grid.data);
-
     grid_history_.apply(grid.data, params_.grid_persist_frames);
     grid_pub_->publish(grid);
   }
-
   void publishMarkers(
     const std_msgs::msg::Header & header,
     const std::vector<std::array<double, 6>> & boxes)
@@ -1551,7 +1549,6 @@ private:
     del.ns = "obstacles";
     del.action = visualization_msgs::msg::Marker::DELETEALL;
     ma.markers.push_back(del);
-
     for (size_t i = 0; i < boxes.size(); ++i) {
       const auto & b = boxes[i];
       visualization_msgs::msg::Marker m;
@@ -1572,7 +1569,6 @@ private:
     }
     marker_pub_->publish(ma);
   }
-
   // ---- /get_obstacles: 按"距机体水平距离"过滤 (range_limit<=0 返回全部) ----
   void onGetObstacles(
     const std::shared_ptr<easyfly_msgs::srv::GetObstacles::Request> req,
@@ -1594,7 +1590,6 @@ private:
         "/get_obstacles 暂无就绪地图，返回空结果");
       return;
     }
-
     double drone_x = 0.0, drone_y = 0.0;
     if (req->range_limit > 0.0f) {
       Eigen::Isometry3d T;
@@ -1613,7 +1608,6 @@ private:
     res->obstacles.header = latest.header;
     res->obstacles.header.frame_id = params_.world_frame;
   }
-
   NodeParams params_;
   bool tf_init_{false};
   bool pend_init_{false};
@@ -1628,7 +1622,6 @@ private:
   int64_t last_obstacle_stamp_ns_{0};
   std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
   std::unique_ptr<tf2_ros::TransformListener> tf_listener_;
-
   std::mutex latest_mtx_;
   ObstacleInfoArray latest_;
   bool map_ready_{false};
@@ -1636,21 +1629,25 @@ private:
   std::string grid_footprint_mode_;
   double grid_height_limit_m_{0.0};
   easyfly::occupancy::GridPersistence grid_history_;
-
   std::mutex input_mtx_;
   bool input_seen_{false};
   int64_t last_input_ros_ns_{0};
   bool clock_sample_valid_{false};
   int64_t last_clock_sample_ns_{0};
-
   std::mutex state_mtx_;
   easyfly_msgs::msg::UAVState latest_state_;
   bool state_received_{false};
   std::chrono::steady_clock::time_point state_arrival_{};
-
   rclcpp::Subscription<sensor_msgs::msg::PointCloud2>::SharedPtr sub_;
   rclcpp::Subscription<easyfly_msgs::msg::UAVState>::SharedPtr state_sub_;
   rclcpp::TimerBase::SharedPtr input_watchdog_timer_;
+  struct PendingCloud
+  {
+    sensor_msgs::msg::PointCloud2::ConstSharedPtr cloud;
+    std::chrono::steady_clock::time_point received;
+  };
+  std::deque<PendingCloud> pending_clouds_;
+  rclcpp::TimerBase::SharedPtr transform_timer_;
   rclcpp::Publisher<ObstacleInfoArray>::SharedPtr obstacles_pub_;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr nonground_pub_;
   rclcpp::Publisher<nav_msgs::msg::OccupancyGrid>::SharedPtr grid_pub_;
@@ -1658,7 +1655,5 @@ private:
   rclcpp::Service<easyfly_msgs::srv::GetObstacles>::SharedPtr srv_;
   rclcpp::CallbackGroup::SharedPtr srv_group_;
 };
-
 }  // namespace easyfly_semantic_map
-
 RCLCPP_COMPONENTS_REGISTER_NODE(easyfly_semantic_map::SemanticMapNode)

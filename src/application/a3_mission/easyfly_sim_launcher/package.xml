@@ -44,6 +44,7 @@
   <exec_depend>mavros_msgs</exec_depend>
   <exec_depend>unique_identifier_msgs</exec_depend>
   <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>easyfly_fastdds_compat</test_depend>
   <test_depend>python3-yaml</test_depend>
   <test_depend>python3-jsonschema</test_depend>
 

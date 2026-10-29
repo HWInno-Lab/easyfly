@@ -7,6 +7,7 @@ find_package(rclcpp_action REQUIRED)
 find_package(easyfly_msgs REQUIRED)
 set(CMAKE_CXX_STANDARD 17)
 add_library(easyfly_core SHARED src/client.cpp)
+set_target_properties(easyfly_core PROPERTIES VERSION 1.0.0 SOVERSION 1)
 target_include_directories(easyfly_core PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)

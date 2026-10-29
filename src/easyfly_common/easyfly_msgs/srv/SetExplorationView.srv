@@ -1,0 +1,13 @@
+# Explicit viewpoint binding; creates no navigation or flight action.
+# A matching parent navigation UUID must subsequently own the normal session.
+std_msgs/Header header
+string mission_id
+string navigation_goal_id
+bool active
+float64 target_x
+float64 target_y
+float64 target_z
+float64 target_yaw
+---
+bool success
+string message

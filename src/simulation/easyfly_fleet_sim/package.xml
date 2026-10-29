@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_fleet_sim</name>
+  <version>0.1.0</version>
+  <description>Managed shared-world multi-PX4 simulation with isolated vehicle resources</description>
+  <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>easyfly_px4_sitl</exec_depend>
+  <exec_depend>easyfly_precision_landing</exec_depend>
+  <exec_depend>easyfly_flight_control</exec_depend>
+  <exec_depend>easyfly_mavlink_bridge</exec_depend>
+  <exec_depend>easyfly_coord_transform</exec_depend>
+  <exec_depend>easyfly_camera_calib</exec_depend>
+  <exec_depend>easyfly_mission_fsm</exec_depend>
+  <exec_depend>easyfly_mission_srvs</exec_depend>
+  <exec_depend>easyfly_msgs</exec_depend>
+  <exec_depend>mavros_msgs</exec_depend>
+  <depend>livox_ros_driver2</depend>
+  <exec_depend>rclpy</exec_depend>
+  <depend>rclcpp</depend>
+  <depend>rosgraph_msgs</depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <depend>sensor_msgs</depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>tf2_msgs</exec_depend>
+  <depend>std_msgs</depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

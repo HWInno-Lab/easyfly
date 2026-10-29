@@ -145,7 +145,9 @@ def state_ready(state, receipt, ros_now, steady_now, armed):
             -0.2 <= (ros_now - source) * 1e-9 <= 1.0 and
             0 <= steady_now - receipt <= 0.3 and state.connected and
             state.armed == armed and state.pose_valid and state.velocity_valid and
-            state.attitude_valid and all(math.isfinite(v) for v in (
+            state.attitude_valid and state.battery_valid and
+            math.isfinite(state.battery_remaining) and 0 <= state.battery_remaining <= 1 and
+            all(math.isfinite(v) for v in (
                 state.position_x, state.position_y, state.position_z,
                 state.velocity_x, state.velocity_y, state.velocity_z,
                 state.roll, state.pitch, state.yaw)))

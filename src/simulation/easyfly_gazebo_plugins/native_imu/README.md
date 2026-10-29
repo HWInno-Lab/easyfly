@@ -7,10 +7,13 @@ register another protobuf definition. Configure `EASYFLY_PX4_GAZEBO_BUILD` to
 the reviewed PX4 Classic build directory. Its message-library fingerprint is
 installed for launch-time validation.
 
-Only three changes: a distinct class name; widen seconds **before** multiplying
+Changes: a distinct class name; widen seconds **before** multiplying
 by 1000000 (the original int32 sum overflows at 2147.484 s on the 1 ms grid);
 release the update event with `reset()` instead of explicitly invoking its
-destructor. Native timestamps, sequence, noise, physics and sensor channels
+destructor; reject a nonpositive world-time integration interval before noise
+calculation. That interval emits no sample, and the next positive interval uses
+the actual reset epoch. The relay still latches on the rollback; it does not
+resume old filter state. Native timestamps, sequence, noise, physics and sensor channels
 otherwise follow the original implementation. The relay still refuses gaps,
 nonfinite samples and discontinuities and never fills or retimestamps samples.
 

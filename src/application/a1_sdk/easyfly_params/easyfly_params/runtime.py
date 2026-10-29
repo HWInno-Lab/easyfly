@@ -14,10 +14,13 @@
 
 """Local typed configuration services; never write flight/backend parameters."""
 import json
+import signal
 
 import rclpy
-from rclpy.executors import ExternalShutdownException
+from rclpy.context import Context
+from rclpy.executors import ExternalShutdownException, SingleThreadedExecutor
 from rclpy.node import Node
+from rclpy.signals import SignalHandlerOptions
 from rcl_interfaces.msg import ParameterDescriptor, SetParametersResult
 from easyfly_msgs.srv import QueryParams
 from std_srvs.srv import Trigger
@@ -26,8 +29,8 @@ from .configuration import load_profile
 
 
 class ParameterManager(Node):
-    def __init__(self):
-        super().__init__('easyfly_params')
+    def __init__(self, *, context=None):
+        super().__init__('easyfly_params', context=context)
         readonly = ParameterDescriptor(read_only=True)
         self.declare_parameter('profile', 'navigation_dev', readonly)
         self.effective = load_profile(self.get_parameter('profile').value)
@@ -135,14 +138,33 @@ class ParameterManager(Node):
 
 
 def main():
-    rclpy.init()
+    # Finish an in-flight take/conversion before invalidating its ROS context.
+    # Raising KeyboardInterrupt inside pybind can also lose the original exception.
+    requested = False
+
+    def interrupt(_signum, _frame):
+        nonlocal requested
+        requested = True
+
+    previous = {number: signal.signal(number, interrupt)
+                for number in (signal.SIGINT, signal.SIGTERM)}
+    context = Context()
     node = None
+    executor = None
     try:
-        node = ParameterManager()
-        rclpy.spin(node)
+        rclpy.init(context=context, signal_handler_options=SignalHandlerOptions.NO)
+        node = ParameterManager(context=context)
+        executor = SingleThreadedExecutor(context=context)
+        executor.add_node(node)
+        while context.ok() and not requested:
+            executor.spin_once(timeout_sec=0.1)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
+        if executor is not None:
+            executor.shutdown()
         if node is not None:
             node.destroy_node()
-        rclpy.try_shutdown()
+        context.try_shutdown()
+        for number, handler in previous.items():
+            signal.signal(number, handler)

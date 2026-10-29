@@ -12,7 +12,7 @@ perception_sitl.launch.py — 阶段三感知调试启动（Gazebo + PX4 + RViz2
 验证话题:
   /camera/color/image_raw             前视彩色图像 (30 Hz)
   /camera/color/camera_info           彩色相机内参
-  /camera/aligned_depth_to_color/image_raw   深度图 (30 Hz)
+  /camera/aligned_depth_to_color/depth/image_raw   32FC1 米制深度图 (30 Hz)
   /camera/aligned_depth_to_color/points      深度点云 (M0 验收用, M1 后可关)
   /livox/lidar                        MID-360 点云 (livox CustomMsg, 10 Hz)
   /livox/imu                          MID-360 内置 IMU (200 Hz)
@@ -42,6 +42,7 @@ from easyfly_px4_sitl.imu_compatibility import require_native_imu
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
 from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
+from easyfly_px4_sitl.rendering import renderer_environment
 
 
 def _openvins(context):
@@ -50,8 +51,72 @@ def _openvins(context):
     return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
         share + '/launch/openvins.launch.py'),
         launch_arguments={'sensor_profile': 'gazebo_mono', 'start_alignment': 'true',
+                          'enable_navigation': LaunchConfiguration('openvins_navigation',
+                                                                  default='false'),
                           'wait_for_inputs': LaunchConfiguration('openvins_wait_for_inputs',
                                                                  default='true')}.items())]
+
+
+def _fastlivo(context):
+    share = get_package_share_directory('easyfly_fast_livo2_integration')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        share + '/launch/fastlivo.launch.py'), launch_arguments={
+            'enable_navigation': LaunchConfiguration('fastlivo_navigation', default='false'),
+            'enable_atlas': LaunchConfiguration('fastlivo_atlas', default='false'),
+            **{k+'_topic': LaunchConfiguration('fastlivo_'+k+'_topic', default=v) for k,v in [('camera','/camera/color/image_raw'),('imu','/livox/imu'),('lidar','/livox/lidar')]}}.items())]
+
+
+def _orbslam3(context):
+    share = get_package_share_directory('easyfly_orbslam3_integration')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        share + '/launch/orbslam3.launch.py'), launch_arguments={
+            'enable_navigation': LaunchConfiguration('orbslam3_navigation', default='false'),
+            'sensor_mode': LaunchConfiguration('orbslam3_sensor_mode', default='rgbd'),
+            **{k+'_topic': LaunchConfiguration('orbslam3_'+k+'_topic', default=v)
+               for k, v in [('rgb', '/camera/color/image_raw'),
+                            ('depth', '/camera/aligned_depth_to_color/depth/image_raw')]},
+            **{k: LaunchConfiguration('orbslam3_'+k, default='') for k in ['runtime_directory','load_atlas','save_atlas']}}.items())]
+
+
+def _gcopter(context):
+    fuel = LaunchConfiguration('exploration_backend', default='none').perform(context) == 'fuel'
+    dynamic = LaunchConfiguration('gcopter_dynamic_navigation', default='false').perform(context)
+    if dynamic == 'true' and fuel:
+        raise ValueError('Dynamic GCOPTER navigation is independent of the FUEL policy map')
+    share = get_package_share_directory('easyfly_trajectory_optimizer')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        share + '/launch/gcopter.launch.py'), launch_arguments={
+            'use_sim_time': 'true', 'uav_state_topic': _mapping_state(),
+            'evidence_directory': LaunchConfiguration('gcopter_evidence_directory'),
+            'dynamic_navigation': dynamic,
+            'fuel_native_trajectory': LaunchConfiguration('fuel_extended_profile', default='false'),
+            'voxel_output_topic': '/planning/fuel_raw_grid' if fuel else '/planning/voxel_grid',
+            'uninflated_topic': '/planning/fuel_observed_grid' if fuel else '',
+            'allow_idle_policy_map_epoch': 'true' if fuel else 'false'}.items())]
+
+
+def _fuel(context):
+    if LaunchConfiguration('exploration_backend', default='none').perform(context) != 'fuel':
+        return []
+    if (LaunchConfiguration('navigation_strategy').perform(context) != 'gcopter' or
+        LaunchConfiguration('localization_backend').perform(context) != 'fast_lio' or
+        LaunchConfiguration('slam_enabled').perform(context) != 'true'):
+        raise ValueError('FUEL requires GCOPTER and FAST-LIO')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        get_package_share_directory('easyfly_fuel_exploration')+'/launch/fuel.launch.py'),
+        launch_arguments={'use_sim_time':'true','uav_state_topic':_mapping_state(),
+          'evidence_directory':LaunchConfiguration('fuel_evidence_directory'),
+          'extended_profile':LaunchConfiguration('fuel_extended_profile', default='false'),
+          'native_max_speed':LaunchConfiguration('fuel_native_max_speed', default='1.2')}.items())]
+
+
+def _super(context):
+    share = get_package_share_directory('easyfly_super_planner')
+    return [IncludeLaunchDescription(PythonLaunchDescriptionSource(
+        share + '/launch/super.launch.py'), launch_arguments={
+            'use_sim_time': 'true', 'uav_state_topic': _mapping_state(),
+            'evidence_directory': LaunchConfiguration('super_evidence_directory'),
+            'execute_committed': LaunchConfiguration('super_execute_committed')}.items())]
 
 
 def _backend_condition(backend):
@@ -65,7 +130,7 @@ def _localization_timesync_mode():
     # backend. Default FAST-LIO keeps the existing NONE/diagnostic policy.
     return PythonExpression([
         "'PASSTHROUGH' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
-        "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
+        "' in ('openvins', 'fast_livo2', 'orbslam3') and '", LaunchConfiguration('slam_enabled', default='true'),
         "' == 'true' else '", LaunchConfiguration('timesync_mode', default='NONE'), "'"])
 
 
@@ -73,8 +138,31 @@ def _perception_nice():
     # Keep CPU-heavy consumers behind the simulated measurement/control path.
     return PythonExpression([
         "'10' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
-        "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
+        "' in ('openvins', 'fast_livo2', 'orbslam3') and '", LaunchConfiguration('slam_enabled', default='true'),
         "' == 'true' else '0'"])
+
+
+def _vio_navigation():
+    parts = ["'", LaunchConfiguration('slam_enabled', default='true'), "' == 'true' and ("]
+    for index, (backend, flag) in enumerate([('openvins','openvins_navigation'),
+                                           ('fast_livo2','fastlivo_navigation'),
+                                           ('orbslam3','orbslam3_navigation')]):
+        if index:
+            parts.append(' or ')
+        parts += ["('", LaunchConfiguration('localization_backend', default='fast_lio'),
+                  "' == '", backend, "' and '", LaunchConfiguration(flag, default='false'), "' == 'true')"]
+    return PythonExpression(parts + [')'])
+
+
+def _navigation_condition():
+    return IfCondition(PythonExpression([
+        "'", LaunchConfiguration('slam_enabled', default='true'), "' == 'true' and ('",
+        LaunchConfiguration('localization_backend', default='fast_lio'),
+        "' == 'fast_lio' or (", _vio_navigation(), "))"]))
+
+
+def _mapping_state():
+    return PythonExpression(["'/localization/' + '", LaunchConfiguration('localization_backend'), "' + '/navigation_state' if ", _vio_navigation(), " else '/uav_state'"])
 
 
 def _resolve_px4_dir():
@@ -122,11 +210,14 @@ def generate_launch_description():
         description='Enable the selected localization backend; false disables localization/navigation')
     localization_arg = DeclareLaunchArgument(
         'localization_backend', default_value='fast_lio',
-        choices=['fast_lio', 'openvins', 'disabled'],
+        choices=['fast_lio', 'openvins', 'fast_livo2', 'orbslam3', 'disabled'],
         description='Exactly one backend; OpenVINS is observation only, navigation unavailable')
     openvins_wait_arg = DeclareLaunchArgument(
         'openvins_wait_for_inputs', default_value='true', choices=['true', 'false'],
         description='Wait for bounded startup input readiness; false for isolated diagnostics')
+    openvins_navigation_arg = DeclareLaunchArgument(
+        'openvins_navigation', default_value='false', choices=['true', 'false'],
+        description='Simulation-only VIO navigation; requires confirmed aligned poses and map')
     fastlio_options_arg = DeclareLaunchArgument(
         'fastlio_options_json', default_value='',
         description='Validated UI FAST-LIO input and mapping overrides; empty keeps YAML defaults')
@@ -178,10 +269,11 @@ def generate_launch_description():
              "--ros-args", "--param", ["gazebo:publish_rate:=", scene_value('clock_rate_hz'), ".0"]],
         output="screen",
         name="gzserver",
-        additional_env={'EASYFLY_GAZEBO_LOCKSTEP': PythonExpression([
-            "'1' if '", LaunchConfiguration('localization_backend', default='fast_lio'),
-            "' == 'openvins' and '", LaunchConfiguration('slam_enabled', default='true'),
-            "' == 'true' else '0'"])},
+        additional_env={**renderer_environment(), 'EASYFLY_GAZEBO_LOCKSTEP': PythonExpression([
+            "'1' if '", LaunchConfiguration('gazebo_lockstep', default='auto'),
+            "' == 'true' or ('", LaunchConfiguration('localization_backend', default='fast_lio'),
+            "' in ('openvins', 'fast_livo2', 'orbslam3') and '", LaunchConfiguration('slam_enabled', default='true'),
+            "' == 'true') else '0'"])},
     )
 
     spawn_model = ExecuteProcess(
@@ -254,7 +346,8 @@ def generate_launch_description():
             get_package_share_directory("easyfly_camera_calib") + "/launch/calib_tf.launch.py"))
     coord_tf = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_coord_transform") + "/launch/coord_tf.launch.py"))
+            get_package_share_directory("easyfly_coord_transform") + "/launch/coord_tf.launch.py"),
+        condition=UnlessCondition(_vio_navigation()))
 
     # ---- P2 目标检测 (M2): YOLO11 OnnxRuntime GPU ----
     # A headless run must not create the optional debug-image publisher even
@@ -318,7 +411,9 @@ def generate_launch_description():
     openvins = GroupAction(condition=_backend_condition('openvins'), scoped=True,
                            forwarding=False,
                            launch_configurations={'openvins_wait_for_inputs': LaunchConfiguration(
-                               'openvins_wait_for_inputs', default='true')},
+                               'openvins_wait_for_inputs', default='true'),
+                               'openvins_navigation': LaunchConfiguration(
+                                   'openvins_navigation', default='false')},
                            actions=[OpaqueFunction(function=_openvins)])
 
     # ---- C2 通信桥接 (mavros + mavlink_bridge): 提供 /uav_state (P1/P3 依赖) ----
@@ -354,6 +449,7 @@ def generate_launch_description():
         launch_arguments={"capture_shutdown": LaunchConfiguration(
             "semantic_capture_shutdown"),
             "ground_model_frame": scene_value('ground_model_frame'),
+            "uav_state_topic": _mapping_state(),
             "grid_footprint_mode": scene_value('grid_footprint_mode'),
             "grid_height_limit_m": scene_value('grid_height_limit_m')}.items())
 
@@ -365,7 +461,9 @@ def generate_launch_description():
         actions=[gui_only])
     bridge_delayed = TimerAction(period=8.0, actions=[mavlink_bridge])
     p1_nodes = TimerAction(period=12.0, actions=[calib_tf, coord_tf])
-    p2_nodes = TimerAction(period=14.0, actions=[detection, fastlio, openvins])
+    fastlivo = GroupAction(condition=_backend_condition('fast_livo2'), actions=[OpaqueFunction(function=_fastlivo)])
+    orbslam3 = GroupAction(condition=_backend_condition('orbslam3'), actions=[OpaqueFunction(function=_orbslam3)])
+    p2_nodes = TimerAction(period=14.0, actions=[detection, fastlio, openvins, fastlivo, orbslam3])
     p4_nodes = TimerAction(period=16.0, actions=[tracking])
     p5_nodes = TimerAction(period=18.0, actions=[pixel_to_3d])
     exec_nodes = TimerAction(period=10.0, actions=[flight_control, mission_fsm])
@@ -379,28 +477,48 @@ def generate_launch_description():
         period=22.0, actions=[follow], condition=_backend_condition('fast_lio'))
     # M4.2: 全局规划节点 (常驻 idle 无副作用, 经 /navigate action 发起)
     navigation_strategy_arg = DeclareLaunchArgument(
-        "navigation_strategy", default_value="astar", choices=["astar", "ego", "combined"])
+        "navigation_strategy", default_value="astar", choices=["astar", "ego", "combined", "gcopter", "super"])
+    gcopter_evidence_arg = DeclareLaunchArgument('gcopter_evidence_directory', default_value='')
+    gcopter_dynamic_arg = DeclareLaunchArgument('gcopter_dynamic_navigation', default_value='false', choices=['true', 'false'])
+    super_evidence_arg = DeclareLaunchArgument('super_evidence_directory', default_value='')
+    super_committed_arg = DeclareLaunchArgument('super_execute_committed', default_value='false', choices=['true', 'false'])
+    ego_acceleration_arg = DeclareLaunchArgument('local_planner_max_acceleration', default_value='6.0', choices=['2.0', '6.0'])
     navigate = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_global_planner") + "/launch/navigate.launch.py"),
         launch_arguments={"use_sim_time": "true",
                           "strategy": LaunchConfiguration("navigation_strategy"),
+                          'gcopter_dynamic_navigation': LaunchConfiguration('gcopter_dynamic_navigation'),
                           "localization_backend": PythonExpression([
                               "'", LaunchConfiguration('localization_backend'), "' if '",
                               LaunchConfiguration('slam_enabled'),
-                              "' == 'true' else 'disabled'"])}.items())
+                              "' == 'true' else 'disabled'"]),
+                          "openvins_navigation": LaunchConfiguration(
+                              'openvins_navigation', default='false'),
+                          'fastlivo_navigation': LaunchConfiguration('fastlivo_navigation', default='false'),
+                          'orbslam3_navigation': LaunchConfiguration('orbslam3_navigation', default='false')}.items())
     m42_nodes = TimerAction(period=24.0, actions=[navigate])
     # M4.3: EGO-Planner 局部规划 (ego_planner_node + traj_server)。
     # position_cmd 是飞控指令流；急停恢复使用 traj_server 专用 trajectory_ack。
     local_planner = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             get_package_share_directory("easyfly_local_planner") + "/launch/local_planner.launch.py"),
+        condition=UnlessCondition(PythonExpression([
+            "'", LaunchConfiguration('navigation_strategy'), "' in ('gcopter','super')"])),
         launch_arguments={
             "use_sim_time": "true",
             "virtual_ceil_height": LaunchConfiguration("local_planner_virtual_ceil_height"),
+            "max_acceleration": LaunchConfiguration("local_planner_max_acceleration"),
+            "hold_navigation_yaw": PythonExpression([
+                "'true' if ", _vio_navigation(), " else 'false'"]),
         }.items())
     m43_nodes = TimerAction(
-        period=26.0, actions=[local_planner], condition=_backend_condition('fast_lio'))
+        period=26.0, actions=[local_planner, OpaqueFunction(function=_fuel), OpaqueFunction(function=_gcopter,
+            condition=IfCondition(PythonExpression([
+                "'", LaunchConfiguration('navigation_strategy'), "' == 'gcopter'"]))),
+            OpaqueFunction(function=_super, condition=IfCondition(PythonExpression([
+                "'", LaunchConfiguration('navigation_strategy'), "' == 'super'"])))],
+        condition=_navigation_condition())
 
     actions = [
         *selection_arguments('full_perception'),
@@ -421,8 +539,24 @@ def generate_launch_description():
         slam_arg,
         localization_arg,
         openvins_wait_arg,
+        openvins_navigation_arg,
+        DeclareLaunchArgument('orbslam3_navigation', default_value='false', choices=['true','false']),
+        DeclareLaunchArgument('orbslam3_sensor_mode', default_value='rgbd', choices=['rgbd','rgbd_imu']),
+        DeclareLaunchArgument('gazebo_lockstep', default_value='auto', choices=['auto', 'true'],
+                             description='Enable reviewed native sensor/render lockstep for explicit data acquisition'),
+        *[DeclareLaunchArgument('orbslam3_'+k, default_value='') for k in ['runtime_directory','load_atlas','save_atlas']],
+        DeclareLaunchArgument('orbslam3_rgb_topic', default_value='/camera/color/image_raw'),
+        DeclareLaunchArgument('orbslam3_depth_topic', default_value='/camera/aligned_depth_to_color/depth/image_raw'),
+        DeclareLaunchArgument('fastlivo_navigation', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('fastlivo_atlas', default_value='false', choices=['true', 'false']),
+        *[DeclareLaunchArgument('fastlivo_'+k+'_topic',default_value=v) for k,v in [('camera','/camera/color/image_raw'),('imu','/livox/imu'),('lidar','/livox/lidar')]],
         fastlio_options_arg,
         navigation_strategy_arg,
+        gcopter_evidence_arg, gcopter_dynamic_arg, super_evidence_arg, super_committed_arg, ego_acceleration_arg,
+        DeclareLaunchArgument('exploration_backend', default_value='none', choices=['none','fuel']),
+        DeclareLaunchArgument('fuel_evidence_directory', default_value=''),
+        DeclareLaunchArgument('fuel_extended_profile', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('fuel_native_max_speed', default_value='1.2'),
         heartbeat_configuration_action(px4_sitl, px4_dir),
         gzserver,
         spawn_delayed,

@@ -24,9 +24,12 @@ files:
 - path: mid360/meshes/livox_mid-360-90x.dae
   sha256: a75f3a446b596c1a21ac5c8201a3716d657b0a1164a1b0060c4f7aca46118647
 - path: mid360/mid360.sdf
-  sha256: 5f1139f1d4bc97a057671a0eb616de37ad5aff41f585bbcce6ebe501824c32ef
+  sha256: c3e66db5e2c9e0bf31ed86b7b6ee65728a3000794cd03553e6ed1315fc0c1405
 - path: mid360/model.config
   sha256: 63b3bdcaa4141889f90bcd039d872498d474446be201f7d83a31972c93e3c079
-local_changes: []
+local_changes:
+- 2026-10-26 V-16 only selects the project IMU measurement-snapshot plugin; physical
+  sensor/noise/rate/frame parameters and visual assets are unchanged. The original
+  strict-rate plugin produced zero source stamps; provenance remains unverified.
 storage: existing
-inventory_note: S0 当前文件快照；不表示上游版本已固定或许可已核实。不添加或修改原模型。
+inventory_note: S0 来源状态保留；V-16 已显式登记插件选择变更，不表示上游版本或资产许可已核实。

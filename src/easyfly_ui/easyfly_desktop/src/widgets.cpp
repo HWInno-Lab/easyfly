@@ -10,18 +10,15 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QPainter>
 #include <QPainterPath>
 #include <QPolygonF>
-
 #include <algorithm>
 #include <cmath>
 #include <utility>
 #include <vector>
-
-#include "easyfly_desktop/presentation.hpp"
 #include "widgets.hpp"
+#include "easyfly_desktop/presentation.hpp"
 namespace easyfly_desktop
 {
 QIcon dashboard_icon(const QString & name)

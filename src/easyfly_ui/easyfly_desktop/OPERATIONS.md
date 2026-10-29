@@ -369,3 +369,23 @@ Task and recording specifications are folded by default; expand their explanatio
 buttons for technical details. Overview metric text fits the available card width.
 Recording IDs and source names use compact display values with full originals in
 tooltips; replay always uses the complete verified identity, never an abbreviated ID.
+
+## Diagnosing an unexpected 3D reset
+
+The renderer remains attached to the Space page. Hiding that page, disconnecting,
+changing clock mode, or explicitly stopping releases its resources; returning to
+the page never opens a renderer without an explicit click.
+
+`easyfly_rviz_lifecycle` logs the process, steady timestamp, instance name,
+sequence and open/close reason. Spatial layer snapshots/logs retain publisher GID,
+reset epoch, last received source stamp and the last invalidation cause even after
+recovery. `easyfly_rviz_source` identifies publisher replacement;
+`easyfly_rviz_invalidate` distinguishes missing TF, invalid data, stale receipt/source
+and resets. Repeated stale frames do not create a log flood. Normal redraw is not
+counted as invalidation. These observations do not renew freshness or permit extra
+publishers, and do not change clearing or reconnection behavior.
+
+Preserve these logs with the observer clock epoch and source/TF records when a
+reset occurs. Historical B-14 lacked those records; later passing runs alone do
+not establish its cause. Rebuild users of `desktop_widgets` against the same
+headers when deploying the added diagnostic snapshot fields.

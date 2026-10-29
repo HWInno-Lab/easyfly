@@ -1,4 +1,17 @@
 #!/usr/bin/env python3
+# Copyright 2026 EasyFly Project
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """Static G6 detection observability and fallback contracts."""
 
 from pathlib import Path
@@ -8,7 +21,9 @@ PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 NODE = (PACKAGE_ROOT / "src" / "detection_node.cpp").read_text()
 ALGORITHMS = PACKAGE_ROOT.parents[2] / "algorithms"
 BACKEND = (ALGORITHMS / "detection/easyfly_yolo_onnx/src/onnx_backend.cpp").read_text()
-BASE = (ALGORITHMS / "detection/easyfly_detection_api/include/easyfly_detection_api/detector.hpp").read_text()
+BASE = (
+    ALGORITHMS / "detection/easyfly_detection_api/include/easyfly_detection_api/detector.hpp"
+).read_text()
 LAUNCH = (PACKAGE_ROOT / "launch" / "detection.launch.py").read_text()
 CONFIG = (PACKAGE_ROOT / "config" / "detection.yaml").read_text()
 
@@ -30,7 +45,7 @@ def test_steady_clock_and_queue_counters() -> None:
     require(NODE, "input_qos.best_effort()", "best-effort input QoS fallback")
     require(NODE, "input_qos.durability_volatile()", "volatile input QoS")
     require(NODE, '"PERF steady window=', "periodic aggregate log")
-    require(NODE, "callback_overwritten=%llu", "callback overwrite metric in log")
+    require(NODE, 'callback_overwritten=%" PRIu64', "callback overwrite metric in log")
     require(NODE, "callback_overwrite_pct", "callback-local overwrite percentage")
     require(NODE, "callback_received_wall_hz", "wall-clock receive rate")
     require(NODE, "processed_wall_hz", "wall-clock processed rate")
@@ -40,12 +55,15 @@ def test_steady_clock_and_queue_counters() -> None:
 
 def test_counter_snapshot_window_baseline_contract() -> None:
     require(NODE, "struct CallbackCounters", "pending-protected counter structure")
-    require(NODE, "InputCounterSnapshot snapshotInputCountersLocked() const",
-            "lock-scoped counter snapshot helper")
-    require(NODE, "perf_last_callback_received_ = snapshot.received",
-            "received baseline update")
-    require(NODE, "perf_last_callback_overwritten_ = snapshot.overwritten",
-            "overwrite baseline update")
+    require(
+        NODE,
+        "InputCounterSnapshot snapshotInputCountersLocked() const",
+        "lock-scoped counter snapshot helper",
+    )
+    require(NODE, "perf_last_callback_received_ = snapshot.received", "received baseline update")
+    require(
+        NODE, "perf_last_callback_overwritten_ = snapshot.overwritten", "overwrite baseline update"
+    )
     require(NODE, "perf_window_start_ = now", "window boundary update")
     if "received_frames_" in NODE or "overwritten_frames_" in NODE:
         raise AssertionError("callback counters must not be sampled as independent atomics")
@@ -87,9 +105,10 @@ def test_launch_fallback_and_observability_overrides() -> None:
     require(LAUNCH, '"use_gpu_override"', "CPU fallback parameter")
     require(
         LAUNCH,
-        "ParameterValue(\n                        LaunchConfiguration(\"use_gpu\"), "
+        'ParameterValue(\n                        LaunchConfiguration("use_gpu"), '
         "value_type=str)",
-        "string-preserving CPU fallback override")
+        "string-preserving CPU fallback override",
+    )
     require(LAUNCH, '"publish_debug_image_override"', "debug image parameter")
     require(LAUNCH, '"performance_log_period_s_override"', "performance parameter")
     require(LAUNCH, '"input_qos_reliability_override"', "QoS reliability parameter")

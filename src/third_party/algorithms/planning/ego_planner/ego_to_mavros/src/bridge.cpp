@@ -1,10 +1,11 @@
 #include "ego_to_mavros/bridge.hpp"
+#include <cmath>
 
 using namespace std::chrono_literals;
 
 // ─── 构造函数 ─────────────────────────────────────────
 EgoToMavrosBridge::EgoToMavrosBridge()
-    : Node("ego_to_mavros_bridge")
+    : Node("ego_to_mavros_bridge"), last_cmd_time_(0, 0, get_clock()->get_clock_type())
 {
   // ── 声明参数 ──────────────────────────
   this->declare_parameter<std::string>("drone_id", "0");
@@ -68,6 +69,8 @@ void EgoToMavrosBridge::stateCallback(const mavros_msgs::msg::State::SharedPtr m
   if (!fcu_connected_)
   {
     state_ = BridgeState::WAITING_FCU;
+    latest_cmd_.reset();
+    had_traj_ = trigger_sent_ = false;
     return;
   }
 
@@ -86,6 +89,8 @@ void EgoToMavrosBridge::stateCallback(const mavros_msgs::msg::State::SharedPtr m
     {
       state_    = BridgeState::WAITING_FCU;
       had_traj_ = false;
+      latest_cmd_.reset();
+      trigger_sent_ = false;
       RCLCPP_WARN(this->get_logger(),
           "[ego_to_mavros] OFFBOARD exited — back to WAITING_FCU.");
     }
@@ -99,6 +104,13 @@ void EgoToMavrosBridge::posCmdCallback(
   if (msg->trajectory_flag !=
       quadrotor_msgs::msg::PositionCommand::TRAJECTORY_STATUS_READY)
     return;
+
+  for (double value : {msg->position.x, msg->position.y, msg->position.z,
+      msg->velocity.x, msg->velocity.y, msg->velocity.z,
+      msg->acceleration.x, msg->acceleration.y, msg->acceleration.z,
+      msg->yaw, msg->yaw_dot}) {
+    if (!std::isfinite(value)) return;
+  }
 
   latest_cmd_    = msg;
   last_cmd_time_ = this->now();
@@ -131,6 +143,14 @@ void EgoToMavrosBridge::posCmdCallback(
 // ─── MAVROS 里程计回调 ────────────────────────────────
 void EgoToMavrosBridge::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg)
 {
+  const auto & p = msg->pose.pose.position;
+  const auto & q = msg->pose.pose.orientation;
+  const double norm = q.x*q.x + q.y*q.y + q.z*q.z + q.w*q.w;
+  if (!std::isfinite(p.x) || !std::isfinite(p.y) || !std::isfinite(p.z) ||
+      !std::isfinite(norm) || norm < 1e-12) {
+    have_odom_ = false;
+    return;
+  }
   //
   //  MAVROS 的 /mavros/local_position/odom 已转换为 ENU（ROS 标准），
   //  此处 pass-through 转发即可。
@@ -142,12 +162,12 @@ void EgoToMavrosBridge::odomCallback(const nav_msgs::msg::Odometry::SharedPtr ms
   have_odom_               = true;
 
   // 提取 yaw
-  tf2::Quaternion q(
+  tf2::Quaternion orientation(
       msg->pose.pose.orientation.x,
       msg->pose.pose.orientation.y,
       msg->pose.pose.orientation.z,
       msg->pose.pose.orientation.w);
-  tf2::Matrix3x3 m(q);
+  tf2::Matrix3x3 m(orientation.normalized());
   double roll, pitch, yaw;
   m.getRPY(roll, pitch, yaw);
   latest_yaw_ = yaw;
@@ -232,12 +252,17 @@ void EgoToMavrosBridge::setpointLoop()
       mavros_msgs::msg::PositionTarget::FRAME_LOCAL_NED;
 
   // 断流检测
-  bool cmd_timed_out = ((this->now() - last_cmd_time_) > cmd_timeout_);
+  const auto clock = this->now();
+  bool cmd_timed_out = !latest_cmd_ || clock < last_cmd_time_ ||
+      ((clock - last_cmd_time_) > cmd_timeout_);
   bool use_traj = (state_ == BridgeState::TRAJECTORY_ACTIVE)
                   && latest_cmd_ && !cmd_timed_out;
 
   if (cmd_timed_out && state_ == BridgeState::TRAJECTORY_ACTIVE)
   {
+    if (!have_odom_) return;
+    last_hold_pose_ = latest_odom_.pose.pose;
+    last_hold_yaw_ = latest_yaw_;
     state_ = BridgeState::FALLBACK_HOLD;
     RCLCPP_WARN(this->get_logger(),
         "[ego_to_mavros] PositionCommand timeout (%.2fs) → FALLBACK_HOLD",

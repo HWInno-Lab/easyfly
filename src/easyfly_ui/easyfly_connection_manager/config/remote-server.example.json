@@ -1,0 +1,24 @@
+{
+  "server_id": "00000000000000000000000000000001",
+  "bind": "127.0.0.1",
+  "port": 8443,
+  "certificate": "/absolute/private/server.pem",
+  "private_key": "/absolute/private/server.key",
+  "token_file": "/absolute/private/operator.token",
+  "state_directory": "/absolute/private/remote-state",
+  "ros_domain_id": 0,
+  "simulation_time": false,
+  "profiles": {
+    "color_line": {
+      "algorithm": "color_line",
+      "parameters": {
+        "input_topic": "/camera/image_raw",
+        "output_topic": "/remote/color_line_observations",
+        "optical_frame": "camera_color_optical_frame"
+      },
+      "output_topic": "/remote/color_line_observations",
+      "output_type": "easyfly_msgs/msg/ColorLineObservationArray",
+      "policy": "grounded"
+    }
+  }
+}

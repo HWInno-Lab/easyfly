@@ -4,6 +4,12 @@ The plugin preserves the configured scan, range bounds, measurement stamps and
 aircraft geometry. Box contacts use a finite ray/box slab intersection in the
 actual ODE box frame; other geometry continues to use native `dCollide`.
 
+Every CustomMsg point has `offset_time=0`: one native ray update acquires the
+entire cloud at `header.stamp == timebase`. CSV order specifies beam direction,
+not an elapsed physics time. The former index-based 0–100 ms offsets made
+FAST-LIO wait for future IMU and deskew points acquired simultaneously.
+`test_livox_scan_timing` verifies ten actual native 20000-point scans and exit.
+
 Gazebo Classic 11.10.2's bundled ODE `deps/opende/src/ray.cpp` uses different
 parallel tests in the early rejection and interval calculation in
 `dCollideRayBox`. A tiny component toward an outside slab can pass the first
@@ -27,4 +33,5 @@ min-range offset is still added exactly once by `ray_geometry.hpp`.
 entry, segment limits, exact parallel rays, inside exits, transformed boxes,
 external walls and invalid numerical inputs. Historical and corrected native
 fixtures, real scene results, loaded library hashes and failures are recorded in
-`schedule-v5-scene.md` and the corresponding scene evidence summaries.
+`schedule-v6.md`. Historical artifact directories were cleared at the user’s request;
+reproduction requires a rebuilt environment and new evidence.

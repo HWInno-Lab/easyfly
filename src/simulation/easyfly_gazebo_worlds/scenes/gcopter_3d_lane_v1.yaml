@@ -1,0 +1,90 @@
+schema_version: 1
+id: gcopter_3d_lane_v1
+name: GCOPTER 3D controlled lane
+status: registered
+category: benchmark/navigation
+tags:
+- procedural
+- static
+- controlled
+- three_dimensional
+simulator: gazebo_classic
+world:
+  package: easyfly_gazebo_worlds
+  path: worlds/benchmark/navigation/gcopter_3d_lane_v1.world
+  sha256: 1a2df19cb1ac30e6cf354a6b8506cdb23916c1cb7c756f56020edef0f171802a
+provenance:
+  status: recorded
+  source_url: null
+  revision: gcopter_3d_lane_v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_worlds
+    path: licenses/PROJECT-LICENSE
+  - package: easyfly_gazebo_worlds
+    path: evidence/gcopter_3d_lane_v1/generation.json
+  note: Project-authored 3D controlled lane; disarmed native world/ENU alignment and
+    real sensors qualified before registration. Flight qualification is recorded separately.
+asset_sets: []
+required_plugins: []
+supported_profiles:
+- navigation_dev
+legacy_profiles: []
+spawn:
+  frame: world
+  position:
+  - 0
+  - 0
+  - 0.1
+  yaw: 0.0
+  basis: Generated flat floor and reserved route capsule, independently checked by
+    native ODE; geometry and coordinate evidence recorded per scene.
+navigation:
+  frame: odom
+  world_to_navigation:
+    translation:
+    - 0.002831496763974428
+    - 0.0075826868414878845
+    - -0.04214362369791667
+    yaw: -0.01449997682651997
+  recommended_region:
+    min:
+    - -0.5
+    - -3.0
+    - 0.6
+    max:
+    - 6.0
+    - 3.0
+    - 2.4
+  ground_model_frame: map
+  grid_footprint_mode: observed_cells
+runtime:
+  entrypoint:
+    package: easyfly_px4_sitl
+    path: models/easyfly_iris/easyfly_iris.sdf
+  asset_sets:
+  - easyfly_airframe_v1
+  - easyfly_runtime_v1
+  - gazebo_builtin_v1
+  required_plugins:
+  - libgazebo_ros_init.so
+  additional_files:
+  - package: easyfly_gazebo_plugins
+    path: livox_laser_plugin/scan_mode/mid360-real-centr.csv
+  notes:
+  - Same managed vehicle, sensors and admission limits as qualified indoor scenes.
+  heartbeat_rate_hz: 5
+recommended_missions: []
+map_products: []
+verification:
+  resources_complete: true
+  world_loaded: true
+  sensors_checked: true
+  navigation_tested: true
+  evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/gcopter_3d_lane_v1/generation.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/gcopter_3d_lane_v1/bootstrap.json
+  - package: easyfly_gazebo_worlds
+    path: evidence/gcopter_3d_lane_v1/navigation.json

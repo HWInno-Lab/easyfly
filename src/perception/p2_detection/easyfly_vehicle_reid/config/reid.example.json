@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "use_sim_time": true,
+  "cameras": [
+    {
+      "id": "front",
+      "image": "/camera/color/image_raw",
+      "observed_tracks": "/tracks_raw",
+      "frame": "camera_color_optical_frame"
+    }
+  ],
+  "threshold": 0.25,
+  "margin": 0.05
+}

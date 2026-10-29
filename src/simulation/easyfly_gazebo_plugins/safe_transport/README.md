@@ -6,7 +6,8 @@ selects a complete project-local `libgazebo_transport.so.11` in its own
 directly: an executable-only symbol override was tested and rejected as ineffective.
 The private library is not installed on a general library search path. No launch
 environment variable exposes it to `gz`, `gzclient`, PX4, ROS nodes, or other apps.
-There is no LD_PRELOAD, system library overwrite, exception suppression, detached
+The installed `easyfly_sensor_witness` and `easyfly_model_query` also opt into
+that private transport through their own RPATH. There is no LD_PRELOAD, system library overwrite, exception suppression, detached
 worker, or change to the transport Connection protocol.
 
 Derived Apache-2.0 sources:
@@ -15,9 +16,9 @@ Derived Apache-2.0 sources:
 - [Gazebo 11.10.2 server_main.cc](https://github.com/gazebosim/gazebo-classic/blob/gazebo11_11.10.2/gazebo/server_main.cc)
 
 The eleven transport source snapshots in `upstream/` are byte-identical
-imports from that tag, verified by `upstream/SHA256SUMS`. Nine are compiled directly;
-`src/connection.cpp` and `src/connection_manager.cpp` are separately maintained
-derivatives of the corresponding upstream snapshots.
+imports from that tag, verified by `upstream/SHA256SUMS`. Five are compiled directly;
+the corresponding connection, connection-manager, topic-manager, publisher,
+publication and subscription-transport sources in `src/` are maintained derivatives.
 They are compiled against
 installed headers, which match the tag (transport_pch.hh is not used). Original
 copyright notices are retained. The source archive SHA256 is
@@ -183,3 +184,54 @@ after correction all weak owners expire and Finish drains normally. Separate
 actual empty-world/gzclient runs exercise the complete native window lifecycle.
 Enable `EASYFLY_TRANSPORT_DIAGNOSTICS` for weak ownership/topic diagnostics; it
 adds no strong owner and defaults off outside Debug builds.
+
+The standalone server routes SIGINT/SIGTERM through a nonblocking self-pipe.
+The native library binds `Server::SigInt` directly, so a C++ symbol override
+does not affect its internal handler address. The standalone executable redirects
+only sigaction registration of that exact native function to the async-safe
+notification; all other registrations retain libc behavior. This also covers
+library threads that explicitly unblock signals. A runtime installation marker
+and the managed probe verify the actual native Run registration was intercepted.
+An owned `SignalRelay` invokes the same `Server::Stop` and sigInt plugin event
+from an ordinary thread, exactly once.
+The relay joins before its server capture can be destroyed; native Fini and the
+unchanged transport drain still determine successful exit. No threads detach,
+no timeout is extended and no incomplete cleanup is reported as success.
+
+Upstream `Server::SigInt` directly invokes C++ event callbacks from the async
+signal handler. A native event fixture reproduces self-deadlock when that signal
+interrupts a simulator thread holding a mutex needed by a plugin callback. Both
+unsafe controls terminate by the fixture's alarm; both relay controls execute
+that identical locked callback and exit normally. This is a reproduced signal
+reentry defect. The original intermittent complete-SITL shutdown hang did not
+have a captured blocked stack, so this test alone does not uniquely attribute
+that historical incident. Full managed shutdown regressions remain required.
+
+`easyfly_model_query MODEL --pose|--info` provides the read-only native model
+witness used by the algorithm probes. It uses this private transport and emits
+the response only after the node, connections and transport workers retire.
+It rejects missing models and nonfinite poses with a nonzero exit status; no
+native query crash is converted to success. `test_model_query` checks repeated
+poses, collision metadata, a missing model and normal server/client shutdown.
+
+`easyfly_sensor_witness OUTPUT.csv` observes the unique native
+`gazebo.msgs.LaserScanStamped` topic and retains its original timestamp and sensor
+world pose. It initializes only transport, pins the verified private library,
+and writes its bounded recording after subscription, connection and worker
+retirement. Ambiguous sources, empty/overflowed recordings, output errors or
+retained owners fail the process. The external `fuel_sensor_witness` consumer
+builds the installed canonical source and private library; it has no system
+transport fallback. The complete FUEL probe selects the installed executable
+by default. The archived stock observer remains only as historical evidence.
+
+A remote subscriber may disconnect before receiving retained messages.
+`Publication::AddSubscription` now removes a callback on its first failed retained
+delivery. Upstream ignored that result: the first failure cleared the connection,
+and the next retained message dereferenced it. The native TCP regression closes
+an actual peer before replaying two retained messages and reproduces the null
+connection in the prior library under GDB. Repeated delivery and remote removal
+also handle an already cleared link; local callbacks are preserved.
+The unchanged reproducer returns normally after the fix and transport drains to
+zero. The observed preflight model-insertion abort had the same null-connection
+assertion but no captured stack, so this does not uniquely attribute that event
+or the older V-05/V-07 shutdown incidents.

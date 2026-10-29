@@ -43,6 +43,8 @@
     <depend condition="$ROS_VERSION == 2">tf2_geometry_msgs</depend>
     <depend condition="$ROS_VERSION == 2">std_msgs</depend>
     <depend condition="$ROS_VERSION == 2">geometry_msgs</depend>
+    <depend condition="$ROS_VERSION == 2">diagnostic_msgs</depend>
+    <depend condition="$ROS_VERSION == 2">rcl_interfaces</depend>
     <depend condition="$ROS_VERSION == 2">sensor_msgs</depend>
     <depend condition="$ROS_VERSION == 2">nav_msgs</depend>
     <depend condition="$ROS_VERSION == 2">cv_bridge</depend>

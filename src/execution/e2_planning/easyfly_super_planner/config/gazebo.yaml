@@ -1,0 +1,149 @@
+super_planner:
+  backup_traj_en: true
+  detailed_log_en: false
+  visualization_en: false
+  use_fov_cut: false
+  print_log: false
+  visual_process: false
+  frontend_in_known_free: true
+  goal_yaw_en: false
+  goal_vel_en: false
+  corridor_bound_dis: 1.5
+  corridor_line_max_length: 1.2
+  safe_corridor_line_max_length: 5.0
+  iris_iter_num: 2
+  obs_skip_num: 1
+  replan_forward_dt: 0.1
+  planning_horizon: 12.0
+  sensing_horizon: -1
+  receding_dis: 8.0
+  robot_r: 0.17320608075688773
+  yaw_dot_max: 3.0
+  yaw_mode: 2
+  mpc_horizon: 15
+traj_opt:
+  switch:
+    save_log_en: false
+    print_optimizer_log: true
+  boundary:
+    max_vel: 0.3
+    max_acc: 1.5
+    max_jerk: 6.0
+    max_omg: 2.5
+    max_acc_thr: 20.0
+    min_acc_thr: 6.0
+    penna_margin: 0.05
+  exp_traj:
+    pos_constraint_type: 2
+    energy_cost_type: 4
+    block_energy_cost: false
+    opt_accuracy: 5.0e-06
+    scale_factor: 1.0
+    integral_reso: 15
+    smooth_eps: 0.01
+    penna_t: 12000.0
+    penna_pos: 5000000.0
+    penna_vel: 50000000.0
+    penna_acc: 500000.0
+    penna_jerk: -500000.0
+    penna_attract: 1000.0
+    penna_omg: 500000.0
+    penna_thr: 100000.0
+  backup_traj:
+    uniform_time_en: true
+    pos_constraint_type: 2
+    piece_num: 2
+    energy_cost_type: 4
+    block_energy_cost: true
+    opt_accuracy: 1.0e-06
+    scale_factor: 1.0
+    integral_reso: 12
+    smooth_eps: 0.01
+    penna_t: 1200.0
+    penna_ts: 100000.0
+    penna_pos: 1000000.0
+    penna_vel: 10000000.0
+    penna_acc: 100000.0
+    penna_jerk: 100000.0
+    penna_omg: 100000.0
+    penna_max_acc_thr: 100000.0
+    penna_min_acc_thr: 100000.0
+  flatness:
+    mass: 1.64
+    dh: 0.35
+    dv: 0.35
+    cp: 0.001
+    v_eps: 0.0001
+    grav: 9.81
+astar:
+  map_voxel_num:
+  - 90
+  - 70
+  - 50
+  visual_process: false
+  allow_diag: false
+  heu_type: 2
+  debug_visualization_en: false
+rog_map:
+  resolution: 0.2
+  inflation_resolution: 0.2
+  inflation_step: 0
+  unk_inflation_en: false
+  unk_inflation_step: 1
+  map_size:
+  - 16.0
+  - 12.0
+  - 8.0
+  fix_map_origin:
+  - 2.0
+  - 0.0
+  - 1.6
+  frontier_extraction_en: false
+  virtual_ceil_height: 5.0
+  virtual_ground_height: -2.0
+  load_pcd_en: false
+  map_sliding:
+    enable: false
+    threshold: 0.3
+  esdf:
+    enable: false
+    resolution: 0.1
+    local_update_box:
+    - 5
+    - 5
+    - 3
+  ros_callback:
+    enable: false
+    cloud_topic: /cloud_registered
+    odom_topic: /lidar_slam/odom
+    odom_timeout: 2.0
+  visualization:
+    enable: false
+    use_dynamic_reconfigure: false
+    time_rate: 2
+    frame_rate: 0
+    range:
+    - 15
+    - 15
+    - 4
+    frame_id: world
+    pub_unknown_map_en: false
+  intensity_thresh: -10
+  point_filt_num: 1
+  raycasting:
+    enable: true
+    batch_update_size: 1
+    local_update_box:
+    - 100
+    - 100
+    - 5
+    ray_range:
+    - 0.5
+    - 100
+    p_min: 0.1
+    p_miss: 0.12
+    p_free: 0.499
+    p_occ: 0.85
+    p_hit: 0.9
+    p_max: 0.98
+    unk_thresh: 0.0

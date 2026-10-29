@@ -333,6 +333,10 @@ public:
     void Delete_Points(PointVector &PointToDel);
     int Delete_Point_Boxes(vector<BoxPointType> &BoxPoints);
     void flatten(KD_TREE_NODE *root, PointVector &Storage, delete_point_storage_set storage_type);
+    // Foreground calls must be serialized with Add/Delete/Search, as in the
+    // mapper's single executor. Skip a busy background rebuild rather than
+    // blocking localization to obtain a visualization snapshot.
+    bool Snapshot(PointVector &Storage);
     void acquire_removed_points(PointVector &removed_points);
     BoxPointType tree_range();
     PointVector PCL_Storage;

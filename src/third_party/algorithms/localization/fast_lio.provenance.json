@@ -19,14 +19,21 @@
   "nested_exact_import_commits": null,
   "license_evidence": {
     "root_license_text": "GPL version 2, June 1991",
-    "package_xml_declared_license": "BSD",
-    "mismatch_preserved_not_resolved": true,
-    "per_file_notices_preserved": true
+    "mismatch_preserved_not_resolved": false,
+    "per_file_notices_preserved": true,
+    "historical_package_xml_declared_license": "BSD",
+    "current_package_xml_declared_licenses": [
+      "GPL-2.0",
+      "BSD-3-Clause"
+    ],
+    "ikd_historical_license_gap_remains": true
   },
   "local_changes_in_this_batch": [
     "Outer directory relocation; all 45 non-CMake tracked vendor files byte-identical.",
     "CMake FASTLIO_OUTPUT_ROOT cache override for isolated Log/PCD outputs; default layout retained.",
-    "Install original LICENSE and README with the existing package share."
+    "Install original LICENSE and README with the existing package share.",
+    "2026-10-24 debug-v1 round2: repair fractional-second truncation that made SLAM TF precede its acquisition stamp; add pure native timestamp regression. Other historical provenance entries retained.",
+    "2026-10-26 V-08: native signal-thread shutdown and current local map snapshot publication; full details and preserved previous identities in v08_local_patch."
   ],
   "consumers": [
     "easyfly_fast_lio_integration",
@@ -47,7 +54,12 @@
     },
     "CMakeLists.txt": {
       "before_sha256": "94c6a87d4091b7e83cd466bc85a23eed7ed6ab89ea2c70474ebce5d0e85f3118",
-      "current_sha256": "8044a0bc9804cc1ab7e6108bf2c3ee55b3a9c4ad7c4329612954b93bc57669f3"
+      "current_sha256": "8c2ad8278c84ea46d27937153a0e4568dd3ce68c75f983db71d349aa44cebbf6",
+      "debug_v1_round2_change": "Round full source time to nearest nanosecond; native regression or build registration.",
+      "pre_v08_recorded_current_sha256": "55ef154640ef67a91c468f9f1a602d9d15cc00501b247cc1e8155dd39be49c82",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits.",
+      "pre_delivery_metadata_sha256": "61c09d7612cae2a644ed3991dddcb3ccd6178ed1172cd22951f950524928e1b1",
+      "delivery_change": "Correct license metadata and install component NOTICE.md; estimator unchanged."
     },
     "LICENSE": {
       "before_sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
@@ -71,7 +83,9 @@
     },
     "README.md": {
       "before_sha256": "f1fbe9178871c53a63ed2bff627c712520a07463a996e579d7c8d800d2d8e27b",
-      "current_sha256": "f1fbe9178871c53a63ed2bff627c712520a07463a996e579d7c8d800d2d8e27b"
+      "current_sha256": "cb448b105f04fc36e0d06b8a23c6fff046974c31a6765936942df9c43ca95a5f",
+      "pre_v08_recorded_current_sha256": "f1fbe9178871c53a63ed2bff627c712520a07463a996e579d7c8d800d2d8e27b",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits."
     },
     "config/avia.yaml": {
       "before_sha256": "47de1f48a605b04a8fcec4a98a41a13a502dcd5ad39d06ad1c75c9d737e74e00",
@@ -143,7 +157,8 @@
     },
     "include/common_lib.h": {
       "before_sha256": "bd9d6cf500f6f77e880c0cbf451ce6fc8b0e6d638773a4580a1ee779744e9e54",
-      "current_sha256": "bd9d6cf500f6f77e880c0cbf451ce6fc8b0e6d638773a4580a1ee779744e9e54"
+      "current_sha256": "9e45f593329d0913932f28d42fec5243dfe68f917d486e19c52f91bbcfac6aac",
+      "debug_v1_round2_change": "Round full source time to nearest nanosecond; native regression or build registration."
     },
     "include/extrinsic_validation.hpp": {
       "before_sha256": "1697586399a2d98c42bc426577596bf41a004fbdad3a1921de40e2dc3f1563cf",
@@ -151,11 +166,15 @@
     },
     "include/ikd-Tree/ikd_Tree.cpp": {
       "before_sha256": "ec3cbbbb6386eb6c68f9aa081c48b5d62209ada44fe167a002d4e3b112a1ea9f",
-      "current_sha256": "ec3cbbbb6386eb6c68f9aa081c48b5d62209ada44fe167a002d4e3b112a1ea9f"
+      "current_sha256": "19e0e25562ec7963905fecfd985d43925a03ff1032c00622d9ebc4fd21ce4945",
+      "pre_v08_recorded_current_sha256": "ec3cbbbb6386eb6c68f9aa081c48b5d62209ada44fe167a002d4e3b112a1ea9f",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits."
     },
     "include/ikd-Tree/ikd_Tree.h": {
       "before_sha256": "bb87cab944c6c59e0be61cb0b3a2cd0e334d93dc1bf768875058857278135a4b",
-      "current_sha256": "bb87cab944c6c59e0be61cb0b3a2cd0e334d93dc1bf768875058857278135a4b"
+      "current_sha256": "738af57b160c71bdcdbe179b413ff31355308f23e2eece0e9592d9392ac8fcff",
+      "pre_v08_recorded_current_sha256": "bb87cab944c6c59e0be61cb0b3a2cd0e334d93dc1bf768875058857278135a4b",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits."
     },
     "include/matplotlibcpp.h": {
       "before_sha256": "360d70cb9a7dd6cb981622871204c394b56f856ef42abd0e07a011a5e146f4d6",
@@ -183,7 +202,11 @@
     },
     "package.xml": {
       "before_sha256": "96bab82ce79a7eb88329ace0fb76a347f5d789eaa2b17ecc1ef3946a90b86071",
-      "current_sha256": "96bab82ce79a7eb88329ace0fb76a347f5d789eaa2b17ecc1ef3946a90b86071"
+      "current_sha256": "2331ad33a0b6d83d14c55d750b8613fd1da6428ec23bd13a39cd48d813338d4c",
+      "pre_v08_recorded_current_sha256": "96bab82ce79a7eb88329ace0fb76a347f5d789eaa2b17ecc1ef3946a90b86071",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits.",
+      "pre_delivery_metadata_sha256": "264b75601d4f7bd834d67a3a7d907fbfbb4ea17a3694a821a62ebcd5b182be21",
+      "delivery_change": "Correct license metadata and install component NOTICE.md; estimator unchanged."
     },
     "rviz/fastlio.rviz": {
       "before_sha256": "4908b856b6e8b61eec6512de360ac3868243539bb89b1c32d5ce7de2cda8712a",
@@ -203,7 +226,9 @@
     },
     "src/laserMapping.cpp": {
       "before_sha256": "c60e2f1bf306ef04f498d7ad37ca5cbab7568839a76af89de705d2b49aebf99a",
-      "current_sha256": "c60e2f1bf306ef04f498d7ad37ca5cbab7568839a76af89de705d2b49aebf99a"
+      "current_sha256": "57ca623dabf57021f3ae4ac43971e33aa6728520d7d6970b94bf261bd05c2f03",
+      "pre_v08_recorded_current_sha256": "c60e2f1bf306ef04f498d7ad37ca5cbab7568839a76af89de705d2b49aebf99a",
+      "v08_change": "See explicit v08_local_patch scope, previous source snapshots and validation limits."
     },
     "src/preprocess.cpp": {
       "before_sha256": "65354415440c45d1c8c185a27b60b8078c91ac8609a1a3d43cb5d1050b0adf53",
@@ -216,6 +241,16 @@
     "test/test_extrinsic_validation.cpp": {
       "before_sha256": "6c8d09337d50ae0a6d750566b53e58e4522d2657e426fe5f0e339e85ec076dde",
       "current_sha256": "6c8d09337d50ae0a6d750566b53e58e4522d2657e426fe5f0e339e85ec076dde"
+    },
+    "include/source_time.hpp": {
+      "before_sha256": null,
+      "current_sha256": "c0e1af13d3066462015db060a624c62e79aedd0b159e67eefb19599e0ed00c36",
+      "debug_v1_round2_change": "Round full source time to nearest nanosecond; native regression or build registration."
+    },
+    "test/test_source_time.cpp": {
+      "before_sha256": null,
+      "current_sha256": "6664755431c93c4e2fd0ac551b7a55e55cb107b30a7338edc83780da021c83c2",
+      "debug_v1_round2_change": "Round full source time to nearest nanosecond; native regression or build registration."
     }
   },
   "ignored_demo_assets": {
@@ -252,8 +287,41 @@
     }
   },
   "limitations": [
-    "No independent upstream .git/import commit; local git history is not a vendor version lock.",
-    "License metadata/text disagreement and nested origin gaps remain open.",
-    "No dependency upgrade, source refetch or SDK relocation in this batch."
-  ]
+    "A verified selected upstream base and exact nested ikd-Tree files now reconstruct current sources; several upstream commits share these bytes, so the historical checkout is not uniquely determined.",
+    "The original ikd-Tree commit has no separate license; this scope remains unresolved. Root and per-file notices are retained and the package no longer declares BSD alone."
+  ],
+  "v08_local_patch": {
+    "date": "2026-10-26",
+    "description": "Preserve preceding bounded scan/path freshness changes; remove synchronous POSIX SIGINT shutdown in favor of native rclcpp signal thread; publish current local ikd-tree snapshots instead of accumulating duplicate scans; add native signal and map membership regressions. Existing estimator equations/calibration/source timestamps unchanged. Map-save now writes latest local snapshot; see README.",
+    "validation": "artifacts/v01-v16-20261025/v08-fix-validation.json and v08-map-snapshot-1.json plus v08-map-snapshot-tests-{copy,symlink}.log; ordinary hour 2 validates signal/catalog changes only, map candidate still requires subsequent whole hour.",
+    "before_map_sources": "artifacts/v01-v16-20261025/v08-before-map-snapshot/manifest.json",
+    "files": {
+      "CMakeLists.txt": "61c09d7612cae2a644ed3991dddcb3ccd6178ed1172cd22951f950524928e1b1",
+      "README.md": "cb448b105f04fc36e0d06b8a23c6fff046974c31a6765936942df9c43ca95a5f",
+      "package.xml": "264b75601d4f7bd834d67a3a7d907fbfbb4ea17a3694a821a62ebcd5b182be21",
+      "src/laserMapping.cpp": "57ca623dabf57021f3ae4ac43971e33aa6728520d7d6970b94bf261bd05c2f03",
+      "include/ikd-Tree/ikd_Tree.h": "738af57b160c71bdcdbe179b413ff31355308f23e2eece0e9592d9392ac8fcff",
+      "include/ikd-Tree/ikd_Tree.cpp": "19e0e25562ec7963905fecfd985d43925a03ff1032c00622d9ebc4fd21ce4945",
+      "test/test_signal_shutdown.py": "4f0e0030444fffd724fcdf3cba1ea8883a5226fddd7eb2638690dcc9cc76ea91",
+      "test/signal_probe.cpp": "cae88d40e1c04ffb532fd8bdd3088249455898c91da4634f48e2123838157eb1",
+      "test/test_map_snapshot.cpp": "c7bf2055a015cf759a7ebd68a260ab015eb711d7f31a51bdb44a2a2a8028112b"
+    }
+  },
+  "verified_reconstruction_source": {
+    "repository": "https://github.com/Ericsii/FAST_LIO_ROS2",
+    "reconstruction_commit": "59b082f0d196764d6d3dc784ccb602c26b2de597",
+    "historically_unique": false,
+    "ikd_repository": "https://github.com/hku-mars/ikd-Tree",
+    "ikd_commit": "e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4",
+    "ikfom_tree": "ffbe4e535bccc0058c477cc9ae539e40b0dee25f"
+  },
+  "reconstruction_manifest": "fast_lio.sources/manifest.json",
+  "license_metadata_correction": {
+    "before": "BSD",
+    "current": [
+      "GPL-2.0",
+      "BSD-3-Clause"
+    ],
+    "scope": "Root LICENSE and individual file notices; unresolved ikd-Tree license scope retained in NOTICE.md."
+  }
 }

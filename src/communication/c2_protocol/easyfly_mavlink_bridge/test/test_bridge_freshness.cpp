@@ -406,6 +406,18 @@ TEST_F(BridgeFreshness, UnansweredMavrosModeLocksBridgeAndClearsPending)
   EXPECT_FALSE(BridgeFreshnessTestPeer::arm(*node_).success);
   EXPECT_EQ(BridgeFreshnessTestPeer::mode(*node_).message.find("command_result_unknown:"), 0U);
   BridgeFreshnessTestPeer::command(*node_);
+  const auto first_rejection = BridgeFreshnessTestPeer::capabilities(*node_);
+  EXPECT_NE(
+    first_rejection.details.front().find("\"fault_rejected_command_count\":1"),
+    std::string::npos);
+  EXPECT_EQ(
+    first_rejection.details.front().find("\"last_fault_rejected_source_ns\":0"),
+    std::string::npos);
+  BridgeFreshnessTestPeer::command(*node_);
+  const auto second_rejection = BridgeFreshnessTestPeer::capabilities(*node_);
+  EXPECT_NE(
+    second_rejection.details.front().find("\"fault_rejected_command_count\":2"),
+    std::string::npos);
   spin();
   EXPECT_EQ(setpoints_, 0);
 }

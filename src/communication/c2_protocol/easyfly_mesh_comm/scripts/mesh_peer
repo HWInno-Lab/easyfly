@@ -1,0 +1,5 @@
+#!/usr/bin/python3 -s
+from easyfly_mesh_comm.node import main
+
+if __name__ == "__main__":
+    main()

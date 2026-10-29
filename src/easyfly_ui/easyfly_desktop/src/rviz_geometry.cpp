@@ -10,15 +10,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-#include "easyfly_desktop/rviz_geometry.hpp"
-
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstring>
 #include <limits>
-
+#include "easyfly_desktop/rviz_geometry.hpp"
+#include <easyfly_ui_bridge/special_observations.hpp>
 namespace easyfly_desktop
 {
 namespace spatial
@@ -211,13 +209,58 @@ Geometry convert(const easyfly_msgs::msg::ObstacleInfoArray & m)
   }
   g.detail = "几何障碍框；不读取类别推断或改变避障"; return g;
 }
+Geometry convert(const easyfly_msgs::msg::LandingGuidanceTarget & m)
+{
+  Geometry g; g.frame = m.header.frame_id;
+  g.stamp_ns = easyfly_ui_bridge::detail::stamp_ns(m.header.stamp); g.lifetime_ns = 500000000;
+  g.detail = "局部板中心与单位法向（非下降指令）"; g.primitive = Primitive::Segments;
+  g.valid = m.valid && easyfly_ui_bridge::special::valid(m, "camera_down_optical_frame");
+  if (!g.valid) {g.detail = "局部降落观测无效/源帧不匹配"; return g;}
+  const auto & p = m.position; const auto & n = m.plane_normal;
+  g.input_count = 1;
+  g.vertices = {{static_cast<float>(p.x), static_cast<float>(p.y), static_cast<float>(p.z)},
+    {static_cast<float>(p.x + .5 * n.x), static_cast<float>(p.y + .5 * n.y),
+      static_cast<float>(p.z + .5 * n.z)}};
+  return g;
+}
+Geometry convert(const easyfly_msgs::msg::TargetPredictionArray & m)
+{
+  Geometry g; g.frame = m.header.frame_id;
+  g.stamp_ns = easyfly_ui_bridge::detail::stamp_ns(m.header.stamp); g.lifetime_ns = 500000000;
+  g.detail = "模型预测十字（非实测；参考时间/horizon见感知表）"; g.primitive = Primitive::Segments;
+  g.valid = easyfly_ui_bridge::special::valid(m); g.input_count = m.predictions.size();
+  if (!g.valid) {g.detail = "预测来源、ID、数值或数量无效"; return g;}
+  for (const auto & p : m.predictions) {
+    if (!p.valid) {++g.omitted; continue;}
+    if (std::abs(p.position_x) > 1000000 || std::abs(p.position_y) > 1000000 ||
+      std::abs(p.position_z) > 1000000) {g.valid = false; g.vertices.clear(); return g;}
+    const float x = p.position_x, y = p.position_y, z = p.position_z;
+    g.vertices.insert(
+      g.vertices.end(), {{x - .1F, y, z}, {x + .1F, y, z},
+        {x, y - .1F, z}, {x, y + .1F, z}, {x, y, z - .1F}, {x, y, z + .1F}});
+  }
+  return g;
+}
+Geometry convert(const easyfly_msgs::msg::ClassifiedObstacleArray & m)
+{
+  if (!m.geometry_valid || !easyfly_ui_bridge::special::valid(m)) {
+    Geometry invalid; invalid.detail = "类别副本几何无效/超限"; return invalid;
+  }
+  easyfly_msgs::msg::ObstacleInfoArray copy; copy.header = m.header;
+  for (const auto & item : m.obstacles) {
+    copy.obstacles.push_back(item.obstacle);
+  }
+  auto g = convert(copy); g.lifetime_ns = 500000000;
+  if (g.valid) {g.detail = "独立类别副本几何（类别有效期见感知表；不改变原障碍）";}
+  return g;
+}
 std::string validity(const Geometry & g, int64_t now, int64_t receipt, int64_t steady)
 {
   if (!g.valid) {return g.detail;}
   if (now <= 0) {return "时钟未就绪";}
   if (g.stamp_ns > now && g.stamp_ns - now > 200000000LL) {return "未来源时间";}
-  if (now - g.stamp_ns > kTtlNs) {return "源时间过期";}
-  if (steady < receipt || steady - receipt > kTtlNs) {return "接收超时 / 重复源不续期";}
+  if (now - g.stamp_ns > g.lifetime_ns) {return "源时间过期";}
+  if (steady < receipt || steady - receipt > g.lifetime_ns) {return "接收超时 / 重复源不续期";}
   return {};
 }
 }  // namespace spatial

@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef EASYFLY_DESKTOP__MISSION_GEOMETRY_HPP_
 #define EASYFLY_DESKTOP__MISSION_GEOMETRY_HPP_
 #include <QPointF>
@@ -24,7 +23,11 @@
 namespace easyfly_desktop
 {
 struct DraftPoint {size_t step; double x, y, z; std::string type;};
-struct DraftArea {size_t step; double x, y, width, height, z;};
+struct DraftArea
+{
+  size_t step; double x, y, width, height, z;
+  std::string type{"search"}; double max_z{0}; bool forbidden{false};
+};
 struct DraftLink {size_t from, to;};  // Indices in points, never a planner route.
 struct DraftGeometry
 {

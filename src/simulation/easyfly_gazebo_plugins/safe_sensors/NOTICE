@@ -1,0 +1,5 @@
+Gazebo Classic sensors, gazebo11_11.10.2
+Open Source Robotics Foundation; Apache-2.0.
+Original per-file copyright notices are retained in upstream/.
+EasyFly modifications (2026): preserve positive equal render-scene time and
+require explicit process-local compatibility activation.

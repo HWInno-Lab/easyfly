@@ -11,19 +11,14 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #pragma once
-
 #include <algorithm>
 #include <cstdint>
 #include <string>
-
 #include <nav_msgs/msg/occupancy_grid.hpp>
 #include <easyfly_msgs/msg/obstacle_info_array.hpp>
-
 namespace easyfly_semantic_map
 {
-
 // Map reset protocol shared with consumers:
 //   * /obstacles: empty array, zero header stamp;
 //   * /occupancy_grid: valid dimensions but every cell is UNKNOWN (-1), zero
@@ -34,7 +29,6 @@ inline bool zeroStamp(const builtin_interfaces::msg::Time & stamp)
 {
   return stamp.sec == 0 && stamp.nanosec == 0;
 }
-
 inline nav_msgs::msg::OccupancyGrid makeInvalidGrid(
   const double width_m, const double height_m, const double resolution,
   const std::string & frame_id)
@@ -52,7 +46,6 @@ inline nav_msgs::msg::OccupancyGrid makeInvalidGrid(
   grid.data.assign(cells, -1);
   return grid;
 }
-
 inline easyfly_msgs::msg::ObstacleInfoArray makeInvalidObstacles(
   const std::string & frame_id)
 {
@@ -60,5 +53,4 @@ inline easyfly_msgs::msg::ObstacleInfoArray makeInvalidObstacles(
   obstacles.header.frame_id = frame_id;
   return obstacles;
 }
-
 }  // namespace easyfly_semantic_map

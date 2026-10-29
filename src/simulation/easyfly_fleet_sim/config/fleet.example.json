@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "coordinator_domain": 170,
+  "gazebo_port": 12980,
+  "gazebo_cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "camera_rate_hz": 10,
+  "vehicles": [
+    {
+      "id": "alpha",
+      "instance": 0,
+      "domain": 171,
+      "spawn": [
+        0,
+        0,
+        0.3
+      ],
+      "cpus": [
+        4,
+        5,
+        6,
+        7
+      ]
+    },
+    {
+      "id": "bravo",
+      "instance": 1,
+      "domain": 172,
+      "spawn": [
+        5,
+        0,
+        0.3
+      ],
+      "cpus": [
+        8,
+        9,
+        10,
+        11
+      ]
+    }
+  ]
+}

@@ -10,13 +10,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef LAYOUT_STATE_HPP_
 #define LAYOUT_STATE_HPP_
-
 #include <QSettings>
 #include <QSplitter>
-
 namespace easyfly_desktop
 {
 // Only a deliberate handle drag persists sizes; temporary focus mode never changes them.
@@ -33,5 +30,4 @@ inline void remember_splitter(QSplitter * splitter, const QString & key)
     });
 }
 }  // namespace easyfly_desktop
-
 #endif  // LAYOUT_STATE_HPP_

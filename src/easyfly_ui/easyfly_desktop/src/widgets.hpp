@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef WIDGETS_HPP_
 #define WIDGETS_HPP_
 #include <QAbstractTableModel>
@@ -20,9 +19,7 @@
 #include <QStringList>
 #include <QVector>
 #include <QWidget>
-
 #include <memory>
-
 #include "easyfly_desktop/source.hpp"
 #include "easyfly_desktop/presentation.hpp"
 #include "easyfly_desktop/camera_overlay.hpp"

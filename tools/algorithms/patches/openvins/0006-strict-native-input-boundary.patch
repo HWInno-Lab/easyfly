@@ -1,0 +1,147 @@
+--- a/ov_msckf/src/ros/ROS2Visualizer.cpp
++++ b/ov_msckf/src/ros/ROS2Visualizer.cpp
+@@ -177,13 +177,29 @@
+ 
+   // We need a valid parser
+   assert(parser != nullptr);
++  rcl_interfaces::msg::ParameterDescriptor input_descriptor;
++  input_descriptor.read_only = true;
++  // The executable auto-declares CLI overrides. Preserve that startup value,
++  // then re-declare it read-only before installing any input callbacks.
++  bool requested_input_timing = false;
++  if (_node->has_parameter("strict_input_timing")) {
++    requested_input_timing = _node->get_parameter("strict_input_timing").as_bool();
++    _node->undeclare_parameter("strict_input_timing");
++  }
++  strict_input_timing = _node->declare_parameter<bool>(
++    "strict_input_timing", requested_input_timing, input_descriptor, true);
++  if (strict_input_timing && (!_node->get_parameter("use_sim_time").as_bool() ||
++      _app->get_params().state_options.num_cameras != 1))
++    throw std::invalid_argument("strict input timing requires managed monocular simulation");
+ 
+   // Create imu subscriber (handle legacy ros param info)
+   std::string topic_imu;
+   _node->declare_parameter<std::string>("topic_imu", "/imu0");
+   _node->get_parameter("topic_imu", topic_imu);
+   parser->parse_external("relative_config_imu", "imu0", "rostopic", topic_imu);
+-  sub_imu = _node->create_subscription<sensor_msgs::msg::Imu>(topic_imu, rclcpp::SensorDataQoS(),
++  rclcpp::QoS imu_qos = rclcpp::SensorDataQoS();
++  if (strict_input_timing) imu_qos = rclcpp::QoS(1000).reliable();
++  sub_imu = _node->create_subscription<sensor_msgs::msg::Imu>(topic_imu, imu_qos,
+                                                               std::bind(&ROS2Visualizer::callback_inertial, this, std::placeholders::_1));
+   PRINT_INFO("subscribing to IMU: %s\n", topic_imu.c_str());
+ 
+@@ -224,7 +240,8 @@
+       // auto sub = _node->create_subscription<sensor_msgs::msg::Image>(
+       //    cam_topic, rclcpp::SensorDataQoS(), std::bind(&ROS2Visualizer::callback_monocular, this, std::placeholders::_1, i));
+       auto sub = _node->create_subscription<sensor_msgs::msg::Image>(
+-          cam_topic, 10, [this, i](const sensor_msgs::msg::Image::SharedPtr msg0) { callback_monocular(msg0, i); });
++          cam_topic, rclcpp::QoS(strict_input_timing ? 32 : 10),
++          [this, i](const sensor_msgs::msg::Image::SharedPtr msg0) { callback_monocular(msg0, i); });
+       subs_cam.push_back(sub);
+       PRINT_INFO("subscribing to cam (mono): %s\n", cam_topic.c_str());
+     }
+@@ -448,7 +465,41 @@
+   PRINT_INFO(REDPURPLE "TIME: %.3f seconds\n\n" RESET, (rT2 - rT1).total_microseconds() * 1e-6);
+ }
+ 
++bool ROS2Visualizer::admit_strict_input(const builtin_interfaces::msg::Time &stamp, bool inertial) {
++  if (!strict_input_timing) return true;
++  if (strict_input_failed) return false;
++  const int64_t now = _node->get_clock()->now().nanoseconds();
++  if (now == 0 && last_input_imu_ns == 0 && last_input_camera_ns == 0) return false;
++  const int64_t source = static_cast<int64_t>(stamp.sec)*1000000000LL + stamp.nanosec;
++  auto &previous = inertial ? last_input_imu_ns : last_input_camera_ns;
++  auto &receipt = inertial ? last_input_imu_receipt : last_input_camera_receipt;
++  const auto received = std::chrono::steady_clock::now();
++  const double receipt_gap = std::chrono::duration<double>(received - receipt).count();
++  const int64_t maximum_gap = inertial ? 25000000LL : 250000000LL;
++  // Discovery can deliver writer history before the first live sample. Drop
++  // expired startup history without feeding it or establishing a stream epoch.
++  // Once a stream has accepted data, the original hard failure rules apply.
++  if (previous == 0 && !_app->initialized() && stamp.sec >= 0 &&
++      stamp.nanosec < 1000000000u && source > 0 && now - source > 500000000LL)
++    return false;
++  if (stamp.sec < 0 || stamp.nanosec >= 1000000000u || source <= 0 || now <= 0 ||
++      source - now > 200000000LL || now - source > 500000000LL ||
++      (previous && (source <= previous || source - previous > maximum_gap || receipt_gap > 0.5))) {
++    strict_input_failed = true;
++    RCLCPP_ERROR(_node->get_logger(),
++      "strict input timing failure (%s): source_ns=%ld previous_ns=%ld clock_ns=%ld receipt_gap=%.6f; "
++      "reject before filter update; restart the whole localization session",
++      inertial ? "imu" : "camera", source, previous, now, receipt_gap);
++    _node->get_node_base_interface()->get_context()->shutdown("strict estimator input timing failure");
++    return false;
++  }
++  previous = source;
++  receipt = received;
++  return true;
++}
++
+ void ROS2Visualizer::callback_inertial(const sensor_msgs::msg::Imu::SharedPtr msg) {
++  if (!admit_strict_input(msg->header.stamp, true)) return;
+ 
+   // convert into correct format
+   ov_core::ImuData message;
+@@ -531,6 +582,7 @@
+ }
+ 
+ void ROS2Visualizer::callback_monocular(const sensor_msgs::msg::Image::SharedPtr msg0, int cam_id0) {
++  if (!admit_strict_input(msg0->header.stamp, false)) return;
+ 
+   // Check if we should drop this image
+   double timestamp = msg0->header.stamp.sec + msg0->header.stamp.nanosec * 1e-9;
+--- a/ov_msckf/src/ros/ROS2Visualizer.h
++++ b/ov_msckf/src/ros/ROS2Visualizer.h
+@@ -33,6 +33,8 @@
+ #include <nav_msgs/msg/odometry.hpp>
+ #include <nav_msgs/msg/path.hpp>
+ #include <rclcpp/rclcpp.hpp>
++#include <rcl_interfaces/msg/parameter_descriptor.hpp>
++#include <chrono>
+ #include <sensor_msgs/msg/camera_info.hpp>
+ #include <sensor_msgs/msg/image.hpp>
+ #include <sensor_msgs/msg/imu.hpp>
+@@ -99,6 +101,14 @@
+    */
+   void setup_subscribers(std::shared_ptr<ov_core::YamlParser> parser);
+ 
++  // Optional managed simulation boundary; rejects incomplete/expired input
++  // before it reaches the estimator, without altering any measurement.
++  bool admit_strict_input(const builtin_interfaces::msg::Time &stamp, bool inertial);
++  bool strict_input_timing = false;
++  bool strict_input_failed = false;
++  int64_t last_input_imu_ns = 0, last_input_camera_ns = 0;
++  std::chrono::steady_clock::time_point last_input_imu_receipt, last_input_camera_receipt;
++
+   /**
+    * @brief Will visualize the system if we have new things
+    */
+--- a/ov_msckf/cmake/ROS2.cmake
++++ b/ov_msckf/cmake/ROS2.cmake
+@@ -8,6 +8,7 @@
+ find_package(std_msgs REQUIRED)
+ find_package(geometry_msgs REQUIRED)
+ find_package(diagnostic_msgs REQUIRED)
++find_package(rcl_interfaces REQUIRED)
+ find_package(sensor_msgs REQUIRED)
+ find_package(nav_msgs REQUIRED)
+ find_package(cv_bridge REQUIRED)
+@@ -43,6 +44,7 @@
+         std_msgs
+         geometry_msgs
+         diagnostic_msgs
++        rcl_interfaces
+         sensor_msgs
+         nav_msgs
+         cv_bridge
+--- a/ov_msckf/package.xml
++++ b/ov_msckf/package.xml
+@@ -44,6 +44,7 @@
+     <depend condition="$ROS_VERSION == 2">std_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">geometry_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">diagnostic_msgs</depend>
++    <depend condition="$ROS_VERSION == 2">rcl_interfaces</depend>
+     <depend condition="$ROS_VERSION == 2">sensor_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">nav_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">cv_bridge</depend>

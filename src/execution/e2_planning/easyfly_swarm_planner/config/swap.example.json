@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "lower": [
+    -5,
+    -5,
+    0.5
+  ],
+  "upper": [
+    10,
+    6,
+    3.5
+  ],
+  "grid_m": 1.0,
+  "tracking_tube_m": 0.3,
+  "separation_m": 2.0,
+  "vehicle_radius_m": 0.35,
+  "obstacles": [],
+  "max_steps": 40,
+  "speed_mps": 0.5,
+  "acceleration_mps2": 0.5,
+  "takeoff_world_z": 1.5,
+  "assignment": "explicit",
+  "targets": {
+    "alpha": [
+      5.0,
+      0.0,
+      1.5
+    ],
+    "bravo": [
+      0.0,
+      0.0,
+      1.5
+    ]
+  },
+  "land_on_complete": true
+}

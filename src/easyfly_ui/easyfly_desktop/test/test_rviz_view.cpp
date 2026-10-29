@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <QApplication>
 #include <QCheckBox>
@@ -31,26 +30,26 @@
 #include <QTabWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
-
 #include <chrono>
 #include <memory>
+#include <set>
 #include <string>
 #include <cstring>
 #include <thread>
 #include <vector>
-
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
 #include <tf2_msgs/msg/tf_message.hpp>
 #include "easyfly_desktop/rviz_geometry.hpp"
-
 #include "easyfly_desktop/rviz_view.hpp"
 #include "support.hpp"
 #ifdef EASYFLY_ENABLE_RVIZ_EMBED
 #include <OgreMaterialManager.h>
 #include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreSceneNode.h>
 #endif
 namespace ui = easyfly_desktop;
 namespace spatial = easyfly_desktop::spatial;
@@ -261,7 +260,11 @@ protected:
   void all_layers(ui::RvizView & view)
   {
     for (auto * box : view.findChildren<QCheckBox *>()) {
-      if (box->text() != "TF" && box->isEnabled()) {box->setChecked(true);}
+      if (box->text() != "TF" && box->isEnabled() &&
+        box->text() != QStringLiteral("完整机模") &&
+        box->text() != QStringLiteral("局部降落板法向") &&
+        box->text() != QStringLiteral("模型预测十字") &&
+        box->text() != QStringLiteral("类别副本几何")) {box->setChecked(true);}
     }
   }
   void SetUp() override
@@ -309,6 +312,136 @@ protected:
     executor->spin_some();
   }
 };
+TEST_F(RvizRender, AircraftUsesOriginalPoseTfFreshnessAndNoPublishers)
+{
+  ui::RvizView view; view.resize(1100, 700); view.set_connection(true, true); view.show();
+  click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running);
+  auto * enabled = view.findChild<QCheckBox *>(QStringLiteral("embeddedRvizLayer_完整机模"));
+  ASSERT_NE(enabled, nullptr); enabled->setChecked(true);
+  auto publish = [&](int second, const std::string & child = "base_link", double q_w = 1.) {
+      rosgraph_msgs::msg::Clock time; time.clock.sec = second; clock->publish(time);
+      nav_msgs::msg::Odometry pose; pose.header.frame_id = "map"; pose.child_frame_id = child;
+      pose.header.stamp.sec = second; pose.pose.pose.orientation.w = q_w;
+      pose.pose.pose.position.z = 1.5; odom->publish(pose); executor->spin_some();
+    };
+  ASSERT_TRUE(wait([&] {publish(10); return layer(view, "完整机模").visible;}));
+  EXPECT_EQ(layer(view, "完整机模").vertices, 18U);  // Sensors lack a transform.
+  transforms = node->create_publisher<tf2_msgs::msg::TFMessage>(
+    "/tf_static", rclcpp::QoS(1).reliable().transient_local());
+  tf2_msgs::msg::TFMessage tf;
+  for (const auto & name : {"camera_link", "livox_frame"}) {
+    geometry_msgs::msg::TransformStamped t; t.header.frame_id = "base_link";
+    t.child_frame_id = name;
+    t.header.stamp.sec = 10; t.transform.rotation.w = 1.;
+    t.transform.translation.z = std::string(name) == "camera_link" ? .22 : .13;
+    t.transform.translation.x = std::string(name) == "camera_link" ? .25 : 0.;
+    tf.transforms.push_back(t);
+  }
+  ASSERT_TRUE(
+    wait(
+      [&] {
+        transforms->publish(tf); publish(11); return layer(view, "完整机模").vertices == 23U;
+      }));
+  EXPECT_TRUE(view.snapshot().publishers.empty());
+  const auto output = qEnvironmentVariable("EASYFLY_GEOGRAPHIC_SCREENSHOT_DIR");
+  if (!output.isEmpty()) {
+    QDir().mkpath(output);
+    ASSERT_TRUE(
+      QApplication::primaryScreen()->grabWindow(view.winId()).save(
+        output +
+        "/aircraft.png"));
+  }
+  // A repeated original stamp never renews receipt freshness, even if /clock
+  // remains frozen and the publisher keeps sending the same pose.
+  ASSERT_TRUE(wait([&] {publish(11); return !layer(view, "完整机模").visible;}, 1500));
+  EXPECT_EQ(layer(view, "完整机模").last_invalidation, "pose_expired_or_future");
+  ASSERT_TRUE(wait([&] {publish(12); return layer(view, "完整机模").visible;}));
+  ASSERT_TRUE(
+    wait(
+      [&] {
+        publish(13, "camera_link");
+        return layer(view, "完整机模").last_invalidation == "invalid_base_pose_or_frame";
+      }));
+  EXPECT_FALSE(layer(view, "完整机模").visible);
+  ASSERT_TRUE(wait([&] {publish(14, "base_link", 0.); return !layer(view, "完整机模").visible;}));
+  ASSERT_TRUE(wait([&] {publish(15); return layer(view, "完整机模").visible;}));
+  auto foreign = node->create_publisher<nav_msgs::msg::Odometry>(
+    "/mavros/local_position/odom",
+    rclcpp::SensorDataQoS());
+  ASSERT_TRUE(
+    wait(
+      [&] {
+        publish(16);
+        return layer(view, "完整机模").last_invalidation == "pose_source_missing_or_ambiguous";
+      }));
+  EXPECT_FALSE(layer(view, "完整机模").visible); foreign.reset();
+  ASSERT_TRUE(wait([&] {publish(17); return layer(view, "完整机模").visible;}));
+  ASSERT_TRUE(wait([&] {publish(9); return !layer(view, "完整机模").visible;}));
+  click(view, "stopEmbeddedRviz"); EXPECT_FALSE(view.snapshot().running);
+}
+TEST_F(RvizRender, RepeatedOdometryDoesNotRetainRetiredSceneParents)
+{
+  struct NodeLifetimes : Ogre::Node::Listener
+  {
+    std::set<const Ogre::Node *> live;
+    void nodeDestroyed(const Ogre::Node * node) override {live.erase(node);}
+    ~NodeLifetimes() override
+    {
+      for (const auto * node : live) {
+        if (node->getListener() == this) {const_cast<Ogre::Node *>(node)->setListener(nullptr);}
+      }
+    }
+  } observed_nodes;
+  const auto observe_tree = [&](const auto & self, Ogre::Node * root) -> void {
+      if (!root->getListener()) {
+        root->setListener(&observed_nodes); observed_nodes.live.insert(root);
+      }
+      for (auto * child : root->getChildren()) {
+        self(self, child);
+      }
+    };
+  const auto observe_nodes = [&] {
+      for (const auto & entry : Ogre::Root::getSingleton().getSceneManagers()) {
+        observe_tree(observe_tree, entry.second->getRootSceneNode());
+      }
+    };
+  const auto retained_nodes = [&] {return observed_nodes.live.size();};
+  const auto count_tree = [](const auto & self, const Ogre::Node * root) -> size_t {
+      size_t count = 1;
+      for (const auto * child : root->getChildren()) {
+        count += self(self, child);
+      }
+      return count;
+    };
+  const auto scene_nodes = [&] {
+      size_t count = 0;
+      for (const auto & entry : Ogre::Root::getSingleton().getSceneManagers()) {
+        count += count_tree(count_tree, entry.second->getRootSceneNode());
+      }
+      return count;
+    };
+  ui::RvizView view; view.resize(1050, 740); view.show(); view.set_connection(true, false);
+  click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running);
+  ASSERT_TRUE(wait([&] {send(); return view.snapshot().status.contains("messages received");}));
+  for (int i = 0; i < 10; ++i) {
+    send(false, 20 + i); QTest::qWait(120);
+  }
+  const auto baseline_frame = view.snapshot().frames;
+  ASSERT_TRUE(wait([&] {return view.snapshot().frames >= baseline_frame + 3;}));
+  const auto initial = scene_nodes(); ASSERT_GT(initial, 10U);
+  observe_nodes(); const auto initial_retained = retained_nodes();
+  const auto updates = view.snapshot().frames;
+  for (int i = 0; i < 60; ++i) {
+    send(false, 30 + i); QTest::qWait(120); observe_nodes();
+  }
+  const auto final_frame = view.snapshot().frames;
+  ASSERT_TRUE(wait([&] {return view.snapshot().frames >= final_frame + 3;}));
+  EXPECT_GE(view.snapshot().frames, updates + 50);
+  EXPECT_EQ(scene_nodes(), initial) << "Keep=1 must also retire the native visual parents";
+  EXPECT_EQ(retained_nodes(), initial_retained) <<
+    "Retired covariance roots must not survive detached from the scene tree";
+  view.stop();
+}
 TEST_F(RvizRender, PoseOnlyCameraZeroPublishersAndIndependentContext)
 {
   ui::RvizView view; view.resize(1050, 740); view.show(); view.set_connection(true, false);
@@ -332,6 +465,9 @@ TEST_F(RvizRender, PoseOnlyCameraZeroPublishersAndIndependentContext)
   // Fast DDS graph discovery reports depth0 (unknown). Inspect the local DDS
   // subscription's actual QoS, not the network-discovery placeholder.
   EXPECT_EQ(view.snapshot().input_depth, 1);
+  const auto opened = view.snapshot();
+  view.set_connection(true, false);
+  EXPECT_EQ(view.snapshot().lifecycle_sequence, opened.lifecycle_sequence);
   view.findChild<QComboBox *>("embeddedRvizView")->setCurrentIndex(1);
   click(view, "resetEmbeddedRvizView"); QTest::qWait(200);
   view.findChild<QComboBox *>("embeddedRvizView")->setCurrentIndex(0);
@@ -341,6 +477,9 @@ TEST_F(RvizRender, PoseOnlyCameraZeroPublishersAndIndependentContext)
     QApplication::primaryScreen()->grabWindow(view.winId()).save(
       directory.filePath("layout-prototype-pose.png")));
   view.set_connection(false, false); EXPECT_FALSE(view.snapshot().running);
+  EXPECT_EQ(view.snapshot().last_node, opened.node);
+  EXPECT_EQ(view.snapshot().lifecycle_reason, "disconnected");
+  EXPECT_EQ(view.snapshot().lifecycle_sequence, opened.lifecycle_sequence + 1);
   EXPECT_TRUE(context->is_valid());
   EXPECT_EQ(node->count_subscribers("/mavros/local_position/odom"), 0U);
 }
@@ -528,10 +667,17 @@ TEST_F(RvizRender, SpatialLayersDefaultOffExplicitSubscriptionsAndBoundedGeometr
   view.set_connection(true, true);
   view.findChild<QComboBox *>("embeddedRvizPreset")->setCurrentIndex(1);
   click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running);
-  ASSERT_EQ(view.snapshot().layers.size(), 6U);
+  ASSERT_EQ(view.snapshot().layers.size(), 10U);
   for (const auto & s : view.snapshot().layers) {
     EXPECT_EQ(s.enabled, s.name == QStringLiteral("实际轨迹"));
-    if (!s.enabled) {EXPECT_EQ(node->count_subscribers(s.topic.toStdString()), 0U);}
+    if (!s.enabled) {
+      if (s.name == QStringLiteral("完整机模")) {
+        // The existing pose display already observes /odom; the optional
+        // aircraft must not create its own reader before explicit selection.
+        EXPECT_EQ(s.input_depth, -1);
+        EXPECT_EQ(node->count_subscribers(s.topic.toStdString()), 1U);
+      } else {EXPECT_EQ(node->count_subscribers(s.topic.toStdString()), 0U);}
+    }
   }
   all_layers(view);
   EXPECT_TRUE(layer(view, "规划显示线").status.contains(QStringLiteral("无数据")));
@@ -540,13 +686,14 @@ TEST_F(RvizRender, SpatialLayersDefaultOffExplicitSubscriptionsAndBoundedGeometr
       [&] {
         send_spatial();
         for (const auto & s : view.snapshot().layers) {
-          if (!s.visible) {
+          if (s.enabled && !s.visible) {
             return false;
           }
         }
         return true;
       }));
   for (const auto & s : view.snapshot().layers) {
+    if (!s.enabled) {continue;}
     EXPECT_EQ(node->count_subscribers(s.topic.toStdString()), 1U);
     EXPECT_GE(s.received, 1U); EXPECT_LE(s.vertices, spatial::kCloudPoints);
     EXPECT_EQ(s.input_depth, 1);
@@ -587,6 +734,83 @@ TEST_F(RvizRender, SpatialLayersDefaultOffExplicitSubscriptionsAndBoundedGeometr
         }));
   }
 }
+TEST_F(RvizRender, SpecializedLayersRequireUniqueFreshSourcesAndExplicitSelection)
+{
+  auto landing = node->create_publisher<easyfly_msgs::msg::LandingGuidanceTarget>(
+    "/landing/guidance_target", 1);
+  auto prediction = node->create_publisher<easyfly_msgs::msg::TargetPredictionArray>(
+    "/target_predictions", 1);
+  auto classified = node->create_publisher<easyfly_msgs::msg::ClassifiedObstacleArray>(
+    "/obstacles_classified", 1);
+  ui::RvizView view; view.resize(1250, 850); view.show(); view.set_connection(true, true);
+  view.findChild<QComboBox *>("embeddedRvizPreset")->setCurrentIndex(1);
+  click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running);
+  const std::vector<QString> names = {"局部降落板法向", "模型预测十字", "类别副本几何"};
+  for (const auto & name : names) {
+    EXPECT_FALSE(layer(view, name).enabled);
+    view.findChild<QCheckBox *>("embeddedRvizLayer_" + name)->setChecked(true);
+  }
+  const auto publish = [&](int second, bool conflict = false) {
+      send(true, second); std_msgs::msg::Header h; h.frame_id = "odom"; h.stamp.sec = second;
+      easyfly_msgs::msg::LandingGuidanceTarget g; g.header = g.source_header = h;
+      g.source_header.frame_id = "camera_down_optical_frame";
+      g.valid = true; g.tag_id = 7; g.tag_size_m = .2; g.plane_normal.z = 1;
+      g.position.x = 1; g.position.y = 1; g.position.z = .1; landing->publish(g);
+      easyfly_msgs::msg::TargetPredictionArray a; a.header = h;
+      easyfly_msgs::msg::TargetPrediction p; p.header = p.observation_header = h;
+      p.valid = true; p.track_id = 2; p.horizon_seconds = .5;
+      p.position_x = conflict ? 3 : 2; p.position_y = 1; p.position_z = 1;
+      a.predictions.push_back(p); prediction->publish(a);
+      easyfly_msgs::msg::ClassifiedObstacleArray b; b.header = h; b.geometry_valid = true;
+      easyfly_msgs::msg::ClassifiedObstacle c; c.obstacle.header = h; c.obstacle.obstacle_id = 4;
+      c.obstacle.center_x = 2; c.obstacle.center_y = 1; c.obstacle.center_z = 1;
+      c.obstacle.size_x = c.obstacle.size_y = c.obstacle.size_z = 1;
+      c.obstacle.obstacle_type = "unknown"; c.association_valid = false;
+      b.obstacles.push_back(c); classified->publish(b);
+    };
+  ASSERT_TRUE(
+    wait(
+      [&] {
+        publish(10); return std::all_of(
+          names.begin(), names.end(),
+          [&](const auto & name) {return layer(view, name).visible;});
+      }));
+  EXPECT_EQ(layer(view, names[0]).vertices, 2U);
+  EXPECT_EQ(layer(view, names[1]).vertices, 6U);
+  EXPECT_EQ(layer(view, names[2]).vertices, 24U);
+  EXPECT_TRUE(view.snapshot().publishers.empty());
+  QDir directory(qEnvironmentVariable(
+      "EASYFLY_UI_CAPTURE_ROOT",
+      EASYFLY_RVIZ_SCREENSHOT_DIRECTORY));
+  ASSERT_TRUE(directory.mkpath("."));
+  ASSERT_TRUE(wait([&] {publish(10); return view.snapshot().frames >= 3;}));
+  view.raise(); view.activateWindow(); QTest::qWait(70);
+  ASSERT_TRUE(
+    QApplication::primaryScreen()->grabWindow(view.winId()).save(
+      directory.filePath("specialized-layers.png")));
+  // Repeating the exact measurement cannot keep a dead source visible.
+  ASSERT_TRUE(wait([&] {publish(10); return !layer(view, names[1]).visible;}, 1500));
+  ASSERT_TRUE(wait([&] {publish(11); return layer(view, names[1]).visible;}));
+  ASSERT_TRUE(wait([&] {publish(11, true); return !layer(view, names[1]).visible;}));
+  EXPECT_TRUE(layer(view, names[1]).last_invalidation.contains("conflict"));
+  ASSERT_TRUE(wait([&] {publish(12); return layer(view, names[1]).visible;}));
+  auto duplicate = node->create_publisher<easyfly_msgs::msg::TargetPredictionArray>(
+    "/target_predictions", 1);
+  ASSERT_TRUE(wait([&] {publish(12); return !layer(view, names[1]).visible;}));
+  EXPECT_TRUE(layer(view, names[1]).status.contains(QStringLiteral("不唯一")));
+  duplicate.reset();
+  ASSERT_TRUE(wait([&] {publish(13); return layer(view, names[1]).visible;}));
+  for (const auto & name : names) {
+    view.findChild<QCheckBox *>("embeddedRvizLayer_" + name)->setChecked(false);
+    EXPECT_FALSE(layer(view, name).visible);
+    ASSERT_TRUE(
+      wait(
+        [&] {
+          return node->count_subscribers(layer(view, name).topic.toStdString()) == 0;
+        }));
+  }
+  view.stop(); EXPECT_TRUE(context->is_valid());
+}
 TEST_F(RvizRender, SpatialSourceFramesNeedRealTfAndRecoverWithoutInventedTransforms)
 {
   spatial_publishers(); ui::RvizView view; view.resize(1250, 850); view.show();
@@ -600,6 +824,7 @@ TEST_F(RvizRender, SpatialSourceFramesNeedRealTfAndRecoverWithoutInventedTransfo
         return layer(view, "SLAM点云").status.contains(QStringLiteral("TF 未就绪"));
       }));
   EXPECT_FALSE(layer(view, "SLAM点云").visible);
+  EXPECT_TRUE(layer(view, "SLAM点云").last_invalidation.contains(QStringLiteral("TF 未就绪")));
   EXPECT_FALSE(layer(view, "实际轨迹").visible); EXPECT_TRUE(view.snapshot().publishers.empty());
   tf2_msgs::msg::TFMessage tf;
   geometry_msgs::msg::TransformStamped transform; transform.header.frame_id = "odom";
@@ -608,6 +833,8 @@ TEST_F(RvizRender, SpatialSourceFramesNeedRealTfAndRecoverWithoutInventedTransfo
   tf.transforms.push_back(transform); transforms->publish(tf);
   ASSERT_TRUE(wait([&] {send_spatial(11, "camera_init"); return layer(view, "SLAM点云").visible;}));
   EXPECT_EQ(layer(view, "SLAM点云").source_frame, "camera_init");
+  // Recovery preserves the fault cause even after the current status becomes OK.
+  EXPECT_TRUE(layer(view, "SLAM点云").last_invalidation.contains(QStringLiteral("TF 未就绪")));
   ASSERT_TRUE(
     wait(
       [&] {
@@ -632,6 +859,7 @@ TEST_F(RvizRender, SpatialDuplicatePauseInvalidFutureAndClockResetClearGeometry)
   EXPECT_FALSE(layer(view, "SLAM点云").visible);
   EXPECT_GT(layer(view, "SLAM点云").receipt_age, 2);
   EXPECT_NEAR(layer(view, "SLAM点云").source_age, 0, 0.01);
+  EXPECT_TRUE(layer(view, "SLAM点云").last_invalidation.contains(QStringLiteral("接收超时")));
   ASSERT_TRUE(wait([&] {send_spatial(11); return layer(view, "SLAM点云").visible;}));
   ASSERT_TRUE(
     wait(
@@ -650,6 +878,8 @@ TEST_F(RvizRender, SpatialDuplicatePauseInvalidFutureAndClockResetClearGeometry)
   ASSERT_TRUE(wait([&] {return layer(view, "SLAM点云").status.contains(QStringLiteral("未来"));}));
   EXPECT_FALSE(layer(view, "SLAM点云").visible);
   ASSERT_TRUE(wait([&] {send_spatial(14); return layer(view, "SLAM点云").visible;}));
+  const auto before_reset = layer(view, "SLAM点云");
+  const auto node_before_reset = view.snapshot().node;
   rosgraph_msgs::msg::Clock clock_reset; clock_reset.clock.sec = 5; clock->publish(clock_reset);
   ASSERT_TRUE(
     wait(
@@ -658,7 +888,47 @@ TEST_F(RvizRender, SpatialDuplicatePauseInvalidFutureAndClockResetClearGeometry)
         !layer(view, "SLAM点云").visible;
       }));
   ASSERT_TRUE(wait([&] {send_spatial(5); return layer(view, "SLAM点云").visible;}));
+  EXPECT_GT(layer(view, "SLAM点云").epoch, before_reset.epoch);
+  EXPECT_EQ(view.snapshot().node, node_before_reset);
   EXPECT_TRUE(view.snapshot().publishers.empty()); view.stop();
+}
+TEST_F(RvizRender, SourceReplacementAndHiddenPageHaveDistinctIdentityEvidence)
+{
+  spatial_publishers(); ui::RvizView view; view.resize(1100, 800); view.show();
+  view.set_connection(true, true);
+  view.findChild<QComboBox *>("embeddedRvizPreset")->setCurrentIndex(1);
+  click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running); all_layers(view);
+  ASSERT_TRUE(wait([&] {send_spatial(); return layer(view, "SLAM点云").visible;}));
+  const auto original = layer(view, "SLAM点云");
+  const auto renderer = view.snapshot();
+  ASSERT_FALSE(original.source_gid.isEmpty());
+  cloud.reset();
+  cloud = node->create_publisher<sensor_msgs::msg::PointCloud2>(
+    "/cloud_registered", rclcpp::SensorDataQoS());
+  ASSERT_TRUE(
+    wait(
+      [&] {
+        send_spatial(11);
+        const auto next = layer(view, "SLAM点云");
+        return next.visible && next.source_gid != original.source_gid;
+      }));
+  const auto replaced = layer(view, "SLAM点云");
+  EXPECT_GT(replaced.source_changes, original.source_changes);
+  EXPECT_EQ(replaced.epoch, original.epoch);
+  EXPECT_EQ(view.snapshot().node, renderer.node);
+  view.hide();
+  EXPECT_FALSE(view.snapshot().running);
+  EXPECT_EQ(view.snapshot().lifecycle_reason, "hidden");
+  EXPECT_EQ(view.snapshot().last_node, renderer.node);
+  const auto hidden_sequence = view.snapshot().lifecycle_sequence;
+  view.show(); view.set_connection(true, true);
+  EXPECT_FALSE(view.snapshot().running);  // Becoming visible cannot recreate the renderer.
+  EXPECT_EQ(view.snapshot().lifecycle_sequence, hidden_sequence);
+  click(view, "startEmbeddedRviz"); ASSERT_TRUE(view.snapshot().running);
+  EXPECT_NE(view.snapshot().node, renderer.node);
+  EXPECT_EQ(view.snapshot().lifecycle_reason, "explicit_open");
+  EXPECT_EQ(view.snapshot().lifecycle_sequence, hidden_sequence + 1);
+  view.stop();
 }
 TEST_F(RvizRender, SpatialBurstUsesLatestSlotAndDoesNotGrowGeometryHistory)
 {
@@ -680,7 +950,6 @@ TEST_F(RvizRender, SpatialBurstUsesLatestSlotAndDoesNotGrowGeometryHistory)
   EXPECT_TRUE(view.snapshot().publishers.empty());
   view.hide(); EXPECT_FALSE(view.snapshot().running); EXPECT_TRUE(context->is_valid());
 }
-
 TEST_F(RvizRender, MissingTransformClockPauseAndBackwardReset)
 {
   ui::RvizView view; view.resize(1024, 720); view.show(); view.set_connection(true, true);

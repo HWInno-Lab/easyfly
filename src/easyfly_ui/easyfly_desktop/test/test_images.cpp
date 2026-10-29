@@ -10,12 +10,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
-
 #include <chrono>
 #include <thread>
-
 #include "easyfly_desktop/image_pipeline.hpp"
 namespace ui = easyfly_desktop;
 namespace b = easyfly_ui_bridge;

@@ -1,0 +1,11 @@
+--- a/mid360/mid360.sdf
++++ b/mid360/mid360.sdf
+@@ -94,7 +94,7 @@
+             </accel>
+           </noise>
+         </imu>
+-        <plugin name="imu_plugin" filename="libgazebo_ros_imu_sensor.so">
++        <plugin name="imu_plugin" filename="libeasyfly_gazebo_ros_imu.so">
+           <ros>
+             <namespace>/livox</namespace>
+             <!-- gazebo_ros_imu_sensor 固定发布 ~/out, 用 remap 改为 /livox/imu -->

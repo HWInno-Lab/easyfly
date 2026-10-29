@@ -3,7 +3,10 @@
 This independently named ROS sensor plugin derives from `gazebo_ros_pkgs` 3.9.0;
 original source, Apache-2.0 notices and hashes are retained locally. It does not
 replace a system library. Curated MID-360 runtime models select
-`libeasyfly_gazebo_ros_imu.so`; legacy source models stay unchanged.
+`libeasyfly_gazebo_ros_imu.so`. Since the V-16 full-stack regression on
+2026-10-26, the legacy MID-360 entry selects the same plugin: its original
+strict-rate path emitted zero source stamps. Only the plugin filename changes;
+legacy physics, noise, rate and frame parameters remain unchanged.
 
 Gazebo 11.10.2 strict-rate `Sensor::Update` does not advance `LastUpdateTime`.
 The upstream ROS plugin reads that scheduler time, causing repeated zero stamps
@@ -28,6 +31,22 @@ checks and clean exit. Strict-rate mode itself may run the IMU near the physics
 rate rather than its requested 200 Hz; the fix does not resample this stream.
 Production simulation remains in its previous non-strict mode.
 
+Sampling and ROS publication now use separate execution paths. The sensor callback
+copies each complete measurement into a FIFO bounded at 1000 items; one joined
+worker publishes the original message in order. DDS discovery or a stalled
+reliable writer cannot block the measurement callback. Queue overflow or a publish
+exception latches output stopped and logs an error; there is no silent overwrite,
+retimestamp or automatic recovery. Normal shutdown disconnects sampling, drains
+the finite queue and joins the worker before releasing the ROS publisher. Existing
+consumer freshness/continuity gates remain unchanged.
+
+A test-only interposer blocks one actual `rcl_publish` call. With a 300 ms block,
+the original synchronous plugin lost 302 ms of source time; the queued plugin
+retained all 461 observed measurements with a 6 ms maximum source gap. A 7-second
+block filled the queue and verified the stopped-output latch and normal cleanup.
+These are controlled native ROS/Gazebo regressions, separate from ordinary
+full-stack and flight qualification. The interposer is not installed.
+
 ## Opt-in producer timing
 
 Set `EASYFLY_IMU_TIMING_TRACE` to an absolute file prefix in an existing output
@@ -37,7 +56,10 @@ publish call, together with the original measurement stamp. It writes
 `PREFIX.PID.NODE.csv` during normal teardown. Tracing is disabled by default.
 The buffer retains at most 60,000 callbacks, counts discarded records, and does
 not perform per-sample file I/O or publish extra ROS messages. Result codes are
-0 (uninitialized), 1 (identical snapshot), and 2 (published).
+0 (uninitialized), 1 (identical snapshot), 2 (published), and 3 (publication
+failure). The header also records `publish_failures`; a nonzero count invalidates
+input evidence. Entry/snapshot times refer to the sensor callback, while publish
+times refer to the worker, so queue delay remains measurable.
 
 Pair this with `tools/algorithms/probes/openvins_input_trace.py`, then analyze
 the producer CSV and observer JSONL using

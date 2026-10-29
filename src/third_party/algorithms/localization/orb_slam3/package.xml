@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_orbslam3_core</name><version>1.0.0</version>
+  <description>Pinned official ORB-SLAM3, privately named dependencies and installed targets.</description>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>GPL-3.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <depend>libopencv-dev</depend><depend>eigen</depend><depend>boost</depend><depend>libssl-dev</depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

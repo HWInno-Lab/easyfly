@@ -121,4 +121,8 @@ if(BUILD_TESTING)
     ENVIRONMENT "ASAN_OPTIONS=detect_leaks=0:halt_on_error=1" TIMEOUT 30)
 endif()
 
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
+
 ament_package()

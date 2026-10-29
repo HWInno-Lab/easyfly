@@ -3,11 +3,17 @@
 <package format="3">
   <name>easyfly_mesh_comm</name>
   <version>0.1.0</version>
-  <description>TODO: easyfly_mesh_comm</description>
+  <description>Authenticated bounded multi-hop observation transport and link-state routing</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>easyfly_udp_protocol</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

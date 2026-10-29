@@ -105,7 +105,10 @@ class SingleRos(unittest.TestCase):
             spin(0.2)
             m = image()
             self.assertFalse(call('initialize', m, x=-0.1).accepted)
+            newer = image(1)
+            self.assertNotEqual(newer.header.stamp, m.header.stamp)
             result = call('initialize', m)
+            self.assertEqual(result.state.header, m.header)
             self.assertTrue(result.accepted)
             first = result.state.track_id
             spin(0.12)

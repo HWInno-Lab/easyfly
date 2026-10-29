@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <atomic>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <mutex>
 #include <thread>
@@ -20,6 +21,7 @@ struct Capture
   int count{0};
   int64_t last{0}, sequence{-1};
   bool continuous{true};
+  bool finite{true};
   void Receive(const boost::shared_ptr<const sensor_msgs::msgs::Imu> & sample)
   {
     std::lock_guard<std::mutex> lock(mutex);
@@ -28,11 +30,16 @@ struct Capture
       continuous = false;
     }
     last = sample->time_usec(); sequence = sample->seq(); ++count;
+    const auto & a = sample->linear_acceleration();
+    const auto & w = sample->angular_velocity();
+    finite = finite && std::isfinite(a.x()) && std::isfinite(a.y()) && std::isfinite(a.z()) &&
+      std::isfinite(w.x()) && std::isfinite(w.y()) && std::isfinite(w.z());
   }
 };
 int main(int argc, char ** argv)
 {
-  const std::string plugin = argc > 1 ? argv[1] : NATIVE_IMU_LIBRARY;
+  const bool reset_time = argc > 1 && std::string(argv[1]) == "--reset-time";
+  const std::string plugin = argc > 1 && !reset_time ? argv[1] : NATIVE_IMU_LIBRARY;
   int reservation = socket(AF_INET, SOCK_STREAM, 0);
   sockaddr_in address{};
   address.sin_family = AF_INET; address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
@@ -98,7 +105,27 @@ int main(int argc, char ** argv)
       " filtered_count=" << filtered.count << " filtered_usec=" << filtered.last <<
       " continuous=" << filtered.continuous << std::endl;
     passed = raw.count > 4000 && filtered.count > 4000 && filtered.continuous &&
-      filtered.last > 2150000000LL;
+      filtered.last > 2150000000LL && raw.finite && filtered.finite;
+  }
+  if (reset_time && passed) {
+    int previous_raw, previous_filtered;
+    int64_t previous_filtered_time;
+    {
+      std::scoped_lock lock(raw.mutex, filtered.mutex);
+      previous_raw = raw.count; previous_filtered = filtered.count;
+      previous_filtered_time = filtered.last;
+    }
+    world->SetSimTime(gazebo::common::Time(0, 0));
+    for (int i=0; i<1000; ++i) {
+      world->Step(1);
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+    std::scoped_lock lock(raw.mutex, filtered.mutex);
+    passed = raw.count > previous_raw + 500 && raw.last <= 1100000 && raw.finite &&
+      filtered.count == previous_filtered && filtered.last == previous_filtered_time;
+    std::cout << "reset_raw_count=" << raw.count-previous_raw << " reset_raw_usec=" << raw.last <<
+      " relay_remained_halted=" << (filtered.count == previous_filtered) << std::endl;
   }
   a.reset(); b.reset(); node->Fini(); node.reset(); relay.reset(); aircraft.reset(); world.reset();
   gazebo::shutdown(); easyfly_transport::ShutdownConnections();

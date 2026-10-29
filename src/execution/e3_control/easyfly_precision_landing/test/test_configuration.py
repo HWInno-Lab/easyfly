@@ -610,3 +610,48 @@ def test_static_36h11_id7_world_uses_gazebo_material_scripts():
     margin = model.find("link/visual[@name='white_margin']")
     assert margin.findtext("material/script/name") == "Gazebo/White"
     assert margin.find("material/lighting") is None
+
+
+@pytest.mark.parametrize('fault', ['none', 'identity', 'axis', 'rotation', 'missing', 'boolean'])
+def test_dynamic_launch_requires_measured_calibration(tmp_path, fault):
+    """Reject incoherent encoder geometry before any launch action is created."""
+    from easyfly_precision_landing.dynamic_fixture import configure
+    module = load_module(
+        'dynamic_launch_validation', PACKAGE / 'launch/precision_landing.launch.py')
+    document = yaml.safe_load(CONFIG.read_text())
+    configure(document)
+    mount = document['landing_camera_mount']['ros__parameters']
+    if fault == 'identity':
+        mount['optical_frame'] = 'unrelated_camera'
+    elif fault == 'axis':
+        mount['joint_axis_flu'] = [0., 0., 0.]
+    elif fault == 'rotation':
+        mount['camera_quaternion_xyzw_zero'] = [0., 0., 0., 0.]
+    elif fault == 'missing':
+        del document['landing_camera_mount']
+    elif fault == 'boolean':
+        document['landing_transform']['ros__parameters']['dynamic_camera'] = 'true'
+    path = tmp_path / 'dynamic.yaml'
+    path.write_text(yaml.safe_dump(document))
+    if fault == 'none':
+        assert module.validate_configuration(path) == document
+    else:
+        with pytest.raises(ValueError):
+            module.validate_configuration(path)
+
+
+def test_dynamic_parameter_file_passes_native_rcl_parser(tmp_path):
+    """The actual ROS parser must accept the shared calibrated parameter file."""
+    from easyfly_precision_landing.dynamic_fixture import configure
+    import rclpy
+    from rclpy.context import Context
+    document = yaml.safe_load(CONFIG.read_text())
+    configure(document)
+    path = tmp_path / 'native_dynamic.yaml'
+    path.write_text(yaml.safe_dump(document))
+    context = Context()
+    try:
+        rclpy.init(args=['--ros-args', '--params-file', str(path)], context=context)
+    finally:
+        if context.ok():
+            context.shutdown()

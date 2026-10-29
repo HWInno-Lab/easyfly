@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <unistd.h>
 #include <gtest/gtest.h>
 #include <QFile>
@@ -23,9 +22,7 @@
 #include <QTemporaryDir>
 #include <QUdpSocket>
 #include <QHostAddress>
-
 #include <iostream>
-
 #include "easyfly_desktop/tools.hpp"
 #include "support.hpp"
 using namespace desktop_test;  // NOLINT(build/namespaces)
@@ -104,7 +101,7 @@ TEST_F(Tools, PresetsContainOnlyViewingToolsAndExplicitEvidenceLabels)
 TEST_F(Tools, BasicFlightUsesBoundedRealOdometryWithoutSlamOrSyntheticTransforms)
 {
   const auto yaml = ui::rviz_preview({}, 3);
-  EXPECT_TRUE(yaml.contains("rviz_default_plugins/Odometry"));
+  EXPECT_TRUE(yaml.contains("easyfly_rviz_plugins/Odometry"));
   EXPECT_TRUE(yaml.contains("/mavros/local_position/odom"));
   EXPECT_TRUE(yaml.contains("Fixed Frame: map"));
   EXPECT_TRUE(yaml.contains("Keep: 1"));
@@ -230,7 +227,6 @@ TEST_F(Tools, WindowCloseWaitsForExplicitChoice)
   EXPECT_TRUE(until([&] {return window.cleanup_complete();}, 6000));
   EXPECT_GT(state->stop_calls, 0); EXPECT_EQ(state->query_calls, 0);
 }
-
 // Opt-in GUI smoke checks, excluded from unattended tests. No backend is started.
 TEST_F(Tools, DISABLED_RealRvizPresets)
 {

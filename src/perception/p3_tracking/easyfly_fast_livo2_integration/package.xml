@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<package format="3">
+  <name>easyfly_fast_livo2_integration</name>
+  <version>0.1.0</version>
+  <description>Explicit simulation FAST-LIVO2 sensor admission and navigation integration</description>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer>
+  <license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>diagnostic_msgs</exec_depend>
+  <exec_depend>easyfly_msgs</exec_depend>
+  <exec_depend>livox_ros_driver2</exec_depend>
+  <exec_depend>fast_livo</exec_depend>
+  <exec_depend>easyfly_openvins_integration</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

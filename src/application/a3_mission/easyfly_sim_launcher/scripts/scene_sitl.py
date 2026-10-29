@@ -154,6 +154,10 @@ class SceneProbe(navigation.Probe):
 
     def launch_command(self):
         command=super().launch_command()
+        options = getattr(self.args, 'fastlio_options', None)
+        if options is not None:
+            command.append('fastlio_options_json:=' + json.dumps(options))
+            self.report['fastlio_options'] = options
         if getattr(self.args,'ego_debugger',None):
             if not self.args.bootstrap:
                 raise ValueError('debugger is only allowed for disarmed inspection')
@@ -278,9 +282,14 @@ class SceneProbe(navigation.Probe):
             self.wait(lambda:len(self.mavros_state_trace)>=6,10)
             recent=self.mavros_state_trace[-6:]
             gaps=[b['receipt']-a['receipt'] for a,b in zip(recent,recent[1:])]
-            if (max(gaps)>2.0 or any(b['stamp']<=a['stamp'] for a,b in zip(recent,recent[1:]))):
-                raise RuntimeError('native heartbeat cadence too slow for unchanged arm confirmation gate')
-            telemetry.update(observed_state_samples=recent,max_receipt_gap_seconds=max(gaps))
+            nonmonotonic=any(b['stamp']<=a['stamp'] for a,b in zip(recent,recent[1:]))
+            telemetry.update(observed_state_samples=recent,max_receipt_gap_seconds=max(gaps),
+                             nonmonotonic_state_stamps=nonmonotonic)
+            # Retain the evidence even when this preflight check rejects the run.
+            self.report['px4_telemetry']=telemetry
+            if max(gaps)>2.0 or nonmonotonic:
+                raise RuntimeError('native heartbeat contract failed: '
+                    f'max_receipt_gap={max(gaps):.6f}s, nonmonotonic_stamps={nonmonotonic}')
             if battery_rate:
                 self.wait(lambda:len(self.battery_trace)>=6,10)
                 batteries=self.battery_trace[-6:]
@@ -509,13 +518,34 @@ class SceneProbe(navigation.Probe):
         if reference is None:
             raise RuntimeError('postlanding recovery requires the fixed scene alignment reference')
         entry['recovery_alignment_samples']=[]
+        entry['recovery_samples']=[]
+        entry['recovery_sample_interval_wall_s']=0.1
+        entry['recovery_sample_capacity']=2500
+        entry['recovery_samples_discarded']=0
+        next_record=began
+        previous_valid=None
         def stationary():
-            nonlocal settled_since,last_reference,next_alignment_query
+            nonlocal settled_since,last_reference,next_alignment_query,next_record,previous_valid
             now=time.monotonic()
             state=self.state()
             last_reference=self.reference_position()
-            valid=recovery_sample_valid(state,self.ready(False),anchor['position'],now,self.receipts,
+            healthy=self.ready(False)
+            valid=recovery_sample_valid(state,healthy,anchor['position'],now,self.receipts,
                 last_reference['position'] if last_reference and last_reference['frame']==anchor['frame'] else None)
+            # Preserve rejected observations too: otherwise an entire timeout
+            # before the first native alignment query has no diagnostic data.
+            if now>=next_record or valid!=previous_valid:
+                next_record=now+0.1
+                previous_valid=valid
+                if len(entry['recovery_samples'])<entry['recovery_sample_capacity']:
+                    entry['recovery_samples'].append(dict(seconds_since_landing=now-began,
+                        state=state,healthy=healthy,reference=last_reference,
+                        reference_error=getattr(self,'last_reference_error',None),
+                        pre_alignment_valid=valid,
+                        receipt_ages={topic:now-self.receipts.get(topic,float('-inf'))
+                            for topic in ['/occupancy_grid','/pointcloud_nonground']}))
+                else:
+                    entry['recovery_samples_discarded']+=1
             if valid:
                 # Drain live ROS observations between native pose queries.
                 # Only a fresh query can finish the continuous interval.
@@ -552,23 +582,28 @@ class SceneProbe(navigation.Probe):
         super().close()
 
     def reference_position(self):
+        self.last_reference_error=None
         state=self.state()
         if state is None:
+            self.last_reference_error=dict(reason='no_state')
             return None
         frame=self.scene['navigation'].get('ground_model_frame','odom')
         if frame=='odom':
             return dict(frame=frame,position=state['position'],basis=None)
         try:
             tf=self.tf_buffer.lookup_transform(frame,'odom',Time())
-        except TransformException:
+        except TransformException as error:
+            self.last_reference_error=dict(reason='transform_unavailable',detail=str(error))
             return None
         source=tf.header.stamp.sec*1000000000+tf.header.stamp.nanosec
         age=(self.node.get_clock().now().nanoseconds-source)*1e-9
         if source<=0 or not -0.2<=age<=1.0:
+            self.last_reference_error=dict(reason='transform_source_age',source_ns=source,age_s=age)
             return None
         t=tf.transform.translation;q=tf.transform.rotation
         position=transform_position(state['position'],[t.x,t.y,t.z],[q.x,q.y,q.z,q.w])
         if position is None:
+            self.last_reference_error=dict(reason='invalid_transform_or_position')
             return None
         return dict(frame=frame,position=position,basis=dict(source_ns=source,age_s=age,
                     translation=[t.x,t.y,t.z],quaternion_xyzw=[q.x,q.y,q.z,q.w]))
@@ -603,6 +638,8 @@ def main():
     parser.add_argument('--bootstrap',action='store_true',help='Disarmed raw-world inspection only; no flight goals')
     parser.add_argument('--ego-debugger',type=Path,help='GDB command file, only for disarmed diagnostic runs')
     parser.add_argument('--mission',type=Path)
+    parser.add_argument('--fastlio-options', type=Path,
+                        help='Explicit FAST-LIO JSON configuration; recorded in the result')
     parser.add_argument('--cycles',type=int,choices=(1,2),default=1,
                         help='Explicit reviewed missions in one simulator; recovery required after each')
     parser.add_argument('--px4-dir',type=Path,required=True)
@@ -610,6 +647,18 @@ def main():
     parser.add_argument('--domain',type=int,required=True)
     parser.add_argument('--gazebo-port',type=int,required=True)
     args=parser.parse_args()
+    if args.fastlio_options is not None:
+        try:
+            from easyfly_params.algorithms import validate
+            options = json.loads(args.fastlio_options.read_text())
+            if (not isinstance(options, dict) or
+                    any(key != 'slam' and not key.startswith('slam_') for key in options) or
+                    options.get('slam', 'fast_lio') != 'fast_lio'):
+                raise ValueError('only explicit FAST-LIO parameters are supported')
+            validate(dict(options, slam='fast_lio'))
+            args.fastlio_options = dict(options, slam='fast_lio')
+        except (OSError, ValueError) as error:
+            parser.error(str(error))
     if not 0<=args.domain<=232 or not 1024<=args.gazebo_port<=65535:
         parser.error('invalid explicit domain or port')
     if args.bootstrap and args.cycles!=1:

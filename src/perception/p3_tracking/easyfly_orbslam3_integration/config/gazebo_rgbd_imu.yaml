@@ -1,0 +1,99 @@
+%YAML:1.0
+# Fixed native Gazebo co-located RGB-D calibration; no physical stereo baseline inferred.
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+File.version: "1.0"
+
+Camera.type: "PinHole"
+
+# Camera calibration and distortion parameters (OpenCV) 
+Camera1.fx: 337.3570508552852
+Camera1.fy: 337.3570508552852
+Camera1.cx: 320.5
+Camera1.cy: 240.5
+
+Camera1.k1: 0.0
+Camera1.k2: 0.0
+Camera1.p1: 0.0
+Camera1.p2: 0.0
+Camera1.k3: 0.0
+
+Camera.width: 640
+Camera.height: 480
+
+# Camera frames per second 
+Camera.fps: 30
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 0
+
+# Close/Far threshold. Baseline times.
+Stereo.ThDepth: 100.0
+Stereo.b: 0.1
+
+# Depth map values factor
+RGBD.DepthMapFactor: 1.0 # 1.0 for ROS_bag
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 2000
+
+# ORB Extractor: Scale factor between levels in the scale pyramid 	
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid	
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast			
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1.0
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2.0
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3.0
+Viewer.ViewpointX: 0.0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500.0
+
+
+# Native Gazebo IMU calibration, shared with the qualified OpenVINS profile.
+# T_imu_camera transforms camera coordinates into livox_imu_frame.
+IMU.T_b_c1: !!opencv-matrix
+   rows: 4
+   cols: 4
+   dt: f
+   data: [0., 0., 1., 0.29350,
+          -1., 0., 0., 0.02329,
+          0., -1., 0., 0.09588,
+          0., 0., 0., 1.]
+IMU.Frequency: 200.0
+IMU.Gravity: 9.8
+IMU.NoiseGyro: 1.2020815280171309e-05
+IMU.NoiseAcc: 0.001202081528017131
+# Native bias random walks are zero. These positive numerical regularizers
+# follow upstream's RGB-D inertial example; they are not measured sensor noise
+# and never represent a published pose covariance or hardware calibration.
+IMU.GyroWalk: 1e-6
+IMU.AccWalk: 1e-4
+IMU.InsertKFsWhenLost: 0
+
+# Upstream fast initialization for metric RGB-D on the smooth Gazebo route.
+# This skips only the initial adjacent-frame acceleration-difference check.
+# All actual inertial initialization optimizations (including BA2) must still
+# finish before public localization. Geometry/freshness acceptance is unchanged.
+IMU.fastInit: 1

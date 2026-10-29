@@ -8,6 +8,8 @@ ament_python_install_package(${PROJECT_NAME})
 include(CTest)
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_rendering test/test_rendering.py)
+  ament_add_pytest_test(test_graphics test/test_graphics.py)
   ament_add_pytest_test(test_hrt_compatibility test/test_hrt_compatibility.py)
   ament_add_pytest_test(test_hrt_selection test/test_hrt_selection.py)
   ament_add_pytest_test(test_mag_compatibility test/test_mag_compatibility.py)
@@ -34,9 +36,11 @@ endif()
 
 install(PROGRAMS scripts/prepare_px4_hrt.py
   DESTINATION lib/${PROJECT_NAME} RENAME prepare_px4_hrt)
+install(PROGRAMS scripts/check_graphics.py
+  DESTINATION lib/${PROJECT_NAME} RENAME check_graphics)
 install(DIRECTORY launch models rviz compat
   DESTINATION share/easyfly_px4_sitl
   PATTERN ".git" EXCLUDE)
-install(FILES README.md DESTINATION share/${PROJECT_NAME})
+install(FILES README.md GRAPHICS.md DESTINATION share/${PROJECT_NAME})
 
 ament_package()

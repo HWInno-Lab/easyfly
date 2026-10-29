@@ -1,0 +1,7 @@
+# Read-only controller observation, not an admission or ownership grant.
+---
+std_msgs/Header header
+string controller_session_id
+uint32 highest_trajectory_id
+bool idle
+string active_navigation_session_id

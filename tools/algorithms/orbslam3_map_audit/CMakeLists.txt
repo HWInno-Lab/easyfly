@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(orbslam3_map_read_only_audit LANGUAGES CXX)
+find_package(easyfly_orbslam3_core REQUIRED)
+add_executable(map_audit main.cpp)
+target_compile_features(map_audit PRIVATE cxx_std_17)
+target_link_libraries(map_audit PRIVATE easyfly_orbslam3_core::easyfly_orbslam3)

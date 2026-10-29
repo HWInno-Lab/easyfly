@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "use_sim_time": true,
+  "disparities": 96,
+  "minimum_m": 0.3,
+  "maximum_m": 20.0,
+  "left_frame": "left_optical",
+  "right_frame": "right_optical",
+  "left_image": "/stereo/left/image_rect",
+  "right_image": "/stereo/right/image_rect",
+  "left_info": "/stereo/left/camera_info",
+  "right_info": "/stereo/right/camera_info"
+}

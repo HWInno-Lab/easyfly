@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.16)
+project(orbslam3_presave_probe LANGUAGES CXX)
+find_package(easyfly_orbslam3_core REQUIRED)
+add_executable(presave_probe main.cpp)
+target_compile_features(presave_probe PRIVATE cxx_std_17)
+target_link_libraries(presave_probe easyfly_orbslam3_core::easyfly_orbslam3)

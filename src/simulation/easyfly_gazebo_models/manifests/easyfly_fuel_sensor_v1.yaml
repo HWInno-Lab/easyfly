@@ -1,0 +1,41 @@
+schema_version: 1
+asset_set_id: easyfly_fuel_sensor_v1
+model_root:
+  package: easyfly_gazebo_models
+  path: easyfly/fuel_models
+provenance:
+  status: recorded
+  source_url: null
+  revision: easyfly-fuel-physical-range3-v1
+  declared_license: Apache-2.0
+  evidence:
+  - package: easyfly_gazebo_models
+    path: licenses/runtime/PROJECT-LICENSE
+  note: Explicit physical native ray range 3m benchmark variant; same real scan CSV/FOV,
+    sensor pose and native IMU; default MID360 unchanged.
+models:
+- name: mid360_fuel
+  sdf: mid360.sdf
+  provenance:
+    status: recorded
+    source_url: null
+    revision: easyfly-fuel-physical-range3-v1
+    declared_license: Apache-2.0
+    evidence:
+    - package: easyfly_gazebo_models
+      path: licenses/runtime/PROJECT-LICENSE
+    note: Explicit physical native ray range 3m benchmark variant; same real scan
+      CSV/FOV, sensor pose and native IMU; default MID360 unchanged.
+files:
+- path: mid360_fuel/mid360.sdf
+  sha256: 5cebe904d4bb57159ba78c3e488737094aee8ac8199c0bdaff304b0bf5ceecd8
+- path: mid360_fuel/model.config
+  sha256: 03f8544d3008f9856e519f8a4ffcfbe41ed8538d6388f267a3d9f344e2bdfae1
+local_changes:
+- Named independent benchmark variant with physical native range max 3m. Original
+  default model bytes unchanged.
+- Native LaserScanStamped world-pose telemetry enabled for a read-only attachment
+  witness; Gazebo sensor visualization remains disabled.
+storage: vendored
+inventory_note: Project-authored simulation sensor configuration, limited-range exploration
+  benchmark.

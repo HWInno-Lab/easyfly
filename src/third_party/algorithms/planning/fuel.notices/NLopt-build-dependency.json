@@ -1,0 +1,31 @@
+{
+  "upstream": "https://github.com/stevengj/nlopt",
+  "version": "2.7.1",
+  "ubuntu_source_package": "nlopt 2.7.1-3build1",
+  "acquisition": "Ubuntu jammy binary packages downloaded using apt-get download; extracted into a private artifact prefix; no system package was changed",
+  "packages": [
+    {
+      "file": "libnlopt-cxx-dev_2.7.1-3build1_amd64.deb",
+      "sha256": "29654af3b04f62c13a59e8d994a23ccc802fc25a788eb363dc448b52b41f2b19",
+      "control": "Package: libnlopt-cxx-dev\nVersion: 2.7.1-3build1\nArchitecture: amd64\nSource: nlopt\n"
+    },
+    {
+      "file": "libnlopt-cxx0_2.7.1-3build1_amd64.deb",
+      "sha256": "89a00480b2c655aee2f8d7a59b1f0fd1f7bc0ba44ff5ec185e697d71fc8879b0",
+      "control": "Package: libnlopt-cxx0\nVersion: 2.7.1-3build1\nArchitecture: amd64\nSource: nlopt\n"
+    },
+    {
+      "file": "libnlopt-dev_2.7.1-3build1_amd64.deb",
+      "sha256": "41e9594780ec34562841856f6f06defd3466b0e81d9fee613130dd1dc2840b59",
+      "control": "Package: libnlopt-dev\nVersion: 2.7.1-3build1\nArchitecture: amd64\nSource: nlopt\n"
+    },
+    {
+      "file": "libnlopt0_2.7.1-3build1_amd64.deb",
+      "sha256": "74f0e5177b5ed338d989bd65ec03097b71bf583010b68758e10532034155d6b2",
+      "control": "Package: libnlopt0\nVersion: 2.7.1-3build1\nArchitecture: amd64\nSource: nlopt\n"
+    }
+  ],
+  "use": "Native FUEL BsplineOptimizer uses NLopt LD_LBFGS; shared-library dependency, no algorithm replacement",
+  "copyright": "NLopt-debian-copyright",
+  "license_text": "NLopt-LGPL-2.1"
+}

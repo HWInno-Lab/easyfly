@@ -658,6 +658,29 @@ int KD_TREE<PointType>::Delete_Point_Boxes(vector<BoxPointType> &BoxPoints)
 }
 
 template <typename PointType>
+bool KD_TREE<PointType>::Snapshot(PointVector &Storage)
+{
+    if (pthread_mutex_trylock(&rebuild_ptr_mutex_lock) != 0)
+        return false;
+    // This lock covers the rebuild's traversal, replacement and reclamation.
+    // Do not hold working_flag_mutex here: flatten's Push_Down can take it
+    // when a subtree rebuild has been scheduled by the foreground thread.
+    try
+    {
+        PointVector current;
+        flatten(Root_Node, current, NOT_RECORD);
+        Storage.swap(current);
+    }
+    catch (...)
+    {
+        pthread_mutex_unlock(&rebuild_ptr_mutex_lock);
+        throw;
+    }
+    pthread_mutex_unlock(&rebuild_ptr_mutex_lock);
+    return true;
+}
+
+template <typename PointType>
 void KD_TREE<PointType>::acquire_removed_points(PointVector &removed_points)
 {
     pthread_mutex_lock(&points_deleted_rebuild_mutex_lock);

@@ -1,0 +1,4 @@
+--- a/COLCON_IGNORE
++++ b/COLCON_IGNORE
+@@ -0,0 +1 @@
++# Build Pangolin only in the recorded private dependency prefix.

@@ -35,7 +35,8 @@ def discovery_patch(class_name, original_hash, patched_hash):
     path = root / f'src/cpp/rtps/reader/{class_name}.cpp'
     data = path.read_bytes()
     digest = hashlib.sha256(data).hexdigest()
-    if digest == patched_hash:
+    if digest == patched_hash or (class_name == 'StatefulReader' and
+                                  digest == '929625f22df359dff7632f12d4d793bc312426f1fbfbc463544a723296ea8ee2'):
         return
     if digest != original_hash:
         raise RuntimeError(f'Unexpected upstream {class_name}.cpp; refusing patch')
@@ -101,4 +102,36 @@ if digest != 'afe142d08866f61f842cb9b618ffb00d81d0ba7ffb45ca3216e5c100514f8a4d':
     data = data.replace(old, new)
     if hashlib.sha256(data).hexdigest() != 'afe142d08866f61f842cb9b618ffb00d81d0ba7ffb45ca3216e5c100514f8a4d':
         raise RuntimeError("Unexpected patched writer header")
+    path.write_bytes(data)
+
+# Upstream Fast-DDS PR #6473, commit be16b70ffe548a8b920cf6ad88f265a11d47371e.
+# The callback can erase/reallocate the history vector, invalidating its hint.
+path = root / 'src/cpp/rtps/reader/StatefulReader.cpp'
+data = path.read_bytes()
+if hashlib.sha256(data).hexdigest() != '929625f22df359dff7632f12d4d793bc312426f1fbfbc463544a723296ea8ee2':
+    if hashlib.sha256(data).hexdigest() != '605e7710db34068442fb291a1f299bfc4597fc74c626b35e1c1fd4965de6f03b':
+        raise RuntimeError('Unexpected StatefulReader before iterator fix')
+    old = b'            listener->onNewCacheChangeAdded(this, aux_ch);\n'
+    new = b'            listener->onNewCacheChangeAdded(this, aux_ch);\n\n            // Reset the iterator to the beginning, since it may be invalidated inside the callback\n            it = mp_history->changesBegin();\n'
+    if data.count(old) != 1:
+        raise RuntimeError('Unexpected NotifyChanges callback context')
+    data = data.replace(old, new)
+    if hashlib.sha256(data).hexdigest() != '929625f22df359dff7632f12d4d793bc312426f1fbfbc463544a723296ea8ee2':
+        raise RuntimeError('Unexpected iterator patch output')
+    path.write_bytes(data)
+
+# Real 2-thread teardown deadlock: flow mutex -> selector vs selector -> flow.
+# Flush per delivered cache while the already-held recursive selector lock is live.
+path = root / 'src/cpp/rtps/flowcontrol/FlowControllerImpl.hpp'
+data = path.read_bytes()
+if hashlib.sha256(data).hexdigest() != 'e68be35bd0de5f19c103fd723e02032c6f82944b16e4e15a7ba6f29e6baf4a86':
+    if hashlib.sha256(data).hexdigest() != '0163a5d100240caf175ef1b58d16b63ba90efe8b97d8a556bf7f67cdf40db348':
+        raise RuntimeError('Unexpected FlowControllerImpl.hpp; refusing patch')
+    old = b'                if (fastrtps::rtps::DeliveryRetCode::DELIVERED != ret_delivery)\n'
+    new = b'                // Flush while this writer and its locator selector are still locked.\n                // Removal takes selector -> flow-controller; flushing after selector\n                // unlock would instead take flow-controller -> selector and deadlock.\n                // Reset the sender here so no raw endpoint survives the unlock.\n                async_mode.group.sender(nullptr, nullptr);\n\n                if (fastrtps::rtps::DeliveryRetCode::DELIVERED != ret_delivery)\n'
+    if data.count(old) != 1:
+        raise RuntimeError('Unexpected flow-controller delivery context')
+    data = data.replace(old, new)
+    if hashlib.sha256(data).hexdigest() != 'e68be35bd0de5f19c103fd723e02032c6f82944b16e4e15a7ba6f29e6baf4a86':
+        raise RuntimeError('Unexpected flow-controller patch output')
     path.write_bytes(data)

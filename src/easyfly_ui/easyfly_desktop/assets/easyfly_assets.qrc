@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="/easyfly">
+    <file alias="aircraft/quadrotor.json">aircraft/quadrotor.json</file>
     <file alias="logo.png">logo.png</file>
+    <file alias="geography/ne_110m_land.geojson">geography/ne_110m_land.geojson</file>
+    <file alias="geography/provenance.json">geography/provenance.json</file>
   </qresource>
 </RCC>

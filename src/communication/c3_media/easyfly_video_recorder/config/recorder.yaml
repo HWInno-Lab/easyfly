@@ -1,0 +1,13 @@
+video_recorder:
+  ros__parameters:
+    directory: ""
+    image_topic: /camera/color/image_raw
+    odom_topic: /mavros/local_position/odom
+    fps: 10
+    max_width: 1280
+    max_height: 720
+    segment_frames: 300
+    byte_limit: 536870912
+    reserve_bytes: 268435456
+    record_bag: false
+    source_timeout_s: 3.0

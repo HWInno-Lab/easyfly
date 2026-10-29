@@ -1,0 +1,31 @@
+VIKIT source and license scope (reviewed 2026-10-28)
+
+Pinned fork: https://github.com/uavfly/vikit.git
+Revision: f262533d04d99282ef63b2b3c8900eac71e6eafb
+Original: https://github.com/uzh-rpg/rpg_vikit.git
+
+The pinned ROS 2 commit changes vikit_common/package.xml from GPLv3 to BSD.
+Its parent already declares GPLv3, and the inherited source retains GPL/PTAM,
+LGPL and MIT notices. Both exact package files are preserved under licenses/.
+The BSD-only package tag is therefore incomplete for this source selection.
+The local package metadata now records the inherited licenses; this is a
+metadata correction, not a new license grant by EasyFly or the fork maintainer.
+The fork's BSD declaration remains evidence for its own contributions and
+is not treated as permission to remove original conditions.
+
+Applicable retained scopes:
+- Original VIKIT package: GPLv3 (licenses/GPL-3.0.txt).
+- homography.h/.cpp and PTAM-derived patch_score.h sections: GPLv3;
+  Copyright 2008 Isis Innovation Limited. Their original notices remain.
+- robust_cost.h/.cpp and file_reader.h: GPLv3 or later, Christian Kerl;
+  vision.h also identifies DVO/GPL code. Keep their original notices.
+- aligned_mem.h: LGPL 2.1, derived from libcvd, as stated in that header.
+- ringbuffer.h: MIT, Copyright 2011 Hauke Strasdat; exact notice copied.
+
+The library compiles pinhole_camera.cpp, math_utils.cpp, vision.cpp,
+performance_monitor.cpp and robust_cost.cpp. All retained headers are installed;
+source files not compiled are still part of the delivered source selection.
+License texts and this scope record are installed with the package.
+This record does not resolve the license compatibility of a combined downstream
+binary merely by correcting metadata. In particular, FAST-LIVO2's GPLv2 package
+and the GPLv3 VIKIT dependency require a separate combined-distribution review.

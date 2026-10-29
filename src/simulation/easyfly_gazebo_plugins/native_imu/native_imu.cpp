@@ -245,6 +245,12 @@ void EasyFlyNativeImuPlugin::OnUpdate(const common::UpdateInfo& _info) {
 #endif
   double dt = (current_time - last_time_).Double();
   last_time_ = current_time;
+  // A paused or reset world has no positive integration interval. Establish
+  // the actual new source-time baseline and emit no synthetic measurement.
+  // The unchanged relay rejects the subsequent epoch rollback and stays halted.
+  if (dt <= 0.0) {
+    return;
+  }
   double t = current_time.Double();
 
 #if GAZEBO_MAJOR_VERSION >= 9

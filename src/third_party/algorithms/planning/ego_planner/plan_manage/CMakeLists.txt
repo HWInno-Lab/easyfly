@@ -69,6 +69,7 @@ add_executable(traj_server src/traj_server.cpp)
 # traj_server 只做 B-spline 采样和 PositionCommand 发布。不要继承完整规划器的
 # PCL/cv_bridge/plan_env 依赖，否则 ROS interface 的传递库会被重复展开数千次。
 ament_target_dependencies(traj_server
+  nav_msgs
   easyfly_msgs
   rclcpp
   traj_utils
@@ -101,6 +102,9 @@ if(BUILD_TESTING)
   add_test(NAME test_navigation_session_ros
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_navigation_session.py)
   set_tests_properties(test_navigation_session_ros PROPERTIES TIMEOUT 20 LABELS "ros_network")
+  add_test(NAME test_held_navigation_yaw_ros
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_held_navigation_yaw.py)
+  set_tests_properties(test_held_navigation_yaw_ros PROPERTIES TIMEOUT 25 LABELS "ros_network")
   add_test(NAME test_managed_navigation_fault_ros
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_managed_navigation_fault.py)
   set_tests_properties(test_managed_navigation_fault_ros PROPERTIES TIMEOUT 50 LABELS "ros_network")
@@ -108,7 +112,14 @@ if(BUILD_TESTING)
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/test/test_managed_refinement.py)
   set_tests_properties(test_managed_refinement_ros PROPERTIES TIMEOUT 35 LABELS "ros_network")
   find_package(ament_cmake_gtest REQUIRED)
+  set(ament_cmake_uncrustify_ADDITIONAL_ARGS LANGUAGE C++)
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
+  include(cmake/legacy_notice_scope.cmake)
   ament_lint_auto_find_test_dependencies()
 
   ament_add_gtest(test_emergency_stop_gate
@@ -130,5 +141,9 @@ if(BUILD_TESTING)
   target_include_directories(test_trajectory_seed_safety PRIVATE include)
   ament_target_dependencies(test_trajectory_seed_safety plan_env)
 endif()
+
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
 
 ament_package()

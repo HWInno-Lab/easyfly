@@ -129,13 +129,30 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
-install(FILES LICENSE README.md DESTINATION share/${PROJECT_NAME})
+install(FILES LICENSE NOTICE.md README.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_cmake_pytest REQUIRED)
+  add_library(fastlio_signal_probe SHARED test/signal_probe.cpp)
+  ament_target_dependencies(fastlio_signal_probe rclcpp)
+  target_link_libraries(fastlio_signal_probe pthread)
+  ament_add_pytest_test(test_signal_shutdown test/test_signal_shutdown.py TIMEOUT 60
+    ENV "FASTLIO_TEST_EXECUTABLE=$<TARGET_FILE:fastlio_mapping>"
+        "FASTLIO_TEST_LIBRARY=$<TARGET_FILE:fastlio_signal_probe>"
+        "FASTLIO_TEST_CONFIG=${CMAKE_CURRENT_SOURCE_DIR}/config/mid360.yaml")
+  ament_add_gtest(test_scan_queue test/test_scan_queue.cpp)
+  target_include_directories(test_scan_queue PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_source_time test/test_source_time.cpp)
+  target_include_directories(test_source_time PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_add_gtest(test_extrinsic_validation test/test_extrinsic_validation.cpp)
   target_include_directories(test_extrinsic_validation PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_map_snapshot test/test_map_snapshot.cpp
+    include/ikd-Tree/ikd_Tree.cpp TIMEOUT 60)
+  target_include_directories(test_map_snapshot PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include ${PCL_INCLUDE_DIRS})
+  target_link_libraries(test_map_snapshot ${PCL_LIBRARIES} pthread)
 endif()
 
 ament_package()

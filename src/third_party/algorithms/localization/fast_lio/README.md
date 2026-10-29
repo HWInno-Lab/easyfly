@@ -193,3 +193,67 @@ The main structure of this UAV is 3d printed (Aluminum or PLA), the .stl file wi
 ## 6.Acknowledgments
 
 Thanks for LOAM(J. Zhang and S. Singh. LOAM: Lidar Odometry and Mapping in Real-time), [Livox_Mapping](https://github.com/Livox-SDK/livox_mapping), [LINS](https://github.com/ChaoqinRobotics/LINS---LiDAR-inertial-SLAM) and [Loam_Livox](https://github.com/hku-mars/loam_livox).
+
+### EasyFly bounded scan backlog (2026-10-25)
+
+The ROS LiDAR receive history and the pending processing queue each retain at
+most two scans. If processing falls behind, a new scan replaces the oldest
+unprocessed scan and cancels its pending synchronization selection. Cloud and
+acquisition time share one queue entry, so dropping/resetting a cloud cannot
+leave an old timestamp at the front. IMU samples already received remain in
+the separate integration queue; the IMU DDS depth is 200 instead of 10 to
+cover short processing stalls. Original source stamps, EKF/map operations and
+UI/planning freshness limits are unchanged. This favors recent localization
+over exhaustive processing of old scans and does not promise freshness under
+unbounded CPU starvation or lossless sensor delivery.
+
+A real sparse-scene discovery-pressure run retained fresh raw LiDAR but
+produced FAST-LIO/TF data 7–9 seconds old. Evidence and before/after checks are
+in `artifacts/b06-b14-20261025/`. The queue tests cover a waiting scan replaced
+during a processing blackout and cloud/timestamp pairing after queue reset.
+
+The path still keeps one historical point per ten observations, but its final
+point is replaced by each latest real observation. Publication is limited to
+5 Hz by steady time and occurs only when a new scan has been processed. Both
+the path header and final pose retain that scan's source time. This avoids
+waiting for ten slowly processed scans before publishing a fresh path; stopped
+input still expires normally. The regression checks the latest tip and retained
+historical density. The final real sparse-scene run with concurrent endpoint
+churn kept all five layers visible in 198 samples on the same RViz instance.
+
+### EasyFly native signal shutdown (2026-10-26)
+
+Keep the SIGINT/SIGTERM handlers installed by `rclcpp::init`. ROS dispatches
+shutdown from its dedicated signal thread; calling `rclcpp::shutdown()` or
+iostream operations directly from a POSIX signal handler can deadlock when
+the interrupted thread holds a lock needed by shutdown. The previous custom
+SIGINT handler is removed; sensor timestamps and estimation are unchanged.
+
+`test_signal_shutdown` starts the real native process with a test-only preload
+library. It checks ordinary SIGINT/SIGTERM and SIGINT delivered while a worker
+holds a mutex needed by a shutdown callback, with both wall time and a frozen
+simulation clock. The probe is not installed. The captured old binary deadlocks
+in the critical-section case; both current installations exit normally. The
+first V-08 hour's specific interrupted lock was not captured, so this regression
+does not identify that incident's exact lock. Full product lifecycle verification
+is recorded separately under `artifacts/v01-v16-20261025/`.
+
+### EasyFly local map publication
+
+`/Laser_map` publishes a snapshot of the current native ikd-tree local map.
+Repeated timer ticks replace the previous publication buffer; they no longer
+append another copy of the latest scan. Spatial retention and downsampling
+remain those of the estimator's existing local map. `/cloud_registered`, pose
+estimation, calibration and source timestamps retain their existing behavior.
+
+The snapshot uses the existing single foreground executor and excludes the
+background tree rebuild, including reclamation of the old tree. A busy rebuild
+defers that visualization publication instead of blocking localization. The
+map-save service writes the most recent published local snapshot, so it omits
+points already removed from the local map and duplicate historical scans. Use
+an explicit sensor recording when lossless scan history is required.
+
+The registered `test_map_snapshot` covers replacement of an empty result,
+repeated snapshots without accumulation, and current point membership after
+native deletion, insertion and asynchronous rebuilding. Validation evidence is
+maintained separately in the V-08 run directory.

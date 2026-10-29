@@ -1,0 +1,1115 @@
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,43 @@
++cmake_minimum_required(VERSION 3.16)
++project(easyfly_fuel_native LANGUAGES C CXX)
++set(CMAKE_CXX_STANDARD 17)
++find_package(ament_cmake REQUIRED)
++find_package(Eigen3 REQUIRED)
++find_package(PCL REQUIRED COMPONENTS common filters)
++find_package(yaml-cpp REQUIRED)
++find_package(NLopt CONFIG REQUIRED)
++if(TARGET NLopt::nlopt)
++ set(fuel_nlopt NLopt::nlopt)
++else()
++ set(fuel_nlopt NLopt::nlopt_cxx)
++endif()
++set(base fuel_planner)
++file(GLOB lkh_sources CONFIGURE_DEPENDS ${base}/utils/lkh_tsp_solver/src/*.c)
++list(FILTER lkh_sources EXCLUDE REGEX "/LKHmain[.]c$")
++add_library(fuel_lkh SHARED ${lkh_sources} ${base}/utils/lkh_tsp_solver/src/lkh_interface.cpp)
++target_compile_options(fuel_lkh PRIVATE $<$<COMPILE_LANGUAGE:C>:-fcommon>)
++target_include_directories(fuel_lkh PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${base}/utils/lkh_tsp_solver/include> $<INSTALL_INTERFACE:include/fuel_native>)
++target_link_libraries(fuel_lkh PRIVATE m)
++add_library(fuel_native SHARED
++ ${base}/bspline/src/non_uniform_bspline.cpp ${base}/bspline_opt/src/bspline_optimizer.cpp
++ ${base}/plan_env/src/sdf_map.cpp ${base}/plan_env/src/raycast.cpp ${base}/plan_env/src/edt_environment.cpp
++ ${base}/active_perception/src/frontier_finder.cpp ${base}/active_perception/src/graph_node.cpp
++ ${base}/active_perception/src/perception_utils.cpp ${base}/path_searching/src/astar2.cpp
++ ${base}/exploration_manager/src/fast_exploration_manager.cpp)
++foreach(module plan_env active_perception path_searching exploration_manager bspline bspline_opt)
++ target_include_directories(fuel_native PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/${base}/${module}/include>)
++ install(DIRECTORY ${base}/${module}/include/ DESTINATION include/fuel_native)
++endforeach()
++target_include_directories(fuel_native PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/fuel_support/include> $<INSTALL_INTERFACE:include/fuel_native> ${PCL_INCLUDE_DIRS})
++target_link_libraries(fuel_native PUBLIC fuel_lkh Eigen3::Eigen yaml-cpp ${PCL_LIBRARIES})
++target_compile_options(fuel_native PRIVATE -O2)
++target_link_libraries(fuel_native PRIVATE ${fuel_nlopt})
++target_link_options(fuel_native PRIVATE -Wl,--no-undefined)
++install(DIRECTORY fuel_support/include/ ${base}/utils/lkh_tsp_solver/include/ DESTINATION include/fuel_native)
++install(TARGETS fuel_native fuel_lkh EXPORT fuelTargets LIBRARY DESTINATION lib)
++install(FILES LICENSE README.md DESTINATION share/${PROJECT_NAME})
++install(FILES ../fuel.provenance.json ../fuel.ros2-highlevel.patch ../fuel.original-selected.tar.gz ../fuel.original-extended-selected.tar.gz DESTINATION share/${PROJECT_NAME}/provenance)
++install(DIRECTORY ../fuel.notices/ DESTINATION share/${PROJECT_NAME}/notices)
++ament_export_targets(fuelTargets HAS_LIBRARY_TARGET)
++ament_export_dependencies(Eigen3 PCL yaml-cpp)
++ament_package()
+--- a/fuel_planner/active_perception/include/active_perception/frontier_finder.h
++++ b/fuel_planner/active_perception/include/active_perception/frontier_finder.h
+@@ -1,7 +1,7 @@
+ #ifndef _FRONTIER_FINDER_H_
+ #define _FRONTIER_FINDER_H_
+ 
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ #include <Eigen/Eigen>
+ #include <memory>
+ #include <vector>
+@@ -52,7 +52,7 @@
+ 
+ class FrontierFinder {
+ public:
+-  FrontierFinder(const shared_ptr<EDTEnvironment>& edt, ros::NodeHandle& nh);
++  FrontierFinder(const shared_ptr<EDTEnvironment>& edt, fuel_support::Config& nh);
+   ~FrontierFinder();
+ 
+   void searchFrontiers();
+@@ -77,6 +77,8 @@
+   bool isFrontierCovered();
+   void wrapYaw(double& yaw);
+ 
++  vector<Vector3d> visibleCells(const Vector3d& pos, const double& yaw,
++                                const vector<Vector3d>& cluster);
+   shared_ptr<PerceptionUtils> percep_utils_;
+ 
+ private:
+--- a/fuel_planner/active_perception/include/active_perception/perception_utils.h
++++ b/fuel_planner/active_perception/include/active_perception/perception_utils.h
+@@ -1,7 +1,7 @@
+ #ifndef _PERCEPTION_UTILS_H_
+ #define _PERCEPTION_UTILS_H_
+ 
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ 
+ #include <Eigen/Eigen>
+ 
+@@ -17,10 +17,16 @@
+ namespace fast_planner {
+ class PerceptionUtils {
+ public:
+-  PerceptionUtils(ros::NodeHandle& nh);
++  PerceptionUtils(fuel_support::Config& nh);
+   ~PerceptionUtils() {
+   }
+   // Set position and yaw
++  Eigen::Vector3d sensorOffset() const {return sensor_offset_;}
++  Eigen::Vector3d sensorOffsetForYaw(double yaw) const {
++    return {cos(yaw)*sensor_offset_.x()-sin(yaw)*sensor_offset_.y(),
++            sin(yaw)*sensor_offset_.x()+cos(yaw)*sensor_offset_.y(),sensor_offset_.z()};
++  }
++  bool physicalRayVisibility() const {return physical_ray_visibility_;}
+   void setPose(const Vector3d& pos, const double& yaw);
+ 
+   // Get info of current pose
+@@ -38,6 +44,9 @@
+ 
+   /* Params */
+   // Sensing range of camera
++  bool horizontal_omni_{false}, physical_ray_visibility_{false};
++  Eigen::Vector3d sensor_offset_{Eigen::Vector3d::Zero()};
++  double min_vertical_{-.12},max_vertical_{.90};
+   double left_angle_, right_angle_, top_angle_, max_dist_, vis_dist_;
+   // Normal vectors of camera FOV planes in camera frame
+   Vector3d n_top_, n_bottom_, n_left_, n_right_;
+--- a/fuel_planner/active_perception/include/active_perception/traj_visibility.h
++++ b/fuel_planner/active_perception/include/active_perception/traj_visibility.h
+@@ -4,6 +4,7 @@
+ #include <plan_env/edt_environment.h>
+ #include <unordered_map>
+ #include <utility>
++#include <fuel_support/config.hpp>
+ #include <bspline/non_uniform_bspline.h>
+ 
+ class RayCaster;
+@@ -37,7 +38,7 @@
+ 
+ public:
+   VisibilityUtil();
+-  VisibilityUtil(const ros::NodeHandle& nh);
++  VisibilityUtil(const fuel_support::Config& nh);
+   ~VisibilityUtil();
+   void setEDTEnvironment(const EDTEnvironment::Ptr& edt);
+ 
+--- a/fuel_planner/active_perception/src/frontier_finder.cpp
++++ b/fuel_planner/active_perception/src/frontier_finder.cpp
+@@ -20,7 +20,7 @@
+ #include <Eigen/Eigenvalues>
+ 
+ namespace fast_planner {
+-FrontierFinder::FrontierFinder(const EDTEnvironment::Ptr& edt, ros::NodeHandle& nh) {
++FrontierFinder::FrontierFinder(const EDTEnvironment::Ptr& edt, fuel_support::Config& nh) {
+   this->edt_env_ = edt;
+   int voxel_num = edt->sdf_map_->getVoxelNum();
+   frontier_flag_ = vector<char>(voxel_num, 0);
+@@ -52,7 +52,7 @@
+ }
+ 
+ void FrontierFinder::searchFrontiers() {
+-  ros::Time t1 = ros::Time::now();
++  fuel_support::Stamp t1 = fuel_support::Stamp::now();
+   tmp_frontiers_.clear();
+ 
+   // Bounding box of updated region
+@@ -117,13 +117,13 @@
+       }
+   splitLargeFrontiers(tmp_frontiers_);
+ 
+-  ROS_WARN_THROTTLE(5.0, "Frontier t: %lf", (ros::Time::now() - t1).toSec());
++  FUEL_WARN_THROTTLE(5.0, "Frontier t: %lf", (fuel_support::Stamp::now() - t1).toSec());
+ }
+ 
+ void FrontierFinder::expandFrontier(
+     const Eigen::Vector3i& first /* , const int& depth, const int& parent_id */) {
+   // std::cout << "depth: " << depth << std::endl;
+-  auto t1 = ros::Time::now();
++  auto t1 = fuel_support::Stamp::now();
+ 
+   // Data for clustering
+   queue<Eigen::Vector3i> cell_queue;
+@@ -664,7 +664,8 @@
+   for (double rc = candidate_rmin_, dr = (candidate_rmax_ - candidate_rmin_) / candidate_rnum_;
+        rc <= candidate_rmax_ + 1e-3; rc += dr)
+     for (double phi = -M_PI; phi < M_PI; phi += candidate_dphi_) {
+-      const Vector3d sample_pos = frontier.average_ + rc * Vector3d(cos(phi), sin(phi), 0);
++      // Viewpoints are body goals; sample circles around the physical sensor height.
++      const Vector3d sample_pos = frontier.average_ + rc * Vector3d(cos(phi), sin(phi), 0) - Vector3d(0., 0., percep_utils_->sensorOffset().z());
+ 
+       // Qualified viewpoint is in bounding box and in safe region
+       if (!edt_env_->sdf_map_->isInBox(sample_pos) ||
+@@ -732,26 +733,36 @@
+ 
+ int FrontierFinder::countVisibleCells(
+     const Eigen::Vector3d& pos, const double& yaw, const vector<Eigen::Vector3d>& cluster) {
++  return static_cast<int>(visibleCells(pos, yaw, cluster).size());
++}
++
++vector<Vector3d> FrontierFinder::visibleCells(
++    const Vector3d& pos, const double& yaw, const vector<Vector3d>& cluster) {
+   percep_utils_->setPose(pos, yaw);
+-  int visib_num = 0;
++  vector<Vector3d> visible;
+   Eigen::Vector3i idx;
+   for (auto cell : cluster) {
+     // Check if frontier cell is inside FOV
+     if (!percep_utils_->insideFOV(cell)) continue;
+ 
+     // Check if frontier cell is visible (not occulded by obstacles)
+-    raycaster_->input(cell, pos);
++    const Vector3d sensor=pos+percep_utils_->sensorOffsetForYaw(yaw);
++    raycaster_->input(cell, sensor);
+     bool visib = true;
+     while (raycaster_->nextId(idx)) {
+-      if (edt_env_->sdf_map_->getInflateOccupancy(idx) == 1 ||
++      // Physical sensing rays use physical occupancy. Body safety sampling and
++      // native A* still use the full conservative inflation/unknown mask.
++      if ((percep_utils_->physicalRayVisibility() ?
++           edt_env_->sdf_map_->getOccupancy(idx) == SDFMap::OCCUPIED :
++           edt_env_->sdf_map_->getInflateOccupancy(idx) == 1) ||
+           edt_env_->sdf_map_->getOccupancy(idx) == SDFMap::UNKNOWN) {
+         visib = false;
+         break;
+       }
+     }
+-    if (visib) visib_num += 1;
+-  }
+-  return visib_num;
++    if (visib) visible.push_back(cell);
++  }
++  return visible;
+ }
+ 
+ void FrontierFinder::downsample(
+--- a/fuel_planner/active_perception/src/graph_node.cpp
++++ b/fuel_planner/active_perception/src/graph_node.cpp
+@@ -18,6 +18,7 @@
+ ViewNode::ViewNode(const Vector3d& p, const double& y) {
+   pos_ = p;
+   yaw_ = y;
++  yaw_dot_ = 0.0;
+   parent_ = nullptr;
+   vel_.setZero();  // vel is zero by default, should be set explicitly
+ }
+--- a/fuel_planner/active_perception/src/perception_utils.cpp
++++ b/fuel_planner/active_perception/src/perception_utils.cpp
+@@ -3,7 +3,14 @@
+ #include <pcl/filters/voxel_grid.h>
+ 
+ namespace fast_planner {
+-PerceptionUtils::PerceptionUtils(ros::NodeHandle& nh) {
++PerceptionUtils::PerceptionUtils(fuel_support::Config& nh) {
++  nh.param("perception_utils/physical_ray_visibility", physical_ray_visibility_, false);
++  nh.param("perception_utils/sensor_offset_x", sensor_offset_.x(), 0.);
++  nh.param("perception_utils/sensor_offset_y", sensor_offset_.y(), 0.);
++  nh.param("perception_utils/sensor_offset_z", sensor_offset_.z(), 0.);
++  nh.param("perception_utils/horizontal_omni", horizontal_omni_, false);
++  nh.param("perception_utils/min_vertical",min_vertical_,-.12);
++  nh.param("perception_utils/max_vertical",max_vertical_,.90);
+   nh.param("perception_utils/top_angle", top_angle_, -1.0);
+   nh.param("perception_utils/left_angle", left_angle_, -1.0);
+   nh.param("perception_utils/right_angle", right_angle_, -1.0);
+@@ -74,16 +81,17 @@
+   Eigen::Matrix3d Rwb;
+   Rwb << cos(yaw_), -sin(yaw_), 0, sin(yaw_), cos(yaw_), 0, 0, 0, 1;
+   for (int i = 0; i < cam_vertices1_.size(); ++i) {
+-    auto p1 = Rwb * cam_vertices1_[i] + pos_;
+-    auto p2 = Rwb * cam_vertices2_[i] + pos_;
++    auto p1 = Rwb * (cam_vertices1_[i] + sensor_offset_) + pos_;
++    auto p2 = Rwb * (cam_vertices2_[i] + sensor_offset_) + pos_;
+     list1.push_back(p1);
+     list2.push_back(p2);
+   }
+ }
+ 
+ bool PerceptionUtils::insideFOV(const Vector3d& point) {
+-  Eigen::Vector3d dir = point - pos_;
++  Eigen::Vector3d dir = point - pos_ - sensorOffsetForYaw(yaw_);
+   if (dir.norm() > max_dist_) return false;
++  if(horizontal_omni_) {const double e=atan2(dir.z(),dir.head<2>().norm());return e>=min_vertical_ && e<=max_vertical_;}
+ 
+   dir.normalize();
+   for (auto n : normals_) {
+@@ -93,21 +101,22 @@
+ }
+ 
+ void PerceptionUtils::getFOVBoundingBox(Vector3d& bmin, Vector3d& bmax) {
++  const Vector3d sensor = pos_ + sensorOffsetForYaw(yaw_);
+   double left = yaw_ + left_angle_;
+   double right = yaw_ - right_angle_;
+-  Vector3d left_pt = pos_ + max_dist_ * Vector3d(cos(left), sin(left), 0);
+-  Vector3d right_pt = pos_ + max_dist_ * Vector3d(cos(right), sin(right), 0);
++  Vector3d left_pt = sensor + max_dist_ * Vector3d(cos(left), sin(left), 0);
++  Vector3d right_pt = sensor + max_dist_ * Vector3d(cos(right), sin(right), 0);
+   vector<Vector3d> points = { left_pt, right_pt };
+   if (left > 0 && right < 0)
+-    points.push_back(pos_ + max_dist_ * Vector3d(1, 0, 0));
++    points.push_back(sensor + max_dist_ * Vector3d(1, 0, 0));
+   else if (left > M_PI_2 && right < M_PI_2)
+-    points.push_back(pos_ + max_dist_ * Vector3d(0, 1, 0));
++    points.push_back(sensor + max_dist_ * Vector3d(0, 1, 0));
+   else if (left > -M_PI_2 && right < -M_PI_2)
+-    points.push_back(pos_ + max_dist_ * Vector3d(0, -1, 0));
++    points.push_back(sensor + max_dist_ * Vector3d(0, -1, 0));
+   else if ((left > M_PI && right < M_PI) || (left > -M_PI && right < -M_PI))
+-    points.push_back(pos_ + max_dist_ * Vector3d(-1, 0, 0));
++    points.push_back(sensor + max_dist_ * Vector3d(-1, 0, 0));
+ 
+-  bmax = bmin = pos_;
++  bmax = bmin = sensor;
+   for (auto p : points) {
+     bmax = bmax.array().max(p.array());
+     bmin = bmin.array().min(p.array());
+--- a/fuel_planner/bspline/src/non_uniform_bspline.cpp
++++ b/fuel_planner/bspline/src/non_uniform_bspline.cpp
+@@ -1,5 +1,5 @@
+ #include "bspline/non_uniform_bspline.h"
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ 
+ namespace fast_planner {
+ NonUniformBspline::NonUniformBspline(const Eigen::MatrixXd& points, const int& order,
+@@ -153,8 +153,8 @@
+       max_acc = max(max_acc, fabs(acc(j)));
+   }
+   double ratio = max(max_vel / limit_vel_, sqrt(fabs(max_acc) / limit_acc_));
+-  ROS_INFO("max vel: %lf, max acc: %lf, ratio: %lf", max_vel, max_acc, ratio);
+-  ROS_ERROR_COND(ratio > 2.0, "max vel: %lf, max acc: %lf, ratio: %lf", max_vel, max_acc, ratio);
++  FUEL_INFO("max vel: %lf, max acc: %lf, ratio: %lf", max_vel, max_acc, ratio);
++  FUEL_ERROR_COND(ratio > 2.0, "max vel: %lf, max acc: %lf, ratio: %lf", max_vel, max_acc, ratio);
+ 
+   return ratio;
+ }
+--- a/fuel_planner/bspline_opt/include/bspline_opt/bspline_optimizer.h
++++ b/fuel_planner/bspline_opt/include/bspline_opt/bspline_optimizer.h
+@@ -3,7 +3,7 @@
+ 
+ #include <Eigen/Eigen>
+ #include <active_perception/traj_visibility.h>
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ 
+ // Gradient and elasitc band optimization
+ 
+@@ -35,7 +35,7 @@
+ 
+   /* main API */
+   void setEnvironment(const shared_ptr<EDTEnvironment>& env);
+-  void setParam(ros::NodeHandle& nh);
++  void setParam(fuel_support::Config& nh);
+   void optimize(Eigen::MatrixXd& points, double& dt, const int& cost_function, const int& max_num_id,
+                 const int& max_time_id);
+ 
+@@ -101,6 +101,7 @@
+   double start_time_;  // global time for moving obstacles
+ 
+   /* Parameters of optimization  */
++  bool fixed_boundary_{false};  // Explicit cubic adapter: exact measured endpoint states.
+   int order_;  // bspline degree
+   int bspline_degree_;
+   double ld_smooth_, ld_dist_, ld_feasi_, ld_start_, ld_end_, ld_guide_, ld_waypt_, ld_view_, ld_time_;
+@@ -129,7 +130,7 @@
+ public:
+   vector<double> vec_cost_;
+   vector<double> vec_time_;
+-  ros::Time time_start_;
++  fuel_support::Stamp time_start_;
+ 
+   void getCostCurve(vector<double>& cost, vector<double>& time) {
+     cost = vec_cost_;
+--- a/fuel_planner/bspline_opt/src/bspline_optimizer.cpp
++++ b/fuel_planner/bspline_opt/src/bspline_optimizer.cpp
+@@ -22,7 +22,7 @@
+ const int BsplineOptimizer::NORMAL_PHASE = BsplineOptimizer::SMOOTHNESS | BsplineOptimizer::DISTANCE |
+     BsplineOptimizer::FEASIBILITY | BsplineOptimizer::START | BsplineOptimizer::END;
+ 
+-void BsplineOptimizer::setParam(ros::NodeHandle& nh) {
++void BsplineOptimizer::setParam(fuel_support::Config& nh) {
+   nh.param("optimization/ld_smooth", ld_smooth_, -1.0);
+   nh.param("optimization/ld_dist", ld_dist_, -1.0);
+   nh.param("optimization/ld_feasi", ld_feasi_, -1.0);
+@@ -52,6 +52,7 @@
+   nh.param("optimization/algorithm2", algorithm2_, -1);
+   nh.param("manager/bspline_degree", bspline_degree_, 3);
+ 
++  nh.param("optimization/fixed_boundary", fixed_boundary_, false);
+   time_lb_ = -1;  // Not used by in most case
+ }
+ 
+@@ -110,7 +111,7 @@
+ void BsplineOptimizer::optimize(Eigen::MatrixXd& points, double& dt, const int& cost_function,
+                                 const int& max_num_id, const int& max_time_id) {
+   if (start_state_.empty()) {
+-    ROS_ERROR("Initial state undefined!");
++    FUEL_ERROR("Initial state undefined!");
+     return;
+   }
+   control_points_ = points;
+@@ -127,9 +128,12 @@
+     order_ = bspline_degree_;
+   point_num_ = control_points_.rows();
+   optimize_time_ = cost_function_ & MINTIME;
++  if (fixed_boundary_ && (dim_ != 3 || order_ != 3 || optimize_time_ || point_num_ < 8))
++    throw std::runtime_error("exact FUEL boundary requires fixed-time 3D cubic spline");
++  best_variable_.clear();
+   variable_num_ = optimize_time_ ? dim_ * point_num_ + 1 : dim_ * point_num_;
+   if (variable_num_ <= 0) {
+-    ROS_ERROR("Empty varibale to optimization solver.");
++    FUEL_ERROR("Empty varibale to optimization solver.");
+     return;
+   }
+ 
+@@ -197,7 +201,11 @@
+   for (int i = 0; i < point_num_; ++i)
+     for (int j = 0; j < dim_; ++j) {
+       double cij = control_points_(i, j);
+-      if (dim_ != 1) cij = max(min(cij, bmax[j % 3]), bmin[j % 3]);
++      if (dim_ != 1) {
++        if (fixed_boundary_ && (i < 3 || i >= point_num_ - 3)) {
++          if (cij < bmin[j] || cij > bmax[j]) throw std::runtime_error("fixed endpoint outside FUEL map box");
++        } else cij = max(min(cij, bmax[j % 3]), bmin[j % 3]);
++      }
+       q[dim_ * i + j] = cij;
+     }
+   // Variables for knot span
+@@ -211,6 +219,7 @@
+       ub[i] = q[i] + bound;
+       lb[i] = max(lb[i], bmin[i % 3]);
+       ub[i] = min(ub[i], bmax[i % 3]);
++      if (fixed_boundary_ && (i / 3 < 3 || i / 3 >= point_num_ - 3)) lb[i] = ub[i] = q[i];
+     }
+     if (optimize_time_) {
+       lb[variable_num_ - 1] = 0.0;
+@@ -220,20 +229,22 @@
+     opt.set_upper_bounds(ub);
+   }
+ 
+-  auto t1 = ros::Time::now();
++  auto t1 = fuel_support::Stamp::now();
+   try {
+     double final_cost;
+     nlopt::result result = opt.optimize(q, final_cost);
+   } catch (std::exception& e) {
+     cout << e.what() << endl;
+   }
++  if (best_variable_.size() != static_cast<size_t>(variable_num_) || !std::isfinite(min_cost_))
++    throw std::runtime_error("FUEL optimization produced no finite candidate");
+   for (int i = 0; i < point_num_; ++i)
+     for (int j = 0; j < dim_; ++j)
+       control_points_(i, j) = best_variable_[dim_ * i + j];
+   if (optimize_time_) knot_span_ = best_variable_[variable_num_ - 1];
+ 
+   if (cost_function_ & MINTIME) {
+-    std::cout << "Iter num: " << iter_num_ << ", time: " << (ros::Time::now() - t1).toSec()
++    std::cout << "Iter num: " << iter_num_ << ", time: " << (fuel_support::Stamp::now() - t1).toSec()
+               << ", point num: " << point_num_ << ", comb time: " << comb_time << std::endl;
+   }
+ 
+@@ -554,7 +565,7 @@
+     // }
+   }
+ 
+-  ros::Time t1 = ros::Time::now();
++  fuel_support::Stamp t1 = fuel_support::Stamp::now();
+ 
+   for (int i = 0; i < point_num_; ++i) {
+     for (int j = 0; j < dim_; ++j)
+@@ -643,7 +654,7 @@
+     grad[variable_num_ - 1] += ld_time_ * gt_time;
+   }
+ 
+-  comb_time += (ros::Time::now() - t1).toSec();
++  comb_time += (fuel_support::Stamp::now() - t1).toSec();
+ 
+   // // Join thread and retrive cost/gradient
+   // for (int i = 0; i < cost_thread.size(); ++i)
+@@ -706,7 +717,7 @@
+   return cost;
+ 
+   // /* evaluation */
+-  // ros::Time te1 = ros::Time::now();
++  // fuel_support::Stamp te1 = fuel_support::Stamp::now();
+   // double time_now = (te1 - opt->time_start_).toSec();
+   // opt->vec_time_.push_back(time_now);
+   // if (opt->vec_cost_.size() == 0)
+--- a/fuel_planner/exploration_manager/include/exploration_manager/expl_data.h
++++ b/fuel_planner/exploration_manager/include/exploration_manager/expl_data.h
+@@ -3,33 +3,15 @@
+ 
+ #include <Eigen/Eigen>
+ #include <vector>
+-#include <bspline/Bspline.h>
++#include <string>
++#include <utility>
++using std::string;
++using std::pair;
+ 
+ using std::vector;
+ using Eigen::Vector3d;
+ 
+ namespace fast_planner {
+-struct FSMData {
+-  // FSM data
+-  bool trigger_, have_odom_, static_state_;
+-  vector<string> state_str_;
+-
+-  Eigen::Vector3d odom_pos_, odom_vel_;  // odometry state
+-  Eigen::Quaterniond odom_orient_;
+-  double odom_yaw_;
+-
+-  Eigen::Vector3d start_pt_, start_vel_, start_acc_, start_yaw_;  // start state
+-  vector<Eigen::Vector3d> start_poss;
+-  bspline::Bspline newest_traj_;
+-};
+-
+-struct FSMParam {
+-  double replan_thresh1_;
+-  double replan_thresh2_;
+-  double replan_thresh3_;
+-  double replan_time_;  // second
+-};
+-
+ struct ExplorationData {
+   vector<vector<Vector3d>> frontiers_;
+   vector<vector<Vector3d>> dead_frontiers_;
+--- a/fuel_planner/exploration_manager/include/exploration_manager/fast_exploration_manager.h
++++ b/fuel_planner/exploration_manager/include/exploration_manager/fast_exploration_manager.h
+@@ -1,7 +1,7 @@
+ #ifndef _EXPLORATION_MANAGER_H_
+ #define _EXPLORATION_MANAGER_H_
+ 
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ #include <Eigen/Eigen>
+ #include <memory>
+ #include <vector>
+@@ -26,7 +26,7 @@
+   FastExplorationManager();
+   ~FastExplorationManager();
+ 
+-  void initialize(ros::NodeHandle& nh);
++  void initialize(fuel_support::Config& nh, const shared_ptr<SDFMap>& map);
+ 
+   int planExploreMotion(const Vector3d& pos, const Vector3d& vel, const Vector3d& acc,
+                         const Vector3d& yaw);
+@@ -37,7 +37,7 @@
+ 
+   shared_ptr<ExplorationData> ed_;
+   shared_ptr<ExplorationParam> ep_;
+-  shared_ptr<FastPlannerManager> planner_manager_;
++  double next_yaw_{0};
+   shared_ptr<FrontierFinder> frontier_finder_;
+   // unique_ptr<ViewFinder> view_finder_;
+ 
+--- a/fuel_planner/exploration_manager/src/fast_exploration_manager.cpp
++++ b/fuel_planner/exploration_manager/src/fast_exploration_manager.cpp
+@@ -1,6 +1,7 @@
+ // #include <fstream>
+ #include <exploration_manager/fast_exploration_manager.h>
+ #include <thread>
++#include <path_searching/astar2.h>
+ #include <iostream>
+ #include <fstream>
+ #include <lkh_tsp_solver/lkh_interface.h>
+@@ -11,13 +12,13 @@
+ #include <plan_env/sdf_map.h>
+ #include <plan_env/edt_environment.h>
+ #include <active_perception/frontier_finder.h>
+-#include <plan_manage/planner_manager.h>
++
+ 
+ #include <exploration_manager/expl_data.h>
+ 
+ #include <pcl/point_cloud.h>
+ #include <pcl/point_types.h>
+-#include <visualization_msgs/Marker.h>
++
+ 
+ using namespace Eigen;
+ 
+@@ -33,11 +34,10 @@
+   ViewNode::map_.reset();
+ }
+ 
+-void FastExplorationManager::initialize(ros::NodeHandle& nh) {
+-  planner_manager_.reset(new FastPlannerManager);
+-  planner_manager_->initPlanModules(nh);
+-  edt_environment_ = planner_manager_->edt_environment_;
+-  sdf_map_ = edt_environment_->sdf_map_;
++void FastExplorationManager::initialize(fuel_support::Config& nh, const shared_ptr<SDFMap>& map) {
++  sdf_map_=map;
++  edt_environment_.reset(new EDTEnvironment);
++  edt_environment_->setMap(sdf_map_);
+   frontier_finder_.reset(new FrontierFinder(edt_environment_, nh));
+   // view_finder_.reset(new ViewFinder(edt_environment_, nh));
+ 
+@@ -68,9 +68,7 @@
+   ViewNode::caster_.reset(new RayCaster);
+   ViewNode::caster_->setParams(resolution_, origin);
+ 
+-  planner_manager_->path_finder_->lambda_heu_ = 1.0;
+-  // planner_manager_->path_finder_->max_search_time_ = 0.05;
+-  planner_manager_->path_finder_->max_search_time_ = 1.0;
++
+ 
+   // Initialize TSP par file
+   ofstream par_file(ep_->tsp_dir_ + "/single.par");
+@@ -87,7 +85,7 @@
+ 
+ int FastExplorationManager::planExploreMotion(
+     const Vector3d& pos, const Vector3d& vel, const Vector3d& acc, const Vector3d& yaw) {
+-  ros::Time t1 = ros::Time::now();
++  fuel_support::Stamp t1 = fuel_support::Stamp::now();
+   auto t2 = t1;
+   ed_->views_.clear();
+   ed_->global_tour_.clear();
+@@ -98,8 +96,8 @@
+   // Search frontiers and group them into clusters
+   frontier_finder_->searchFrontiers();
+ 
+-  double frontier_time = (ros::Time::now() - t1).toSec();
+-  t1 = ros::Time::now();
++  double frontier_time = (fuel_support::Stamp::now() - t1).toSec();
++  t1 = fuel_support::Stamp::now();
+ 
+   // Find viewpoints (x,y,z,yaw) for all frontier clusters and get visible ones' info
+   frontier_finder_->computeFrontiersToVisit();
+@@ -108,7 +106,7 @@
+   frontier_finder_->getDormantFrontiers(ed_->dead_frontiers_);
+ 
+   if (ed_->frontiers_.empty()) {
+-    ROS_WARN("No coverable frontier.");
++    FUEL_WARN("No coverable frontier.");
+     return NO_FRONTIER;
+   }
+   frontier_finder_->getTopViewpointsInfo(pos, ed_->points_, ed_->yaws_, ed_->averages_);
+@@ -116,8 +114,8 @@
+     ed_->views_.push_back(
+         ed_->points_[i] + 2.0 * Vector3d(cos(ed_->yaws_[i]), sin(ed_->yaws_[i]), 0));
+ 
+-  double view_time = (ros::Time::now() - t1).toSec();
+-  ROS_WARN(
++  double view_time = (fuel_support::Stamp::now() - t1).toSec();
++  FUEL_WARN(
+       "Frontier: %d, t: %lf, viewpoint: %d, t: %lf", ed_->frontiers_.size(), frontier_time,
+       ed_->points_.size(), view_time);
+ 
+@@ -134,7 +132,7 @@
+     if (ep_->refine_local_) {
+       // Do refinement for the next few viewpoints in the global tour
+       // Idx of the first K frontier in optimal tour
+-      t1 = ros::Time::now();
++      t1 = fuel_support::Stamp::now();
+ 
+       ed_->refined_ids_.clear();
+       ed_->unrefined_points_.clear();
+@@ -174,8 +172,8 @@
+         ed_->refined_views1_.insert(ed_->refined_views1_.end(), v1.begin(), v1.end());
+         ed_->refined_views2_.insert(ed_->refined_views2_.end(), v2.begin(), v2.end());
+       }
+-      double local_time = (ros::Time::now() - t1).toSec();
+-      ROS_WARN("Local refine time: %lf", local_time);
++      double local_time = (fuel_support::Stamp::now() - t1).toSec();
++      FUEL_WARN("Local refine time: %lf", local_time);
+ 
+     } else {
+       // Choose the next viewpoint from global tour
+@@ -219,82 +217,18 @@
+       next_yaw = ed_->yaws_[0];
+     }
+   } else
+-    ROS_ERROR("Empty destination.");
++    FUEL_ERROR("Empty destination.");
+ 
+   std::cout << "Next view: " << next_pos.transpose() << ", " << next_yaw << std::endl;
+ 
+-  // Plan trajectory (position and yaw) to the next viewpoint
+-  t1 = ros::Time::now();
+-
+-  // Compute time lower bound of yaw and use in trajectory generation
+-  double diff = fabs(next_yaw - yaw[0]);
+-  double time_lb = min(diff, 2 * M_PI - diff) / ViewNode::yd_;
+-
+-  // Generate trajectory of x,y,z
+-  planner_manager_->path_finder_->reset();
+-  if (planner_manager_->path_finder_->search(pos, next_pos) != Astar::REACH_END) {
+-    ROS_ERROR("No path to next viewpoint");
+-    return FAIL;
+-  }
+-  ed_->path_next_goal_ = planner_manager_->path_finder_->getPath();
+-  shortenPath(ed_->path_next_goal_);
+-
+-  const double radius_far = 5.0;
+-  const double radius_close = 1.5;
+-  const double len = Astar::pathLength(ed_->path_next_goal_);
+-  if (len < radius_close) {
+-    // Next viewpoint is very close, no need to search kinodynamic path, just use waypoints-based
+-    // optimization
+-    planner_manager_->planExploreTraj(ed_->path_next_goal_, vel, acc, time_lb);
+-    ed_->next_goal_ = next_pos;
+-
+-  } else if (len > radius_far) {
+-    // Next viewpoint is far away, select intermediate goal on geometric path (this also deal with
+-    // dead end)
+-    std::cout << "Far goal." << std::endl;
+-    double len2 = 0.0;
+-    vector<Eigen::Vector3d> truncated_path = { ed_->path_next_goal_.front() };
+-    for (int i = 1; i < ed_->path_next_goal_.size() && len2 < radius_far; ++i) {
+-      auto cur_pt = ed_->path_next_goal_[i];
+-      len2 += (cur_pt - truncated_path.back()).norm();
+-      truncated_path.push_back(cur_pt);
+-    }
+-    ed_->next_goal_ = truncated_path.back();
+-    planner_manager_->planExploreTraj(truncated_path, vel, acc, time_lb);
+-    // if (!planner_manager_->kinodynamicReplan(
+-    //         pos, vel, acc, ed_->next_goal_, Vector3d(0, 0, 0), time_lb))
+-    //   return FAIL;
+-    // ed_->kino_path_ = planner_manager_->kino_path_finder_->getKinoTraj(0.02);
+-  } else {
+-    // Search kino path to exactly next viewpoint and optimize
+-    std::cout << "Mid goal" << std::endl;
+-    ed_->next_goal_ = next_pos;
+-
+-    if (!planner_manager_->kinodynamicReplan(
+-            pos, vel, acc, ed_->next_goal_, Vector3d(0, 0, 0), time_lb))
+-      return FAIL;
+-  }
+-
+-  if (planner_manager_->local_data_.position_traj_.getTimeSum() < time_lb - 0.1)
+-    ROS_ERROR("Lower bound not satified!");
+-
+-  planner_manager_->planYawExplore(yaw, next_yaw, true, ep_->relax_time_);
+-
+-  double traj_plan_time = (ros::Time::now() - t1).toSec();
+-  t1 = ros::Time::now();
+-
+-  double yaw_time = (ros::Time::now() - t1).toSec();
+-  ROS_WARN("Traj: %lf, yaw: %lf", traj_plan_time, yaw_time);
+-  double total = (ros::Time::now() - t2).toSec();
+-  ROS_WARN("Total time: %lf", total);
+-  ROS_ERROR_COND(total > 0.1, "Total time too long!!!");
+-
++  // EasyFly executes this genuine selected viewpoint through its owned navigation action.
++  ed_->next_goal_=next_pos;next_yaw_=next_yaw;
+   return SUCCEED;
+ }
+ 
+ void FastExplorationManager::shortenPath(vector<Vector3d>& path) {
+   if (path.empty()) {
+-    ROS_ERROR("Empty path to shorten");
++    FUEL_ERROR("Empty path to shorten");
+     return;
+   }
+   // Shorten the tour, only critical intermediate points are reserved.
+@@ -307,7 +241,7 @@
+       // Add waypoints to shorten path only to avoid collision
+       ViewNode::caster_->input(short_tour.back(), path[i + 1]);
+       Eigen::Vector3i idx;
+-      while (ViewNode::caster_->nextId(idx) && ros::ok()) {
++      while (ViewNode::caster_->nextId(idx) && true) {
+         if (edt_environment_->sdf_map_->getInflateOccupancy(idx) == 1 ||
+             edt_environment_->sdf_map_->getOccupancy(idx) == SDFMap::UNKNOWN) {
+           short_tour.push_back(path[i]);
+@@ -327,7 +261,7 @@
+ void FastExplorationManager::findGlobalTour(
+     const Vector3d& cur_pos, const Vector3d& cur_vel, const Vector3d cur_yaw,
+     vector<int>& indices) {
+-  auto t1 = ros::Time::now();
++  auto t1 = fuel_support::Stamp::now();
+ 
+   // Get cost matrix for current state and clusters
+   Eigen::MatrixXd cost_mat;
+@@ -335,8 +269,8 @@
+   frontier_finder_->getFullCostMatrix(cur_pos, cur_vel, cur_yaw, cost_mat);
+   const int dimension = cost_mat.rows();
+ 
+-  double mat_time = (ros::Time::now() - t1).toSec();
+-  t1 = ros::Time::now();
++  double mat_time = (fuel_support::Stamp::now() - t1).toSec();
++  t1 = fuel_support::Stamp::now();
+ 
+   // Write params and cost matrix to problem file
+   ofstream prob_file(ep_->tsp_dir_ + "/single.tsp");
+@@ -422,8 +356,8 @@
+   // Get the path of optimal tour from path matrix
+   frontier_finder_->getPathForTour(cur_pos, indices, ed_->global_tour_);
+ 
+-  double tsp_time = (ros::Time::now() - t1).toSec();
+-  ROS_WARN("Cost mat: %lf, TSP: %lf", mat_time, tsp_time);
++  double tsp_time = (fuel_support::Stamp::now() - t1).toSec();
++  FUEL_WARN("Cost mat: %lf, TSP: %lf", mat_time, tsp_time);
+ }
+ 
+ void FastExplorationManager::refineLocalTour(
+@@ -431,7 +365,7 @@
+     const vector<vector<Vector3d>>& n_points, const vector<vector<double>>& n_yaws,
+     vector<Vector3d>& refined_pts, vector<double>& refined_yaws) {
+   double create_time, search_time, parse_time;
+-  auto t1 = ros::Time::now();
++  auto t1 = fuel_support::Stamp::now();
+ 
+   // Create graph for viewpoints selection
+   GraphSearch<ViewNode> g_search;
+@@ -468,15 +402,15 @@
+     cur_group.clear();
+   }
+   std::cout << "" << std::endl;
+-  create_time = (ros::Time::now() - t1).toSec();
+-  t1 = ros::Time::now();
++  create_time = (fuel_support::Stamp::now() - t1).toSec();
++  t1 = fuel_support::Stamp::now();
+ 
+   // Search optimal sequence
+   vector<ViewNode::Ptr> path;
+   g_search.DijkstraSearch(first->id_, final_node->id_, path);
+ 
+-  search_time = (ros::Time::now() - t1).toSec();
+-  t1 = ros::Time::now();
++  search_time = (fuel_support::Stamp::now() - t1).toSec();
++  t1 = fuel_support::Stamp::now();
+ 
+   // Return searched sequence
+   for (int i = 1; i < path.size(); ++i) {
+@@ -498,8 +432,8 @@
+   }
+   ViewNode::astar_->lambda_heu_ = 10000;
+ 
+-  parse_time = (ros::Time::now() - t1).toSec();
+-  // ROS_WARN("create: %lf, search: %lf, parse: %lf", create_time, search_time, parse_time);
++  parse_time = (fuel_support::Stamp::now() - t1).toSec();
++  // FUEL_WARN("create: %lf, search: %lf, parse: %lf", create_time, search_time, parse_time);
+ }
+ 
+ }  // namespace fast_planner
+--- a/fuel_planner/path_searching/include/path_searching/astar2.h
++++ b/fuel_planner/path_searching/include/path_searching/astar2.h
+@@ -4,8 +4,8 @@
+ #include <Eigen/Eigen>
+ #include <iostream>
+ #include <map>
+-#include <ros/console.h>
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
++#include <fuel_support/config.hpp>
+ #include <string>
+ #include <unordered_map>
+ #include "plan_env/edt_environment.h"
+@@ -41,7 +41,7 @@
+   ~Astar();
+   enum { REACH_END = 1, NO_PATH = 2 };
+ 
+-  void init(ros::NodeHandle& nh, const EDTEnvironment::Ptr& env);
++  void init(fuel_support::Config& nh, const EDTEnvironment::Ptr& env);
+   void reset();
+   int search(const Eigen::Vector3d& start_pt, const Eigen::Vector3d& end_pt);
+   void setResolution(const double& res);
+--- a/fuel_planner/path_searching/src/astar2.cpp
++++ b/fuel_planner/path_searching/src/astar2.cpp
+@@ -14,7 +14,7 @@
+     delete path_node_pool_[i];
+ }
+ 
+-void Astar::init(ros::NodeHandle& nh, const EDTEnvironment::Ptr& env) {
++void Astar::init(fuel_support::Config& nh, const EDTEnvironment::Ptr& env) {
+   nh.param("astar/resolution_astar", resolution_, -1.0);
+   nh.param("astar/lambda_heu", lambda_heu_, -1.0);
+   nh.param("astar/max_search_time", max_search_time_, -1.0);
+@@ -59,7 +59,7 @@
+   open_set_map_.insert(make_pair(cur_node->index, cur_node));
+   use_node_num_ += 1;
+ 
+-  const auto t1 = ros::Time::now();
++  const auto t1 = fuel_support::Stamp::now();
+ 
+   /* ---------- search loop ---------- */
+   while (!open_set_.empty()) {
+@@ -72,7 +72,7 @@
+     }
+ 
+     // Early termination if time up
+-    if ((ros::Time::now() - t1).toSec() > max_search_time_) {
++    if ((fuel_support::Stamp::now() - t1).toSec() > max_search_time_) {
+       // std::cout << "early";
+       early_terminate_cost_ = cur_node->g_score + getDiagHeu(cur_node->position, end_pt);
+       return NO_PATH;
+--- a/fuel_planner/plan_env/include/plan_env/edt_environment.h
++++ b/fuel_planner/plan_env/include/plan_env/edt_environment.h
+@@ -5,7 +5,9 @@
+ #include <iostream>
+ #include <utility>
+ 
+-#include <plan_env/obj_predictor.h>
++#include <memory>
++#include <list>
++#include <vector>
+ 
+ using std::cout;
+ using std::endl;
+@@ -21,11 +23,7 @@
+ class EDTEnvironment {
+ private:
+   /* data */
+-  ObjPrediction obj_prediction_;
+-  ObjScale obj_scale_;
+   double resolution_inv_;
+-  double distToBox(int idx, const Eigen::Vector3d& pos, const double& time);
+-  double minDistToAllBox(const Eigen::Vector3d& pos, const double& time);
+ 
+ public:
+   EDTEnvironment(/* args */) {
+@@ -37,8 +35,6 @@
+ 
+   void init();
+   void setMap(shared_ptr<SDFMap>& map);
+-  void setObjPrediction(ObjPrediction prediction);
+-  void setObjScale(ObjScale scale);
+   void evaluateEDTWithGrad(const Eigen::Vector3d& pos, double time, double& dist, Eigen::Vector3d& grad);
+   double evaluateCoarseEDT(Eigen::Vector3d& pos, double time);
+ 
+--- a/fuel_planner/plan_env/include/plan_env/sdf_map.h
++++ b/fuel_planner/plan_env/include/plan_env/sdf_map.h
+@@ -5,7 +5,7 @@
+ #include <Eigen/StdVector>
+ 
+ #include <queue>
+-#include <ros/ros.h>
++#include <fuel_support/config.hpp>
+ #include <tuple>
+ 
+ #include <pcl/point_cloud.h>
+@@ -31,7 +31,9 @@
+ 
+   enum OCCUPANCY { UNKNOWN, FREE, OCCUPIED };
+ 
+-  void initMap(ros::NodeHandle& nh);
++  void initMap(fuel_support::Config& nh);
++  void importSnapshot(const vector<int8_t>& raw, const vector<int8_t>& inflated);
++  void buildSnapshotESDF();
+   void inputPointCloud(const pcl::PointCloud<pcl::PointXYZ>& points, const int& point_num,
+                        const Eigen::Vector3d& camera_pos);
+ 
+@@ -73,7 +75,7 @@
+ 
+   unique_ptr<MapParam> mp_;
+   unique_ptr<MapData> md_;
+-  unique_ptr<MapROS> mr_;
++
+   unique_ptr<RayCaster> caster_;
+ 
+   friend MapROS;
+--- a/fuel_planner/plan_env/src/edt_environment.cpp
++++ b/fuel_planner/plan_env/src/edt_environment.cpp
+@@ -10,41 +10,6 @@
+ void EDTEnvironment::setMap(shared_ptr<SDFMap>& map) {
+   this->sdf_map_ = map;
+   resolution_inv_ = 1 / sdf_map_->getResolution();
+-}
+-
+-void EDTEnvironment::setObjPrediction(ObjPrediction prediction) {
+-  this->obj_prediction_ = prediction;
+-}
+-
+-void EDTEnvironment::setObjScale(ObjScale scale) {
+-  this->obj_scale_ = scale;
+-}
+-
+-double EDTEnvironment::distToBox(int idx, const Eigen::Vector3d& pos, const double& time) {
+-  // Eigen::Vector3d pos_box = obj_prediction_->at(idx).evaluate(time);
+-  Eigen::Vector3d pos_box = obj_prediction_->at(idx).evaluateConstVel(time);
+-
+-  Eigen::Vector3d box_max = pos_box + 0.5 * obj_scale_->at(idx);
+-  Eigen::Vector3d box_min = pos_box - 0.5 * obj_scale_->at(idx);
+-
+-  Eigen::Vector3d dist;
+-
+-  for (int i = 0; i < 3; i++) {
+-    dist(i) = pos(i) >= box_min(i) && pos(i) <= box_max(i) ? 0.0 : min(fabs(pos(i) - box_min(i)),
+-                                                                       fabs(pos(i) - box_max(i)));
+-  }
+-
+-  return dist.norm();
+-}
+-
+-double EDTEnvironment::minDistToAllBox(const Eigen::Vector3d& pos, const double& time) {
+-  double dist = 10000000.0;
+-  for (int i = 0; i < obj_prediction_->size(); i++) {
+-    double di = distToBox(i, pos, time);
+-    if (di < dist) dist = di;
+-  }
+-
+-  return dist;
+ }
+ 
+ void EDTEnvironment::getSurroundDistance(Eigen::Vector3d pts[2][2][2], double dists[2][2][2]) {
+@@ -91,8 +56,7 @@
+   if (time < 0.0) {
+     return d1;
+   } else {
+-    double d2 = minDistToAllBox(pos, time);
+-    return min(d1, d2);
++    throw std::runtime_error("dynamic object prediction is outside this adapter");
+   }
+ }
+ // EDTEnvironment::
+--- a/fuel_planner/plan_env/src/sdf_map.cpp
++++ b/fuel_planner/plan_env/src/sdf_map.cpp
+@@ -1,5 +1,5 @@
+ #include "plan_env/sdf_map.h"
+-#include "plan_env/map_ros.h"
++
+ #include <plan_env/raycast.h>
+ 
+ namespace fast_planner {
+@@ -9,10 +9,10 @@
+ SDFMap::~SDFMap() {
+ }
+ 
+-void SDFMap::initMap(ros::NodeHandle& nh) {
++void SDFMap::initMap(fuel_support::Config& nh) {
+   mp_.reset(new MapParam);
+   md_.reset(new MapData);
+-  mr_.reset(new MapROS);
++
+ 
+   // Params of map properties
+   double x_size, y_size, z_size;
+@@ -31,6 +31,8 @@
+   mp_->local_bound_inflate_ = max(mp_->resolution_, mp_->local_bound_inflate_);
+   mp_->resolution_inv_ = 1 / mp_->resolution_;
+   mp_->map_origin_ = Eigen::Vector3d(-x_size / 2.0, -y_size / 2.0, mp_->ground_height_);
++  nh.param("sdf_map/origin_x", mp_->map_origin_[0], mp_->map_origin_[0]);
++  nh.param("sdf_map/origin_y", mp_->map_origin_[1], mp_->map_origin_[1]);
+   mp_->map_size_ = Eigen::Vector3d(x_size, y_size, z_size);
+   for (int i = 0; i < 3; ++i)
+     mp_->map_voxel_num_(i) = ceil(mp_->map_size_(i) / mp_->resolution_);
+@@ -83,10 +85,7 @@
+   posToIndex(mp_->box_mind_, mp_->box_min_);
+   posToIndex(mp_->box_maxd_, mp_->box_max_);
+ 
+-  // Initialize ROS wrapper
+-  mr_->setMap(this);
+-  mr_->node_ = nh;
+-  mr_->init();
++
+ 
+   caster_.reset(new RayCaster);
+   caster_->setParams(mp_->resolution_, mp_->map_origin_);
+@@ -321,7 +320,7 @@
+   posToIndex(update_min - bound_inf, md_->local_bound_min_);
+   boundIndex(md_->local_bound_min_);
+   boundIndex(md_->local_bound_max_);
+-  mr_->local_updated_ = true;
++
+ 
+   // Bounding box for subsequent updating
+   for (int k = 0; k < 3; ++k) {
+@@ -536,3 +535,34 @@
+ }
+ }  // namespace fast_planner
+ // SDFMap
++
++namespace fast_planner {
++void SDFMap::importSnapshot(const vector<int8_t>& raw,const vector<int8_t>& inflated) {
++ if(raw.size()!=md_->occupancy_buffer_.size() || inflated.size()!=raw.size()) throw std::runtime_error("snapshot geometry");
++ for(size_t i=0;i<raw.size();++i)if((raw[i]!=-1 && raw[i]!=0 && raw[i]!=100) || (inflated[i]!=-1 && inflated[i]!=0 && inflated[i]!=100))throw std::runtime_error("snapshot occupancy");
++ Eigen::Vector3i lo=mp_->map_voxel_num_,hi=Eigen::Vector3i::Zero();bool changed=false;
++ // External layout is x-fastest; native SDFMap layout is z-fastest.
++ for(int z=0;z<mp_->map_voxel_num_[2];++z)for(int y=0;y<mp_->map_voxel_num_[1];++y)for(int x=0;x<mp_->map_voxel_num_[0];++x){
++  int src=x+mp_->map_voxel_num_[0]*(y+mp_->map_voxel_num_[1]*z),dst=toAddress(x,y,z);
++  if(raw[src]!=-1 && raw[src]!=0 && raw[src]!=100)throw std::runtime_error("snapshot occupancy");
++  double v=raw[src]<0?mp_->clamp_min_log_-mp_->unknown_flag_:(raw[src]==0?mp_->clamp_min_log_:mp_->clamp_max_log_);
++  char inf=inflated[src]==0?0:1;
++  if(md_->occupancy_buffer_[dst]!=v || md_->occupancy_buffer_inflate_[dst]!=inf){changed=true;Eigen::Vector3i i(x,y,z);lo=lo.cwiseMin(i);hi=hi.cwiseMax(i);}
++  md_->occupancy_buffer_[dst]=v;md_->occupancy_buffer_inflate_[dst]=inf;
++ }
++ if(changed){indexToPos(lo,md_->update_min_);indexToPos(hi,md_->update_max_);}
++ else {md_->update_min_=mp_->map_min_boundary_;md_->update_max_=mp_->map_max_boundary_;}
++ md_->reset_updated_box_=false;
++}
++}
++
++namespace fast_planner {
++void SDFMap::buildSnapshotESDF() {
++  // Snapshot imports have no streaming ROS map updater to set local bounds.
++  // Recompute the actual native ESDF over this bounded snapshot, including
++  // unknown cells as obstacles when optimistic=false.
++  md_->local_bound_min_ = Eigen::Vector3i::Zero();
++  md_->local_bound_max_ = mp_->map_voxel_num_ - Eigen::Vector3i::Ones();
++  updateESDF3d();
++}
++}
+--- /dev/null
++++ b/fuel_support/include/fuel_support/config.hpp
+@@ -0,0 +1,29 @@
++// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
++#pragma once
++#include <yaml-cpp/yaml.h>
++#include <chrono>
++#include <cstdio>
++#include <cstdint>
++#include <stdexcept>
++#include <string>
++#include <iostream>
++namespace fuel_support {
++class Config {
++ public:
++  YAML::Node values;
++  template<class T> void param(const std::string& name,T& out,const T& fallback) const {
++    out=values[name]?values[name].as<T>():fallback;
++  }
++};
++struct Stamp {
++  double seconds{0};
++  static Stamp now(){return {std::chrono::duration<double>(std::chrono::steady_clock::now().time_since_epoch()).count()};}
++  double toSec() const{return seconds;}
++  Stamp operator-(const Stamp& other)const{return {seconds-other.seconds};}
++};
++}
++#define FUEL_WARN(...) do{std::fprintf(stderr,__VA_ARGS__);std::fprintf(stderr,"\n");}while(0)
++#define FUEL_INFO(...) FUEL_WARN(__VA_ARGS__)
++#define FUEL_ERROR(...) FUEL_WARN(__VA_ARGS__)
++#define FUEL_WARN_THROTTLE(period,...) FUEL_WARN(__VA_ARGS__)
++#define FUEL_ERROR_COND(condition,...) do{if(condition) FUEL_WARN(__VA_ARGS__);}while(0)
+--- /dev/null
++++ b/package.xml
+@@ -0,0 +1 @@
++<package format="3"><name>easyfly_fuel_native</name><version>0.1.0</version><description>Pinned native FUEL frontier structure, viewpoint and hierarchical tour planning</description><maintainer email="maintainer@easyfly.local">EasyFly</maintainer><license>GPL-3.0</license><buildtool_depend>ament_cmake</buildtool_depend><depend>eigen</depend><depend>libpcl-all-dev</depend><depend>yaml-cpp</depend><export><build_type>ament_cmake</build_type></export><build_depend>libnlopt-cxx-dev</build_depend><exec_depend>libnlopt0</exec_depend></package>

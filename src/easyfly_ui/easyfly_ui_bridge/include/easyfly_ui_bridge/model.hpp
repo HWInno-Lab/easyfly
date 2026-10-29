@@ -37,6 +37,12 @@
 #include <easyfly_msgs/msg/ellipse_observation_array.hpp>
 #include <easyfly_msgs/msg/color_line_observation_array.hpp>
 #include <easyfly_msgs/msg/localization_status.hpp>
+#include <easyfly_msgs/msg/tag_observation_array.hpp>
+#include <easyfly_msgs/msg/landing_target.hpp>
+#include <easyfly_msgs/msg/landing_guidance_target.hpp>
+#include <easyfly_msgs/msg/mission_step_feedback.hpp>
+#include <easyfly_msgs/msg/target_prediction_array.hpp>
+#include <easyfly_msgs/msg/classified_obstacle_array.hpp>
 
 namespace easyfly_ui_bridge
 {
@@ -151,6 +157,15 @@ struct CameraObservations
   Observation<sensor_msgs::msg::Image> ellipse_image, color_line_image;
   size_t cached_images{0}, cached_bytes{0};
 };
+struct SpecialObservations
+{
+  Observation<easyfly_msgs::msg::TagObservationArray> tags;
+  Observation<easyfly_msgs::msg::LandingTarget> landing;
+  Observation<easyfly_msgs::msg::LandingGuidanceTarget> guidance;
+  Observation<easyfly_msgs::msg::MissionStepFeedback> step_feedback;
+  Observation<easyfly_msgs::msg::TargetPredictionArray> predictions;
+  Observation<easyfly_msgs::msg::ClassifiedObstacleArray> classified;
+};
 struct UiSnapshot
 {
   uint64_t observation_session_id{0}, time_epoch{0}, revision{0};
@@ -162,7 +177,10 @@ struct UiSnapshot
   // Read-only localization telemetry; never navigation or flight admission.
   std::string selected_localization_backend;
   Observation<easyfly_msgs::msg::LocalizationStatus> localization;
+  bool localization_navigation_enabled{false};  // Selected launch mode, not readiness.
+  Observation<easyfly_msgs::msg::LocalizationStatus> navigation_localization;
   StateView state;
+  SpecialObservations special;
   // Read-only DDS graph evidence, sampled on the bridge worker at most once/second.
   double state_graph_observed{0};
   double backend_graph_observed{0};
@@ -190,6 +208,9 @@ struct UiSnapshot
 
 namespace detail
 {
+Quality validate_navigation_localization(
+  const easyfly_msgs::msg::LocalizationStatus & message, const std::string & backend,
+  const ClockState & clock, double receipt_age);
 double steady_seconds();
 int64_t stamp_ns(const builtin_interfaces::msg::Time & stamp);
 Quality source_quality(

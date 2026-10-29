@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -27,7 +26,6 @@
 #include <utility>
 #include "easyfly_desktop/mission_controls.hpp"
 #include "easyfly_desktop/presentation.hpp"
-
 namespace easyfly_desktop
 {
 namespace
@@ -118,7 +116,6 @@ struct MissionPanel::Impl
   QLabel * gate, * status, * dependencies;
   QPushButton * start, * cancel, * stop_check;
   QMessageBox * prompt{nullptr};
-
   Impl(
     MissionPanel * owner, const MissionOptions & value, ControlFactory factory,
     ReviewRead reader)

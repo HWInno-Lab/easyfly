@@ -63,3 +63,8 @@ C++ types and explicitly supplies ROS/steady timestamps; the old `predictor.hpp`
 contains forwarding aliases only. Message conversion, clock sampling, timer and
 capability service remain here. Topics, QoS, parameters, model thresholds and
 clock/watchdog call order are preserved. No navigation/control consumer is added.
+
+独立的 `easyfly_visual_navigation visual_mission --execute` 现提供显式米制视觉任务，
+并可消费类别和预测作为扩大避让范围的约束。其源时间、深度、坐标、控制所有权和
+仿真范围见 [视觉导航说明](../../../execution/e3_control/easyfly_visual_navigation/README.md)。
+本包仍只产生原有观测，启动本包不会自动开始飞行。

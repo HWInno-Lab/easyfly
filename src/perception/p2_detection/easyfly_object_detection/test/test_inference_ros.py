@@ -1,5 +1,19 @@
 # Copyright 2026 EasyFly Project
-# SPDX-License-Identifier: Apache-2.0
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#
+#
+
 """Installed real detector: fixed RGB input, model resolution and CPU/CUDA output."""
 import json
 import os
@@ -27,7 +41,7 @@ def ros_node():
 
 
 @pytest.mark.parametrize('gpu', [False, True])
-def test_fixed_frame_installed_detector(gpu, tmp_path, ros_node):
+def test_fixed_frame_installed_detector(gpu, tmp_path, ros_node, record_property):
     node = ros_node
     publisher = node.create_publisher(Image, '/camera/color/image_raw', 10)
     seen = []
@@ -46,11 +60,18 @@ def test_fixed_frame_installed_detector(gpu, tmp_path, ros_node):
         '-p', 'publish_debug_image_override:="false"'], stdout=log, stderr=log,
         start_new_session=True)
     try:
-        end = time.monotonic() + 15
+        # An empty CUDA cache can compile the provider kernels before the first
+        # subscription exists. This is an inference contract, not a warm-start
+        # benchmark; keep CPU readiness and post-ready inference budgets intact.
+        started = time.monotonic()
+        startup_budget = 60 if gpu else 15
+        end = started + startup_budget
         while publisher.get_subscription_count() == 0:
             rclpy.spin_once(node, timeout_sec=.02)
             assert process.poll() is None, log_path.read_text()
             assert time.monotonic() < end, log_path.read_text()
+        record_property('startup_seconds', time.monotonic() - started)
+        record_property('startup_budget_seconds', startup_budget)
         image = Image()
         image.header.stamp = node.get_clock().now().to_msg()
         image.header.frame_id = 'camera_color_optical_frame'
@@ -77,6 +98,7 @@ def test_fixed_frame_installed_detector(gpu, tmp_path, ros_node):
     diagnostic = log_path.read_text()
     actual_provider = ('CUDAExecutionProvider' if 'EP=CUDAExecutionProvider' in diagnostic
                        else 'CPUExecutionProvider')
+    record_property('actual_provider', actual_provider)
     assert 'EP=' + actual_provider in diagnostic
     if not gpu:
         assert actual_provider == 'CPUExecutionProvider'

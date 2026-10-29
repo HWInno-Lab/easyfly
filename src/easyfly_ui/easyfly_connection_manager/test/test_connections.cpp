@@ -47,6 +47,7 @@
 #include "easyfly_connection_manager/profile.hpp"
 #include "easyfly_connection_manager/rpc.hpp"
 #include "easyfly_connection_manager/supervisor.hpp"
+#include "../src/qgc_settings.hpp"
 
 namespace cm = easyfly_connection_manager;
 namespace
@@ -96,6 +97,35 @@ struct Peer
   int sequence{0};
 };
 }  // namespace
+
+TEST(ConnectionProfile, Qgc4And5ReadTheSelectedUdpEndpointFromTheirNativeSettingsGroups)
+{
+  QTemporaryDir root;
+  const auto path = root.path() + "/QGroundControl.ini";
+  {
+    QSettings settings(path, QSettings::IniFormat);
+    settings.setValue("savePath", root.path() + "/saved");
+    settings.setValue("LinkManager/udpListenPort", 14550);
+    settings.setValue("AutoConnect/udpListenPort", 14550);
+    cm::configure_qgc_udp(settings, 14562, 14559);
+    settings.sync(); ASSERT_EQ(settings.status(), QSettings::NoError);
+  }
+  QSettings persisted(path, QSettings::IniFormat);
+  EXPECT_EQ(persisted.value("savePath").toString(), root.path() + "/saved");
+  for (const auto & version_group : {"LinkManager/", "AutoConnect/"}) {
+    const QString group(version_group);
+    EXPECT_TRUE(persisted.value(group + "autoConnectUDP").toBool());
+    EXPECT_EQ(persisted.value(group + "udpListenPort").toInt(), 14562);
+    EXPECT_EQ(persisted.value(group + "udpTargetHostIP").toString(), "127.0.0.1");
+    EXPECT_EQ(persisted.value(group + "udpTargetHostPort").toInt(), 14559);
+    EXPECT_FALSE(persisted.value(group + "autoConnectPixhawk", true).toBool());
+    EXPECT_FALSE(persisted.value(group + "autoConnectSiKRadio", true).toBool());
+    EXPECT_FALSE(persisted.value(group + "autoConnectRTKGPS", true).toBool());
+    EXPECT_FALSE(persisted.value(group + "autoConnectLibrePilot", true).toBool());
+    EXPECT_FALSE(persisted.value(group + "autoConnectZeroConf", true).toBool());
+    EXPECT_FALSE(persisted.value(group + "autoConnectPX4Flow", true).toBool());
+  }
+}
 
 TEST(ConnectionProfile, RejectsMissingAndIncompatibleDesktopProtocol)
 {
@@ -634,6 +664,107 @@ TEST(Connections, OpenvinsSelectionIsDistinctFixedAndPreservedInEnvironment)
   EXPECT_THROW(profile.validate(), std::exception);
 }
 
+TEST(Connections, FixedCalibrationAndFuelSelectionsAreValidatedBeforeStart)
+{
+  auto profile = cm::Profile::create("Algorithm admission");
+  profile.mode = "sitl"; profile.selected_profile = "navigation_dev";
+  for (const auto & slam : QStringList{"openvins", "fast_livo2", "orbslam3"}) {
+    profile.algorithms = cm::algorithm_defaults(); profile.algorithms["slam"] = slam;
+    EXPECT_NO_THROW(profile.validate());
+    EXPECT_EQ(cm::Profile::from_json(profile.json()).algorithms, profile.algorithms);
+    EXPECT_EQ(
+      cm::session_environment(profile, "session").value(
+        "EASYFLY_LOCALIZATION_BACKEND"), slam);
+    profile.algorithms["slam_max_iteration"] = 5;
+    EXPECT_THROW(profile.validate(), std::exception);
+  }
+  profile.algorithms = cm::algorithm_defaults();
+  profile.algorithms["exploration"] = "fuel";
+  EXPECT_THROW(profile.validate(), std::exception);
+  profile.algorithms["strategy"] = "gcopter";
+  EXPECT_NO_THROW(profile.validate());
+  profile.algorithms["slam"] = "fast_lio";
+  EXPECT_NO_THROW(profile.validate());
+  profile.algorithms["slam"] = "orbslam3";
+  EXPECT_THROW(profile.validate(), std::exception);
+  profile.algorithms["slam"] = "profile";
+  profile.selected_profile = "full_perception";
+  EXPECT_THROW(profile.validate(), std::exception);
+}
+
+TEST(ConnectionManager, FixedCalibrationSwitchPreservesDraftAndSavesApplicableParameters)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  const auto file = root.path() + "/profiles.json";
+  auto p = cm::Profile::create("Customized FAST-LIO");
+  p.mode = "sitl"; p.selected_profile = "navigation_dev";
+  p.algorithms["slam"] = "fast_lio"; p.algorithms["slam_imu_topic"] = "/custom/imu";
+  cm::write_profiles(file, {p});
+  for (const auto & choice : QStringList{"fast_livo2", "orbslam3", "openvins"}) {
+    cm::ManagerWindow manager(file, root.path() + "/runtime");
+    manager.show(); auto * save = manager.findChild<QPushButton *>("saveConnection");
+    ASSERT_TRUE(until([&] {return save->isEnabled();}));
+    auto * slam = manager.findChild<QComboBox *>("algorithm_slam");
+    auto * imu = manager.findChild<QLineEdit *>("algorithm_slam_imu_topic");
+    slam->setCurrentIndex(slam->findData("fast_lio"));
+    imu->setText("/custom/imu"); ASSERT_TRUE(imu->isEnabled());
+    slam->setCurrentIndex(slam->findData(choice)); EXPECT_FALSE(imu->isEnabled());
+    EXPECT_TRUE(
+      manager.findChild<QLabel *>("slamConfigurationSummary")->text().contains(
+        "自定义参数不随本配置保存"));
+    slam->setCurrentIndex(slam->findData("fast_lio"));
+    EXPECT_TRUE(imu->isEnabled()); EXPECT_EQ(imu->text(), "/custom/imu");
+    slam->setCurrentIndex(slam->findData(choice)); save->click();
+    const auto saved = cm::read_profiles(file); ASSERT_EQ(saved.size(), 1);
+    EXPECT_EQ(saved[0].algorithms["slam"], choice);
+    EXPECT_EQ(saved[0].algorithms["slam_imu_topic"], "/livox/imu");
+    EXPECT_NO_THROW(saved[0].validate());
+    if (qEnvironmentVariableIsSet("EASYFLY_CM_SLAM_SCREENSHOTS")) {
+      auto * tabs = manager.findChild<QTabWidget *>(); tabs->setCurrentIndex(1);
+      manager.resize(850, 570); QCoreApplication::processEvents();
+      auto * area = qobject_cast<QScrollArea *>(tabs->currentWidget());
+      area->ensureWidgetVisible(manager.findChild<QLabel *>("slamConfigurationSummary"), 0, 10);
+      QCoreApplication::processEvents();
+      EXPECT_EQ(area->horizontalScrollBar()->maximum(), 0);
+      ASSERT_TRUE(
+        manager.grab().save(
+          qEnvironmentVariable("EASYFLY_CM_SLAM_SCREENSHOTS") + "/" + choice + ".png"));
+    }
+    cm::ManagerWindow reopened(file, root.path() + "/runtime");
+    EXPECT_EQ(reopened.findChild<QComboBox *>("algorithm_slam")->currentData(), choice);
+    EXPECT_EQ(reopened.findChild<QLineEdit *>("algorithm_slam_imu_topic")->text(), "/livox/imu");
+    EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+    EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+  }
+}
+
+TEST(Connections, LegacyFixedCalibrationFileMigratesWithoutChangingFrozenPayloads)
+{
+  QTemporaryDir root;
+  for (const auto & slam : QStringList{"fast_livo2", "orbslam3"}) {
+    auto profile = cm::Profile::create("Old incompatible form");
+    profile.mode = "sitl"; profile.selected_profile = "navigation_dev";
+    profile.algorithms["slam"] = slam;
+    profile.algorithms["slam_max_iteration"] = 5;
+    const auto payload = profile.json();
+    EXPECT_THROW(cm::Profile::from_json(payload), std::exception);
+    const auto bytes = QJsonDocument(
+      QJsonObject{{"schema_version", 2},
+        {"profiles", QJsonArray{payload}}}).toJson();
+    QFile file(root.path() + "/legacy.json"); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    file.setPermissions(QFile::ReadOwner | QFile::WriteOwner); file.write(bytes); file.close();
+    const auto loaded = cm::read_profiles(file.fileName()); ASSERT_EQ(loaded.size(), 1);
+    EXPECT_EQ(loaded[0].algorithms["slam"], slam);
+    EXPECT_EQ(
+      loaded[0].algorithms["slam_max_iteration"],
+      cm::algorithm_defaults()["slam_max_iteration"]);
+    ASSERT_TRUE(file.open(QIODevice::ReadOnly)); EXPECT_EQ(file.readAll(), bytes); file.close();
+    cm::write_profiles(file.fileName(), loaded);
+    EXPECT_EQ(cm::read_profiles(file.fileName())[0].hash(), loaded[0].hash());
+  }
+}
+
 TEST(ConnectionManager, SceneAdmissionTracksProfileDraftAndMissingSelection)
 {
   QTemporaryDir root;
@@ -670,4 +801,22 @@ TEST(ConnectionManager, SceneAdmissionTracksProfileDraftAndMissingSelection)
   EXPECT_FALSE(start->isEnabled());
   EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
   EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
+TEST(ConnectionProfile, PeripheralOptInIsIndependentAndPreservesLegacyProfileHash)
+{
+  auto p = cm::Profile::create("Peripheral simulation"); p.mode = "sitl";
+  const auto legacy = p.json(); const auto hash = p.hash();
+  EXPECT_FALSE(legacy["features"].toObject().contains("peripheral_control"));
+  EXPECT_EQ(cm::Profile::from_json(legacy).hash(), hash);
+  p.peripheral_control = true; EXPECT_NO_THROW(p.validate());
+  EXPECT_FALSE(p.mission_control); EXPECT_TRUE(cm::Profile::from_json(p.json()).peripheral_control);
+  EXPECT_NE(p.hash(), hash);
+  p.peripheral_control = false; EXPECT_EQ(p.hash(), hash);
+  p.peripheral_control = true; p.mode = "observe"; EXPECT_THROW(p.validate(), std::runtime_error);
+  p.mode = "sitl"; p.gcs_enabled = true; EXPECT_THROW(p.validate(), std::runtime_error);
+  p.gcs_enabled = false; p.simulation_time = false; EXPECT_THROW(p.validate(), std::runtime_error);
+  auto bad = legacy; auto features = bad["features"].toObject();
+  features["peripheral_control"] = "true";
+  bad["features"] = features; EXPECT_THROW(cm::Profile::from_json(bad), std::runtime_error);
 }

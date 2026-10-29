@@ -22,6 +22,7 @@ ExternalProject_Add(fastdds_endpoint_guard
 ExternalProject_Add_StepDependencies(fastdds_endpoint_guard patch
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/patch_endpoint.py")
 ament_python_install_package(${PROJECT_NAME})
+ament_environment_hooks("${CMAKE_CURRENT_SOURCE_DIR}/env-hooks/private_library.dsv.in")
 install(FILES "${private_library}" DESTINATION lib/${PROJECT_NAME} RENAME libfastrtps.so.2.6)
 install(CODE "file(SHA256 \"${private_library}\" native_hash)\nfile(WRITE \"\${CMAKE_INSTALL_PREFIX}/lib/${PROJECT_NAME}/SHA256\" \"\${native_hash}\\n\")")
 ExternalProject_Get_Property(fastdds_endpoint_guard SOURCE_DIR)
@@ -29,9 +30,24 @@ install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 install(FILES "${SOURCE_DIR}/LICENSE" README.md source-lock.json DESTINATION share/${PROJECT_NAME})
 install(FILES cmake/patch_endpoint.py DESTINATION share/${PROJECT_NAME}/source)
 if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_history_notification test/test_history_notification.cpp)
+  target_link_libraries(test_history_notification fastrtps)
+  add_dependencies(test_history_notification fastdds_endpoint_guard)
+  set_tests_properties(test_history_notification PROPERTIES
+    ENVIRONMENT "LD_LIBRARY_PATH=${private_build}/src/cpp:$ENV{LD_LIBRARY_PATH}")
   # The glibc-versioned scheduling barrier is specific to our Linux x86_64
   # simulation target. It never changes the installed runtime or system mutexes.
   if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64)$")
+    add_executable(test_flow_flush test/test_flow_flush.cpp)
+    target_compile_features(test_flow_flush PRIVATE cxx_std_17)
+    target_link_libraries(test_flow_flush fastrtps pthread dl)
+    target_link_options(test_flow_flush PRIVATE "-Wl,--export-dynamic")
+    add_dependencies(test_flow_flush fastdds_endpoint_guard)
+    add_test(NAME test_flow_flush COMMAND ${CMAKE_COMMAND} -E env
+      "LD_LIBRARY_PATH=${private_build}/src/cpp:$ENV{LD_LIBRARY_PATH}"
+      $<TARGET_FILE:test_flow_flush>)
+    set_tests_properties(test_flow_flush PROPERTIES TIMEOUT 20 RUN_SERIAL TRUE)
     add_executable(test_reader_discovery test/test_reader_discovery.cpp)
     target_compile_features(test_reader_discovery PRIVATE cxx_std_17)
     target_link_libraries(test_reader_discovery fastrtps pthread dl)

@@ -11,6 +11,7 @@ ALG-8.1..8.5已完成当前依赖的分类与接入记录；ALG-9整体构建/�
 | --- | --- | --- |
 | algorithms/localization/fast_lio | 完整ROS定位/惯性建图；内嵌ikd-Tree/IKFoM | [说明](algorithms/localization/README.md) · [清单](algorithms/localization/fast_lio.provenance.json) |
 | algorithms/planning/ego_planner | 完整8包ROS规划、搜索、建图和轨迹优化 | [说明](algorithms/planning/README.md) · [清单](algorithms/planning/ego_planner.provenance.json) |
+| algorithms/planning/super | 固定官方 SUPER 与 ROG-Map；原生 A*/CIRI/MINCO-S4 | [说明](algorithms/planning/README.md) · [清单](algorithms/planning/super.provenance.json) |
 | runtimes/onnxruntime | 本地可选推理运行库，载荷忽略；CPU/CUDA依赖 | [说明](runtimes/README.md) · [清单](runtimes/onnxruntime.provenance.json) |
 | sensor_sdks/livox_sdk2 | 原生雷达SDK | [说明](sensor_sdks/README.md) · [清单](sensor_sdks/livox_sdk2.provenance.json) |
 | sensor_sdks/librealsense | 原生深度相机SDK | [说明](sensor_sdks/README.md) · [清单](sensor_sdks/librealsense.provenance.json) |

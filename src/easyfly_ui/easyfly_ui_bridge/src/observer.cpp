@@ -27,6 +27,7 @@
 
 #include "easyfly_ui_bridge/observer.hpp"
 #include "easyfly_ui_bridge/camera_observations.hpp"
+#include "easyfly_ui_bridge/special_observations.hpp"
 
 namespace easyfly_ui_bridge
 {
@@ -108,6 +109,7 @@ struct Observer::Impl
   std::array<Image::ConstSharedPtr, 2> incoming_images;
   std::array<double, 2> image_received{};
   std::array<std::unique_ptr<CameraObservationBuffer>, 2> camera_buffers;
+  std::unique_ptr<SpecialObservationBuffer> special_buffer;
   easyfly_msgs::msg::MissionStatus::ConstSharedPtr incoming_event;
   double event_received{0};
   std::map<Key, Pending> pending;
@@ -149,10 +151,19 @@ struct Observer::Impl
     if (config.selected_localization_backend != "external" &&
       config.selected_localization_backend != "fast_lio" &&
       config.selected_localization_backend != "openvins" &&
+      config.selected_localization_backend != "fast_livo2" &&
+      config.selected_localization_backend != "orbslam3" &&
       config.selected_localization_backend != "disabled")
     {throw std::invalid_argument("invalid selected localization backend");}
     data.selected_localization_backend = config.selected_localization_backend;
-    data.localization.evidence.endpoint = "/localization/openvins/status";
+    data.localization_navigation_enabled = config.localization_navigation_enabled;
+    data.navigation_localization.evidence.endpoint =
+      "/localization/" + data.selected_localization_backend + "/navigation_status";
+    data.localization.evidence.endpoint =
+      (data.selected_localization_backend == "fast_livo2" ||
+      data.selected_localization_backend == "orbslam3") ?
+      "/localization/" + data.selected_localization_backend +
+      "/status" : "/localization/openvins/status";
     if (previous_session) {
       if (!previous_session->stopped) {
         throw std::invalid_argument("previous observer is not stopped");
@@ -286,11 +297,19 @@ struct Observer::Impl
     for (auto & image : data.images) {image = {};}
     for (auto & buffer : camera_buffers) {if (buffer) {buffer->clear();}}
     data.camera_perception = {};
+    if (special_buffer) {special_buffer->clear();} data.special = {};
     data.task_backends.clear(); data.backend_graph_observed = 0;
     incoming_images = {}; incoming_event.reset();
     data.trajectory.clear();
     data.localization = {};
-    data.localization.evidence.endpoint = "/localization/openvins/status";
+    data.navigation_localization = {};
+    data.navigation_localization.evidence.endpoint =
+      "/localization/" + data.selected_localization_backend + "/navigation_status";
+    data.localization.evidence.endpoint =
+      (data.selected_localization_backend == "fast_livo2" ||
+      data.selected_localization_backend == "orbslam3") ?
+      "/localization/" + data.selected_localization_backend +
+      "/status" : "/localization/openvins/status";
     // The event is historical and has no execution identity; keep original epoch.
     data.last_mission_event.evidence.quality = Quality::ClockReset;
     event("ROS clock moved backwards: current layers and read-only requests invalidated");
@@ -329,17 +348,21 @@ struct Observer::Impl
     }
     subscriptions.push_back(
       node->create_subscription<easyfly_msgs::msg::LocalizationStatus>(
-        "/localization/openvins/status", rclcpp::QoS(1).reliable().transient_local(),
+        data.localization.evidence.endpoint, rclcpp::QoS(1).reliable().transient_local(),
         [this](easyfly_msgs::msg::LocalizationStatus::ConstSharedPtr m) {
           const double received = detail::steady_seconds();
           const auto structural = detail::validate_localization(
             *m,
             {Quality::ValidAtObservation, detail::stamp_ns(m->header.stamp), 0}, 0);
           // Bound retained strings and reject malformed identities before storing.
-          if (structural == Quality::Invalid && (m->backend_id != "openvins" ||
-          m->session_id.empty() || m->session_id.size() > 128 || m->reason.size() > 2048 ||
-          m->last_rejection.size() > 2048 || m->header.frame_id.size() > 256 ||
-          m->tracked_frame.size() > 256))
+          const std::string expected_backend =
+          (data.selected_localization_backend == "fast_livo2" ||
+          data.selected_localization_backend == "orbslam3") ?
+          data.selected_localization_backend : "openvins";
+          if (m->backend_id != expected_backend || (structural == Quality::Invalid && (
+            m->session_id.empty() || m->session_id.size() > 128 || m->reason.size() > 2048 ||
+            m->last_rejection.size() > 2048 || m->header.frame_id.size() > 256 ||
+            m->tracked_frame.size() > 256)))
           {
             data.localization.value.reset();
             data.localization.evidence.quality = Quality::Invalid;
@@ -354,9 +377,55 @@ struct Observer::Impl
           observation.value->header.stamp == m->header.stamp;
           if (!same_source) {e.first_source_steady = received;}
           e.received_steady = received; e.time_epoch = data.clock.epoch;
-          e.reason = "localization observation only; navigation frame/map integration pending";
+          e.reason = "raw localization observation; navigation admission is checked separately";
           observation.value = std::move(m);
         }));
+    if (config.localization_navigation_enabled &&
+      (config.selected_localization_backend == "openvins" ||
+      config.selected_localization_backend == "fast_livo2" ||
+      config.selected_localization_backend == "orbslam3"))
+    {
+      subscriptions.push_back(
+        node->create_subscription<easyfly_msgs::msg::LocalizationStatus>(
+          data.navigation_localization.evidence.endpoint,
+          rclcpp::QoS(1).reliable().transient_local(),
+          [this](easyfly_msgs::msg::LocalizationStatus::ConstSharedPtr m) {
+            auto & observation = data.navigation_localization;
+            auto & e = observation.evidence;
+            if (m->backend_id != data.selected_localization_backend + "_navigation" ||
+            m->session_id.size() > 128 || m->reason.size() > 2048 ||
+            m->last_rejection.size() > 2048 || m->header.frame_id.size() > 256 ||
+            m->tracked_frame.size() > 256)
+            {
+              observation.value.reset(); e.quality = Quality::Invalid;
+              e.reason = "invalid navigation localization envelope"; return;
+            }
+            const double received = detail::steady_seconds();
+            if (!observation.value || observation.value->session_id != m->session_id ||
+            observation.value->generation != m->generation ||
+            observation.value->header.stamp != m->header.stamp)
+            {e.first_source_steady = received;}
+            e.received_steady = received; e.time_epoch = data.clock.epoch;
+            e.reason = "aligned navigation observation; server retains map and flight admission";
+            observation.value = std::move(m);
+          }));
+    }
+    special_buffer = std::make_unique<SpecialObservationBuffer>(config.landing_optical_frame);
+    const auto special_subscribe = [this](const char * topic, auto sample) {
+        using Message = decltype(sample);
+        subscriptions.push_back(
+          node->create_subscription<Message>(
+            topic,
+            rclcpp::QoS(1).best_effort(), [this](typename Message::ConstSharedPtr m) {
+              special_buffer->receive(std::move(m), detail::steady_seconds(), data.clock.epoch);
+            }));
+      };
+    special_subscribe("/tag_observations", easyfly_msgs::msg::TagObservationArray{});
+    special_subscribe("/landing_target", easyfly_msgs::msg::LandingTarget{});
+    special_subscribe("/landing/guidance_target", easyfly_msgs::msg::LandingGuidanceTarget{});
+    special_subscribe("/mission/step_feedback", easyfly_msgs::msg::MissionStepFeedback{});
+    special_subscribe("/target_predictions", easyfly_msgs::msg::TargetPredictionArray{});
+    special_subscribe("/obstacles_classified", easyfly_msgs::msg::ClassifiedObstacleArray{});
     subscriptions.push_back(
       node->create_subscription<easyfly_msgs::msg::MissionStatus>(
         "/mission_status", rclcpp::QoS(1),
@@ -600,6 +669,32 @@ struct Observer::Impl
   }
   void observations(double now)
   {
+    if (special_buffer) {
+      data.special = special_buffer->snapshot(data.clock, now);
+      const auto unique_source = [this](auto & observation) {
+          if (observation.value && node->count_publishers(observation.evidence.endpoint) != 1) {
+            observation.evidence.quality = Quality::Invalid;
+            observation.evidence.reason = "specialized publisher missing or ambiguous";
+          }
+        };
+      unique_source(data.special.tags); unique_source(data.special.landing);
+      unique_source(data.special.guidance); unique_source(data.special.step_feedback);
+      unique_source(data.special.predictions); unique_source(data.special.classified);
+    }
+    if (data.navigation_localization.value) {
+      auto & e = data.navigation_localization.evidence;
+      e.receipt_age = now - e.first_source_steady;
+      e.source_age_available = data.clock.now_ns > 0;
+      e.source_age = e.source_age_available ? static_cast<double>(data.clock.now_ns -
+        detail::stamp_ns(data.navigation_localization.value->header.stamp)) / 1e9 : 0;
+      e.quality = detail::validate_navigation_localization(
+        *data.navigation_localization.value, data.selected_localization_backend,
+        data.clock, e.receipt_age);
+      if (node->count_publishers(e.endpoint) != 1) {
+        e.quality = Quality::Invalid;
+        e.reason = "navigation localization publisher missing or ambiguous";
+      }
+    }
     if (data.localization.value) {
       auto & e = data.localization.evidence;
       e.receipt_age = now - e.first_source_steady;
@@ -608,7 +703,7 @@ struct Observer::Impl
         detail::stamp_ns(data.localization.value->header.stamp)) / 1e9 : 0;
       e.quality =
         detail::validate_localization(*data.localization.value, data.clock, e.receipt_age);
-      if (node->count_publishers("/localization/openvins/status") > 1) {
+      if (node->count_publishers(data.localization.evidence.endpoint) > 1) {
         e.quality = Quality::Invalid;
         e.reason = "multiple localization publishers; ambiguous session";
       }
@@ -795,8 +890,10 @@ struct Observer::Impl
       queue.clear(); reserved.clear();
     }
     incoming_images = {}; incoming_event.reset(); subscriptions.clear();
+    special_buffer.reset(); data.special = {};
     for (auto & buffer : camera_buffers) {buffer.reset();}
     data.camera_perception = {};
+    if (special_buffer) {special_buffer->clear();} data.special = {};
     data.task_backends.clear(); data.backend_graph_observed = 0;
     caps_clients.clear(); mission_client.reset(); params_client.reset(); perception_client.reset();
     details_client.reset();
@@ -814,6 +911,7 @@ struct Observer::Impl
     for (auto & image : data.images) {image = {};}
     data.trajectory.clear();
     data.localization.evidence.quality = Quality::Stale;
+    data.navigation_localization.evidence.quality = Quality::Stale;
     for (auto & item : data.capabilities) {item.second.evidence.quality = Quality::Stale;}
     for (auto & item : data.missions) {item.second.evidence.quality = Quality::Stale;}
     data.mission_details.evidence.quality = Quality::Stale;
@@ -836,7 +934,7 @@ struct Observer::Impl
         if (config.poll_observations && now - last_poll >= 1.01) {
           data.backend_graph_observed = now;
           for (const auto & name :
-            {"takeoff", "goto", "navigate", "track", "search", "precision_land", "land"})
+            {"takeoff", "goto", "navigate", "track", "search", "explore", "precision_land", "land"})
           {
             data.task_backends[name] = sdk->server_ready(name);
           }

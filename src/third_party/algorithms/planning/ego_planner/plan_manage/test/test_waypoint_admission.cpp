@@ -1,17 +1,34 @@
-#include <cstdint>
-#include <limits>
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <gtest/gtest.h>
-
 #include <plan_manage/collision_safety.h>
 #include <plan_manage/waypoint_admission.h>
+#include <cstdint>
+#include <limits>
 
 namespace
 {
 
 using ego_planner::collision_safety::emergencyWindowImminent;
 using ego_planner::collision_safety::sanitizeEmergencyTime;
-using namespace ego_planner::waypoint_admission;
+using ego_planner::waypoint_admission::validOdomFrame;
+using ego_planner::waypoint_admission::validStampFields;
+using ego_planner::waypoint_admission::validTimestampWindow;
+using ego_planner::waypoint_admission::nonDecreasingStamp;
+using ego_planner::waypoint_admission::selectGoalAltitude;
+using ego_planner::waypoint_admission::validFinitePosition;
+using ego_planner::waypoint_admission::boundedFutureTolerance;
 
 TEST(WaypointAdmission, AcceptsOnlyOdomFrameSpellings)
 {
@@ -38,8 +55,9 @@ TEST(WaypointAdmission, RejectsStaleFutureAndNonFiniteTimestampWindows)
   EXPECT_TRUE(validTimestampWindow(-0.2, 1.0, 0.2));
   EXPECT_FALSE(validTimestampWindow(-0.200001, 1.0, 0.2));
   EXPECT_FALSE(validTimestampWindow(1.000001, 1.0, 0.2));
-  EXPECT_FALSE(validTimestampWindow(
-    std::numeric_limits<double>::quiet_NaN(), 1.0, 0.2));
+  EXPECT_FALSE(
+    validTimestampWindow(
+      std::numeric_limits<double>::quiet_NaN(), 1.0, 0.2));
   EXPECT_FALSE(validTimestampWindow(0.0, 0.0, 0.2));
 }
 
@@ -63,15 +81,17 @@ TEST(WaypointAdmission, ExplicitAndLowAltitudeGoalsHaveSafeSemantics)
   EXPECT_DOUBLE_EQ(selected, 1.49);
 
   EXPECT_FALSE(selectGoalAltitude(0.0, 0.49, selected));
-  EXPECT_FALSE(selectGoalAltitude(
-    std::numeric_limits<double>::quiet_NaN(), 1.49, selected));
+  EXPECT_FALSE(
+    selectGoalAltitude(
+      std::numeric_limits<double>::quiet_NaN(), 1.49, selected));
 }
 
 TEST(WaypointAdmission, PositionAndFutureToleranceAreFailClosed)
 {
   EXPECT_TRUE(validFinitePosition(1.0, 2.0, 3.0));
-  EXPECT_FALSE(validFinitePosition(
-    std::numeric_limits<double>::quiet_NaN(), 2.0, 3.0));
+  EXPECT_FALSE(
+    validFinitePosition(
+      std::numeric_limits<double>::quiet_NaN(), 2.0, 3.0));
   EXPECT_DOUBLE_EQ(boundedFutureTolerance(0.3), 0.3);
   EXPECT_DOUBLE_EQ(boundedFutureTolerance(-1.0), 0.2);
   EXPECT_DOUBLE_EQ(boundedFutureTolerance(6.0), 0.2);
@@ -82,15 +102,17 @@ TEST(CollisionSafety, EmergencyTimeAndBoundaryAreFailClosed)
   EXPECT_DOUBLE_EQ(sanitizeEmergencyTime(0.8), 0.8);
   EXPECT_DOUBLE_EQ(sanitizeEmergencyTime(0.0), 1.0);
   EXPECT_DOUBLE_EQ(sanitizeEmergencyTime(-1.0), 1.0);
-  EXPECT_DOUBLE_EQ(sanitizeEmergencyTime(
-    std::numeric_limits<double>::quiet_NaN()), 1.0);
+  EXPECT_DOUBLE_EQ(
+    sanitizeEmergencyTime(
+      std::numeric_limits<double>::quiet_NaN()), 1.0);
   EXPECT_DOUBLE_EQ(sanitizeEmergencyTime(61.0), 1.0);
 
   EXPECT_FALSE(emergencyWindowImminent(1.01, 1.0));
   EXPECT_TRUE(emergencyWindowImminent(1.0, 1.0));
   EXPECT_TRUE(emergencyWindowImminent(0.1, 1.0));
-  EXPECT_TRUE(emergencyWindowImminent(
-    std::numeric_limits<double>::quiet_NaN(), 1.0));
+  EXPECT_TRUE(
+    emergencyWindowImminent(
+      std::numeric_limits<double>::quiet_NaN(), 1.0));
   EXPECT_TRUE(emergencyWindowImminent(1.0, 0.0));
 }
 
@@ -101,8 +123,9 @@ TEST(CollisionSafety, InvalidTrajectoryDurationIsRejected)
   EXPECT_FALSE(ego_planner::collision_safety::validTrajectoryDuration(0.0));
   EXPECT_FALSE(ego_planner::collision_safety::validTrajectoryDuration(-1.0));
   EXPECT_FALSE(ego_planner::collision_safety::validTrajectoryDuration(300.001));
-  EXPECT_FALSE(ego_planner::collision_safety::validTrajectoryDuration(
-    std::numeric_limits<double>::quiet_NaN()));
+  EXPECT_FALSE(
+    ego_planner::collision_safety::validTrajectoryDuration(
+      std::numeric_limits<double>::quiet_NaN()));
 }
 
 }  // namespace

@@ -204,3 +204,20 @@ def test_reference_attitude_gap_and_position_queues_are_bounded():
     for i in range(17):
         pairer.add_position(Pose(1_000_000_000+i, [0., 0., 0.], QI, 10.))
     assert a.failure == Gate.RESET_REQUIRED and not pairer.positions
+
+
+def test_absent_covariance_is_never_replaced_by_filter_confidence():
+    p, q, cov = imu_to_base([1, 2, 3], QI, None, T, QI)
+    np.testing.assert_allclose(p, np.array([1, 2, 3])+T)
+    assert cov is None
+    required = Alignment(T, QI)
+    required.pose(Pose(10, [1, 2, 3], QI, 1.))
+    assert required.failure is not None
+    optional = Alignment(T, QI, require_covariance=False)
+    optional.pose(Pose(10, [1, 2, 3], QI, 1.))
+    assert optional.failure is None and len(optional.pending) == 1
+    # A correction generation still irreversibly invalidates the old alignment.
+    optional.clock = 100
+    optional.confirm('orb-session', 0, Gate.INITIALIZING, 0, 100, 1.)
+    optional.confirm('orb-session', 1, Gate.RESET_REQUIRED, 0, 100, 1.)
+    assert optional.failure is not None

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-follow.launch.py — easyfly_target_tracking 启动 (M4.1)
+follow.launch.py — easyfly_target_tracking 启动 (M4.1).
 
 用法:
   ros2 launch easyfly_target_tracking follow.launch.py    # 仿真 (use_sim_time=true)

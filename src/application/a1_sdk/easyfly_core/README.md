@@ -2,12 +2,12 @@
 
 `Client` owns a separate ROS Context, Node, and one executor thread. It neither
 borrows nor shuts down the application's ROS context. It publishes no control
-commands. Eight typed action methods are provided: `takeoff`, `land`, `go_to`,
-`navigate`, `follow`, `track`, `search`, `execute_mission`.
+commands. Ten typed action methods are provided: `takeoff`, `land`, `precision_land`, `go_to`,
+`navigate`, `follow`, `track`, `search`, `explore`, `execute_mission`.
 
 `running()` describes this SDK runtime, not vehicle readiness. `server_ready`
-checks a particular endpoint using keys `takeoff`, `land`, `goto`, `navigate`,
-`follow`, `track`, `search`, `execute_mission`. Discovery is asynchronous; an unavailable
+checks a particular endpoint using keys `takeoff`, `land`, `precision_land`, `goto`, `navigate`,
+`follow`, `track`, `search`, `explore`, `execute_mission`. Discovery is asynchronous; an unavailable
 server produces an explicit `Unavailable` operation, not success. Platform flight
 admission remains the server's responsibility.
 
@@ -23,7 +23,7 @@ its snapshot. Other pending operations are not covered by one operation's wait.
 `cancel()` queues cancellation of that exact goal handle. Accepted cancel
 responses do NOT imply stopped execution; wait for the real result.
 
-D3 managed navigation, search and mission endpoints can finish their public
+Managed navigation, search, exploration, precision landing and mission endpoints can finish their public
 Action before internal children stop. Set `ClientOptions.require_managed_ownership=true`
 for these endpoints: readiness also requires the matching UUID ownership service,
 and drain waits for explicit RELEASED. `action_terminal_received` and `goal_id`
@@ -62,3 +62,11 @@ ros2 run easyfly_core sdk_state_example
 ```
 
 ROS mock regressions use domain 91 and never connect to flight hardware.
+
+`explore(Explore::Goal)` uses `/explore` and `/exploration/ownership`. Its result
+`reason` maps to the same operation `message` field; feedback preserves phase,
+coverage, completed viewpoints and next XYZ. A terminal action response does not
+release a managed operation until the ownership service confirms release.
+The Python binding accepts `explore(min_bound, max_bound, forbidden_boxes=[],
+return_home=True, timeout_sec=120)`, where each box is a pair of XYZ triples.
+Runtime bounds, current map, localization and flight admission remain server checks.

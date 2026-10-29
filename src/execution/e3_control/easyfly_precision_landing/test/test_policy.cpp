@@ -256,3 +256,44 @@ TEST(LandingPolicy, StableRecoveryStillRequiresFreshAlignmentBeforeDescent)
     EXPECT_EQ(i < 4 ? "align" : "descend", d.phase);
   }
 }
+
+TEST(LandingPolicy, MovingBoardUsesOriginalMotionWindowAndKeepsStaticDefault)
+{
+  auto c = config();
+  c.moving_target = true;
+  c.align_tolerance = .08;
+  pl::Policy policy(c);
+  policy.start({0, 0, 1}, 10);
+  pl::Decision decision;
+  for (int i = 0; i < 400; ++i) {
+    const double t = i * .05;
+    pl::Observation o{true, 1000000000LL + i * 50000000LL, .02 * t, 0, 0, 0, 0, 1};
+    decision = policy.step({.02 * t, 0, 1}, o, 10 + t, .05);
+    EXPECT_FALSE(decision.failed);
+    if (t < .7) {EXPECT_EQ(decision.phase, "align");}
+  }
+  EXPECT_EQ(decision.phase, "descend");
+  // Travel exceeded the static board's 0.25m anchored boundary.
+  EXPECT_GT(decision.x, .25);
+  auto unsafe = c;
+  unsafe.moving_usable_radius = .3;
+  EXPECT_FALSE(unsafe.valid());
+}
+
+TEST(LandingPolicy, FastOrNonlinearMovingBoardCannotAuthorizeLanding)
+{
+  for (const double speed : {.2, -.2}) {
+    auto c = config(); c.moving_target = true; c.align_tolerance = .08;
+    pl::Policy policy(c); policy.start({0, 0, .29}, 10);
+    pl::Decision decision;
+    for (int i = 0; i < 30; ++i) {
+      const double t = i * .05;
+      decision = policy.step(
+        {speed * t, 0, .29},
+        {true, 1000000000LL + i * 50000000LL, speed * t, 0, 0, 0, 0, 1}, 10 + t, .05);
+      EXPECT_FALSE(decision.handoff);
+    }
+    EXPECT_TRUE(decision.failed);
+    EXPECT_EQ(decision.reason, "moving_target_exceeds_declared_motion_profile");
+  }
+}

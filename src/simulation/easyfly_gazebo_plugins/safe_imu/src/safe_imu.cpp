@@ -30,6 +30,9 @@
 #include <cstdlib>
 #include <cstdint>
 #include <fstream>
+#include <condition_variable>
+#include <deque>
+#include <thread>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -56,7 +59,7 @@ struct ImuTimingSample
   int64_t snapshot_end_ns = 0;
   int64_t publish_begin_ns = 0;
   int64_t publish_end_ns = 0;
-  int result = 0;  // 0 = uninitialized, 1 = identical snapshot, 2 = published.
+  int result = 0;  // 0 = uninitialized, 1 = identical snapshot, 2 = published, 3 = failed.
 };
 }  // namespace
 
@@ -79,6 +82,21 @@ public:
   std::vector<ImuTimingSample> timings_;
   std::mutex timing_mutex_;
   size_t timings_discarded_ = 0;
+  struct PendingMeasurement
+  {
+    sensor_msgs::msg::Imu message;
+    ImuTimingSample timing;
+  };
+  static constexpr size_t kPublicationCapacity = 1000;
+  std::mutex publication_mutex_;
+  std::condition_variable publication_ready_;
+  std::deque<PendingMeasurement> publication_queue_;
+  std::thread publication_thread_;
+  bool publication_stopping_ = false;
+  bool publication_failed_ = false;
+  size_t publication_failures_ = 0;
+  void PublishQueued();
+  void StopPublisher();
   void RecordTiming(const ImuTimingSample & sample);
   void WriteTimings();
   /// Publish latest imu data to ROS
@@ -93,6 +111,7 @@ EasyFlyGazeboRosImuSensor::EasyFlyGazeboRosImuSensor()
 EasyFlyGazeboRosImuSensor::~EasyFlyGazeboRosImuSensor()
 {
   impl_->sensor_update_event_.reset();
+  impl_->StopPublisher();
   impl_->WriteTimings();
 }
 
@@ -176,6 +195,11 @@ void EasyFlyGazeboRosImuSensor::Load(gazebo::sensors::SensorPtr _sensor, sdf::El
       impl_->timing_path_.c_str());
   }
 
+  // Keep the simulator's measurement callback independent of DDS discovery,
+  // reliable-writer backpressure and serialization. Each queued item owns a
+  // complete original measurement; neither its source stamp nor fields change.
+  impl_->publication_thread_ = std::thread(
+    &EasyFlyGazeboRosImuSensorPrivate::PublishQueued, impl_.get());
   impl_->sensor_update_event_ = impl_->sensor_->ConnectUpdated(
     std::bind(&EasyFlyGazeboRosImuSensorPrivate::OnUpdate, impl_.get()));
 }
@@ -225,19 +249,85 @@ void EasyFlyGazeboRosImuSensorPrivate::OnUpdate()
   IGN_PROFILE_END();
   IGN_PROFILE_BEGIN("Publish");
 #endif
-  // Publish message
-  if (timing.entry_ns) {
-    timing.publish_begin_ns = MonotonicNs();
+  {
+    std::lock_guard<std::mutex> lock(publication_mutex_);
+    if (publication_stopping_ || publication_failed_) {
+      return;
+    }
+    if (publication_queue_.size() >= kPublicationCapacity) {
+      publication_failed_ = true;
+      ++publication_failures_;
+      timing.result = 3;
+      RecordTiming(timing);
+      RCLCPP_ERROR(ros_node_->get_logger(),
+        "IMU publication queue overflow: output latched stopped; original stamps retained");
+      publication_ready_.notify_one();
+      return;
+    }
+    publication_queue_.push_back(PendingMeasurement{*msg_, timing});
   }
-  pub_->publish(*msg_);
-  if (timing.entry_ns) {
-    timing.publish_end_ns = MonotonicNs();
-    timing.result = 2;
-    RecordTiming(timing);
-  }
+  publication_ready_.notify_one();
+
 #ifdef IGN_PROFILER_ENABLE
   IGN_PROFILE_END();
 #endif
+}
+
+void EasyFlyGazeboRosImuSensorPrivate::PublishQueued()
+{
+  for (;;) {
+    PendingMeasurement pending;
+    {
+      std::unique_lock<std::mutex> lock(publication_mutex_);
+      publication_ready_.wait(lock, [this] {
+          return publication_stopping_ || publication_failed_ || !publication_queue_.empty();
+        });
+      if (publication_failed_) {
+        publication_queue_.clear();
+        return;
+      }
+      if (publication_queue_.empty()) {
+        return;  // Stopping after the last captured measurement is drained.
+      }
+      pending = std::move(publication_queue_.front());
+      publication_queue_.pop_front();
+    }
+    try {
+      if (pending.timing.entry_ns) {
+        pending.timing.publish_begin_ns = MonotonicNs();
+      }
+      pub_->publish(pending.message);
+      if (pending.timing.entry_ns) {
+        pending.timing.publish_end_ns = MonotonicNs();
+        pending.timing.result = 2;
+      }
+      RecordTiming(pending.timing);
+    } catch (const std::exception &error) {
+      {
+        std::lock_guard<std::mutex> lock(publication_mutex_);
+        publication_failed_ = true;
+        ++publication_failures_;
+        publication_queue_.clear();
+      }
+      pending.timing.result = 3;
+      RecordTiming(pending.timing);
+      RCLCPP_ERROR(ros_node_->get_logger(),
+        "IMU publication failed: output latched stopped: %s", error.what());
+      return;
+    }
+  }
+}
+
+void EasyFlyGazeboRosImuSensorPrivate::StopPublisher()
+{
+  {
+    std::lock_guard<std::mutex> lock(publication_mutex_);
+    publication_stopping_ = true;
+  }
+  publication_ready_.notify_one();
+  if (publication_thread_.joinable()) {
+    publication_thread_.join();
+  }
 }
 
 void EasyFlyGazeboRosImuSensorPrivate::RecordTiming(const ImuTimingSample & sample)
@@ -260,7 +350,8 @@ void EasyFlyGazeboRosImuSensorPrivate::WriteTimings()
   }
   std::lock_guard<std::mutex> lock(timing_mutex_);
   std::ofstream stream(timing_path_);
-  stream << "# CLOCK_MONOTONIC capacity=60000 discarded=" << timings_discarded_ << '\n';
+  stream << "# CLOCK_MONOTONIC capacity=60000 discarded=" << timings_discarded_ <<
+    " publish_failures=" << publication_failures_ << '\n';
   stream << "source_ns,entry_ns,snapshot_end_ns,publish_begin_ns,publish_end_ns,result\n";
   for (const auto & sample : timings_) {
     stream << sample.source_ns << ',' << sample.entry_ns << ',' << sample.snapshot_end_ns << ',' <<

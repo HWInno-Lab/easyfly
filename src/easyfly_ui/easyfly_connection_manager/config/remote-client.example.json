@@ -1,0 +1,7 @@
+{
+  "url": "https://remote-host:8443",
+  "ca_file": "/absolute/private/ca.pem",
+  "token_file": "/absolute/private/operator.token",
+  "server_id": "00000000000000000000000000000001",
+  "client_id": "00000000000000000000000000000002"
+}

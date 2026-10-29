@@ -28,7 +28,7 @@ confirmation; a storage error is not remote-release evidence.
 Construction sends reads only. A fresh session and reviewed valid_snapshot
 (<=2 steady seconds, UTF-8 <=64KiB, exact SHA-256, shared full static parser) are
 required for start_confirmed. The caller must supply the explicitly confirmed
-server instance. The desktop additionally checks simulation/profile evidence and
+server instance and a fresh nonempty 32-hex confirmation identity. The desktop additionally checks simulation/profile evidence and
 requires explicit confirmation/exit choices; this library is NOT live flight admission.
 
 Before start or cancel, the local intent is durably committed: owner-only
@@ -60,12 +60,12 @@ No cross-restart server recovery database is added.
 
 The GUI supplies a random 32-hex confirmation ID for each currently open start
 dialog. Its decision callback is one-shot and checks the originating dialog.
-The controller consumes an accepted supplied ID at most once in this process,
+The controller requires and consumes an accepted ID at most once in this process,
 even after the intent resolves. Up to256 IDs are retained without eviction;
-new attributed starts are refused at the limit. A refused enqueue does not
+new starts are refused at the limit. A refused enqueue does not
 consume its ID. Fresh explicit review/confirmation is required after failure;
-there is still no automatic write retry. The three-argument library API remains
-available to explicit non-GUI callers, recorded with confirmation=none.
+there is still no automatic write retry. The legacy three-argument overload remains ABI-compatible but refuses dispatch.
+Empty confirmation IDs cannot bypass the one-shot ledger, including direct library calls.
 Confirmation IDs are not journal/schema fields, wire credentials, or replay
 authorization across restarts. Restore remains reads-only and never restores a
 GUI confirmation or permit.
@@ -173,3 +173,18 @@ review and bind current bytes. `stop` is nonblocking; wait for stopped before GU
 destruction. A hung filesystem can delay local worker completion, not authorize
 forced rollback or infer remote outcome. Tests use domain128 mocks and isolated
 temporary storage; GUI integration uses domain129 without flight nodes.
+
+### Peripheral service client
+
+`PeripheralControl` owns one independent worker/context, depth-one typed
+`/single_track/state` and `/gimbal/state` subscriptions, and only the fixed
+ManageSingleTrack / SetGimbalAngle / SetGimbalTracking clients. Construction is
+explicit. Mutable requests require simulation configuration and uninhibited
+permission; read-only query is separately allowed. Requests are bounded and queued
+once, require a unique ready service, and never retry. A timeout is unknown until
+the actual response arrives. Acceptance cannot set observed tracking/angle state.
+Source and receipt freshness, clock progress, valid typed values and unique
+publishers gate telemetry. Shutdown is nonblocking to callers and joins off the
+UI path after `stopped`; it sends no compensating peripheral or flight command.
+No durable service request identity or cross-process unknown-operation recovery is
+claimed. The mission control journal remains a separate protocol.

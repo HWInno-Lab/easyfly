@@ -67,6 +67,19 @@ def validate_configuration(path):
         or transform["landing_plane_z_m"] != flight["precision_plane_z"]
     ):
         raise ValueError("D5 tag/frame/size/plane configuration mismatch")
+    dynamic = transform.get('dynamic_camera', False)
+    if type(dynamic) is not bool:
+        raise ValueError('dynamic_camera must be explicit boolean')
+    if dynamic:
+        from easyfly_precision_landing.extrinsics import measured_mount
+        mount = document.get('landing_camera_mount', {}).get('ros__parameters', {})
+        if (mount.get('configured') is not True or not mount.get('joint_name')
+                or mount.get('optical_frame') != transform['optical_frame']):
+            raise ValueError('explicit matching measured camera mount required')
+        measured_mount(0., mount.get('pivot_translation_flu', []),
+                       mount.get('optical_offset_flu_at_zero', []),
+                       mount.get('joint_axis_flu', []),
+                       mount.get('camera_quaternion_xyzw_zero', []))
     return document
 
 
@@ -80,7 +93,7 @@ def nodes(context):
         raise ValueError(
             "explicit config_file and use_sim_time=true required; hardware unverified"
         )
-    validate_configuration(config)
+    document = validate_configuration(config)
     clock = {"use_sim_time": True}
     entities = [
         Node(
@@ -119,6 +132,13 @@ def nodes(context):
             output="screen",
         ),
     ]
+    if document['landing_transform']['ros__parameters'].get('dynamic_camera', False):
+        if 'landing_camera_mount' not in document:
+            raise ValueError('dynamic camera requires explicit measured mount configuration')
+        entities.append(Node(package='easyfly_precision_landing',
+                             executable='landing_camera_mount_node',
+                             name='landing_camera_mount', parameters=[config, clock],
+                             output='screen'))
     if (
         LaunchConfiguration("start_flight_controller").perform(context)
         == "true"

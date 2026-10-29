@@ -10,14 +10,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef EASYFLY_UI_CONTROL__CONTROLLER_HPP_
 #define EASYFLY_UI_CONTROL__CONTROLLER_HPP_
 #include <memory>
 #include <optional>
 #include <string>
 #include <easyfly_msgs/srv/get_mission_details.hpp>
-
 namespace easyfly_ui_control
 {
 enum class Phase {Idle, Sent, Uncertain, Running, CancelPending, DrainPending, Completed, Blocked};
@@ -60,11 +58,11 @@ public:
   std::shared_ptr<const ControlSnapshot> snapshot() const;
   // For explicit operator confirmation, not discovery/telemetry callbacks.
   // Review must have been received <=2 steady seconds ago. Revalidated in worker.
+  // Legacy overload refuses dispatch without a confirmation identity.
   bool start_confirmed(
     const easyfly_msgs::srv::GetMissionDetails::Response & review,
     double review_received, const std::string & confirmed_server_instance);
-  // Optional frontend correlation ID; a valid supplied ID is consumed once per facade.
-  // Empty IDs remain available to explicit non-GUI callers and are logged as unattributed.
+  // Required confirmation identity, consumed once per facade; empty IDs are refused.
   bool start_confirmed(
     const easyfly_msgs::srv::GetMissionDetails::Response & review,
     double review_received, const std::string & confirmed_server_instance,

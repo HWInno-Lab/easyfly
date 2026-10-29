@@ -23,6 +23,7 @@
 #define OV_MSCKF_ROS2VISUALIZER_H
 
 #include <geometry_msgs/msg/pose_stamped.hpp>
+#include <diagnostic_msgs/msg/diagnostic_array.hpp>
 #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
 #include <image_transport/image_transport.h>
@@ -32,6 +33,8 @@
 #include <nav_msgs/msg/odometry.hpp>
 #include <nav_msgs/msg/path.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <rcl_interfaces/msg/parameter_descriptor.hpp>
+#include <chrono>
 #include <sensor_msgs/msg/camera_info.hpp>
 #include <sensor_msgs/msg/image.hpp>
 #include <sensor_msgs/msg/imu.hpp>
@@ -98,6 +101,14 @@ public:
    */
   void setup_subscribers(std::shared_ptr<ov_core::YamlParser> parser);
 
+  // Optional managed simulation boundary; rejects incomplete/expired input
+  // before it reaches the estimator, without altering any measurement.
+  bool admit_strict_input(const builtin_interfaces::msg::Time &stamp, bool inertial);
+  bool strict_input_timing = false;
+  bool strict_input_failed = false;
+  int64_t last_input_imu_ns = 0, last_input_camera_ns = 0;
+  std::chrono::steady_clock::time_point last_input_imu_receipt, last_input_camera_receipt;
+
   /**
    * @brief Will visualize the system if we have new things
    */
@@ -153,6 +164,7 @@ protected:
   // Our publishers
   image_transport::Publisher it_pub_tracks, it_pub_loop_img_depth, it_pub_loop_img_depth_color;
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pub_poseimu;
+  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr pub_tracking;
   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pub_odomimu;
   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pub_pathimu;
   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_points_msckf, pub_points_slam, pub_points_aruco, pub_points_sim;

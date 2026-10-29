@@ -1,5 +1,18 @@
-#ifndef EGO_PLANNER_WAYPOINT_ADMISSION_H_
-#define EGO_PLANNER_WAYPOINT_ADMISSION_H_
+// Copyright 2026 EasyFly Project
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+#ifndef PLAN_MANAGE__WAYPOINT_ADMISSION_H_
+#define PLAN_MANAGE__WAYPOINT_ADMISSION_H_
 
 #include <cmath>
 #include <cstdint>
@@ -42,7 +55,7 @@ inline bool nonDecreasingStamp(
   const bool have_previous) noexcept
 {
   return stamp_ns > 0 && (!have_previous || previous_ns <= 0 ||
-                          stamp_ns >= previous_ns);
+         stamp_ns >= previous_ns);
 }
 
 inline bool validFinitePosition(
@@ -67,7 +80,8 @@ inline bool selectGoalAltitude(
   const double explicit_minimum = 0.5) noexcept
 {
   if (!std::isfinite(explicit_minimum) || explicit_minimum < 0.0 ||
-      !std::isfinite(requested_z) || !std::isfinite(current_z)) {
+    !std::isfinite(requested_z) || !std::isfinite(current_z))
+  {
     return false;
   }
   if (requested_z >= explicit_minimum) {
@@ -81,7 +95,7 @@ inline bool selectGoalAltitude(
   return true;
 }
 
-}  // namespace waypoint_admission
+}    // namespace waypoint_admission
 }  // namespace ego_planner
 
-#endif  // EGO_PLANNER_WAYPOINT_ADMISSION_H_
+#endif  // PLAN_MANAGE__WAYPOINT_ADMISSION_H_

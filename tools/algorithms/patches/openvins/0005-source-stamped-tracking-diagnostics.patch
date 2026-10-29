@@ -1,0 +1,117 @@
+--- a/ov_msckf/src/core/VioManager.h
++++ b/ov_msckf/src/core/VioManager.h
+@@ -109,6 +109,9 @@
+ 
+   /// Accessor to get the current state
+   std::shared_ptr<State> get_state() { return state; }
++
++  /// Current image's observed 2D tracks; call from the serialized image update worker.
++  std::vector<size_t> current_track_ids(const std::vector<int> & camera_ids);
+ 
+   /// Accessor to get the current propagator
+   std::shared_ptr<Propagator> get_propagator() { return propagator; }
+--- a/ov_msckf/src/core/VioManager.cpp
++++ b/ov_msckf/src/core/VioManager.cpp
+@@ -49,6 +49,16 @@
+ 
+ VioManager::~VioManager() { wait_for_initialization(); }
+ 
++std::vector<size_t> VioManager::current_track_ids(const std::vector<int> & camera_ids) {
++  const auto active = trackFEATS->get_last_ids();
++  std::vector<size_t> ids;
++  for (int camera : camera_ids) {
++    auto found = active.find(camera);
++    if (found != active.end()) ids.insert(ids.end(), found->second.begin(), found->second.end());
++  }
++  return ids;
++}
++
+ void VioManager::wait_for_initialization() {
+   if (initialization_thread.joinable())
+     initialization_thread.join();
+--- a/ov_msckf/src/ros/ROS2Visualizer.h
++++ b/ov_msckf/src/ros/ROS2Visualizer.h
+@@ -23,6 +23,7 @@
+ #define OV_MSCKF_ROS2VISUALIZER_H
+ 
+ #include <geometry_msgs/msg/pose_stamped.hpp>
++#include <diagnostic_msgs/msg/diagnostic_array.hpp>
+ #include <geometry_msgs/msg/pose_with_covariance_stamped.hpp>
+ #include <geometry_msgs/msg/transform_stamped.hpp>
+ #include <image_transport/image_transport.h>
+@@ -153,6 +154,7 @@
+   // Our publishers
+   image_transport::Publisher it_pub_tracks, it_pub_loop_img_depth, it_pub_loop_img_depth_color;
+   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr pub_poseimu;
++  rclcpp::Publisher<diagnostic_msgs::msg::DiagnosticArray>::SharedPtr pub_tracking;
+   rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr pub_odomimu;
+   rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr pub_pathimu;
+   rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr pub_points_msckf, pub_points_slam, pub_points_aruco, pub_points_sim;
+--- a/ov_msckf/src/ros/ROS2Visualizer.cpp
++++ b/ov_msckf/src/ros/ROS2Visualizer.cpp
+@@ -46,6 +46,7 @@
+ 
+   // Setup pose and path publisher
+   pub_poseimu = node->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("poseimu", 2);
++  pub_tracking = node->create_publisher<diagnostic_msgs::msg::DiagnosticArray>("visual_tracking", 32);
+   PRINT_DEBUG("Publishing: %s\n", pub_poseimu->get_topic_name());
+   pub_odomimu = node->create_publisher<nav_msgs::msg::Odometry>("odomimu", 2);
+   PRINT_DEBUG("Publishing: %s\n", pub_odomimu->get_topic_name());
+@@ -490,7 +491,29 @@
+       while (!camera_queue.empty() && camera_queue.at(0).timestamp < timestamp_imu_inC) {
+         auto rT0_1 = boost::posix_time::microsec_clock::local_time();
+         double update_dt = 100.0 * (timestamp_imu_inC - camera_queue.at(0).timestamp);
++        const auto previous_tracks = _app->current_track_ids(camera_queue.at(0).sensor_ids);
+         _app->feed_measurement_camera(camera_queue.at(0));
++        diagnostic_msgs::msg::DiagnosticArray observed;
++        const double camera_time = camera_queue.at(0).timestamp;
++        observed.header.stamp = ROSVisualizerHelper::get_time_from_seconds(
++          camera_time + _app->get_state()->_calib_dt_CAMtoIMU->value()(0));
++        diagnostic_msgs::msg::DiagnosticStatus quality;
++        quality.name = "openvins/visual_tracking";
++        quality.hardware_id = "open_vins";
++        const auto current_tracks = _app->current_track_ids(camera_queue.at(0).sensor_ids);
++        size_t tracks = 0;
++        for (auto id : current_tracks) {
++          if (std::find(previous_tracks.begin(), previous_tracks.end(), id) != previous_tracks.end()) ++tracks;
++        }
++        quality.level = tracks ? diagnostic_msgs::msg::DiagnosticStatus::OK :
++                                 diagnostic_msgs::msg::DiagnosticStatus::WARN;
++        quality.message = "Observed current 2D tracks; not a navigation certificate";
++        diagnostic_msgs::msg::KeyValue count, initialized;
++        count.key = "tracked_features"; count.value = std::to_string(tracks);
++        initialized.key = "initialized"; initialized.value = _app->initialized() ? "1" : "0";
++        quality.values = {count, initialized};
++        observed.status.push_back(quality);
++        pub_tracking->publish(observed);
+         visualize();
+         camera_queue.pop_front();
+         auto rT0_2 = boost::posix_time::microsec_clock::local_time();
+--- a/ov_msckf/cmake/ROS2.cmake
++++ b/ov_msckf/cmake/ROS2.cmake
+@@ -7,6 +7,7 @@
+ find_package(tf2_geometry_msgs REQUIRED)
+ find_package(std_msgs REQUIRED)
+ find_package(geometry_msgs REQUIRED)
++find_package(diagnostic_msgs REQUIRED)
+ find_package(sensor_msgs REQUIRED)
+ find_package(nav_msgs REQUIRED)
+ find_package(cv_bridge REQUIRED)
+@@ -41,6 +42,7 @@
+         tf2_geometry_msgs
+         std_msgs
+         geometry_msgs
++        diagnostic_msgs
+         sensor_msgs
+         nav_msgs
+         cv_bridge
+--- a/ov_msckf/package.xml
++++ b/ov_msckf/package.xml
+@@ -43,6 +43,7 @@
+     <depend condition="$ROS_VERSION == 2">tf2_geometry_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">std_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">geometry_msgs</depend>
++    <depend condition="$ROS_VERSION == 2">diagnostic_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">sensor_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">nav_msgs</depend>
+     <depend condition="$ROS_VERSION == 2">cv_bridge</depend>

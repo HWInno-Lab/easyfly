@@ -10,9 +10,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <gtest/gtest.h>
 #include <QComboBox>
+#include <QCheckBox>
 #include <QDir>
 #include <QFile>
 #include <QLabel>
@@ -452,4 +452,51 @@ TEST(DraftEditor, DirtyExitGuardStillAppliesAfterObserverDisconnected)
     nullptr);
   prompt->done(QMessageBox::Yes);
   EXPECT_TRUE(desktop_test::until([&] {return window.cleanup_complete() && editor->stopped();}));
+}
+
+TEST(MissionDraft, ExplorePreservesForbiddenBoxesAndExplicitReturnHome)
+{
+  auto s = ui::draft_default_step("explore"); s.return_home = false;
+  s.forbidden_boxes.push_back({{{1.1, 1.2, .5}}, {{1.9, 1.8, 2.1}}});
+  ASSERT_TRUE(ui::draft_set_field(s, "min_x", -3.123456789012345));
+  const auto body = ui::draft_yaml({s}); const auto parsed = mission::validateMissionText(body);
+  ASSERT_TRUE(parsed.valid()) << parsed.error;
+  ASSERT_EQ(parsed.steps[0].forbidden_boxes.size(), 1u);
+  EXPECT_EQ(parsed.steps[0].forbidden_boxes[0].min, s.forbidden_boxes[0].min);
+  EXPECT_EQ(parsed.steps[0].min_bound, s.min_bound); EXPECT_FALSE(parsed.steps[0].return_home);
+  EXPECT_EQ(body, ui::draft_yaml(parsed.steps));
+  s.forbidden_boxes[0].max[0] = 0; EXPECT_THROW(ui::draft_yaml({s}), std::invalid_argument);
+}
+
+TEST(DraftEditor, ExploreEditsExactBoxesAndKeepsInvalidInput)
+{
+  QTemporaryDir temporary; const auto path = temporary.path() + "/explore.yaml";
+  auto step = ui::draft_default_step("explore");
+  step.forbidden_boxes.push_back({{{1, 1, .5}}, {{1.5, 1.5, 2}}});
+  write(path, ui::draft_yaml({step}));
+  ui::MissionEditor editor; editor.resize(1120, 800); editor.show(); editor.open_file(path);
+  ASSERT_TRUE(desktop_test::until([&] {return checked(editor);}));
+  auto * boxes = editor.findChild<QPlainTextEdit *>("draftExploreForbidden");
+  auto * home = editor.findChild<QCheckBox *>("draftExploreReturnHome");
+  ASSERT_NE(boxes, nullptr); ASSERT_NE(home, nullptr);
+  EXPECT_TRUE(home->isChecked()); home->setChecked(false);
+  boxes->setPlainText("1 1 0.5 1.8 1.7 2.1\n-1 -1 0.5 -0.5 -0.5 2");
+  editor.findChild<QPushButton *>("draftApply")->click(); accept(editor);
+  auto * body = editor.findChild<QPlainTextEdit *>("draftBody");
+  ASSERT_TRUE(
+    desktop_test::until(
+      [&] {
+        return checked(editor) && body->toPlainText().contains("return_home: false");
+      }));
+  auto plan = mission::validateMissionText(body->toPlainText().toStdString());
+  ASSERT_TRUE(plan.valid()); ASSERT_EQ(plan.steps[0].forbidden_boxes.size(), 2u);
+  EXPECT_DOUBLE_EQ(plan.steps[0].forbidden_boxes[0].max[0], 1.8);
+  const auto saved = body->toPlainText();
+  boxes = editor.findChild<QPlainTextEdit *>("draftExploreForbidden"); boxes->setPlainText(
+    "1 2 broken");
+  editor.findChild<QPushButton *>("draftApply")->click();
+  EXPECT_TRUE(status(editor).contains(QStringLiteral("六个有限数值")));
+  EXPECT_EQ(body->toPlainText(), saved); EXPECT_EQ(boxes->toPlainText(), "1 2 broken");
+  EXPECT_EQ(editor.findChild<QMessageBox *>("draftPrompt"), nullptr);
+  editor.stop(); EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
 }

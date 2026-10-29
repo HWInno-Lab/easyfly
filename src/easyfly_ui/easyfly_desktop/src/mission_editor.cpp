@@ -10,10 +10,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QComboBox>
 #include <QFileDialog>
 #include <QFormLayout>
+#include <QCheckBox>
+#include <QRegularExpression>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -38,7 +39,6 @@
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_desktop/mission_geometry.hpp"
 #include "layout_state.hpp"
-
 namespace easyfly_desktop
 {
 namespace mission = easyfly_mission_fsm;
@@ -53,6 +53,8 @@ struct MissionEditor::Impl
   QComboBox * type;
   QComboBox * add_type;
   QWidget * fields;
+  QPlainTextEdit * forbidden{nullptr};
+  QCheckBox * return_home{nullptr};
   QFormLayout * form;
   QLineEdit * directory;
   QLineEdit * name;
@@ -165,7 +167,7 @@ struct MissionEditor::Impl
     type = new QComboBox(parameters_page); type->setObjectName("draftType");
     type->addItems(
       {"takeoff", "hover", "waypoint", "navigate", "track", "search", "land",
-        "precision_land"});
+        "precision_land", "explore"});
     parameters_layout->addWidget(type);
     add_type = new QComboBox(sequence_page); add_type->setObjectName("draftAddType");
     for (int i = 0; i < type->count(); ++i) {add_type->addItem(type->itemText(i));}
@@ -426,12 +428,42 @@ struct MissionEditor::Impl
   void build_fields(const mission::MissionStep & step)
   {
     while (form->rowCount()) {form->removeRow(0);} inputs.clear();
+    forbidden = nullptr; return_home = nullptr;
     for (const auto & f : draft_fields(step)) {
       auto * line = new QLineEdit(QString::number(f.value, 'g', 17), fields);
       line->setObjectName("draftField_" + QString::fromStdString(f.key)); inputs[f.key] = line;
       form->addRow(QString::fromStdString(f.key + " [" + f.unit + "]"), line);
       QObject::connect(
         line, &QLineEdit::textEdited, owner, [this] {
+          form_dirty = true; notify(); enable();
+        });
+    }
+    if (step.type == "explore") {
+      return_home = new QCheckBox(QStringLiteral("完成后返回探索起点"), fields);
+      return_home->setObjectName("draftExploreReturnHome");
+      return_home->setChecked(step.return_home); form->addRow(return_home);
+      QObject::connect(
+        return_home, &QCheckBox::toggled, owner, [this] {
+          form_dirty = true; notify(); enable();
+        });
+      forbidden = new QPlainTextEdit(fields); forbidden->setObjectName("draftExploreForbidden");
+      forbidden->setMinimumHeight(100);
+      QStringList rows;
+      for (const auto & box : step.forbidden_boxes) {
+        QStringList values;
+        for (double v : box.min) {values << QString::number(v, 'g', 17);}
+        for (double v : box.max) {values << QString::number(v, 'g', 17);}
+        rows << values.join(' ');
+      }
+      forbidden->setPlainText(rows.join('\n'));
+      forbidden->setAccessibleName(QStringLiteral("禁飞盒坐标，每行六个数，单位米"));
+      auto * hint = new QLabel(
+        QStringLiteral(
+          "禁飞盒（可空，最多16行）：每行 xmin ymin zmin xmax ymax zmax，单位m。"
+          "范围使用 odom，Z 限0.5～2.5m；飞行许可仍由实时地图与飞控检查。"), fields);
+      hint->setWordWrap(true); form->addRow(hint); form->addRow(forbidden);
+      QObject::connect(
+        forbidden, &QPlainTextEdit::textChanged, owner, [this] {
           form_dirty = true; notify(); enable();
         });
     }
@@ -457,6 +489,26 @@ struct MissionEditor::Impl
       if (!ok || !std::isfinite(value) || !draft_set_field(s, input.first, value)) {
         status->setText(
           QStringLiteral("表单数值无效：") + QString::fromStdString(input.first)); return;
+      }
+    }
+    if (s.type == "explore" && forbidden && return_home) {
+      s.return_home = return_home->isChecked(); s.forbidden_boxes.clear();
+      const auto rows = forbidden->toPlainText().split('\n', Qt::SkipEmptyParts);
+      if (rows.size() > 16 || forbidden->toPlainText().size() > 8192) {
+        status->setText(QStringLiteral("禁飞盒最多16行，内容不能超过8192字符")); return;
+      }
+      for (const auto & line : rows) {
+        const auto values = line.trimmed().split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
+        mission::ExplorationBox box{}; bool valid_box = values.size() == 6;
+        for (int i = 0; valid_box && i < 6; ++i) {
+          bool ok = false; const double v = QLocale::c().toDouble(values[i], &ok);
+          valid_box = ok && std::isfinite(v);
+          (i < 3 ? box.min[i] : box.max[i - 3]) = v;
+        }
+        if (!valid_box) {
+          status->setText(QStringLiteral("禁飞盒每行需要六个有限数值；输入已保留")); return;
+        }
+        s.forbidden_boxes.push_back(box);
       }
     }
     candidate[row] = s; normalize(std::move(candidate));

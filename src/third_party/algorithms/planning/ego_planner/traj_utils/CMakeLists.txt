@@ -25,7 +25,7 @@
 #   DataDisp.msg
 #   MultiBsplines.msg
 #   )
-  
+
 # # Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
@@ -35,28 +35,28 @@
 
 # catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES traj_utils 
+#  LIBRARIES traj_utils
 #  CATKIN_DEPENDS message_runtime
 # #  DEPENDS system_lib
 # )
 
-# include_directories( 
-#     SYSTEM 
-#     include 
+# include_directories(
+#     SYSTEM
+#     include
 #     ${catkin_INCLUDE_DIRS}
-#     ${Eigen3_INCLUDE_DIRS} 
+#     ${Eigen3_INCLUDE_DIRS}
 #     ${PCL_INCLUDE_DIRS}
 # )
 
 # link_directories(${PCL_LIBRARY_DIRS})
 
 # add_library( traj_utils
-#     src/planning_visualization.cpp 
-#     src/polynomial_traj.cpp 
+#     src/planning_visualization.cpp
+#     src/polynomial_traj.cpp
 #     )
 # target_link_libraries( traj_utils
-#     ${catkin_LIBRARIES} 
-#     )  
+#     ${catkin_LIBRARIES}
+#     )
 
 cmake_minimum_required(VERSION 3.8)
 project(traj_utils)
@@ -99,7 +99,7 @@ find_package(PCL 1.7 REQUIRED)
 #   DataDisp.msg
 #   MultiBsplines.msg
 #   )
-  
+
 # # Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
@@ -109,57 +109,62 @@ find_package(PCL 1.7 REQUIRED)
 
 # catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES traj_utils 
+#  LIBRARIES traj_utils
 #  CATKIN_DEPENDS message_runtime
 # #  DEPENDS system_lib
 # )
 
-include_directories( 
-    SYSTEM 
-    include 
+include_directories(
+    SYSTEM
+    include
     # ${catkin_INCLUDE_DIRS}
-    ${Eigen3_INCLUDE_DIRS} 
+    ${Eigen3_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
 )
 
 # link_directories(${PCL_LIBRARY_DIRS})
 
 # add_library( traj_utils
-#     src/planning_visualization.cpp 
-#     src/polynomial_traj.cpp 
+#     src/planning_visualization.cpp
+#     src/polynomial_traj.cpp
 #     )
 # ament_target_dependencies(traj_utils
-# ${MY_DEPENDENCIES} 
+# ${MY_DEPENDENCIES}
 # )
 # install(TARGETS
 #   traj_utils
 #   DESTINATION lib/${PROJECT_NAME}
 # )
 # target_link_libraries( traj_utils
-#     ${catkin_LIBRARIES} 
-#     )  
+#     ${catkin_LIBRARIES}
+#     )
 #TAG 这里是msg的点 1.rosidl_default_generators和相关的环境DEPENDENCIES builtin_interfaces
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
-rosidl_generate_interfaces(${PROJECT_NAME} 
-"msg/Bspline.msg" 
-"msg/DataDisp.msg" 
+rosidl_generate_interfaces(${PROJECT_NAME}
+"msg/Bspline.msg"
+"msg/DataDisp.msg"
 "msg/MultiBsplines.msg"
 "msg/TrajectoryAck.msg"
 DEPENDENCIES builtin_interfaces geometry_msgs std_msgs)
 
 
 if(BUILD_TESTING)
+  set(ament_cmake_uncrustify_ADDITIONAL_ARGS LANGUAGE C++)
   find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
+  include(cmake/legacy_notice_scope.cmake)
   ament_lint_auto_find_test_dependencies()
 endif()
 ##1.自身工程的.h库
+install(FILES ../NOTICE.md ../legacy-notice-scope.json
+  DESTINATION share/${PROJECT_NAME}/source_notices)
+install(DIRECTORY ../licenses DESTINATION share/${PROJECT_NAME}/source_notices)
+
 ament_package()

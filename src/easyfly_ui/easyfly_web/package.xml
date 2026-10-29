@@ -3,11 +3,18 @@
 <package format="3">
   <name>easyfly_web</name>
   <version>0.1.0</version>
-  <description>TODO: easyfly_web</description>
+  <description>Authenticated offline Web workspace for native telemetry and reviewed mission services</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>easyfly_msgs</exec_depend>
+  <exec_depend>easyfly_connection_manager</exec_depend>
+  <exec_depend>ament_index_python</exec_depend>
+  <exec_depend>rosidl_runtime_py</exec_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

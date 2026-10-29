@@ -38,10 +38,12 @@ target_link_libraries(easyfly_connection_supervisor connection_components)
 install(TARGETS easyfly_connection_manager easyfly_connection_supervisor
   DESTINATION lib/${PROJECT_NAME})
 install(PROGRAMS scripts/easyfly_connections scripts/easyfly_connection_backend
+  scripts/easyfly_remote_service scripts/easyfly_remote_client scripts/easyfly_remote_algorithms
   DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
 configure_file(assets/easyfly-connections.desktop.in easyfly-connections.desktop @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/easyfly-connections.desktop DESTINATION share/applications)
-install(FILES README.md CONTRACT.md DESTINATION share/${PROJECT_NAME})
+install(FILES README.md CONTRACT.md REMOTE.md DESTINATION share/${PROJECT_NAME})
 if(BUILD_TESTING)
   configure_file(scripts/easyfly_connection_backend easyfly_connection_backend COPYONLY)
   add_executable(capture_manager test/capture_manager.cpp)
@@ -60,6 +62,11 @@ if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_backend test/test_backend.py TIMEOUT 60)
   ament_add_pytest_test(test_ownership test/test_ownership.py TIMEOUT 30)
+  ament_add_pytest_test(test_remote_profiles test/test_remote_profiles.py TIMEOUT 30
+    APPEND_ENV PYTHONNOUSERSITE=1)
+  ament_add_pytest_test(test_remote_observer test/test_remote_observer.py TIMEOUT 30
+    APPEND_ENV PYTHONNOUSERSITE=1 ROS_DOMAIN_ID=195 ROS_LOCALHOST_ONLY=1)
+  set_tests_properties(test_remote_observer PROPERTIES RUN_SERIAL TRUE)
   ament_add_pytest_test(test_live_session test/test_live_session.py TIMEOUT 120)
   set_tests_properties(test_live_session PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_LOCALHOST_ONLY=1" RUN_SERIAL TRUE)

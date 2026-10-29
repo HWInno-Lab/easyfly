@@ -11,8 +11,8 @@ import rclpy
 from rclpy.action import ActionClient, ActionServer, GoalResponse, CancelResponse
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
-from easyfly_msgs.action import ExecuteMission, Takeoff, Land, GoToWaypoint, NavigateTo, TrackTarget, SearchArea, PrecisionLand
-from easyfly_msgs.msg import UAVState
+from easyfly_msgs.action import ExecuteMission, Takeoff, Land, GoToWaypoint, NavigateTo, TrackTarget, SearchArea, PrecisionLand, Explore
+from easyfly_msgs.msg import UAVState, MissionStepFeedback
 from easyfly_msgs.srv import GetActionOwnership, SetFlightMode
 
 
@@ -23,6 +23,10 @@ class MissionExecutorTest(unittest.TestCase):
         cls.node = rclpy.create_node('d3_executor_mock')
         cls.group = ReentrantCallbackGroup()
         cls.calls = []
+        cls.explore_goals = []
+        cls.child_feedback = []
+        cls.feedback_subscription = cls.node.create_subscription(
+            MissionStepFeedback, "/mission/step_feedback", cls.child_feedback.append, 10)
         cls.behavior = 'success'
         cls.cancel_delay = .02
         cls.source_old = False
@@ -36,7 +40,7 @@ class MissionExecutorTest(unittest.TestCase):
         cls.cancel_calls = 0
         cls.servers = {}
         cls.ownership_services=[]
-        for endpoint in ('/navigation/ownership','/search/ownership','/precision_landing/ownership'):
+        for endpoint in ('/navigation/ownership','/search/ownership','/precision_landing/ownership','/exploration/ownership'):
             def query(request,response):
                 response.goal_id=request.goal_id
                 release_at=cls.ownership.get(request.goal_id)
@@ -45,7 +49,7 @@ class MissionExecutorTest(unittest.TestCase):
             cls.ownership_services.append(cls.node.create_service(GetActionOwnership,endpoint,query))
         for action, name in ((Takeoff, 'takeoff'), (Land, 'land'), (GoToWaypoint, 'goto_waypoint'),
                              (NavigateTo, 'navigate'), (TrackTarget, 'track_target'), (SearchArea, 'search_area'),
-                             (PrecisionLand, 'precision_land')):
+                             (PrecisionLand, 'precision_land'), (Explore, 'explore')):
             cls.add_server(action, name)
         cls.publisher = cls.node.create_publisher(UAVState, '/uav_state', 10)
 
@@ -97,41 +101,57 @@ class MissionExecutorTest(unittest.TestCase):
             cls.cancel_calls += 1
             return CancelResponse.REJECT if cls.behavior == 'reject_cancel' else CancelResponse.ACCEPT
 
+        def result_value(success, message):
+            value = action.Result(success=success)
+            setattr(value, 'reason' if action is Explore else 'message', message)
+            return value
+
         def execute(handle):
             identity=bytes(handle.goal_id.uuid).hex()
             cls.ownership[identity]=float('inf')
             cls.calls.append(name)
+            if name == 'explore':
+                cls.explore_goals.append(handle.request)
             behavior = cls.behavior
             should_hold = (name == 'track_target' and behavior != 'early_track_success') or (
-                name == 'navigate' and behavior in ('hold', 'late_accept', 'reject_cancel'))
+                name in ('navigate', 'explore') and behavior in ('hold', 'late_accept', 'reject_cancel'))
             feedback = action.Feedback()
             if hasattr(feedback, 'progress'):
                 feedback.progress = .4
+            if action is PrecisionLand:
+                feedback.phase = 'align'
+                feedback.target_valid = True
+                feedback.horizontal_error_m = .12
+                feedback.height_above_target_m = 1.3
+            if action is Explore:
+                feedback.phase = 'exploring'
+                feedback.coverage = .4
+                feedback.completed_viewpoints = 2
             for _ in range(5):
                 handle.publish_feedback(feedback)
                 time.sleep(.01)
-            if name in ('navigate', 'precision_land') and behavior=='managed_drain':
+            if name in ('navigate', 'precision_land', 'explore') and behavior=='managed_drain':
                 cls.ownership[identity]=time.monotonic()+.6
                 handle.abort()
-                return action.Result(success=False,message='public_failure_still_owned')
+                return result_value(False, 'public_failure_still_owned')
             if name=='navigate' and behavior=='late_success':
                 time.sleep(.12)
             while should_hold and not handle.is_cancel_requested:
                 time.sleep(.01)
                 if cls.process.poll() is not None:
                     handle.abort()
-                    return action.Result(success=False, message='test_node_stopped')
+                    return result_value(False, 'test_node_stopped')
                 if behavior == 'reject_cancel' and cls.behavior != 'reject_cancel':
                     break
             result = action.Result()
             if handle.is_cancel_requested:
                 time.sleep(cls.cancel_delay)
                 handle.canceled()
-                result.success, result.message = False, 'real_canceled'
+                result = result_value(False, 'real_canceled')
             else:
                 handle.succeed()
                 result.success = behavior != 'false_success'
-                result.message = 'done' if result.success else 'false_success'
+                result = result_value(result.success, 'done' if result.success else 'false_success')
             cls.ownership[identity]=time.monotonic()
             return result
 
@@ -214,8 +234,67 @@ class MissionExecutorTest(unittest.TestCase):
         self.assertFalse(result.result.success)
         self.assertEqual(self.calls, ['takeoff'])
 
+    def explore_step(self):
+        return ('  - type: explore\n    min_bound: [-2, -2, 0.5]\n'
+                '    max_bound: [2, 2, 2.5]\n    return_home: false\n    timeout: 5\n'
+                '    forbidden_boxes: [{min: [1, 1, 0.5], max: [1.5, 1.5, 2]}]\n')
+
+    def test_explore_transmits_bounds_and_finishes_before_land(self):
+        result = self.result(self.goal(self.explore_step() + '  - type: land\n'))
+        self.assertEqual(result.status, 4)
+        self.assertTrue(result.result.success)
+        self.assertEqual(self.calls, ['explore', 'land'])
+        sent = self.explore_goals[-1]
+        self.assertEqual((sent.min_bound.x, sent.max_bound.z), (-2., 2.5))
+        self.assertFalse(sent.return_home)
+        self.assertEqual(sent.timeout_sec, 5.)
+        self.assertEqual(len(sent.forbidden_boxes), 2)
+        self.assertEqual(sent.forbidden_boxes[1].x, 1.5)
+
+    def test_explore_false_success_never_advances_to_land(self):
+        type(self).behavior = 'false_success'
+        result = self.result(self.goal(self.explore_step() + '  - type: land\n'))
+        self.assertEqual(result.status, 6)
+        self.assertFalse(result.result.success)
+        self.assertIn('false_success', result.result.message)
+        self.assertEqual(self.calls, ['explore'])
+
+    def test_explore_public_failure_retains_child_ownership(self):
+        type(self).behavior = 'managed_drain'
+        result = self.result(self.goal(self.explore_step() + '  - type: land\n'))
+        self.assertEqual(result.status, 6)
+        self.assertEqual(self.calls, ['explore'])
+        self.assertFalse(self.goal('  - type: hover\n    duration: 0.02\n').accepted)
+        time.sleep(.8)
+        self.assertTrue(self.result(self.goal('  - type: hover\n    duration: 0.02\n')).result.success)
+
+    def test_explore_cancel_waits_for_real_terminal(self):
+        type(self).behavior = 'hold'
+        type(self).cancel_delay = .5
+        handle = self.goal(self.explore_step() + '  - type: land\n')
+        self.assertTrue(handle.accepted)
+        end = time.monotonic() + 3
+        while not self.calls and time.monotonic() < end:
+            time.sleep(.01)
+        self.assertEqual(self.calls, ['explore'])
+        self.assertTrue(self.wait(handle.cancel_goal_async()).goals_canceling)
+        self.assertEqual(self.result(handle).status, 5)
+        self.assertFalse(self.goal('  - type: hover\n    duration: 0.02\n').accepted)
+        time.sleep(.8)
+        self.assertTrue(self.result(self.goal('  - type: hover\n    duration: 0.02\n')).result.success)
+        self.assertNotIn('land', self.calls)
+
     def test_precision_step_reports_true_terminal_without_extra_land(self):
-        result = self.result(self.goal('  - type: precision_land\n    tag_id: 7\n    timeout: 3\n'))
+        self.child_feedback.clear()
+        handle = self.goal('  - type: precision_land\n    tag_id: 7\n    timeout: 3\n')
+        result = self.result(handle)
+        identity = bytes(handle.goal_id.uuid).hex()
+        received = [f for f in self.child_feedback if f.mission_goal_id == identity and f.active]
+        self.assertTrue(received)
+        self.assertTrue(all(f.child_goal_id != identity and len(f.child_goal_id) == 32 for f in received))
+        self.assertTrue(all(f.step_type == 'precision_land' and f.phase == 'align' for f in received))
+        self.assertTrue(all(f.target_valid and f.horizontal_error_m == .12 for f in received))
+        self.assertTrue(all(0 <= f.feedback_age_sec <= .5 for f in received))
         self.assertEqual(result.status, 4)
         self.assertTrue(result.result.success)
         self.assertEqual(self.calls, ['precision_land'])

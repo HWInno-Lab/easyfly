@@ -27,11 +27,15 @@ rclcpp_components_register_node(${PROJECT_NAME}_nodes
 install(TARGETS ${PROJECT_NAME}_nodes LIBRARY DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)
 install(DIRECTORY config launch DESTINATION share/${PROJECT_NAME})
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/../../../../models/yolo11n.onnx
+install(FILES
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../../models/yolo11n.onnx
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../../models/LICENSE-AGPL-3.0
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../../models/README.md
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../../third_party/model-assets.provenance.json
   DESTINATION share/${PROJECT_NAME}/models)
 if(BUILD_TESTING)
   find_package(ament_cmake_pytest REQUIRED)
-  ament_add_pytest_test(test_inference_ros test/test_inference_ros.py TIMEOUT 75
+  ament_add_pytest_test(test_inference_ros test/test_inference_ros.py TIMEOUT 120
     ENV ROS_DOMAIN_ID=216 ROS_LOG_DIR=/tmp/easyfly_alg5_detector)
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(

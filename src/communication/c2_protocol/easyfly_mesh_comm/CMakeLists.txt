@@ -2,10 +2,16 @@ cmake_minimum_required(VERSION 3.8)
 project(easyfly_mesh_comm)
 
 find_package(ament_cmake REQUIRED)
-
-# TODO: add library/executable targets
+find_package(ament_cmake_python REQUIRED)
+ament_python_install_package(${PROJECT_NAME})
+install(PROGRAMS scripts/mesh_peer DESTINATION lib/${PROJECT_NAME})
+install(DIRECTORY config DESTINATION share/${PROJECT_NAME})
+install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
+  find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_mesh test/test_mesh.py TIMEOUT 30
+    APPEND_ENV PYTHONNOUSERSITE=1)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 endif()

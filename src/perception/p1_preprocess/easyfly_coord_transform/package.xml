@@ -17,7 +17,15 @@
   <depend>easyfly_msgs</depend>
 
   <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>rclpy</test_depend>
+  <test_depend>tf2_msgs</test_depend>
+  <test_depend>easyfly_rc_receiver</test_depend>
+  <test_depend>mavros_msgs</test_depend>
+  <test_depend>std_msgs</test_depend>
   <test_depend>ament_lint_common</test_depend>
+
+  <exec_depend>easyfly_launch</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

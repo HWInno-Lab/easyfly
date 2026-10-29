@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import json
+import math
 import re
 
 from ament_index_python.packages import get_package_share_directory
@@ -38,14 +39,82 @@ def _launch_profile(context):
                          ('detection_use_gpu', 'auto')]:
         arguments[key] = LaunchConfiguration(key, default=default).perform(context)
     if profile['entrypoint'] != 'base':
+        arguments['local_planner_max_acceleration'] = LaunchConfiguration('local_planner_max_acceleration', default='6.0').perform(context)
+        if arguments['local_planner_max_acceleration'] not in ('2.0', '6.0'):
+            raise ValueError('unsupported local planner acceleration bound')
         arguments['rviz'] = LaunchConfiguration('rviz', default='true').perform(context)
     raw_options = LaunchConfiguration('algorithms_json', default='').perform(context)
     options = validate(json.loads(raw_options) if raw_options else {})
     backend = localization_backend(options, profile['name'])
+    if options['strategy'] in ('gcopter', 'super') and profile['name'] != 'navigation_dev':
+        raise ValueError(options['strategy'].upper() + ' simulation navigation requires navigation_dev')
+    if options['strategy'] in ('gcopter', 'super'):
+        key = options['strategy'] + '_evidence_directory'
+        arguments[key] = LaunchConfiguration(key, default='').perform(context)
+    dynamic = LaunchConfiguration('gcopter_dynamic_navigation', default='false').perform(context)
+    if dynamic not in ('true', 'false'):
+        raise ValueError('gcopter_dynamic_navigation must be true or false')
+    if dynamic == 'true' and (options['strategy'] != 'gcopter' or
+                              profile['name'] != 'navigation_dev' or options['exploration'] == 'fuel'):
+        raise ValueError('Dynamic GCOPTER requires independent navigation_dev with GCOPTER')
+    arguments['gcopter_dynamic_navigation'] = dynamic
+    committed = LaunchConfiguration('super_execute_committed', default='false').perform(context)
+    if committed not in ('true', 'false'):
+        raise ValueError('super_execute_committed must be true or false')
+    if committed == 'true' and (options['strategy'] != 'super' or profile['name'] != 'navigation_dev'):
+        raise ValueError('committed SUPER execution requires navigation_dev and SUPER')
+    arguments['super_execute_committed'] = committed
+    extended = LaunchConfiguration('fuel_extended_profile', default='false').perform(context)
+    if extended not in ('true', 'false'):
+        raise ValueError('fuel_extended_profile must be true or false')
+    if extended == 'true' and (options['exploration'] != 'fuel' or dynamic == 'true'):
+        raise ValueError('Extended FUEL requires the fixed FUEL policy map')
+    arguments['fuel_extended_profile'] = extended
+    arguments['fuel_native_max_speed'] = LaunchConfiguration('fuel_native_max_speed', default='1.2').perform(context)
+    if not math.isfinite(float(arguments['fuel_native_max_speed'])) or not .1 <= float(arguments['fuel_native_max_speed']) <= 2.:
+        raise ValueError('fuel_native_max_speed must be .1 to 2 m/s')
+    if options['exploration'] == 'fuel':
+        if profile['name'] != 'navigation_dev' or options['strategy'] != 'gcopter' or backend != 'fast_lio':
+            raise ValueError('FUEL requires navigation_dev, FAST-LIO and GCOPTER')
+        evidence = LaunchConfiguration('fuel_evidence_directory', default='').perform(context)
+        if not evidence or not Path(evidence).is_absolute():
+            raise ValueError('FUEL requires an absolute evidence directory')
+        arguments.update(exploration_backend='fuel', fuel_evidence_directory=evidence)
+    vio_navigation = LaunchConfiguration('openvins_navigation', default='false').perform(context)
+    if vio_navigation not in ('true', 'false'):
+        raise ValueError('openvins_navigation must be true or false')
+    if vio_navigation == 'true' and (backend != 'openvins' or profile['name'] != 'navigation_dev'):
+        raise ValueError('OpenVINS simulation navigation requires navigation_dev and OpenVINS')
+    livo_navigation = LaunchConfiguration('fastlivo_navigation', default='false').perform(context)
+    if livo_navigation not in ('true', 'false'):
+        raise ValueError('fastlivo_navigation must be true or false')
+    if livo_navigation == 'true' and (backend != 'fast_livo2' or profile['name'] != 'navigation_dev'):
+        raise ValueError('FAST-LIVO2 simulation navigation requires navigation_dev and FAST-LIVO2')
+    orb_navigation = LaunchConfiguration('orbslam3_navigation', default='false').perform(context)
+    if orb_navigation not in ('true', 'false'):
+        raise ValueError('orbslam3_navigation must be true or false')
+    if orb_navigation == 'true' and (backend != 'orbslam3' or profile['name'] != 'navigation_dev'):
+        raise ValueError('ORB-SLAM3 navigation requires navigation_dev and ORB-SLAM3')
+    orb_sensor = LaunchConfiguration('orbslam3_sensor_mode', default='rgbd').perform(context)
+    if orb_sensor not in ('rgbd', 'rgbd_imu') or (orb_sensor == 'rgbd_imu' and backend != 'orbslam3'):
+        raise ValueError('ORB sensor mode requires the matching selected backend')
+    if backend == 'orbslam3':
+        runtime = LaunchConfiguration('orbslam3_runtime_directory', default='').perform(context)
+        if not runtime or not Path(runtime).is_absolute() or not Path(runtime).is_dir() or (Path(runtime)/'runtime-settings.yaml').exists():
+            raise ValueError('ORB-SLAM3 requires a fresh absolute runtime directory')
+        arguments['orbslam3_runtime_directory'] = runtime
+        arguments['orbslam3_navigation'] = orb_navigation
+        arguments['orbslam3_sensor_mode'] = orb_sensor
+        for key in ['load_atlas', 'save_atlas']:
+            arguments['orbslam3_'+key] = LaunchConfiguration('orbslam3_'+key, default='').perform(context)
     use_slam = backend != 'disabled'
     if profile['entrypoint'] != 'base':
         arguments['slam_enabled'] = 'true' if use_slam else 'false'
         arguments['localization_backend'] = backend
+        if backend == 'fast_livo2':
+            arguments['fastlivo_navigation'] = livo_navigation
+        if backend == 'openvins':
+            arguments['openvins_navigation'] = vio_navigation
         if raw_options and backend == 'fast_lio':
             arguments['fastlio_options_json'] = json.dumps(options, separators=(',', ':'))
     if raw_options:
@@ -112,7 +181,22 @@ def generate_launch_description():
         DeclareLaunchArgument('detection_use_gpu', default_value='auto'),
         DeclareLaunchArgument('algorithms_json', default_value='',
                               description='Validated algorithm configuration from the UI'),
+        DeclareLaunchArgument('orbslam3_navigation', default_value='false', choices=['true','false']),
+        DeclareLaunchArgument('orbslam3_sensor_mode', default_value='rgbd', choices=['rgbd','rgbd_imu']),
+        *[DeclareLaunchArgument('orbslam3_'+k, default_value='') for k in ['runtime_directory','load_atlas','save_atlas']],
+        DeclareLaunchArgument('fastlivo_navigation', default_value='false', choices=['true','false']),
+        DeclareLaunchArgument('openvins_navigation', default_value='false',
+                              choices=['true', 'false'],
+                              description='Simulation navigation; requires navigation_dev'),
         DeclareLaunchArgument('algorithm_image_topic', default_value='/camera/color/image_raw'),
+        DeclareLaunchArgument('gcopter_evidence_directory', default_value=''),
+        DeclareLaunchArgument('gcopter_dynamic_navigation', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('super_evidence_directory', default_value=''),
+        DeclareLaunchArgument('super_execute_committed', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('fuel_evidence_directory', default_value=''),
+        DeclareLaunchArgument('fuel_extended_profile', default_value='false', choices=['true', 'false']),
+        DeclareLaunchArgument('fuel_native_max_speed', default_value='1.2'),
+        DeclareLaunchArgument('local_planner_max_acceleration', default_value='6.0'),
         DeclareLaunchArgument('rviz', default_value='true', choices=['true', 'false']),
         OpaqueFunction(function=_launch_profile),
     ])

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "inventory_date": "2026-10-19",
+  "inventory_date": "2026-10-28",
   "source_commit_before_catalog": "2b69165b2708944cf974e925bd9a87c70acec072",
   "scope": "Classified third-party roots plus retained ROS driver/model boundaries; not an exhaustive SBOM or runtime loader registry.",
   "algorithm_categories": [
@@ -300,11 +300,160 @@
       "known_local_patch_commits": [],
       "patches": [
         "tools/algorithms/patches/openvins/0001-ros2-visualizer-lifetime.patch",
-        "tools/algorithms/patches/openvins/0002-install-notices.patch"
+        "tools/algorithms/patches/openvins/0002-install-notices.patch",
+        "tools/algorithms/patches/openvins/0003-owned-update-and-init-workers.patch",
+        "tools/algorithms/patches/openvins/0004-zupt-update-readiness.patch",
+        "tools/algorithms/patches/openvins/0005-source-stamped-tracking-diagnostics.patch",
+        "tools/algorithms/patches/openvins/0006-strict-native-input-boundary.patch"
       ],
       "unresolved": [
-        "Only Gazebo mono profile qualified; device-specific D435i calibration pending.",
-        "Default navigation/UI backend selection and flight admission are not integrated."
+        "D435i stereo product configuration and device-specific calibration remain unverified.",
+        "Explicit Gazebo navigation is qualified; desktop navigation/task admission remains pending I-01."
+      ],
+      "related_paths": []
+    },
+    {
+      "id": "fast_livo2",
+      "primary_path": "src/third_party/algorithms/localization/fast_livo2",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "localization",
+        "lidar",
+        "visual",
+        "inertial"
+      ],
+      "integration_style": "explicit_ros2_guarded_simulation_backend",
+      "consumers": [
+        "easyfly_fast_livo2_integration"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/localization/fast_livo2.provenance.json",
+        "docs/development/fastlivo2-simulation-acceptance.md"
+      ],
+      "exact_upstream_import_revision": "837b7bbc1431cb04cf936528e52c83c835efba8e",
+      "related_paths": [
+        "src/third_party/algorithms/localization/fast_livo2_dependencies"
+      ],
+      "unresolved": [
+        "Vikit fork declares BSD metadata but contains no standalone full license text; original notices retained.",
+        "Hardware, loop closure and long-term map reuse are not accepted."
+      ]
+    },
+    {
+      "id": "orb_slam3",
+      "primary_path": "src/third_party/algorithms/localization/orb_slam3",
+      "kind": "vendor_cpp_engine",
+      "tags": [
+        "localization",
+        "visual",
+        "rgbd",
+        "loop_closure",
+        "relocalization"
+      ],
+      "integration_style": "explicit_ros2_guarded_simulation_backend",
+      "consumers": [
+        "easyfly_orbslam3_integration",
+        "easyfly_openvins_integration"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/localization/orb_slam3.provenance.json",
+        "docs/development/orbslam3-simulation-acceptance.md"
+      ],
+      "exact_upstream_import_revision": "4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4",
+      "related_paths": [
+        "src/third_party/algorithms/localization/orb_slam3_dependencies/pangolin"
+      ],
+      "unresolved": [
+        "Qualified RGB-D Gazebo navigation and inertial observation have passed; hardware and unrestricted inertial navigation remain outside scope.",
+        "Bundled DBoW2/DUtils upstream references an absent standalone LICENSE.txt; original notices retained."
+      ]
+    },
+    {
+      "id": "super",
+      "primary_path": "src/third_party/algorithms/planning/super",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "planning",
+        "trajectory",
+        "optimization",
+        "mapping",
+        "search"
+      ],
+      "integration_style": "exported_native_targets_and_managed_navigation_session",
+      "consumers": [
+        "easyfly_super_planner"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/planning/super.provenance.json",
+        "docs/development/super-simulation-acceptance.md"
+      ],
+      "version_evidence": "official hku-mars/SUPER pinned source and reconstructible integration patches",
+      "exact_upstream_import_revision": "2ad3419c127a617c6d7df6925e81a14175a9c096",
+      "known_local_patch_commits": [],
+      "unresolved": [
+        "Main source LGPL-3.0-or-later conflicts with upstream BSD package metadata; no separate root LGPL text in selected snapshot.",
+        "Hardware, high-speed and native unknown-space backup flight execution are outside current Gazebo qualification."
+      ],
+      "related_paths": [
+        "src/third_party/algorithms/planning/super/rog_map",
+        "src/third_party/algorithms/planning/super/super_planner"
+      ]
+    },
+    {
+      "id": "fuel",
+      "primary_path": "src/third_party/algorithms/planning/fuel",
+      "kind": "vendor_ros_engine",
+      "tags": [
+        "planning",
+        "exploration",
+        "mapping",
+        "search"
+      ],
+      "integration_style": "exported_native_highlevel_targets_and_owned_ros2_exploration_action",
+      "consumers": [
+        "easyfly_fuel_core",
+        "easyfly_fuel_exploration"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/planning/fuel.provenance.json",
+        "docs/development/fuel-simulation-acceptance.md"
+      ],
+      "version_evidence": "Official HKUST-Aerial-Robotics/FUEL selected source and zero-fuzz high-level integration patch",
+      "exact_upstream_import_revision": "662dd23c7b52b258d3c4a0155ff6632118e8984f",
+      "known_local_patch_commits": [],
+      "unresolved": [
+        "Bundled LKH package.xml license TODO preserved; simulation qualification does not establish redistribution rights.",
+        "Native FUEL B-spline/controller, hardware, high-speed and dynamic-scene qualification are outside current bounded Gazebo scope."
+      ],
+      "related_paths": [
+        "src/third_party/algorithms/planning/fuel/fuel_planner/utils/lkh_tsp_solver",
+        "src/third_party/algorithms/planning/fuel.notices"
+      ]
+    },
+    {
+      "id": "gcopter",
+      "primary_path": "src/third_party/algorithms/planning/gcopter",
+      "kind": "vendor_cpp_engine",
+      "tags": [
+        "planning",
+        "trajectory",
+        "optimization"
+      ],
+      "integration_style": "exported_native_targets_and_owned_navigation_session",
+      "consumers": [
+        "easyfly_trajectory_optimizer",
+        "easyfly_fuel_exploration"
+      ],
+      "evidence_files": [
+        "src/third_party/algorithms/planning/gcopter.provenance.json",
+        "src/execution/e2_planning/easyfly_trajectory_optimizer/README.md"
+      ],
+      "exact_upstream_import_revision": "e0444f6d47b84f972ced91746b05feb36ce1fd4f",
+      "patches": [
+        "tools/algorithms/patches/gcopter/0001-cxx17-const-comparator.patch"
+      ],
+      "unresolved": [
+        "Static bounded local map; dynamic clearing, unrestricted range and hardware remain outside current qualification."
       ],
       "related_paths": []
     }

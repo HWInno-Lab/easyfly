@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <fcntl.h>
 #include <linux/fs.h>
 #include <sys/stat.h>
@@ -82,6 +81,11 @@ std::vector<DraftField> draft_fields(const mission::MissionStep & s)
     add("area_width", s.area_width, "m"); add("area_height", s.area_height, "m");
     add("altitude", s.altitude, "m"); add("max_speed", s.max_speed, "m/s");
   }
+  if (s.type == "explore") {
+    add("min_x", s.min_bound[0], "m"); add("min_y", s.min_bound[1], "m");
+    add("min_z", s.min_bound[2], "m"); add("max_x", s.max_bound[0], "m");
+    add("max_y", s.max_bound[1], "m"); add("max_z", s.max_bound[2], "m");
+  }
   if (s.type == "precision_land") {add("tag_id", s.tag_id, "id", true);}
   add("timeout", s.timeout, "s"); return f;
 }
@@ -100,7 +104,9 @@ bool draft_set_field(mission::MissionStep & s, const std::string & key, double v
       {"z", &s.z}, {"yaw", &s.yaw}, {"max_speed", &s.max_speed}, {"timeout", &s.timeout},
       {"acceptance_radius", &s.acceptance_radius}, {"follow_distance", &s.follow_distance},
       {"follow_height", &s.follow_height}, {"center_x", &s.center_x}, {"center_y", &s.center_y},
-      {"area_width", &s.area_width}, {"area_height", &s.area_height}};
+      {"area_width", &s.area_width}, {"area_height", &s.area_height},
+      {"min_x", &s.min_bound[0]}, {"min_y", &s.min_bound[1]}, {"min_z", &s.min_bound[2]},
+      {"max_x", &s.max_bound[0]}, {"max_y", &s.max_bound[1]}, {"max_z", &s.max_bound[2]}};
     for (const auto & entry : values) {
       if (entry.first == key) {
         *entry.second = value; return true;
@@ -123,15 +129,31 @@ std::string draft_yaml(const std::vector<mission::MissionStep> & steps)
     "failure_policy: abort\nsteps:\n";
   for (const auto & s : steps) {
     const std::vector<std::string> types{"takeoff", "hover", "waypoint", "navigate", "track",
-      "search", "land", "precision_land"};
+      "search", "land", "precision_land", "explore"};
     if (std::find(types.begin(), types.end(), s.type) == types.end()) {
       throw std::invalid_argument("不支持的步骤类型");
     }
     out << "  - type: " << s.type << '\n';
     for (const auto & f : draft_fields(s)) {
+      if (s.type == "explore" && f.key != "timeout") {continue;}
       out << "    " << f.key << ": " << f.value << '\n';
     }
     if (s.type == "search") {out << "    pattern: boustrophedon\n";}
+    if (s.type == "explore") {
+      const auto point = [&](const std::array<double, 3> & p) {
+          out << '[' << p[0] << ", " << p[1] << ", " << p[2] << ']';
+        };
+      out << "    min_bound: "; point(s.min_bound);
+      out << "\n    max_bound: "; point(s.max_bound);
+      out << "\n    return_home: " << (s.return_home ? "true" : "false") << '\n';
+      if (!s.forbidden_boxes.empty()) {
+        out << "    forbidden_boxes:\n";
+        for (const auto & box : s.forbidden_boxes) {
+          out << "      - min: "; point(box.min);
+          out << "\n        max: "; point(box.max); out << '\n';
+        }
+      }
+    }
   }
   const auto body = out.str();
   const auto checked = mission::validateMissionText(body);

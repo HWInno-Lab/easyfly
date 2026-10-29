@@ -15,6 +15,7 @@
 #include <cmath>
 #include <chrono>
 #include <sstream>
+#include <random>
 #include <thread>
 
 namespace easyfly_flight_control
@@ -166,6 +167,26 @@ FlightController::FlightController(const rclcpp::NodeOptions & options)
 
   ctl_cb_group_ = create_callback_group(rclcpp::CallbackGroupType::MutuallyExclusive);
   initialize_precision_landing();
+  rclcpp_action::GoalUUID controller_uuid;
+  std::random_device entropy;
+  constexpr char hex[] = "0123456789abcdef";
+  for (auto & byte : controller_uuid) {
+    byte = static_cast<uint8_t>(entropy());
+    controller_session_id_ += hex[byte >> 4];
+    controller_session_id_ += hex[byte & 15];
+  }
+  srv_trajectory_state_ = create_service<easyfly_msgs::srv::GetTrajectoryState>(
+    "/flight_control/trajectory_state", [this](
+      easyfly_msgs::srv::GetTrajectoryState::Request::SharedPtr,
+      easyfly_msgs::srv::GetTrajectoryState::Response::SharedPtr response) {
+      std::lock_guard<std::recursive_mutex> lock(flight_mtx_);
+      response->header.stamp = now();
+      response->controller_session_id = controller_session_id_;
+      response->highest_trajectory_id = traj_seen_max_id_;
+      response->idle = active_ == HOVER && !action_reserved_ && !precision_reserved_ &&
+      !command_uncertain_;
+      response->active_navigation_session_id = traj_session_id_;
+    });
   srv_flight_capabilities_ = create_service<easyfly_msgs::srv::GetCapabilities>(
     "/platform/flight_control/capabilities", [this](
       easyfly_msgs::srv::GetCapabilities::Request::SharedPtr,

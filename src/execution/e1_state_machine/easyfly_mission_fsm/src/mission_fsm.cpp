@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <set>
+#include <limits>
 using namespace std::chrono_literals;
 namespace easyfly_mission_fsm {
 using Clock = std::chrono::steady_clock;
@@ -15,7 +16,7 @@ static uint8_t phase(const std::string &type) {
   if(type=="takeoff") return MS::TAKEOFF;
   if(type=="hover") return MS::HOVER;
   if(type=="track") return MS::TRACK;
-  if(type=="search") return MS::SEARCH;
+  if(type=="search" || type=="explore") return MS::SEARCH;
   if(type=="land" || type=="precision_land") return MS::LAND;
   return MS::WAYPOINT;
 }
@@ -36,6 +37,7 @@ MissionFSM::MissionFSM(const rclcpp::NodeOptions &options):Node("mission_fsm",op
      !std::isfinite(backend_discovery_s_) || backend_discovery_s_<0 || backend_discovery_s_>30)
     throw std::invalid_argument("invalid mission timing parameters");
   pub_status_=create_publisher<MS>("/mission_status",10);
+  pub_step_feedback_=create_publisher<easyfly_msgs::msg::MissionStepFeedback>("/mission/step_feedback",1);
   cli_set_mode_=create_client<easyfly_msgs::srv::SetFlightMode>("/set_flight_mode");
   as_mission_=rclcpp_action::create_server<ExecuteMission>(this,"/execute_mission",
     std::bind(&MissionFSM::handle_mission_goal,this,std::placeholders::_1,std::placeholders::_2),
@@ -258,6 +260,15 @@ bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shar
     g.center_x=s.center_x;g.center_y=s.center_y;g.area_width=s.area_width;g.area_height=s.area_height;
     g.search_altitude=s.altitude;g.search_speed=s.max_speed;g.search_pattern=s.search_pattern;
     operation=sdk_->search(g);
+  } else if(s.type=="explore") {
+    easyfly_msgs::action::Explore::Goal g;
+    const auto point=[](const std::array<double,3> &p) {
+      geometry_msgs::msg::Point value;value.x=p[0];value.y=p[1];value.z=p[2];return value;};
+    g.min_bound=point(s.min_bound);g.max_bound=point(s.max_bound);
+    for(const auto &box:s.forbidden_boxes) {
+      g.forbidden_boxes.push_back(point(box.min));g.forbidden_boxes.push_back(point(box.max));
+    }
+    g.return_home=s.return_home;g.timeout_sec=s.timeout;operation=sdk_->explore(g);
   } else if(s.type=="precision_land") {
     easyfly_msgs::action::PrecisionLand::Goal g; g.tag_id=s.tag_id; g.timeout=s.timeout;
     operation=sdk_->precision_land(g);
@@ -266,8 +277,42 @@ bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shar
   {std::lock_guard<std::mutex> lock(step_mtx_);current_=operation;}
   Clock::time_point accepted_at{};
   bool duration_cancel=false;
+  double last_feedback_receipt=0;
+  const auto relay_feedback=[&](const easyfly_core::OperationSnapshot &snapshot,bool active) {
+    if(s.type!="precision_land" && s.type!="explore") return;
+    const double receipt=snapshot.feedback_received_seconds;
+    const double age=std::chrono::duration<double>(Clock::now().time_since_epoch()).count()-receipt;
+    if(snapshot.goal_id.empty() || (active && (receipt<=last_feedback_receipt || age<0 || age>.5))) return;
+    easyfly_msgs::msg::MissionStepFeedback event;
+    event.header.stamp=now();event.header.frame_id="odom";
+    event.mission_goal_id=easyfly_core::goalIdentity(handle->get_goal_id());
+    event.child_goal_id=snapshot.goal_id;event.step_type=s.type;event.step_index=index;
+    event.active=active;event.feedback_age_sec=active ? age : 0;
+    const auto number=[&](const char *key) {
+      const auto it=snapshot.feedback.numbers.find(key);
+      return it==snapshot.feedback.numbers.end() ? std::numeric_limits<double>::quiet_NaN() : it->second;
+    };
+    const auto phase=snapshot.feedback.strings.find("phase");
+    event.phase=active && phase!=snapshot.feedback.strings.end() ? phase->second : "terminal";
+    if(event.phase.size()>128) return;
+    if(active && s.type=="precision_land") {
+      const auto target=snapshot.feedback.flags.find("target_valid");
+      event.target_valid=target!=snapshot.feedback.flags.end() && target->second;
+      event.horizontal_error_m=number("horizontal_error_m");
+      event.height_above_target_m=number("height_above_target_m");
+    } else if(active) {
+      event.coverage=number("coverage");
+      const double count=number("completed_viewpoints");
+      if(!std::isfinite(count) || count<0 || count>std::numeric_limits<uint32_t>::max() || std::floor(count)!=count) return;
+      event.completed_viewpoints=static_cast<uint32_t>(count);
+      event.next_viewpoint.x=number("next_x");event.next_viewpoint.y=number("next_y");
+      event.next_viewpoint.z=number("next_z");
+    }
+    pub_step_feedback_->publish(event);last_feedback_receipt=receipt;
+  };
   while(!shutdown_ && reason().empty()) {
     auto snapshot=operation->snapshot();
+    relay_feedback(snapshot,true);
     if(Clock::now()>=deadline) {stop("step_timeout");break;}
     if(snapshot.admission==easyfly_core::Admission::Accepted && accepted_at==Clock::time_point{})
       accepted_at=Clock::now();
@@ -296,6 +341,7 @@ bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shar
       operation->wait(.02);
   }
   const auto final=operation->snapshot();
+  relay_feedback(final,false);
   if(reason().empty() && Clock::now()>deadline) stop("step_timeout");
   const bool ok=reason().empty() && !shutdown_ && !final.remote_execution_pending &&
     (s.type=="track" ? duration_cancel && final.status==Status::Canceled :

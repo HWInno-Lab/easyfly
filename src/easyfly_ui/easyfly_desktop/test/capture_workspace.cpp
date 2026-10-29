@@ -10,7 +10,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <QCommandLineParser>
 #include <QDir>
 #include <QLabel>
@@ -29,7 +28,6 @@
 #include "easyfly_desktop/mission_editor.hpp"
 #include "support.hpp"
 #include "connection_page.hpp"
-
 int main(int argc, char ** argv)
 {
   QApplication app(argc, argv); app.setFont(QFont("Noto Sans CJK SC", 10));

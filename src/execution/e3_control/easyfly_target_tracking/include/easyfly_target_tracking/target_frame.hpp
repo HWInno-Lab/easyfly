@@ -11,18 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #pragma once
-
 #include <string>
-
 #include <easyfly_msgs/msg/target3_d_array.hpp>
-
 namespace easyfly_target_tracking
 {
-
 inline constexpr char kTargetWorldFrame[] = "odom";
-
 // The default-constructed message is not a received sample.  Callers must
 // gate this check on their received/generation flag, then reject every
 // received empty or non-odom frame before using target coordinates.
@@ -30,5 +24,4 @@ inline bool targetArrayFrameValid(const easyfly_msgs::msg::Target3DArray & messa
 {
   return message.header.frame_id == kTargetWorldFrame;
 }
-
 }  // namespace easyfly_target_tracking

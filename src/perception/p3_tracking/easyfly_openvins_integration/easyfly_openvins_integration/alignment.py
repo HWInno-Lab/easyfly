@@ -45,10 +45,12 @@ class Pose:
 
 
 class Alignment:
-    def __init__(self, translation, orientation_ib, limits=AlignmentLimits()):
+    def __init__(self, translation, orientation_ib, limits=AlignmentLimits(),
+                 require_covariance=True):
         self.translation = vector(translation, 3)
         self.orientation_ib = quaternion(orientation_ib)
         self.limits = limits
+        self.require_covariance = require_covariance
         self.clock = 0
         self.session_id = ''
         self.generation = 0
@@ -137,7 +139,8 @@ class Alignment:
         if self.failure is not None:
             self.rejected += 1
             return
-        if pose.covariance is None or pose.stamp <= self.last_pose_seen:
+        if (self.require_covariance and pose.covariance is None) or \
+                pose.stamp <= self.last_pose_seen:
             self.rejected += 1
             self.fail('alignment_pose_time_or_covariance', reset=False)
             return

@@ -58,6 +58,11 @@ install(DIRECTORY config launch
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  # Preserve native analysis; teach cppcheck the C++ and test-framework syntax.
+  find_package(ament_cmake_cppcheck REQUIRED)
+  ament_cppcheck(LANGUAGE c++ LIBRARIES googletest qt
+    INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  list(APPEND AMENT_LINT_AUTO_EXCLUDE ament_cmake_cppcheck)
   ament_lint_auto_find_test_dependencies()
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_cmake_pytest REQUIRED)
@@ -77,6 +82,9 @@ if(BUILD_TESTING)
     TIMEOUT 45 ENV ROS_LOG_DIR=/tmp/easyfly_astar_endpoint_test ROS_DOMAIN_ID=89)
   ament_add_pytest_test(test_planning_control_ros test/test_planning_control_ros.py
     TIMEOUT 75 ENV ROS_DOMAIN_ID=214 ROS_LOG_DIR=/tmp/easyfly_alg3_controls)
+  ament_add_gtest(test_rolling_target test/test_rolling_target.cpp)
+  target_include_directories(test_rolling_target PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_rolling_target easyfly_msgs)
   ament_add_gtest(test_astar_adapter test/test_astar_adapter.cpp)
   target_link_libraries(test_astar_adapter ${PROJECT_NAME}_backends)
   ament_add_gtest(test_map_validity test/test_map_validity.cpp)
@@ -93,6 +101,13 @@ if(BUILD_TESTING)
   ament_add_gtest(test_segment_acceptance test/test_segment_acceptance.cpp)
   target_include_directories(test_segment_acceptance PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_add_gtest(test_route_clearance test/test_route_clearance.cpp)
+  target_include_directories(test_route_clearance PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  ament_target_dependencies(test_route_clearance easyfly_astar easyfly_grid_planner_api)
+  target_compile_definitions(test_route_clearance PRIVATE
+    RECORDED_CORNER_GRID="${CMAKE_CURRENT_SOURCE_DIR}/test/data/short_corner_recorded.txt"
+    RECORDED_TRACKING_GRID="${CMAKE_CURRENT_SOURCE_DIR}/test/data/tracking_offset_recorded.txt"
+    RECORDED_TRACKING_UPDATE="${CMAKE_CURRENT_SOURCE_DIR}/test/data/tracking_offset_updated.txt")
 endif()
 
 ament_export_targets(plannerBackends HAS_LIBRARY_TARGET)

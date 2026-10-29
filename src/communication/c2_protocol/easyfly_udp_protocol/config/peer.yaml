@@ -1,0 +1,15 @@
+udp_peer:
+  ros__parameters:
+    bind: 127.0.0.1
+    port: 9010
+    peer_host: 127.0.0.1
+    peer_port: 9011
+    private_key_file: ""
+    peer_public_key_file: ""
+    input_topic: /odom
+    output_topic: /network/remote_odom
+    max_hz: 20.0
+    source_timeout_s: 1.0
+    link_timeout_s: 2.0
+    ttl_ms: 1500
+    max_datagrams_per_second: 100

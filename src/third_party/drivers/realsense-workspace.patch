@@ -1,0 +1,21 @@
+diff --git a/realsense2_camera/package.xml b/realsense2_camera/package.xml
+index 44a8b4d9..bbd1ec6b 100644
+--- a/realsense2_camera/package.xml
++++ b/realsense2_camera/package.xml
+@@ -17,7 +17,6 @@
+   <depend>builtin_interfaces</depend>
+   <depend>cv_bridge</depend>
+   <depend>image_transport</depend>
+-  <depend>librealsense2</depend>
+   <depend>rclcpp</depend>
+ 
+   <!-- Lifecycle dependencies are optional -DUSE_LIFECYCLE_NODE -->
+diff --git a/realsense2_description/COLCON_IGNORE b/realsense2_description/COLCON_IGNORE
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/realsense2_rgbd_plugin/COLCON_IGNORE b/realsense2_rgbd_plugin/COLCON_IGNORE
+new file mode 100644
+index 00000000..e69de29b
+diff --git a/realsense2_ros_mqtt_bridge/COLCON_IGNORE b/realsense2_ros_mqtt_bridge/COLCON_IGNORE
+new file mode 100644
+index 00000000..e69de29b

@@ -45,8 +45,9 @@ def generate_launch_description():
     height_arg = DeclareLaunchArgument(
         'grid_height_limit_m', default_value='0.0',
         description='Opt-in 2D projection height above trusted ground; zero keeps all heights')
+    state_arg = DeclareLaunchArgument('uav_state_topic', default_value='/uav_state')
     return LaunchDescription([
-        use_sim_time_arg, capture_arg, ground_arg, grid_arg, height_arg,
+        use_sim_time_arg, capture_arg, ground_arg, grid_arg, height_arg, state_arg,
         OpaqueFunction(function=_node)])
 
 
@@ -65,6 +66,7 @@ def _node(context):
         name="easyfly_semantic_map",
         output="screen",
         prefix=prefix,
+        remappings=[('/uav_state', LaunchConfiguration('uav_state_topic'))],
         parameters=[
             {
                 "use_sim_time": LaunchConfiguration("use_sim_time"),

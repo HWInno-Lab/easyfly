@@ -35,6 +35,16 @@ def test_curated_lidar_preserves_sensor_and_physics():
     assert old.find('.//visual/geometry/mesh') is not None
     assert new.find('.//visual/geometry/mesh') is None
     assert new.find('.//visual/geometry/cylinder') is not None
+    # Replay only the documented IMU migration; compare all remaining semantics.
+    spec = importlib.util.spec_from_file_location(
+        'runtime_assets_recipe', WORKSPACE/'tools/scenes/prepare_runtime_assets.py')
+    recipe = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(recipe)
+    recipe.configure_mid360_imu(old)
+    origins = json.loads((MODELS/'licenses/runtime/ORIGINS.json').read_text())
+    assert hashlib.sha256((MODELS/origins['original_mid360_sdf_path']).read_bytes()).hexdigest() == origins['original_mid360_sdf_sha256']
+    assert hashlib.sha256((MODELS/'mid360/mid360.sdf').read_bytes()).hexdigest() == origins['current_base_mid360_sdf_sha256']
+    assert hashlib.sha256((MODELS/'easyfly/runtime_models/mid360/mid360.sdf').read_bytes()).hexdigest() == origins['curated_mid360_sdf_sha256']
     for root in [old,new]:
         root.find('.//visual/geometry').clear()
     assert semantic(old)==semantic(new)
@@ -166,6 +176,10 @@ def test_postlanding_gate_requires_continuous_stationary_interval(scene_probe_mo
     assert entry['recovery_seconds']==(10. if alignment_interrupts else 6.5)
     assert entry['recovery_limits']['alignment_position_error_m']==.2
     assert entry['recovery_limits']['alignment_yaw_error_rad']==.1
+    rejected=next(v for v in entry['recovery_samples'] if v['seconds_since_landing']==2.5)
+    assert not rejected['pre_alignment_valid']
+    assert rejected['receipt_ages']['/pointcloud_nonground']==2.5
+    assert entry['recovery_samples_discarded']==0
 
 
 def test_recovery_rate_limits_native_queries_and_requires_a_fresh_final_sample(scene_probe_module,monkeypatch):

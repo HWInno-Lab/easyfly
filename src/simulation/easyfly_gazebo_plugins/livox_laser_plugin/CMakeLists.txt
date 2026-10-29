@@ -8,6 +8,7 @@ if(NOT CMAKE_CXX_STANDARD_REQUIRED)
 endif()
 
 find_package(rclcpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(gazebo_dev REQUIRED)
 find_package(livox_ros_driver2 REQUIRED)
@@ -16,10 +17,6 @@ find_package(rosidl_cmake REQUIRED)  # rosidl_get_typesupport_target
 add_library(livox_laser_simulation SHARED
   src/livox_points_plugin.cpp
   src/livox_ode_multiray_shape.cpp
-)
-
-target_compile_definitions(livox_laser_simulation PRIVATE
-  SCAN_MODE_DIR="${CMAKE_CURRENT_SOURCE_DIR}/scan_mode"
 )
 
 target_include_directories(livox_laser_simulation PRIVATE
@@ -31,6 +28,7 @@ target_include_directories(livox_laser_simulation PRIVATE
 # livox_ros_driver2 为 ament_auto 混合包(库+消息), 其导出已包含 rosidl typesupport
 ament_target_dependencies(livox_laser_simulation
   rclcpp
+  ament_index_cpp
   sensor_msgs
   gazebo_dev
   livox_ros_driver2

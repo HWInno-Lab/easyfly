@@ -66,7 +66,13 @@ def test_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture):
     run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture)
 
 
-def run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture, workload='steady'):
+def test_capture_preserves_spaced_parameter_path(tmp_path):
+    """GDB must forward a real params-file path as one argument, including spaces."""
+    run_active_mapping_shutdown(tmp_path, 'frozen', signal.SIGINT, True, spaced_path=True)
+
+
+def run_active_mapping_shutdown(
+        tmp_path, clock_mode, stop_signal, capture, workload='steady', spaced_path=False):
     """Exercise bounded legitimate traffic, optionally with moving obstacles and readers."""
     os.environ['ROS_DOMAIN_ID'] = '186'
     rclpy.init()
@@ -149,6 +155,10 @@ def run_active_mapping_shutdown(tmp_path, clock_mode, stop_signal, capture, work
             command = [str(executable), '--ros-args', '-p',
                        'use_sim_time:=' + ('false' if clock_mode == 'system' else 'true'),
                        '-p', 'ground_model_frame:=map']
+            if spaced_path:
+                params = tmp_path / 'parameters with spaces.yaml'
+                params.write_text('/**:\n  ros__parameters:\n    ground_model_frame: map\n')
+                command += ['--params-file', str(params)]
             if capture:
                 command = [sys.executable, str(Path(__file__).parents[1] /
                            'scripts/semantic_shutdown_capture.py'), *command]

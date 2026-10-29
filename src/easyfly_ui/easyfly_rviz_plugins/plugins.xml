@@ -1,0 +1,7 @@
+<library path="easyfly_rviz_odometry">
+  <class name="easyfly_rviz_plugins/Odometry"
+         type="easyfly_rviz_plugins::OdometryDisplay"
+         base_class_type="rviz_common::Display">
+    <description>Native odometry visuals with cleanup of their retired empty parent nodes.</description>
+  </class>
+</library>

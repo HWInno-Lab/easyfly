@@ -45,51 +45,44 @@ def cloud_points(cloud, max_points):
         or cloud.point_step > 256
         or len(cloud.data) > 8388608
     ):
-        raise ValueError('cloud budget')
+        raise ValueError("cloud budget")
     if (
         cloud.row_step < cloud.width * cloud.point_step
         or len(cloud.data) != cloud.row_step * cloud.height
     ):
-        raise ValueError('cloud layout')
+        raise ValueError("cloud layout")
     if len(cloud.fields) > 32:
-        raise ValueError('cloud fields budget')
+        raise ValueError("cloud fields budget")
     fields = {}
     for field in cloud.fields:
-        if field.name in ('x', 'y', 'z'):
-            if (
-                field.name in fields
-                or field.count != 1
-                or field.datatype not in (7, 8)
-            ):
-                raise ValueError('XYZ field type/duplicate')
+        if field.name in ("x", "y", "z"):
+            if field.name in fields or field.count != 1 or field.datatype not in (7, 8):
+                raise ValueError("XYZ field type/duplicate")
             size = 4 if field.datatype == 7 else 8
             if field.offset < 0 or field.offset + size > cloud.point_step:
-                raise ValueError('XYZ offset')
+                raise ValueError("XYZ offset")
             fields[field.name] = (
                 field.offset,
                 size,
-                'f' if size == 4 else 'd',
+                "f" if size == 4 else "d",
             )
-    if set(fields) != {'x', 'y', 'z'}:
-        raise ValueError('XYZ missing')
+    if set(fields) != {"x", "y", "z"}:
+        raise ValueError("XYZ missing")
     ordered = sorted((o, o + size) for o, size, _ in fields.values())
     if any(a[1] > b[0] for a, b in zip(ordered, ordered[1:])):
-        raise ValueError('overlapping XYZ')
-    endian = '>' if cloud.is_bigendian else '<'
+        raise ValueError("overlapping XYZ")
+    endian = ">" if cloud.is_bigendian else "<"
     points = []
     for row in range(cloud.height):
         for column in range(cloud.width):
             start = row * cloud.row_step + column * cloud.point_step
             point = tuple(
-                struct.unpack_from(
-                    endian + fields[key][2], cloud.data, start + fields[key][0]
-                )[0]
-                for key in ('x', 'y', 'z')
+                struct.unpack_from(endian + fields[key][2], cloud.data, start + fields[key][0])[0]
+                for key in ("x", "y", "z")
             )
             if all(math.isfinite(v) and abs(v) <= 100000 for v in point):
                 points.append(point)
     return points
-
 
 
 def rigid_transform(transform):
@@ -101,6 +94,7 @@ def project(points, image, model, transform):
     q, t = transform.rotation, transform.translation
     numeric_transform = TransformView((q.x, q.y, q.z, q.w), (t.x, t.y, t.z))
     colored, depth = project_geometry(points, image_view(image), model, numeric_transform)
-    colors = b''.join(struct.pack('<fffI', *xyz, (r << 16) | (g << 8) | b)
-                      for xyz, (r, g, b) in colored)
-    return colors, struct.pack('<' + 'f' * len(depth), *depth), len(colored)
+    colors = b"".join(
+        struct.pack("<fffI", *xyz, (r << 16) | (g << 8) | b) for xyz, (r, g, b) in colored
+    )
+    return colors, struct.pack("<" + "f" * len(depth), *depth), len(colored)

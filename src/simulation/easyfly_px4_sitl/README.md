@@ -5,6 +5,19 @@ build, a single-vehicle reservation, and the maintained EasyFly Iris SDF.
 Missing or mismatched compatibility inputs fail closed; the original PX4
 installation is not patched by this launcher. No automatic flight goal is sent.
 
+The Gazebo process defaults Mesa software rendering to one worker. The residential
+mesh regression met its freshness gates with this setting; four workers still
+left long pauses despite spare host CPUs. An explicit `LP_NUM_THREADS` is preserved, including
+zero. This does not change camera resolution/rate, scene assets, physics or
+freshness limits, and does not force software rendering on GPU systems.
+See [Mesa's environment documentation](https://docs.mesa3d.org/envvars.html#envvar-LP_NUM_THREADS).
+
+Racetrack (`racetrack_aws_day_v2`) currently requires a working hardware GLX
+renderer. Software rendering is not qualified for its complete reference task.
+Run `ros2 run easyfly_px4_sitl check_graphics --require-hardware-rendering` in
+the same environment used to start Gazebo. See [graphics deployment](GRAPHICS.md)
+for the tested resource profile, driver checks and unchanged acceptance gates.
+
 ## Optional magnetometer sample interval compatibility
 
 The pinned PX4 1.16.2 magnetometer reset filter is initialized with a 10 ms
@@ -87,7 +100,9 @@ recorded in the model package's `licenses/runtime/imu-noise-reference.json`.
 
 These model-level repairs keep nonzero noise. They do not modify system plugins,
 PX4 admission/protection parameters, random walk, bias settings, or hardware
-configuration. Legacy launches retain their 0.83 m spawn default; both registered
+configuration. The built-in empty/perception worlds spawn at 0.1 m above their flat ground,
+avoiding an artificial startup drop. Other raw worlds retain their explicit/default
+spawn configuration; both registered
 warehouse scenes explicitly select 0.10 m in their scene manifests. This typical
 simulation reference is not a measurement or calibration of a real device.
 See the [TDK product and datasheet entry](https://www.invensense.tdk.com/en-us/products/inertial-sensors/industrial-motion/iim-42653).

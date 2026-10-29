@@ -28,29 +28,29 @@ from rosgraph_msgs.msg import Clock
 
 class ShutdownTest(unittest.TestCase):
     def test_signal_exit(self):
-        os.environ['ROS_DOMAIN_ID'] = '193'
+        os.environ["ROS_DOMAIN_ID"] = "193"
         rclpy.init()
-        node = rclpy.create_node('shutdown_regression')
-        clocks = node.create_publisher(Clock, '/clock', 10)
+        node = rclpy.create_node("shutdown_regression")
+        clocks = node.create_publisher(Clock, "/clock", 10)
         executable = os.path.join(
-            get_package_prefix('ego_planner'),
-            'lib',
-            'ego_planner',
-            'traj_server',
+            get_package_prefix("ego_planner"),
+            "lib",
+            "ego_planner",
+            "traj_server",
         )
         try:
-            for mode in ('wall', 'paused', 'active'):
+            for mode in ("wall", "paused", "active"):
                 for sig in (signal.SIGINT, signal.SIGTERM):
                     with self.subTest(mode=mode, signal=sig.name):
-                        name = f'shutdown_{mode}_{sig.name.lower()}'
-                        with tempfile.TemporaryFile(mode='w+t') as output:
+                        name = f"shutdown_{mode}_{sig.name.lower()}"
+                        with tempfile.TemporaryFile(mode="w+t") as output:
                             process = subprocess.Popen(
                                 [
                                     executable,
-                                    '--ros-args',
-                                    '-r',
-                                    f'__node:={name}',
-                                    '-p',
+                                    "--ros-args",
+                                    "-r",
+                                    f"__node:={name}",
+                                    "-p",
                                     f'use_sim_time:={str(mode != "wall").lower()}',
                                 ],
                                 stdout=output,
@@ -61,7 +61,7 @@ class ShutdownTest(unittest.TestCase):
                                 deadline = time.monotonic() + 8.0
                                 tick = 0
                                 while time.monotonic() < deadline:
-                                    if mode != 'wall':
+                                    if mode != "wall":
                                         clocks.publish(
                                             Clock(
                                                 clock=Time(
@@ -70,25 +70,21 @@ class ShutdownTest(unittest.TestCase):
                                                 )
                                             )
                                         )
-                                        if mode == 'active':
+                                        if mode == "active":
                                             tick = (tick + 1) % 1000
                                     rclpy.spin_once(node, timeout_sec=0.02)
                                     output.seek(0)
                                     logs = output.read()
                                     self.assertIsNone(process.poll(), logs)
-                                    ready = '[Traj server]: ready.' in logs
+                                    ready = "[Traj server]: ready." in logs
                                     if ready:
                                         break
-                                self.assertTrue(
-                                    ready, 'node did not become ready: ' + logs
-                                )
+                                self.assertTrue(ready, "node did not become ready: " + logs)
                                 # Include positive frozen time, not only zero-clock startup.
-                                if mode != 'wall':
+                                if mode != "wall":
                                     deadline = time.monotonic() + 2.0
                                     while clocks.get_subscription_count() == 0:
-                                        self.assertLess(
-                                            time.monotonic(), deadline
-                                        )
+                                        self.assertLess(time.monotonic(), deadline)
                                         rclpy.spin_once(node, timeout_sec=0.02)
                                     for _ in range(5):
                                         clocks.publish(
@@ -96,23 +92,19 @@ class ShutdownTest(unittest.TestCase):
                                                 clock=Time(
                                                     sec=10,
                                                     nanosec=(
-                                                        tick * 1000000
-                                                        if mode == 'active'
-                                                        else 0
+                                                        tick * 1000000 if mode == "active" else 0
                                                     ),
                                                 )
                                             )
                                         )
-                                        if mode == 'active':
+                                        if mode == "active":
                                             tick += 1
                                         rclpy.spin_once(node, timeout_sec=0.02)
                                 process.send_signal(sig)
                                 try:
                                     code = process.wait(timeout=3.0)
                                 except subprocess.TimeoutExpired:
-                                    self.fail(
-                                        'signal shutdown required forced termination'
-                                    )
+                                    self.fail("signal shutdown required forced termination")
                                 output.seek(0)
                                 self.assertEqual(code, 0, output.read())
                             finally:
@@ -125,5 +117,5 @@ class ShutdownTest(unittest.TestCase):
                 rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,18 @@
+#!/bin/bash
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+# Source only the userspace and install shipped in this release.
+set -e
+export HOME=/home/easyfly
+export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+export ROS_LOCALHOST_ONLY=1
+export ROS_LOG_DIR=/var/lib/easyfly/ros-log
+export GEOGRAPHICLIB_DATA=/usr/share/GeographicLib
+export EASYFLY_PX4_HRT_COMPAT_DIR=/opt/easyfly/inputs/px4-compat
+export CMAKE_PREFIX_PATH=/opt/easyfly/dependencies/pangolin
+export LD_LIBRARY_PATH=/opt/easyfly/dependencies/pangolin/lib
+export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
+export OPENBLAS_NUM_THREADS=${OPENBLAS_NUM_THREADS:-1}
+mkdir -p "$ROS_LOG_DIR" /var/lib/easyfly/fastlio/Log /var/lib/easyfly/fastlio/PCD
+source /opt/ros/humble/setup.bash
+source /opt/easyfly/install/local_setup.bash
+exec "$@"

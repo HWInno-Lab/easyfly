@@ -125,7 +125,7 @@ def inventory(px4_directory=''):
 def check(profile):
     """Offline dependencies/resources first; never launch or prepare assets here."""
     from ament_index_python.packages import get_package_share_directory
-    from easyfly_params.algorithms import validate, localization_backend
+    from easyfly_params.algorithms import validate
     algorithms = validate(profile.get('algorithms', {}))
     for kind in ('ellipse', 'color_line'):
         if algorithms[kind + '_enabled']:
@@ -134,13 +134,21 @@ def check(profile):
         raise ValueError('后端仅支持本机通信或本机仿真')
     fcu, gcs = urls(profile)
     if profile['mode'] == 'sitl':
-        backend = localization_backend(algorithms, profile['selected_profile'])
+        backend = simulation_selection(profile, algorithms)
         if backend == 'fast_lio':
             get_package_share_directory('fast_lio')
             get_package_share_directory('easyfly_fast_lio_integration')
         elif backend == 'openvins':
             get_package_share_directory('ov_msckf')
             get_package_share_directory('easyfly_openvins_integration')
+        elif backend in ('fast_livo2', 'orbslam3'):
+            get_package_share_directory('easyfly_' + backend + '_integration')
+        if algorithms['strategy'] in ('gcopter', 'super'):
+            get_package_share_directory('easyfly_trajectory_optimizer')
+        if algorithms['strategy'] == 'super':
+            get_package_share_directory('easyfly_super_planner')
+        if algorithms['exploration'] == 'fuel':
+            get_package_share_directory('easyfly_fuel_exploration')
         if not profile['simulation_time'] or profile['fcu']['transport'] != 'udp':
             raise ValueError('仿真必须使用模拟时间和 UDP')
         from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
@@ -170,16 +178,70 @@ def check(profile):
                 selected_px4=str(selected) if selected else '')
 
 
-def command(profile):
+def simulation_selection(profile, algorithms):
+    """Reject incompatible selections before reserving or starting a backend."""
+    from easyfly_params.algorithms import localization_backend
+    backend = localization_backend(algorithms, profile['selected_profile'])
+    if algorithms['strategy'] in ('gcopter', 'super'):
+        if profile['selected_profile'] != 'navigation_dev':
+            raise ValueError('GCOPTER / SUPER 需要导航开发运行方案 navigation_dev')
+    if algorithms['exploration'] == 'fuel':
+        if (profile['selected_profile'] != 'navigation_dev' or
+                algorithms['strategy'] != 'gcopter' or backend != 'fast_lio'):
+            raise ValueError('FUEL 需要导航开发运行方案、FAST-LIO 和 GCOPTER')
+    return backend
+
+
+def prepare_algorithm_runtime(profile, directory):
+    """Create exclusive algorithm storage inside this owned session, never reuse it."""
+    if profile['mode'] != 'sitl':
+        return {}
+    from easyfly_params.algorithms import validate
+    algorithms = validate(profile.get('algorithms', {}))
+    backend = simulation_selection(profile, algorithms)
+    names = (['orbslam3'] if backend == 'orbslam3' else [])
+    if algorithms['exploration'] == 'fuel':
+        names.append('fuel')
+    if not names:
+        return {}
+    root = private(Path(directory) / 'algorithms')
+    result = {}
+    for name in names:
+        path = root / name
+        path.mkdir(mode=0o700)  # Existing files, directories and symlinks all fail closed.
+        result[name] = str(path)
+    return result
+
+
+def command(profile, algorithm_runtime=None):
     fcu, gcs = urls(profile)
     common = [f'fcu_url:={fcu}', f"target_system:={profile['fcu']['target_system']}"]
     # ros2 launch rejects a CLI name:= without a value. Use the declared empty default.
     if gcs:
         common.append(f'gcs_url:={gcs}')
     if profile['mode'] == 'sitl':
-        from easyfly_params.algorithms import validate, localization_backend
+        from easyfly_params.algorithms import validate
         algorithms = validate(profile.get('algorithms', {}))
-        localization_backend(algorithms, profile['selected_profile'])
+        backend = simulation_selection(profile, algorithms)
+        extra = []
+        if profile['selected_profile'] == 'navigation_dev':
+            navigation = {'openvins': 'openvins_navigation',
+                          'fast_livo2': 'fastlivo_navigation',
+                          'orbslam3': 'orbslam3_navigation'}
+            if backend in navigation:
+                extra.append(navigation[backend] + ':=true')
+        required = {}
+        if backend == 'orbslam3':
+            required['orbslam3'] = 'orbslam3_runtime_directory'
+        if algorithms['exploration'] == 'fuel':
+            required['fuel'] = 'fuel_evidence_directory'
+        for name, argument in required.items():
+            value = (algorithm_runtime or {}).get(name, '')
+            path = Path(value)
+            if (not value or not path.is_absolute() or path.resolve() != path or
+                    not path.is_dir()):
+                raise ValueError('缺少本次会话的算法运行目录：' + name)
+            extra.append(argument + ':=' + str(path))
         topic = (profile.get('down_topic', '/camera_down/color/image_raw')
                  if algorithms['camera'] == 'down' else
                  profile.get('front_topic', '/camera/color/image_raw'))
@@ -189,7 +251,7 @@ def command(profile):
                 'headless:=' + str(not profile['simulation']['gazebo_gui']).lower(),
                 'algorithms_json:=' + json.dumps(algorithms, separators=(',', ':')),
                 'algorithm_image_topic:=' + (topic or '/camera/color/image_raw'),
-                'rviz:=false', *common]
+                'rviz:=false', *common, *extra]
     return ['ros2', 'launch', 'easyfly_mavlink_bridge', 'mavlink_bridge.launch.py',
             'use_sim_time:=' + str(profile['simulation_time']).lower(), *common]
 
@@ -322,7 +384,9 @@ class Backend:
             if any(json.loads(line) == {'op': 'stop'} for line in pending.splitlines()):
                 raise Cancelled()
         self.log = (self.directory / 'backend.log').open('xb')
-        args = command(self.profile)
+        runtime = prepare_algorithm_runtime(self.profile, self.directory)
+        self.result['algorithm_runtime'] = runtime
+        args = command(self.profile, runtime)
         (self.directory / 'launch.json').write_text(
             json.dumps(dict(argv=args, **self.result), indent=2))
         self.process = subprocess.Popen(args, env=environment, cwd=self.directory,

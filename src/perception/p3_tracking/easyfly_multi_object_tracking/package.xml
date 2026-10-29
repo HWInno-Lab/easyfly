@@ -31,6 +31,8 @@
   <test_depend>tf2_ros_py</test_depend>
   <test_depend>python3-yaml</test_depend>
 
+  <exec_depend>easyfly_launch</exec_depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

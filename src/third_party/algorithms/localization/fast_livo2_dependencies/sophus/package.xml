@@ -1,0 +1,1 @@
+<package format="3"><name>sophus</name><version>1.22.10</version><description>Pinned Sophus header library</description><maintainer email="dev@easyfly.local">EasyFly</maintainer><license>MIT</license><buildtool_depend>cmake</buildtool_depend><depend>eigen</depend><depend>fmt</depend><export><build_type>cmake</build_type></export></package>
