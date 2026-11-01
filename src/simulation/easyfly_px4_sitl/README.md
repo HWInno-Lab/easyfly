@@ -156,8 +156,9 @@ before a goal. Raw disarmed draft inspection keeps upstream telemetry.
 
 ### 按场景选择原生时钟频率
 
-场景`runtime.clock_rate_hz`可选10或100，默认10；Gazebo原生ROS插件直接使用
-`gazebo:publish_rate`发布真实仿真时间。较重场景可选100以减少ROS时钟节流，
+场景`runtime.clock_rate_hz`可选10或100，受管场景默认100；无scene的旧低层入口仍默认10。
+Gazebo原生ROS插件直接使用`gazebo:publish_rate`发布真实仿真时间。100 Hz减少时钟量化
+导致的MAVROS同时间戳不同GPS观测，
 不更改传感器、物理步长或状态新鲜度门限。显式raw检查可用
 `debug_clock_rate_hz:=100`、`debug_heartbeat_rate_hz:=5`，必须同时指定world和
 `debug_model_path`；managed场景只使用清单。心跳仍由启动所属PX4原生命令配置。

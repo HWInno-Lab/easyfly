@@ -44,13 +44,14 @@ class Client:
 
     def request(self, method, path, value=None):
         """Bound response and timeout; a lost mutation response remains unknown to the client."""
-        connection = http.client.HTTPSConnection(self.url.hostname, self.url.port,
-                                                 context=self.context, timeout=2.)
+        connection = http.client.HTTPSConnection(
+            self.url.hostname, self.url.port, context=self.context,
+            timeout=getattr(self, 'timeout', 2.))
         try:
             headers = {'Authorization': 'Bearer ' + self.token}
             data = None
             if value is not None:
-                data = json.dumps(value, allow_nan=False).encode()
+                data = json.dumps(value, allow_nan=False, ensure_ascii=False).encode()
                 headers['Content-Type'] = 'application/json'
             connection.request(method, path, body=data, headers=headers)
             response = connection.getresponse()

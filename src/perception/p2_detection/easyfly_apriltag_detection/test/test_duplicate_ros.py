@@ -101,23 +101,45 @@ def test_exact_duplicate_requires_original_live_evidence(case):
             clocks.publish(Clock(clock=Time(sec=100, nanosec=nanoseconds)))
             pump(0.025)
 
-        def ready():
+        def capabilities():
             future = capability.call_async(GetCapabilities.Request())
             end = time.monotonic() + 2
             while not future.done() and time.monotonic() < end:
                 pump(0.01)
             assert future.done()
-            return future.result().ready[0]
+            return future.result()
+
+        def ready():
+            return capabilities().ready[0]
 
         try:
             assert capability.wait_for_service(timeout_sec=5)
             end = time.monotonic() + 5
-            while (
-                images.get_subscription_count() == 0 and time.monotonic() < end
-            ):
+
+            # All inputs are volatile: a clock/calibration sent before matching
+            # is lost even when the image subscription is already discovered.
+            def inputs_matched():
+                return (
+                    images.get_subscription_count() > 0
+                    and infos.get_subscription_count() > 0
+                    and clocks.get_subscription_count() > 0
+                    and node.count_publishers('/tag_observations') > 0
+                )
+
+            while not inputs_matched() and time.monotonic() < end:
                 pump(0.01)
-            pump(0.25)
+            assert inputs_matched(), 'detector input/output discovery incomplete'
+            # Matching is not delivery. A reply stamped by the real detector
+            # proves its TimeSource received an input before the one-shot frame.
+            end = time.monotonic() + 5
+            while True:
+                clocks.publish(Clock(clock=Time(sec=99)))
+                pump(0.025)
+                if capabilities().header.stamp.sec == 99:
+                    break
+                assert time.monotonic() < end, 'detector did not receive startup clock'
             clock(0)
+            assert capabilities().header.stamp.sec == 100
             image = Image(
                 height=480, width=640, encoding='mono8', step=640, data=pixels
             )

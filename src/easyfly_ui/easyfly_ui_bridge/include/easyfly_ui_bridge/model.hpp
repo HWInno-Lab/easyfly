@@ -31,6 +31,8 @@
 #include <easyfly_mission_format/mission_format.hpp>
 #include <easyfly_msgs/srv/query_params.hpp>
 #include <sensor_msgs/msg/image.hpp>
+#include <sensor_msgs/msg/nav_sat_fix.hpp>
+#include <nav_msgs/msg/occupancy_grid.hpp>
 #include <easyfly_msgs/msg/detection_info_array.hpp>
 #include <easyfly_msgs/msg/track_info_array.hpp>
 #include <easyfly_msgs/msg/target3_d_array.hpp>
@@ -108,6 +110,7 @@ struct StateView
   bool battery_valid{false};
   bool gps_valid{false};
   std::optional<double> speed_mps;
+  std::optional<double> horizontal_speed_mps, vertical_speed_mps;
   std::optional<double> battery_percent;
 };
 struct TrajectoryPoint
@@ -115,6 +118,13 @@ struct TrajectoryPoint
   int64_t source_ns{0};
   double steady{0};
   double x{0}, y{0}, z{0};
+};
+struct GlobalTrajectoryPoint
+{
+  int64_t source_ns{0};
+  double steady{0};
+  double latitude{0}, longitude{0}, altitude{0};
+  uint64_t segment{0};  // Connect only adjacent points with the same segment.
 };
 struct Event
 {
@@ -166,6 +176,12 @@ struct SpecialObservations
   Observation<easyfly_msgs::msg::TargetPredictionArray> predictions;
   Observation<easyfly_msgs::msg::ClassifiedObstacleArray> classified;
 };
+struct MissionExecutionView
+{
+  std::string goal_id, name, hash, content, frame, state;
+  int current_step{-1}, completed_steps{0}, total_steps{0};
+  std::shared_ptr<const easyfly_mission_fsm::MissionValidation> plan;
+};
 struct UiSnapshot
 {
   uint64_t observation_session_id{0}, time_epoch{0}, revision{0};
@@ -180,6 +196,12 @@ struct UiSnapshot
   bool localization_navigation_enabled{false};  // Selected launch mode, not readiness.
   Observation<easyfly_msgs::msg::LocalizationStatus> navigation_localization;
   StateView state;
+  Observation<MissionExecutionView> mission_execution;
+  // Original GPS evidence; never inferred from fresh aggregate UAVState.
+  Observation<sensor_msgs::msg::NavSatFix> global_position;
+  // Original bounded odom obstacle grid; display only, never navigation admission.
+  Observation<nav_msgs::msg::OccupancyGrid> occupancy_grid;
+  std::deque<GlobalTrajectoryPoint> global_trajectory;
   SpecialObservations special;
   // Read-only DDS graph evidence, sampled on the bridge worker at most once/second.
   double state_graph_observed{0};
@@ -208,6 +230,71 @@ struct UiSnapshot
 
 namespace detail
 {
+Quality validate_occupancy_grid(
+  const nav_msgs::msg::OccupancyGrid & message, const ClockState & clock, double receipt_age);
+// One worker-owned original map. Empty source means missing/ambiguous DDS origin.
+class OccupancyGridBuffer
+{
+public:
+  void clear();
+  void observe(
+    std::shared_ptr<const nav_msgs::msg::OccupancyGrid> message,
+    const ClockState & clock, double steady, const std::string & source);
+  Observation<nav_msgs::msg::OccupancyGrid> snapshot(
+    const ClockState & clock, double steady, const std::string & source);
+
+private:
+  void origin(const ClockState & clock, const std::string & source);
+  std::shared_ptr<const nav_msgs::msg::OccupancyGrid> candidate_;
+  Evidence evidence_;
+  std::string source_;
+  uint64_t epoch_{0};
+  int64_t high_water_{0};
+  bool blocked_{false};
+};
+Quality validate_execution_overview(
+  const std::string & text, MissionExecutionView * output, int64_t * source_ns);
+class MissionExecutionBuffer
+{
+public:
+  void clear();
+  void observe(
+    const std::string & text, const ClockState & clock,
+    double steady, const std::string & source);
+  Observation<MissionExecutionView> snapshot(
+    const ClockState & clock, double steady, const std::string & source);
+
+private:
+  void origin(const ClockState & clock, const std::string & source);
+  Observation<MissionExecutionView> observation_;
+  std::string source_, payload_;
+  int64_t source_ns_{0}, seen_ns_{0};
+  uint64_t epoch_{0};
+  bool blocked_{false};
+};
+Quality validate_global_position(
+  const sensor_msgs::msg::NavSatFix & message, const ClockState & clock, double receipt_age);
+// Worker-owned bounded raw GPS history. An empty source means non-unique/unavailable DDS origin.
+class GlobalPositionBuffer
+{
+public:
+  void clear();
+  void observe(
+    std::shared_ptr<const sensor_msgs::msg::NavSatFix> message,
+    const ClockState & clock, double steady, const std::string & source);
+  Observation<sensor_msgs::msg::NavSatFix> snapshot(
+    const ClockState & clock, double steady, const std::string & source);
+  const std::deque<GlobalTrajectoryPoint> & trajectory() const {return points_;}
+
+private:
+  void origin(const ClockState & clock, const std::string & source);
+  Observation<sensor_msgs::msg::NavSatFix> observation_;
+  std::deque<GlobalTrajectoryPoint> points_;
+  std::string source_;
+  uint64_t epoch_{0}, segment_{0};
+  int64_t last_source_{0};
+  bool discontinuity_{true}, blocked_{false};
+};
 Quality validate_navigation_localization(
   const easyfly_msgs::msg::LocalizationStatus & message, const std::string & backend,
   const ClockState & clock, double receipt_age);

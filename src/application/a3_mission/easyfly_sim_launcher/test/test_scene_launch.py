@@ -51,6 +51,15 @@ def load_launch(package, filename):
     return module
 
 
+@pytest.mark.parametrize('configured,expected', [(None, 100), (10, 10), (100, 100)])
+def test_managed_clock_default_and_explicit_override(ready_catalog, configured, expected):
+    runtime = ready_catalog.scenes['test']['runtime']
+    runtime.pop('clock_rate_hz', None)
+    if configured is not None:
+        runtime['clock_rate_hz'] = configured
+    assert resolve_scene(ready_catalog, 'test', 'base_sim').clock_rate_hz == expected
+
+
 @pytest.mark.parametrize('command', ['list','validate'])
 def test_cli_success_json(ready_catalog, capsys, command, monkeypatch):
     import socket
@@ -202,7 +211,8 @@ def test_both_entrypoints_effective_scene_inputs(ready_catalog, monkeypatch, fil
         ready_catalog.scenes['test']['navigation']['ground_model_frame']='map'
         ready_catalog.scenes['test']['navigation']['grid_footprint_mode']='observed_cells'
         ready_catalog.scenes['test']['runtime']['heartbeat_rate_hz']=5
-        ready_catalog.scenes['test']['runtime']['clock_rate_hz']=100
+        # Managed scenes use the 100 Hz clock default; legacy no-scene stays at 10 Hz.
+        ready_catalog.scenes['test']['runtime'].pop('clock_rate_hz', None)
         context.launch_configurations.update(scene='test',scene_profile=profile)
     description = module.generate_launch_description()
     assert native_inputs == [Path('/tmp/nonexecuted-px4')]

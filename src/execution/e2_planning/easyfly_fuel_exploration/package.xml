@@ -11,4 +11,4 @@
  <test_depend>rosgraph_msgs</test_depend><test_depend>python3-scipy</test_depend>
  <test_depend>ament_cmake_pytest</test_depend>
  <export><build_type>ament_cmake</build_type></export>
-<depend>easyfly_trajectory_optimizer</depend><depend>easyfly_fuel_native</depend><build_depend>libnlopt-cxx-dev</build_depend></package>
+<depend>easyfly_trajectory_optimizer</depend><depend>easyfly_fuel_native</depend><depend>libnlopt-cxx-dev</depend></package>

@@ -65,10 +65,13 @@ Results are latest-per-logical-key, not an unbounded execution history.
 - `read_parameter`: profile/use_sim_time/operator_note/export_pretty only, with empty param_value.
 - `perception`: targets/obstacles only, default range_limit=0.
 
-Automatic polling queries the four capability endpoints at approximately 1Hz and
-alternates targets/obstacles at a combined 1Hz. Mission/config reads are explicit.
-Every endpoint is limited to one request per second, one outstanding logical key,
-eight reserved requests overall and a one-second steady waiting budget. Timed-out
+Automatic polling queries the four capability endpoints at approximately 1Hz.
+The read-only perception endpoint has a separate 0.25-second minimum interval,
+alternating targets/obstacles at up to a combined 4Hz (approximately 2Hz per kind)
+so valid geometry can refresh within its unchanged one-second freshness window.
+Mission/config reads are explicit. All other endpoints retain a one-request-per-second
+limit. Every logical key allows one outstanding request, with eight reserved
+requests overall and a one-second steady waiting budget. Timed-out
 read requests are removed locally using rclcpp's pending-request cleanup; timeout,
 unknown ID or task status alone never prove execution/ownership release.
 
@@ -78,6 +81,20 @@ quality before rendering a geometric layer; a missing geometry payload in an
 invalid report must not be presented as a valid empty observation. Repeated reads
 of the same geometry source preserve its original first-distinct receipt age,
 including across failed/stale query attempts.
+
+`UiSnapshot::occupancy_grid` observes `/occupancy_grid` independently of RViz,
+using depth1 reliable transient-local QoS. It retains one original planar `odom`
+grid: each dimension <=4096, <=1,000,000 cells, exact data length, finite positive
+resolution <=100m, finite bounded origin, normalized planar quaternion and values
+in [-1,100]. Both source time and original distinct receipt have a two-second
+lifetime. Identical repeats cannot refresh receipt; conflicting equal stamps or
+regressed stamps invalidate the map until a newer valid sample. A zero-stamped,
+all-unknown grid is the upstream reset protocol and clears current geometry.
+Publisher ambiguity, GID change, session/epoch change and stop clear current data.
+Structurally valid data preceding the clock can become valid later only within
+its original receipt lifetime. Non-current snapshots expose no grid payload.
+This obstacle grid includes upstream inflation and short frame persistence;
+zero-valued cells do not establish surveyed or safely traversable space.
 
 Call `stop()` on the GUI thread and poll `snapshot()->stopped`; stop itself does
 not wait. Destroy only after cleanup completes, or on a non-GUI owner thread:
@@ -120,17 +137,57 @@ optional future adapters, not inferred from existing generic geometry.
 front binding is `/camera/color/image_raw` → `/detections`, `/tracks_raw`,
 `/target_positions`, with fused positions in `odom`; down-view has no binding.
 A changed image topic does not automatically redirect these observations. Only
-an exact configured image-topic match creates the depth1 best-effort subscribers.
+an exact configured image-topic match enables the perception subscribers.
 This declaration is not authentication or a discovery-based camera association.
+
+The observer samples camera publisher identities at most once per steady second.
+For one unambiguous Image publisher, its depth4 volatile image reader requests
+RELIABLE when offered and BEST_EFFORT for a best-effort source. With no/ambiguous
+publisher it waits and clears current data; source disappearance, GID or policy
+changes rebuild the reader only when needed. A late publisher or reliable-to-
+best-effort replacement recovers automatically. Metadata readers remain depth1
+best-effort and check each callback's publisher GID against the selected graph
+origin. Source changes clear cached camera transactions; source identity checks
+are not authentication of arbitrary DDS participants.
 
 Each bound camera retains at most eight original images and 8MiB total image
 bytes, with a one-second steady lifetime. Snapshots expose only the exact-header
-images for the latest detection/track observations, not the full image cache.
+images for current mode observations, not the full image cache. The private
+observer wrapper also retains at most one completed image/metadata transaction
+for each of detections, tracks, ellipses and color-lines, captured after every
+callback before the 10Hz snapshot can miss it. Its additional original images
+share pointers and have a separate 8MiB combined budget. A newer valid metadata
+frame temporarily missing its exact image may expose the last complete pair,
+with both original headers and receipt deadlines unchanged (1s detection/tracking,
+0.5s classical geometry). It never combines a newer metadata payload with an
+older image. Invalidity, validated expiry, source/epoch changes and conflicting
+same-stamp raw pixels revoke the retained transaction. Valid empty pairs replace
+old detections normally. Track fallback also retains only its own matching
+original Target3D observation, rather than borrowing newer depth information;
+a latest non-valid depth observation cannot be overwritten by cached valid depth.
+Raw conflicts produce terminal per-mode Invalid evidence until a newer complete
+pair arrives, so downstream display caches also withdraw the old transaction.
+Four small original-header records survive pair image-budget eviction; a repeated
+evicted header whose original pixels cannot be verified is likewise rejected,
+without keeping image payloads outside the stated byte budget.
 Each metadata array is limited to 100 items and labels to 128 UTF-8 bytes;
 per-track trajectory fields are bounded to 30 entries. Same-stamp duplicates
 do not renew receipt lifetime; conflicts/out-of-order arrays become invalid.
 Pause, clock reset, source mismatch and stop invalidate matching. Old snapshots
 are immutable, but consumers must not retain an unbounded snapshot history.
+
+Classical ellipse/color-line expiry has one narrow display classification:
+`kValidatedGeometryExpiry` (`validated classical source expiry`). The bridge
+emits it only for an empty `valid=false` message whose exact upstream reason is
+`expired_or_clock_invalid`, whose positive original header and bounded dimensions
+match the immediately preceding valid same-epoch observation and source watermark.
+It retains that bounded invalid envelope with `Quality::Invalid` and the original
+receipt timestamps; repeated expiry cannot renew it and aging cannot revive it.
+The marker is removed from a cross-epoch snapshot. All other invalid messages,
+including `processing_expired`, malformed layouts, conflicts and regressions,
+retain the ordinary hard-invalid path. This marker permits a desktop to freeze
+historical pixels while immediately clearing annotations; it never makes an
+expired observation current or authorizes reuse of an old overlay.
 
 `/tracks_raw` IDs are the namespace consumed by pixel-to-3D. Do not join these
 depth results to consolidated `/tracks` IDs. Target3D preserves the track event

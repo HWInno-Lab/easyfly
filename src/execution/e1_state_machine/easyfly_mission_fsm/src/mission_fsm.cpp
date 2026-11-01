@@ -4,6 +4,8 @@
 #include <cmath>
 #include <set>
 #include <limits>
+#include <filesystem>
+#include <json/json.h>
 using namespace std::chrono_literals;
 namespace easyfly_mission_fsm {
 using Clock = std::chrono::steady_clock;
@@ -37,6 +39,7 @@ MissionFSM::MissionFSM(const rclcpp::NodeOptions &options):Node("mission_fsm",op
      !std::isfinite(backend_discovery_s_) || backend_discovery_s_<0 || backend_discovery_s_>30)
     throw std::invalid_argument("invalid mission timing parameters");
   pub_status_=create_publisher<MS>("/mission_status",10);
+  pub_overview_=create_publisher<std_msgs::msg::String>("/mission/execution_overview",rclcpp::QoS(1).reliable().transient_local());
   pub_step_feedback_=create_publisher<easyfly_msgs::msg::MissionStepFeedback>("/mission/step_feedback",1);
   cli_set_mode_=create_client<easyfly_msgs::srv::SetFlightMode>("/set_flight_mode");
   as_mission_=rclcpp_action::create_server<ExecuteMission>(this,"/execute_mission",
@@ -132,7 +135,8 @@ rclcpp_action::GoalResponse MissionFSM::handle_mission_goal(
       std::isfinite(u.position_x) && std::isfinite(u.position_y) && std::isfinite(u.position_z));
     return rclcpp_action::GoalResponse::REJECT;
   }
-  const auto validation=validateMissionFile(goal->mission_file);
+  const auto document=loadMissionDocument(goal->mission_file);
+  const auto &validation=document.validation;
   if(!validation.valid()) {
     RCLCPP_WARN(get_logger(),"mission_admission reject=invalid_mission_file goal_uuid=%s",identity.c_str());
     return rclcpp_action::GoalResponse::REJECT;
@@ -142,8 +146,15 @@ rclcpp_action::GoalResponse MissionFSM::handle_mission_goal(
     RCLCPP_WARN(get_logger(),"mission_admission reject=concurrent_goal goal_uuid=%s",identity.c_str());
     return rclcpp_action::GoalResponse::REJECT;
   }
-  accepted_steps_=validation.steps; stop_reason_.clear();
-  cancel_requested_=false; rtl_triggered_=false; steps_completed_=0;
+  accepted_steps_=validation.steps; accepted_content_=document.content;
+  accepted_name_=std::filesystem::path(goal->mission_file).filename().string();
+  if(accepted_name_.empty() || accepted_name_.size()>128 || !missionTextUtf8(accepted_name_) ||
+    accepted_name_=="." || accepted_name_==".." ||
+    std::any_of(accepted_name_.begin(),accepted_name_.end(),[](unsigned char c) {
+      return c<32 || c==127 || c=='/' || c=='\\';
+    })) accepted_name_="mission";
+  stop_reason_.clear();
+  cancel_requested_=false; rtl_triggered_=false; steps_completed_=0; current_step_index_=-1;
   return rclcpp_action::GoalResponse::ACCEPT_AND_EXECUTE;
 }
 rclcpp_action::CancelResponse MissionFSM::handle_mission_cancel(std::shared_ptr<Handle>) {
@@ -156,6 +167,7 @@ void MissionFSM::handle_mission_accepted(std::shared_ptr<Handle> handle) {
   if(worker_.joinable()) worker_.join();
   std::vector<MissionStep> steps;
   {std::lock_guard<std::mutex> lock(mission_mtx_); steps=accepted_steps_;}
+  publish_overview(handle,-1,"active",true);
   worker_=std::thread([this,handle,steps] {execute_mission(steps,handle);});
 }
 void MissionFSM::publish_status(uint8_t p,const std::string &name,int index,int total,float progress,
@@ -171,6 +183,33 @@ void MissionFSM::feedback(uint8_t p,const std::string &name,int index,int total,
   s.current_waypoint=index; s.total_waypoints=total; s.progress=progress;
   s.message=reason(); handle->publish_feedback(f);
   publish_status(p,name,index,total,progress,false,s.message);
+  publish_overview(handle,current_step_index_.load(),"active");
+}
+void MissionFSM::publish_overview(const std::shared_ptr<Handle> &handle,int index,
+  const std::string &state,bool force) {
+  try {
+    const auto time=Clock::now();
+    if(!force && time-overview_at_<500ms) return;
+    overview_at_=time;
+    Json::Value value;
+    value["schema_version"]=1; value["stamp_ns"]=Json::Int64(now().nanoseconds());
+    value["goal_id"]=easyfly_core::goalIdentity(handle->get_goal_id());
+    value["frame_id"]="odom";value["state"]=state;
+    {
+      std::lock_guard<std::mutex> lock(mission_mtx_);
+      value["name"]=accepted_name_;value["content"]=accepted_content_;
+      value["sha256"]=missionContentSha256(accepted_content_);
+      value["total_steps"]=static_cast<int>(accepted_steps_.size());
+      value["current_step"]=state=="active" && index>=0 &&
+        index<static_cast<int>(accepted_steps_.size()) ? index : -1;
+    }
+    value["completed_steps"]=steps_completed_.load();
+    Json::StreamWriterBuilder writer;writer["indentation"]="";
+    std_msgs::msg::String message;message.data=Json::writeString(writer,value);
+    pub_overview_->publish(message);
+  } catch(const std::exception &e) {
+    RCLCPP_WARN(get_logger(),"overview observation unavailable: %s",e.what());
+  }
 }
 void MissionFSM::execute_mission(std::vector<MissionStep> steps,std::shared_ptr<Handle> handle) {
   const int total=static_cast<int>(steps.size());
@@ -200,8 +239,17 @@ void MissionFSM::execute_mission(std::vector<MissionStep> steps,std::shared_ptr<
   result->success=steps_completed_==total && reason().empty() && !shutdown_;
   result->message=result->success ? "mission complete" : reason().empty() ? "step failed" : reason();
   try {
-    if(cancel_requested_ && handle->is_canceling()) handle->canceled(result);
-    else if(result->success) handle->succeed(result); else handle->abort(result);
+    std::string terminal;
+    if(cancel_requested_ && handle->is_canceling()) {
+      handle->canceled(result); terminal="canceled";
+    } else if(result->success) {
+      handle->succeed(result); terminal="succeeded";
+    } else {
+      handle->abort(result); terminal="failed";
+    }
+    // A read-only terminal observation describes an actual public Action transition,
+    // never an intended transition that may still throw or race cancellation.
+    publish_overview(handle,-1,terminal,true);
   } catch(const std::exception &e) {RCLCPP_WARN(get_logger(),"public result: %s",e.what());}
   // A public failure/cancel cannot release an unknown live child. Keep the
   // mission slot fault-locked until a real remote terminal arrives.
@@ -223,6 +271,7 @@ void MissionFSM::execute_mission(std::vector<MissionStep> steps,std::shared_ptr<
 bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shared_ptr<Handle> handle) {
   if(s.type=="track" && s.duration<=0) {stop("invalid_track_duration"); return false;}
   {std::lock_guard<std::mutex> lock(step_mtx_);current_type_=s.type;}
+  current_step_index_=index;
   const auto start=Clock::now();
   const auto deadline=start+std::chrono::duration<double>(s.timeout);
   if(s.type=="hover") {
@@ -235,7 +284,7 @@ bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shar
       std::this_thread::sleep_for(20ms);
     }
     if(Clock::now()>deadline) {stop("hover_timeout");return false;}
-    steps_completed_=index+1;
+    steps_completed_=index+1; current_step_index_=-1;
     feedback(phase(s.type),s.type,index+1,total,static_cast<float>(index+1)/total,handle);
     return true;
   }
@@ -348,7 +397,7 @@ bool MissionFSM::execute_step(const MissionStep &s,int index,int total,std::shar
       final.status==Status::Succeeded && final.success);
   if(ok) {
     {std::lock_guard<std::mutex> lock(step_mtx_);current_.reset();}
-    steps_completed_=index+1;
+    steps_completed_=index+1; current_step_index_=-1;
     feedback(phase(s.type),s.type,index+1,total,static_cast<float>(index+1)/total,handle);
   } else if(reason().empty()) stop(final.remote_execution_pending ? "child_cancel_unresolved" :
     "step_failed:"+final.message);

@@ -168,6 +168,7 @@ private:
   rclcpp::Time last_imu_time_;
   rclcpp::Time last_battery_time_;
   rclcpp::Time last_gps_time_;
+  sensor_msgs::msg::NavSatFix::SharedPtr last_gps_fix_;
   std::chrono::steady_clock::time_point last_state_receipt_{};
   std::chrono::steady_clock::time_point last_pose_receipt_{};
   std::chrono::steady_clock::time_point last_velocity_receipt_{};

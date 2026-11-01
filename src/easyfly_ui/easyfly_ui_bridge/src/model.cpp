@@ -58,9 +58,9 @@ bool finite(std::initializer_list<double> values)
 {
   return std::all_of(values.begin(), values.end(), [](double x) {return std::isfinite(x);});
 }
-bool json(const std::string & text, Json::Value & root)
+bool json(const std::string & text, Json::Value & root, size_t budget = 4096)
 {
-  if (text.empty() || text.size() > 4096) {return false;}
+  if (text.empty() || text.size() > budget) {return false;}
   Json::CharReaderBuilder builder;
   builder["collectComments"] = false;
   builder["allowComments"] = false;
@@ -108,6 +108,325 @@ Quality source_quality(
   if (age < -.2) {return Quality::Invalid;}
   if (receipt_age > lifetime || age > lifetime) {return Quality::Stale;}
   return Quality::ValidAtObservation;
+}
+namespace
+{
+Quality execution_source_quality(int64_t source, const ClockState & clock, double receipt_age)
+{
+  if (source <= 0) {return Quality::Invalid;}
+  if (clock.quality != Quality::ValidAtObservation) {return clock.quality;}
+  const double age = static_cast<double>(clock.now_ns - source) / 1e9;
+  if (age < -.2) {return Quality::Invalid;}
+  return receipt_age > 2. || age > 2. ? Quality::Stale : Quality::ValidAtObservation;
+}
+}  // namespace
+Quality validate_execution_overview(
+  const std::string & text, MissionExecutionView * output, int64_t * source_ns)
+{
+  if (output) {*output = {};}
+  if (source_ns) {*source_ns = 0;}
+  if (text.size() > 400U * 1024U) {return Quality::BudgetExceeded;}
+  Json::Value v;
+  if (!json(text, v, 400U * 1024U) || !v.isObject() ||
+    !v["schema_version"].isInt() || v["schema_version"].asInt() != 1 ||
+    !v["stamp_ns"].isInt64() || v["stamp_ns"].asInt64() <= 0)
+  {return Quality::Invalid;}
+  for (const auto * field : {"goal_id", "name", "sha256", "content", "frame_id", "state"}) {
+    if (!v[field].isString()) {return Quality::Invalid;}
+  }
+  for (const auto * field : {"current_step", "completed_steps", "total_steps"}) {
+    if (!v[field].isInt()) {return Quality::Invalid;}
+  }
+  MissionExecutionView result;
+  result.goal_id = v["goal_id"].asString(); result.name = v["name"].asString();
+  result.hash = v["sha256"].asString(); result.content = v["content"].asString();
+  result.frame = v["frame_id"].asString(); result.state = v["state"].asString();
+  result.current_step = v["current_step"].asInt();
+  result.completed_steps = v["completed_steps"].asInt();
+  result.total_steps = v["total_steps"].asInt();
+  if (!execution_id(result.goal_id) || !basename(result.name) || result.name.size() > 128 ||
+    !easyfly_mission_fsm::missionTextUtf8(result.name) || result.frame != "odom" ||
+    (result.state != "active" && result.state != "succeeded" &&
+    result.state != "failed" && result.state != "canceled") ||
+    result.total_steps < 1 || result.total_steps > 256 ||
+    result.current_step < -1 || result.current_step >= result.total_steps ||
+    result.completed_steps < 0 || result.completed_steps > result.total_steps ||
+    (result.current_step >= 0 && result.current_step < result.completed_steps))
+  {return Quality::Invalid;}
+  if (result.content.size() > 65536 || result.hash.size() > 64) {return Quality::BudgetExceeded;}
+  if (!easyfly_mission_fsm::missionTextUtf8(result.content) || result.hash.size() != 64 ||
+    result.hash != easyfly_mission_fsm::missionContentSha256(result.content))
+  {
+    return Quality::Invalid;
+  }
+  auto plan = std::make_shared<easyfly_mission_fsm::MissionValidation>(
+    easyfly_mission_fsm::validateMissionText(result.content));
+  if (!plan->valid()) {return Quality::Invalid;}
+  if (plan->steps.size() != static_cast<size_t>(result.total_steps)) {return Quality::Invalid;}
+  result.plan = std::move(plan);
+  if (source_ns) {*source_ns = v["stamp_ns"].asInt64();}
+  if (output) {*output = std::move(result);}
+  return Quality::ValidAtObservation;
+}
+void MissionExecutionBuffer::clear()
+{
+  observation_ = {}; source_.clear(); payload_.clear();
+  source_ns_ = seen_ns_ = 0; epoch_ = 0; blocked_ = false;
+}
+void MissionExecutionBuffer::origin(const ClockState & clock, const std::string & source)
+{
+  const bool lost_source = !source_.empty() && source.empty();
+  if (clock.epoch != epoch_ || source != source_) {
+    clear(); epoch_ = clock.epoch; source_ = source;
+  }
+  observation_.evidence.endpoint = "/mission/execution_overview";
+  observation_.evidence.time_epoch = clock.epoch;
+  if (lost_source) {
+    observation_.evidence.quality = Quality::Invalid;
+    observation_.evidence.reason = "publisher disappeared or became ambiguous; origin cleared";
+  }
+}
+void MissionExecutionBuffer::observe(
+  const std::string & text, const ClockState & clock,
+  double steady, const std::string & source)
+{
+  origin(clock, source);
+  auto & e = observation_.evidence;
+  e.received_steady = steady;
+  if (!payload_.empty() && text == payload_) {return;}
+  MissionExecutionView parsed; int64_t stamp = 0;
+  const auto quality = validate_execution_overview(text, &parsed, &stamp);
+  const auto timing = execution_source_quality(stamp, clock, 0);
+  bool conflict = stamp <= seen_ns_;
+  if (observation_.value && parsed.goal_id == observation_.value->goal_id) {
+    const auto & previous = *observation_.value;
+    conflict = conflict || parsed.name != previous.name || parsed.hash != previous.hash ||
+      parsed.content != previous.content || parsed.completed_steps < previous.completed_steps ||
+      (previous.state != "active" && parsed.state != previous.state) ||
+      (parsed.state == "active" && parsed.current_step >= 0 &&
+      parsed.current_step < previous.current_step);
+  }
+  if (quality != Quality::ValidAtObservation || timing != Quality::ValidAtObservation ||
+    source.empty() || conflict)
+  {
+    blocked_ = true; e.quality = quality != Quality::ValidAtObservation ? quality :
+      timing != Quality::ValidAtObservation ? timing : Quality::Invalid;
+    e.reason = "execution context failed source, format, hash, progress or identity validation";
+    if (timing == Quality::ValidAtObservation) {seen_ns_ = std::max(seen_ns_, stamp);}
+    return;
+  }
+  source_ns_ = seen_ns_ = stamp; payload_ = text; blocked_ = false;
+  observation_.value = std::make_shared<const MissionExecutionView>(std::move(parsed));
+  e.first_source_steady = steady; e.quality = Quality::ValidAtObservation;
+  e.reason = "native execution identity and exact content observed; display only";
+}
+Observation<MissionExecutionView> MissionExecutionBuffer::snapshot(
+  const ClockState & clock, double steady, const std::string & source)
+{
+  origin(clock, source);
+  auto & e = observation_.evidence;
+  if (observation_.value) {
+    e.receipt_age = steady - e.first_source_steady;
+    e.source_age_available = clock.now_ns > 0 && source_ns_ > 0;
+    e.source_age = e.source_age_available ? static_cast<double>(clock.now_ns - source_ns_) /
+      1e9 : 0.;
+    if (!blocked_) {e.quality = execution_source_quality(source_ns_, clock, e.receipt_age);}
+    if (e.quality != Quality::ValidAtObservation) {
+      e.reason = "historical execution context; no current target may be inferred";
+    }
+  }
+  return observation_;
+}
+namespace
+{
+Quality grid_structure(const nav_msgs::msg::OccupancyGrid & m)
+{
+  const auto & p = m.info.origin.position;
+  const auto & q = m.info.origin.orientation;
+  const uint64_t cells = uint64_t(m.info.width) * m.info.height;
+  if (m.info.width > 4096 || m.info.height > 4096 || cells > 1000000) {
+    return Quality::BudgetExceeded;
+  }
+  if (!cells || cells != m.data.size() || m.header.frame_id != "odom" ||
+    !finite({m.info.resolution, p.x, p.y, p.z, q.x, q.y, q.z, q.w}) ||
+    m.info.resolution <= 0 || m.info.resolution > 100 ||
+    std::abs(p.x) > 1e6 || std::abs(p.y) > 1e6 || std::abs(p.z) > 1e6 ||
+    std::abs(q.x) > 1e-6 || std::abs(q.y) > 1e-6 ||
+    std::abs(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w - 1.) > .001)
+  {return Quality::Invalid;}
+  if (std::any_of(m.data.begin(), m.data.end(), [](int8_t v) {return v < -1 || v > 100;})) {
+    return Quality::Invalid;
+  }
+  return Quality::ValidAtObservation;
+}
+}  // namespace
+Quality validate_occupancy_grid(
+  const nav_msgs::msg::OccupancyGrid & m, const ClockState & clock, double receipt_age)
+{
+  const auto structure = grid_structure(m);
+  if (structure != Quality::ValidAtObservation) {return structure;}
+  if (!std::isfinite(receipt_age) || receipt_age < 0) {return Quality::Invalid;}
+  return source_quality(m.header, clock, receipt_age, 2.0);
+}
+void OccupancyGridBuffer::clear()
+{
+  candidate_.reset(); evidence_ = {}; source_.clear(); epoch_ = 0;
+  high_water_ = 0; blocked_ = false;
+}
+void OccupancyGridBuffer::origin(const ClockState & clock, const std::string & source)
+{
+  const bool changed = source != source_ || clock.epoch != epoch_;
+  const bool had_source = !source_.empty();
+  if (changed) {clear(); source_ = source; epoch_ = clock.epoch;}
+  evidence_.endpoint = "/occupancy_grid"; evidence_.time_epoch = clock.epoch;
+  if (source.empty() && (had_source || changed)) {
+    evidence_.quality = Quality::Invalid;
+    evidence_.reason = "grid publisher missing or ambiguous; origin cleared";
+  }
+}
+void OccupancyGridBuffer::observe(
+  std::shared_ptr<const nav_msgs::msg::OccupancyGrid> message,
+  const ClockState & clock, double steady, const std::string & source)
+{
+  origin(clock, source);
+  if (!message) {return;}
+  const auto structure = grid_structure(*message);
+  const auto stamp = stamp_ns(message->header.stamp);
+  const bool reset = structure == Quality::ValidAtObservation && stamp == 0 &&
+    std::all_of(message->data.begin(), message->data.end(), [](int8_t v) {return v == -1;});
+  if (reset || source.empty() || structure != Quality::ValidAtObservation || stamp <= 0 ||
+    !std::isfinite(steady) || steady < 0)
+  {
+    candidate_.reset(); blocked_ = true;
+    evidence_.received_steady = steady;
+    evidence_.first_source_steady = evidence_.receipt_age = evidence_.source_age = 0;
+    evidence_.source_age_available = false;
+    if (reset) {high_water_ = 0;}
+    evidence_.quality = structure == Quality::BudgetExceeded ? structure : Quality::Invalid;
+    evidence_.reason = reset ? "upstream grid reset: zero stamp and all unknown; cleared" :
+      "grid requires bounded planar odom geometry, positive time and a unique publisher";
+    return;
+  }
+  if (stamp <= high_water_) {
+    if (stamp < high_water_ || !candidate_ || *candidate_ != *message) {
+      blocked_ = true; evidence_.quality = Quality::Invalid;
+      evidence_.reason = "grid source stamp regressed or duplicate payload conflicts";
+    }
+    // Identical duplicates never renew either receipt timestamp or unblock conflicts.
+    return;
+  }
+  high_water_ = stamp; candidate_ = std::move(message); blocked_ = false;
+  evidence_.received_steady = evidence_.first_source_steady = steady;
+  evidence_.receipt_age = 0;
+  evidence_.quality = source_quality(candidate_->header, clock, 0, 2.0);
+  blocked_ = evidence_.quality == Quality::Invalid;
+  evidence_.reason =
+    "original obstacle grid; includes upstream inflation/persistence; display only";
+}
+Observation<nav_msgs::msg::OccupancyGrid> OccupancyGridBuffer::snapshot(
+  const ClockState & clock, double steady, const std::string & source)
+{
+  origin(clock, source);
+  if (candidate_) {
+    evidence_.receipt_age = steady - evidence_.first_source_steady;
+    evidence_.source_age_available = clock.now_ns > 0;
+    evidence_.source_age = evidence_.source_age_available ?
+      static_cast<double>(clock.now_ns - stamp_ns(candidate_->header.stamp)) / 1e9 : 0.;
+    if (!blocked_ && !source.empty()) {
+      evidence_.quality = !std::isfinite(evidence_.receipt_age) || evidence_.receipt_age < 0 ?
+        Quality::Invalid : source_quality(candidate_->header, clock, evidence_.receipt_age, 2.0);
+      if (evidence_.quality == Quality::Invalid) {blocked_ = true;}
+    }
+  }
+  return {evidence_.quality == Quality::ValidAtObservation ? candidate_ : nullptr, evidence_};
+}
+Quality validate_global_position(
+  const sensor_msgs::msg::NavSatFix & m, const ClockState & clock, double receipt_age)
+{
+  using Status = sensor_msgs::msg::NavSatStatus;
+  if (m.status.status < Status::STATUS_FIX || m.status.status > Status::STATUS_GBAS_FIX ||
+    !finite({m.latitude, m.longitude, m.altitude}) ||
+    std::abs(m.latitude) > 90 || std::abs(m.longitude) > 180 ||
+    m.header.frame_id.size() > 256)
+  {return Quality::Invalid;}
+  return source_quality(m.header, clock, receipt_age, 2.0, false);
+}
+void GlobalPositionBuffer::clear()
+{
+  observation_ = {}; points_.clear(); source_.clear(); epoch_ = 0;
+  segment_ = 0; last_source_ = 0; discontinuity_ = true; blocked_ = false;
+}
+void GlobalPositionBuffer::origin(const ClockState & clock, const std::string & source)
+{
+  const bool lost_source = !source_.empty() && source.empty();
+  if (clock.epoch != epoch_ || source != source_) {
+    clear(); epoch_ = clock.epoch; source_ = source;
+  }
+  observation_.evidence.endpoint = "/mavros/global_position/global";
+  observation_.evidence.time_epoch = clock.epoch;
+  if (lost_source) {
+    observation_.evidence.quality = Quality::Invalid;
+    observation_.evidence.reason = "publisher disappeared or became ambiguous; origin cleared";
+  }
+}
+void GlobalPositionBuffer::observe(
+  std::shared_ptr<const sensor_msgs::msg::NavSatFix> message,
+  const ClockState & clock, double steady, const std::string & source)
+{
+  origin(clock, source);
+  if (!message) {return;}
+  const auto stamp = stamp_ns(message->header.stamp);
+  auto & e = observation_.evidence;
+  e.received_steady = steady;
+  if (observation_.value && message->header.frame_id != observation_.value->header.frame_id) {
+    points_.clear(); discontinuity_ = true; last_source_ = 0;
+  }
+  if (stamp <= last_source_ && observation_.value) {
+    discontinuity_ = true;
+    if (stamp < last_source_ || *message != *observation_.value) {
+      blocked_ = true; e.quality = Quality::Invalid;
+      e.reason = "GPS source stamp regressed or duplicate payload conflicts";
+    }
+    return;
+  }
+  observation_.value = std::move(message);
+  e.first_source_steady = steady;
+  e.quality = source.empty() ? Quality::Invalid :
+    validate_global_position(*observation_.value, clock, 0);
+  blocked_ = e.quality != Quality::ValidAtObservation;
+  if (source_quality(observation_.value->header, clock, 0, 2., false) ==
+    Quality::ValidAtObservation) {last_source_ = stamp;}
+  if (blocked_) {
+    discontinuity_ = true; e.reason = "GPS requires a unique source, valid fix and source time";
+    return;
+  }
+  if (!points_.empty() && (steady - points_.back().steady > 2. ||
+    stamp - points_.back().source_ns > 2000000000LL)) {discontinuity_ = true;}
+  if (discontinuity_) {++segment_; discontinuity_ = false;}
+  points_.push_back(
+    {stamp, steady, observation_.value->latitude,
+      observation_.value->longitude, observation_.value->altitude, segment_});
+  e.reason = "original GPS fix and acquisition time checked; display only";
+  while (points_.size() > 4096 || (!points_.empty() && steady - points_.front().steady > 300.)) {
+    points_.pop_front();
+  }
+}
+Observation<sensor_msgs::msg::NavSatFix> GlobalPositionBuffer::snapshot(
+  const ClockState & clock, double steady, const std::string & source)
+{
+  origin(clock, source);
+  auto & e = observation_.evidence;
+  if (observation_.value) {
+    e.receipt_age = steady - e.first_source_steady;
+    e.source_age_available = clock.now_ns > 0 && stamp_ns(observation_.value->header.stamp) > 0;
+    e.source_age = e.source_age_available ?
+      static_cast<double>(clock.now_ns - stamp_ns(observation_.value->header.stamp)) / 1e9 : 0.;
+    e.quality = source.empty() || blocked_ ? Quality::Invalid :
+      validate_global_position(*observation_.value, clock, e.receipt_age);
+    if (e.quality != Quality::ValidAtObservation) {discontinuity_ = true;}
+  }
+  while (!points_.empty() && steady - points_.front().steady > 300.) {points_.pop_front();}
+  return observation_;
 }
 Quality validate_localization(
   const easyfly_msgs::msg::LocalizationStatus & m, const ClockState & clock, double receipt_age)
@@ -197,7 +516,11 @@ StateView state_view(
     std::abs(v.latitude) <= 90 && std::abs(v.longitude) <= 180 && v.eph >= 0 && v.epv >= 0;
   if (result.velocity_valid) {
     const double speed = std::hypot(v.velocity_x, v.velocity_y, v.velocity_z);
-    if (std::isfinite(speed)) {result.speed_mps = speed;} else {result.velocity_valid = false;}
+    if (std::isfinite(speed)) {
+      result.speed_mps = speed;
+      result.horizontal_speed_mps = std::hypot(v.velocity_x, v.velocity_y);
+      result.vertical_speed_mps = v.velocity_z;
+    } else {result.velocity_valid = false;}
   }
   if (result.battery_valid) {result.battery_percent = v.battery_remaining * 100;}
   return result;

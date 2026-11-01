@@ -25,6 +25,7 @@
 
 #include <camera_info_manager/camera_info_manager.hpp>
 #include "easyfly_gazebo_plugins/safe_camera.hpp"
+#include "easyfly_gazebo_plugins/camera_measurement_stamps.hpp"
 #include <gazebo_ros/conversions/builtin_interfaces.hpp>
 #include <gazebo_ros/node.hpp>
 #include <gazebo_ros/utils.hpp>
@@ -112,6 +113,9 @@ public:
 
   /// Lock for image message
   std::mutex image_mutex_;
+
+  /// Last published RGB measurement for each camera, protected by image_mutex_.
+  detail::CameraMeasurementStamps image_stamps_;
 
   /// Store current camera image.
   sensor_msgs::msg::Image image_msg_;
@@ -588,14 +592,18 @@ void EasyFlyGazeboRosCamera::NewFrame(
     sensor_update_time = MultiCameraPlugin::parent_sensor_->LastMeasurementTime();
   }
 
+  // Keep CameraInfo and Image in one measurement publication group.
+  std::lock_guard<std::mutex> image_lock(impl_->image_mutex_);
+  if (impl_->image_stamps_.duplicate(_camera_num, sensor_update_time)) {
+    return;
+  }
+
   // Publish camera info
   auto camera_info_msg = impl_->camera_info_manager_[_camera_num]->getCameraInfo();
   camera_info_msg.header.stamp = gazebo_ros::Convert<builtin_interfaces::msg::Time>(
     sensor_update_time);
 
   impl_->camera_info_pub_[_camera_num]->publish(camera_info_msg);
-
-  std::lock_guard<std::mutex> image_lock(impl_->image_mutex_);
 
   // Publish image
   impl_->image_msg_.header.frame_id = impl_->frame_name_;
@@ -608,6 +616,7 @@ void EasyFlyGazeboRosCamera::NewFrame(
     impl_->img_step_[_camera_num] * _width, reinterpret_cast<const void *>(_image));
 
   impl_->image_pub_[_camera_num].publish(impl_->image_msg_);
+  impl_->image_stamps_.published(_camera_num, sensor_update_time);
 
   // Disable camera if it's a triggered camera
   if (nullptr != impl_->trigger_sub_) {

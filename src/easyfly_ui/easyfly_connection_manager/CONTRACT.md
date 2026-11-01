@@ -52,7 +52,7 @@ uses the corrected project-local transport, including registered-node finalizati
 before clearing the topic table. New profiles still default gazebo_gui=false.
 Workspace camera/RViz views remain available independently of that native GUI option.
 
-Managed mutable flags require the configured session policy. Mission execution is
+Managed mutable flags require the configured session policy. Mission execution in the legacy integrated DDS workspace is
 restricted to explicitly enabled local simulation. All mutable flags default off;
 GCS maintenance rejects mission/import/parameter features. Recording and RViz pages
 follow installed desktop build capabilities and remain idle until manual start. Legacy
@@ -111,6 +111,14 @@ camera/perception, space, records/playback and diagnostics/settings. One rendere
 owned by the spatial page; overview navigation does not duplicate it. Managed effective
 configuration is read-only outside the connection page. Offline-isolated QGC and
 networked QGC share only the selected executable, not startup authorization or isolation.
+Scene choices contain only registered entries compatible with the current profile.
+Profile changes and catalog refresh preserve a compatible selection. An incompatible,
+draft or missing saved ID remains in form state but never enters the dropdown: show an
+inline explanation, leave selection empty and forbid startup until a valid choice.
+Filtering does not silently replace a scene or rewrite the saved profile. An empty
+result disables the dropdown and startup, with a visible recovery hint. Scene resource
+and license preflight remain mandatory at startup.
+
 Scene preview reads a bounded, package-contained world only after catalog SHA validation;
 it displays limited static primitive geometry, omitting models/meshes/includes. It is
 not a simulator image or evidence of a running scene.
@@ -147,3 +155,31 @@ Navigation remains unavailable for OpenVINS until IMU/base and odom/map frame
 integration is implemented. The coordinator rejects goals even with fresh
 ESTIMATING status and refuses runtime changes of its read-only backend parameter.
 The UI blocks new navigation/tracking/search mission confirmation for this choice.
+
+
+## Onboard platform v2
+
+The separate onboard platform entry configures one complete physical-clock recipe
+through an authenticated HTTPS service; it does not relax legacy workspace permits.
+See ONBOARD.md for deployment and operation. The fixed catalog defines installed
+adapters; no arbitrary shell, package, executable or PID is accepted. Hardware
+calibration/configuration files are required and frozen per run. One user/domain
+owner and the shared communications lock prevent duplicate managed instances.
+Output freshness and node/TF discovery distinguish readiness from process existence.
+
+Request identities bind exact content, platform identity and service boot. Durable
+receipts prevent mutation replay. Unresolved service restarts retain uncertainty
+and never adopt orphan processes. The owner requests cooperative SIGINT, retains
+ownership on timeout and postpones launch TERM/KILL timers beyond operational
+lifetimes. UI exit preserves the agent, children and pending tasks.
+
+Mission configuration uses the native validator. Execution additionally requires
+deployment opt-in, the owned core stack, fresh grounded observations, exact reviewed
+content hash and the native reviewed facade. QGC forwarding disables managed
+execution. An unknown response is queried with its original identity, never retried
+as a new task. Software autostart does not execute a flight task. Exported ground
+credentials include CA/token and operator identity, never the server private key.
+Systemd deployment is a user service; unattended boot needs explicit OS setup.
+
+Software integration uses synthetic image inputs and a mock action backend. It does
+not qualify a physical vehicle or change the hardware_unverified profile.

@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Lifecycle admission, endpoints and ownership checks without starting a flight backend."""
+import json
 import stat
 
 import pytest
@@ -55,6 +56,22 @@ def test_transport_urls_are_arguments_and_not_a_shell():
     assert command(p)[2:4] == ['easyfly_mavlink_bridge', 'mavlink_bridge.launch.py']
     p['fcu']['transport'] = 'tcp'
     assert urls(p)[0] == 'tcp://127.0.0.1:14580'
+
+
+def test_installed_px4_default_preserves_explicit_user_selection(tmp_path, monkeypatch):
+    """Apply deployment defaults to empty fields, never to explicit user paths."""
+    from easyfly_connection_manager.backend import effective_px4_directory
+    monkeypatch.setattr('ament_index_python.packages.get_package_share_directory',
+                        lambda _: str(tmp_path))
+    installation = tmp_path / 'installation.json'
+    installation.write_text(json.dumps({'px4_directory': '/reviewed/px4-input'}))
+    assert effective_px4_directory('') == '/reviewed/px4-input'
+    assert effective_px4_directory('/operator/px4-input') == '/operator/px4-input'
+    installation.write_text(json.dumps({'px4_directory': ''}))
+    assert effective_px4_directory('') is None
+    installation.write_text(json.dumps({'px4_directory': 42}))
+    with pytest.raises(ValueError, match='字符串'):
+        effective_px4_directory('')
 
 
 @pytest.mark.parametrize('change', [
@@ -262,6 +279,7 @@ def test_localization_dependencies_are_selected_without_fallback(monkeypatch, se
     monkeypatch.setattr(packages, 'get_package_share_directory', lookup)
     monkeypatch.setattr(hrt, 'select_px4_directory', stop_before_simulation)
     p = profile()
+    p['simulation']['px4_directory'] = '/inspection/px4-input'
     p['algorithms'] = dict(slam=selection)
     with pytest.raises(RuntimeError, match='inspection stopped'):
         check(p)
@@ -330,6 +348,69 @@ def test_unselected_algorithms_do_not_create_storage(tmp_path):
     assert prepare_algorithm_runtime(p, directory) == {}
     assert not directory.exists()
     assert not any('_directory:=' in value for value in command(p))
+
+
+def test_preflight_failure_reports_the_actual_failed_stage(tmp_path, monkeypatch):
+    """A port conflict keeps completed resource checks without claiming a launch."""
+    from unittest.mock import Mock
+    from easyfly_connection_manager import backend
+
+    frames = []
+    monkeypatch.setattr(backend.sys, 'argv', ['backend', '--directory', str(tmp_path / 'owner')])
+    monkeypatch.setattr(backend, 'read_profile', profile)
+    monkeypatch.setattr(backend, 'emit', frames.append)
+    monkeypatch.setattr(backend, 'check', lambda _: dict(fcu_url='', gcs_url=''))
+
+    def occupied(_):
+        raise RuntimeError('fixture port occupied')
+
+    monkeypatch.setattr(backend, 'reserve', occupied)
+    launch = Mock()
+    monkeypatch.setattr(backend.subprocess, 'Popen', launch)
+    assert backend.main() == 2
+    result = frames[-1]
+    assert result['phase'] == 'failed' and not result['process_running']
+    assert result['startup_stage'] == 'reserving_ports'
+    assert result['startup_completed'] == ['checking_resources']
+    assert 'fixture port occupied' in result['error']
+    assert result['startup_elapsed_s'] >= 0
+    launch.assert_not_called()
+
+
+def test_startup_waits_follow_observed_clock_and_fcu_without_granting_stop(tmp_path, monkeypatch):
+    """Seeing FCU/time is not permission to stop an armed or airborne vehicle."""
+    from types import SimpleNamespace
+    from easyfly_connection_manager import backend
+
+    now = [100.0]
+    monkeypatch.setattr(backend.time, 'monotonic', lambda: now[0])
+    worker = backend.Backend.__new__(backend.Backend)
+    worker.profile, worker.directory, worker.node = profile(), tmp_path, None
+    worker.process = SimpleNamespace(poll=lambda: None, pid=1, returncode=None)
+    worker.state = dict(connected=False, armed=True, landed=2, state_sources=1,
+                        landed_sources=1, state_at=100.0, landed_at=100.0)
+    worker.action_states, worker.gcs = {}, {}
+    worker.ever_connected, worker.stopping_at = True, None
+    worker.started, worker.phase, worker.message = 90.0, 'starting', ''
+    worker.result = dict(fcu_url='', gcs_url='')
+    worker.clock_ns, worker.clock_progress_at = 0, None
+    worker.startup = backend.StartupProgress(started_at=80.0)
+    result = worker.status()
+    assert result['startup_stage'] == 'waiting_for_clock'
+    assert not result['safe_to_stop'] and not result['can_abort_startup']
+    worker.clock_ns, worker.clock_progress_at = 10**9, 100.0
+    assert worker.status()['startup_stage'] == 'waiting_for_fcu'
+    worker.state['connected'] = True
+    result = worker.status()
+    assert result['startup_stage'] == 'observing'
+    assert {'waiting_for_clock', 'waiting_for_fcu'} <= set(result['startup_completed'])
+    assert not result['safe_to_stop'] and result['phase'] == 'running'
+    now[0] = 121.0
+    stale = worker.status()
+    assert stale['startup_stage'] == 'waiting_for_clock'
+    assert 'waiting_for_fcu' not in stale['startup_completed']
+    assert stale['startup_elapsed_s'] == result['startup_elapsed_s']
+    assert stale['phase'] == 'degraded' and not stale['safe_to_stop']
 
 
 @pytest.mark.parametrize('options,selected', [

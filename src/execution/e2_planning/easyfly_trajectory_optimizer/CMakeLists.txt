@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.8)
 project(easyfly_trajectory_optimizer)
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+ament_python_install_package(${PROJECT_NAME})
 find_package(easyfly_gcopter_core REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(easyfly_msgs REQUIRED)
@@ -31,6 +33,7 @@ target_compile_options(gcopter_navigation PRIVATE -O2 -Wall -Wextra)
 install(TARGETS trajectory_core EXPORT trajectoryTargets LIBRARY DESTINATION lib)
 install(TARGETS gcopter_worker gcopter_navigation gcopter_voxel_map DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY include/ DESTINATION include)
+install(PROGRAMS scripts/lidar_rays_node DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME})
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 
@@ -43,6 +46,9 @@ if(BUILD_TESTING)
   target_link_libraries(test_gcopter_core trajectory_core)
   target_compile_definitions(test_gcopter_core PRIVATE
     TRACKING_REQUEST_FROM_TEST="${CMAKE_CURRENT_SOURCE_DIR}/test/data/fuel_room_tracking.request")
+  ament_add_pytest_test(test_lidar_rays test/test_lidar_rays.py TIMEOUT 10)
+  ament_add_pytest_test(test_lidar_rays_ros test/test_lidar_rays_ros.py
+    TIMEOUT 25 ENV ROS_DOMAIN_ID=216)
   ament_add_pytest_test(test_gcopter_recorded_worker test/test_recorded_worker.py TIMEOUT 10)
   ament_add_pytest_test(test_gcopter_navigation_ros test/test_navigation_ros.py
     TIMEOUT 90 ENV ROS_DOMAIN_ID=197)

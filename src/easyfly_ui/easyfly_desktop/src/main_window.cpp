@@ -16,6 +16,7 @@
 #include <QComboBox>
 #include <QCoreApplication>
 #include <QDockWidget>
+#include <QDialog>
 #include <QFormLayout>
 #include <QFontMetrics>
 #include <QFrame>
@@ -30,6 +31,7 @@
 #include <QListWidget>
 #include <QDynamicPropertyChangeEvent>
 #include <QMenuBar>
+#include <QMenu>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QPlainTextEdit>
@@ -42,9 +44,10 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 #include <QTableView>
+#include <QTabBar>
+#include <QToolButton>
 #include <QTabWidget>
 #include <QTimer>
-#include <QToolButton>
 #include <QVBoxLayout>
 #include <algorithm>
 #include <cmath>
@@ -59,7 +62,10 @@
 #include "easyfly_desktop/peripheral_panel.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_desktop/mission_draft.hpp"
+#include "easyfly_desktop/task_step_info.hpp"
+#include "easyfly_desktop/overview_task.hpp"
 #include "easyfly_desktop/presentation.hpp"
+#include "easyfly_ui_bridge/camera_observations.hpp"
 #include "widgets.hpp"
 #include "easyfly_desktop/geographic_view.hpp"
 #include "theme.hpp"
@@ -132,6 +138,9 @@ struct MainWindow::Impl
   std::unique_ptr<ImagePipeline> overlay_decoder;
   int64_t overlay_submitted_stamp{-1};
   std::optional<bridge::CameraObservations> overlay_observations;
+  std::shared_ptr<const ConvertedFrame> completed_overlay_frame;
+  std::optional<bridge::CameraObservations> completed_overlay_observations;
+  std::optional<bridge::CameraPerceptionBinding> overlay_origin;
   QComboBox * overlay_mode{nullptr};
   QLabel * overlay_evidence{nullptr};
   TextTable * overlay_model{nullptr};
@@ -162,6 +171,18 @@ struct MainWindow::Impl
   QVBoxLayout * rviz_full_layout{nullptr}, *overview_rviz_layout{nullptr};
   QTabWidget * overview_map_tabs{nullptr};
   QTabWidget * task_tabs{nullptr}, *space_tabs{nullptr}, *settings_tabs{nullptr};
+  QComboBox * task_target{nullptr};
+  QLabel * task_target_info{nullptr}, *task_document_source{nullptr};
+  QStackedWidget * task_execution_stack{nullptr}, *task_import_stack{nullptr};
+  QDialog * task_save_dialog{nullptr};
+  QLabel * task_save_hint{nullptr};
+  QLabel * task_progress{nullptr};
+  QPushButton * review_saved{nullptr};
+  QJsonObject simulation_saved, onboard_saved;
+  QString saved_catalog_focus;
+  bool refresh_saved_catalog{false}, read_saved_catalog{false};
+  QVBoxLayout * task_detail_layout{nullptr};
+  QJsonObject staged_mission;
   QWidget * execution_page{nullptr};
   QVBoxLayout * execution_layout{nullptr};
   QLabel * effective_configuration{nullptr};
@@ -183,7 +204,8 @@ struct MainWindow::Impl
   std::string details_name;
   uint64_t rendered_details{0}, rendered_details_session{0};
   QPushButton * inspect{nullptr};
-  QLabel * details_summary{nullptr}, *task_dependencies{nullptr};
+  QPushButton * edit_catalog{nullptr};
+  QLabel * details_summary{nullptr}, *task_dependencies{nullptr}, *read_summary{nullptr};
   QPlainTextEdit * mission_content{nullptr};
   QTabWidget * document_tabs{nullptr};
   TextTable * steps_model{nullptr};
@@ -193,6 +215,8 @@ struct MainWindow::Impl
   double event_tail{-1}; std::size_t event_count{0}; uint64_t event_session{0};
   QStackedWidget * pages{nullptr}; QListWidget * navigation{nullptr};
   QWidget * connection_page{nullptr};
+  QWidget * onboard_mission_page{nullptr};
+  QObject * onboard_session{nullptr};
   int connection_page_index{-1};
   bool connection_lobby{false};
   MissionEditor * editor{nullptr};
@@ -203,6 +227,17 @@ struct MainWindow::Impl
   QLabel * position{nullptr}, *speed{nullptr}, *battery{nullptr}, *validity{nullptr},
   *state_age{nullptr};
   QLabel * altitude_metric{nullptr};
+  QLabel * overview_armed{nullptr}, *overview_vertical_speed{nullptr},
+  *overview_total_speed{nullptr};
+  QLabel * overview_context{nullptr}, *overview_task{nullptr}, *overview_alert{nullptr};
+  QComboBox * overview_map_mode{nullptr}, *overview_camera_selector{nullptr};
+  QCheckBox * overview_follow{nullptr};
+  QSplitter * overview_split{nullptr};
+  QWidget * overview_side{nullptr};
+  FlightInstrumentOverlay * instrument_overlay{nullptr};
+  QPushButton * overview_map_focus{nullptr}, *overview_camera_focus{nullptr};
+  QList<int> overview_split_sizes; int overview_focus{0};
+  bool syncing_geography{false}; double overview_gps_good_at{0};
   FlightInstrumentCanvas * instruments{nullptr};
   QLabel * global_overview{nullptr}, *global_mission{nullptr}, *catalog_quality{nullptr};
   QLabel * validation_result{nullptr}, *query_result{nullptr}, *image_evidence{nullptr};
@@ -214,7 +249,7 @@ struct MainWindow::Impl
   QWidget * configuration{nullptr};
   CameraCanvas * overview_camera{nullptr}, *camera_canvas{nullptr}; MapCanvas * map{nullptr};
   MapCanvas * overview_map{nullptr};
-  GeographicView * geography{nullptr};
+  GeographicView * geography{nullptr}, *overview_geography{nullptr};
   TextTable * capability_model{nullptr}, *target_model{nullptr}, *obstacle_model{nullptr};
   TextTable * algorithm_model{nullptr};
   bool peripheral_commands{false};
@@ -239,7 +274,7 @@ struct MainWindow::Impl
       released = true;
       toggle->setEnabled(false);
       connection->setText(QStringLiteral("尚未连接平台"));
-      clock->setText(QStringLiteral("请在连接与仿真页选择场景或连接方式"));
+      clock->setText(QStringLiteral("请在连接管理页选择场景或连接方式"));
       backend_profile->clear();
     }
     timer = new QTimer(window); timer->setInterval(100);
@@ -258,7 +293,8 @@ struct MainWindow::Impl
     auto * heading_row = new QHBoxLayout;
     heading->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     heading_row->addWidget(heading);
-    heading_row->addWidget(label(subtitle, "pageSubtitle", content), 1);
+    auto * subtitle_label = label(subtitle, "pageSubtitle", content);
+    subtitle_label->setVisible(!subtitle.isEmpty()); heading_row->addWidget(subtitle_label, 1);
     layout->addLayout(heading_row);
     scroll->setWidget(content); pages->addWidget(scroll); return layout;
   }
@@ -365,14 +401,39 @@ struct MainWindow::Impl
         window->setProperty(
           "connectionHandoffBlocked",
           connection_lobby && editor && editor->dirty());
+        if (task_target) {update_task_center();}
       });
-    draft_layout->addWidget(editor);
-    auto * import_box = new QGroupBox(QStringLiteral("受控导入（独立显式启用）"), draft_page);
+    auto * import_box = new QGroupBox(QStringLiteral("保存任务到平台"), draft_page);
     auto * import_layout = new QVBoxLayout(import_box);
     import_panel = new ImportPanel(
       import_options, import_factory, import_box,
-      [this] {return editor->exported_draft();});
-    import_layout->addWidget(import_panel); draft_layout->addWidget(import_box);
+      [this] {return editor->validated_draft();});
+    QObject::connect(
+      import_panel, &ImportPanel::saved, window, [this](const QJsonObject & receipt) {
+        simulation_saved = receipt;
+        simulation_saved["observer_session"] = static_cast<double>(current ?
+        current->observation_session_id : 0);
+        simulation_saved["observer_epoch"] = static_cast<double>(current ? current->time_epoch : 0);
+        refresh_saved_catalog = true;
+        if (task_tabs && task_tabs->currentIndex() == 1) {
+          saved_catalog_focus = receipt.value("name").toString();
+        }
+        update_task_center();
+      });
+    import_layout->addWidget(import_panel);
+    draft_layout->setContentsMargins(0, 0, 0, 0); draft_layout->addWidget(editor, 1);
+    auto * save_row = new QHBoxLayout;
+    task_save_hint = label({}, "taskSaveHint", draft_page); save_row->addWidget(task_save_hint, 1);
+    auto * save_platform = button(QStringLiteral("保存到平台…"), "saveTaskToPlatform", draft_page);
+    save_row->addWidget(save_platform); draft_layout->addLayout(save_row);
+    QObject::connect(
+      save_platform, &QPushButton::clicked, window, [this] {
+        update_task_center();
+        task_save_dialog->setWindowTitle(
+          QStringLiteral("保存到平台 · %1").arg(task_target->currentText()));
+        task_save_dialog->open();
+        if (!onboard_task_target()) {import_panel->prepare_save();}
+      });
     pages->addWidget(draft_scroll);
     navigation->setCurrentRow(0);
     request_note = label(
@@ -428,37 +489,98 @@ struct MainWindow::Impl
     auto * overview = old(0); auto * catalog = old(1); auto * perception = old(2);
     auto * local = old(3); auto * diagnostic = old(4); auto * tools = old(5);
     auto * draft = old(6);
-    task_tabs = new QTabWidget; task_tabs->setObjectName("taskCenterTabs");
-    auto * task_workspace = new QSplitter(Qt::Horizontal);
-    task_workspace->setObjectName("taskExecutionSplitter");
-    task_workspace->setChildrenCollapsible(false); task_workspace->addWidget(catalog);
-    catalog->show();
-    task_tabs->addTab(task_workspace, QStringLiteral("任务与执行"));
+    auto * task_center = new QWidget; task_center->setObjectName("taskCenterPage");
+    auto * task_layout = new QVBoxLayout(task_center);
+    task_layout->setContentsMargins(0, 0, 0, 0); task_layout->setSpacing(6);
+    auto * target_row = new QHBoxLayout;
+    target_row->addWidget(new QLabel(QStringLiteral("任务目标"), task_center));
+    task_target = new QComboBox(task_center); task_target->setObjectName("taskTarget");
+    task_target->setAccessibleName(QStringLiteral("任务目标平台"));
+    task_target->addItem(QStringLiteral("本机仿真 / DDS"), "simulation");
+    target_row->addWidget(task_target);
+    task_target_info = label({}, "taskTargetIdentity", task_center);
+    target_row->addWidget(task_target_info, 1); task_layout->addLayout(target_row);
+    task_document_source = label(
+      QStringLiteral("任务编辑维护本地副本；导入与执行使用上方所选平台。"),
+      "taskDocumentSource", task_center);
+    task_layout->addWidget(task_document_source);
+    auto * progress_row = new QHBoxLayout;
+    task_progress = label({}, "taskDocumentState", task_center);
+    progress_row->addWidget(task_progress, 1);
+    review_saved = button(QStringLiteral("查看并审阅已保存任务"), "reviewSavedTask", task_center);
+    review_saved->hide(); progress_row->addWidget(review_saved);
+    task_layout->addLayout(progress_row);
+    QObject::connect(review_saved, &QPushButton::clicked, window, [this] {view_saved_task();});
+    task_tabs = new QTabWidget(task_center); task_tabs->setObjectName("taskCenterTabs");
+    task_layout->addWidget(task_tabs, 1);
+    task_execution_stack = new QStackedWidget(task_tabs);
+    task_execution_stack->setObjectName("taskExecutionTargets");
+    task_execution_stack->addWidget(catalog);
+    task_tabs->addTab(task_execution_stack, QStringLiteral("任务与执行"));
     task_tabs->addTab(draft, QStringLiteral("任务编辑"));
     auto * import_box = import_panel->parentWidget();
     auto * import_scroll = new QScrollArea; import_scroll->setWidgetResizable(true);
     import_scroll->setWidget(import_box);
-    task_tabs->addTab(import_scroll, QStringLiteral("校验与导入"));
+    task_save_dialog = new QDialog(window); task_save_dialog->setObjectName("taskSaveDialog");
+    task_save_dialog->setModal(true); task_save_dialog->resize(760, 460);
+    auto * save_layout = new QVBoxLayout(task_save_dialog);
+    task_import_stack = new QStackedWidget(task_save_dialog);
+    task_import_stack->setObjectName("taskImportTargets");
+    task_import_stack->addWidget(import_scroll);
+    save_layout->addWidget(task_import_stack, 1);
+    auto * back_to_editor = button(
+      QStringLiteral("返回编辑"), "closeTaskSaveDialog", task_save_dialog);
+    save_layout->addWidget(back_to_editor);
+    QObject::connect(back_to_editor, &QPushButton::clicked, task_save_dialog, &QDialog::reject);
     auto * execution_scroll = new QScrollArea; execution_scroll->setWidgetResizable(true);
     execution_scroll->setWidget(execution_page);
     execution_scroll->setFrameShape(QFrame::NoFrame);
     execution_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    execution_scroll->setMinimumWidth(300);
-    task_workspace->addWidget(execution_scroll);
-    task_workspace->setStretchFactor(0, 1); task_workspace->setStretchFactor(1, 0);
-    task_workspace->setSizes({720, 350}); remember_splitter(task_workspace, "mission-execution");
+    const int execution_tab = document_tabs->addTab(
+      execution_scroll, QStringLiteral("执行与查询"));
+    task_detail_layout->insertWidget(0, global_mission);
+    if (mission_panel) {task_detail_layout->addWidget(mission_panel->action_bar());}
     auto * execution_toggle = new QToolButton(task_tabs);
     execution_toggle->setObjectName("toggleTaskExecution");
     execution_toggle->setText(QStringLiteral("执行与查询")); execution_toggle->setCheckable(true);
     execution_toggle->setChecked(mission_options.enabled);
-    execution_scroll->setVisible(execution_toggle->isChecked());
+    document_tabs->setCurrentIndex(mission_options.enabled ? execution_tab : 0);
     task_tabs->setCornerWidget(execution_toggle);
     QObject::connect(
-      execution_toggle, &QToolButton::toggled, execution_scroll,
-      &QWidget::setVisible);
+      execution_toggle, &QToolButton::toggled, window,
+      [this, execution_tab](bool checked) {
+        document_tabs->setCurrentIndex(checked ? execution_tab : 0);
+      });
+    QObject::connect(
+      document_tabs, &QTabWidget::currentChanged, execution_toggle,
+      [execution_toggle, execution_tab](int index) {
+        QSignalBlocker block(execution_toggle); execution_toggle->setChecked(
+          index == execution_tab);
+      });
     QObject::connect(
       task_tabs, &QTabWidget::currentChanged, execution_toggle,
-      [execution_toggle](int index) {execution_toggle->setVisible(index == 0);});
+      [this, execution_toggle](int index) {
+        execution_toggle->setVisible(index == 0 && !onboard_task_target());
+      });
+    QObject::connect(
+      task_target, QOverload<int>::of(&QComboBox::currentIndexChanged), window,
+      [this, execution_toggle] {
+        const bool onboard = onboard_task_target();
+        task_execution_stack->setCurrentIndex(onboard ? 1 : 0);
+        task_import_stack->setCurrentIndex(onboard ? 1 : 0);
+        execution_toggle->setVisible(task_tabs->currentIndex() == 0 && !onboard);
+        if (mission_panel) {mission_panel->set_target_active(!onboard);}
+        if (onboard_session) {
+          onboard_session->setProperty("onboardMissionCenterActive", onboard);
+          if (onboard_session->metaObject()->indexOfMethod("setMissionCenterActive(bool)") >= 0) {
+            QMetaObject::invokeMethod(
+              onboard_session, "setMissionCenterActive", Qt::DirectConnection, Q_ARG(
+                bool,
+                onboard));
+          }
+        }
+        staged_mission = {}; update_task_center(); update_buttons();
+      });
     space_tabs = new QTabWidget; space_tabs->setObjectName("spaceViewTabs");
     space_tabs->addTab(local, QStringLiteral("局部二维"));
     if (!rviz_view && RvizView::available()) {
@@ -479,23 +601,26 @@ struct MainWindow::Impl
     }
     geography = new GeographicView(space_tabs); geography->setObjectName("geographicView");
     space_tabs->addTab(geography, QStringLiteral("地理底图 · 离线"));
-    if (overview_map_tabs->count() > 1) {
-      auto * previous = overview_map_tabs->widget(1); overview_map_tabs->removeTab(1);
-      previous->deleteLater();
-    }
-    auto * shortcut = new QWidget; auto * shortcut_layout = new QVBoxLayout(shortcut);
-    shortcut_layout->addStretch();
-    shortcut_layout->addWidget(
-      label(
-        QStringLiteral("点云、地图与三维图层集中在空间视图中。"),
-        "overviewSpatialHint", shortcut));
-    auto * open_space = button(QStringLiteral("打开三维空间视图"), "overviewOpenSpace", shortcut);
+    const auto synchronize_geo = [this](GeographicView * from, GeographicView * to) {
+        if (syncing_geography) {return;} syncing_geography = true;
+        if (from->datum()) {to->set_datum(*from->datum());} else {to->clear_datum();}
+        if (!from->offline_map_path().isEmpty() &&
+          from->offline_map_path() != to->offline_map_path())
+        {to->import_map(from->offline_map_path());}
+        to->set_map_source(from->map_source()); syncing_geography = false;
+      };
+    overview_geography->configuration_changed = [this, synchronize_geo] {
+        synchronize_geo(overview_geography, geography);
+      };
+    geography->configuration_changed = [this, synchronize_geo] {
+        synchronize_geo(geography, overview_geography);
+      };
     QObject::connect(
-      open_space, &QPushButton::clicked, window, [this] {
-        window->show_page("space"); space_tabs->setCurrentIndex(1);
+      camera, qOverload<int>(&QComboBox::currentIndexChanged), window,
+      [this](int index) {
+        const QSignalBlocker blocker(overview_camera_selector);
+        overview_camera_selector->setCurrentIndex(index);
       });
-    shortcut_layout->addWidget(open_space); shortcut_layout->addStretch();
-    overview_map_tabs->addTab(shortcut, QStringLiteral("三维入口"));
     QWidget * records = recording_panel;
     if (!records && RecordingWorker::available()) {
       auto paths = storage_protected_paths;
@@ -529,10 +654,10 @@ struct MainWindow::Impl
           "当前为独立观测入口。请通过 EasyFl"
           "y 应用入口管理仿真、DDS 和 QGC。"),
         "connectionUnavailable", placeholder)); placeholder_layout->addStretch();
-    const QList<QWidget *> ordered{placeholder, overview, task_tabs, perception,
+    const QList<QWidget *> ordered{placeholder, overview, task_center, perception,
       space_tabs, records_scroll, settings_tabs};
     navigation->clear();
-    const QStringList names{QStringLiteral("连接与仿真"), QStringLiteral("运行总览"),
+    const QStringList names{QStringLiteral("连接管理"), QStringLiteral("运行总览"),
       QStringLiteral("任务中心"), QStringLiteral("相机与感知"), QStringLiteral("空间视图"),
       QStringLiteral("记录与回放"), QStringLiteral("诊断与设置")};
     const QStringList keys{"connection", "overview", "tasks", "perception", "space", "records",
@@ -547,12 +672,8 @@ struct MainWindow::Impl
   }
   void overview_page()
   {
-    auto * layout =
-      page(
-      QStringLiteral("运行总览"), QStringLiteral(
-        "观测不是控制权；armed、OF"
-        "FBOARD 或 ready 均不等于"
-        "可飞。"));
+    auto * layout = page(QStringLiteral("运行总览"), {});
+    overview_context = label({}, "overviewContext", pages); layout->addWidget(overview_context);
     auto * metrics = new QGridLayout; metrics->setSpacing(10);
     const auto metric =
       [&](const QString & title, const QString & icon, const char * name, int col) {
@@ -573,41 +694,125 @@ struct MainWindow::Impl
     state_connection = metric(QStringLiteral("飞控连接"), "link", "stateConnection", 0);
     mode = metric(QStringLiteral("飞行模式"), "mode", "stateMode", 1);
     altitude_metric = metric(QStringLiteral("局部高度 Z · m"), "location", "overviewAltitude", 2);
-    speed = metric(QStringLiteral("速度 · m/s"), "speed", "stateSpeed", 3);
+    speed = metric(QStringLiteral("水平速度 · m/s"), "speed", "stateSpeed", 3);
     battery = metric(QStringLiteral("电池"), "battery", "stateBattery", 4);
+    overview_armed = label({}, "overviewArmed", mode->parentWidget());
+    mode->parentWidget()->layout()->addWidget(overview_armed);
+    overview_vertical_speed = label({}, "overviewVerticalSpeed", speed->parentWidget());
+    speed->parentWidget()->layout()->addWidget(overview_vertical_speed);
     layout->addLayout(metrics);
+    overview_task = label({}, "overviewTaskSummary", pages); layout->addWidget(overview_task);
+    auto * alert_row = new QHBoxLayout;
+    overview_alert = label({}, "overviewAlert", pages); overview_alert->hide();
+    alert_row->addWidget(overview_alert, 1);
+    auto * alert_details = button(QStringLiteral("查看详情"), "overviewAlertDetails", pages);
+    alert_details->hide(); alert_row->addWidget(alert_details); layout->addLayout(alert_row);
+    QObject::connect(
+      alert_details, &QPushButton::clicked, window, [this] {
+        window->findChild<QWidget *>("overviewEvidencePanel")->show();
+        window->findChild<QPushButton *>("overviewEvidenceToggle")->setChecked(true);
+      });
+    auto * map_tools = new QHBoxLayout;
+    overview_map_mode = new QComboBox; overview_map_mode->setObjectName("overviewMapMode");
+    overview_map_mode->addItems(
+      {QStringLiteral("自动地图"), QStringLiteral("局部地图"),
+        QStringLiteral("地理地图")}); map_tools->addWidget(overview_map_mode);
+    auto * zoom_in = button("＋", "overviewMapZoomIn", pages);
+    auto * zoom_out = button("−", "overviewMapZoomOut", pages);
+    zoom_in->setAccessibleName(QStringLiteral("放大局部地图"));
+    zoom_out->setAccessibleName(QStringLiteral("缩小局部地图"));
+    auto * center = button(QStringLiteral("定位飞机"), "overviewMapCenter", pages);
+    auto * fit = button(QStringLiteral("适应任务"), "overviewMapFit", pages);
+    overview_follow = new QCheckBox(QStringLiteral("跟随")); overview_follow->setChecked(true);
+    overview_follow->setObjectName("overviewMapFollow");
+    for (auto * control : {zoom_in, zoom_out, center, fit}) {map_tools->addWidget(control);}
+    map_tools->addWidget(overview_follow);
+    auto * layers = new QToolButton(pages); layers->setText(QStringLiteral("图层"));
+    layers->setObjectName("overviewMapLayers");
+    layers->setAccessibleName(QStringLiteral("局部地图图层"));
+    layers->setPopupMode(QToolButton::InstantPopup);
+    auto * layer_menu = new QMenu(layers);
+    auto * grid_layer = layer_menu->addAction(QStringLiteral("障碍栅格"));
+    grid_layer->setObjectName("overviewGridLayer");
+    grid_layer->setCheckable(true); grid_layer->setChecked(true);
+    auto * obstacle_layer = layer_menu->addAction(QStringLiteral("实时障碍框"));
+    obstacle_layer->setObjectName("overviewObstacleLayer"); obstacle_layer->setCheckable(true);
+    layers->setMenu(layer_menu); map_tools->addWidget(layers); map_tools->addStretch();
+    overview_map_focus = button(QStringLiteral("放大地图"), "overviewMapFocus", pages);
+    map_tools->addWidget(overview_map_focus); layout->addLayout(map_tools);
     auto * split = new QSplitter(Qt::Horizontal, pages); split->setObjectName("overviewSplitter");
+    overview_split = split;
     split->setChildrenCollapsible(false);
     split->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
     split->setMinimumHeight(330);
     overview_map_tabs = new QTabWidget(split); overview_map_tabs->setObjectName("overviewMapTabs");
-    overview_map_tabs->setMinimumWidth(320);
+    overview_map_tabs->tabBar()->hide(); overview_map_tabs->setMinimumWidth(320);
     overview_map_tabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
     overview_map_tabs->setMinimumHeight(290);
     auto * local = new QWidget(overview_map_tabs); auto * local_layout = new QVBoxLayout(local);
     local_layout->setContentsMargins(4, 4, 4, 4);
     overview_map = new MapCanvas(local); overview_map->setObjectName("overviewMapCanvas");
+    overview_map->set_grid_enabled(true); overview_map->set_obstacle_overlay(false);
+    QObject::connect(
+      grid_layer, &QAction::toggled, window,
+      [this](bool on) {overview_map->set_grid_enabled(on);});
+    QObject::connect(
+      obstacle_layer, &QAction::toggled, window,
+      [this](bool on) {overview_map->set_obstacle_overlay(on);});
     overview_map->setMinimumHeight(240); local_layout->addWidget(overview_map, 1);
-    local_layout->addWidget(
-      label(
-        QStringLiteral(
-          "局部位置 / 实际轨迹；不是卫星底图。"
-          "SLAM 与点云请选 RViz 三维。"),
-        "overviewMapHint", local));
-    overview_map_tabs->addTab(local, dashboard_icon("map"), QStringLiteral("局部地图 · ENU"));
+    overview_map_tabs->addTab(local, QStringLiteral("局部地图"));
+    overview_geography = new GeographicView(overview_map_tabs);
+    overview_geography->setObjectName("overviewGeographicView");
+    overview_geography->set_compact(true);
+    overview_map_tabs->addTab(overview_geography, QStringLiteral("地理地图"));
+    instrument_overlay = new FlightInstrumentOverlay(overview_map);
+    instruments = instrument_overlay->canvas();
+    const auto attach_instruments = [this](int index) {
+        auto * canvas = index == 1 ?
+          overview_geography->findChild<QWidget *>("geographicCanvas") : overview_map;
+        instrument_overlay->attach(canvas);
+      };
+    QObject::connect(
+      overview_map_tabs, &QTabWidget::currentChanged, window, attach_instruments);
+    attach_instruments(overview_map_tabs->currentIndex());
+    QObject::connect(zoom_in, &QPushButton::clicked, window, [this] {overview_map->zoom(1.4);});
+    QObject::connect(
+      zoom_out, &QPushButton::clicked, window,
+      [this] {overview_map->zoom(1 / 1.4);});
+    QObject::connect(
+      center, &QPushButton::clicked, window, [this] {
+        overview_map->center_on_vehicle();
+      });
+    QObject::connect(fit, &QPushButton::clicked, window, [this] {overview_map->fit();});
+    QObject::connect(
+      overview_follow, &QCheckBox::toggled, window,
+      [this](bool on) {overview_map->set_follow(on);});
+    QObject::connect(
+      overview_map_focus, &QPushButton::clicked, window,
+      [this] {set_overview_focus(overview_focus == 1 ? 0 : 1);});
     auto * side = new QWidget(split); side->setMinimumWidth(220); side->setMaximumWidth(380);
+    overview_side = side;
     auto * side_layout = new QVBoxLayout(side); side_layout->setContentsMargins(8, 0, 0, 0);
-    auto * instrument_box = new QGroupBox(QStringLiteral("姿态与航向 · 只读"), side);
-    auto * instrument_layout = new QVBoxLayout(instrument_box);
-    instruments = new FlightInstrumentCanvas(instrument_box);
-    instruments->setMinimumHeight(120);
-    instruments->setObjectName("overviewInstruments"); instrument_layout->addWidget(instruments);
-    side_layout->addWidget(instrument_box);
-    auto * box = new QGroupBox(QStringLiteral("选中相机 · 当前视角"), side);
+    auto * box = new QGroupBox(QStringLiteral("相机"), side);
     auto * camera_layout = new QVBoxLayout(box);
+    auto * camera_tools = new QHBoxLayout;
+    overview_camera_selector = new QComboBox;
+    overview_camera_selector->setObjectName("overviewCameraSelector");
+    overview_camera_selector->addItems({QStringLiteral("前视"), QStringLiteral("下视")});
+    camera_tools->addWidget(overview_camera_selector, 1);
+    overview_camera_focus = button(QStringLiteral("放大"), "overviewCameraFocus", box);
+    camera_tools->addWidget(overview_camera_focus); camera_layout->addLayout(camera_tools);
+    QObject::connect(
+      overview_camera_selector, qOverload<int>(&QComboBox::currentIndexChanged),
+      window, [this](int index) {if (camera) {camera->setCurrentIndex(index);}});
+    QObject::connect(
+      overview_camera_focus, &QPushButton::clicked, window,
+      [this] {set_overview_focus(overview_focus == 2 ? 0 : 2);});
     overview_camera = new CameraCanvas(box); overview_camera->setObjectName("overviewCamera");
     overview_camera->setMinimumHeight(120); camera_layout->addWidget(overview_camera);
     side_layout->addWidget(box, 1);
+    side->setMinimumHeight(side_layout->minimumSize().height());
+    split->setMinimumHeight(std::max(330, side->minimumHeight()));
     split->setStretchFactor(0, 1); split->setStretchFactor(1, 0); split->setSizes({740, 300});
     remember_splitter(split, "overview");
     layout->addWidget(split, 1);
@@ -623,12 +828,13 @@ struct MainWindow::Impl
     form->addRow(QStringLiteral("解锁状态"), armed);
     form->addRow(QStringLiteral("X / Y / Z（odom，m）"), position);
     form->addRow(QStringLiteral("独立有效性"), validity);
-    form->addRow(QStringLiteral("时间证据"), state_age);
+    form->addRow(QStringLiteral("更新时间"), state_age);
+    overview_total_speed = label({}, "overviewTotalSpeed", state);
+    form->addRow(QStringLiteral("三维合速度"), overview_total_speed);
     evidence_layout->addWidget(state);
     auto * phase = new QGroupBox(
       QStringLiteral(
-        "全局阶段观察（"
-        "不关联目录任务）"), evidence_panel);
+        "执行阶段原始状态"), evidence_panel);
     auto * p = new QVBoxLayout(phase);
     global_overview = label({}, "globalPhaseOverview", phase); p->addWidget(global_overview);
     evidence_layout->addWidget(phase);
@@ -641,14 +847,13 @@ struct MainWindow::Impl
         evidence_panel));
     auto * actions = new QHBoxLayout;
     auto * expand = button(
-      QStringLiteral("展开观测证据 / 全局阶段"), "overviewEvidenceToggle", pages);
+      QStringLiteral("详细状态"), "overviewEvidenceToggle", pages);
     expand->setCheckable(true);
     QObject::connect(
       expand, &QPushButton::toggled, window, [evidence_panel, expand](bool shown) {
         evidence_panel->setVisible(shown);
         expand->setText(
-          shown ? QStringLiteral("收起观测证据 / 全局阶段") :
-          QStringLiteral("展开观测证据 / 全局阶段"));
+          shown ? QStringLiteral("收起详细状态") : QStringLiteral("详细状态"));
       });
     actions->addWidget(expand);
     auto * events = button(QStringLiteral("会话事件"), "overviewEvents", pages);
@@ -659,6 +864,25 @@ struct MainWindow::Impl
       });
     actions->addWidget(events); actions->addStretch(); layout->addLayout(actions);
     layout->addWidget(evidence_panel); evidence_panel->hide();
+  }
+  void set_overview_focus(int focus)
+  {
+    if (!overview_split) {return;}
+    if (!overview_focus && focus) {overview_split_sizes = overview_split->sizes();}
+    overview_focus = focus;
+    overview_map_tabs->setVisible(focus != 2); overview_side->setVisible(focus != 1);
+    overview_side->layout()->invalidate();
+    overview_side->setMinimumHeight(overview_side->layout()->minimumSize().height());
+    overview_split->setMinimumHeight(std::max(330, overview_side->minimumHeight()));
+    overview_side->setMaximumWidth(focus == 2 ? QWIDGETSIZE_MAX : 380);
+    overview_map_focus->setText(
+      focus == 1 ? QStringLiteral("恢复布局") : QStringLiteral("放大地图"));
+    overview_camera_focus->setText(
+      focus == 2 ? QStringLiteral("恢复布局") : QStringLiteral("放大"));
+    if (!focus && overview_split_sizes.size() == 2) {
+      overview_split->setSizes(overview_split_sizes);
+    }
+    window->setProperty("overviewFocus", focus);
   }
   void mount_rviz()
   {
@@ -671,27 +895,49 @@ struct MainWindow::Impl
   void mission_page()
   {
     auto * catalog_page = new QWidget(pages); catalog_page->setObjectName("missionCatalogPage");
-    auto * layout = new QVBoxLayout(catalog_page); pages->addWidget(catalog_page);
+    auto * outer = new QHBoxLayout(catalog_page); outer->setContentsMargins(0, 0, 0, 0);
+    auto * split = new QSplitter(Qt::Horizontal, catalog_page);
+    split->setObjectName("taskExecutionSplitter"); split->setChildrenCollapsible(false);
+    outer->addWidget(split); pages->addWidget(catalog_page);
+    auto * directory = new QWidget(split); directory->setMinimumWidth(200);
+    directory->setObjectName("taskCatalogDirectory");
+    auto * directory_layout = new QVBoxLayout(directory);
+    directory_layout->setContentsMargins(8, 8, 8, 8); directory_layout->setSpacing(6);
+    auto * detail = new QWidget(split); detail->setMinimumWidth(0);
+    detail->setObjectName("taskCatalogDetails");
+    task_detail_layout = new QVBoxLayout(detail);
+    task_detail_layout->setContentsMargins(8, 8, 8, 8); task_detail_layout->setSpacing(6);
+    auto * scroll = new QScrollArea(detail); scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    auto * body = new QWidget(scroll); auto * layout = new QVBoxLayout(body);
     layout->setContentsMargins(10, 8, 10, 8); layout->setSpacing(6);
-    layout->addWidget(
+    scroll->setWidget(body); task_detail_layout->addWidget(scroll, 1);
+    split->addWidget(directory); split->addWidget(detail);
+    split->setStretchFactor(0, 0); split->setStretchFactor(1, 1);
+    split->setSizes({280, 760}); remember_splitter(split, "mission-catalog-details");
+    directory_layout->addWidget(
       label(
-        QStringLiteral("任务目录与步骤"),
+        QStringLiteral("任务目录"),
         "missionCatalogHeading", catalog_page));
     execution_page = new QWidget; execution_layout = new QVBoxLayout(execution_page);
     auto * refresh = button(QStringLiteral("刷新目录（只读）"), "listMissions", pages);
-    layout->addWidget(refresh);
+    directory_layout->addWidget(refresh);
     QObject::connect(
       refresh, &QPushButton::clicked, window, [this] {
-        if (available()) {record(bridge::Key::MissionList, source->list_missions());}
+        if (available() && !onboard_task_target()) {
+          record(bridge::Key::MissionList, source->list_missions());
+        }
       });
-    catalog_quality = label({}, "catalogQuality", pages); layout->addWidget(catalog_quality);
+    catalog_quality = label({}, "catalogQuality", pages);
+    directory_layout->addWidget(catalog_quality);
     mission_list = new QListWidget(pages); mission_list->setObjectName("missionList");
-    mission_list->setMinimumHeight(70); mission_list->setMaximumHeight(100); layout->addWidget(
-      mission_list);
-    validate = button(QStringLiteral("校验所选目录任务（静态检查）"), "validateMission", pages);
+    mission_list->setMinimumHeight(70); directory_layout->addWidget(mission_list, 1);
+    validate = button(QStringLiteral("校验所选任务"), "validateMission", pages);
+    validate->setToolTip(QStringLiteral("静态检查目录中的任务；检查通过不代表运行条件已满足"));
     validate->setEnabled(false);
-    auto * preview_actions = new QHBoxLayout(); preview_actions->addWidget(validate);
-    layout->addLayout(preview_actions);
+    auto * preview_actions = new QVBoxLayout(); preview_actions->addWidget(validate);
+    directory_layout->addLayout(preview_actions);
     QObject::connect(
       mission_list, &QListWidget::currentRowChanged, window, [this] {
         const auto name = mission_list->currentItem() ?
@@ -701,7 +947,7 @@ struct MainWindow::Impl
       });
     QObject::connect(
       validate, &QPushButton::clicked, window, [this] {
-        if (available() && mission_list->currentItem()) {
+        if (available() && !onboard_task_target() && mission_list->currentItem()) {
           const auto name = mission_list->currentItem()->text().toUtf8().toStdString();
           const auto receipt = source->validate_mission(name);
           if (receipt.status == bridge::RequestStatus::Queued) {validated_name = name;}
@@ -713,11 +959,12 @@ struct MainWindow::Impl
         "尚未校验。校验成功不是飞"
         "行许可。"), "validationResult", pages);
     layout->addWidget(validation_result);
-    inspect = button(QStringLiteral("读取所选任务详情（只读）"), "inspectMission", pages);
+    inspect = button(QStringLiteral("读取任务详情"), "inspectMission", pages);
+    inspect->setToolTip(QStringLiteral("读取所选任务的已校验副本，只读，不执行"));
     inspect->setEnabled(false); preview_actions->addWidget(inspect);
     QObject::connect(
       inspect, &QPushButton::clicked, window, [this] {
-        if (!available() || !mission_list->currentItem()) {return;}
+        if (!available() || onboard_task_target() || !mission_list->currentItem()) {return;}
         const auto name = mission_list->currentItem()->text().toStdString();
         const auto receipt = source->mission_details(name);
         if (receipt.status == bridge::RequestStatus::Queued) {
@@ -725,7 +972,28 @@ struct MainWindow::Impl
         }
         record(bridge::Key::MissionDetails, receipt);
       });
+    edit_catalog = button(QStringLiteral("在任务编辑中打开"), "editCatalogMission", pages);
+    edit_catalog->setEnabled(false); preview_actions->addWidget(edit_catalog);
+    QObject::connect(
+      edit_catalog, &QPushButton::clicked, window, [this] {
+        if (!available() || onboard_task_target() || !current->mission_details.value ||
+        !mission_list->currentItem()) {return;}
+        const auto & document = *current->mission_details.value;
+        if (!document.success || document.mission_name !=
+        mission_list->currentItem()->text().toStdString()) {return;}
+        editor->open_document(
+          QString::fromUtf8(document.mission_name.data(), document.mission_name.size()),
+          QString::fromUtf8(document.content.data(), document.content.size()));
+        task_tabs->setCurrentIndex(1);
+      });
     details_summary = label(QStringLiteral("尚未读取任务详情"), "missionDetailsSummary", pages);
+    read_summary = label(QStringLiteral("尚未读取任务详情"), "missionReadSummary", pages);
+    layout->addWidget(read_summary);
+    auto * read_details = new QToolButton(pages); read_details->setCheckable(true);
+    read_details->setText(QStringLiteral("读取版本详情"));
+    read_details->setObjectName("missionReadDetailsToggle"); layout->addWidget(read_details);
+    details_summary->hide();
+    QObject::connect(read_details, &QToolButton::toggled, details_summary, &QWidget::setVisible);
     layout->addWidget(details_summary);
     task_dependencies = label(
       QStringLiteral("读取任务后检查算法依赖接口。"), "taskAlgorithmDependencies", pages);
@@ -788,7 +1056,7 @@ struct MainWindow::Impl
     QObject::connect(execution_id, &QLineEdit::textChanged, window, [this] {update_buttons();});
     QObject::connect(
       query, &QPushButton::clicked, window, [this] {
-        if (!available()) {return;}
+        if (!available() || onboard_task_target()) {return;}
         const auto id = execution_id->text().toUtf8().toStdString();
         const auto receipt = source->query_mission(id);
         if (receipt.status == bridge::RequestStatus::Queued) {queried_id = id;}
@@ -860,18 +1128,16 @@ struct MainWindow::Impl
       });
     QObject::connect(
       overlay_mode, qOverload<int>(&QComboBox::currentIndexChanged), window, [this] {
-        overlay_submitted_stamp = -1;
-        overlay_observations.reset();
-        if (overlay_decoder) {overlay_decoder->clear();}
+        clear_overlay_preview();
         camera_canvas->frame({}, QStringLiteral("显示模式已变更，等待同帧观测"));
+        camera_canvas->setProperty("display_stamp_ns", QVariant{});
+        overlay_evidence->setText(QStringLiteral("显示模式已变更，等待同帧观测"));
         overlay_model->replace({});
       });
     QObject::connect(
       camera, qOverload<int>(&QComboBox::currentIndexChanged), window, [this] {
         submitted_stamp = -1;
-        overlay_submitted_stamp = -1;
-        overlay_observations.reset();
-        if (overlay_decoder) {overlay_decoder->clear();}
+        clear_overlay_preview();
         if (decoder) {decoder->clear();} clear_images(
           QStringLiteral(
             "选源已变更，等待该源的新"
@@ -940,9 +1206,28 @@ struct MainWindow::Impl
     auto * layout =
       page(
       QStringLiteral("局部二维 · odom/ENU"), QStringLiteral(
-        "仅观测实际轨迹、当前有效机位/目标/几何障"
-        "碍。无点击发目标、无完整地图或飞行边界推断。"));
+        "显示障碍栅格、实际轨迹与当前有效机位／目标；"
+        "实时障碍框可在图层中开启。"));
     map = new MapCanvas(pages); map->setObjectName("spatialCanvas"); layout->addWidget(map, 1);
+    map->set_grid_enabled(true); map->set_obstacle_overlay(false);
+    auto * layers = new QToolButton(pages); layers->setText(QStringLiteral("图层"));
+    layers->setObjectName("spatialMapLayers");
+    layers->setAccessibleName(QStringLiteral("局部二维图层"));
+    layers->setPopupMode(QToolButton::InstantPopup);
+    auto * layer_menu = new QMenu(layers);
+    auto * grid_layer = layer_menu->addAction(QStringLiteral("障碍栅格"));
+    grid_layer->setObjectName("spatialGridLayer");
+    grid_layer->setCheckable(true); grid_layer->setChecked(true);
+    auto * obstacle_layer = layer_menu->addAction(QStringLiteral("实时障碍框"));
+    obstacle_layer->setObjectName("spatialObstacleLayer"); obstacle_layer->setCheckable(true);
+    layers->setMenu(layer_menu);
+    layout->itemAt(0)->layout()->addWidget(layers);
+    QObject::connect(
+      grid_layer, &QAction::toggled, window,
+      [this](bool on) {map->set_grid_enabled(on);});
+    QObject::connect(
+      obstacle_layer, &QAction::toggled, window,
+      [this](bool on) {map->set_obstacle_overlay(on);});
     layout->addWidget(
       label(
         QStringLiteral(
@@ -1175,6 +1460,7 @@ struct MainWindow::Impl
           "请先完成或关闭本地草"
           "稿操作，再退出窗口。"), 5000); return;
     }
+    if (task_save_dialog) {task_save_dialog->hide();}
     parameter_panel->exit_question(true);
     import_panel->exit_question(true);
     if (editor->dirty() && !draft_exit_confirmed) {
@@ -1304,9 +1590,182 @@ struct MainWindow::Impl
   {
     return source && current && current->running && !current->stopped && !closing && !disconnecting;
   }
+  bool onboard_task_target() const
+  {
+    return task_target && task_target->currentData().toString() == "onboard";
+  }
+  bool same_task_target(const QJsonObject & expected, const QJsonObject & actual) const
+  {
+    if (expected.isEmpty() || actual.isEmpty()) {return false;}
+    for (const auto & key : {"server_id", "boot_id", "client_id"}) {
+      if (expected.value(key).toString().isEmpty() || expected.value(key) != actual.value(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  QJsonObject saved_task() const
+  {
+    if (!onboard_task_target()) {
+      const bool matches = available() && current &&
+        simulation_saved.value("observer_session").toDouble() == current->observation_session_id &&
+        simulation_saved.value("observer_epoch").toDouble() == current->time_epoch &&
+        import_panel->matches_saved_receipt(simulation_saved);
+      return matches ? simulation_saved : QJsonObject{};
+    }
+    const auto context = onboard_session ?
+      onboard_session->property("onboardMissionContext").value<QJsonObject>() : QJsonObject{};
+    return same_task_target(
+      onboard_saved.value("target").toObject(),
+      context.value("target").toObject()) ? onboard_saved : QJsonObject{};
+  }
+  void view_saved_task()
+  {
+    const auto receipt = saved_task(); const auto name = receipt.value("name").toString();
+    if (name.isEmpty() || closing) {return;}
+    task_save_dialog->hide(); window->show_page("tasks"); task_tabs->setCurrentIndex(0);
+    if (onboard_task_target()) {
+      if (onboard_session &&
+        onboard_session->metaObject()->indexOfMethod("focusMission(QString)") >= 0)
+      {
+        QMetaObject::invokeMethod(
+          onboard_session, "focusMission", Qt::DirectConnection, Q_ARG(QString, name));
+      }
+    } else {
+      saved_catalog_focus = name; refresh_saved_catalog = true; read_saved_catalog = true;
+      update_buttons();
+    }
+  }
+  QJsonObject simulation_step_support() const
+  {
+    QJsonObject support;
+    const auto now = bridge::detail::steady_seconds();
+    const bool fresh_graph = available() && current->backend_graph_observed > 0 &&
+      now >= current->backend_graph_observed && now - current->backend_graph_observed <= 2;
+    for (const auto & info : task_step_infos()) {
+      QString state = "unknown";
+      QString reason = QStringLiteral("等待当前平台的后端观测；可继续离线编辑。");
+      if (fresh_graph) {
+        const auto key = info.key == "waypoint" ? std::string("goto") : info.key.toStdString();
+        const auto found = current->task_backends.find(key);
+        const bool present = found != current->task_backends.end() && found->second;
+        state = present || info.key == "hover" ? "supported" : "not_ready";
+        reason = info.key == "hover" ? QStringLiteral("由任务状态机等待；执行任务仍需任务服务。") :
+          (present ? QStringLiteral("动作接口已发现；输入有效性及执行条件仍由平台检查。") :
+          QStringLiteral("当前连接未发现此动作后端，请检查已启动的运行方案。"));
+        if ((info.key == "navigate" || info.key == "track" || info.key == "search" ||
+          info.key == "explore") && current->selected_localization_backend == "disabled")
+        {
+          state = "not_ready"; reason = QStringLiteral("定位已关闭，请配置定位与地图后再检查。");
+        }
+        if (info.key == "explore" && (current->selected_profile != "navigation_dev" ||
+          current->selected_localization_backend != "fast_lio"))
+        {
+          state = "not_ready";
+          reason = QStringLiteral("FUEL 探索需要导航仿真、FAST-LIO、GCOPTER及探索后端。");
+        }
+        if (info.key == "precision_land" && present) {
+          state = "unknown";
+          reason = QStringLiteral("接口已发现；需单独确认精降已启用、下视相机及标记观测链。");
+          const auto caps = current->capabilities.find(bridge::Key::LandingCapabilities);
+          if (caps != current->capabilities.end() && caps->second.value &&
+            display_quality(caps->second.evidence, *current, now, 2, false) ==
+            bridge::Quality::ValidAtObservation)
+          {
+            const auto & details = caps->second.value->details;
+            if (std::any_of(
+                details.begin(), details.end(), [](const auto & value) {
+                  return value.find("disabled") != std::string::npos;
+                }))
+            {
+              state = "not_ready";
+              reason = QStringLiteral("精降后端尚未启用，请使用完整精降配置。");
+            }
+          }
+        }
+      }
+      support[info.key] = QJsonObject{{"state", state}, {"reason", reason}};
+    }
+    return support;
+  }
+  void update_task_center()
+  {
+    if (!task_target) {return;}
+    const bool onboard = onboard_task_target();
+    const auto context = onboard_session ?
+      onboard_session->property("onboardMissionContext").value<QJsonObject>() : QJsonObject{};
+    const auto target = context.value("target").toObject();
+    editor->set_platform_context(
+      QJsonObject{{"kind", onboard ? "onboard" : "simulation"},
+        {"fresh", onboard ? context.value("fresh").toBool() : available()},
+        {"step_support", onboard ? context.value(
+            "step_support").toObject() : simulation_step_support()}});
+    const auto alias = target.value("alias").toString(QStringLiteral("机载平台"));
+    if (task_target->count() > 1) {
+      task_target->setItemText(
+        1, target.isEmpty() ? QStringLiteral("机载平台（未连接）") : alias);
+    }
+    task_target_info->setText(
+      onboard ?
+      (target.isEmpty() ? QStringLiteral("请在连接管理中连接机载平台") :
+      QStringLiteral("%1 · %2 · 身份 %3%4")
+      .arg(
+        alias, target.value("url").toString(), target.value("server_id").toString().left(12),
+        context.value("fresh").toBool() ? QString{} : QStringLiteral(" · 状态未更新"))) :
+      QStringLiteral("目录来自当前 DDS 连接；任务执行沿用本机仿真权限。"));
+    task_target_info->setToolTip(QString::fromUtf8(QJsonDocument(target).toJson()));
+    const auto draft = editor->validated_draft();
+    task_save_hint->setText(
+      onboard ?
+      (context.value("fresh").toBool() ?
+      QStringLiteral("保存当前校验版本到机载平台；执行前仍需重新读取审阅。") :
+      QStringLiteral("连接机载平台后可保存；当前编辑保留在本地。")) :
+      (!import_options.enabled ?
+      QStringLiteral("当前连接未启用平台保存；本地编辑、校验和导出仍可用。") :
+      (!draft ? QStringLiteral("请先校验任务，并应用或重置尚未提交的表单修改。") :
+      QStringLiteral("可直接保存当前校验版本；本地导出为独立可选操作。"))));
+    import_panel->observe(draft, available() && !onboard);
+    const auto saved = saved_task();
+    const bool same_version = draft && saved.value("name").toString() ==
+      QString::fromStdString(draft->name) && saved.value("sha256").toString() ==
+      QString::fromStdString(draft->hash);
+    QString progress = editor->property("draftValidationMessage").toString();
+    if (same_version) {
+      progress = QStringLiteral("当前版本已保存到所选平台；执行前需读取并审阅平台版本。");
+    }
+    if (progress.isEmpty()) {
+      progress = QStringLiteral("本地任务草稿；选择模板或打开任务后开始编辑。");
+    }
+    task_progress->setText(progress); review_saved->setVisible(!saved.isEmpty());
+    review_saved->setToolTip(
+      QStringLiteral("查看平台已保存的任务：%1").arg(saved.value("name").toString()));
+    if (!onboard_session) {return;}
+    QJsonObject candidate{{"revision", static_cast<double>(editor->revision())},
+      {"target", target}, {"valid", false}};
+    if (onboard && !closing && draft) {
+      candidate["valid"] = true;
+      candidate["name"] = QString::fromUtf8(draft->name.data(), draft->name.size());
+      candidate["content"] = QString::fromUtf8(draft->content.data(), draft->content.size());
+      candidate["hash"] = QString::fromStdString(draft->hash);
+    }
+    if (staged_mission == candidate) {return;}
+    staged_mission = candidate;
+    onboard_session->setProperty("onboardMissionCandidate", candidate);
+    if (onboard_session->metaObject()->indexOfMethod("setMissionCandidate(QJsonObject)") >= 0) {
+      QMetaObject::invokeMethod(
+        onboard_session, "setMissionCandidate", Qt::DirectConnection,
+        Q_ARG(QJsonObject, candidate));
+    }
+  }
   void update_buttons()
   {
-    import_panel->observe(editor->exported_draft(), available());
+    import_panel->observe(editor->validated_draft(), available() && !onboard_task_target());
+    if (!onboard_task_target() && available() && refresh_saved_catalog) {
+      const auto receipt = source->list_missions();
+      if (receipt.status == bridge::RequestStatus::Queued) {
+        refresh_saved_catalog = false; record(bridge::Key::MissionList, receipt);
+      }
+    }
     parameter_panel->observer_available(available());
     if (mission_panel) {
       const auto name = mission_list->currentItem() ?
@@ -1316,10 +1775,19 @@ struct MainWindow::Impl
         pending(bridge::Key::MissionDetails, current->mission_details.evidence.request_id),
         available(), config.use_sim_time);
     }
-    if (inspect) {inspect->setEnabled(available() && mission_list->currentItem());}
-    validate->setEnabled(available() && mission_list->currentItem());
+    const bool simulation = available() && !onboard_task_target();
+    if (inspect) {inspect->setEnabled(simulation && mission_list->currentItem());}
+    validate->setEnabled(simulation && mission_list->currentItem());
+    if (edit_catalog) {
+      edit_catalog->setEnabled(
+        simulation && current->mission_details.value && current->mission_details.value->success &&
+        mission_list->currentItem() &&
+        current->mission_details.value->mission_name ==
+        mission_list->currentItem()->text().toStdString() &&
+        !mission_content->toPlainText().isEmpty());
+    }
     query->setEnabled(
-      available() && bridge::detail::execution_id(
+      simulation && bridge::detail::execution_id(
         execution_id->text().toStdString()));
   }
   void record(bridge::Key key, bridge::RequestReceipt receipt)
@@ -1403,11 +1871,18 @@ struct MainWindow::Impl
   {
     const auto found = expected.find(key); return found != expected.end() && found->second != id;
   }
+  void clear_overlay_preview()
+  {
+    overlay_observations.reset(); overlay_submitted_stamp = -1;
+    completed_overlay_frame.reset(); completed_overlay_observations.reset();
+    overlay_origin.reset();
+    if (overlay_decoder) {overlay_decoder->clear();}
+  }
   void clear_images(const QString & message)
   {
     recording_frame.reset();
     if (peripherals) {peripherals->observe(current, {}, false, config.use_sim_time);}
-    overlay_observations.reset(); overlay_submitted_stamp = -1;
+    clear_overlay_preview();
     overview_camera->frame({}, message); camera_canvas->frame({}, message);
     overview_camera->setProperty("display_stamp_ns", QVariant{});
     camera_canvas->setProperty("display_stamp_ns", QVariant{});
@@ -1505,8 +1980,18 @@ struct MainWindow::Impl
       live ? (v.sdk.value.connected ? QStringLiteral("已连接") :
       QStringLiteral("未连接")) : unknown);
     state_connection->setToolTip(quality_text(q));
-    armed->setText(live ? yes(v.sdk.value.armed) : unknown);
-    mode->setText(live ? text(v.sdk.value.flight_mode_name, 256) : unknown);
+    const bool flight_state_live = live && v.sdk.value.connected;
+    const auto armed_value = v.sdk.value.armed ?
+      QStringLiteral("已解锁") : QStringLiteral("未解锁");
+    armed->setText(
+      flight_state_live ? armed_value :
+      (v.sdk.received ? QStringLiteral("未知 · 最后已知：") + armed_value :
+      QStringLiteral("状态未知")));
+    overview_armed->setText(armed->text());
+    mode->setText(
+      flight_state_live ? text(v.sdk.value.flight_mode_name, 128) :
+      (v.sdk.received ? QStringLiteral("最后已知：") + text(v.sdk.value.flight_mode_name, 128) :
+      QStringLiteral("模式未知")));
     mode->setToolTip(mode->text() + " · " + quality_text(q));
     position->setText(
       live &&
@@ -1524,8 +2009,16 @@ struct MainWindow::Impl
         "拔高度；定位不可用时不显示数值。"));
     instruments->snapshot(s, now);
     speed->setText(
-      live && v.velocity_valid && v.speed_mps ? number(
-        *v.speed_mps) + " m/s" : QStringLiteral("—（速度不可用）"));
+      live && v.velocity_valid && v.horizontal_speed_mps ?
+      number(*v.horizontal_speed_mps) : QStringLiteral("—"));
+    overview_vertical_speed->setText(
+      live && v.velocity_valid && v.vertical_speed_mps ?
+      QStringLiteral("升降 %1%2 m/s").arg(*v.vertical_speed_mps >= 0 ? "+" : "")
+      .arg(number(*v.vertical_speed_mps)) : QStringLiteral("升降速度未知"));
+    overview_vertical_speed->setToolTip(QStringLiteral("向上为正，向下为负。"));
+    overview_total_speed->setText(
+      live && v.velocity_valid && v.speed_mps ?
+      number(*v.speed_mps) + " m/s" : QStringLiteral("—"));
     battery->setText(
       live && v.battery_valid && v.battery_percent ? number(
         *v.battery_percent,
@@ -1550,6 +2043,61 @@ struct MainWindow::Impl
         value->setStyleSheet(QString("font-size:%1px;").arg(pixels));
       }
     }
+  }
+  void overview_view(double now)
+  {
+    const auto & snapshot = *current;
+    const auto & state = snapshot.state;
+    overview_geography->snapshot(current, now);
+    const bool gps = overview_geography->gps_available();
+    const auto quality = display_quality(state.evidence, snapshot, now, 1, true);
+    const bool live = quality == bridge::Quality::ValidAtObservation && state.sdk.received &&
+      state.sdk.fresh;
+    const auto localization = gps ?
+      (live && state.position_valid ?
+      QStringLiteral("GPS／局部位置可用") : QStringLiteral("GPS可用")) :
+      live && state.position_valid ? QStringLiteral("局部位置可用") : QStringLiteral("定位未就绪");
+    auto observed_name = window->windowTitle(); observed_name.remove("EasyFly · ");
+    overview_context->setText(QStringLiteral("当前观测：%1 · %2").arg(observed_name, localization));
+    const auto task = overview_task_overlay(snapshot, now);
+    overview_map->set_task_overlay(task); overview_geography->set_task_overlay(task);
+    if (geography) {geography->set_task_overlay(task);}
+    overview_task->setText(task.bound ? task.summary : task.reason);
+    overview_task->setToolTip(task.reason);
+    overview_task->setProperty("executionBound", task.bound);
+    overview_task->setProperty("currentStep", task.current_step);
+    overview_task->setProperty("completedSteps", task.completed_steps);
+    if (gps) {overview_gps_good_at = now;}
+    const auto mode_index = overview_map_mode->currentIndex();
+    const bool geographic = mode_index == 2 || (mode_index == 0 &&
+      (gps || (overview_map_tabs->currentIndex() == 1 && overview_gps_good_at > 0 &&
+      now - overview_gps_good_at <= 5)));
+    overview_map_tabs->setCurrentIndex(geographic ? 1 : 0);
+    for (const auto & name : {"overviewMapZoomIn", "overviewMapZoomOut", "overviewMapCenter",
+        "overviewMapFit", "overviewMapFollow", "overviewMapLayers"})
+    {window->findChild<QWidget *>(name)->setVisible(!geographic);}
+    {
+      const QSignalBlocker blocker(overview_follow);
+      overview_follow->setChecked(overview_map->following());
+    }
+    QStringList warnings;
+    if (state.sdk.received && (!live || !state.sdk.value.connected)) {
+      warnings << QStringLiteral("飞控连接或状态失效，解锁和模式仅显示最后已知值");
+    } else if (live && !state.position_valid) {
+      warnings << QStringLiteral("局部位置暂不可用");
+    }
+    if (live && state.battery_valid && state.battery_percent && *state.battery_percent < 15) {
+      warnings << QStringLiteral("电量偏低：%1%").arg(number(*state.battery_percent, 1));
+    }
+    if (snapshot.command_uncertain_observed) {
+      warnings << QStringLiteral("存在控制结果未确认记录，请查看详细状态");
+    }
+    overview_alert->setText(
+      warnings.isEmpty() ? QString{} : QStringLiteral("⚠ ") +
+      warnings.join("；"));
+    overview_alert->setVisible(!warnings.isEmpty());
+    overview_alert->setStyleSheet("color:#9a5200;");
+    window->findChild<QWidget *>("overviewAlertDetails")->setVisible(!warnings.isEmpty());
   }
   void mission_view(double now)
   {
@@ -1586,11 +2134,25 @@ struct MainWindow::Impl
           }
           const auto matches = mission_list->findItems(selection, Qt::MatchExactly);
           if (!matches.empty()) {mission_list->setCurrentItem(matches[0]);}
+          if (!saved_catalog_focus.isEmpty()) {
+            const auto saved = mission_list->findItems(saved_catalog_focus, Qt::MatchExactly);
+            if (!saved.empty()) {
+              mission_list->setCurrentItem(saved[0]); saved_catalog_focus.clear();
+            }
+          }
         }
         if (!mission_list->currentItem() || mission_list->currentItem()->text() != selection) {
           details_name.clear(); clear_details();
         }
         update_buttons();
+        if (read_saved_catalog && mission_list->currentItem() && saved_catalog_focus.isEmpty()) {
+          read_saved_catalog = false;
+          const auto name = mission_list->currentItem()->text().toStdString();
+          const auto receipt = source->mission_details(name);
+          if (receipt.status == bridge::RequestStatus::Queued) {
+            details_name = name; clear_details(); record(bridge::Key::MissionDetails, receipt);
+          }
+        }
       }
     }
     const auto validation = s.missions.find(bridge::Key::MissionValidation);
@@ -1619,6 +2181,7 @@ struct MainWindow::Impl
   }
   void clear_details()
   {
+    if (read_summary) {read_summary->setText(QStringLiteral("尚未读取所选平台任务的详情。"));}
     rendered_details = rendered_details_session = 0;
     if (steps_model) {steps_model->replace({});}
     if (mission_content) {mission_content->clear();}
@@ -1632,6 +2195,7 @@ struct MainWindow::Impl
     if (details_name.empty()) {return;}
     const auto & observation = current->mission_details;
     if (pending(bridge::Key::MissionDetails, observation.evidence.request_id)) {
+      read_summary->setText(QStringLiteral("正在读取平台任务：") + text(details_name, 128));
       details_summary->setText(QStringLiteral("等待任务详情：") + text(details_name, 128)); return;
     }
     const auto quality = display_quality(observation.evidence, *current, now, 2, false);
@@ -1644,6 +2208,7 @@ struct MainWindow::Impl
         QStringLiteral("任务详情不可用：%1 · %2\n%3").arg(
           text(details_name, 128), quality_text(quality),
           response ? text(response->message, 2048) : text(observation.evidence.reason, 2048)));
+      read_summary->setText(details_summary->text());
       return;
     }
     const auto dependency = missing_mission_backends(*current, now);
@@ -1651,6 +2216,10 @@ struct MainWindow::Impl
       dependency.isEmpty() ? QStringLiteral(
         "已读取任务所需接口已发现；输入有效性与飞行准入仍由后端检查。") : dependency);
     const auto & format = current->mission_format;
+    read_summary->setText(
+      QStringLiteral("平台任务：%1 · %2 步 · %3\n已读取平台版本，执行前仍需审阅确认。")
+      .arg(text(details_name, 128)).arg(current->mission_plan->steps.size())
+      .arg(quality_text(quality)));
     details_summary->setText(
       QStringLiteral(
         "读取文件：%1 · %2 · %3\nSHA-256：%4\n"
@@ -1674,7 +2243,7 @@ struct MainWindow::Impl
     QVector<QStringList> rows;
     for (const auto & step : current->mission_plan->steps) {
       rows.push_back(
-        {QString::number(rows.size() + 1), text(step.type, 32),
+        {QString::number(rows.size() + 1), task_step_title(step.type),
           mission_step_parameters(step), number(step.timeout, 6)});
     }
     steps_model->replace(std::move(rows));
@@ -1759,6 +2328,7 @@ struct MainWindow::Impl
     const auto & frame = s.images[channel];
     const ImageBinding binding{s.observation_session_id, s.time_epoch, channel,
       config.image_topics[channel]};
+    const bool processed = overlay_mode->currentIndex() != 0;
     if (last_session != s.observation_session_id || last_epoch != s.time_epoch ||
       last_camera != channel)
     {
@@ -1770,6 +2340,34 @@ struct MainWindow::Impl
       text(
         binding.topic,
         256) + " · " + quality_text(q) + "\n" + ages(frame.evidence, s, now));
+    const auto freeze_preview = [&](const std::shared_ptr<const ConvertedFrame> & decoded) {
+        if (!decoder || !available() || !frame.value || !decoded ||
+          !(decoded->binding == binding) || !decoded->error.empty() || decoded->image.isNull() ||
+          frame.evidence.time_epoch != s.time_epoch ||
+          s.clock.quality != bridge::Quality::ValidAtObservation ||
+          decoded->stamp_ns <= 0 || decoded->stamp_ns >
+          bridge::detail::stamp_ns(frame.value->header.stamp)) {return false;}
+        const double receipt_age = now - decoded->first_received;
+        const double source_age = static_cast<double>(s.clock.now_ns - decoded->stamp_ns) / 1e9;
+        if (receipt_age < 0 || receipt_age > 5 || source_age < -.2) {return false;}
+        const auto caption = QStringLiteral("%1 · %2 · 帧源年龄 %3s · stamp=%4")
+          .arg(camera->currentText(), text(binding.topic, 256), number(source_age))
+          .arg(decoded->stamp_ns);
+        overview_camera->frame(decoded->image, caption); overview_camera->set_frozen(true);
+        overview_camera->overlay({});
+        overview_camera->setProperty("display_stamp_ns", QVariant{});
+        if (!processed) {
+          camera_canvas->frame(decoded->image, caption); camera_canvas->set_frozen(true);
+          camera_canvas->overlay({});
+          camera_canvas->setProperty("display_stamp_ns", QVariant{});
+          clear_overlay_preview(); overlay_model->replace({});
+          overlay_evidence->setText(QStringLiteral("画面暂停，旧帧叠加结果已清除"));
+        }
+        return true;
+      };
+    if (q == bridge::Quality::Stale && decoder && freeze_preview(decoder->latest())) {
+      if (processed) {overlay_view(now, channel, binding);} return;
+    }
     if (!decoder || !available() || q != bridge::Quality::ValidAtObservation || !frame.value) {
       if (decoder) {decoder->clear();} submitted_stamp = -1;
       clear_images(text(binding.topic, 256) + " · " + quality_text(q)); return;
@@ -1780,11 +2378,16 @@ struct MainWindow::Impl
       decoder->submit(frame.value, frame.evidence.first_source_steady); submitted_stamp = ns;
     }
     const auto decoded = decoder->latest();
-    if (!decoded || !(decoded->binding == binding)) {return;}
+    if (!decoded || !(decoded->binding == binding)) {
+      clear_images(QStringLiteral("等待当前源的新鲜图像")); return;
+    }
     const double age = static_cast<double>(s.clock.now_ns - decoded->stamp_ns) / 1e9;
     const bool fresh = decoded->stamp_ns <= ns && age >= -.2 && age <= 1 &&
       now - decoded->first_received <= 1;
     if (!fresh || !decoded->error.empty()) {
+      if (!fresh && decoded->error.empty() && freeze_preview(decoded)) {
+        if (processed) {overlay_view(now, channel, binding);} return;
+      }
       clear_images(
         decoded->error.empty() ?
         QStringLiteral("转换结果已过期，不显示旧帧") : text(decoded->error));
@@ -1828,64 +2431,114 @@ struct MainWindow::Impl
       tracking ? observations.binding.tracks_topic : observations.binding.detections_topic;
     const auto q = display_quality(evidence, s, now, 1, true);
     const auto image_quality = display_quality(image.evidence, s, now, 1, true);
-    const auto fail = [&](const QString & reason) {
+    const auto empty = [&](const QString & reason) {
         camera_canvas->frame({}, reason); overlay_model->replace({});
         camera_canvas->setProperty("display_stamp_ns", QVariant{});
         overlay_evidence->setText(reason);
       };
-    if (observations.binding.image_topic.empty() ||
-      observations.binding.image_topic != binding.topic)
-    {
-      fail(
-        QStringLiteral(
-          "该相机没有明确感知绑"
-          "定；不复用其他相机结果")); return;
+    const auto same_origin = [](const auto & a, const auto & b) {
+        return a.image_topic == b.image_topic && a.detections_topic == b.detections_topic &&
+               a.tracks_topic == b.tracks_topic && a.targets_topic == b.targets_topic &&
+               a.target_frame == b.target_frame && a.ellipse_topic == b.ellipse_topic &&
+               a.color_line_topic == b.color_line_topic;
+      };
+    if (overlay_origin && !same_origin(*overlay_origin, observations.binding)) {
+      clear_overlay_preview();
     }
-    if (!image.value || image_quality != bridge::Quality::ValidAtObservation ||
-      q != bridge::Quality::ValidAtObservation)
+    overlay_origin = observations.binding;
+    const auto hard_failure = [](bridge::Quality quality) {
+        return quality != bridge::Quality::ValidAtObservation &&
+               quality != bridge::Quality::Stale && quality != bridge::Quality::Unavailable;
+      };
+    const bool source_expired = (ellipse || line) && q == bridge::Quality::Invalid &&
+      evidence.reason == bridge::kValidatedGeometryExpiry;
+    const bool invalid_geometry = !source_expired &&
+      ((ellipse && observations.ellipses.value && !observations.ellipses.value->valid) ||
+      (line && observations.color_lines.value && !observations.color_lines.value->valid));
+    const bool expired_match = (q == bridge::Quality::Stale || source_expired) && !image.value &&
+      image_quality == bridge::Quality::NotReceived;
+    if (observations.binding.image_topic.empty() ||
+      observations.binding.image_topic != binding.topic ||
+      s.clock.quality != bridge::Quality::ValidAtObservation || !available() ||
+      invalid_geometry ||
+      (hard_failure(q) && !source_expired) || (hard_failure(image_quality) && !expired_match))
     {
-      if (overlay_decoder) {overlay_decoder->clear();} overlay_submitted_stamp = -1;
-      const auto reason = QStringLiteral(" · 未取得新鲜同帧图像，未叠框");
-      fail(text(topic, 256) + " · " + quality_text(q) + reason);
+      clear_overlay_preview();
+      empty(
+        text(topic, 256) + " · " +
+        quality_text(invalid_geometry ? bridge::Quality::Invalid : q) +
+        QStringLiteral(" · 同帧观测不可用"));
       return;
     }
-    if (!overlay_decoder) {
-      try {
-        overlay_decoder = std::make_unique<ImagePipeline>();
-      } catch (const std::exception & error) {
-        fail(QStringLiteral("感知转换器未启动：") + text(error.what(), 256)); return;
+    // Harvest the completed conversion with the exact observations submitted
+    // alongside it, before accepting a newer candidate. Keep display and work
+    // slots separate: metadata/image transport and conversion are asynchronous.
+    if (overlay_decoder) {
+      const auto converted = overlay_decoder->latest();
+      if (converted && converted->binding == binding &&
+        converted->stamp_ns == overlay_submitted_stamp && overlay_observations)
+      {
+        if (!converted->error.empty()) {
+          clear_overlay_preview(); empty(text(converted->error)); return;
+        }
+        const auto matched = camera_overlay(
+          s, *converted, channel, static_cast<CameraOverlayMode>(overlay_mode->currentIndex()),
+          now, &*overlay_observations);
+        if (matched.matched) {
+          completed_overlay_frame = converted;
+          completed_overlay_observations = *overlay_observations;
+        }
       }
     }
-    overlay_decoder->bind(binding);
-    const auto stamp = bridge::detail::stamp_ns(image.value->header.stamp);
-    const auto converted = overlay_decoder->latest();
-    const bool ready = converted && converted->binding == binding &&
-      converted->stamp_ns == overlay_submitted_stamp && converted->error.empty() &&
-      overlay_observations.has_value();
-    const auto overlay = ready ? camera_overlay(
-      s, *converted, channel,
-      static_cast<CameraOverlayMode>(overlay_mode->currentIndex()), now,
-      &*overlay_observations) : CameraOverlay{};
-    // Render only the metadata saved with the completed conversion. The newest
-    // observation may advance while this worker is decoding an older image.
-    if (stamp != overlay_submitted_stamp) {
-      overlay_decoder->submit(image.value, image.evidence.first_source_steady);
-      overlay_submitted_stamp = stamp; overlay_observations = observations;
+    if (image.value && image_quality == bridge::Quality::ValidAtObservation &&
+      q == bridge::Quality::ValidAtObservation)
+    {
+      if (!overlay_decoder) {
+        try {
+          overlay_decoder = std::make_unique<ImagePipeline>();
+        } catch (const std::exception & error) {
+          clear_overlay_preview();
+          empty(QStringLiteral("感知转换器未启动：") + text(error.what(), 256)); return;
+        }
+      }
+      overlay_decoder->bind(binding);
+      const auto stamp = bridge::detail::stamp_ns(image.value->header.stamp);
+      if (stamp != overlay_submitted_stamp) {
+        overlay_decoder->submit(image.value, image.evidence.first_source_steady);
+        overlay_submitted_stamp = stamp; overlay_observations = observations;
+      }
     }
-    if (!ready) {
-      fail(QStringLiteral("等待同帧感知图像转换（不沿用旧框）")); return;
+    if (!completed_overlay_frame || !completed_overlay_observations ||
+      !(completed_overlay_frame->binding == binding))
+    {
+      empty(QStringLiteral("等待第一组同帧感知图像")); return;
     }
-    if (!overlay.matched) {fail(overlay.status); return;}
+    const auto & converted = completed_overlay_frame;
+    const auto overlay = q == bridge::Quality::Stale || source_expired ? CameraOverlay{} :
+    camera_overlay(
+      s, *converted, channel, static_cast<CameraOverlayMode>(overlay_mode->currentIndex()),
+      now, &*completed_overlay_observations);
     const auto age = static_cast<double>(s.clock.now_ns - converted->stamp_ns) / 1e9;
-    camera_canvas->frame(
-      converted->image, QStringLiteral(
-        "同帧感知 · 非最新原图 · 源"
-        "年龄 %1s · stamp=%2")
-      .arg(number(age)).arg(converted->stamp_ns));
-    camera_canvas->overlay(overlay);
+    const auto caption = QStringLiteral("同帧感知 · 非最新原图 · 源年龄 %1s · stamp=%2")
+      .arg(number(age)).arg(converted->stamp_ns);
+    if (!overlay.matched) {
+      const double receipt_age = now - converted->first_received;
+      if (age < -.2 || age > 5 || receipt_age < 0 || receipt_age > 5 ||
+        converted->image.isNull() || !converted->error.empty())
+      {
+        completed_overlay_frame.reset(); completed_overlay_observations.reset();
+        empty(QStringLiteral("同帧预览已过期，等待新的匹配图像")); return;
+      }
+      camera_canvas->frame(converted->image, caption); camera_canvas->overlay({});
+      camera_canvas->set_frozen(true);
+      camera_canvas->setProperty("display_stamp_ns", QVariant{});
+      overlay_model->replace({});
+      overlay_evidence->setText(QStringLiteral("画面暂停 · 同帧结果已过期，旧叠层已清除"));
+      return;
+    }
+    camera_canvas->frame(converted->image, caption); camera_canvas->overlay(overlay);
     camera_canvas->setProperty(
-      "display_stamp_ns",
-      QVariant::fromValue<qlonglong>(converted->stamp_ns));
+      "display_stamp_ns", QVariant::fromValue<qlonglong>(converted->stamp_ns));
     overlay_evidence->setText(
       overlay.status + "\n" + text(topic, 256) + QStringLiteral(
         " · 所示帧源龄 %1s / 收龄 %2s").arg(number(age), number(now - converted->first_received)));
@@ -2121,6 +2774,7 @@ struct MainWindow::Impl
   }
   void tick()
   {
+    update_task_center();
     window->setProperty("connectionHandoffBlocked", connection_lobby && editor->dirty());
     tools_tick();
     if (source) {current = source->snapshot();}
@@ -2163,6 +2817,7 @@ struct MainWindow::Impl
     }
     map->snapshot(current, now); overview_map->snapshot(current, now);
     if (geography) {geography->snapshot(current, now);}
+    overview_view(now);
     update_buttons();
   }
 };
@@ -2181,6 +2836,31 @@ void MainWindow::set_connection_page(QWidget * page, bool lobby)
 {
   if (!page || impl_->connection_page) {return;}
   impl_->connection_page = page; impl_->connection_lobby = lobby;
+  impl_->onboard_session = page->property("onboardSession").value<QObject *>();
+  impl_->onboard_mission_page = qobject_cast<QWidget *>(
+    page->property(
+      "onboardMissionPage").value<QObject *>());
+  if (impl_->onboard_mission_page && impl_->task_tabs) {
+    impl_->task_execution_stack->addWidget(impl_->onboard_mission_page);
+    auto * transfer = qobject_cast<QWidget *>(
+      page->property("onboardMissionTransferPage").value<QObject *>());
+    if (!transfer) {
+      transfer = label(
+        QStringLiteral("当前机载组件未提供统一任务保存入口。"),
+        "onboardTransferUnavailable", impl_->task_import_stack);
+    }
+    impl_->task_import_stack->addWidget(transfer);
+    impl_->task_target->addItem(QStringLiteral("机载平台（未连接）"), "onboard");
+  }
+  if (impl_->onboard_session) {
+    impl_->onboard_session->installEventFilter(this);
+    impl_->onboard_session->setProperty("onboardMissionCenterActive", false);
+    if (impl_->onboard_session->metaObject()->indexOfMethod("setMissionCenterActive(bool)") >= 0) {
+      QMetaObject::invokeMethod(
+        impl_->onboard_session, "setMissionCenterActive", Qt::DirectConnection, Q_ARG(bool, false));
+    }
+  }
+  impl_->update_task_center();
   impl_->connection_page_index = 0;
   auto * previous = impl_->pages->widget(0); impl_->pages->removeWidget(previous);
   previous->deleteLater(); impl_->pages->insertWidget(0, page);
@@ -2189,10 +2869,10 @@ void MainWindow::set_connection_page(QWidget * page, bool lobby)
   impl_->qgc_path->setReadOnly(true);
   if (auto * choose = findChild<QPushButton *>("selectQgc")) {choose->hide();}
   impl_->qgc_path->setText(page->property("connectionQgcPath").toString());
-  impl_->qgc_path->setPlaceholderText(QStringLiteral("在连接与仿真的 QGC 页选择程序"));
+  impl_->qgc_path->setPlaceholderText(QStringLiteral("在连接管理的 QGC 页选择程序"));
   impl_->effective_configuration->setText(
     QStringLiteral(
-      "连接参数统一在连接与仿真页"
+      "连接参数统一在连接管理页"
       "维护；此处仅展示生效信息。"));
   page->installEventFilter(this);
   if (lobby) {
@@ -2220,6 +2900,10 @@ void MainWindow::set_connection_page(QWidget * page, bool lobby)
         "正常结束本次观测并返回"
         "连接页，保留仿真后台。"));
   }
+  if (!page->property("onboardObserverContext").value<QJsonObject>().isEmpty()) {
+    QDynamicPropertyChangeEvent target_event("onboardObserverContext");
+    QCoreApplication::sendEvent(page, &target_event);
+  }
 }
 bool MainWindow::show_page(const QString & key)
 {
@@ -2237,9 +2921,62 @@ bool MainWindow::show_connection_page()
 }
 bool MainWindow::eventFilter(QObject * object, QEvent * event)
 {
+  if (object == impl_->onboard_session && event->type() == QEvent::DynamicPropertyChange) {
+    const auto name = static_cast<QDynamicPropertyChangeEvent *>(event)->propertyName();
+    if (name == "onboardMissionContext") {
+      impl_->update_task_center();
+    } else if (name == "onboardMissionSaved") {
+      const auto saved = object->property("onboardMissionSaved").value<QJsonObject>();
+      if (!saved.value("name").toString().isEmpty() &&
+        !saved.value("sha256").toString().isEmpty())
+      {
+        impl_->onboard_saved = saved; impl_->update_task_center();
+      }
+    } else if (name == "onboardMissionDocument") {
+      const auto document = object->property("onboardMissionDocument").value<QJsonObject>();
+      const auto context = object->property("onboardMissionContext").value<QJsonObject>();
+      const auto expected = document.value("target").toObject();
+      const auto actual = context.value("target").toObject();
+      bool matches = !actual.isEmpty();
+      for (const auto & key : {"server_id", "boot_id", "client_id"}) {
+        matches = matches && expected.value(key) == actual.value(key);
+      }
+      if (matches && impl_->onboard_task_target() && document.value("content").isString()) {
+        impl_->editor->open_document(
+          document.value("name").toString(), document.value("content").toString(),
+          [this, expected] {
+            if (impl_->closing || !impl_->onboard_task_target() || !impl_->onboard_session) {
+              return false;
+            }
+            const auto current = impl_->onboard_session->property(
+              "onboardMissionContext").value<QJsonObject>().value("target").toObject();
+            for (const auto & key : {"server_id", "boot_id", "client_id"}) {
+              if (expected.value(key) != current.value(key)) {return false;}
+            }
+            return !current.isEmpty();
+          });
+        show_page("tasks"); impl_->task_tabs->setCurrentIndex(1);
+      }
+    }
+  }
   if (object == impl_->connection_page && event->type() == QEvent::DynamicPropertyChange) {
     const auto name = static_cast<QDynamicPropertyChangeEvent *>(event)->propertyName();
-    if (name == "connectionRaiseRequested") {
+    if (name == "onboardMissionRequested") {
+      show_page("tasks");
+      if (impl_->onboard_mission_page) {
+        impl_->task_target->setCurrentIndex(1);
+        impl_->task_tabs->setCurrentIndex(0);
+      }
+    } else if (name == "onboardObserverContext") {
+      const auto target = object->property("onboardObserverContext").value<QJsonObject>();
+      impl_->request_note->setText(
+        target.isEmpty() ?
+        QStringLiteral("当前观察配置未关联机载管理目标；任务执行使用各自独立的目标与权限检查。") :
+        QStringLiteral(
+          "所选机载观察配置关联目标：%1 · domain %2。"
+          "此关联不代表 DDS 已认证数据源身份，请核对实际数据源。")
+        .arg(target["server_id"].toString().left(12)).arg(target["ros_domain_id"].toInt()));
+    } else if (name == "connectionRaiseRequested") {
       show_connection_page(); show(); raise(); activateWindow();
     } else if (name == "connectionExitRequested") {
       close();
@@ -2255,11 +2992,11 @@ bool MainWindow::eventFilter(QObject * object, QEvent * event)
       impl_->effective_configuration->setText(
         active.isEmpty() ? QStringLiteral(
           "尚无生效连接。请在连"
-          "接与仿真页选择配置。") :
+          "接管理页选择配置。") :
         QStringLiteral(
           "生效连接：%1\nROS domain：%2 · 时间源：%3\n运行方案"
           " / 观测标签：%4\n前视：%5\n下视：%6\n"
-          "修改请前往连接与仿真。")
+          "修改请前往连接管理。")
         .arg(active["name"].toString()).arg(active["domain"].toInt())
         .arg(
           time_label,
@@ -2347,6 +3084,12 @@ QJsonObject MainWindow::connection_status() const
 }
 void MainWindow::closeEvent(QCloseEvent * event)
 {
+  if (!impl_->closing && impl_->onboard_session) {
+    bool discard = false;
+    if (!QMetaObject::invokeMethod(
+        impl_->onboard_session, "confirmDiscardChanges", Qt::DirectConnection,
+        Q_RETURN_ARG(bool, discard)) || !discard) {event->ignore(); return;}
+  }
   if (!impl_->closing) {
     setProperty("connectionCloseReturnsToLobby", property("connectionReturnRequested").toBool());
     setProperty("connectionReturnRequested", false);

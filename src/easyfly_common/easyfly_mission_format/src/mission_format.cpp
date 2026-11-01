@@ -207,25 +207,30 @@ MissionValidation validateMissionText(const std::string & text)
     return MissionValidation{{}, exc.what()};
   }
 }
-MissionValidation validateMissionFile(const std::string & path)
+MissionDocument loadMissionDocument(const std::string & path)
 {
   const int fd = open(path.c_str(), O_RDONLY | O_NONBLOCK | O_CLOEXEC);
-  if (fd < 0) {return MissionValidation{{}, "cannot open mission file"};}
+  if (fd < 0) {return {MissionValidation{{}, "cannot open mission file"}, {}};}
   struct Guard {int fd; ~Guard() {close(fd);}} guard{fd};
   struct stat info {};
   if (fstat(fd, &info) || !S_ISREG(info.st_mode) || info.st_size > 65536) {
-    return MissionValidation{{}, "mission must be a regular file <=64KiB"};
+    return {MissionValidation{{}, "mission must be a regular file <=64KiB"}, {}};
   }
   std::string text(65537, '\0'); size_t count = 0;
   while (count < text.size()) {
     const auto n = read(fd, text.data() + count, text.size() - count);
     if (n < 0 && errno == EINTR) {continue;}
-    if (n < 0) {return MissionValidation{{}, "mission read failed"};}
+    if (n < 0) {return {MissionValidation{{}, "mission read failed"}, {}};}
     if (!n) {break;}
     count += static_cast<size_t>(n);
   }
-  if (count > 65536) {return MissionValidation{{}, "mission exceeds 64KiB"};}
+  if (count > 65536) {return {MissionValidation{{}, "mission exceeds 64KiB"}, {}};}
   text.resize(count);
-  return validateMissionText(text);
+  return {validateMissionText(text), text};
 }
+MissionValidation validateMissionFile(const std::string & path)
+{
+  return loadMissionDocument(path).validation;
+}
+
 }  // namespace easyfly_mission_fsm

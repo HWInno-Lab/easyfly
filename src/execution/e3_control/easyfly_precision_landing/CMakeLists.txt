@@ -27,6 +27,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_extrinsics test/test_extrinsics.py TIMEOUT 15)
   ament_add_pytest_test(test_dynamic_mount_ros test/test_dynamic_mount_ros.py TIMEOUT 30
     ENV ROS_DOMAIN_ID=232)
+  ament_add_pytest_test(test_hardware_configuration test/test_hardware_configuration.py TIMEOUT 15)
   ament_add_pytest_test(test_configuration test/test_configuration.py TIMEOUT 15)
   ament_add_pytest_test(test_simulation_setup test/test_simulation_setup.py TIMEOUT 15)
   ament_add_pytest_test(test_simulation_scenarios test/test_simulation_scenarios.py TIMEOUT 15)

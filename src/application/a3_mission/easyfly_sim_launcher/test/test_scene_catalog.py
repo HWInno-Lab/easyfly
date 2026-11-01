@@ -26,11 +26,15 @@ def test_shipped_registered_scenes_preserve_declared_profiles_without_promoting_
             if scene['id'] in navigation_only:
                 assert scene['supported_profiles'] == ['navigation_dev'], scene['id']
             else:
-                assert 'base_sim' in scene['supported_profiles'], scene['id']
+                # These four visible simulation profiles share the managed
+                # airframe/sensors. Omitting perception left its UI with zero
+                # usable scenes even though profile-only expansion passed.
+                assert {'base_sim', 'full_perception', 'navigation_dev', 'landing_dev'} <= set(
+                    scene['supported_profiles']), scene['id']
                 basic.append(scene['id'])
             assert 'navigation_dev' in scene['supported_profiles'], scene['id']
         else:
-            assert 'base_sim' not in scene['supported_profiles'], scene['id']
+            assert not scene['supported_profiles'], scene['id']
     assert len(basic) >= 11
     assert navigation_only <= set(registered)
 
@@ -412,6 +416,10 @@ def test_repository_catalog_loads_without_runtime_roots():
                   easyfly_gazebo_models=WORKSPACE / 'src/simulation/easyfly_gazebo_models')
     catalog = SceneCatalog(shares)
     assert {'empty','perception_demo','precision_landing','warehouse_aws_v1','warehouse_aws_no_roof_v1'} <= set(catalog.scenes)
+    assert {name for name, scene in catalog.scenes.items() if scene['status'] == 'draft'} == {
+        'empty', 'perception_demo', 'precision_landing'}
+    assert not {'primitives_corridor_seed1042_v1', 'racetrack_aws_day_v1',
+                'hospital_aws_v1'} & set(catalog.scenes)
     assert catalog.validate('empty').as_dict()['scene_resources_complete']
     result = catalog.validate('perception_demo').as_dict()
     assert not result['scene_resources_complete']

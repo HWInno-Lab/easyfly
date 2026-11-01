@@ -41,7 +41,7 @@ CameraOverlay camera_overlay(
   const bridge::UiSnapshot & snapshot,
   const ConvertedFrame & frame, int channel, CameraOverlayMode mode, double now,
   const bridge::CameraObservations * selected = nullptr);
-QRect camera_image_rect(QSize canvas, QSize image);
+QRect camera_image_rect(QSize canvas, QSize image, int caption_height = 48);
 QRect camera_label_rect(
   QRect bounds, QRect image, QSize label,
   const std::vector<QRect> & occupied);

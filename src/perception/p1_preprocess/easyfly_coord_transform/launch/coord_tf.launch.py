@@ -13,6 +13,9 @@
 
 """P1 坐标变换节点启动: odom→base_link 动态 TF + /odom."""
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.parameter_descriptions import ParameterValue
 from easyfly_launch.composition import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
@@ -28,9 +31,11 @@ def generate_launch_description():
                 package="easyfly_coord_transform",
                 plugin="easyfly_coord_transform::OdomTfPublisher",
                 name="odom_tf_publisher",
-                parameters=[{"use_sim_time": True}],
+                parameters=[{"use_sim_time": ParameterValue(
+                    LaunchConfiguration('use_sim_time'), value_type=bool)}],
             ),
         ],
         output="screen",
     )
-    return LaunchDescription([container])
+    return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='true'), container])

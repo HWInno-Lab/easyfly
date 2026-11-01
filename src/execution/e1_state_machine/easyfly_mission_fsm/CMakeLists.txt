@@ -7,6 +7,8 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(jsoncpp REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(easyfly_msgs REQUIRED)
 find_package(easyfly_core REQUIRED)
@@ -27,8 +29,9 @@ ament_target_dependencies(mission_fsm_node
   rclcpp
   rclcpp_action
   easyfly_msgs
+  std_msgs
 )
-target_link_libraries(mission_fsm_node easyfly_mission_format::easyfly_mission_format easyfly_core::easyfly_core)
+target_link_libraries(mission_fsm_node jsoncpp_lib easyfly_mission_format::easyfly_mission_format easyfly_core::easyfly_core)
 
 add_executable(search_area_node src/search_area_node.cpp)
 ament_target_dependencies(search_area_node rclcpp rclcpp_action easyfly_msgs)
@@ -59,6 +62,8 @@ if(BUILD_TESTING)
       -P ${CMAKE_CURRENT_SOURCE_DIR}/test/check_format_compat.cmake)
   set_tests_properties(test_installed_format_compat PROPERTIES TIMEOUT 30)
   find_package(ament_cmake_pytest REQUIRED)
+  ament_add_pytest_test(test_execution_overview test/test_execution_overview.py TIMEOUT 35
+    ENV ROS_DOMAIN_ID=217 ROS_LOG_DIR=/tmp/easyfly_execution_overview)
   ament_add_pytest_test(test_prevalidation test/test_prevalidation.py TIMEOUT 30
     ENV ROS_DOMAIN_ID=96 ROS_LOG_DIR=/tmp/easyfly_d2_prevalidation)
   ament_add_pytest_test(test_mission_executor test/test_mission_executor.py TIMEOUT 90

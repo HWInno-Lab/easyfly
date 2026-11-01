@@ -122,7 +122,7 @@ def reviewed_files(archive_path):
         'src/simulation/easyfly_gazebo_models/licenses/aws_racetrack/LICENSE': license_bytes,
         'src/simulation/easyfly_gazebo_models/licenses/aws_racetrack/origins.json':
             (json.dumps(record, indent=2) + '\n').encode(),
-        'src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/' + SCENE + '.world': world,
+        'tools/scenes/source-worlds/' + SCENE + '.world': world,
     }
 
 

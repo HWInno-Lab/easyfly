@@ -107,6 +107,7 @@ struct MissionPanel::Impl
   std::shared_ptr<const bridge::UiSnapshot> observed;
   std::string selected;
   bool waiting{true}, available{false}, simulation{false}, exiting{false}, stopping{false};
+  bool target_active{true};
   bool local_queued{false};
   std::string queued_after;
   QString notice;
@@ -115,6 +116,7 @@ struct MissionPanel::Impl
   QCheckBox * permit;
   QLabel * gate, * status, * dependencies;
   QPushButton * start, * cancel, * stop_check;
+  QWidget * actions;
   QMessageBox * prompt{nullptr};
   Impl(
     MissionPanel * owner, const MissionOptions & value, ControlFactory factory,
@@ -126,23 +128,27 @@ struct MissionPanel::Impl
       throw std::invalid_argument("explicit enable and persistent directory required");
     }
     auto * layout = new QVBoxLayout(panel); layout->setContentsMargins(0, 0, 0, 0);
+    actions = new QWidget(panel); actions->setObjectName("missionActionBar");
+    auto * action_layout = new QVBoxLayout(actions);
+    action_layout->setContentsMargins(0, 0, 0, 0); action_layout->setSpacing(4);
     permit = new QCheckBox(
       QStringLiteral("允许新的仿真任务"), panel);
     permit->setObjectName("managedSimulationPermit"); permit->setChecked(false);
-    layout->addWidget(permit);
+    action_layout->addWidget(permit);
     auto * permit_hint = plain("managedSimulationPermitHint", panel);
     permit_hint->setText(QStringLiteral("勾选即确认本 ROS domain 仅用于仿真且未连接实机。"));
-    layout->addWidget(permit_hint);
+    action_layout->addWidget(permit_hint);
     dependencies = plain("missionAlgorithmDependencies", panel); layout->addWidget(dependencies);
     gate = plain("missionPreflight", panel); layout->addWidget(gate);
-    auto * row = new QVBoxLayout;
+    auto * row = new QHBoxLayout;
     start = new QPushButton(QStringLiteral("审阅并确认启动"), panel);
     start->setObjectName("startMission");
     cancel = new QPushButton(QStringLiteral("确认取消本地登记执行"), panel);
     cancel->setObjectName("cancelOwnedMission"); row->addWidget(start); row->addWidget(cancel);
-    layout->addLayout(row);
+    action_layout->addLayout(row);
     stop_check = new QPushButton(QStringLiteral("取消本次启动复核（不发飞行请求）"), panel);
-    stop_check->setObjectName("stopMissionRecheck"); layout->addWidget(stop_check);
+    stop_check->setObjectName("stopMissionRecheck"); action_layout->addWidget(stop_check);
+    layout->addWidget(actions);
     status = plain("managedMissionStatus", panel); layout->addWidget(status);
     auto * boundary = plain("managedMissionBoundary", panel);
     boundary->setText(
@@ -199,6 +205,7 @@ struct MissionPanel::Impl
   {return observed ? missing_mission_backends(*observed, now) : QString{};}
   QString preflight(double now, bool reviewing = false) const
   {
+    if (!target_active) {return QStringLiteral("当前任务目标为机载平台；仿真任务操作已收起");}
     if (check) {return QStringLiteral("正在只读复核已确认内容；尚未发送启动，不接受重复操作");}
     if (exiting || stopping || prompt) {return QStringLiteral("正在确认操作或退出，不接受新操作");}
     if (!port) {return QStringLiteral("控制门面未创建；不会回退原任务接口");}
@@ -294,7 +301,8 @@ struct MissionPanel::Impl
   bool can_cancel() const
   {
     const auto s = state();
-    return !exiting && !stopping && !prompt && !check && s && !s->stopped && !s->request_pending &&
+    return target_active && !exiting && !stopping && !prompt && !check && s && !s->stopped &&
+           !s->request_pending &&
            s->phase != control::Phase::Blocked && s->intent && !s->intent->resolved &&
            !s->intent->cancel_dispatched && bridge::detail::execution_id(s->intent->execution);
   }
@@ -316,8 +324,8 @@ struct MissionPanel::Impl
         "可审阅已读取副本；确认后只读复核同一内容与新鲜配置/能力，不是飞行许可。") :
       reason) + (notice.isEmpty() ? QString{} : "\n" + notice));
     start->setEnabled(reason.isEmpty()); cancel->setEnabled(can_cancel());
-    permit->setEnabled(!exiting && !stopping && !prompt && !check);
-    stop_check->setEnabled(check.has_value() && !exiting && !stopping);
+    permit->setEnabled(target_active && !exiting && !stopping && !prompt && !check);
+    stop_check->setEnabled(target_active && check.has_value() && !exiting && !stopping);
     if (!s) {return;}
     QString description = phase(s->phase) + " · " + text(s->status, 64) + "\n" + text(
       s->message,
@@ -576,6 +584,17 @@ void MissionPanel::exit_question(bool active)
   impl_->exiting = active;
   if (active) {
     impl_->dismiss(); impl_->abort_check(QStringLiteral("正在退出；复核终止，未发送启动"));
+  }
+  impl_->render();
+}
+QWidget * MissionPanel::action_bar() {return impl_->actions;}
+void MissionPanel::set_target_active(bool active)
+{
+  if (impl_->target_active == active) {return;}
+  impl_->target_active = active;
+  if (!active) {
+    impl_->permit->setChecked(false); impl_->dismiss();
+    impl_->abort_check(QStringLiteral("任务目标已切换；复核终止，未发送启动"));
   }
   impl_->render();
 }

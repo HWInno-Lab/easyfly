@@ -14,10 +14,13 @@
 #define EASYFLY_DESKTOP__GEOGRAPHIC_VIEW_HPP_
 #include <QWidget>
 #include <memory>
+#include <optional>
+#include <functional>
 #include "easyfly_desktop/geography.hpp"
 #include "easyfly_desktop/source.hpp"
 namespace easyfly_desktop
 {
+struct OverviewTaskOverlay;
 class GeographicView : public QWidget
 {
 public:
@@ -26,6 +29,17 @@ public:
   void snapshot(std::shared_ptr<const bridge::UiSnapshot> value, double now);
   void set_datum(const geo::Datum & datum);
   void import_map(const QString & path);
+  bool gps_available() const;
+  void set_compact(bool compact);
+  void set_task_overlay(const OverviewTaskOverlay & overlay);
+  std::optional<geo::Datum> datum() const;
+  void clear_datum();
+  // world (default), offline (imported MBTiles), osm (explicit online opt-in).
+  QString map_source() const;
+  void set_map_source(const QString & source);
+  QString offline_map_path() const;
+  // Called only on explicit edits or connection-scoped datum invalidation.
+  std::function<void()> configuration_changed;
 
 private:
   struct Impl;

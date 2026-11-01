@@ -308,13 +308,13 @@ class Server(HTTPServer):
 
     allow_reuse_address = True
 
-    def __init__(self, config, owner):
+    def __init__(self, config, owner, handler=None):
         self.owner = owner
         self.token = token_file(config['token_file'])
         self.tls = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         self.tls.minimum_version = ssl.TLSVersion.TLSv1_2
         self.tls.load_cert_chain(config['certificate'], config['private_key'])
-        super().__init__((config['bind'], config['port']), Handler)
+        super().__init__((config['bind'], config['port']), handler or Handler)
         self.timeout = .2
 
     def get_request(self):

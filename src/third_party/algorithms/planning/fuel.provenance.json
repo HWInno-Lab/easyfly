@@ -8,7 +8,7 @@
   },
   "port_patch": {
     "path": "fuel.ros2-highlevel.patch",
-    "sha256": "c26fb7bd25ea43e4c60f4b8950c85c6088dab4a3696039d14e05c43fed3a4842",
+    "sha256": "9e05aa31fd7acb0a8ccc0ed5395d8ccc45faf0b26787e67079c7ac2ee8b10a33",
     "changed_files": [
       "CMakeLists.txt",
       "fuel_planner/active_perception/include/active_perception/frontier_finder.h",
@@ -181,7 +181,7 @@
     "fuel_planner/utils/lkh_tsp_solver/src/lkh_interface.cpp": "d15e6824ea1573e49e1f06673af643a0dd0f3c1836eea4372166dc3549429e96",
     "fuel_planner/utils/lkh_tsp_solver/src/printff.c": "ffc0fbb5bd710a7a016ee0f5738c887a3a7bbd40fa0a937c781b7ae75ffa6338",
     "fuel_support/include/fuel_support/config.hpp": "31053c8f3b8ddf0b9e81514d6b70b8fe156e2376f316048fc930f7a7a65aac16",
-    "package.xml": "39920d74d54fcdb17a950d4224d661612bef8d4fb0f7251f14bb6863d4bfe0a5"
+    "package.xml": "8ea47ac66b5db5afa0ef71fc03c6eb4b73633eea0d55df8761babaafb075f785"
   },
   "scope": "Native incremental FIS/global bundled LKH/local viewpoints and explicit native cubic BsplineOptimizer/NonUniformBspline adapter; default GCOPTER motion remains. Qualification is separate from source reconstruction.",
   "transport": "YAML configuration and real steady clock; actual ROS2 worker/action outside native library, no emulated ROS1 graph.",

@@ -38,6 +38,64 @@ class Cancelled(Exception):
     """A queued normal stop arrived before the first backend process existed."""
 
 
+STARTUP_STAGES = {
+    'checking_resources': '检查资源与配置',
+    'reserving_ports': '检查并保留通信端口',
+    'establishing_owner': '建立受管会话归属',
+    'preparing_environment': '准备 DDS 与仿真运行环境',
+    'starting_observer': '建立后台状态观察',
+    'checking_sources': '检查 DDS 状态源冲突',
+    'starting_components': '启动仿真／通信组件',
+    'waiting_for_clock': '等待有效模拟时钟',
+    'waiting_for_fcu': '等待飞控连接与状态',
+    'observing': '飞控与时间源可观测',
+}
+
+
+class StartupProgress:
+    """Report completed operations and observed waits, never estimated percentages."""
+
+    def __init__(self, publish=None, started_at=None):
+        self.started_at = time.monotonic() if started_at is None else started_at
+        self.stage_at = self.started_at
+        self.stage = 'checking_resources'
+        self.waiting_for = ''
+        self.completed = []
+        self.finished_at = None
+        self.publish = publish
+
+    def begin(self, stage, waiting_for='', notify=True):
+        if stage not in STARTUP_STAGES:
+            raise ValueError('unknown startup stage: ' + stage)
+        if self.stage != stage:
+            self.stage_at = time.monotonic()
+        self.stage, self.waiting_for = stage, waiting_for
+        if stage in self.completed:
+            self.completed.remove(stage)
+        if stage == 'observing' and self.finished_at is None:
+            self.finished_at = time.monotonic()
+        if notify and self.publish:
+            self.publish(self.snapshot())
+
+    def complete(self, stage=None, notify=True):
+        stage = stage or self.stage
+        if stage not in self.completed:
+            self.completed.append(stage)
+        if notify and self.publish:
+            self.publish(self.snapshot())
+
+    def snapshot(self, now=None):
+        now = time.monotonic() if now is None else now
+        return dict(
+            startup_stage=self.stage,
+            startup_stage_label=STARTUP_STAGES[self.stage],
+            startup_completed=list(self.completed),
+            startup_elapsed_s=round(max(0.0, (self.finished_at or now) - self.started_at), 1),
+            startup_stage_elapsed_s=round(max(0.0, now - self.stage_at), 1),
+            startup_waiting_for=self.waiting_for,
+        )
+
+
 def private(path):
     path = Path(path)
     if not path.is_absolute() or path.resolve() != path:
@@ -98,9 +156,26 @@ def preview_geometry(data):
     return result
 
 
+def effective_px4_directory(requested=''):
+    """Use one deployed default for empty UI fields, without overriding explicit input."""
+    if requested:
+        return requested
+    from ament_index_python.packages import get_package_share_directory
+    path = Path(get_package_share_directory('easyfly_connection_manager')) / 'installation.json'
+    if not path.exists():
+        return None
+    if path.stat().st_size > 4096:
+        raise ValueError('安装的 PX4 默认配置超出允许大小')
+    value = json.loads(path.read_text()).get('px4_directory', '')
+    if not isinstance(value, str):
+        raise ValueError('安装的 PX4 默认目录必须为字符串')
+    return value or None
+
+
 def inventory(px4_directory=''):
     from easyfly_px4_sitl.scene_environment import installed_catalog
-    catalog, notes = installed_catalog(px4_dir=Path(px4_directory) if px4_directory else None)
+    requested = effective_px4_directory(px4_directory)
+    catalog, notes = installed_catalog(px4_dir=Path(requested) if requested else None)
     rows = []
     for key, scene in sorted(catalog.scenes.items()):
         report = dict(checked=False)
@@ -156,7 +231,8 @@ def check(profile):
         from easyfly_px4_sitl.scene_environment import installed_catalog
         from easyfly_px4_sitl.scene_inputs import resolve_scene
         from easyfly_params.configuration import load_profile, ensure_launchable
-        selected = select_px4_directory(profile['simulation']['px4_directory'] or None)
+        selected = select_px4_directory(effective_px4_directory(
+            profile['simulation']['px4_directory']))
         if (selected / 'easyfly_staging.json').exists():
             selected = Path(json.loads((selected / 'easyfly_staging.json').read_text())['source'])
         require_native_imu(selected)
@@ -174,6 +250,21 @@ def check(profile):
                 raise ValueError('当前用户没有串口读写权限；请由管理员配置 dialout 设备权限')
     get_package_share_directory('easyfly_mavlink_bridge')
     get_package_share_directory('mavros')
+    get_package_share_directory('easyfly_mavros_runtime')
+    from ament_index_python.packages import get_package_prefix
+    required = [('easyfly_mavros_runtime', 'mavros_node'),
+                ('easyfly_mavlink_bridge', 'mavlink_bridge_node'),
+                ('easyfly_rc_receiver', 'rc_receiver_node')]
+    if profile['mode'] == 'sitl':
+        required += [('easyfly_params', 'parameter_manager'),
+                     ('easyfly_perception_srvs', 'perception_services'),
+                     ('easyfly_mission_srvs', 'mission_services')]
+        required += [('easyfly_' + kind + '_detection', kind + '_detection_node')
+                     for kind in ('ellipse', 'color_line') if algorithms[kind + '_enabled']]
+    for package, executable in required:
+        path = Path(get_package_prefix(package)) / 'lib' / package / executable
+        if not path.is_file() or not os.access(path, os.X_OK):
+            raise ValueError('缺少已安装的启动程序：' + str(path))
     return dict(ok=True, fcu_url=fcu, gcs_url=gcs,
                 selected_px4=str(selected) if selected else '')
 
@@ -300,11 +391,16 @@ def emit(value):
 
 
 class Backend:
-    def __init__(self, profile, directory):
+    def __init__(self, profile, directory, startup=None):
         self.profile = profile
         self.directory = private(directory)
+        self.startup = startup or StartupProgress()
+        self.startup.begin('checking_resources', '校验场景、资源、算法兼容性与通信配置')
         self.result = check(profile)
+        self.startup.complete()
+        self.startup.begin('reserving_ports', '确认当前会话可独占所需通信端口')
         self.reservation = reserve(profile)
+        self.startup.complete()
         self.process = None
         self.state = {}
         self.ever_connected = False
@@ -323,6 +419,7 @@ class Backend:
         self.clock_progress_at = None
 
     def start(self):
+        self.startup.begin('preparing_environment', '校验 DDS 兼容环境并准备独立运行目录')
         # Activate only the installed, verified loader-reply compatibility policy.
         from easyfly_fastdds_compat.runtime import activate
         dds = activate()
@@ -340,6 +437,8 @@ class Backend:
             environment['PX4_DIR'] = staged['staging']
             # The process uses a reviewed private rootfs, never the shared default.
             self.result['px4_staging'] = staged
+        self.startup.complete()
+        self.startup.begin('starting_observer', '建立飞控、时钟与动作状态订阅')
         from rclpy import create_node
         from rclpy.context import Context
         from rclpy.parameter import Parameter
@@ -369,6 +468,8 @@ class Backend:
             self.node.create_subscription(
                 GoalStatusArray, f'/{name}/_action/status',
                 lambda msg, key=name: self.on_actions(key, msg), status_qos)
+        self.startup.complete()
+        self.startup.begin('checking_sources', '等待 DDS 发现，排查已有飞控／状态发布源')
         # Discovery is asynchronous; allow existing endpoints to become visible.
         end = time.monotonic() + 1.2
         while time.monotonic() < end:
@@ -383,6 +484,8 @@ class Backend:
                 raise ValueError('启动期间请求超出预算')
             if any(json.loads(line) == {'op': 'stop'} for line in pending.splitlines()):
                 raise Cancelled()
+        self.startup.complete()
+        self.startup.begin('starting_components', '创建本会话运行配置并启动进程')
         self.log = (self.directory / 'backend.log').open('xb')
         runtime = prepare_algorithm_runtime(self.profile, self.directory)
         self.result['algorithm_runtime'] = runtime
@@ -392,6 +495,11 @@ class Backend:
         self.process = subprocess.Popen(args, env=environment, cwd=self.directory,
                                         stdout=self.log, stderr=subprocess.STDOUT,
                                         start_new_session=True)
+        # From this point a process exists. Only full owner snapshots may report
+        # its running/stop state; preflight frames must never clear that evidence.
+        self.startup.publish = None
+        self.startup.complete()
+        self.startup.begin('waiting_for_fcu', '等待本会话的真实飞控与时间源数据')
         self.started = time.monotonic()
 
     def on_clock(self, msg):
@@ -492,6 +600,28 @@ class Backend:
                 self.phase, self.message = 'degraded', recovery
             elif diagnosis == 'vehicle_active':
                 self.phase, self.message = 'running', '飞控状态已收到，当前不允许停止后端'
+        progress = getattr(self, 'startup', None)
+        if progress is None:
+            progress = self.startup = StartupProgress(started_at=self.started)
+        if not stopped and not self.stopping_at:
+            clock_ready = (not self.profile['simulation_time'] or
+                           (clock_age is not None and clock_age <= 2.5))
+            fcu_ready = (self.state.get('connected', False) and fresh and
+                         self.state.get('state_sources') == 1)
+            for stage, ready in (('waiting_for_clock', clock_ready),
+                                 ('waiting_for_fcu', fcu_ready)):
+                if ready:
+                    if stage != 'waiting_for_clock' or self.profile['simulation_time']:
+                        progress.complete(stage, notify=False)
+                elif stage in progress.completed:
+                    progress.completed.remove(stage)
+            if not clock_ready:
+                progress.begin('waiting_for_clock', recovery, notify=False)
+            elif not fcu_ready:
+                progress.begin('waiting_for_fcu', recovery, notify=False)
+            else:
+                progress.begin(
+                    'observing', '飞控和时间源已可观测；算法输出以工作台实际状态为准', notify=False)
         return dict(phase=self.phase, message=self.message, process_running=not stopped,
                     error=getattr(self, 'error', None) or '',
                     diagnosis=diagnosis, recovery=recovery, clock_ns=self.clock_ns,
@@ -504,7 +634,7 @@ class Backend:
                     armed=self.state.get('armed'), landed=self.state.get('landed'),
                     safe_to_stop=safe, can_abort_startup=abort_startup,
                     gcs=self.gcs if now - self.gcs.get('at', -1e30) < 3 else {},
-                    directory=str(self.directory), exit_code=code)
+                    directory=str(self.directory), exit_code=code, **progress.snapshot(now))
 
     def stop(self):
         if not self.process or self.process.poll() is not None or self.stopping_at:
@@ -629,28 +759,34 @@ def main():
     parser.add_argument('--control-directory', type=Path)
     args = parser.parse_args()
     worker = None
+    startup = None
     try:
         if args.catalog:
             emit(inventory(args.px4_directory))
             return 0
+        if not args.check:
+            startup = StartupProgress(publish=lambda fields: emit(dict(
+                phase='preflight', process_running=False, can_abort_startup=True,
+                message=fields['startup_stage_label'], **fields)))
         profile = read_profile()
         if args.check:
             emit(check(profile))
             return 0
-        emit(dict(phase='preflight', process_running=False, can_abort_startup=True,
-                  message='正在校验场景、资源、兼容输入和飞控端口；尚未启动后端'))
-        worker = Backend(profile, args.directory)
+        worker = Backend(profile, args.directory, startup=startup)
         if args.control_directory:
+            startup.begin('establishing_owner', '建立本次连接的认证归属与查询通道')
             from easyfly_connection_manager.ownership import OwnerChannel
             worker.owner_channel = OwnerChannel(
                 private(args.control_directory), os.environ.get('EASYFLY_BACKEND_OWNER_TOKEN', ''),
                 os.environ.get('EASYFLY_CONNECTION_SESSION', ''), worker)
+            startup.complete()
         worker.start()
         emit(worker.status())
         return run_owned(worker)
     except Cancelled:
         value = dict(phase='stopped', process_running=False, exit_code=0,
-                     message='已取消启动，尚未创建后端')
+                     message='已取消启动，尚未创建后端',
+                     **(startup.snapshot() if startup else {}))
         if args.control_directory:
             from easyfly_connection_manager.ownership import save_terminal
             save_terminal(private(args.directory), os.environ['EASYFLY_BACKEND_OWNER_TOKEN'],
@@ -664,7 +800,8 @@ def main():
             worker.state.clear()
             return run_owned(worker)
         value = dict(phase='failed', process_running=False, exit_code=2,
-                     error=f'{type(exc).__name__}: {exc}')
+                     error=f'{type(exc).__name__}: {exc}',
+                     **(startup.snapshot() if startup else {}))
         if args.control_directory:
             from easyfly_connection_manager.ownership import save_terminal
             save_terminal(private(args.directory), os.environ['EASYFLY_BACKEND_OWNER_TOKEN'],

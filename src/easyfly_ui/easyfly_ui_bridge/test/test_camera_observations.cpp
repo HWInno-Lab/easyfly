@@ -142,3 +142,108 @@ TEST(CameraObservations, ClassicalGeometryMatchesOnlyOriginalImageAndExpires)
     buffer.snapshot(observed_clock(), 3.1).color_lines.evidence.quality,
     b::Quality::Invalid);
 }
+
+namespace
+{
+template<typename Message, typename Receive, typename Select>
+void verified_geometry_expiry(Receive receive, Select select)
+{
+  auto bnd = binding(); bnd.ellipse_topic = "/ellipse_observations";
+  bnd.color_line_topic = "/color_line_observations";
+  b::CameraObservationBuffer buffer(bnd);
+  auto valid = std::make_shared<Message>(); valid->header = image()->header;
+  valid->image_width = 640; valid->image_height = 480; valid->valid = true;
+  (buffer.*receive)(valid, 1., 0);
+  auto expired = std::make_shared<Message>(*valid); expired->valid = false;
+  expired->reason = "expired_or_clock_invalid";
+  (buffer.*receive)(expired, 1.6, 0);
+  const auto result = buffer.snapshot(observed_clock(), 1.7).*select;
+  ASSERT_TRUE(result.value); EXPECT_FALSE(result.value->valid);
+  EXPECT_TRUE(result.value->observations.empty());
+  EXPECT_EQ(result.evidence.quality, b::Quality::Invalid);
+  EXPECT_EQ(result.evidence.reason, b::kValidatedGeometryExpiry);
+  EXPECT_DOUBLE_EQ(result.evidence.first_source_steady, 1.);
+  EXPECT_DOUBLE_EQ(result.evidence.received_steady, 1.);
+  EXPECT_NEAR(result.evidence.receipt_age, .7, 1e-10);
+  // Duplicate expiry remains terminal even if the clock/source looks fresh again.
+  (buffer.*receive)(std::make_shared<Message>(*expired), 1.8, 0);
+  const auto repeat = buffer.snapshot(observed_clock(), 1.9).*select;
+  ASSERT_TRUE(repeat.value); EXPECT_EQ(repeat.evidence.quality, b::Quality::Invalid);
+  EXPECT_EQ(repeat.evidence.reason, b::kValidatedGeometryExpiry);
+  EXPECT_DOUBLE_EQ(repeat.evidence.first_source_steady, 1.);
+  EXPECT_DOUBLE_EQ(repeat.evidence.received_steady, 1.);
+  EXPECT_NEAR(repeat.evidence.receipt_age, .9, 1e-10);
+  auto next_epoch = observed_clock(); ++next_epoch.epoch;
+  const auto reset = buffer.snapshot(next_epoch, 1.9).*select;
+  EXPECT_EQ(reset.evidence.quality, b::Quality::ClockReset);
+  EXPECT_NE(reset.evidence.reason, b::kValidatedGeometryExpiry);
+  // The immutable snapshot keeps its original invalid classification.
+  EXPECT_EQ(result.evidence.reason, b::kValidatedGeometryExpiry);
+  (buffer.*receive)(std::make_shared<Message>(*valid), 1.95, 0);
+  EXPECT_FALSE((buffer.snapshot(observed_clock(), 1.95).*select).value);
+  EXPECT_EQ(
+    (buffer.snapshot(observed_clock(), 1.95).*select).evidence.quality,
+    b::Quality::Invalid);
+  auto newer = std::make_shared<Message>(*valid); newer->header.stamp.nanosec = 100000000;
+  (buffer.*receive)(newer, 2., 0);
+  EXPECT_EQ(
+    (buffer.snapshot(observed_clock(), 2.).*select).evidence.quality,
+    b::Quality::ValidAtObservation);
+  buffer.clear(); EXPECT_FALSE((buffer.snapshot(observed_clock(), 2.).*select).value);
+}
+template<typename Message, typename Receive, typename Select>
+void rejected_geometry_expiry(Receive receive, Select select)
+{
+  for (int scenario = 0; scenario < 12; ++scenario) {
+    SCOPED_TRACE(scenario);
+    auto bnd = binding(); bnd.ellipse_topic = "/ellipse_observations";
+    bnd.color_line_topic = "/color_line_observations";
+    b::CameraObservationBuffer buffer(bnd);
+    auto valid = std::make_shared<Message>(); valid->header = image()->header;
+    valid->image_width = 640; valid->image_height = 480; valid->valid = true;
+    if (scenario != 0) {(buffer.*receive)(valid, 1., 0);}
+    auto invalid = std::make_shared<Message>(*valid); invalid->valid = false;
+    invalid->reason = "expired_or_clock_invalid";
+    uint64_t epoch = 0;
+    switch (scenario) {
+      case 0: break;  // No prior valid same-frame observation.
+      case 1: invalid->image_width = 641; break;
+      case 2: invalid->header.frame_id = "other_camera"; break;
+      case 3: epoch = 1; break;
+      case 4: invalid->reason = "processing_expired"; break;
+      case 5: invalid->reason = "unknown"; break;
+      case 6: invalid->header.stamp.sec = 9; break;
+      case 7: invalid->header.stamp.sec = 11; break;
+      case 8: invalid->observations.resize(1); break;
+      case 9: invalid->image_width = invalid->image_height = 0; break;
+      case 10: invalid->header.stamp.sec = 0; break;
+      case 11: {
+          // A hard failure destroys the prior valid basis for a later claimed expiry.
+          auto malformed = std::make_shared<Message>(*invalid);
+          malformed->reason = "algorithm_error"; (buffer.*receive)(malformed, 1.1, 0);
+          break;
+        }
+    }
+    (buffer.*receive)(invalid, 1.6, epoch);
+    auto clock = observed_clock(); clock.epoch = epoch;
+    const auto result = buffer.snapshot(clock, 1.7).*select;
+    EXPECT_FALSE(result.value); EXPECT_EQ(result.evidence.quality, b::Quality::Invalid);
+    EXPECT_NE(result.evidence.reason, b::kValidatedGeometryExpiry);
+    EXPECT_FALSE((buffer.snapshot(clock, 1.8).*select).value);
+  }
+}
+}  // namespace
+TEST(CameraObservations, VerifiedClassicalExpiryPreservesOriginalReceiptAndCannotRevive)
+{
+  verified_geometry_expiry<easyfly_msgs::msg::EllipseObservationArray>(
+    &b::CameraObservationBuffer::ellipses, &b::CameraObservations::ellipses);
+  verified_geometry_expiry<easyfly_msgs::msg::ColorLineObservationArray>(
+    &b::CameraObservationBuffer::color_lines, &b::CameraObservations::color_lines);
+}
+TEST(CameraObservations, ExpiryClaimsRequirePreviousValidExactEnvelopeAndEpoch)
+{
+  rejected_geometry_expiry<easyfly_msgs::msg::EllipseObservationArray>(
+    &b::CameraObservationBuffer::ellipses, &b::CameraObservations::ellipses);
+  rejected_geometry_expiry<easyfly_msgs::msg::ColorLineObservationArray>(
+    &b::CameraObservationBuffer::color_lines, &b::CameraObservations::color_lines);
+}

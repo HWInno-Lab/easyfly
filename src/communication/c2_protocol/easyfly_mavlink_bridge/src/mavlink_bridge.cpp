@@ -320,12 +320,32 @@ void MavlinkBridge::cb_altitude(const mavros_msgs::msg::Altitude::SharedPtr msg)
 void MavlinkBridge::cb_global_position(const sensor_msgs::msg::NavSatFix::SharedPtr msg)
 {
   std::lock_guard<std::mutex> lk(state_mtx_);
+  // Aggregate publish time must never refresh the original GPS acquisition.
+  if (msg->header.stamp.sec < 0 || msg->header.stamp.nanosec >= 1000000000U ||
+    msg->status.status < sensor_msgs::msg::NavSatStatus::STATUS_FIX ||
+    msg->status.status > sensor_msgs::msg::NavSatStatus::STATUS_GBAS_FIX ||
+    !std::isfinite(msg->latitude) || !std::isfinite(msg->longitude) ||
+    !std::isfinite(msg->altitude) || std::abs(msg->latitude) > 90. ||
+    std::abs(msg->longitude) > 180.)
+  {rcvd_gps_ = false;return;}
+  const rclcpp::Time source(msg->header.stamp, get_clock()->get_clock_type());
+  if (source.nanoseconds() <= 0 || (now() - source).seconds() < 0.) {
+    rcvd_gps_ = false;return;
+  }
+  if (last_gps_fix_ && source.nanoseconds() <= last_gps_time_.nanoseconds()) {
+    // Replays cannot restore expired receipt freshness; conflicts fail closed.
+    if (source.nanoseconds() < last_gps_time_.nanoseconds() || *msg != *last_gps_fix_) {
+      rcvd_gps_ = false;
+    }
+    return;
+  }
   uav_.latitude = msg->latitude;
   uav_.longitude = msg->longitude;
   uav_.eph = static_cast<double>(msg->position_covariance[0]);
   uav_.epv = static_cast<double>(msg->position_covariance[8]);
+  last_gps_fix_ = msg;
   rcvd_gps_ = true;
-  last_gps_time_ = now();
+  last_gps_time_ = source;
   last_gps_receipt_ = std::chrono::steady_clock::now();
 }
 

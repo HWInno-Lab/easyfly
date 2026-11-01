@@ -14,6 +14,7 @@
 #include <QComboBox>
 #include <QColor>
 #include <QDir>
+#include <QDialog>
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -31,6 +32,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QSplitter>
+#include <QStackedWidget>
 #include <QToolButton>
 #include <QTableView>
 #include <QTabWidget>
@@ -49,6 +51,14 @@
 #endif
 #include "support.hpp"
 using namespace desktop_test;  // NOLINT(build/namespaces)
+class TaskCenterSession : public QObject
+{
+  Q_OBJECT
+
+public:
+  using QObject::QObject;
+  Q_INVOKABLE bool confirmDiscardChanges() {return true;}
+};
 class Desktop : public ::testing::Test
 {
 protected:
@@ -92,7 +102,7 @@ TEST_F(Desktop, ConnectionLobbyCreatesNoSourceAndWaitsForAnIntegratedFreshWorksp
   auto * navigation = widget<QListWidget>("navigation");
   ASSERT_NE(navigation, nullptr);
   EXPECT_EQ(navigation->currentRow(), 0);
-  EXPECT_EQ(navigation->currentItem()->text(), QStringLiteral("连接与仿真"));
+  EXPECT_EQ(navigation->currentItem()->text(), QStringLiteral("连接管理"));
   EXPECT_EQ(navigation->count(), 7);
   const QStringList keys{"connection", "overview", "tasks", "perception", "space", "records",
     "settings"};
@@ -156,32 +166,117 @@ TEST_F(Desktop, ConnectionPageSharesNavigationWithoutRestartingObservation)
   EXPECT_EQ(state->stop_calls, 0);
   EXPECT_TRUE(widget<QWidget>("configurationPanel")->isHidden());
   EXPECT_EQ(window->findChildren<ui::RvizView *>().size(), ui::RvizView::available() ? 1 : 0);
-  EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 3);
+  EXPECT_EQ(widget<QTabWidget>("taskCenterTabs")->count(), 2);
   EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->count(), 3);
   EXPECT_EQ(widget<QTabWidget>("spaceViewTabs")->widget(2)->objectName(), "geographicView");
 }
-TEST_F(Desktop, TaskCatalogAndExecutionStayTogetherWithoutWastingNavigationSpace)
+TEST_F(Desktop, OnboardTasksShareTwoTabsAndOneEditorAcrossTargets)
+{
+  open();
+  auto * page = new QWidget(window.get());
+  auto * onboard_tasks = new QWidget(page);
+  onboard_tasks->setObjectName("fixtureOnboardMissionPage");
+  auto * task_layout = new QVBoxLayout(onboard_tasks);
+  auto * draft = new QLineEdit(QStringLiteral("retained onboard request"), onboard_tasks);
+  task_layout->addWidget(draft);
+  auto * transfer = new QWidget(page); transfer->setObjectName("fixtureOnboardTransfer");
+  auto * session = new TaskCenterSession(page);
+  const QJsonObject target{{"server_id", "platform-A"}, {"boot_id", "boot-A"},
+    {"client_id", "client-A"}, {"alias", "Aircraft A"}, {"url", "https://aircraft-a:443"}};
+  session->setProperty("onboardMissionContext", QJsonObject{{"target", target}, {"fresh", true}});
+  page->setProperty("onboardSession", QVariant::fromValue<QObject *>(session));
+  page->setProperty("onboardMissionPage", QVariant::fromValue<QObject *>(onboard_tasks));
+  page->setProperty("onboardMissionTransferPage", QVariant::fromValue<QObject *>(transfer));
+  auto * task_center = widget<QTabWidget>("taskCenterTabs");
+  window->set_connection_page(page);
+  ASSERT_EQ(task_center->count(), 2);
+  auto * choice = widget<QComboBox>("taskTarget");
+  ASSERT_NE(choice, nullptr); EXPECT_EQ(choice->currentData(), "simulation");
+  auto * execution = widget<QStackedWidget>("taskExecutionTargets");
+  auto * imports = widget<QStackedWidget>("taskImportTargets");
+  ASSERT_NE(execution, nullptr); ASSERT_NE(imports, nullptr);
+  EXPECT_FALSE(page->isAncestorOf(onboard_tasks));
+  for (int request = 1; request <= 5; ++request) {
+    ASSERT_TRUE(window->show_connection_page());
+    page->setProperty("onboardMissionRequested", request);
+    EXPECT_EQ(choice->currentData(), "onboard");
+    EXPECT_EQ(task_center->currentIndex(), 0);
+    EXPECT_EQ(execution->currentWidget(), onboard_tasks);
+    EXPECT_EQ(imports->currentWidget(), transfer);
+    EXPECT_TRUE(session->property("onboardMissionCenterActive").toBool());
+    EXPECT_EQ(task_center->count(), 2);
+    EXPECT_EQ(draft->text(), "retained onboard request");
+    EXPECT_TRUE(content("taskTargetIdentity").contains("Aircraft A"));
+    ASSERT_TRUE(window->show_page("overview"));
+  }
+  const QString body = QStringLiteral(
+    "schema_version: 1\nframe_id: odom\nunits: {position: m, angle: rad, time: s}\n"
+    "failure_policy: abort\nsteps:\n  - {type: hover, duration: 1.0, timeout: 5.0}\n");
+  session->setProperty(
+    "onboardMissionDocument", QJsonObject{{"name", "remote.yaml"}, {"content", body},
+      {"target", target}, {"serial", 1}});
+  auto * editor = window->findChild<ui::MissionEditor *>();
+  ASSERT_TRUE(until([&] {return editor->validated_draft().has_value();}));
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return session->property("onboardMissionCandidate").value<QJsonObject>()["valid"].toBool();
+      }));
+  EXPECT_EQ(task_center->currentIndex(), 1);
+  EXPECT_EQ(window->findChildren<ui::MissionEditor *>().size(), 1);
+  EXPECT_EQ(editor->validated_draft()->content, body.toStdString());
+  EXPECT_FALSE(editor->exported_draft().has_value());
+  auto candidate = session->property("onboardMissionCandidate").value<QJsonObject>();
+  EXPECT_EQ(candidate["target"].toObject(), target);
+  EXPECT_EQ(candidate["name"], "remote.yaml");
+  auto * save_dialog = widget<QDialog>("taskSaveDialog"); ASSERT_NE(save_dialog, nullptr);
+  for (int reopen = 0; reopen < 2; ++reopen) {
+    click("saveTaskToPlatform"); EXPECT_TRUE(save_dialog->isVisible());
+    EXPECT_TRUE(transfer->isVisible()); EXPECT_TRUE(save_dialog->isAncestorOf(transfer));
+    click("closeTaskSaveDialog"); EXPECT_FALSE(save_dialog->isVisible());
+    EXPECT_EQ(session->property("onboardMissionCandidate").value<QJsonObject>(), candidate);
+    EXPECT_EQ(window->findChildren<ui::MissionEditor *>().size(), 1);
+  }
+  widget<QLineEdit>("draftFilename")->setText("invalid-name");
+  EXPECT_FALSE(session->property("onboardMissionCandidate").value<QJsonObject>()["valid"].toBool());
+  auto other_target = target; other_target["server_id"] = "platform-B";
+  session->setProperty(
+    "onboardMissionDocument", QJsonObject{{"name", "wrong.yaml"}, {"content", "invalid"},
+      {"target", other_target}, {"serial", 2}});
+  EXPECT_FALSE(editor->validated_draft().has_value());
+  EXPECT_EQ(widget<QPlainTextEdit>("draftBody")->toPlainText(), body);
+  choice->setCurrentIndex(0);
+  EXPECT_FALSE(session->property("onboardMissionCenterActive").toBool());
+  EXPECT_NE(execution->currentWidget(), onboard_tasks);
+  EXPECT_NE(imports->currentWidget(), transfer);
+  EXPECT_EQ(state->stop_calls, 0);
+}
+TEST_F(Desktop, TaskDirectoryAndDetailsUseTwoColumnsWithIntegratedExecution)
 {
   open(); window->show_page("tasks");
   auto * tabs = widget<QTabWidget>("taskCenterTabs"); tabs->setCurrentIndex(0);
-  auto * catalog = widget<QWidget>("missionCatalogPage");
+  auto * directory = widget<QWidget>("taskCatalogDirectory");
+  auto * details = widget<QWidget>("taskCatalogDetails");
   auto * query = widget<QPushButton>("queryMission");
   auto * execution = widget<QToolButton>("toggleTaskExecution");
   EXPECT_FALSE(query->isVisible()); execution->click();
-  auto * navigation = widget<QListWidget>("navigation");
+  auto * columns = widget<QSplitter>("taskExecutionSplitter");
+  ASSERT_NE(columns, nullptr); EXPECT_EQ(columns->count(), 2);
   for (const auto & size : {QSize(1366, 768), QSize(1024, 720)}) {
     window->resize(size); QTest::qWait(60);
-    EXPECT_TRUE(catalog->isVisible()); EXPECT_TRUE(query->isVisible());
-    EXPECT_GE(catalog->width(), 350);
-    const auto start = catalog->mapTo(window.get(), QPoint());
-    const auto nav_start = navigation->mapTo(window.get(), QPoint());
-    EXPECT_LE(start.x() - nav_start.x() - navigation->width(), 24);
-    EXPECT_LT(start.x() + catalog->width(), query->mapTo(window.get(), QPoint()).x());
+    EXPECT_TRUE(directory->isVisible()); EXPECT_TRUE(details->isVisible());
+    EXPECT_TRUE(query->isVisible());
+    EXPECT_LT(
+      directory->mapTo(window.get(), QPoint()).x(), details->mapTo(
+        window.get(),
+        QPoint()).x());
+    EXPECT_TRUE(details->isAncestorOf(query));
     EXPECT_TRUE(
       window->rect().contains(
         QRect(
           query->mapTo(window.get(), QPoint()),
           query->size())));
+    EXPECT_GT(widget<QListWidget>("missionList")->height(), 100);
   }
 }
 TEST_F(Desktop, OfflineNeverUsesDefaultZeros)
@@ -310,7 +405,7 @@ TEST_F(Desktop, LogoIsBundledAndOverviewContainsIndependentObservationPanels)
   EXPECT_FALSE(map->property("heading_valid").toBool());
   EXPECT_EQ(content("overviewAltitude"), "1.50");
   EXPECT_EQ(widget<QTabWidget>("overviewMapTabs")->count(), 2);
-  EXPECT_NE(widget<QLabel>("overviewSpatialHint"), nullptr);
+  EXPECT_EQ(widget<QLabel>("overviewSpatialHint"), nullptr);
   for (int i = 0; i < widget<QListWidget>("navigation")->count(); ++i) {
     EXPECT_FALSE(widget<QListWidget>("navigation")->item(i)->icon().isNull());
   }
@@ -998,3 +1093,5 @@ TEST_F(Desktop, VisualNavigationNeedsExplicitModeAndFreshMatchingSession)
     EXPECT_FALSE(ui::missing_mission_backends(*state->data, now).isEmpty());
   }
 }
+
+#include "test_desktop.moc"

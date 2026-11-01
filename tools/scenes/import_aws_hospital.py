@@ -4,10 +4,10 @@
 
 No upstream code is executed and no network is used. --prepare-cache explicitly
 prepares all 44 archives using the same atomic cache implementation as the CLI.
-The original world remains a draft: this is not a geometry or flight acceptance.
+The original world is a source input only; this never recreates the retired
+v1 scene. Historical import evidence is reproduced without rewriting it.
 """
 import argparse
-import copy
 import hashlib
 import json
 from pathlib import Path, PurePosixPath
@@ -235,26 +235,8 @@ def reviewed_outputs(upstream):
                                'License declarations recorded from publisher, not inferred from AWS root license.',
                                'Publisher metadata names its current version; immutable ZIP bytes and the matching '
                                'X-Ign-Resource-Version response were independently recorded during source retrieval.'])
-    outputs[WORLDS + 'worlds/indoor/hospital/' + SCENE + '.world'] = world
+    outputs['tools/scenes/source-worlds/' + SCENE + '.world'] = world
     outputs[WORLDS + 'evidence/' + SCENE + '/import-source.json'] = encoded(report)
-    # Copy the established runtime contract, not its office qualification flags or calibration.
-    scene = copy.deepcopy(yaml.safe_load((ROOT / (WORLDS + 'scenes/office_willowgarage_v1.yaml')).read_text()))
-    scene.update(id=SCENE, name='AWS 医院（上游原始草稿）', status='draft', category='indoor/hospital',
-                 tags=['hospital', 'medical', 'static'], supported_profiles=[], recommended_missions=[])
-    scene['world'] = dict(package='easyfly_gazebo_worlds', path='worlds/indoor/hospital/' + SCENE + '.world', sha256=sha(world))
-    scene['provenance'] = provenance(lock['source_repository'], revision, 'MIT-0', [
-        'licenses/aws_hospital/LICENSE', 'licenses/aws_hospital/origins.json'],
-        'Original hospital.world unchanged. Fuel dependencies have separate CC-BY-4.0 declarations. '
-        'Three anomalous source heights retained for review; draft cannot launch.')
-    scene['asset_sets'] = [a['asset_set_id'] for a, _ in assets] + ['gazebo_builtin_v1']
-    scene['spawn'] = dict(frame='world', position=None, yaw=None, basis='Pending native floor/clearance survey and corrected-world review.')
-    scene['navigation'].update(world_to_navigation=None, recommended_region=None)
-    scene['navigation'].pop('alignment_check', None)
-    scene['verification'] = dict(resources_complete=False, world_loaded=False, sensors_checked=False,
-                                 navigation_tested=False, evidence_refs=[dict(package='easyfly_gazebo_worlds',
-                                 path='evidence/' + SCENE + '/import-source.json')],
-                                 required_px4_compatibility=['mag_lpf_interval_v1'])
-    outputs[WORLDS + 'scenes/' + SCENE + '.yaml'] = yaml_bytes(scene)
     return outputs, assets
 
 
@@ -286,7 +268,7 @@ def main():
         from easyfly_px4_sitl.asset_cache import default_root, fetch_asset
         for asset, path in assets:
             results.append(fetch_asset(asset, args.cache_root or default_root(), archive_path=path))
-    print(json.dumps(dict(scene=SCENE, status='draft', model_count=69, asset_sets=44,
+    print(json.dumps(dict(source=SCENE, status='source_only', model_count=69, asset_sets=44,
                           generated_files=len(outputs), check=args.check, prepared_assets=results), indent=2))
 
 

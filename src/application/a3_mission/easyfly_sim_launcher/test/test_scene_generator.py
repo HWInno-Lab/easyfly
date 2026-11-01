@@ -140,7 +140,6 @@ def test_complete_document_schema_guards(config, tmp_path, field, value):
 
 
 @pytest.mark.parametrize('identifier', ['primitives_sparse_seed42_v1',
-                                       'primitives_corridor_seed1042_v1',
                                        'primitives_corridor_seed1042_v2'])
 def test_checked_in_sample_matches_generator(config, identifier):
     data = generator.load_config(WORLDS / f'generators/{identifier}.json')

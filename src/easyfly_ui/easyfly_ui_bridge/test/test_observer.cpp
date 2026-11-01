@@ -13,6 +13,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <atomic>
 #include <chrono>
 #include <cstdlib>
@@ -27,6 +28,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "easyfly_ui_bridge/observer.hpp"
 
@@ -73,6 +75,10 @@ protected:
   std::atomic<int> response_mode{0}, mission_delay_ms{0};
   std::atomic<int> details_mode{0}, details_delay_ms{0}, details_calls{0};
   std::mutex state_mutex;
+  std::mutex query_times_mutex;
+  std::vector<double> perception_query_times;
+  std::array<std::vector<double>, 4> capability_query_times;
+  std::atomic<int> targets_calls{0}, obstacles_calls{0};
   double position_x{0};
 
   builtin_interfaces::msg::Time stamp(int64_t ns = 0)
@@ -170,14 +176,20 @@ protected:
             response->content.clear(); response->content_sha256.clear();
           }
         }));
+    size_t capability_index = 0;
     for (const auto * name :
       {"/platform/flight_control/capabilities", "/platform/mission/capabilities",
         "/platform/perception/capabilities", "/platform/precision_landing/capabilities"})
     {
+      const auto index = capability_index++;
       platform_resources.push_back(
         node->create_service<Caps>(
           name,
-          [this](Caps::Request::SharedPtr, Caps::Response::SharedPtr response) {
+          [this, index](Caps::Request::SharedPtr, Caps::Response::SharedPtr response) {
+            {
+              std::lock_guard<std::mutex> lock(query_times_mutex);
+              capability_query_times[index].push_back(detail::steady_seconds());
+            }
             response->header.stamp = stamp(); response->header.frame_id = "odom";
             response->names = {"takeoff"}; response->implemented = {true};
             response->ready = {false};
@@ -199,6 +211,11 @@ protected:
       node->create_service<Perception>(
         "/platform/perception/query",
         [this](Perception::Request::SharedPtr request, Perception::Response::SharedPtr response) {
+          {
+            std::lock_guard<std::mutex> lock(query_times_mutex);
+            perception_query_times.push_back(detail::steady_seconds());
+          }
+          if (request->kind == "targets") {++targets_calls;} else {++obstacles_calls;}
           response->status = Perception::Response::VALID; response->age_sec = 0;
           auto & header = request->kind ==
           "targets" ? response->targets.header : response->obstacles.header;
@@ -251,6 +268,8 @@ protected:
   void running(Observer & observer)
   {
     ASSERT_TRUE(until([&] {return observer.snapshot()->state.position_valid;}));
+    // Camera QoS/origin discovery is bounded to 1Hz, independent of SDK state readiness.
+    ASSERT_TRUE(until([&] {return image_publisher->get_subscription_count() >= 1;}));
     // Discovery readiness for the bridge's own node, without sending extra queries.
     ASSERT_TRUE(
       until(
@@ -283,6 +302,40 @@ protected:
     EXPECT_EQ(observer.list_missions().status, RequestStatus::Closed);
   }
 };
+
+TEST_F(ObserverTest, RetainedGridReadonlySubscriptionClearsOnResetAndAmbiguousPublisher)
+{
+  using Grid = nav_msgs::msg::OccupancyGrid;
+  const auto qos = rclcpp::QoS(1).reliable().transient_local();
+  auto publisher = node->create_publisher<Grid>("/occupancy_grid", qos);
+  Grid m; m.header.frame_id = "odom"; m.header.stamp = stamp();
+  m.info.width = m.info.height = 2; m.info.resolution = .2F;
+  m.info.origin.orientation.w = 1.; m.data = {0, 100, 0, 0};
+  publisher->publish(m);  // No repeat: a late observer must receive retained data.
+  Observer observer(configuration()); running(observer);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->occupancy_grid.value != nullptr;}));
+  const auto original = observer.snapshot();
+  EXPECT_EQ(original->occupancy_grid.value->data, m.data);
+  for (const auto & subscription : node->get_subscriptions_info_by_topic("/occupancy_grid")) {
+    if (subscription.node_name().find("easyfly_ui_observer_") == 0) {
+      EXPECT_EQ(subscription.qos_profile().reliability(), rclcpp::ReliabilityPolicy::Reliable);
+      EXPECT_EQ(subscription.qos_profile().durability(), rclcpp::DurabilityPolicy::TransientLocal);
+    }
+  }
+  auto other = node->create_publisher<Grid>("/occupancy_grid", qos);
+  ASSERT_TRUE(until([&] {return !observer.snapshot()->occupancy_grid.value;}));
+  EXPECT_EQ(observer.snapshot()->occupancy_grid.evidence.quality, Quality::Invalid);
+  other.reset();
+  ASSERT_TRUE(until([&] {return node->count_publishers("/occupancy_grid") == 1;}));
+  m.header.stamp = stamp(); publisher->publish(m);
+  ASSERT_TRUE(until([&] {return observer.snapshot()->occupancy_grid.value != nullptr;}));
+  m.header.stamp = builtin_interfaces::msg::Time{};
+  m.data.assign(4, -1); publisher->publish(m);
+  ASSERT_TRUE(until([&] {return !observer.snapshot()->occupancy_grid.value;}));
+  EXPECT_EQ(observer.snapshot()->occupancy_grid.evidence.quality, Quality::Invalid);
+  EXPECT_TRUE(original->occupancy_grid.value);  // Old snapshots remain immutable.
+  stopped(observer); EXPECT_FALSE(observer.snapshot()->occupancy_grid.value);
+}
 
 TEST_F(ObserverTest, CameraPerceptionExactFrameSubscriptionsRemainReadonlyAcrossReset)
 {
@@ -697,6 +750,59 @@ TEST_F(ObserverTest, SameStampConflictingStateRequiresAnIndependentNewSample)
   stopped(observer);
 }
 
+TEST_F(ObserverTest, AutomaticPerceptionRefreshFitsFreshnessBudgetWithoutRenewingOldSources)
+{
+  Observer observer;
+  running(observer);
+  const auto both_valid = [&] {
+      const auto snapshot = observer.snapshot();
+      return snapshot->perception.at(Key::Targets).evidence.quality ==
+             Quality::ValidAtObservation &&
+             snapshot->perception.at(Key::Obstacles).evidence.quality ==
+             Quality::ValidAtObservation;
+    };
+  ASSERT_TRUE(until(both_valid));
+  const auto targets_before = targets_calls.load(), obstacles_before = obstacles_calls.load();
+  const double begin = detail::steady_seconds();
+  size_t samples = 0;
+  while (detail::steady_seconds() - begin < 2.2) {
+    ASSERT_TRUE(both_valid()); ++samples;
+    std::this_thread::sleep_for(20ms);
+  }
+  const double end = detail::steady_seconds();
+  EXPECT_GT(samples, 90U);
+  EXPECT_GE(targets_calls - targets_before, 3);
+  EXPECT_GE(obstacles_calls - obstacles_before, 3);
+  EXPECT_LE(targets_calls - targets_before, 6);
+  EXPECT_LE(obstacles_calls - obstacles_before, 6);
+  {
+    std::lock_guard<std::mutex> lock(query_times_mutex);
+    const auto in_window = [&](double at) {return at >= begin && at <= end;};
+    EXPECT_LE(
+      std::count_if(perception_query_times.begin(), perception_query_times.end(), in_window), 10);
+    for (const auto & times : capability_query_times) {
+      EXPECT_LE(std::count_if(times.begin(), times.end(), in_window), 3);
+      for (size_t i = 1; i < times.size(); ++i) {
+        EXPECT_GE(times[i] - times[i - 1], .9);
+      }
+    }
+  }
+  geometry_stamp = now_ns.load();
+  ASSERT_TRUE(until([&] {return !both_valid();}));
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->perception.at(Key::Targets).evidence.quality == Quality::Stale &&
+        snapshot->perception.at(Key::Obstacles).evidence.quality == Quality::Stale;
+      }));
+  const auto targets_stale = targets_calls.load(), obstacles_stale = obstacles_calls.load();
+  std::this_thread::sleep_for(600ms);
+  EXPECT_GT(targets_calls, targets_stale); EXPECT_GT(obstacles_calls, obstacles_stale);
+  EXPECT_FALSE(both_valid());
+  stopped(observer);
+}
+
 TEST_F(ObserverTest, NoTelemetryAndZeroClockWithAutomaticPollRemainUnavailable)
 {
   publish_state = false; advance = false; now_ns = 0;
@@ -1050,4 +1156,126 @@ TEST_F(ObserverTest, SpecializedTelemetryIsBoundedExpiresAndNeverControls)
   EXPECT_EQ(goals.load(), 0); EXPECT_EQ(cancels.load(), 0); EXPECT_EQ(commands.load(), 0);
   EXPECT_EQ(control_messages.load(), 0); EXPECT_EQ(mission_writes.load(), 0); EXPECT_EQ(
     param_writes.load(), 0);
+}
+
+TEST_F(ObserverTest, RawGpsExpiresIndependentlyAndAmbiguousSourcesClearGlobalHistory)
+{
+  using Fix = sensor_msgs::msg::NavSatFix;
+  auto publisher = node->create_publisher<Fix>("/mavros/global_position/global", 1);
+  std::atomic<bool> send{true};
+  auto producer = node->create_wall_timer(
+    40ms, [&] {
+      if (!send) {return;}
+      Fix message; message.header.stamp = stamp(); message.header.frame_id = "gps_sensor";
+      message.status.status = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
+      message.latitude = 31.2; message.longitude = 121.5; message.altitude = 10.;
+      publisher->publish(message);
+    });
+  BridgeConfig config; config.poll_observations = false; Observer observer(config);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->global_position.evidence.quality == Quality::ValidAtObservation &&
+        snapshot->global_trajectory.size() >= 2;
+      }));
+  const auto old_segment = observer.snapshot()->global_trajectory.back().segment;
+  send = false;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->global_position.evidence.quality == Quality::Stale;
+      }));
+  EXPECT_EQ(observer.snapshot()->state.evidence.quality, Quality::ValidAtObservation);
+  send = true;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->global_position.evidence.quality == Quality::ValidAtObservation &&
+        snapshot->global_trajectory.back().segment != old_segment;
+      }));
+  auto other = node->create_publisher<Fix>("/mavros/global_position/global", 1);
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->global_position.evidence.quality !=
+        Quality::ValidAtObservation &&
+        observer.snapshot()->global_trajectory.empty();
+      }));
+  other.reset();
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->global_position.evidence.quality == Quality::ValidAtObservation;
+      }));
+  observer.stop(); ASSERT_TRUE(until([&] {return observer.snapshot()->stopped;}));
+  EXPECT_TRUE(observer.snapshot()->global_trajectory.empty());
+  EXPECT_NE(observer.snapshot()->global_position.evidence.quality, Quality::ValidAtObservation);
+  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(cancels.load(), 0); EXPECT_EQ(commands.load(), 0);
+}
+
+TEST_F(
+  ObserverTest,
+  NativeExecutionContextRequiresUniqueNamedSourceAndRetainsOnlyHistoricalTerminal)
+{
+  using Text = std_msgs::msg::String;
+  const auto context_text = [&](const std::string & state) {
+      const std::string content = "type=hover\nwait=2\n";
+      return "{\"schema_version\":1,\"stamp_ns\":" + std::to_string(now_ns.load()) +
+             ",\"goal_id\":\"0123456789abcdef0123456789abcdef\","
+             "\"name\":\"demo.yaml\",\"sha256\":\""
+             +
+             easyfly_mission_fsm::missionContentSha256(content) +
+             "\",\"content\":\"type=hover\\nwait=2\\n\",\"frame_id\":\"odom\",\"state\":\"" +
+             state + "\",\"current_step\":0,\"completed_steps\":0,\"total_steps\":1}";
+    };
+  auto wrong = node->create_publisher<Text>(
+    "/mission/execution_overview", rclcpp::QoS(1).reliable().transient_local());
+  BridgeConfig config; config.poll_observations = false; Observer observer(config);
+  ASSERT_TRUE(until([&] {return wrong->get_subscription_count() == 1;}));
+  Text message; message.data = context_text("active"); wrong->publish(message);
+  std::this_thread::sleep_for(150ms);
+  EXPECT_NE(observer.snapshot()->mission_execution.evidence.quality, Quality::ValidAtObservation);
+  wrong.reset();
+  rclcpp::NodeOptions options; options.context(context);
+  auto owner = std::make_shared<rclcpp::Node>("mission_fsm", options);
+  auto publisher = owner->create_publisher<Text>(
+    "/mission/execution_overview", rclcpp::QoS(1).reliable().transient_local());
+  std::atomic<bool> send{true}, terminal{false};
+  auto producer = node->create_wall_timer(
+    100ms, [&] {
+      if (!send) {return;}
+      Text sample; sample.data = context_text(terminal ? "canceled" : "active");
+      publisher->publish(sample);
+    });
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto snapshot = observer.snapshot();
+        return snapshot->mission_execution.value &&
+        snapshot->mission_execution.evidence.quality == Quality::ValidAtObservation;
+      }));
+  ASSERT_TRUE(observer.snapshot()->mission_execution.value->plan);
+  EXPECT_EQ(observer.snapshot()->mission_execution.value->plan->steps.size(), 1U);
+  terminal = true;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        const auto value = observer.snapshot()->mission_execution.value;
+        return value && value->state == "canceled";
+      }));
+  send = false;
+  ASSERT_TRUE(
+    until(
+      [&] {
+        return observer.snapshot()->mission_execution.evidence.quality == Quality::Stale;
+      }));
+  ASSERT_TRUE(observer.snapshot()->mission_execution.value);
+  EXPECT_EQ(observer.snapshot()->mission_execution.value->state, "canceled");
+  auto ambiguous = node->create_publisher<Text>(
+    "/mission/execution_overview", rclcpp::QoS(1).reliable().transient_local());
+  ASSERT_TRUE(until([&] {return !observer.snapshot()->mission_execution.value;}));
+  observer.stop(); ASSERT_TRUE(until([&] {return observer.snapshot()->stopped;}));
+  EXPECT_EQ(goals.load(), 0); EXPECT_EQ(cancels.load(), 0); EXPECT_EQ(commands.load(), 0);
 }

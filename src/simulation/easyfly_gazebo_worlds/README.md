@@ -1,7 +1,7 @@
 # 场景登记（S0–S6）
 
-本版本的六个草稿已分别作出保留／替代决定，见[场景生命周期](SCENE-LIFECYCLE.md)。
-三个旧版由登记 v2 替代；最小世界、感知示例和精降专项保留现有用途，不晋升通用场景。
+当前保留 17 个场景清单：14 个登记、3 个草稿，见[场景生命周期](SCENE-LIFECYCLE.md)。
+旧通道、赛道和医院 v1 已清除，使用登记 v2；最小世界、感知示例和精降专项保留现有用途，不晋升通用场景。
 
 `hospital_aws_v2` 是独立的医院修订：使用三套新版本缓存修复8处资源引用，
 根据原生地板射线与碰撞底部落位3个异常实例，保留原医院181个实例及天花板。
@@ -16,12 +16,12 @@
 原全高度投影、2.9m投影及恢复调度失败分别保留，未改物理屋顶、路线或静态参考。
 验收仅覆盖北侧开阔区的1.5m参考往返与落地，不能据此推定整座医院可导航。
 
-`hospital_aws_v1` 新增 `indoor/hospital` 分类草稿。保留固定上游单层医院 world
-原字节，锁定 26 个 AWS 模型和 43 个独立 Fuel 模型；在线显式 fetch 或离线维护工具
-准备外部缓存后可做资源闭包检查。原 world 中 StorageRack_1、WhiteChipChair_1、
+医院 v2 使用固定上游单层医院 world，锁定 26 个 AWS 模型和 43 个独立 Fuel 模型。
+旧 `hospital_aws_v1` 登记和运行 world 已清除；原字节仅保存在
+`tools/scenes/source-worlds/hospital_aws_v1.world`，用于 v2 重建。原 world 中 StorageRack_1、WhiteChipChair_1、
 TrolleyBed_1 的 z 为 -7.57769e+08m，已逐项记录在
-`evidence/hospital_aws_v1/import-source.json`。出生点、标定和推荐任务尚未填写，
-受管启动必须拒绝。已由独立 `hospital_aws_v2` 完成修订和登记；v1 作为历史输入保留。
+`evidence/hospital_aws_v1/import-source.json`。原草稿未完成出生点、标定和推荐任务，
+现由独立 `hospital_aws_v2` 完成修订和登记；历史输入不作为可选场景或运行资源安装。
 资源/许可记录完整不等于原场景可飞行，也不代表多层医院或电梯已支持。
 
 现有 `empty.world`、`perception_demo.world`、`precision_landing.world` 保留根路径。
@@ -40,11 +40,16 @@ YAML 是数据，不执行脚本；禁止重复键、锚点、别名和非有限
 - `provenance` 分开记录声明、证据和核实状态。world 许可不覆盖所引用模型。
 - `verification` 是对应修订的历史记录，不是实时起飞许可；具体状态以每份清单及证据为准。
 
-11 个已登记场景同时支持 `base_sim` 和既有 `navigation_dev`。
+11 个通用登记场景支持 `base_sim`、`full_perception`、`navigation_dev`、`landing_dev`。
+`full_perception` 对应桌面的“感知与建图”；`landing_dev` 仅为降落开发的传感器/TF 准备，
+不启动专用精降。2026-10-30 修复了后两类方案漏登记、桌面没有可用场景的问题。
 基础仿真沿用同一 world、飞机、出生点、资源与兼容输入校验，仅启动仿真和飞控状态链路，
 不启动 SLAM 或导航规划。基础模式的逐场地面启动、状态/时钟观测及正常退出证据见
 `evidence/base-sim-startup-20261020.json`；不扩展原导航验收区域，也不代表飞行验收。
-6 个草稿仍未开放受管启动，`legacy_profiles` 不作为兼容性放行依据。
+感知及降落准备两方案的 22 组公开入口未解锁复验见
+`evidence/perception-profiles-20261030.json`，覆盖四路传感器、CPU 检测、默认 FAST-LIO
+点云/栅格地图、坐标对齐及完整退出；不代表飞行或精降验收，医院间歇启动异常仍保留。
+3 个保留草稿仍未开放受管启动，`legacy_profiles` 不作为兼容性放行依据。
 
 `draft` 清单可登记但不能宣称可启动。S1 已接入公开
 `scene` 参数与 ROS list/validate 命令，草稿选择会被拒绝。当前 `precision_landing` 未填写出生点，
@@ -162,7 +167,7 @@ OGRE 仅解析 SDF 明确选中的简单 material 块及其纹理引用；继承
 ODE无命中距离返回1000且entity为空，记录只说明25m向上射线内未命中，不把哨兵当实际净空。
 堵塞参数`primitives_blocked_seed42_v1.json`在生成阶段明确拒绝，不生成world或场景条目。
 
-初版`primitives_corridor_seed1042_v1`保留为draft：原生碰撞和传感器输出通过，
+初版`primitives_corridor_seed1042_v1`已清除：当时原生碰撞和传感器输出通过，
 但实测可信地面点比例低于原有0.15要求，未形成可信地图；
 `mapping-rejected-s4.json`保留该次实测拒绝。未减小阈值或复用稀疏场景签收。
 
@@ -223,7 +228,8 @@ ros2 launch easyfly_sim_launcher profile.launch.py profile:=navigation_dev scene
 `mag_lpf_interval_v1`兼容特性。离线机器可将同一固定归档传给fetch的`--archive`，
 之后用`--offline`核验。缺缓存在启动任何子进程前拒绝，启动不自动下载。
 
-原始`racetrack_aws_day_v1`保留上游world全部字节并保持draft：它携带7212.321秒
+原始`racetrack_aws_day_v1`场景已清除，上游 world 原字节仅移存于
+`tools/scenes/source-worlds/racetrack_aws_day_v1.world`供 v2 重建：它携带7212.321秒
 历史时钟，首次PX4启动未就绪。v2只移除state中四个保存时钟/计数字段，所有其他字节，
 包括保存的6盏灯光位置均保留。不能简单删除整个state；其中灯光位置与定义不同。
 `python3 tools/scenes/import_aws_racetrack.py <固定归档> --check`及
@@ -237,7 +243,8 @@ v2交点与240个静态模型边界均与原v1一致。原点路线近护栏，�
 该范围不覆盖整条赛道、竞速、夜间/空赛道、长时间运行或真实硬件。
 具体签收状态及原始失败见`scenes/`清单和逐场景`evidence/`。
 
-较重场景可显式登记`runtime.clock_rate_hz: 100`；未填写仍为上游默认10。
+受管场景未填写`runtime.clock_rate_hz`时默认100，以减少MAVROS使用模拟时钟打戳时的量化冲突；
+仍可显式登记10或100，无scene的旧低层入口仍默认10。
 两个Gazebo入口只配置原`libgazebo_ros_init.so`的`gazebo:publish_rate`，
 发布的仍为真实Gazebo仿真时间，不另建时钟或修改传感器时间戳。
 赛道v2配合原生5Hz心跳使用100Hz时钟，使ROS状态不再受10Hz时钟节流。

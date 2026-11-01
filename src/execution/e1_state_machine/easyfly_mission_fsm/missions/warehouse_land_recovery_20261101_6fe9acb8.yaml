@@ -1,0 +1,7 @@
+# Contingency only, after the original task and child ownership have released.
+schema_version: 1
+frame_id: odom
+units: {position: m, angle: rad, time: s}
+failure_policy: abort
+steps:
+  - {type: land, timeout: 90}

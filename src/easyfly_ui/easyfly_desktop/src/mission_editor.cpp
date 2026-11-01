@@ -11,6 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <QComboBox>
+#include <QJsonObject>
 #include <QFileDialog>
 #include <QFormLayout>
 #include <QCheckBox>
@@ -38,10 +39,25 @@
 #include "easyfly_desktop/mission_draft.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
 #include "easyfly_desktop/mission_geometry.hpp"
+#include "easyfly_desktop/task_step_info.hpp"
 #include "layout_state.hpp"
 namespace easyfly_desktop
 {
 namespace mission = easyfly_mission_fsm;
+namespace
+{
+bool document_name_valid(const std::string & name)
+{
+  return !name.empty() && name.size() <= 255 && name.front() != '.' &&
+         name.find('/') == std::string::npos &&
+         (QString::fromStdString(name).endsWith(".yaml") ||
+         QString::fromStdString(name).endsWith(".yml")) && mission::missionTextUtf8(name) &&
+         std::none_of(
+    name.begin(), name.end(), [](unsigned char c) {
+      return c < 32 || c == 127 || c == '\\';
+    });
+}
+}  // namespace
 struct MissionEditor::Impl
 {
   MissionEditor * owner;
@@ -49,6 +65,11 @@ struct MissionEditor::Impl
   std::function<void()> changed;
   QPlainTextEdit * body;
   QLabel * status;
+  QLabel * status_details, * template_hint;
+  QLabel * step_hint{nullptr};
+  QComboBox * templates;
+  QJsonObject platform_context;
+  QString status_message;
   QListWidget * list;
   QComboBox * type;
   QComboBox * add_type;
@@ -67,8 +88,9 @@ struct MissionEditor::Impl
   QTimer * debounce;
   QMessageBox * prompt{nullptr};
   std::vector<mission::MissionStep> steps;
-  std::string content, clean_content;
+  std::string content, clean_content, validated_hash;
   uint64_t revision{0}, valid_revision{0}, request{0}, consumed{0};
+  uint64_t edit_revision{0};
   bool valid{false}, form_dirty{false}, io{false}, closing{false}, loading{false};
   QString root;
   QString exported_root;
@@ -77,7 +99,19 @@ struct MissionEditor::Impl
   : owner(widget), worker(std::move(paths)), changed(std::move(callback))
   {
     owner->setObjectName("pageContent"); owner->setAttribute(Qt::WA_StyledBackground, true);
-    auto * layout = new QVBoxLayout(owner);
+    auto * viewport_layout = new QVBoxLayout(owner);
+    viewport_layout->setContentsMargins(0, 0, 0, 0);
+    auto * editor_scroll = new QScrollArea(owner);
+    editor_scroll->setObjectName("draftEditorScroll"); editor_scroll->setWidgetResizable(true);
+    editor_scroll->setFrameShape(QFrame::NoFrame);
+    editor_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    editor_scroll->setMinimumWidth(0);
+    editor_scroll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Ignored);
+    auto * content_widget = new QWidget(editor_scroll);
+    content_widget->setObjectName("draftEditorContent"); editor_scroll->setWidget(content_widget);
+    viewport_layout->addWidget(editor_scroll);
+    auto * layout = new QVBoxLayout(content_widget);
+    layout->setSizeConstraint(QLayout::SetMinimumSize);
     auto * heading = new QLabel(QStringLiteral("任务编辑 · 本地草稿"), owner);
     heading->setProperty("heading", true); layout->addWidget(heading);
     auto * note = new QLabel(
@@ -89,14 +123,25 @@ struct MissionEditor::Impl
     help->setCheckable(true);
     QObject::connect(help, &QToolButton::toggled, note, &QWidget::setVisible);
     auto * toolbar = new QHBoxLayout;
+    toolbar->addWidget(new QLabel(QStringLiteral("任务模板"), owner));
+    templates = new QComboBox(owner); templates->setObjectName("draftTemplate");
+    templates->setAccessibleName(QStringLiteral("任务模板"));
+    templates->setMinimumWidth(0);
+    templates->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    templates->setMinimumContentsLength(8);
+    for (const auto & value : task_template_infos()) {templates->addItem(value.title, value.key);}
+    toolbar->addWidget(templates);
     button(
-      toolbar, "draftNew", QStringLiteral("新建示例"), [this] {
+      toolbar, "draftNew", QStringLiteral("新建任务"), [this] {
+        const int selected_template = templates->currentIndex();
         replace_question(
-          [this] {
+          [this, selected_template] {
             DraftJob j; j.operation = DraftOperation::Normalize; j.revision = revision;
-            for (const auto * t : {"takeoff", "hover", "land"}) {
-              j.steps.push_back(draft_default_step(t));
+            const auto value = task_template_infos().value(selected_template);
+            for (const auto & t : value.types) {
+              j.steps.push_back(draft_default_step(t.toStdString()));
             }
+            if (value.key == "waypoint") {j.steps[1].x = 2.0;}
             submit(std::move(j), true);
           });
       });
@@ -116,7 +161,15 @@ struct MissionEditor::Impl
     button(toolbar, "draftValidate", QStringLiteral("校验任务"), [this] {validate();});
     toolbar->addStretch(); toolbar->addWidget(help); layout->addLayout(toolbar);
     layout->addWidget(note);
+    template_hint = new QLabel(owner); template_hint->setObjectName("draftTemplateHint");
+    template_hint->setWordWrap(true); template_hint->setMinimumWidth(0);
+    template_hint->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    layout->addWidget(template_hint);
+    QObject::connect(
+      templates, QOverload<int>::of(&QComboBox::currentIndexChanged), owner,
+      [this] {refresh_support();});
     auto * tabs = new QTabWidget(owner); tabs->setObjectName("draftTabs");
+    tabs->setMinimumHeight(320);
     layout->addWidget(tabs, 1);
     auto * split = new QSplitter(Qt::Horizontal, tabs);
     split->setObjectName("draftStepParameterSplitter"); split->setChildrenCollapsible(false);
@@ -165,19 +218,21 @@ struct MissionEditor::Impl
     list = new QListWidget(sequence_page); list->setObjectName("draftSteps");
     sequence_layout->addWidget(list, 1);
     type = new QComboBox(parameters_page); type->setObjectName("draftType");
-    type->addItems(
-      {"takeoff", "hover", "waypoint", "navigate", "track", "search", "land",
-        "precision_land", "explore"});
+    for (const auto & info : task_step_infos()) {
+      type->addItem(task_step_title(info.key.toStdString()), info.key);
+    }
     parameters_layout->addWidget(type);
     add_type = new QComboBox(sequence_page); add_type->setObjectName("draftAddType");
-    for (int i = 0; i < type->count(); ++i) {add_type->addItem(type->itemText(i));}
+    for (int i = 0; i < type->count(); ++i) {
+      add_type->addItem(type->itemText(i), type->itemData(i));
+    }
     sequence_layout->addWidget(new QLabel(QStringLiteral("追加步骤类型"), sequence_page));
     sequence_layout->addWidget(add_type);
     auto * actions = new QHBoxLayout;
     button(
       actions, "draftAdd", QStringLiteral("追加"), [this] {
         auto candidate = steps;
-        candidate.push_back(draft_default_step(add_type->currentText().toStdString()));
+        candidate.push_back(draft_default_step(add_type->currentData().toString().toStdString()));
         normalize(std::move(candidate));
       }, true);
     button(
@@ -234,8 +289,12 @@ struct MissionEditor::Impl
         prepare(directory->text());
       });
     export_layout->addLayout(folder);
-    auto * export_row = new QHBoxLayout; name = new QLineEdit("mission.yaml", export_box);
-    name->setObjectName("draftFilename"); export_row->addWidget(name, 1);
+    auto * document_row = new QHBoxLayout;
+    document_row->addWidget(new QLabel(QStringLiteral("任务文件名"), owner));
+    name = new QLineEdit("mission.yaml", owner); name->setObjectName("draftFilename");
+    name->setAccessibleName(QStringLiteral("任务文件名")); document_row->addWidget(name, 1);
+    layout->insertLayout(1, document_row);
+    auto * export_row = new QHBoxLayout;
     save = button(
       export_row, "draftExport", QStringLiteral("导出已校验草稿"), [this] {
         export_to(name->text());
@@ -244,20 +303,35 @@ struct MissionEditor::Impl
     auto * export_toggle = new QToolButton(owner);
     export_toggle->setObjectName("toggleDraftExport");
     export_toggle->setText(QStringLiteral("导出与目录设置")); export_toggle->setCheckable(true);
-    export_box->hide(); layout->addWidget(export_toggle); layout->addWidget(export_box);
+    auto * detail_actions = new QHBoxLayout;
+    detail_actions->addWidget(export_toggle);
+    auto * validation_details = new QToolButton(owner);
+    validation_details->setObjectName("draftValidationDetails");
+    validation_details->setText(QStringLiteral("校验详情")); validation_details->setCheckable(true);
+    detail_actions->addWidget(validation_details); detail_actions->addStretch();
+    export_box->hide(); layout->addLayout(detail_actions); layout->addWidget(export_box);
     QObject::connect(export_toggle, &QToolButton::toggled, export_box, &QWidget::setVisible);
     status = new QLabel(QStringLiteral("未校验 · 本地草稿不发送任何 ROS 请求"), owner);
     status->setMinimumWidth(0); status->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     status->setObjectName("draftStatus"); status->setTextFormat(Qt::PlainText); status->setWordWrap(
       true);
     status->setTextInteractionFlags(Qt::TextSelectableByMouse); layout->addWidget(status);
+    status_details = new QLabel(owner); status_details->setObjectName("draftStatusDetails");
+    status_details->setTextFormat(Qt::PlainText); status_details->setWordWrap(true);
+    status_details->setMinimumWidth(0);
+    status_details->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    status_details->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    status_details->hide(); layout->addWidget(status_details);
+    QObject::connect(
+      validation_details, &QToolButton::toggled, status_details, &QWidget::setVisible);
+    status_message = status->text();
     debounce = new QTimer(owner); debounce->setSingleShot(true); debounce->setInterval(180);
     QObject::connect(debounce, &QTimer::timeout, owner, [this] {validate();});
     QObject::connect(
       body, &QPlainTextEdit::textChanged, owner, [this] {
         if (loading) {return;}
         content = body->toPlainText().toUtf8().toStdString(); ++revision; valid = false;
-        steps.clear(); list->clear(); show_fields(); status->setText(
+        steps.clear(); list->clear(); show_fields(); set_status(
           QStringLiteral(
             "正文已更改，等待后台校验"));
         debounce->start(); notify(); enable();
@@ -269,13 +343,14 @@ struct MissionEditor::Impl
         }
       });
     QObject::connect(
-      type, &QComboBox::currentTextChanged, owner, [this] {
+      type, QOverload<int>::of(&QComboBox::currentIndexChanged), owner, [this] {
         if (loading || !valid || list->currentRow() < 0) {return;}
         form_dirty = true; build_fields(
           draft_default_step(
-            type->currentText().toStdString())); notify(); enable();
+            type->currentData().toString().toStdString())); notify(); enable();
       });
     QObject::connect(directory, &QLineEdit::textChanged, owner, [this] {root.clear(); enable();});
+    QObject::connect(name, &QLineEdit::textChanged, owner, [this] {notify(); enable();});
     auto * timer = new QTimer(owner); timer->setInterval(50);
     QObject::connect(timer, &QTimer::timeout, owner, [this] {poll();}); timer->start(); enable();
   }
@@ -289,7 +364,92 @@ struct MissionEditor::Impl
     }
     return b;
   }
-  void notify() {if (changed) {changed();}}
+  void set_status(const QString & value)
+  {
+    status_message = value; refresh_status();
+  }
+  void refresh_status()
+  {
+    const auto work = worker.state(); QString state, message = status_message;
+    if (form_dirty) {
+      state = "unapplied";
+      message = QStringLiteral("有未应用的步骤修改；应用或重置表单后再校验和保存。");
+      if (status_message.startsWith(QStringLiteral("表单")) ||
+        status_message.startsWith(QStringLiteral("禁飞盒")) ||
+        status_message.startsWith(QStringLiteral("未通过"))) {message += "\n" + status_message;}
+    } else if (prompt) {
+      state = "processing"; message = QStringLiteral("等待确认；当前草稿尚未替换。");
+    } else if (io) {
+      state = "processing";
+    } else if (((work.active || work.pending) && request != consumed) || debounce->isActive()) {
+      state = "validating"; message = QStringLiteral("校验中；当前版本尚未确认通过。");
+    } else if (valid && valid_revision == revision) {
+      state = "validated";
+      if (!document_name_valid(name->text().toUtf8().toStdString())) {
+        state = "invalid";
+        message = QStringLiteral(
+          "任务正文已校验；文件名须为不含路径的 .yaml/.yml 名称，UTF-8 长度不超过255字节。");
+      }
+    } else if (message.startsWith(QStringLiteral("未通过"))) {
+      state = "invalid";
+    } else {state = "unvalidated";}
+    QStringList visible;
+    for (const auto & line : message.split('\n')) {
+      if (!line.startsWith("SHA-256:")) {visible << line;}
+    }
+    status->setText(visible.join('\n'));
+    status->setToolTip(message); status_details->setText(message);
+    owner->setProperty("draftState", state);
+    owner->setProperty("draftValidationMessage", visible.join('\n'));
+  }
+  QString support_text(const std::string & step) const
+  {
+    const auto entry = platform_context.value("step_support").toObject().value(
+      QString::fromStdString(step)).toObject();
+    const auto state = entry.value("state").toString("unknown");
+    QString text;
+    if (state == "unadapted") {
+      text = QStringLiteral("当前平台尚未适配");
+    } else if (state == "not_ready") {
+      text = QStringLiteral("缺少依赖或后端未就绪");
+    } else if (state == "supported") {
+      text = platform_context.value("fresh").toBool() ?
+        QStringLiteral("平台已适配；执行仍需实时就绪检查") :
+        QStringLiteral("平台已适配；当前运行状态尚未确认");
+    } else {text = QStringLiteral("平台能力尚未确认；仍可离线编辑");}
+    const auto reason = entry.value("reason").toString();
+    return reason.isEmpty() ? text + QStringLiteral("。") : text + QStringLiteral("：") + reason;
+  }
+  void refresh_support()
+  {
+    for (auto * selector : {type, add_type}) {
+      for (int i = 0; i < selector->count(); ++i) {
+        const auto key = selector->itemData(i).toString().toStdString();
+        selector->setItemData(
+          i, task_step_description(key) + "\n" + task_step_requirements(key) + "\n" +
+          support_text(key), Qt::ToolTipRole);
+      }
+    }
+    if (step_hint) {
+      const auto key = type->currentData().toString().toStdString();
+      step_hint->setText(
+        task_step_description(key) + "\n" + task_step_requirements(key) + "\n" + support_text(key));
+    }
+    const auto value = task_template_infos().value(templates->currentIndex());
+    QStringList missing;
+    for (const auto & key : value.types) {
+      const auto entry = platform_context.value("step_support").toObject()[key].toObject();
+      if (entry.value("state") == "unadapted" || entry.value("state") == "not_ready") {
+        missing << task_step_info(key.toStdString()).title;
+      }
+    }
+    missing.removeDuplicates();
+    template_hint->setText(
+      value.note + QStringLiteral(" 模板需按场地修改；创建不会运行任务。") +
+      (missing.isEmpty() ? QString{} : QStringLiteral(" 当前待补能力：") +
+      missing.join(QStringLiteral("、"))));
+  }
+  void notify() {++edit_revision; if (changed) {changed();}}
   bool dirty() const {return form_dirty || content != clean_content;}
   bool busy() const {return io || prompt;}
   void enable()
@@ -309,7 +469,7 @@ struct MissionEditor::Impl
       b->setEnabled(checked && (form_button ? list->currentRow() >= 0 : !form_dirty));
     }
     save->setEnabled(checked && !form_dirty && !root.isEmpty());
-    refresh_geometry();
+    templates->setEnabled(ready); refresh_status(); refresh_support(); refresh_geometry();
   }
   void refresh_geometry()
   {
@@ -375,10 +535,10 @@ struct MissionEditor::Impl
   {
     debounce->stop(); request = worker.submit(std::move(j));
     if (!request) {
-      status->setText(
+      set_status(
         QStringLiteral(
           "操作未入队：正文须≤64KiB，步骤≤256，或后台操作尚未完成")); io = false;
-    } else {io = explicit_io; status->setText(QStringLiteral("后台处理本地草稿…"));}
+    } else {io = explicit_io; set_status(QStringLiteral("后台处理本地草稿…"));}
     enable();
   }
   void validate()
@@ -393,6 +553,27 @@ struct MissionEditor::Impl
         DraftJob j; j.operation = DraftOperation::Read;
         j.path = path.toUtf8().toStdString(); j.revision = revision;
         submit(std::move(j), true);
+      });
+  }
+  void open_document(
+    const QString & document_name, const QString & document_content,
+    std::function<bool()> source_current)
+  {
+    const auto bytes = document_content.toUtf8().toStdString();
+    if (!document_name_valid(document_name.toUtf8().toStdString()) || bytes.size() > 65536) {
+      set_status(QStringLiteral("任务名称无效或正文超过64KiB；当前草稿未改变")); return;
+    }
+    const auto expected_revision = edit_revision;
+    replace_question(
+      [this, document_name, bytes, expected_revision, source_current] {
+        if (source_current && !source_current()) {
+          set_status(
+            QStringLiteral("确认期间来源平台或任务目标已变化；当前草稿未改变")); return;
+        }
+        if (edit_revision != expected_revision) {
+          set_status(QStringLiteral("确认期间草稿已改变；未替换新的编辑")); return;
+        }
+        name->setText(document_name); exported.reset(); replace_body(bytes, true);
       });
   }
   void prepare(const QString & path)
@@ -427,12 +608,22 @@ struct MissionEditor::Impl
   }
   void build_fields(const mission::MissionStep & step)
   {
+    step_hint = nullptr;
     while (form->rowCount()) {form->removeRow(0);} inputs.clear();
     forbidden = nullptr; return_home = nullptr;
+    step_hint = new QLabel(fields); step_hint->setObjectName("draftStepHelp");
+    step_hint->setWordWrap(true); step_hint->setMinimumWidth(0);
+    step_hint->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    form->addRow(step_hint);
     for (const auto & f : draft_fields(step)) {
       auto * line = new QLineEdit(QString::number(f.value, 'g', 17), fields);
       line->setObjectName("draftField_" + QString::fromStdString(f.key)); inputs[f.key] = line;
-      form->addRow(QString::fromStdString(f.key + " [" + f.unit + "]"), line);
+      const auto caption = task_parameter_title(f.key) + " [" + QString::fromStdString(f.unit) +
+        "]";
+      const auto hint = task_parameter_hint(step.type, f.key);
+      auto * field_label = new QLabel(caption, fields); field_label->setToolTip(hint);
+      line->setAccessibleName(caption); line->setToolTip(hint);
+      form->addRow(field_label, line);
       QObject::connect(
         line, &QLineEdit::textEdited, owner, [this] {
           form_dirty = true; notify(); enable();
@@ -441,7 +632,11 @@ struct MissionEditor::Impl
     if (step.type == "explore") {
       return_home = new QCheckBox(QStringLiteral("完成后返回探索起点"), fields);
       return_home->setObjectName("draftExploreReturnHome");
-      return_home->setChecked(step.return_home); form->addRow(return_home);
+      return_home->setChecked(step.return_home);
+      return_home->setToolTip(
+        QStringLiteral(
+          "仅探索成功后返回本探索步骤开始时的位置；不包含降落，失败或超时不保证返回。"));
+      form->addRow(return_home);
       QObject::connect(
         return_home, &QCheckBox::toggled, owner, [this] {
           form_dirty = true; notify(); enable();
@@ -470,11 +665,21 @@ struct MissionEditor::Impl
   }
   void show_fields()
   {
+    const bool reset_changed = form_dirty;
     form_dirty = false; const int row = list->currentRow(); loading = true;
+    step_hint = nullptr;
     if (row >= 0 && row < static_cast<int>(steps.size())) {
-      type->setCurrentText(QString::fromStdString(steps[row].type)); build_fields(steps[row]);
+      type->setCurrentIndex(type->findData(QString::fromStdString(steps[row].type)));
+      build_fields(steps[row]);
     } else {while (form->rowCount()) {form->removeRow(0);} inputs.clear();}
-    loading = false; enable();
+    loading = false;
+    if (reset_changed && valid && valid_revision == revision) {
+      double timeout = 0; for (const auto & s : steps) {timeout += s.timeout;}
+      set_status(
+        QStringLiteral("v1 校验通过 · %1 步 · 超时上限合计 %2s · 仅文件格式校验\nSHA-256: %3")
+        .arg(steps.size()).arg(timeout).arg(QString::fromStdString(validated_hash)));
+    }
+    enable();
   }
   void apply_form()
   {
@@ -482,12 +687,12 @@ struct MissionEditor::Impl
       return;
     }
     auto candidate = steps;
-    auto s = type->currentText().toStdString() == candidate[row].type ? candidate[row] :
-      draft_default_step(type->currentText().toStdString());
+    auto s = type->currentData().toString().toStdString() == candidate[row].type ? candidate[row] :
+      draft_default_step(type->currentData().toString().toStdString());
     for (const auto & input : inputs) {
       bool ok = false; const double value = QLocale::c().toDouble(input.second->text(), &ok);
       if (!ok || !std::isfinite(value) || !draft_set_field(s, input.first, value)) {
-        status->setText(
+        set_status(
           QStringLiteral("表单数值无效：") + QString::fromStdString(input.first)); return;
       }
     }
@@ -495,7 +700,7 @@ struct MissionEditor::Impl
       s.return_home = return_home->isChecked(); s.forbidden_boxes.clear();
       const auto rows = forbidden->toPlainText().split('\n', Qt::SkipEmptyParts);
       if (rows.size() > 16 || forbidden->toPlainText().size() > 8192) {
-        status->setText(QStringLiteral("禁飞盒最多16行，内容不能超过8192字符")); return;
+        set_status(QStringLiteral("禁飞盒最多16行，内容不能超过8192字符")); return;
       }
       for (const auto & line : rows) {
         const auto values = line.trimmed().split(QRegularExpression("\\s+"), Qt::SkipEmptyParts);
@@ -506,7 +711,7 @@ struct MissionEditor::Impl
           (i < 3 ? box.min[i] : box.max[i - 3]) = v;
         }
         if (!valid_box) {
-          status->setText(QStringLiteral("禁飞盒每行需要六个有限数值；输入已保留")); return;
+          set_status(QStringLiteral("禁飞盒每行需要六个有限数值；输入已保留")); return;
         }
         s.forbidden_boxes.push_back(box);
       }
@@ -530,7 +735,7 @@ struct MissionEditor::Impl
       if (r->job.operation == DraftOperation::Validate) {
         valid = false; steps.clear(); list->clear(); show_fields();
       }
-      status->setText(
+      set_status(
         QStringLiteral("未通过 / 未确认成功：") + QString::fromStdString(r->error) +
         (r->backup.empty() ? QString{} : QStringLiteral("\n原内容备份保留于：") +
         QString::fromStdString(r->backup)));
@@ -542,21 +747,23 @@ struct MissionEditor::Impl
     if (r->job.operation == DraftOperation::Validate) {
       if (r->job.revision != revision) {return;}
       valid_revision = revision; valid = r->format == "yaml_v1";
+      validated_hash = valid ? r->hash : std::string{};
       steps = valid ? r->plan.steps : std::vector<mission::MissionStep>{};
       loading = true; list->clear();
       for (size_t i = 0; i < steps.size(); ++i) {
-        list->addItem(QString::number(i + 1) + " · " + QString::fromStdString(steps[i].type));
+        list->addItem(QString::number(i + 1) + " · " + task_step_title(steps[i].type));
       }
       if (!steps.empty()) {list->setCurrentRow(0);} loading = false; show_fields();
       double timeout = 0; for (const auto & s : steps) {timeout += s.timeout;}
-      status->setText(
-        valid ? QStringLiteral("v1 校验通过 · %1 步 · 超时上限合计 %2s\nSHA-256: %3")
+      set_status(
+        valid ? QStringLiteral(
+          "v1 校验通过 · %1 步 · 超时上限合计 %2s · 仅文件格式校验\nSHA-256: %3")
         .arg(steps.size()).arg(timeout).arg(QString::fromStdString(r->hash)) :
         QStringLiteral(
           "旧式 legacy_flat 格式：仅显示正文，不自动转换、不允许 v1 表单编辑或导出。"));
     } else if (r->job.operation == DraftOperation::PrepareDirectory) {
       directory->setText(QString::fromStdString(r->path)); root = QString::fromStdString(r->path);
-      status->setText(QStringLiteral("专用草稿目录已确认：") + root);
+      set_status(QStringLiteral("专用草稿目录已确认：") + root);
       validate();
     } else if (r->job.operation == DraftOperation::InspectExport) {
       auto j = r->job; j.operation = DraftOperation::Export; j.expected = r->fingerprint;
@@ -581,7 +788,7 @@ struct MissionEditor::Impl
           mission::missionContentSha256(content)};
         notify();
       }
-      status->setText(
+      set_status(
         QStringLiteral("已导出本地草稿（此操作不导入、不执行）：") +
         QString::fromStdString(r->path) +
         "\nSHA-256: " + QString::fromStdString(mission::missionContentSha256(r->job.content)) +
@@ -599,6 +806,15 @@ MissionEditor::~MissionEditor() = default;
 bool MissionEditor::dirty() const {return impl_->dirty();}
 bool MissionEditor::busy() const {return impl_->busy();}
 bool MissionEditor::stopped() const {return impl_->worker.state().stopped;}
+uint64_t MissionEditor::revision() const {return impl_->edit_revision;}
+std::optional<ExportedDraft> MissionEditor::validated_draft() const
+{
+  const auto & i = *impl_; const auto worker = i.worker.state();
+  const auto name = i.name->text().toUtf8().toStdString();
+  if (i.closing || i.busy() || worker.active || worker.pending || i.form_dirty || !i.valid ||
+    i.valid_revision != i.revision || !document_name_valid(name)) {return {};}
+  return ExportedDraft{i.edit_revision, name, i.content, i.validated_hash};
+}
 std::optional<ExportedDraft> MissionEditor::exported_draft() const
 {
   const auto & i = *impl_;
@@ -608,11 +824,19 @@ std::optional<ExportedDraft> MissionEditor::exported_draft() const
     i.name->text().toUtf8().toStdString() != i.exported->name) {return {};}
   return i.exported;
 }
+void MissionEditor::set_platform_context(const QJsonObject & context)
+{
+  if (impl_->platform_context == context) {return;}
+  impl_->platform_context = context; impl_->refresh_support();
+}
 void MissionEditor::stop()
 {
   impl_->closing = true; impl_->debounce->stop(); impl_->worker.stop(); impl_->enable();
 }
 void MissionEditor::open_file(const QString & p) {impl_->open(p);}
+void MissionEditor::open_document(
+  const QString & name, const QString & content, std::function<bool()> source_current)
+{impl_->open_document(name, content, std::move(source_current));}
 void MissionEditor::prepare_directory(const QString & p) {impl_->prepare(p);}
 void MissionEditor::export_file(const QString & n) {impl_->export_to(n);}
 }  // namespace easyfly_desktop

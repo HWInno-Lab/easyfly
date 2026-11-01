@@ -322,9 +322,9 @@ Native recovery queries run at most once per wall second so the probe keeps
 processing real ROS subscriptions between queries. Only a fresh actual query can
 finish the continuous recovery interval; receipt/TF freshness limits are unchanged.
 
-`hospital_aws_v1` is a resource-audit draft with 44 independent archived assets:
-one fixed AWS tarball and 43 individually versioned Fuel ZIPs. Explicit online
-`scene_catalog fetch hospital_aws_v1` prepares them; `--offline` verifies them.
+`hospital_aws_v2` uses independently pinned AWS and Fuel archives, including
+three separately versioned repaired asset sets. Explicit online
+`scene_catalog fetch hospital_aws_v2` prepares them; `--offline` verifies them.
 The single-asset `--archive` option rejects this scene as ambiguous. For completely
 offline maintainer preparation, first obtain the exact archives and metadata in
 `tools/scenes/hospital-source-lock.json`, then run:
@@ -336,8 +336,11 @@ python3 tools/scenes/import_aws_hospital.py /absolute/path/to/upstream \
 
 This command reproduces and verifies the committed data before preparing cache
 versions; it neither downloads nor starts any process in the simulation stack.
-The original hospital world has three anomalous source heights. It remains draft
-and managed launch refuses it pending a separate geometry/runtime qualification.
+The original hospital world has three anomalous source heights. The retired v1
+scene is no longer registered or installed as a runtime world. Its locked source
+bytes remain in `tools/scenes/source-worlds/` only to reproduce v2; the importer
+does not recreate a v1 scene manifest. Historical import records retain their
+original labels and paths.
 
 ## 随包验收说明
 

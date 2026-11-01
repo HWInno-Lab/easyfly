@@ -17,6 +17,8 @@
 #include "easyfly_ui_bridge/model.hpp"
 namespace easyfly_ui_bridge
 {
+// Derived only after validating a same-origin valid-to-expired geometry transition.
+inline constexpr char kValidatedGeometryExpiry[] = "validated classical source expiry";
 // Single observer-worker owner. Snapshots expose at most two matched images,
 // not the whole cache. Old snapshots remain immutable.
 class CameraObservationBuffer

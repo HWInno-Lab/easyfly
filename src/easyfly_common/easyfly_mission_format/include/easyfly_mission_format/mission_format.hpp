@@ -22,6 +22,13 @@ namespace easyfly_mission_fsm
 // Static validation is not authorization to fly: live action admission still applies.
 MissionValidation validateMissionText(const std::string & text);
 MissionValidation validateMissionFile(const std::string & path);
+struct MissionDocument
+{
+  MissionValidation validation;
+  std::string content;
+};
+// Retain exactly the bytes validated through one bounded, regular-file descriptor.
+MissionDocument loadMissionDocument(const std::string & path);
 // Classification is metadata only; callers must validate before using it.
 std::string missionFormatName(const std::string & text);
 // Identifies exact content bytes, never an execution or authentication identity.

@@ -37,9 +37,9 @@ if(BUILD_TESTING)
     target_link_libraries(test_managed_stack easyfly_desktop::local_playback)
   endif()
   target_compile_definitions(test_import_controls PRIVATE
-    EASYFLY_IMPORT_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-5/import")
+    EASYFLY_IMPORT_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-5/import")
   target_compile_definitions(test_parameter_controls PRIVATE
-    EASYFLY_PARAMETER_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-5/parameters")
+    EASYFLY_PARAMETER_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-5/parameters")
   target_compile_definitions(test_managed_stack PRIVATE
     EASYFLY_TOOL_FIXTURE="$<TARGET_FILE:tool_fixture>")
   add_dependencies(test_managed_stack tool_fixture)

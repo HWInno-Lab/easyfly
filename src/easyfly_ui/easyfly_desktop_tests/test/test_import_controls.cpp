@@ -27,6 +27,7 @@
 #include <QScrollArea>
 #include <QTemporaryDir>
 #include <QTest>
+#include <QTabWidget>
 #include <cstdlib>
 #include <atomic>
 #include <memory>
@@ -70,7 +71,7 @@ public:
     if (state_->inhibited || state_->data.fault) {return false;}
     ++state_->reads;
     state_->data.destination = c::ImportDestination{std::string(32, 'a'), std::string(32, 'b'),
-      "/tmp/mock-catalog", true, 256, 0, static_cast<double>(state_->reads)}; return true;
+      "/tmp/mock-catalog", true, 256, 0, easyfly_ui_bridge::detail::steady_seconds()}; return true;
   }
   bool import_confirmed(
     const c::ImportDocument & doc, const c::ImportDestination & d,
@@ -131,6 +132,68 @@ TEST(ImportPanel, CancelAndRetiredConfirmationCannotSubmit)
   confirm(panel); EXPECT_EQ(s->creates, 1); next->done(QMessageBox::Yes); EXPECT_EQ(s->creates, 1);
   panel.stop();
 }
+TEST(ImportPanel, DirectValidatedSaveRefreshesCatalogAndKeepsReviewExplicit)
+{
+  auto state = std::make_shared<State>();
+  auto observation = std::make_shared<desktop_test::FakeState>();
+  observation->details_content = body;
+  ui::MainWindow window({}, desktop_test::factory(observation), nullptr, ui::default_tool_options(),
+    {}, ui::control_factory(), {}, ui::parameter_factory(), {true, "/tmp/mock-journal"},
+    factory(state));
+  window.show(); window.show_page("tasks");
+  window.findChild<QTabWidget *>("taskCenterTabs")->setCurrentIndex(1);
+  auto * editor = window.findChild<ui::MissionEditor *>();
+  editor->open_document("demo.yaml", QString::fromUtf8(body));
+  ASSERT_TRUE(desktop_test::until([&] {return editor->validated_draft().has_value();}));
+  EXPECT_FALSE(editor->exported_draft().has_value());
+  auto * panel = window.findChild<ui::ImportPanel *>();
+  int confirmations = 0;
+  QObject::connect(
+    panel, &ui::ImportPanel::saved, &window, [&](const QJsonObject & receipt) {
+      ++confirmations; EXPECT_EQ(receipt["name"].toString(), "demo.yaml");
+      EXPECT_EQ(
+        receipt["sha256"].toString(),
+        QString::fromStdString(editor->validated_draft()->hash));
+    });
+  window.findChild<QPushButton *>("saveTaskToPlatform")->click();
+  auto * create = window.findChild<QPushButton *>("importCreate");
+  ASSERT_TRUE(desktop_test::until([&] {return create->isEnabled();}));
+  create->click(); confirm(*panel);
+  ASSERT_TRUE(desktop_test::until([&] {return confirmations == 1 && observation->list_calls > 0;}));
+  EXPECT_TRUE(
+    window.findChild<QLabel *>("taskDocumentState")->text().contains(
+      QStringLiteral(
+        "已保存")));
+  window.findChild<QPushButton *>("reviewSavedTask")->click();
+  ASSERT_TRUE(desktop_test::until([&] {return observation->details_calls > 0;}));
+  EXPECT_EQ(window.findChild<QTabWidget *>("taskCenterTabs")->currentIndex(), 0);
+  EXPECT_EQ(window.findChild<QPushButton *>("startMission"), nullptr);
+  QTest::qWait(100); EXPECT_EQ(confirmations, 1);
+  window.close(); EXPECT_TRUE(desktop_test::until([&] {return window.cleanup_complete();}));
+}
+TEST(ImportPanel, SavedReceiptRequiresCurrentFreshDirectoryIdentity)
+{
+  auto state = std::make_shared<State>();
+  ui::ImportPanel panel({true, "/tmp/mock-journal"}, factory(state));
+  panel.observe(draft(), true); panel.prepare_save();
+  panel.findChild<QPushButton *>("importCreate")->click(); confirm(panel);
+  ASSERT_TRUE(
+    desktop_test::until(
+      [&] {
+        return !panel.property("platformSavedReceipt").value<QJsonObject>().isEmpty();
+      }));
+  const auto receipt = panel.property("platformSavedReceipt").value<QJsonObject>();
+  EXPECT_TRUE(panel.matches_saved_receipt(receipt));
+  const auto original = *state->data.destination;
+  state->data.destination->instance = std::string(32, 'd');
+  EXPECT_FALSE(panel.matches_saved_receipt(receipt));
+  state->data.destination = original; state->data.destination->catalog = std::string(32, 'd');
+  EXPECT_FALSE(panel.matches_saved_receipt(receipt));
+  state->data.destination = original; state->data.destination->received -= 3;
+  EXPECT_FALSE(panel.matches_saved_receipt(receipt));
+  state->data.destination = original; panel.observe(draft(), false);
+  EXPECT_FALSE(panel.matches_saved_receipt(receipt)); panel.stop();
+}
 TEST(ImportPanel, LiveEditorRevisionIsCheckedBeforeTimerRefresh)
 {
   auto s = std::make_shared<State>(); std::optional<ui::ExportedDraft> live = draft();
@@ -183,7 +246,7 @@ TEST(ImportPanel, UnresolvedExitKeepsJournalAndDefaultsToStayEvenWhenDisconnecte
       }));
   EXPECT_EQ(s->stops, 1); EXPECT_EQ(s->creates, 0);
 }
-TEST(ImportStack, ExportedDraftRealServiceReadbackAndReadOnlyCatalogView)
+TEST(ImportStack, ValidatedDraftRealServiceReadbackAndReadOnlyCatalogView)
 {
   ASSERT_STREQ(std::getenv("ROS_DOMAIN_ID"), "129"); ASSERT_STREQ(
     std::getenv(
@@ -207,23 +270,10 @@ TEST(ImportStack, ExportedDraftRealServiceReadbackAndReadOnlyCatalogView)
     {true, (directory.path() + "/journal").toStdString()});
   window.show(); window.findChild<QListWidget *>("navigation")->setCurrentRow(6);
   auto * editor = window.findChild<ui::MissionEditor *>(); ASSERT_NE(editor, nullptr);
-  editor->prepare_directory(directory.path() + "/drafts");
-  ASSERT_TRUE(
-    desktop_test::until(
-      [&] {
-        return !editor->busy() &&
-        window.findChild<QLineEdit *>("draftDirectory")->text() == directory.path() + "/drafts" &&
-        QFile::exists(directory.path() + "/drafts/.easyfly-drafts-v1");
-      }));
-  window.findChild<QPlainTextEdit *>("draftBody")->setPlainText(QString::fromUtf8(body));
-  ASSERT_TRUE(
-    desktop_test::until(
-      [&] {
-        return window.findChild<QPushButton *>("draftExport")->isEnabled();
-      }));
-  window.findChild<QLineEdit *>("draftFilename")->setText("new.yaml"); editor->export_file(
-    "new.yaml");
-  ASSERT_TRUE(desktop_test::until([&] {return editor->exported_draft().has_value();}));
+  editor->open_document("new.yaml", QString::fromUtf8(body));
+  ASSERT_TRUE(desktop_test::until([&] {return editor->validated_draft().has_value();}));
+  EXPECT_FALSE(editor->exported_draft().has_value());
+  EXPECT_FALSE(QFile::exists(directory.path() + "/drafts"));
   auto * panel = window.findChild<ui::ImportPanel *>(); ASSERT_NE(panel, nullptr);
   auto * read = window.findChild<QPushButton *>("importReadDestination");
   auto * create = window.findChild<QPushButton *>("importCreate");
@@ -416,30 +466,33 @@ protected:
     ASSERT_TRUE(
       desktop_test::until(
         [&] {
-          return creates() == expected && !window->findChild<ui::ImportPanel *>()->busy() &&
+          auto * panel = window->findChild<ui::ImportPanel *>();
+          const auto receipt = panel->property("platformSavedReceipt").value<QJsonObject>();
+          const auto draft = window->findChild<ui::MissionEditor *>()->validated_draft();
+          const bool confirmed = phase == c::ImportPhase::Completed ?
+          draft && receipt.value("name").toString() == QString::fromStdString(draft->name) &&
+          receipt.value("sha256").toString() == QString::fromStdString(draft->hash) :
           widget<QLabel>("importStatus")->property("importPhase").toInt() ==
           static_cast<int>(phase);
-        }, 6000));
+          return creates() == expected && !panel->busy() && confirmed;
+        }, 6000)) << "create requests=" << creates() << "; status=" <<
+      widget<QLabel>("importStatus")->text().toStdString();
   }
   void inspect(const QByteArray & expected)
   {
-    // List and validate share a production endpoint with an unchanged 1s read limit.
-    QTest::qWait(1050);
     ASSERT_NE(observed_source, nullptr);
-    const auto previous = observed_source->snapshot()->missions.at(
-      easyfly_ui_bridge::Key::MissionList).evidence.request_id;
-    widget<QListWidget>("navigation")->setCurrentRow(1);
-    widget<QPushButton>("listMissions")->click();
+    ASSERT_TRUE(window->show_page("tasks"));
+    widget<QTabWidget>("taskCenterTabs")->setCurrentIndex(0);
     auto * list = widget<QListWidget>("missionList");
+    // Saving refreshes the actual catalog; no redundant rate-limited manual read is needed.
     ASSERT_TRUE(
       desktop_test::until(
         [&] {
           const auto snapshot = observed_source->snapshot();
           return snapshot->missions.at(easyfly_ui_bridge::Key::MissionList).evidence.request_id >
-          previous;
+          0 &&
+          list->count() == 1 && list->item(0)->text() == "c04.yaml";
         }, 5000));
-    // Let the GUI consume that actual new list reply, not its retained old list rows.
-    QTest::qWait(150); ASSERT_EQ(list->count(), 1);
     EXPECT_EQ(list->item(0)->text(), "c04.yaml"); list->setCurrentRow(0);
     ASSERT_TRUE(
       desktop_test::until(

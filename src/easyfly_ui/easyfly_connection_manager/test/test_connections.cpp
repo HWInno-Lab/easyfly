@@ -23,6 +23,7 @@
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTabWidget>
+#include <QToolButton>
 #include <QTimer>
 #include <QDir>
 #include <QFile>
@@ -481,6 +482,128 @@ TEST(ConnectionManager, SimulationAndSerialCanBeConfiguredWithoutCommandLine)
     ASSERT_TRUE(manager.grab().save(qEnvironmentVariable("EASYFLY_CM_FORM_SCREENSHOT")));
   }
 }
+TEST(ConnectionManager, ObserveModeKeepsDdsEditableWithoutStartingBackend)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  auto p = cm::Profile::create("DDS connection"); p.mode = "observe";
+  const auto path = root.path() + "/profiles.json"; cm::write_profiles(path, {p});
+  cm::ManagerWindow manager(path, root.path() + "/runtime");
+  auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}));
+  for (const auto & id : {"connectionDomain", "connectionScope", "connectionSimulationTime",
+      "connectionFrontTopic", "connectionDownTopic"})
+  {
+    auto * field = manager.findChild<QWidget *>(id);
+    ASSERT_NE(field, nullptr); EXPECT_TRUE(field->isEnabled()) << id;
+  }
+  EXPECT_FALSE(manager.findChild<QComboBox *>("algorithm_strategy")->isEnabled());
+  EXPECT_FALSE(manager.findChild<QComboBox *>("connectionTransport")->isEnabled());
+  EXPECT_FALSE(manager.findChild<QCheckBox *>("connectionGcsEnabled")->isEnabled());
+  manager.findChild<QSpinBox *>("connectionDomain")->setValue(96);
+  manager.findChild<QComboBox *>("connectionScope")->setCurrentIndex(1);
+  manager.findChild<QCheckBox *>("connectionSimulationTime")->setChecked(false);
+  manager.findChild<QLineEdit *>("connectionFrontTopic")->setText("/external/front/image_raw");
+  manager.findChild<QLineEdit *>("connectionDownTopic")->setText("/external/down/image_raw");
+  QTest::mouseClick(save, Qt::LeftButton);
+  const auto saved = cm::read_profiles(path); ASSERT_EQ(saved.size(), 1);
+  EXPECT_EQ(saved[0].mode, "observe"); EXPECT_EQ(saved[0].domain, 96);
+  EXPECT_FALSE(saved[0].local_only); EXPECT_FALSE(saved[0].simulation_time);
+  EXPECT_EQ(saved[0].front_topic, "/external/front/image_raw");
+  EXPECT_EQ(saved[0].down_topic, "/external/down/image_raw");
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
+TEST(ConnectionManager, ModeNavigationRetainsDraftAndOnboardUsesTheSamePersistentPage)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  auto p = cm::Profile::create("Simulation draft");
+  p.mode = "sitl"; p.simulation_time = true; p.local_only = true;
+  const auto path = root.path() + "/profiles.json"; cm::write_profiles(path, {p});
+  cm::ManagerWindow manager(path, root.path() + "/runtime"); manager.show();
+  ASSERT_TRUE(until([&] {return manager.findChild<QPushButton *>("saveConnection")->isEnabled();}));
+  auto * strategy = manager.findChild<QComboBox *>("algorithm_strategy");
+  ASSERT_NE(strategy, nullptr); strategy->setCurrentIndex(strategy->findData("ego"));
+  auto * session = manager.property("onboardSession").value<QObject *>();
+  ASSERT_NE(session, nullptr);
+  const auto choose = [&manager](const QString & title) {
+      for (auto * button : manager.findChildren<QToolButton *>("connectionModeCard")) {
+        if (button->text() == title) {button->click(); return true;}
+      }
+      return false;
+    };
+  ASSERT_TRUE(choose(QStringLiteral("连接 DDS")));
+  auto * tabs = manager.findChild<QTabWidget *>("connectionConfigurationTabs");
+  ASSERT_NE(tabs, nullptr);
+  for (int i = 0; i < tabs->count(); ++i) {
+    if (tabs->tabText(i) == QStringLiteral("算法配置") ||
+      tabs->tabText(i) == QStringLiteral("飞控链路") ||
+      tabs->tabText(i) == QStringLiteral("运行环境"))
+    {
+      EXPECT_FALSE(tabs->isTabVisible(i));
+    }
+  }
+  auto * topic = manager.findChild<QLineEdit *>("connectionFrontTopic");
+  topic->setText("not a ROS topic");
+  EXPECT_FALSE(manager.findChild<QLabel *>("connectionValidationSummary")->isHidden());
+  EXPECT_FALSE(manager.findChild<QPushButton *>("startConnection")->isEnabled());
+  manager.findChild<QToolButton *>("onboardModeCard")->click();
+  auto * onboard = manager.findChild<QWidget *>("integratedOnboardPage");
+  ASSERT_NE(onboard, nullptr); EXPECT_TRUE(onboard->isVisible());
+  EXPECT_FALSE(tabs->isVisible());
+  manager.resize(850, 570); QTest::qWait(30);
+  EXPECT_LE(manager.height(), 570);
+  auto * onboard_tabs = onboard->findChild<QTabWidget *>("onboardManagementTabs");
+  ASSERT_NE(onboard_tabs, nullptr);
+  auto * environment = qobject_cast<QScrollArea *>(onboard_tabs->widget(0));
+  ASSERT_NE(environment, nullptr);
+  EXPECT_EQ(environment->horizontalScrollBar()->maximum(), 0);
+  auto * stop_platform = onboard->findChild<QPushButton *>("onboardStop");
+  ASSERT_NE(stop_platform, nullptr);
+  const auto stop_position = stop_platform->mapTo(onboard, QPoint(0, 0));
+  EXPECT_TRUE(onboard->rect().contains(QRect(stop_position, stop_platform->size())));
+  ASSERT_TRUE(choose(QStringLiteral("本机仿真")));
+  EXPECT_EQ(strategy->currentData(), "ego");
+  ASSERT_TRUE(choose(QStringLiteral("连接 DDS")));
+  EXPECT_EQ(topic->text(), "not a ROS topic");
+  EXPECT_EQ(manager.property("onboardSession").value<QObject *>(), session);
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
+TEST(ConnectionManager, ObserverTargetAssociationSurvivesReloadAndClearsForAnotherProfile)
+{
+  QTemporaryDir root;
+  const auto runtime = root.path() + "/runtime";
+  cm::Supervisor supervisor(runtime, DESKTOP_BINARY_FROM_TEST);
+  auto bound = cm::Profile::create("Aircraft observer"); bound.mode = "observe";
+  bound.simulation_time = false;
+  auto other = cm::Profile::create("Unrelated observer"); other.mode = "observe";
+  const auto path = root.path() + "/profiles.json";
+  cm::write_profiles(path, {bound, other});
+  const QJsonObject context{{"server_id", "authenticated-aircraft"},
+    {"ros_domain_id", bound.domain},
+    {"local_only", bound.local_only}};
+  QFile associations(runtime + "/observer-targets.json");
+  ASSERT_TRUE(associations.open(QIODevice::WriteOnly));
+  associations.write(QJsonDocument(QJsonObject{{bound.id, context}}).toJson());
+  associations.close();
+  cm::ManagerWindow manager(path, runtime);
+  ASSERT_TRUE(until([&] {return manager.findChild<QPushButton *>("saveConnection")->isEnabled();}));
+  EXPECT_EQ(
+    manager.property("onboardObserverContext").value<QJsonObject>()["server_id"],
+    "authenticated-aircraft");
+  manager.findChild<QComboBox *>("connectionSelector")->setCurrentIndex(1);
+  EXPECT_TRUE(manager.property("onboardObserverContext").value<QJsonObject>().isEmpty());
+  manager.findChild<QComboBox *>("connectionSelector")->setCurrentIndex(0);
+  EXPECT_EQ(
+    manager.property("onboardObserverContext").value<QJsonObject>()["server_id"],
+    "authenticated-aircraft");
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
 TEST(ConnectionManager, RecoveredBackendReopensFrozenProfileWithoutOverwritingAnotherSavedProfile)
 {
   QTemporaryDir root;
@@ -765,7 +888,7 @@ TEST(Connections, LegacyFixedCalibrationFileMigratesWithoutChangingFrozenPayload
   }
 }
 
-TEST(ConnectionManager, SceneAdmissionTracksProfileDraftAndMissingSelection)
+TEST(ConnectionManager, SceneChoicesOnlyIncludeCurrentProfileAndPreserveSelection)
 {
   QTemporaryDir root;
   cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
@@ -777,30 +900,81 @@ TEST(ConnectionManager, SceneAdmissionTracksProfileDraftAndMissingSelection)
   auto * profile = manager.findChild<QComboBox *>("connectionProfile");
   auto * status = manager.findChild<QLabel *>("connectionSceneStatus");
   auto * start = manager.findChild<QPushButton *>("startConnection");
-  ASSERT_TRUE(until([&] {return scenes->findData("empty") >= 0;}, 15000));
-  ASSERT_TRUE(until([&] {return start->isEnabled();}));
-  EXPECT_TRUE(scenes->currentText().contains(QStringLiteral(" · 可用")));
+  ASSERT_TRUE(until([&] {return scenes->count() == 11 && start->isEnabled();}, 15000));
+  for (const auto & name : {"base_sim", "full_perception", "landing_dev", "navigation_dev"}) {
+    profile->setCurrentIndex(profile->findData(name));
+    EXPECT_EQ(scenes->count(), QString(name) == "navigation_dev" ? 14 : 11);
+    EXPECT_EQ(scenes->currentData(), "primitives_sparse_seed42_v1");
+    EXPECT_TRUE(start->isEnabled());
+    EXPECT_TRUE(status->text().contains(QStringLiteral("所选场景已登记")));
+    for (int i = 0; i < scenes->count(); ++i) {
+      const auto row = scenes->itemData(i, Qt::UserRole + 1).toJsonObject();
+      EXPECT_EQ(row["status"], "registered");
+      EXPECT_TRUE(row["profiles"].toArray().contains(QString(name)));
+    }
+    for (const auto & hidden : {"empty", "perception_demo", "precision_landing",
+        "hospital_aws_v1", "racetrack_aws_day_v1", "primitives_corridor_seed1042_v1"})
+    {
+      EXPECT_EQ(scenes->findData(hidden), -1);
+    }
+  }
+  const auto fuel = QString("fuel_room_v1");
+  ASSERT_GE(scenes->findData(fuel), 0); scenes->setCurrentIndex(scenes->findData(fuel));
   profile->setCurrentIndex(profile->findData("full_perception"));
+  EXPECT_EQ(scenes->findData(fuel), -1); EXPECT_EQ(scenes->currentIndex(), -1);
   EXPECT_FALSE(start->isEnabled());
   EXPECT_TRUE(status->text().contains(QStringLiteral("不支持")));
-  EXPECT_TRUE(status->text().contains(QStringLiteral("基础仿真")));
-  profile->setCurrentIndex(profile->findData("base_sim"));
+  manager.findChild<QToolButton *>("refreshScenes")->click();
+  EXPECT_FALSE(start->isEnabled());
+  ASSERT_TRUE(until([&] {return status->text().contains(QStringLiteral("不支持"));}, 15000));
+  EXPECT_EQ(scenes->count(), 11); EXPECT_EQ(scenes->currentIndex(), -1);
+  profile->setCurrentIndex(profile->findData("navigation_dev"));
+  EXPECT_EQ(scenes->currentData(), fuel); EXPECT_TRUE(start->isEnabled());
+  profile->addItem("No compatible scenes", "no_scenes");
+  profile->setCurrentIndex(profile->count() - 1);
+  EXPECT_EQ(scenes->count(), 0); EXPECT_FALSE(scenes->isEnabled());
+  EXPECT_TRUE(status->text().contains(QStringLiteral("暂无可用场景")));
+  EXPECT_FALSE(start->isEnabled());
+  profile->setCurrentIndex(profile->findData("full_perception"));
+  scenes->setCurrentIndex(scenes->findData("primitives_sparse_seed42_v1"));
   EXPECT_TRUE(start->isEnabled());
-  scenes->setCurrentIndex(scenes->findData("empty"));
-  EXPECT_FALSE(start->isEnabled()); EXPECT_TRUE(status->text().contains(QStringLiteral("草稿")));
-  scenes->addItem("removed_scene", "removed_scene");
-  scenes->setCurrentIndex(scenes->count() - 1);
-  EXPECT_FALSE(start->isEnabled());
-  EXPECT_TRUE(status->text().contains(QStringLiteral("不在已安装目录")));
-  manager.findChild<QPushButton *>("refreshScenes")->click();
-  EXPECT_FALSE(start->isEnabled());
-  ASSERT_TRUE(
-    until(
-      [&] {return status->text().contains(QStringLiteral("不在已安装目录"));}, 15000));
-  EXPECT_EQ(scenes->currentData(), "removed_scene");
-  EXPECT_FALSE(start->isEnabled());
+  QTest::keyClick(scenes, Qt::Key_End);
+  const auto choice = scenes->currentData();
+  manager.findChild<QToolButton *>("refreshScenes")->click();
+  ASSERT_TRUE(until([&] {return start->isEnabled();}, 15000));
+  EXPECT_EQ(scenes->currentData(), choice);
   EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
   EXPECT_FALSE(supervisor.status()["process_running"].toBool());
+}
+
+TEST(ConnectionManager, UnavailableSavedScenesStayOutOfChoicesWithoutRewritingProfiles)
+{
+  for (const auto & id : {"empty", "removed_scene", "fuel_room_v1"}) {
+    SCOPED_TRACE(id);
+    QTemporaryDir root;
+    cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+    auto p = cm::Profile::create("Legacy scene"); p.mode = "sitl";
+    p.selected_profile = "full_perception"; p.scene = id;
+    const auto path = root.path() + "/profiles.json"; cm::write_profiles(path, {p});
+    QFile file(path); ASSERT_TRUE(file.open(QIODevice::ReadOnly));
+    const auto original = file.readAll(); file.close();
+    cm::ManagerWindow manager(path, root.path() + "/runtime");
+    auto * scenes = manager.findChild<QComboBox *>("connectionScene");
+    auto * status = manager.findChild<QLabel *>("connectionSceneStatus");
+    auto * start = manager.findChild<QPushButton *>("startConnection");
+    ASSERT_TRUE(until([&] {return scenes->isEnabled() && scenes->count() == 11;}, 15000));
+    EXPECT_EQ(scenes->currentIndex(), -1); EXPECT_EQ(scenes->findData(id), -1);
+    EXPECT_TRUE(status->text().contains(id)); EXPECT_FALSE(start->isEnabled());
+    manager.findChild<QToolButton *>("refreshScenes")->click();
+    ASSERT_TRUE(until([&] {return scenes->isEnabled();}, 15000));
+    EXPECT_EQ(scenes->currentIndex(), -1); EXPECT_EQ(scenes->findData(id), -1);
+    EXPECT_FALSE(start->isEnabled());
+    ASSERT_TRUE(file.open(QIODevice::ReadOnly)); EXPECT_EQ(file.readAll(), original); file.close();
+    scenes->setCurrentIndex(scenes->findData("primitives_sparse_seed42_v1"));
+    ASSERT_TRUE(until([&] {return start->isEnabled();}));
+    EXPECT_TRUE(status->text().contains(QStringLiteral("所选场景已登记")));
+    EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  }
 }
 
 TEST(ConnectionProfile, PeripheralOptInIsIndependentAndPreservesLegacyProfileHash)

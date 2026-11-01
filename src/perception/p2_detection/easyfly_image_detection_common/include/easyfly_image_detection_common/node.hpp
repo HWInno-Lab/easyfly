@@ -15,11 +15,14 @@
 #define EASYFLY_IMAGE_DETECTION_COMMON__NODE_HPP_
 
 #include <chrono>
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
+#include <utility>
+#include <vector>
 
 #include <easyfly_msgs/srv/get_capabilities.hpp>
 #include <opencv2/imgproc.hpp>
@@ -34,26 +37,30 @@ template<typename Result>
 class Node : public rclcpp::Node
 {
 public:
-  Node(const std::string & name, const std::string & capability, bool allow_mono)
-  : rclcpp::Node(name), capability_(capability), allow_mono_(allow_mono)
+  Node(
+    const std::string & name, const std::string & capability, bool allow_mono,
+    const rclcpp::NodeOptions & options = rclcpp::NodeOptions())
+  : rclcpp::Node(name, options), capability_(capability), allow_mono_(allow_mono)
   {
     frame_ = parameter<std::string>("optical_frame", "camera_color_optical_frame");
     age_ = parameter<double>("max_age_seconds", 0.5);
-    const auto input = parameter<std::string>("input_topic", "/camera/image_raw");
+    input_ = parameter<std::string>("input_topic", "/camera/image_raw");
+    input_reliability_ = parameter<std::string>("input_reliability", "auto");
     const auto output = parameter<std::string>("output_topic", "/" + capability + "_observations");
     const auto service = parameter<std::string>(
       "capabilities_service", "/platform/" + capability + "/capabilities");
     const auto threads = parameter<int>("opencv_threads", 2);
-    if (frame_.empty() || input.empty() || output.empty() || service.empty() ||
+    if (frame_.empty() || input_.empty() || output.empty() || service.empty() ||
+      (input_reliability_ != "auto" && input_reliability_ != "reliable" &&
+      input_reliability_ != "best_effort") ||
       !std::isfinite(age_) || age_ < 0.05 || age_ > 5.0 || threads < 1 || threads > 8)
     {
       throw std::invalid_argument("invalid image detector transport parameters");
     }
     cv::setNumThreads(threads);
     publisher_ = this->template create_publisher<Result>(output, rclcpp::QoS(1));
-    subscription_ = this->template create_subscription<sensor_msgs::msg::Image>(
-      input, rclcpp::SensorDataQoS().keep_last(1),
-      [this](sensor_msgs::msg::Image::ConstSharedPtr image) {receive(*image);});
+    refresh_input();
+    graph_timer_ = this->create_wall_timer(std::chrono::seconds(1), [this]() {refresh_input();});
     timer_ = this->create_wall_timer(
       std::chrono::milliseconds(25), [this]() {
         if (!clock_valid() || (last_result_.valid && !fresh(last_result_.header, receipt_))) {
@@ -84,6 +91,44 @@ protected:
   virtual void detect(const cv::Mat & image, Result & output) = 0;
 
 private:
+  void refresh_input()
+  {
+    std::vector<std::string> sources;
+    bool all_reliable = true;
+    for (const auto & endpoint : this->get_publishers_info_by_topic(input_)) {
+      if (endpoint.topic_type() != "sensor_msgs/msg/Image") {continue;}
+      const auto & gid = endpoint.endpoint_gid();
+      sources.emplace_back(reinterpret_cast<const char *>(gid.data()), gid.size());
+      all_reliable = all_reliable && endpoint.qos_profile().reliability() ==
+        rclcpp::ReliabilityPolicy::Reliable;
+    }
+    std::sort(sources.begin(), sources.end());
+    const bool reliable = input_reliability_ == "reliable" ||
+      (input_reliability_ == "auto" && !sources.empty() && all_reliable);
+    if (subscription_ && sources == input_sources_ && reliable == reliable_input_) {return;}
+    // Retire the old result before changing transport. In particular, a QoS
+    // rebuild must not give the same source frame another receipt lifetime.
+    invalidate("input_source_changed");
+    const auto generation = ++input_generation_;
+    subscription_.reset(); input_sources_ = std::move(sources); reliable_input_ = reliable;
+    auto qos = rclcpp::QoS(1).durability_volatile();
+    if (reliable) {qos.reliable();} else {qos.best_effort();}
+    subscription_ = this->template create_subscription<sensor_msgs::msg::Image>(
+      input_, qos,
+      [this, generation](sensor_msgs::msg::Image::ConstSharedPtr image,
+      const rclcpp::MessageInfo & info) {
+        if (generation != input_generation_) {return;}
+        const auto & gid = info.get_rmw_message_info().publisher_gid;
+        const std::string source(reinterpret_cast<const char *>(gid.data), sizeof(gid.data));
+        if (source != receiving_source_) {
+          invalidate("input_source_changed"); receiving_source_ = source; watermark_ = 0;
+        }
+        receive(*image);
+      });
+    RCLCPP_INFO(
+      this->get_logger(), "Image input reliability: %s (%s, %zu publisher(s))",
+      reliable ? "reliable" : "best_effort", input_reliability_.c_str(), input_sources_.size());
+  }
   static double steady()
   {
     return std::chrono::duration<double>(
@@ -179,7 +224,10 @@ private:
     }
   }
 
-  std::string capability_, frame_;
+  std::string capability_, frame_, input_, input_reliability_, receiving_source_;
+  std::vector<std::string> input_sources_;
+  bool reliable_input_{false};
+  uint64_t input_generation_{0};
   bool allow_mono_;
   double age_{0.5}, progress_{0.0}, receipt_{0.0};
   int64_t clock_{0}, watermark_{0};
@@ -187,6 +235,7 @@ private:
   typename rclcpp::Publisher<Result>::SharedPtr publisher_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr subscription_;
   rclcpp::TimerBase::SharedPtr timer_;
+  rclcpp::TimerBase::SharedPtr graph_timer_;
   rclcpp::Service<easyfly_msgs::srv::GetCapabilities>::SharedPtr service_;
 };
 }  // namespace easyfly::image_detection

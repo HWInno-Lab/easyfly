@@ -25,7 +25,7 @@ class SceneInputs:
     ground_model_frame: str = 'odom'
     grid_footprint_mode: str = 'cluster_boxes'
     heartbeat_rate_hz: int = 1
-    clock_rate_hz: int = 10
+    clock_rate_hz: int = 100
     battery_rate_hz: int = 0
     grid_height_limit_m: float = 0.0
 
@@ -61,7 +61,7 @@ def resolve_scene(catalog, scene_id, profile):
                        scene['navigation'].get('ground_model_frame','odom'),
                        scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
                        scene['runtime'].get('heartbeat_rate_hz',1),
-                       scene['runtime'].get('clock_rate_hz',10),battery,
+                       scene['runtime'].get('clock_rate_hz',100),battery,
                        scene['navigation'].get('grid_height_limit_m',0.0))
 
 

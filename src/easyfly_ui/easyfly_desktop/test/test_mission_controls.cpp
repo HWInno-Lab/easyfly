@@ -14,6 +14,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDir>
 #include <QFile>
 #include <QLabel>
@@ -203,6 +204,40 @@ TEST_F(MissionGui, RetiredPromptCannotConfirmOrDismissANewerPrompt)
   ASSERT_EQ(widget<QMessageBox>("missionStartPrompt"), current);
   answer("missionStartPrompt", true);
   ASSERT_TRUE(until([&] {return control->starts == 1;}));
+}
+TEST_F(MissionGui, TargetSwitchRetiresSimulationReviewAndKeepsFixedActionsVisible)
+{
+  open();
+  auto * page = new QWidget(window.get());
+  page->setProperty("onboardMissionPage", QVariant::fromValue<QObject *>(new QWidget(page)));
+  page->setProperty(
+    "onboardMissionTransferPage",
+    QVariant::fromValue<QObject *>(new QWidget(page)));
+  window->set_connection_page(page); window->show_page("tasks");
+  ASSERT_TRUE(prepare());
+  window->resize(1024, 720); QTest::qWait(60);
+  for (const auto * name : {"startMission", "cancelOwnedMission"}) {
+    auto * action = widget<QPushButton>(name); ASSERT_TRUE(action->isVisible());
+    EXPECT_TRUE(
+      window->rect().contains(
+        QRect(
+          action->mapTo(window.get(), QPoint()),
+          action->size())));
+  }
+  widget<QPushButton>("startMission")->click();
+  ASSERT_NE(widget<QMessageBox>("missionStartPrompt"), nullptr);
+  auto * target = widget<QComboBox>("taskTarget"); ASSERT_NE(target, nullptr);
+  target->setCurrentIndex(1);
+  EXPECT_FALSE(widget<QCheckBox>("managedSimulationPermit")->isChecked());
+  EXPECT_FALSE(widget<QPushButton>("startMission")->isEnabled());
+  EXPECT_FALSE(widget<QPushButton>("cancelOwnedMission")->isEnabled());
+  QTest::qWait(100);
+  EXPECT_EQ(control->starts, 0); EXPECT_EQ(control->cancels, 0); EXPECT_EQ(control->stops, 0);
+  EXPECT_EQ(source->stop_calls, 0);
+  target->setCurrentIndex(0);
+  EXPECT_FALSE(widget<QPushButton>("startMission")->isEnabled());
+  widget<QCheckBox>("managedSimulationPermit")->setChecked(true);
+  ASSERT_TRUE(until([&] {return widget<QPushButton>("startMission")->isEnabled();}));
 }
 TEST_F(MissionGui, HumanReviewCanOutlastBudgetButUsesNewExactReads)
 {

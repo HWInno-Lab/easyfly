@@ -35,6 +35,7 @@
 #include <vector>
 #include "easyfly_desktop/mission_draft.hpp"
 #include "easyfly_desktop/mission_editor.hpp"
+#include "easyfly_desktop/task_step_info.hpp"
 #include "support.hpp"
 namespace ui = easyfly_desktop;
 namespace mission = easyfly_mission_fsm;
@@ -300,7 +301,12 @@ TEST(DraftEditor, ReadExactCrLfExportAndCancelOverwrite)
         return status(editor).contains(QStringLiteral("已导出本地草稿"));
       }));
   EXPECT_EQ(read(root + "/mission.yaml"), bytes); EXPECT_EQ(read(source), bytes);
+  ASSERT_TRUE(editor.exported_draft());
+  EXPECT_EQ(editor.exported_draft()->content, bytes);
+  ASSERT_TRUE(editor.validated_draft());
+  EXPECT_EQ(editor.validated_draft()->hash, editor.exported_draft()->hash);
   editor.findChild<QPlainTextEdit *>("draftBody")->appendPlainText("# local edit");
+  EXPECT_FALSE(editor.exported_draft()); EXPECT_FALSE(editor.validated_draft());
   ASSERT_TRUE(desktop_test::until([&] {return checked(editor);}));
   editor.export_file("mission.yaml");
   ASSERT_TRUE(desktop_test::until([&] {return editor.findChild<QMessageBox *>("draftPrompt");}));
@@ -323,13 +329,149 @@ TEST(DraftEditor, ReadExactCrLfExportAndCancelOverwrite)
   EXPECT_FALSE(editor.dirty()); EXPECT_EQ(read(source), bytes);
   editor.stop(); EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
 }
+TEST(DraftEditor, InMemoryReadPreservesBytesAndSnapshotsTrackAllEdits)
+{
+  ui::MissionEditor editor; editor.resize(1120, 800); editor.show();
+  const auto bytes = QString::fromStdString(sample() + "# 机载原文\n").replace(
+    "\n", "\r\n").toUtf8().toStdString();
+  editor.open_document("onboard.yaml", QString::fromStdString(bytes));
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  const auto original = *editor.validated_draft();
+  EXPECT_EQ(original.name, "onboard.yaml"); EXPECT_EQ(original.content, bytes);
+  EXPECT_EQ(original.hash, mission::missionContentSha256(bytes));
+  EXPECT_EQ(original.revision, editor.revision()); EXPECT_FALSE(editor.dirty());
+  EXPECT_FALSE(editor.exported_draft());
+  auto * name = editor.findChild<QLineEdit *>("draftFilename");
+  const auto unicode_name = QString(50, QChar(0x5de1)) + ".yaml";
+  name->setText(unicode_name); ASSERT_TRUE(editor.validated_draft());
+  EXPECT_EQ(editor.validated_draft()->name, unicode_name.toStdString());
+  name->setText("../invalid.yaml"); EXPECT_GT(editor.revision(), original.revision);
+  EXPECT_FALSE(editor.validated_draft()); name->setText("renamed.yml");
+  ASSERT_TRUE(editor.validated_draft()); EXPECT_EQ(editor.validated_draft()->name, "renamed.yml");
+  auto * field = editor.findChild<QLineEdit *>("draftField_altitude"); ASSERT_NE(field, nullptr);
+  const auto named_revision = editor.revision();
+  field->setFocus(); field->selectAll(); QTest::keyClicks(field, "2.25");
+  EXPECT_GT(editor.revision(), named_revision); EXPECT_FALSE(editor.validated_draft());
+  editor.findChild<QPushButton *>("draftResetForm")->click();
+  ASSERT_TRUE(editor.validated_draft()); EXPECT_EQ(editor.validated_draft()->content, bytes);
+  auto * body = editor.findChild<QPlainTextEdit *>("draftBody");
+  body->appendPlainText("# local change"); EXPECT_FALSE(editor.validated_draft());
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  EXPECT_GT(editor.revision(), named_revision);
+  EXPECT_NE(editor.validated_draft()->hash, original.hash); EXPECT_FALSE(editor.exported_draft());
+  editor.stop(); EXPECT_FALSE(editor.validated_draft());
+  EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
+}
+TEST(DraftEditor, InMemoryReplacementHonorsCancelAndPreservesNewerEdits)
+{
+  ui::MissionEditor editor;
+  editor.open_document("first.yaml", QString::fromStdString(sample()));
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  auto * body = editor.findChild<QPlainTextEdit *>("draftBody");
+  body->appendPlainText("# unsaved local change");
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  const auto modified = body->toPlainText();
+  editor.open_document("second.yaml", QString::fromStdString(sample()));
+  auto * prompt = editor.findChild<QMessageBox *>("draftPrompt"); ASSERT_NE(prompt, nullptr);
+  EXPECT_FALSE(editor.validated_draft()); prompt->done(QMessageBox::Cancel);
+  EXPECT_EQ(body->toPlainText(), modified); EXPECT_TRUE(editor.dirty());
+  editor.open_document("second.yaml", QString::fromStdString(sample()));
+  ASSERT_NE(editor.findChild<QMessageBox *>("draftPrompt"), nullptr);
+  auto * name = editor.findChild<QLineEdit *>("draftFilename");
+  name->setText("newer-name.yaml"); accept(editor);
+  EXPECT_EQ(body->toPlainText(), modified); EXPECT_EQ(name->text(), "newer-name.yaml");
+  EXPECT_TRUE(status(editor).contains(QStringLiteral("未替换新的编辑")));
+  bool source_current = true;
+  editor.open_document(
+    "second.yaml", QString::fromStdString(sample()), [&] {return source_current;});
+  source_current = false; accept(editor);
+  EXPECT_EQ(body->toPlainText(), modified); EXPECT_EQ(name->text(), "newer-name.yaml");
+  EXPECT_TRUE(status(editor).contains(QStringLiteral("来源平台或任务目标已变化")));
+  const auto remote = sample() + "# second source\n";
+  editor.open_document("second.yaml", QString::fromStdString(remote)); accept(editor);
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  EXPECT_EQ(editor.validated_draft()->content, remote); EXPECT_FALSE(editor.dirty());
+  const auto revision = editor.revision();
+  editor.open_document(".hidden.yaml", QString::fromStdString(sample()));
+  EXPECT_EQ(editor.revision(), revision); EXPECT_EQ(editor.validated_draft()->content, remote);
+  editor.stop(); EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
+}
+TEST(DraftEditor, ChineseChoicesPreserveSchemaKeysAndEveryTemplateValidates)
+{
+  const auto & templates = ui::task_template_infos();
+  ASSERT_EQ(templates.size(), 6);
+  for (const auto & value : templates) {
+    ui::MissionEditor editor;
+    auto * choice = editor.findChild<QComboBox *>("draftTemplate"); ASSERT_NE(choice, nullptr);
+    choice->setCurrentIndex(choice->findData(value.key));
+    editor.findChild<QPushButton *>("draftNew")->click();
+    ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();})) <<
+      value.key.toStdString() << ": " << status(editor).toStdString();
+    const auto document = *editor.validated_draft();
+    const auto parsed = mission::validateMissionText(document.content);
+    ASSERT_TRUE(parsed.valid());
+    ASSERT_EQ(parsed.steps.size(), static_cast<size_t>(value.types.size()));
+    for (int i = 0; i < value.types.size(); ++i) {
+      EXPECT_EQ(parsed.steps[i].type, value.types[i].toStdString());
+    }
+    auto * type = editor.findChild<QComboBox *>("draftType"); ASSERT_NE(type, nullptr);
+    auto * add = editor.findChild<QComboBox *>("draftAddType"); ASSERT_NE(add, nullptr);
+    EXPECT_EQ(type->count(), 9); EXPECT_EQ(add->count(), 9);
+    EXPECT_EQ(type->currentData().toString(), value.types[0]);
+    EXPECT_TRUE(type->itemText(type->findData("takeoff")).contains(QStringLiteral("起飞")));
+    EXPECT_TRUE(add->itemText(add->findData("explore")).contains(QStringLiteral("自主探索")));
+    EXPECT_TRUE(status(editor).contains(QStringLiteral("仅文件格式校验")));
+    EXPECT_FALSE(status(editor).contains("SHA-256"));
+    EXPECT_TRUE(
+      editor.findChild<QLabel *>("draftStatusDetails")->text().contains(
+        document.hash.
+        c_str()));
+    EXPECT_TRUE(editor.findChild<QLabel *>("draftStatusDetails")->isHidden());
+    EXPECT_EQ(editor.property("draftState").toString(), "validated");
+    editor.stop(); EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
+  }
+}
+TEST(DraftEditor, PlatformHintsDoNotMutateOrBlockOfflineEditing)
+{
+  ui::MissionEditor editor;
+  editor.open_document("mission.yaml", QString::fromStdString(sample()));
+  ASSERT_TRUE(desktop_test::until([&] {return editor.validated_draft().has_value();}));
+  const auto original = *editor.validated_draft();
+  const QJsonObject support{{"takeoff", QJsonObject{{"state", "not_ready"},
+      {"reason", QStringLiteral("缺少飞控控制后端")}}},
+    {"explore", QJsonObject{{"state", "unadapted"},
+        {"reason", QStringLiteral("机载管理尚未适配 FUEL")}}}};
+  editor.set_platform_context(
+    QJsonObject{{"kind", "onboard"}, {"fresh", false},
+      {"step_support", support}});
+  EXPECT_EQ(editor.revision(), original.revision);
+  EXPECT_EQ(editor.validated_draft()->content, original.content);
+  EXPECT_TRUE(
+    editor.findChild<QLabel *>("draftStepHelp")->text().contains(QStringLiteral("缺少飞控")));
+  auto * type = editor.findChild<QComboBox *>("draftType");
+  const auto index = type->findData("explore"); ASSERT_GE(index, 0);
+  EXPECT_TRUE(
+    type->itemData(index, Qt::ToolTipRole).toString().contains(QStringLiteral("尚未适配")));
+  type->setCurrentIndex(index);
+  EXPECT_EQ(editor.property("draftState").toString(), "unapplied");
+  EXPECT_TRUE(status(editor).contains(QStringLiteral("未应用")));
+  EXPECT_FALSE(editor.validated_draft());
+  EXPECT_TRUE(editor.findChild<QPushButton *>("draftApply")->isEnabled());
+  EXPECT_TRUE(editor.findChild<QLabel *>("draftStepHelp")->text().contains("FUEL"));
+  editor.findChild<QPushButton *>("draftResetForm")->click();
+  ASSERT_TRUE(editor.validated_draft());
+  EXPECT_EQ(editor.validated_draft()->content, original.content);
+  EXPECT_EQ(editor.property("draftState").toString(), "validated");
+  editor.stop(); EXPECT_TRUE(desktop_test::until([&] {return editor.stopped();}));
+}
 TEST(DraftEditor, AddReorderDeleteAndRejectOutOfRangeForm)
 {
   ui::MissionEditor editor; editor.resize(1120, 800); editor.show();
   editor.findChild<QPushButton *>("draftNew")->click();
   ASSERT_TRUE(desktop_test::until([&] {return checked(editor);}));
   auto * list = editor.findChild<QListWidget *>("draftSteps");
-  editor.findChild<QComboBox *>("draftAddType")->setCurrentText("search");
+  auto * add_type = editor.findChild<QComboBox *>("draftAddType");
+  add_type->setCurrentIndex(add_type->findData("search"));
   EXPECT_TRUE(editor.findChild<QPushButton *>("draftAdd")->isEnabled());
   editor.findChild<QPushButton *>("draftAdd")->click(); accept(editor);
   ASSERT_TRUE(desktop_test::until([&] {return checked(editor) && list->count() == 4;}));

@@ -113,6 +113,8 @@ TEST(CameraOverlay, LetterboxReservesCaptionAndClipsNormalizedBoxes)
   EXPECT_EQ(ui::camera_image_rect(QSize(800, 648), QSize(640, 480)), QRect(0, 0, 800, 600));
   EXPECT_EQ(ui::camera_image_rect(QSize(1000, 648), QSize(640, 480)), QRect(100, 0, 800, 600));
   EXPECT_TRUE(ui::camera_image_rect(QSize(640, 40), QSize(640, 480)).isEmpty());
+  EXPECT_EQ(ui::camera_image_rect(QSize(800, 680), QSize(640, 480), 80), QRect(0, 0, 800, 600));
+  EXPECT_TRUE(ui::camera_image_rect(QSize(640, 80), QSize(640, 480), 80).isEmpty());
   Sample sample; sample.tracks->tracks[0].bbox_center_x = 0;
   sample.targets->targets[0].pixel_u = 0;
   auto result = sample.render(); ASSERT_TRUE(result.matched);

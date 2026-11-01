@@ -13,6 +13,7 @@
 #ifndef EASYFLY_DESKTOP__MISSION_EDITOR_HPP_
 #define EASYFLY_DESKTOP__MISSION_EDITOR_HPP_
 #include <QWidget>
+#include <QJsonObject>
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -36,9 +37,14 @@ public:
   bool dirty() const;
   bool busy() const;
   bool stopped() const;
+  uint64_t revision() const;
+  std::optional<ExportedDraft> validated_draft() const;
   std::optional<ExportedDraft> exported_draft() const;
+  void set_platform_context(const QJsonObject & context);
   void stop();
   void open_file(const QString & path);
+  void open_document(
+    const QString & name, const QString & content, std::function<bool()> source_current = {});
   void prepare_directory(const QString & path);
   void export_file(const QString & filename);
 

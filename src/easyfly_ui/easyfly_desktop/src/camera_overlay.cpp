@@ -99,10 +99,11 @@ void depth(
   box.label += QStringLiteral(" · z=%1m").arg(number(*box.axial_depth));
 }
 }  // namespace
-QRect camera_image_rect(QSize canvas, QSize image)
+QRect camera_image_rect(QSize canvas, QSize image, int caption_height)
 {
-  if (canvas.width() <= 0 || canvas.height() <= 48 || image.isEmpty()) {return {};}
-  const auto available = QSize(canvas.width(), canvas.height() - 48);
+  caption_height = std::max(0, caption_height);
+  if (canvas.width() <= 0 || canvas.height() <= caption_height || image.isEmpty()) {return {};}
+  const auto available = QSize(canvas.width(), canvas.height() - caption_height);
   const auto size = image.scaled(available, Qt::KeepAspectRatio);
   return QRect(
     (available.width() - size.width()) / 2, (available.height() - size.height()) / 2,

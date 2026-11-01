@@ -16,7 +16,7 @@
 | CPU 渲染 | 四核竞争负载下，完整地面感知栈使用 Mesa 加 `gazebo_lockstep:=true`，两次冷启动通过原传感器质量及退出门槛；约 0.16 倍实时速度，不是实时飞行或纯 CPU 赛道资格。 |
 | 稀疏场景 FAST-LIO | 显式使用安装包 `easyfly_fast_lio_integration/config/gazebo_mid360_sparse.json`，表面与地图滤波均为 0.1 m；三次冷启动各两轮原任务通过落地上锁、0.15 m 恢复门槛及退出检查。默认值与其他冻结会话未改变，此资格不外推到其他场景或硬件。 |
 | 精准降落 | 静止标志板、固定下视相机与专用 D5 夹具；需按 `easyfly_precision_landing` 安装 README 选择已验配置。移动板、机载时延和硬件仍未签收。 |
-| 场景 | 20 个清单、14 个登记；六个草稿的保留／替代决策见 `easyfly_gazebo_worlds/SCENE-LIFECYCLE.md`。已登记场景仍需每次启动的资源及实时准入。 |
+| 场景 | 17 个清单、14 个登记；保留 3 个调试／专项草稿，3 个被 v2 替代的旧场景已清除，见 `easyfly_gazebo_worlds/SCENE-LIFECYCLE.md`。已登记场景仍需每次启动的资源及实时准入。 |
 | 来源与模型 | RealSense 驱动可通过源码随附 bundle 精确离线恢复；YOLO 权重官方来源、许可、类别顺序及等价导出已验证。V-09 近距离卡车车尾漏检仍保留。 |
 
 ## 当前尚未签收的部分

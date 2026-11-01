@@ -38,7 +38,7 @@ add_library(desktop_widgets STATIC
   src/camera_overlay.cpp
   assets/easyfly_assets.qrc src/branding.cpp
   src/theme.cpp src/tools.cpp src/mission_controls.cpp src/mission_draft.cpp
-  src/mission_geometry.cpp src/mission_editor.cpp src/parameter_controls.cpp src/import_controls.cpp
+  src/mission_geometry.cpp src/overview_task.cpp src/mission_editor.cpp src/parameter_controls.cpp src/import_controls.cpp
   src/geography.cpp src/geographic_view.cpp src/aircraft_display.cpp
   src/rviz_view.cpp src/rviz_geometry.cpp src/rviz_layers.cpp src/recording.cpp
   src/recording_panel.cpp src/main_window.cpp)
@@ -54,7 +54,7 @@ get_filename_component(EASYFLY_DRAFT_INSTALL_ROOT "${CMAKE_INSTALL_PREFIX}/.." A
 target_compile_definitions(desktop_widgets PRIVATE
   EASYFLY_DRAFT_SOURCE_ROOT="${EASYFLY_DRAFT_SOURCE_ROOT}"
   EASYFLY_DRAFT_INSTALL_ROOT="${EASYFLY_DRAFT_INSTALL_ROOT}")
-target_link_libraries(desktop_widgets PUBLIC Qt5::Widgets SQLite::SQLite3 PkgConfig::GEOGRAPHICLIB)
+target_link_libraries(desktop_widgets PUBLIC Qt5::Widgets Qt5::Network SQLite::SQLite3 PkgConfig::GEOGRAPHICLIB)
 if(EASYFLY_ENABLE_MEDIA)
   target_compile_definitions(desktop_widgets PUBLIC EASYFLY_ENABLE_MEDIA)
   target_include_directories(desktop_widgets SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
@@ -112,6 +112,18 @@ if(BUILD_TESTING)
   target_include_directories(capture_workspace PRIVATE src test)
   target_link_libraries(capture_workspace desktop_widgets Qt5::Test Qt5::Network)
   ament_target_dependencies(capture_workspace ament_index_cpp)
+  ament_add_gtest(test_overview test/test_overview.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 30)
+  target_link_libraries(test_overview desktop_widgets Qt5::Test)
+  set_tests_properties(test_overview PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+  ament_add_gtest(test_local_map test/test_local_map.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 30)
+  target_link_libraries(test_local_map desktop_widgets Qt5::Test)
+  set_tests_properties(test_local_map PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+  ament_add_gtest(test_processed_camera test/test_processed_camera.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 45)
+  target_link_libraries(test_processed_camera desktop_widgets Qt5::Test)
+  set_tests_properties(test_processed_camera PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   ament_add_gtest(test_geography test/test_geography.cpp test/qt_test_main.cpp
     SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 45)
   target_link_libraries(test_geography desktop_widgets Qt5::Test)
@@ -148,7 +160,7 @@ if(BUILD_TESTING)
   ament_target_dependencies(test_rviz_view nav_msgs rosgraph_msgs tf2_msgs)
   target_compile_definitions(test_rviz_view PRIVATE
     EASYFLY_RVIZ_DESKTOP_BINARY="$<TARGET_FILE:easyfly_desktop>"
-    EASYFLY_RVIZ_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-5/rviz")
+    EASYFLY_RVIZ_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-5/rviz")
   add_dependencies(test_rviz_view easyfly_desktop)
   set_tests_properties(test_rviz_view PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=131;ROS_LOCALHOST_ONLY=1")
@@ -156,28 +168,29 @@ if(BUILD_TESTING)
     SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 60)
   target_link_libraries(test_mission_geometry desktop_widgets Qt5::Test)
   target_compile_definitions(test_mission_geometry PRIVATE
-    EASYFLY_GEOMETRY_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-5/geometry")
+    EASYFLY_GEOMETRY_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-5/geometry")
   set_tests_properties(test_mission_geometry PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=120;ROS_LOCALHOST_ONLY=1")
   ament_add_gtest(test_mission_draft test/test_mission_draft.cpp test/qt_test_main.cpp
     SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 60)
   target_link_libraries(test_mission_draft desktop_widgets Qt5::Test)
   target_compile_definitions(test_mission_draft PRIVATE
-    EASYFLY_DRAFT_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-5")
+    EASYFLY_DRAFT_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-5")
   set_tests_properties(test_mission_draft PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=119;ROS_LOCALHOST_ONLY=1")
   ament_add_gtest(test_mission_controls test/test_mission_controls.cpp TIMEOUT 90)
   target_link_libraries(test_mission_controls desktop_widgets Qt5::Test)
   target_compile_definitions(test_mission_controls PRIVATE
     EASYFLY_DESKTOP_BINARY="$<TARGET_FILE:easyfly_desktop>"
-    EASYFLY_MANAGED_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-4")
+    EASYFLY_MANAGED_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-4")
   add_dependencies(test_mission_controls easyfly_desktop)
   set_tests_properties(test_mission_controls PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=93;ROS_LOCALHOST_ONLY=1")
   ament_add_gtest(test_desktop test/test_desktop.cpp TIMEOUT 90)
+  set_target_properties(test_desktop PROPERTIES AUTOMOC ON)
   target_link_libraries(test_desktop desktop_widgets Qt5::Test)
   target_compile_definitions(test_desktop PRIVATE
-    EASYFLY_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_SOURCE_DIR}/../../../docs/ui/d6-2")
+    EASYFLY_SCREENSHOT_DIRECTORY="${CMAKE_CURRENT_BINARY_DIR}/test-screenshots/d6-2")
   ament_add_gtest(test_images test/test_images.cpp TIMEOUT 30)
   target_link_libraries(test_images desktop_widgets)
   add_executable(tool_fixture test/tool_fixture.cpp)

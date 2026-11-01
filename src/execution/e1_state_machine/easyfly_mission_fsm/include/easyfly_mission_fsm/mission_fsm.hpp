@@ -1,5 +1,6 @@
 #pragma once
 #include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/string.hpp>
 #include <rclcpp_action/rclcpp_action.hpp>
 #include <easyfly_core/client.hpp>
 #include <easyfly_core/ownership_registry.hpp>
@@ -28,6 +29,7 @@ class MissionFSM : public rclcpp::Node {
   bool execute_step(const MissionStep &, int, int, std::shared_ptr<Handle>);
   void cancel_current_step();
   void safety_check();
+  void publish_overview(const std::shared_ptr<Handle> &, int, const std::string &, bool = false);
   void trigger_rtl();
   void publish_status(uint8_t, const std::string &, int, int, float,
     bool success = false, const std::string &message = "");
@@ -43,10 +45,13 @@ class MissionFSM : public rclcpp::Node {
   rclcpp::TimerBase::SharedPtr timer_safety_;
   std::atomic<bool> mission_active_{false}, cancel_requested_{false}, shutdown_{false};
   std::atomic<bool> rtl_triggered_{false};
-  std::atomic<int> steps_completed_{0};
+  std::atomic<int> steps_completed_{0}, current_step_index_{-1};
   mutable std::mutex mission_mtx_;
   std::string stop_reason_;
   std::vector<MissionStep> accepted_steps_;
+  std::string accepted_content_, accepted_name_;
+  std::chrono::steady_clock::time_point overview_at_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr pub_overview_;
   double cancel_budget_s_{3}, battery_invalid_grace_s_{5}, backend_discovery_s_{3};
   std::chrono::steady_clock::time_point battery_invalid_since_;
   std::mutex step_mtx_;

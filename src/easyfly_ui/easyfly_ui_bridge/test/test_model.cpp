@@ -14,6 +14,8 @@
 #include <gtest/gtest.h>
 
 #include <limits>
+#include <utility>
+#include <vector>
 
 #include "easyfly_ui_bridge/model.hpp"
 
@@ -96,6 +98,8 @@ TEST(BridgeModel, FieldsNeverUseDefaultZeroAsValid)
   sdk.value.velocity_x = 3; sdk.value.velocity_y = 4; sdk.value.battery_remaining = .5;
   v = detail::state_view(sdk, clock, 10, 10, false);
   ASSERT_TRUE(v.speed_mps); EXPECT_DOUBLE_EQ(*v.speed_mps, 5);
+  ASSERT_TRUE(v.horizontal_speed_mps); EXPECT_DOUBLE_EQ(*v.horizontal_speed_mps, 5);
+  ASSERT_TRUE(v.vertical_speed_mps); EXPECT_DOUBLE_EQ(*v.vertical_speed_mps, 0);
   ASSERT_TRUE(v.battery_percent); EXPECT_DOUBLE_EQ(*v.battery_percent, 50);
   sdk.value.position_x = std::numeric_limits<double>::quiet_NaN();
   sdk.value.velocity_z = std::numeric_limits<double>::infinity();
@@ -266,4 +270,221 @@ TEST(BridgeModel, FastLivoStatusMatchesItsOwnFrameAndFreshness)
   EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Stale);
   m.pose_stamp.sec = 10; m.state = m.RESET_REQUIRED; m.pose_valid = false;
   EXPECT_EQ(detail::validate_localization(m, clock, 0), Quality::Invalid);
+}
+
+TEST(BridgeModel, RawGlobalFixQualityDoesNotBorrowAggregateFreshness)
+{
+  sensor_msgs::msg::NavSatFix fix;
+  fix.header.stamp.sec = 10;
+  fix.status.status = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
+  fix.latitude = 31.2; fix.longitude = 121.5; fix.altitude = 10.;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::ValidAtObservation);
+  fix.status.status = sensor_msgs::msg::NavSatStatus::STATUS_NO_FIX;
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Invalid);
+  fix.status.status = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
+  fix.latitude = 91.; EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Invalid);
+  fix.latitude = 31.2; fix.longitude = std::numeric_limits<double>::quiet_NaN();
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Invalid);
+  fix.longitude = 121.5; fix.header.stamp.sec = 7;
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Stale);
+  fix.header.stamp.sec = 11;
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Invalid);
+  fix.header.stamp.sec = 0;
+  EXPECT_EQ(detail::validate_global_position(fix, clock, 0), Quality::Invalid);
+}
+
+TEST(BridgeModel, GlobalHistoryBreaksOnDuplicatesAndInvalidityAndClearsAcrossOrigins)
+{
+  detail::GlobalPositionBuffer buffer;
+  auto fix = std::make_shared<sensor_msgs::msg::NavSatFix>();
+  fix->header.frame_id = "gps"; fix->header.stamp.sec = 10;
+  fix->latitude = 31.2; fix->longitude = 121.5; fix->altitude = 10.;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  buffer.observe(fix, clock, 10., "publisher_one");
+  ASSERT_EQ(buffer.trajectory().size(), 1U);
+  const auto segment = buffer.trajectory().back().segment;
+  buffer.observe(std::make_shared<sensor_msgs::msg::NavSatFix>(*fix), clock, 11., "publisher_one");
+  EXPECT_EQ(buffer.trajectory().size(), 1U);
+  EXPECT_EQ(buffer.snapshot(clock, 12.1, "publisher_one").evidence.quality, Quality::Stale);
+  fix = std::make_shared<sensor_msgs::msg::NavSatFix>(*fix);
+  fix->header.stamp.sec = 12; clock.now_ns = 12000000000LL;
+  buffer.observe(fix, clock, 12.2, "publisher_one");
+  ASSERT_EQ(buffer.trajectory().size(), 2U);
+  EXPECT_NE(buffer.trajectory().back().segment, segment);
+  auto bad = std::make_shared<sensor_msgs::msg::NavSatFix>(*fix);
+  bad->header.stamp.sec = 13; bad->status.status = -1; clock.now_ns = 13000000000LL;
+  buffer.observe(bad, clock, 13., "publisher_one");
+  EXPECT_EQ(buffer.snapshot(clock, 13., "publisher_one").evidence.quality, Quality::Invalid);
+  EXPECT_EQ(buffer.trajectory().size(), 2U);
+  fix = std::make_shared<sensor_msgs::msg::NavSatFix>(*fix);
+  fix->header.stamp.sec = 14; clock.now_ns = 14000000000LL;
+  buffer.observe(fix, clock, 14., "publisher_one");
+  ASSERT_EQ(buffer.trajectory().size(), 3U);
+  EXPECT_NE(buffer.trajectory()[1].segment, buffer.trajectory()[2].segment);
+  buffer.snapshot(clock, 14., "publisher_two");
+  EXPECT_TRUE(buffer.trajectory().empty());
+  buffer.observe(fix, clock, 14., "publisher_two");
+  EXPECT_EQ(buffer.trajectory().size(), 1U);
+  ++clock.epoch;
+  buffer.snapshot(clock, 14., "publisher_two");
+  EXPECT_TRUE(buffer.trajectory().empty());
+  buffer.observe(fix, clock, 14., "publisher_two");
+  buffer.snapshot(clock, 14., "");
+  EXPECT_TRUE(buffer.trajectory().empty());
+}
+
+TEST(BridgeModel, GlobalHistoryIsBoundedBySourceProgressCountAndFiveMinutes)
+{
+  detail::GlobalPositionBuffer buffer;
+  ClockState clock{Quality::ValidAtObservation, 1000000000LL, 0};
+  for (int i = 0; i < 5000; ++i) {
+    auto fix = std::make_shared<sensor_msgs::msg::NavSatFix>();
+    const int64_t stamp = 1000000000LL + int64_t(i) * 1000000LL;
+    fix->header.stamp.sec = stamp / 1000000000LL;
+    fix->header.stamp.nanosec = stamp % 1000000000LL;
+    clock.now_ns = stamp;
+    buffer.observe(fix, clock, i * .001, "source");
+  }
+  EXPECT_EQ(buffer.trajectory().size(), 4096U);
+  buffer.snapshot(clock, 306., "source");
+  EXPECT_TRUE(buffer.trajectory().empty());
+}
+
+namespace
+{
+std::string quoted_json(const std::string & text)
+{
+  std::string value = "\"";
+  for (char c : text) {
+    switch (c) {
+      case '\n': value += "\\n"; break;
+      case '\r': value += "\\r"; break;
+      case '\t': value += "\\t"; break;
+      case '"': value += "\\\""; break;
+      case '\\': value += "\\\\"; break;
+      default: value += c;
+    }
+  }
+  return value + "\"";
+}
+std::string execution_context(
+  int64_t stamp = 10000000000LL,
+  const std::string & state = "active", const std::string & content = "type=hover\nwait=2\n")
+{
+  return "{\"schema_version\":1,\"stamp_ns\":" + std::to_string(stamp) +
+         ",\"goal_id\":\"0123456789abcdef0123456789abcdef\",\"name\":\"demo.yaml\",\"sha256\":\"" +
+         easyfly_mission_fsm::missionContentSha256(content) + "\",\"content\":" +
+         quoted_json(content) + ",\"frame_id\":\"odom\",\"state\":" + quoted_json(state) +
+         ",\"current_step\":0,\"completed_steps\":0,\"total_steps\":1}";
+}
+}  // namespace
+TEST(BridgeModel, ExecutionOverviewRequiresExactNativeContentHashCountAndIdentity)
+{
+  easyfly_ui_bridge::MissionExecutionView view;
+  int64_t stamp = 0;
+  auto payload = execution_context(10000000000LL, "active", "type=hover\r\nwait=2\r\n");
+  ASSERT_EQ(
+    detail::validate_execution_overview(payload, &view, &stamp),
+    Quality::ValidAtObservation);
+  EXPECT_EQ(stamp, 10000000000LL); EXPECT_EQ(view.content, "type=hover\r\nwait=2\r\n");
+  ASSERT_TRUE(view.plan); EXPECT_EQ(view.plan->steps.size(), 1U);
+  for (const auto & replacement : std::vector<std::pair<std::string, std::string>>{
+    {"\"schema_version\":1", "\"schema_version\":2"},
+    {"\"total_steps\":1", "\"total_steps\":2"},
+    {"\"current_step\":0", "\"current_step\":1"},
+    {"\"completed_steps\":0", "\"completed_steps\":2"},
+    {"\"frame_id\":\"odom\"", "\"frame_id\":\"map\""},
+    {"\"name\":\"demo.yaml\"", "\"name\":\"../demo.yaml\""},
+    {"0123456789abcdef0123456789abcdef", "not-an-execution"}})
+  {
+    auto bad = payload;
+    bad.replace(bad.find(replacement.first), replacement.first.size(), replacement.second);
+    EXPECT_EQ(detail::validate_execution_overview(bad, nullptr, nullptr), Quality::Invalid);
+  }
+  auto bad = payload;
+  const auto digest = easyfly_mission_fsm::missionContentSha256("type=hover\r\nwait=2\r\n");
+  bad[bad.find(digest)] = digest[0] == 'a' ? 'b' : 'a';
+  EXPECT_EQ(detail::validate_execution_overview(bad, nullptr, nullptr), Quality::Invalid);
+  EXPECT_EQ(
+    detail::validate_execution_overview(
+      "{\"schema_version\":1," + payload.substr(1),
+      nullptr, nullptr), Quality::Invalid);
+  EXPECT_EQ(
+    detail::validate_execution_overview(
+      std::string(400 * 1024 + 1, 'x'),
+      nullptr, nullptr), Quality::BudgetExceeded);
+}
+
+TEST(BridgeModel, ExecutionContextFreshnessProgressTerminalAndSourceRemainIndependent)
+{
+  detail::MissionExecutionBuffer buffer;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  const auto payload = execution_context();
+  buffer.observe(payload, clock, 10., "fsm");
+  ASSERT_EQ(buffer.snapshot(clock, 10., "fsm").evidence.quality, Quality::ValidAtObservation);
+  buffer.observe(payload, clock, 11.9, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 12.1, "fsm").evidence.quality, Quality::Stale);
+  clock.now_ns = 12000000000LL;
+  buffer.observe(execution_context(clock.now_ns), clock, 12.2, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 12.2, "fsm").evidence.quality, Quality::ValidAtObservation);
+  clock.now_ns = 13000000000LL;
+  buffer.observe(execution_context(clock.now_ns, "active", "type=land\n"), clock, 13., "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 13., "fsm").evidence.quality, Quality::Invalid);
+  buffer.observe(execution_context(clock.now_ns), clock, 13.1, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 13.1, "fsm").evidence.quality, Quality::Invalid);
+  clock.now_ns = 14000000000LL;
+  buffer.observe(execution_context(clock.now_ns, "canceled"), clock, 14., "fsm");
+  auto terminal = buffer.snapshot(clock, 14., "fsm");
+  ASSERT_TRUE(terminal.value); EXPECT_EQ(terminal.value->state, "canceled");
+  EXPECT_EQ(terminal.evidence.quality, Quality::ValidAtObservation);
+  EXPECT_EQ(buffer.snapshot(clock, 16.1, "fsm").evidence.quality, Quality::Stale);
+  EXPECT_TRUE(buffer.snapshot(clock, 16.1, "fsm").value);  // Historical geometry remains available.
+  clock.now_ns = 15000000000LL;
+  buffer.observe(execution_context(clock.now_ns), clock, 16.2, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 16.2, "fsm").evidence.quality, Quality::Invalid);
+  EXPECT_FALSE(buffer.snapshot(clock, 16.2, "different_gid").value);
+  buffer.observe(execution_context(clock.now_ns), clock, 16.2, "different_gid");
+  ++clock.epoch;
+  EXPECT_FALSE(buffer.snapshot(clock, 16.2, "different_gid").value);
+  buffer.observe(execution_context(INT64_MAX), clock, 16.3, "different_gid");
+  EXPECT_NE(
+    buffer.snapshot(clock, 16.3, "different_gid").evidence.quality,
+    Quality::ValidAtObservation);
+}
+
+TEST(BridgeModel, ActualExecutionStepMayBeUnknownBetweenTwoCompletedTransitions)
+{
+  detail::MissionExecutionBuffer buffer;
+  ClockState clock{Quality::ValidAtObservation, 10000000000LL, 0};
+  const std::string content = "type=hover\nwait=1\n---\ntype=hover\nwait=2\n";
+  const auto sample = [&](int current, int completed) {
+      auto text = execution_context(clock.now_ns, "active", content);
+      const auto replace = [&](const std::string & from, const std::string & to) {
+          text.replace(text.find(from), from.size(), to);
+        };
+      replace("\"total_steps\":1", "\"total_steps\":2");
+      replace("\"current_step\":0", "\"current_step\":" + std::to_string(current));
+      replace("\"completed_steps\":0", "\"completed_steps\":" + std::to_string(completed));
+      return text;
+    };
+  buffer.observe(sample(0, 0), clock, 10., "fsm");
+  ASSERT_EQ(buffer.snapshot(clock, 10., "fsm").evidence.quality, Quality::ValidAtObservation);
+  clock.now_ns += 100000000LL;
+  buffer.observe(sample(-1, 1), clock, 10.1, "fsm");
+  auto waiting = buffer.snapshot(clock, 10.1, "fsm");
+  ASSERT_EQ(waiting.evidence.quality, Quality::ValidAtObservation);
+  ASSERT_TRUE(waiting.value); EXPECT_EQ(waiting.value->current_step, -1);
+  EXPECT_EQ(waiting.value->completed_steps, 1);
+  clock.now_ns += 100000000LL;
+  buffer.observe(sample(1, 1), clock, 10.2, "fsm");
+  auto second = buffer.snapshot(clock, 10.2, "fsm");
+  ASSERT_EQ(second.evidence.quality, Quality::ValidAtObservation);
+  ASSERT_TRUE(second.value); EXPECT_EQ(second.value->current_step, 1);
+  clock.now_ns += 100000000LL;
+  buffer.observe(sample(0, 1), clock, 10.3, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 10.3, "fsm").evidence.quality, Quality::Invalid);
+  clock.now_ns += 100000000LL;
+  buffer.observe(sample(-1, 0), clock, 10.4, "fsm");
+  EXPECT_EQ(buffer.snapshot(clock, 10.4, "fsm").evidence.quality, Quality::Invalid);
 }

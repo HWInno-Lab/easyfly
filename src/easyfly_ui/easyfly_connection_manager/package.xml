@@ -3,7 +3,7 @@
 <package format="3">
   <name>easyfly_connection_manager</name>
   <version>0.1.0</version>
-  <description>Graphical connection profiles and isolated read-only desktop sessions</description>
+  <description>Graphical simulation, DDS connections and managed onboard algorithms and tasks</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
   <license>Apache-2.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
@@ -22,11 +22,32 @@
   <exec_depend>rosgraph_msgs</exec_depend>
   <exec_depend>action_msgs</exec_depend>
   <exec_depend>std_srvs</exec_depend>
+  <exec_depend>easyfly_msgs</exec_depend>
+  <exec_depend>easyfly_mission_format</exec_depend>
+  <exec_depend>easyfly_launch</exec_depend>
+  <exec_depend>easyfly_px4_sitl</exec_depend>
+  <exec_depend>easyfly_sim_launcher</exec_depend>
+  <exec_depend>easyfly_fastdds_compat</exec_depend>
+  <exec_depend>easyfly_precision_landing</exec_depend>
+  <exec_depend>easyfly_target_tracking</exec_depend>
+  <exec_depend>easyfly_trajectory_optimizer</exec_depend>
+  <exec_depend>easyfly_fuel_exploration</exec_depend>
+  <exec_depend>easyfly_mavlink_bridge</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+  <exec_depend>openssl</exec_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>ament_index_python</test_depend>
   <test_depend>rclpy</test_depend>
   <test_depend>easyfly_msgs</test_depend>
+  <test_depend>sensor_msgs</test_depend>
+  <test_depend>easyfly_color_line_detection</test_depend>
+  <test_depend>easyfly_mission_srvs</test_depend>
+  <test_depend>easyfly_coord_transform</test_depend>
+  <test_depend>easyfly_multi_object_tracking</test_depend>
+  <test_depend>easyfly_pixel_to_3d</test_depend>
   <test_depend>easyfly_orbslam3_integration</test_depend>
   <test_depend>rosgraph_msgs</test_depend>
   <test_depend>ament_lint_auto</test_depend>

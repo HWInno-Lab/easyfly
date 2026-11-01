@@ -171,3 +171,48 @@ and the intermediate unsuccessful retiming attempt remain in the evidence.
 The exact reverse request is a repository regression. Both installation modes,
 all GCOPTER component tests, coordinator behavior/ownership tests, explicit
 profile checks and the dependent SUPER regression were checked separately.
+
+## Managed physical Livox / FUEL profile
+
+`lidar_rays_node` accepts the real `livox_ros_driver2/CustomMsg` stream. Its
+read-only parameters require an explicit `input_topic`, `source_frame`,
+`range_min` and `range_max`; there is no assumed sensor mounting or calibrated
+range. Both acquisition timestamps and the host must use synchronized ROS wall
+time. Header time and Livox `timebase` must agree. Packets are bounded to 50,000
+points and 200 ms of ordered acquisition offsets. Only finite, in-range,
+unflagged first/single returns are retained. Missing, noisy, zero or invalid
+returns produce **no ray**, never an artificial maximum-range free observation.
+
+The physical `/livox/lidar/rays` contract is one little-endian PointCloud2 per
+packet: FLOAT32 xyz at 0/4/8, UINT8 hit type 1 at 12, FLOAT32 calibrated minimum
+and maximum range at 16/20, and UINT32 Livox `offset_time` nanoseconds at 24
+(point_step 28). `gcopter_voxel_map` requires `physical_livox=true` for this
+layout; the original 24-byte simulator layout remains separate. For each unique
+acquisition offset the mapper looks up `odom <- source_frame` at exactly
+`header.stamp + offset_time`, then integrates each return from that sensor
+origin. Missing/stale TF rejects the whole packet; latest-TF substitution and
+packet-start-time approximation are forbidden. Dynamic odometry with the actual
+static mounting transform is required. A purely static odom/sensor transform
+cannot qualify a moving physical sensor. The resulting map stamp is the last
+retained acquisition time. Ambiguous publishers and expired input invalidate the
+map; unobserved cells remain unknown.
+
+`hardware_gcopter.launch.py` only starts the idle mapper and planner. It requires
+a ROS `parameter_file` with explicit `gcopter_voxel_map.ros__parameters` values
+for `map_min`, `map_max`, `resolution`, `inflation_radius`, `source_frame`, and
+explicit `gcopter_navigation.ros__parameters` `z_min`/`z_max`. These values must
+come from the actual vehicle envelope, sensor mounting and operating area; no
+simulation calibration is supplied. The initial physical profile uses a bounded
+fixed map, conservative persistent hits, wall clock, no camera and no native
+extended FUEL trajectory. Raw, inflated observed and FUEL policy grids are
+`/planning/fuel_raw_grid`, `/planning/fuel_observed_grid` and
+`/planning/voxel_grid`. The planner permits an idle policy-map epoch transition.
+The managed connection layer supplies the owner-private evidence directory next
+to its frozen component manifest and starts the GCOPTER navigation coordinator
+separately. Component launch never submits an exploration or flight goal.
+
+`test_lidar_rays.py` covers pure conversion/calibration/launch contracts.
+`test_lidar_rays_ros.py` uses domain 216 with an actual adapter and mapper to
+check distinct per-point origins, unknown cells, malformed/no-return input,
+duplicate sources, missing TF, expiry and rejection of synthetic physical
+misses. It opens no devices and issues no flight requests.

@@ -24,10 +24,12 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rosgraph_msgs/msg/clock.hpp>
+#include <std_msgs/msg/string.hpp>
 
 #include "easyfly_ui_bridge/observer.hpp"
 #include "easyfly_ui_bridge/camera_observations.hpp"
 #include "easyfly_ui_bridge/special_observations.hpp"
+#include "camera_stream.hpp"
 
 namespace easyfly_ui_bridge
 {
@@ -85,6 +87,9 @@ struct Observer::Impl
   BridgeConfig config;
   ClockWatch clock;
   UiSnapshot data;
+  detail::GlobalPositionBuffer global_buffer;
+  detail::OccupancyGridBuffer grid_buffer;
+  detail::MissionExecutionBuffer execution_buffer;
   std::shared_ptr<const UiSnapshot> published;
   std::atomic<bool> closing{false};
   std::atomic<uint64_t> current_epoch{0};
@@ -108,7 +113,12 @@ struct Observer::Impl
   std::vector<rclcpp::SubscriptionBase::SharedPtr> subscriptions;
   std::array<Image::ConstSharedPtr, 2> incoming_images;
   std::array<double, 2> image_received{};
-  std::array<std::unique_ptr<CameraObservationBuffer>, 2> camera_buffers;
+  std::array<std::unique_ptr<detail::CameraStream>, 2> camera_buffers;
+  std::array<rclcpp::Subscription<Image>::SharedPtr, 2> image_subscriptions;
+  std::array<std::map<std::string, std::string>, 2> camera_sources;
+  std::array<std::string, 2> image_source_gids;
+  std::array<bool, 2> image_reliable{};
+  double camera_graph_observed{0};
   std::unique_ptr<SpecialObservationBuffer> special_buffer;
   easyfly_msgs::msg::MissionStatus::ConstSharedPtr incoming_event;
   double event_received{0};
@@ -216,7 +226,8 @@ struct Observer::Impl
     }
     const double now = detail::steady_seconds();
     auto & last = last_request[endpoint(key)];
-    if (last > 0 && now - last < 1.0) {
+    const double interval = key == Key::Targets || key == Key::Obstacles ? .25 : 1.0;
+    if (last > 0 && now - last < interval) {
       ++rejected;
       return {0, RequestStatus::RateLimited};
     }
@@ -301,6 +312,9 @@ struct Observer::Impl
     data.task_backends.clear(); data.backend_graph_observed = 0;
     incoming_images = {}; incoming_event.reset();
     data.trajectory.clear();
+    global_buffer.clear(); data.global_position = {}; data.global_trajectory.clear();
+    grid_buffer.clear(); data.occupancy_grid = {};
+    execution_buffer.clear(); data.mission_execution = {};
     data.localization = {};
     data.navigation_localization = {};
     data.navigation_localization.evidence.endpoint =
@@ -313,6 +327,121 @@ struct Observer::Impl
     // The event is historical and has no execution identity; keep original epoch.
     data.last_mission_event.evidence.quality = Quality::ClockReset;
     event("ROS clock moved backwards: current layers and read-only requests invalidated");
+  }
+  std::string execution_source(const rclcpp::MessageInfo * message = nullptr)
+  {
+    const auto sources = node->get_publishers_info_by_topic("/mission/execution_overview");
+    if (sources.size() != 1 || sources[0].topic_type() != "std_msgs/msg/String" ||
+      sources[0].node_name() != "mission_fsm" || sources[0].node_namespace() != "/") {return {};}
+    const auto & gid = sources[0].endpoint_gid();
+    if (message) {
+      const auto & actual = message->get_rmw_message_info().publisher_gid;
+      if (!std::equal(gid.begin(), gid.end(), actual.data)) {return {};}
+    }
+    return std::string(reinterpret_cast<const char *>(gid.data()), gid.size());
+  }
+  std::string gps_source(const rclcpp::MessageInfo * message = nullptr)
+  {
+    const auto sources = node->get_publishers_info_by_topic("/mavros/global_position/global");
+    if (sources.size() != 1 || sources[0].topic_type() != "sensor_msgs/msg/NavSatFix") {return {};}
+    const auto & gid = sources[0].endpoint_gid();
+    if (message) {
+      const auto & actual = message->get_rmw_message_info().publisher_gid;
+      if (!std::equal(gid.begin(), gid.end(), actual.data)) {return {};}
+    }
+    return std::string(reinterpret_cast<const char *>(gid.data()), gid.size());
+  }
+  std::string grid_source(const rclcpp::MessageInfo * message = nullptr)
+  {
+    const auto sources = node->get_publishers_info_by_topic("/occupancy_grid");
+    if (sources.size() != 1 || sources[0].topic_type() != "nav_msgs/msg/OccupancyGrid") {
+      return {};
+    }
+    const auto & gid = sources[0].endpoint_gid();
+    if (message) {
+      const auto & actual = message->get_rmw_message_info().publisher_gid;
+      if (!std::equal(gid.begin(), gid.end(), actual.data)) {return {};}
+    }
+    return std::string(reinterpret_cast<const char *>(gid.data()), gid.size());
+  }
+  bool camera_source_matches(
+    size_t camera, const std::string & topic, const rclcpp::MessageInfo & info)
+  {
+    auto found = camera_sources[camera].find(topic);
+    if (found == camera_sources[camera].end() || found->second.empty()) {return false;}
+    const auto & actual = info.get_rmw_message_info().publisher_gid;
+    const std::string gid(reinterpret_cast<const char *>(actual.data), RMW_GID_STORAGE_SIZE);
+    if (found->second == gid) {return true;}
+    // Quarantine this topic until the next bounded graph probe establishes its origin.
+    found->second.clear();
+    if (camera_buffers[camera]) {camera_buffers[camera]->clear();}
+    data.camera_perception[camera] = {};
+    if (topic == config.image_topics[camera]) {
+      incoming_images[camera].reset(); data.images[camera] = {}; image_received[camera] = 0;
+    }
+    return false;
+  }
+  void camera_graph(double now)
+  {
+    if (camera_graph_observed > 0 && now - camera_graph_observed < 1.) {return;}
+    camera_graph_observed = now;
+    for (size_t i = 0; i < config.image_topics.size(); ++i) {
+      if (config.image_topics[i].empty()) {continue;}
+      std::map<std::string, std::string> sources;
+      bool reliable = false;
+      const auto inspect = [&](const std::string & topic, const std::string & type, bool image) {
+          if (topic.empty()) {return;}
+          const auto publishers = node->get_publishers_info_by_topic(topic);
+          std::string gid;
+          if (publishers.size() == 1 && publishers[0].topic_type() == type) {
+            const auto & id = publishers[0].endpoint_gid();
+            gid.assign(reinterpret_cast<const char *>(id.data()), id.size());
+            if (image) {
+              const auto policy = publishers[0].qos_profile().reliability();
+              reliable = policy == rclcpp::ReliabilityPolicy::Reliable;
+              if (!reliable && policy != rclcpp::ReliabilityPolicy::BestEffort) {gid.clear();}
+            }
+          }
+          sources[topic] = std::move(gid);
+        };
+      inspect(config.image_topics[i], "sensor_msgs/msg/Image", true);
+      const auto & binding = config.camera_perception[i];
+      if (camera_buffers[i]) {
+        inspect(binding.detections_topic, "easyfly_msgs/msg/DetectionInfoArray", false);
+        inspect(binding.tracks_topic, "easyfly_msgs/msg/TrackInfoArray", false);
+        inspect(binding.targets_topic, "easyfly_msgs/msg/Target3DArray", false);
+        inspect(binding.ellipse_topic, "easyfly_msgs/msg/EllipseObservationArray", false);
+        inspect(binding.color_line_topic, "easyfly_msgs/msg/ColorLineObservationArray", false);
+        std::string identity;
+        for (const auto & source : sources) {identity += source.first + '\n' + source.second;}
+        camera_buffers[i]->source_identity(identity);
+      }
+      const auto gid = sources.at(config.image_topics[i]);
+      const bool rebuild = gid != image_source_gids[i] || reliable != image_reliable[i] ||
+        (!gid.empty() && !image_subscriptions[i]);
+      camera_sources[i] = std::move(sources);
+      if (!rebuild) {continue;}
+      if (camera_buffers[i]) {camera_buffers[i]->clear();}
+      image_subscriptions[i].reset(); image_source_gids[i] = gid; image_reliable[i] = reliable;
+      incoming_images[i].reset(); data.images[i] = {}; image_received[i] = 0;
+      if (gid.empty()) {continue;}
+      auto qos = rclcpp::QoS(4).durability_volatile();
+      if (reliable) {qos.reliable();} else {qos.best_effort();}
+      image_subscriptions[i] = node->create_subscription<Image>(
+        config.image_topics[i], qos,
+        [this, i](Image::ConstSharedPtr message, const rclcpp::MessageInfo & info) {
+          if (!camera_source_matches(i, config.image_topics[i], info)) {return;}
+          const double received = detail::steady_seconds();
+          if (camera_buffers[i]) {
+            camera_buffers[i]->image(
+              message, received, clock.state(received, node->now().nanoseconds()));
+          }
+          const bool same = incoming_images[i] && incoming_images[i]->header == message->header;
+          if (incoming_images[i]) {++data.counters.dropped_images;}
+          incoming_images[i] = std::move(message);
+          if (!same) {image_received[i] = received;}
+        });
+    }
   }
   void initialize()
   {
@@ -346,6 +475,32 @@ struct Observer::Impl
             }
           }));
     }
+    subscriptions.push_back(
+      node->create_subscription<std_msgs::msg::String>(
+        "/mission/execution_overview", rclcpp::QoS(1).reliable().transient_local(),
+        [this](std_msgs::msg::String::ConstSharedPtr message, const rclcpp::MessageInfo & info) {
+          const auto steady = detail::steady_seconds();
+          const auto current = clock.state(steady, node->now().nanoseconds());
+          execution_buffer.observe(message->data, current, steady, execution_source(&info));
+        }));
+    subscriptions.push_back(
+      node->create_subscription<nav_msgs::msg::OccupancyGrid>(
+        "/occupancy_grid", rclcpp::QoS(1).reliable().transient_local(),
+        [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr message,
+        const rclcpp::MessageInfo & info) {
+          const auto steady = detail::steady_seconds();
+          const auto current = clock.state(steady, node->now().nanoseconds());
+          grid_buffer.observe(message, current, steady, grid_source(&info));
+        }));
+    subscriptions.push_back(
+      node->create_subscription<sensor_msgs::msg::NavSatFix>(
+        "/mavros/global_position/global", rclcpp::SensorDataQoS(),
+        [this](sensor_msgs::msg::NavSatFix::ConstSharedPtr message,
+        const rclcpp::MessageInfo & info) {
+          const auto steady = detail::steady_seconds();
+          const auto current = clock.state(steady, node->now().nanoseconds());
+          global_buffer.observe(message, current, steady, gps_source(&info));
+        }));
     subscriptions.push_back(
       node->create_subscription<easyfly_msgs::msg::LocalizationStatus>(
         data.localization.evidence.endpoint, rclcpp::QoS(1).reliable().transient_local(),
@@ -436,50 +591,39 @@ struct Observer::Impl
       if (config.image_topics[i].empty()) {continue;}
       const auto & binding = config.camera_perception[i];
       if (!binding.image_topic.empty() && binding.image_topic == config.image_topics[i]) {
-        camera_buffers[i] = std::make_unique<CameraObservationBuffer>(binding);
+        camera_buffers[i] = std::make_unique<detail::CameraStream>(binding);
         const auto subscribe = [this, i](const auto & topic, auto sample, auto callback) {
             using Message = decltype(sample);
             if (topic.empty()) {return;}
             subscriptions.push_back(
               node->create_subscription<Message>(
                 topic,
-                rclcpp::QoS(1).best_effort(), [this, i, callback](
-                  typename Message::ConstSharedPtr message) {
+                rclcpp::QoS(1).best_effort(), [this, i, callback, topic](
+                  typename Message::ConstSharedPtr message, const rclcpp::MessageInfo & info) {
+                  if (!camera_source_matches(i, topic, info)) {return;}
+                  const double received = detail::steady_seconds();
                   (camera_buffers[i].get()->*callback)(
-                    message, detail::steady_seconds(),
-                    current_epoch.load());
+                    message, received, clock.state(received, node->now().nanoseconds()));
                 }));
           };
         subscribe(
           binding.detections_topic, easyfly_msgs::msg::DetectionInfoArray{},
-          &CameraObservationBuffer::detections);
+          &detail::CameraStream::detections);
         subscribe(
           binding.tracks_topic, easyfly_msgs::msg::TrackInfoArray{},
-          &CameraObservationBuffer::tracks);
+          &detail::CameraStream::tracks);
         subscribe(
           binding.targets_topic, easyfly_msgs::msg::Target3DArray{},
-          &CameraObservationBuffer::targets);
+          &detail::CameraStream::targets);
         subscribe(
           binding.ellipse_topic, easyfly_msgs::msg::EllipseObservationArray{},
-          &CameraObservationBuffer::ellipses);
+          &detail::CameraStream::ellipses);
         subscribe(
           binding.color_line_topic, easyfly_msgs::msg::ColorLineObservationArray{},
-          &CameraObservationBuffer::color_lines);
+          &detail::CameraStream::color_lines);
       }
-      subscriptions.push_back(
-        node->create_subscription<Image>(
-          config.image_topics[i],
-          rclcpp::QoS(1).best_effort(), [this, i](Image::ConstSharedPtr m) {
-            if (camera_buffers[i]) {
-              camera_buffers[i]->image(m, detail::steady_seconds(), current_epoch.load());
-            }
-            const bool same_pending_source = incoming_images[i] &&
-            incoming_images[i]->header == m->header;
-            if (incoming_images[i]) {++data.counters.dropped_images;}
-            incoming_images[i] = std::move(m);
-            if (!same_pending_source) {image_received[i] = detail::steady_seconds();}
-          }));
     }
+    camera_graph(detail::steady_seconds());
     data.running = true;
     event("Read-only observation started; selected profile is not backend confirmation");
   }
@@ -669,6 +813,11 @@ struct Observer::Impl
   }
   void observations(double now)
   {
+    camera_graph(now);
+    data.mission_execution = execution_buffer.snapshot(data.clock, now, execution_source());
+    data.global_position = global_buffer.snapshot(data.clock, now, gps_source());
+    data.occupancy_grid = grid_buffer.snapshot(data.clock, now, grid_source());
+    data.global_trajectory = global_buffer.trajectory();
     if (special_buffer) {
       data.special = special_buffer->snapshot(data.clock, now);
       const auto unique_source = [this](auto & observation) {
@@ -890,6 +1039,7 @@ struct Observer::Impl
       queue.clear(); reserved.clear();
     }
     incoming_images = {}; incoming_event.reset(); subscriptions.clear();
+    image_subscriptions = {}; camera_sources = {}; image_source_gids = {};
     special_buffer.reset(); data.special = {};
     for (auto & buffer : camera_buffers) {buffer.reset();}
     data.camera_perception = {};
@@ -908,6 +1058,12 @@ struct Observer::Impl
     data.state.position_valid = data.state.velocity_valid = data.state.attitude_valid = false;
     data.state.battery_valid = data.state.gps_valid = false;
     data.state.speed_mps.reset(); data.state.battery_percent.reset();
+    data.state.horizontal_speed_mps.reset(); data.state.vertical_speed_mps.reset();
+    global_buffer.clear(); data.global_position.evidence.quality = Quality::Stale;
+    grid_buffer.clear(); data.occupancy_grid = {};
+    data.occupancy_grid.evidence.quality = Quality::Stale;
+    execution_buffer.clear(); data.mission_execution.evidence.quality = Quality::Stale;
+    data.global_trajectory.clear();
     for (auto & image : data.images) {image = {};}
     data.trajectory.clear();
     data.localization.evidence.quality = Quality::Stale;
@@ -925,7 +1081,7 @@ struct Observer::Impl
   {
     try {
       if (!closing.load()) {initialize();}
-      double last_publish = 0, last_poll = 0;
+      double last_publish = 0, last_poll = 0, last_perception_poll = 0;
       bool targets = true;
       while (!closing.load() && context->is_valid()) {
         executor->spin_some(std::chrono::milliseconds(5));
@@ -940,7 +1096,11 @@ struct Observer::Impl
           }
           for (Key key : {Key::FlightCapabilities, Key::MissionCapabilities,
               Key::PerceptionCapabilities, Key::LandingCapabilities}) {submit(key);}
-          submit(targets ? Key::Targets : Key::Obstacles); targets = !targets; last_poll = now;
+          last_poll = now;
+        }
+        if (config.poll_observations && now - last_perception_poll >= .25) {
+          submit(targets ? Key::Targets : Key::Obstacles); targets = !targets;
+          last_perception_poll = detail::steady_seconds();
         }
         requests(now);
         if (now - last_publish >= .1) {observations(now); publish(); last_publish = now;}

@@ -20,7 +20,9 @@ def sha(data):
 def derive(workspace):
     base = workspace / 'src/simulation/easyfly_gazebo_worlds'
     source = 'worlds/outdoor/urban/racetrack_aws_day_v1.world'
-    before = (base / source).read_bytes()
+    # Retain the historical source label in the immutable derivation record.
+    # The actual locked input is no longer installed as a runtime world.
+    before = (workspace / 'tools/scenes/source-worlds/racetrack_aws_day_v1.world').read_bytes()
     if sha(before) != '38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c':
         raise ValueError('reviewed original daytime world required')
     document = ET.fromstring(before)

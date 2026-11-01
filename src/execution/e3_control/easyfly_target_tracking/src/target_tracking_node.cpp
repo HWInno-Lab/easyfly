@@ -29,6 +29,10 @@
 //   - 仅悬停状态可发起 (自身不含起飞, 从地面发起会在首个航点发送时明确报错);
 //   - 与任务 FSM 互斥 (flight_control 单动作槽), 不要同时使用。
 #include <yaml-cpp/yaml.h>
+
+#include <set>
+#include <regex>
+#include <stdexcept>
 #include <array>
 #include <algorithm>
 #include <atomic>
@@ -50,6 +54,7 @@
 #include <easyfly_msgs/action/go_to_waypoint.hpp>
 #include <easyfly_msgs/msg/target3_d_array.hpp>
 #include <easyfly_msgs/msg/uav_state.hpp>
+
 #include "easyfly_target_tracking/waypoint_lifecycle.hpp"
 #include "easyfly_target_tracking/target_frame.hpp"
 #include "easyfly_target_tracking/follow_offset.hpp"
@@ -136,6 +141,43 @@ private:
     }
     YAML::Node root = YAML::LoadFile(cfg);
     const auto & p = root["target_tracking"];
+    if (!root.IsMap() || root.size() != 1 || !p.IsMap()) {
+      throw std::runtime_error("expected target_tracking configuration mapping");
+    }
+    const std::set<std::string> allowed = {
+      "input_topic", "uav_state_topic", "reissue_threshold", "default_follow_distance",
+      "default_follow_height", "max_altitude", "max_target_speed", "max_target_jump",
+      "jump_guard_margin", "max_observation_gap", "max_follow_radius", "state_timeout",
+      "child_cancel_timeout", "child_cancel_max_wait", "first_seen_timeout", "lost_timeout",
+      "reacquire_radius"};
+    for (const auto & item : p) {
+      if (!allowed.count(item.first.as<std::string>())) {
+        throw std::runtime_error("unknown target_tracking configuration key");
+      }
+    }
+    for (const auto & key : allowed) {
+      if (!p[key] || !p[key].IsScalar()) {
+        throw std::runtime_error("all target_tracking configuration values must be explicit");
+      }
+      if (key == "input_topic" || key == "uav_state_topic") {
+        if (!std::regex_match(
+            p[key].as<std::string>(),
+            std::regex("/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*")))
+        {
+          throw std::runtime_error("target_tracking requires absolute topic names");
+        }
+      } else {
+        const auto value = p[key].as<double>();
+        if (!std::isfinite(value) || value <= 0.0) {
+          throw std::runtime_error("target_tracking safety limits must be finite and positive");
+        }
+      }
+    }
+    if (p["default_follow_height"].as<double>() > p["max_altitude"].as<double>() ||
+      p["child_cancel_timeout"].as<double>() > p["child_cancel_max_wait"].as<double>())
+    {
+      throw std::runtime_error("inconsistent target_tracking safety limits");
+    }
     params_.input_topic = p["input_topic"].as<std::string>(params_.input_topic);
     params_.uav_state_topic = p["uav_state_topic"].as<std::string>(params_.uav_state_topic);
     params_.reissue_threshold = p["reissue_threshold"].as<double>(params_.reissue_threshold);

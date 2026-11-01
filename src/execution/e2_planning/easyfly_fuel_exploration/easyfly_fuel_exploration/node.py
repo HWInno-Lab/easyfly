@@ -35,6 +35,7 @@ import yaml
 
 from .policy import Policy, geometry, identity
 from .camera import CameraView
+from .evidence import private_evidence_directory
 
 
 def point(p):
@@ -53,7 +54,7 @@ class Exploration(Node):
         value = self.declare_parameter('evidence_directory', '').value
         if not value:
             raise ValueError('FUEL requires an explicit evidence_directory')
-        self.root = Path(value).resolve(); self.root.mkdir(parents=True, exist_ok=True)
+        self.root = private_evidence_directory(value)
         self.admitted = False; self.active = None; self.fault_lock = False
         self.stopping = False
         self.state = None; self.state_received = 0.; self.pair = None; self.pair_received = 0.

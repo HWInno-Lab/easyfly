@@ -51,10 +51,21 @@ public:
     battery->voltage = 12.0;
     battery->percentage = 0.8;
     node.cb_battery(battery);
-    node.cb_global_position(std::make_shared<sensor_msgs::msg::NavSatFix>());
+    auto gps = std::make_shared<sensor_msgs::msg::NavSatFix>();
+    gps->header.stamp = node.now();
+    gps->status.status = sensor_msgs::msg::NavSatStatus::STATUS_FIX;
+    node.cb_global_position(gps);
     auto rc = std::make_shared<mavros_msgs::msg::RCIn>();
     rc->channels.push_back(1500);
     node.cb_rc_in(rc);
+  }
+  static void gps(MavlinkBridge & node, int64_t stamp, int8_t fix = 0, double latitude = 31.)
+  {
+    auto message = std::make_shared<sensor_msgs::msg::NavSatFix>();
+    message->header.stamp = rclcpp::Time(stamp);
+    message->status.status = fix;
+    message->latitude = latitude; message->longitude = 121.; message->altitude = 10.;
+    node.cb_global_position(message);
   }
   static void status(MavlinkBridge & node, int64_t stamp, const std::string & mode = "OFFBOARD")
   {
@@ -299,6 +310,30 @@ TEST_F(BridgeFreshness, FrozenClockTelemetryExpiresAndOnlyNewInputRestoresValidi
   BridgeFreshnessTestPeer::telemetry(*node_);
   state = BridgeFreshnessTestPeer::snapshot(*node_);
   EXPECT_TRUE(state.connected && state.pose_valid && state.attitude_valid && state.rc_connected);
+}
+
+TEST_F(BridgeFreshness, GlobalFixUsesOriginalStatusTimeAndDistinctReceipt)
+{
+  BridgeFreshnessTestPeer::gps(*node_, 10000000000LL);
+  EXPECT_TRUE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  std::this_thread::sleep_for(80ms);
+  BridgeFreshnessTestPeer::gps(*node_, 10000000000LL);
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::gps(*node_, 10000000000LL, -1);
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::freeze(*node_, 11);
+  BridgeFreshnessTestPeer::gps(*node_, 11000000000LL);
+  EXPECT_TRUE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::gps(*node_, 12000000000LL);
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::gps(*node_, 0);
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::gps(*node_, 9000000000LL);
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
+  BridgeFreshnessTestPeer::gps(
+    *node_, 11000000000LL, 0,
+    std::numeric_limits<double>::quiet_NaN());
+  EXPECT_FALSE(BridgeFreshnessTestPeer::snapshot(*node_).gps_valid);
 }
 
 TEST_F(BridgeFreshness, FrozenClockOldSetpointStopsAndNewCommandIsRequired)

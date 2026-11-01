@@ -180,7 +180,7 @@ class SceneProbe(navigation.Probe):
                             'debug_model_path:='+':'.join(roots),
                             'debug_spawn_pose:='+' '.join(str(v) for v in [*spawn['position'],spawn['yaw']]),
                             'debug_heartbeat_rate_hz:='+str(self.scene['runtime'].get('heartbeat_rate_hz',1)),
-                            'debug_clock_rate_hz:='+str(self.scene['runtime'].get('clock_rate_hz',10)),
+                            'debug_clock_rate_hz:='+str(self.scene['runtime'].get('clock_rate_hz',100)),
                             'grid_footprint_mode:='+self.scene['navigation'].get('grid_footprint_mode','cluster_boxes'),
                             'grid_height_limit_m:='+str(self.scene['navigation'].get('grid_height_limit_m',0.0)),
                             'ground_model_frame:='+self.scene['navigation'].get('ground_model_frame','odom')])
@@ -245,7 +245,7 @@ class SceneProbe(navigation.Probe):
                         raise RuntimeError('loaded library differs from selected overlay: '+str(path))
                     loaded[path.name]=dict(pid=pid,path=str(path),sha256=hashlib.sha256(path.read_bytes()).hexdigest())
         self.report['loaded_libraries']=loaded
-        clock_rate=self.scene['runtime'].get('clock_rate_hz',10)
+        clock_rate=self.scene['runtime'].get('clock_rate_hz',100)
         if clock_rate!=10:
             client=self.node.create_client(GetParameters,'/gazebo/get_parameters')
             try:

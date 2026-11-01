@@ -12,13 +12,26 @@
 // limitations under the License.
 
 #include <iostream>
+#include <iomanip>
+#include <string>
 #include "easyfly_mission_format/mission_format.hpp"
 
 int main(int argc, char ** argv)
 {
-  if (argc != 2) {std::cerr << "usage: mission_validate PATH\n"; return 2;}
-  const auto result = easyfly_mission_fsm::validateMissionFile(argv[1]);
+  const bool types = argc == 3 && std::string(argv[1]) == "--step-types";
+  if (argc != 2 && !types) {
+    std::cerr << "usage: mission_validate [--step-types] PATH\n"; return 2;
+  }
+  const auto result = easyfly_mission_fsm::validateMissionFile(argv[types ? 2 : 1]);
   if (!result.valid()) {std::cerr << result.error << '\n'; return 1;}
+  if (types) {
+    std::cout << '[';
+    for (size_t i = 0; i < result.steps.size(); ++i) {
+      if (i) {std::cout << ',';}
+      std::cout << std::quoted(result.steps[i].type);
+    }
+    std::cout << "]\n"; return 0;
+  }
   std::cout << "valid: " << result.steps.size() << " steps; live flight admission still required\n";
   return 0;
 }

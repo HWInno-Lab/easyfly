@@ -1,0 +1,16 @@
+# AWS warehouse: one bounded autonomous FUEL exploration.
+# Actual frontier/viewpoints are chosen by FUEL; no precomputed waypoint route.
+schema_version: 1
+frame_id: odom
+units: {position: m, angle: rad, time: s}
+failure_policy: abort
+steps:
+  - {type: takeoff, altitude: 1.5, climb_speed: 0.3, timeout: 75}
+  - {type: hover, duration: 15, timeout: 25}
+  - type: explore
+    min_bound: [-2.0, -3.0, 0.5]
+    max_bound: [6.0, 3.0, 2.5]
+    return_home: true
+    timeout: 180
+    forbidden_boxes: []
+  - {type: land, timeout: 90}

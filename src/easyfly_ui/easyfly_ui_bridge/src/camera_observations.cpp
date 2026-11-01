@@ -42,7 +42,8 @@ void receive(
 {
   if (!message) {return;}
   const auto ns = detail::stamp_ns(message->header.stamp);
-  if (current.value && ns == watermark && *message == *current.value) {return;}
+  if (current.value && current.evidence.time_epoch == epoch &&
+    ns == watermark && *message == *current.value) {return;}
   current = {};
   current.evidence.endpoint = topic; current.evidence.time_epoch = epoch;
   current.evidence.received_steady = current.evidence.first_source_steady = now;
@@ -65,8 +66,14 @@ Observation<Message> age(
   evidence.source_age = static_cast<double>(clock.now_ns -
     detail::stamp_ns(current.value->header.stamp)) / 1e9;
   evidence.source_age_available = clock.now_ns > 0;
-  evidence.quality = evidence.time_epoch != clock.epoch ? Quality::ClockReset :
-    detail::source_quality(current.value->header, clock, evidence.receipt_age, lifetime, false);
+  if (evidence.time_epoch != clock.epoch) {
+    evidence.quality = Quality::ClockReset;
+    // A terminal expiry notification must not become a cross-epoch display exception.
+    if (evidence.reason == kValidatedGeometryExpiry) {evidence.reason.clear();}
+  } else if (evidence.quality != Quality::Invalid) {
+    evidence.quality = detail::source_quality(
+      current.value->header, clock, evidence.receipt_age, lifetime, false);
+  }
   return current;
 }
 }  // namespace
@@ -155,6 +162,30 @@ template<typename Message> bool geometry_envelope(const Message & message)
          static_cast<uint64_t>(message.image_width) * message.image_height <= 2073600 &&
          message.observations.size() <= 32;
 }
+template<typename Message>
+bool geometry_expiry(
+  std::shared_ptr<const Message> message, Observation<Message> & current,
+  int64_t watermark, uint64_t epoch)
+{
+  if (!message || !current.value || current.evidence.time_epoch != epoch) {return false;}
+  const auto ns = detail::stamp_ns(message->header.stamp);
+  // Repeated expiry notifications cannot renew either original receipt timestamp.
+  if (current.evidence.quality == Quality::Invalid &&
+    current.evidence.reason == kValidatedGeometryExpiry && ns == watermark &&
+    *message == *current.value) {return true;}
+  if (current.evidence.quality != Quality::ValidAtObservation || !current.value->valid ||
+    message->valid || !message->observations.empty() ||
+    message->reason != "expired_or_clock_invalid" || !header(message->header) ||
+    message->image_width == 0 || message->image_height == 0 ||
+    uint64_t(message->image_width) * message->image_height > 2073600 ||
+    message->header != current.value->header || ns != watermark ||
+    message->image_width != current.value->image_width ||
+    message->image_height != current.value->image_height) {return false;}
+  current.value = std::move(message);
+  current.evidence.quality = Quality::Invalid;
+  current.evidence.reason = kValidatedGeometryExpiry;
+  return true;
+}
 bool point(double x, double y, uint32_t width, uint32_t height)
 {
   return std::isfinite(x) && std::isfinite(y) && x >= 0 && y >= 0 && x < width && y < height;
@@ -165,6 +196,7 @@ void CameraObservationBuffer::ellipses(
   easyfly_msgs::msg::EllipseObservationArray::ConstSharedPtr message, double now, uint64_t epoch)
 {
   if (!message) {return;}
+  if (geometry_expiry(message, data_.ellipses, ellipse_watermark_, epoch)) {return;}
   const bool valid = geometry_envelope(*message) && std::all_of(
     message->observations.begin(), message->observations.end(), [&](const auto & value) {
       return point(value.center_x, value.center_y, message->image_width, message->image_height) &&
@@ -182,6 +214,7 @@ void CameraObservationBuffer::color_lines(
   easyfly_msgs::msg::ColorLineObservationArray::ConstSharedPtr message, double now, uint64_t epoch)
 {
   if (!message) {return;}
+  if (geometry_expiry(message, data_.color_lines, color_line_watermark_, epoch)) {return;}
   const bool valid = geometry_envelope(*message) && std::all_of(
     message->observations.begin(), message->observations.end(), [&](const auto & value) {
       return point(value.center_x, value.center_y, message->image_width, message->image_height) &&

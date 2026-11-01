@@ -1,0 +1,4933 @@
+{
+  "date": "2026-10-30",
+  "scope": "Default FAST-LIO, headless disarmed startup, four live sensor streams, CPU inference, real pointcloud/grid mapping, stationary frame alignment, normal shutdown through the public profile entrypoint",
+  "exclusions": [
+    "No flight missions",
+    "No hardware",
+    "No qualification of draft scenes",
+    "Alternative localization backends and GPU inference are outside this matrix",
+    "Hospital intermittent crash V3-016 remains open despite these successful runs"
+  ],
+  "profiles": [
+    "full_perception",
+    "landing_dev"
+  ],
+  "source_hashes": {
+    "artifacts/test-v3-scene-profiles-20261030/probe-profile.py": "c426a606f718b58512d0fb725879089dfadc055063435b0da3cb7d491fe0c8d8",
+    "artifacts/test-v3-scene-profiles-20261030/run-matrix.py": "a54fca9d9476539a3d46c029a7615be3b72aa3bc5e81d1dd1bb75a14fa358ade",
+    "src/application/a3_mission/easyfly_sim_launcher/launch/profile.launch.py": "30fd1a3b6d7f71defa0dad0e31e9d8f0947086198f61ea8faf9bda2b96a1d4d8"
+  },
+  "cases": [
+    {
+      "scene": "primitives_sparse_seed42_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=primitives_sparse_seed42_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 66,
+        "/pointcloud_nonground": 72
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        188
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002163769916205627,
+          "yaw_error_rad": 5.6151585779835166e-05,
+          "translation_component_error_m": 0.002163769916205627,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0026457468823840222,
+                0.0014977197861298919,
+                -0.03550096419270834
+              ],
+              "measured_navigation": [
+                0.0020224545150995255,
+                0.0018903970485553145,
+                -0.033466458984375
+              ],
+              "error_m": 0.002163769916205627
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0005894880030124903,
+          "yaw_error_rad": 3.7288977572144666e-05,
+          "translation_component_error_m": 0.0005894880030124903,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0026457468823840222,
+                0.0014977197861298919,
+                -0.03550096419270834
+              ],
+              "measured_navigation": [
+                0.0030017185490578413,
+                0.001102618407458067,
+                -0.03575527734375
+              ],
+              "error_m": 0.0005894880030124903
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0018001527696723098,
+          "yaw_error_rad": 9.344056344980436e-05,
+          "translation_component_error_m": 0.0018001527696723098,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0026457468823840222,
+                0.0014977197861298919,
+                -0.03550096419270834
+              ],
+              "measured_navigation": [
+                0.0029130675829946995,
+                0.0015001439023762941,
+                -0.03728115625
+              ],
+              "error_m": 0.0018001527696723098
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--primitives_sparse_seed42_v1/result.json",
+      "raw_report_sha256": "c6d3b75e06da64793361ac2267be6414082e589625451c1ed8515a7bca8b0408",
+      "console_sha256": "f41ddbe0884869296cd5fc999f4031f26b48db14698359a5a32b4f34f9cf9b0a",
+      "seconds": 40.59274977497989
+    },
+    {
+      "scene": "bookstore_aws_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "24c090cd7d9cc5fc4d4efaf87bff34230ccf2fa76f54c66eae8667a5843ef0fd",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=bookstore_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 33,
+        "/pointcloud_nonground": 36
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        118
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0027276967739661563,
+          "yaw_error_rad": 8.12048388113551e-05,
+          "translation_component_error_m": 0.0027276967739661563,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.912671363014821,
+                -5.448960007997375,
+                -0.047643919270833335
+              ],
+              "measured_navigation": [
+                2.9108221655628106,
+                -5.4488904950334325,
+                -0.045639931640625006
+              ],
+              "error_m": 0.0027276967739661563
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0011076020142599553,
+          "yaw_error_rad": 8.679829880879618e-05,
+          "translation_component_error_m": 0.0011076020142599553,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.912671363014821,
+                -5.448960007997375,
+                -0.047643919270833335
+              ],
+              "measured_navigation": [
+                2.9136666566846507,
+                -5.448475738394558,
+                -0.047684609375000006
+              ],
+              "error_m": 0.0011076020142599553
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002211416735087724,
+          "yaw_error_rad": 5.593459977734638e-06,
+          "translation_component_error_m": 0.002211416735087724,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.912671363014821,
+                -5.448960007997375,
+                -0.047643919270833335
+              ],
+              "measured_navigation": [
+                2.9135252667970004,
+                -5.449513790564132,
+                -0.049607216796875006
+              ],
+              "error_m": 0.002211416735087724
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--bookstore_aws_v1/result.json",
+      "raw_report_sha256": "2fb51ad3b764c6ee4bf1f6e48ba2e1bab148b5000dea393dd2023ead0a7826cc",
+      "console_sha256": "08b73ceeb5ad1f1faf5741ad822082b643498f44885d6e14dae921abd13585f0",
+      "seconds": 41.34357396399719
+    },
+    {
+      "scene": "forest_pine_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "960af1553c92ac8ca1be5adb9550f96b68603594e18b0048776dba7e99206f1b",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=forest_pine_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 61,
+        "/pointcloud_nonground": 70
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        177
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0022037619203993785,
+          "yaw_error_rad": 4.1982784633520787e-05,
+          "translation_component_error_m": 0.0022037619203993785,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.6125934740779195,
+                6.399998594811909,
+                -0.028054675130208335
+              ],
+              "measured_navigation": [
+                5.612350878768788,
+                6.402182907785033,
+                -0.028217435546875003
+              ],
+              "error_m": 0.0022037619203993785
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0005371622682032306,
+          "yaw_error_rad": 4.04170369225354e-06,
+          "translation_component_error_m": 0.0005371622682032306,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.6125934740779195,
+                6.399998594811909,
+                -0.028054675130208335
+              ],
+              "measured_navigation": [
+                5.6126245914142245,
+                6.399498376229196,
+                -0.028247953125000003
+              ],
+              "error_m": 0.0005371622682032306
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001734260706823838,
+          "yaw_error_rad": 4.602448832968786e-05,
+          "translation_component_error_m": 0.001734260706823838,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.6125934740779195,
+                6.399998594811909,
+                -0.028054675130208335
+              ],
+              "measured_navigation": [
+                5.612804952050747,
+                6.3983145004215,
+                -0.027698636718750003
+              ],
+              "error_m": 0.001734260706823838
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--forest_pine_v1/result.json",
+      "raw_report_sha256": "01894e0ff6270a9661cf0573420cfe3d8f92c94c937f55a309646645404a0187",
+      "console_sha256": "a0a461276d793775298e4a99717974342b9c9a8a362564fb37a76b767e0c8a4d",
+      "seconds": 41.97155478500645
+    },
+    {
+      "scene": "hospital_aws_v2",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=hospital_aws_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 37,
+        "/pointcloud_nonground": 42
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        103,
+        102
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0018915635614681638,
+          "yaw_error_rad": 0.00015853394899852796,
+          "translation_component_error_m": 0.0026111208927213775,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2998395044234769,
+                -0.29918568249966704,
+                0.501495361328125
+              ],
+              "error_m": 0.0017102565079787733
+            },
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.2998395044234769,
+                -0.29918568249966704,
+                2.001495361328125
+              ],
+              "error_m": 0.0017102565079787733
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2999346247924775,
+                0.30081430996043146,
+                0.501495361328125
+              ],
+              "error_m": 0.001703960131889321
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.2999346247924775,
+                0.30081430996043146,
+                2.001495361328125
+              ],
+              "error_m": 0.001703960131889321
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.80016046918686,
+                -0.29885276120816506,
+                0.501495361328125
+              ],
+              "error_m": 0.0018915635614681638
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.80016046918686,
+                -0.29885276120816506,
+                2.001495361328125
+              ],
+              "error_m": 0.0018915635614681638
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.800065348817859,
+                0.30114723125193166,
+                0.501495361328125
+              ],
+              "error_m": 0.0018858726136873718
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.800065348817859,
+                0.30114723125193166,
+                2.001495361328125
+              ],
+              "error_m": 0.0018858726136873718
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0001728561064502469,
+          "yaw_error_rad": 1.3684639926254264e-05,
+          "translation_component_error_m": 0.00023685206977527558,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3000266163545621,
+                -0.3001154457835362,
+                0.49990844726562494
+              ],
+              "error_m": 0.0001497266256816749
+            },
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.3000266163545621,
+                -0.3001154457835362,
+                1.9999084472656252
+              ],
+              "error_m": 0.00014972662568150518
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3000184055706065,
+                0.29988455416028437,
+                0.49990844726562494
+              ],
+              "error_m": 0.00014848707050967656
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.3000184055706065,
+                0.29988455416028437,
+                1.9999084472656252
+              ],
+              "error_m": 0.00014848707050950542
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999733834488056,
+                -0.30014418352738126,
+                0.49990844726562494
+              ],
+              "error_m": 0.0001728561064502469
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.7999733834488056,
+                -0.30014418352738126,
+                1.9999084472656252
+              ],
+              "error_m": 0.0001728561064500999
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999815942327608,
+                0.2998558164164411,
+                0.49990844726562494
+              ],
+              "error_m": 0.00017178353008101926
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.7999815942327608,
+                0.2998558164164411,
+                1.9999084472656252
+              ],
+              "error_m": 0.00017178353008087132
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0017306774587107954,
+          "yaw_error_rad": 0.0001448493089151459,
+          "translation_component_error_m": 0.002382737640294361,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30013386493019956,
+                -0.30069913104905943,
+                0.49859619140624994
+              ],
+              "error_m": 0.0015739703336412666
+            },
+            {
+              "world_point": [
+                -0.7946485604635001,
+                11.190688576352317,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.30013386493019956,
+                -0.30069913104905943,
+                1.9985961914062502
+              ],
+              "error_m": 0.0015739703336410192
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30004695534515435,
+                0.2993008626565441,
+                0.49859619140624994
+              ],
+              "error_m": 0.001568973039073532
+            },
+            {
+              "world_point": [
+                -0.8041501522056197,
+                11.79061333809696,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.30004695534515435,
+                0.2993008626565441,
+                1.9985961914062502
+              ],
+              "error_m": 0.0015689730390732837
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7998661130394122,
+                -0.30100331459671814,
+                0.49859619140624994
+              ],
+              "error_m": 0.0017306774587107954
+            },
+            {
+              "world_point": [
+                1.305088105642749,
+                11.223944147449735,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.7998661130394122,
+                -0.30100331459671814,
+                1.9985961914062502
+              ],
+              "error_m": 0.0017306774587105703
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                0.5144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999530226244573,
+                0.29899667910888716,
+                0.49859619140624994
+              ],
+              "error_m": 0.0017261339033350863
+            },
+            {
+              "world_point": [
+                1.2955865139006293,
+                11.82386890919438,
+                2.0144540078125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.7999530226244573,
+                0.29899667910888716,
+                1.9985961914062502
+              ],
+              "error_m": 0.0017261339033348606
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--hospital_aws_v2/result.json",
+      "raw_report_sha256": "b91ee75729f76371a7cd7f6de080811630ebb14cfbce6c862d924a63c9af791f",
+      "console_sha256": "f8e6cb86de0ac7ecf03a55979628c5ab4e52ef9d96dc705a1c3d3311b215fcb2",
+      "seconds": 54.792519590992015
+    },
+    {
+      "scene": "house_aws_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=house_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 44,
+        "/pointcloud_nonground": 48
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        129
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0031554147912311583,
+          "yaw_error_rad": 0.00016632352658291563,
+          "translation_component_error_m": 0.0031554147912311583,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0155941130848647,
+                -0.7832270574666005,
+                -0.03860358463541667
+              ],
+              "measured_navigation": [
+                -1.0146580773694824,
+                -0.7802180728054539,
+                -0.03844082421875
+              ],
+              "error_m": 0.0031554147912311583
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0010876701199523343,
+          "yaw_error_rad": 2.4360545291113658e-05,
+          "translation_component_error_m": 0.0010876701199523343,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0155941130848647,
+                -0.7832270574666005,
+                -0.03860358463541667
+              ],
+              "measured_navigation": [
+                -1.0159693370029579,
+                -0.7840939814410999,
+                -0.039142728515625
+              ],
+              "error_m": 0.0010876701199523343
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002246018336720964,
+          "yaw_error_rad": 0.00019068407226032795,
+          "translation_component_error_m": 0.002246018336720964,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0155941130848647,
+                -0.7832270574666005,
+                -0.03860358463541667
+              ],
+              "measured_navigation": [
+                -1.0161549248821538,
+                -0.785369118153248,
+                -0.038227201171875
+              ],
+              "error_m": 0.002246018336720964
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--house_aws_v1/result.json",
+      "raw_report_sha256": "60fc6eb26467cc2d17f7b39eab06baa98cae6a6a39588b3c82b6ea4ab738c8f2",
+      "console_sha256": "72d9af2172ef88d5a856ff88e366f7b521e1fba2ff369e3a586809ab62d3bd18",
+      "seconds": 42.487908968993
+    },
+    {
+      "scene": "office_willowgarage_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=office_willowgarage_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 82,
+        "/pointcloud_nonground": 90
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        218
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0029727185770338444,
+          "yaw_error_rad": 0.0001936733135866498,
+          "translation_component_error_m": 0.002293036501505516,
+          "samples": [
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30055056097813004,
+                -0.3026721355915001,
+                0.5011189778645833
+              ],
+              "error_m": 0.0029488196742812837
+            },
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30055056097813004,
+                -0.3026721355915001,
+                2.301118977864583
+              ],
+              "error_m": 0.002948819674281199
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30066676496555633,
+                0.29732785315569643,
+                0.5011189778645833
+              ],
+              "error_m": 0.0029727185770338444
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30066676496555633,
+                0.29732785315569643,
+                2.301118977864583
+              ],
+              "error_m": 0.002972718577033761
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7994493996370498,
+                -0.30226542163551073,
+                0.5011189778645833
+              ],
+              "error_m": 0.0025860022056735533
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7994493996370498,
+                -0.30226542163551073,
+                2.301118977864583
+              ],
+              "error_m": 0.0025860022056734574
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7993331956496226,
+                0.2977345671116858,
+                0.5011189778645833
+              ],
+              "error_m": 0.0026132213213896183
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7993331956496226,
+                0.2977345671116858,
+                2.301118977864583
+              ],
+              "error_m": 0.0026132213213895233
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.000561268098631705,
+          "yaw_error_rad": 2.9775156370030753e-06,
+          "translation_component_error_m": 0.000549995971036529,
+          "samples": [
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30010123507758824,
+                -0.29946401010339585,
+                0.4998677571614583
+              ],
+              "error_m": 0.0005612680986316395
+            },
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30010123507758824,
+                -0.29946401010339585,
+                2.299867757161458
+              ],
+              "error_m": 0.000561268098631705
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3000994485682069,
+                0.30053598989394636,
+                0.4998677571614583
+              ],
+              "error_m": 0.0005609486183926452
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3000994485682069,
+                0.30053598989394636,
+                2.299867757161458
+              ],
+              "error_m": 0.0005609486183927107
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7998987649131024,
+                -0.2994702628862349,
+                0.4998677571614583
+              ],
+              "error_m": 0.0005553000277911879
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7998987649131024,
+                -0.2994702628862349,
+                2.299867757161458
+              ],
+              "error_m": 0.000555300027791254
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999005514224846,
+                0.3005297371111091,
+                0.4998677571614583
+              ],
+              "error_m": 0.0005549771119619396
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7999005514224846,
+                0.3005297371111091,
+                2.299867757161458
+              ],
+              "error_m": 0.0005549771119620058
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0024743896234537587,
+          "yaw_error_rad": 0.00019069579789466815,
+          "translation_component_error_m": 0.0018383119272132797,
+          "samples": [
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29934797695448623,
+                -0.2978642159469427,
+                0.4990132649739583
+              ],
+              "error_m": 0.002441383539059858
+            },
+            {
+              "world_point": [
+                -6.291327652467956,
+                9.695902311661836,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29934797695448623,
+                -0.2978642159469427,
+                2.299013264973958
+              ],
+              "error_m": 0.00244138353905997
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29923355947644303,
+                0.30213577314359163,
+                0.4990132649739583
+              ],
+              "error_m": 0.002474389623453648
+            },
+            {
+              "world_point": [
+                -6.30036538430767,
+                10.295834240636445,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29923355947644303,
+                0.30213577314359163,
+                2.299013264973958
+              ],
+              "error_m": 0.0024743896234537587
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8006519848623812,
+                -0.2982646771200965,
+                0.4990132649739583
+              ],
+              "error_m": 0.0021000180403768273
+            },
+            {
+              "world_point": [
+                -4.191565901056831,
+                9.727534373100834,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8006519848623812,
+                -0.2982646771200965,
+                2.299013264973958
+              ],
+              "error_m": 0.0021000180403769574
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                0.5382780638020833
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8007664023404244,
+                0.30173531197043957,
+                0.4990132649739583
+              ],
+              "error_m": 0.0021382998372015813
+            },
+            {
+              "world_point": [
+                -4.200603632896545,
+                10.327466302075443,
+                2.338278063802083
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8007664023404244,
+                0.30173531197043957,
+                2.299013264973958
+              ],
+              "error_m": 0.002138299837201709
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--office_willowgarage_v1/result.json",
+      "raw_report_sha256": "7df3df238535f2145b427f3a04c832348554997ccbbdd29e6e81225edd468080",
+      "console_sha256": "c307eb0611902b6286b79fafd611d05b111e1e39620b3f235d18502a06bb643a",
+      "seconds": 41.96705087600276
+    },
+    {
+      "scene": "primitives_corridor_seed1042_v2",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "e70d971a430a339294078d2a3a55bcfb7175b1738de5a59d71e5823e3b07cccb",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=primitives_corridor_seed1042_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 58,
+        "/pointcloud_nonground": 69
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        202
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0033023737884244485,
+          "yaw_error_rad": 9.59060120716247e-05,
+          "translation_component_error_m": 0.0033023737884244485,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -0.0005660514386060337,
+                0.005295670125633478,
+                -0.02975348697916667
+              ],
+              "measured_navigation": [
+                0.0013119123177602887,
+                0.0067899771966040134,
+                -0.027485013671875003
+              ],
+              "error_m": 0.0033023737884244485
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0018178280435540402,
+          "yaw_error_rad": 4.78409279782814e-05,
+          "translation_component_error_m": 0.0018178280435540402,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -0.0005660514386060337,
+                0.005295670125633478,
+                -0.02975348697916667
+              ],
+              "measured_navigation": [
+                0.0008660515886731446,
+                0.005824757739901543,
+                -0.028766751953125003
+              ],
+              "error_m": 0.0018178280435540402
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.005064291604740771,
+          "yaw_error_rad": 0.0001437469403796736,
+          "translation_component_error_m": 0.005064291604740771,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -0.0005660514386060337,
+                0.005295670125633478,
+                -0.02975348697916667
+              ],
+              "measured_navigation": [
+                -0.0038761182222515345,
+                0.0032722754403948784,
+                -0.0330086953125
+              ],
+              "error_m": 0.005064291604740771
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--primitives_corridor_seed1042_v2/result.json",
+      "raw_report_sha256": "141f43617ba3180198a373d0b2714ab206c85c8ba04420cb85cd0bc7a424d015",
+      "console_sha256": "38f33131de98975e05c50cd4798a12eaf0712245b92d044eee40eafcb1eb8ba8",
+      "seconds": 41.70018881899887
+    },
+    {
+      "scene": "racetrack_aws_day_v2",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=racetrack_aws_day_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 45,
+        "/pointcloud_nonground": 47
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        88,
+        87
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002027568675861682,
+          "yaw_error_rad": 0.00016538902293420675,
+          "translation_component_error_m": 0.002027568675861682,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.10262013111325,
+                6.876313807228894,
+                -0.08687070703125
+              ],
+              "measured_navigation": [
+                8.10098700872761,
+                6.877515062691435,
+                -0.086840189453125
+              ],
+              "error_m": 0.002027568675861682
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0002816942746351234,
+          "yaw_error_rad": 1.8629597529306458e-05,
+          "translation_component_error_m": 0.0002816942746351234,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.10262013111325,
+                6.876313807228894,
+                -0.08687070703125
+              ],
+              "measured_navigation": [
+                8.102754961740736,
+                6.876147540113782,
+                -0.0870538125
+              ],
+              "error_m": 0.0002816942746351234
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001827392168153991,
+          "yaw_error_rad": 0.00014675942517881034,
+          "translation_component_error_m": 0.001827392168153991,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.10262013111325,
+                6.876313807228894,
+                -0.08687070703125
+              ],
+              "measured_navigation": [
+                8.104118422871403,
+                6.875278818881465,
+                -0.086718119140625
+              ],
+              "error_m": 0.001827392168153991
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--racetrack_aws_day_v2/result.json",
+      "raw_report_sha256": "bda560d6e820741865e99d05dba168dd9c5df43cdaf28d05031da1f0f4b7fa0c",
+      "console_sha256": "419367c50e21d7e6f7ecbfb1ff7e6244ccb04c8442a3b4debddafa0719eca225",
+      "seconds": 47.20365128701087
+    },
+    {
+      "scene": "urban_block_osrf_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=urban_block_osrf_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 75,
+        "/pointcloud_nonground": 84
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        191
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0033569190164075137,
+          "yaw_error_rad": 3.549088273272632e-06,
+          "translation_component_error_m": 0.003352944514275355,
+          "samples": [
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29848089652863286,
+                -0.3018323927727453,
+                0.5023600260416667
+              ],
+              "error_m": 0.0033518743335146342
+            },
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29848089652863286,
+                -0.3018323927727453,
+                2.3023600260416663
+              ],
+              "error_m": 0.0033518743335144777
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29847876707566895,
+                0.29816760722347596,
+                0.5023600260416667
+              ],
+              "error_m": 0.003352839962609517
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.29847876707566895,
+                0.29816760722347596,
+                2.3023600260416663
+              ],
+              "error_m": 0.0033528399626093605
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8015191034581415,
+                -0.3018398458581192,
+                0.5023600260416667
+              ],
+              "error_m": 0.0033559545610035908
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8015191034581415,
+                -0.3018398458581192,
+                2.3023600260416663
+              ],
+              "error_m": 0.0033559545610034346
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8015212329111054,
+                0.29816015413810204,
+                0.5023600260416667
+              ],
+              "error_m": 0.0033569190164075137
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8015212329111054,
+                0.29816015413810204,
+                2.3023600260416663
+              ],
+              "error_m": 0.0033569190164073576
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0019699565453444833,
+          "yaw_error_rad": 6.95567604793064e-05,
+          "translation_component_error_m": 0.0018735379315363598,
+          "samples": [
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2989902775453398,
+                -0.2987721865227355,
+                0.5009867350260417
+              ],
+              "error_m": 0.001871018808567906
+            },
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2989902775453398,
+                -0.2987721865227355,
+                2.3009867350260413
+              ],
+              "error_m": 0.001871018808567789
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2990320116015937,
+                0.3012278120258216,
+                0.5009867350260417
+              ],
+              "error_m": 0.0018488293382080835
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2990320116015937,
+                0.3012278120258216,
+                2.3009867350260413
+              ],
+              "error_m": 0.001848829338207965
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8010097173746102,
+                -0.2986261173258468,
+                0.5009867350260417
+              ],
+              "error_m": 0.0019699565453444833
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8010097173746102,
+                -0.2986261173258468,
+                2.3009867350260413
+              ],
+              "error_m": 0.0019699565453443722
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8009679833183563,
+                0.30137388122271036,
+                0.5009867350260417
+              ],
+              "error_m": 0.0019488938735471692
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8009679833183563,
+                0.30137388122271036,
+                2.3009867350260413
+              ],
+              "error_m": 0.001948893873547057
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.004238075157766819,
+          "yaw_error_rad": 6.60076721978875e-05,
+          "translation_component_error_m": 0.0042233620927325174,
+          "samples": [
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30252882454587304,
+                -0.2993954193066753,
+                0.4966532389322917
+              ],
+              "error_m": 0.004238075157766687
+            },
+            {
+              "world_point": [
+                -0.29455685053623293,
+                -0.3086939742980767,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30252882454587304,
+                -0.2993954193066753,
+                2.2966532389322913
+              ],
+              "error_m": 0.004238075157766819
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3024892199425831,
+                0.3006045793862209,
+                0.4966532389322917
+              ],
+              "error_m": 0.004214563061709344
+            },
+            {
+              "world_point": [
+                -0.30479409082104314,
+                0.2912186851043992,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3024892199425831,
+                0.3006045793862209,
+                2.2966532389322913
+              ],
+              "error_m": 0.004214563061709477
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7974711708792634,
+                -0.2995340354181902,
+                0.4966532389322917
+              ],
+              "error_m": 0.004220534250271489
+            },
+            {
+              "world_point": [
+                1.8051374573724328,
+                -0.2728636333012411,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7974711708792634,
+                -0.2995340354181902,
+                2.2966532389322913
+              ],
+              "error_m": 0.004220534250271622
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                0.5610645221354167
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7975107754825537,
+                0.3004659632747059,
+                0.4966532389322917
+              ],
+              "error_m": 0.0041969238873202025
+            },
+            {
+              "world_point": [
+                1.7949002170876227,
+                0.3270490261012348,
+                2.3610645221354165
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7975107754825537,
+                0.3004659632747059,
+                2.2966532389322913
+              ],
+              "error_m": 0.004196923887320335
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--urban_block_osrf_v1/result.json",
+      "raw_report_sha256": "1211ba9547ada351bfdc50cdbd34645fd3dcd13832a26233d4b8aebd48fb587e",
+      "console_sha256": "17d340351df7781f22bb6d6f4e74d653909d0b76e3f3fb7b00ffec93f2af478f",
+      "seconds": 41.01705703701009
+    },
+    {
+      "scene": "warehouse_aws_no_roof_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=warehouse_aws_no_roof_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 58,
+        "/pointcloud_nonground": 65
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        176
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0028020202459718034,
+          "yaw_error_rad": 0.00011997794071755274,
+          "translation_component_error_m": 0.0028020202459718034,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.007396420929580927,
+                0.0015967598810675554,
+                -0.076464310546875
+              ],
+              "measured_navigation": [
+                0.0050684311427176,
+                5.6572760513518006e-05,
+                -0.076708451171875
+              ],
+              "error_m": 0.0028020202459718034
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0012032890257996605,
+          "yaw_error_rad": 1.6240166810965045e-05,
+          "translation_component_error_m": 0.0012032890257996605,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.007396420929580927,
+                0.0015967598810675554,
+                -0.076464310546875
+              ],
+              "measured_navigation": [
+                0.008313832804560661,
+                0.0008235341520048678,
+                -0.0763727578125
+              ],
+              "error_m": 0.0012032890257996605
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0027138334736367003,
+          "yaw_error_rad": 0.00010373777380551924,
+          "translation_component_error_m": 0.0027138334736367003,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.007396420929580927,
+                0.0015967598810675554,
+                -0.076464310546875
+              ],
+              "measured_navigation": [
+                0.00880699884146452,
+                0.00391017273068428,
+                -0.07631172265625
+              ],
+              "error_m": 0.0027138334736367003
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--warehouse_aws_no_roof_v1/result.json",
+      "raw_report_sha256": "e62f5148dca3dbba12e6c68ea333ae9d28a74940e4cda1b94a07f3643289a3ff",
+      "console_sha256": "d593a2f38305ae77dc2dfe458e5749ffa6e353f180d4c51945f0145b2f924e03",
+      "seconds": 42.041120624984615
+    },
+    {
+      "scene": "warehouse_aws_v1",
+      "profile": "full_perception",
+      "passed": true,
+      "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=full_perception",
+        "scene:=warehouse_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 54,
+        "/pointcloud_nonground": 61
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        150
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0010481242553593403,
+          "yaw_error_rad": 3.715041800891189e-05,
+          "translation_component_error_m": 0.0010481242553593403,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0034289414373536906,
+                0.005812608947356542,
+                -0.067492142578125
+              ],
+              "measured_navigation": [
+                0.003000622382387519,
+                0.005670812446624041,
+                -0.06654609765625
+              ],
+              "error_m": 0.0010481242553593403
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0006889858455861244,
+          "yaw_error_rad": 7.044125948499e-05,
+          "translation_component_error_m": 0.0006889858455861244,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0034289414373536906,
+                0.005812608947356542,
+                -0.067492142578125
+              ],
+              "measured_navigation": [
+                0.0035798419266939163,
+                0.005175195634365082,
+                -0.067705765625
+              ],
+              "error_m": 0.0006889858455861244
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0011047944593163943,
+          "yaw_error_rad": 0.00010759167763467817,
+          "translation_component_error_m": 0.0011047944593163943,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0034289414373536906,
+                0.005812608947356542,
+                -0.067492142578125
+              ],
+              "measured_navigation": [
+                0.003706360002979636,
+                0.0065918187610805035,
+                -0.068224564453125
+              ],
+              "error_m": 0.0011047944593163943
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/full_perception--warehouse_aws_v1/result.json",
+      "raw_report_sha256": "2ff2d103d643362eabf20a7a9c474608ab3aba077ac4cac3b555ed6f345b133b",
+      "console_sha256": "0d6860e79605e2a1f290a4ad14fb0e162aab8b0c9fc1b368837e6796a226d236",
+      "seconds": 41.785427198017715
+    },
+    {
+      "scene": "primitives_sparse_seed42_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=primitives_sparse_seed42_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 69,
+        "/pointcloud_nonground": 78
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        189
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.003729515705132853,
+          "yaw_error_rad": 1.0367268906678884e-05,
+          "translation_component_error_m": 0.003729515705132853,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006689541507512331,
+                0.005445508907238643,
+                -0.05270270572916667
+              ],
+              "measured_navigation": [
+                0.007462137844413519,
+                0.006694600451737642,
+                -0.049274564453125
+              ],
+              "error_m": 0.003729515705132853
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.00017762250406583646,
+          "yaw_error_rad": 0.00012399741937332324,
+          "translation_component_error_m": 0.00017762250406583646,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006689541507512331,
+                0.005445508907238643,
+                -0.05270270572916667
+              ],
+              "measured_navigation": [
+                0.00682513602077961,
+                0.005548352841287851,
+                -0.052753568359375
+              ],
+              "error_m": 0.00017762250406583646
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0037494734577122888,
+          "yaw_error_rad": 0.0001136301503936038,
+          "translation_component_error_m": 0.0037494734577122888,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006689541507512331,
+                0.005445508907238643,
+                -0.05270270572916667
+              ],
+              "measured_navigation": [
+                0.0057813506573438644,
+                0.0040935734286904335,
+                -0.056079984375
+              ],
+              "error_m": 0.0037494734577122888
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--primitives_sparse_seed42_v1/result.json",
+      "raw_report_sha256": "dbb3f01935dde9088c1b26d83930d91cf43eb62380b41243a39251da4f6cd159",
+      "console_sha256": "e99c1966742ad028200b4f8498630c8c7f4b04645317313c415ac3765e420708",
+      "seconds": 40.93449114300893
+    },
+    {
+      "scene": "bookstore_aws_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "24c090cd7d9cc5fc4d4efaf87bff34230ccf2fa76f54c66eae8667a5843ef0fd",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=bookstore_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 39,
+        "/pointcloud_nonground": 41
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        118
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0009308946050524722,
+          "yaw_error_rad": 8.187875248419872e-05,
+          "translation_component_error_m": 0.0009308946050524722,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.9252772814682646,
+                -5.442105736158489,
+                -0.04647407877604167
+              ],
+              "measured_navigation": [
+                2.925617617857365,
+                -5.442161331492157,
+                -0.045609414062500006
+              ],
+              "error_m": 0.0009308946050524722
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.00028928847535240497,
+          "yaw_error_rad": 3.6022637909341806e-05,
+          "translation_component_error_m": 0.00028928847535240497,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.9252772814682646,
+                -5.442105736158489,
+                -0.04647407877604167
+              ],
+              "measured_navigation": [
+                2.9255052357958555,
+                -5.441959528710329,
+                -0.046372353515625006
+              ],
+              "error_m": 0.00028928847535240497
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0011247552959366847,
+          "yaw_error_rad": 0.0001179013905674188,
+          "translation_component_error_m": 0.0011247552959366847,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                2.9252772814682646,
+                -5.442105736158489,
+                -0.04647407877604167
+              ],
+              "measured_navigation": [
+                2.9247089907515726,
+                -5.442196348272978,
+                -0.047440468750000006
+              ],
+              "error_m": 0.0011247552959366847
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--bookstore_aws_v1/result.json",
+      "raw_report_sha256": "39b94cf0efcdc5b968043efeb64193c7045b2252d07ca3821afdd8fae19d8d7c",
+      "console_sha256": "219b4e54f4be773caeb4202513215807e1c34601c9d2401d62a5bc5ff51318b4",
+      "seconds": 42.05038860798231
+    },
+    {
+      "scene": "forest_pine_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "960af1553c92ac8ca1be5adb9550f96b68603594e18b0048776dba7e99206f1b",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=forest_pine_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 68,
+        "/pointcloud_nonground": 75
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        197
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001044935229669135,
+          "yaw_error_rad": 5.579847723567386e-05,
+          "translation_component_error_m": 0.001044935229669135,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.568670775996978,
+                6.437568234630613,
+                -0.03849168684895834
+              ],
+              "measured_navigation": [
+                5.568823511733316,
+                6.437201285250887,
+                -0.037525296875
+              ],
+              "error_m": 0.001044935229669135
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001463714763541611,
+          "yaw_error_rad": 4.476074298890783e-05,
+          "translation_component_error_m": 0.001463714763541611,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.568670775996978,
+                6.437568234630613,
+                -0.03849168684895834
+              ],
+              "measured_navigation": [
+                5.56893873487248,
+                6.437107184813994,
+                -0.037128568359375
+              ],
+              "error_m": 0.001463714763541611
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002507823021524824,
+          "yaw_error_rad": 0.0001005592203501566,
+          "translation_component_error_m": 0.002507823021524824,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                5.568670775996978,
+                6.437568234630613,
+                -0.03849168684895834
+              ],
+              "measured_navigation": [
+                5.5682500813851386,
+                6.438396233826958,
+                -0.0408211953125
+              ],
+              "error_m": 0.002507823021524824
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--forest_pine_v1/result.json",
+      "raw_report_sha256": "d51c2b5b17423b3ed293daa15b46b67572ff984de99c5b65aed394a0405527ff",
+      "console_sha256": "0d2d64b4988a7891d4b1f02dcbb781cecebfb7e573d7ebebf7f85f612768bbf1",
+      "seconds": 41.65660128000309
+    },
+    {
+      "scene": "hospital_aws_v2",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=hospital_aws_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 28,
+        "/pointcloud_nonground": 32
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        99
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0018214395673435146,
+          "yaw_error_rad": 0.00016758150390273722,
+          "translation_component_error_m": 0.002617828008768389,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2999772666463855,
+                -0.3000880029635322,
+                0.501800537109375
+              ],
+              "error_m": 0.001802829778207997
+            },
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.2999772666463855,
+                -0.3000880029635322,
+                2.001800537109375
+              ],
+              "error_m": 0.001802829778207997
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30007781554825647,
+                0.29991198861140234,
+                0.501800537109375
+              ],
+              "error_m": 0.0018043655800058435
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.30007781554825647,
+                0.29991198861140234,
+                2.001800537109375
+              ],
+              "error_m": 0.0018043655800058435
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.800022703865876,
+                -0.2997360818069854,
+                0.501800537109375
+              ],
+              "error_m": 0.0018199181740853835
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.800022703865876,
+                -0.2997360818069854,
+                2.001800537109375
+              ],
+              "error_m": 0.0018199181740853835
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.799922154964005,
+                0.30026390976794914,
+                0.501800537109375
+              ],
+              "error_m": 0.0018214395673435146
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.799922154964005,
+                0.30026390976794914,
+                2.001800537109375
+              ],
+              "error_m": 0.0018214395673435146
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0007620241907973757,
+          "yaw_error_rad": 1.1801476111697462e-05,
+          "translation_component_error_m": 0.0007715313723144898,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29998451338129856,
+                -0.299815023157155,
+                0.500732421875
+              ],
+              "error_m": 0.0007555779713081964
+            },
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.29998451338129856,
+                -0.299815023157155,
+                2.000732421875
+              ],
+              "error_m": 0.0007555779713081964
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2999915942669655,
+                0.3001849768010647,
+                0.500732421875
+              ],
+              "error_m": 0.0007554659994059953
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.2999915942669655,
+                0.3001849768010647,
+                2.000732421875
+              ],
+              "error_m": 0.0007554659994059953
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8000154864724627,
+                -0.29979024005732136,
+                0.500732421875
+              ],
+              "error_m": 0.0007620241907973757
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.8000154864724627,
+                -0.29979024005732136,
+                2.000732421875
+              ],
+              "error_m": 0.0007620241907973757
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8000084055867955,
+                0.3002097599008984,
+                0.500732421875
+              ],
+              "error_m": 0.0007619131662419239
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.8000084055867955,
+                0.3002097599008984,
+                2.000732421875
+              ],
+              "error_m": 0.0007619131662419239
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.002577866880128714,
+          "yaw_error_rad": 0.00017938298019181884,
+          "translation_component_error_m": 0.0032639947623815096,
+          "samples": [
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30003820107935053,
+                -0.30009731222874336,
+                0.49746704101562494
+              ],
+              "error_m": 0.002535115423181529
+            },
+            {
+              "world_point": [
+                -0.7946899155156928,
+                11.192697281448721,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.30003820107935053,
+                -0.30009731222874336,
+                1.9974670410156252
+              ],
+              "error_m": 0.0025351154231812514
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.29993057129181266,
+                0.29990267811778537,
+                0.49746704101562494
+              ],
+              "error_m": 0.0025357786005100426
+            },
+            {
+              "world_point": [
+                -0.8037502356405599,
+                11.792628869714616,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                -0.29993057129181266,
+                0.29990267811778537,
+                1.9974670410156252
+              ],
+              "error_m": 0.002535778600509765
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7999617651334834,
+                -0.3004740164851256,
+                0.49746704101562494
+              ],
+              "error_m": 0.0025772145331180163
+            },
+            {
+              "world_point": [
+                1.3050706434149268,
+                11.224408401885755,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.7999617651334834,
+                -0.3004740164851256,
+                1.9974670410156252
+              ],
+              "error_m": 0.0025772145331177435
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                0.52360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.800069394921021,
+                0.29952597386140134,
+                0.49746704101562494
+              ],
+              "error_m": 0.002577866880128714
+            },
+            {
+              "world_point": [
+                1.2960103232900595,
+                11.82433999015165,
+                2.02360928125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.0
+              ],
+              "measured_navigation": [
+                1.800069394921021,
+                0.29952597386140134,
+                1.9974670410156252
+              ],
+              "error_m": 0.0025778668801284418
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--hospital_aws_v2/result.json",
+      "raw_report_sha256": "ffa3ed871ec3ac8a8426256dc1ec64095345473395856a86c98fd6be76c9275c",
+      "console_sha256": "9e4123922ee41b963628338b14b674b04989e7bcdeaa007de3004d41691adbfb",
+      "seconds": 51.6856856480008
+    },
+    {
+      "scene": "house_aws_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=house_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 36,
+        "/pointcloud_nonground": 41
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        138
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0019014959797644456,
+          "yaw_error_rad": 0.00017011262006607145,
+          "translation_component_error_m": 0.0019014959797644456,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0124523006989024,
+                -0.7893763224986108,
+                -0.04021084375
+              ],
+              "measured_navigation": [
+                -1.0122630937561956,
+                -0.7875404738897643,
+                -0.040668607421875
+              ],
+              "error_m": 0.0019014959797644456
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0014001820974555595,
+          "yaw_error_rad": 1.871194629350474e-05,
+          "translation_component_error_m": 0.0014001820974555595,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0124523006989024,
+                -0.7893763224986108,
+                -0.04021084375
+              ],
+              "measured_navigation": [
+                -1.0124207288925147,
+                -0.7896475878916858,
+                -0.041584134765625
+              ],
+              "error_m": 0.0014001820974555595
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.002418558488798876,
+          "yaw_error_rad": 0.00018882456666011183,
+          "translation_component_error_m": 0.002418558488798876,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                -1.0124523006989024,
+                -0.7893763224986108,
+                -0.04021084375
+              ],
+              "measured_navigation": [
+                -1.0126730794479966,
+                -0.7909409057143822,
+                -0.0383797890625
+              ],
+              "error_m": 0.002418558488798876
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--house_aws_v1/result.json",
+      "raw_report_sha256": "595b676b9d5e162942e92aefc66c31d30e33c9f6266dd86d18dd82617b9cccc5",
+      "console_sha256": "e4e3a67ea82396c90fafa737846dd4b8ee28fc5c0c2ae50c6b6eb4d9b076cb2d",
+      "seconds": 41.49582274799468
+    },
+    {
+      "scene": "office_willowgarage_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=office_willowgarage_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 75,
+        "/pointcloud_nonground": 86
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        184
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.001905014668875256,
+          "yaw_error_rad": 0.000275334794464505,
+          "translation_component_error_m": 0.0022770302706074342,
+          "samples": [
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30152954037481283,
+                -0.29976360624519494,
+                0.49969482421874994
+              ],
+              "error_m": 0.0015775005619507799
+            },
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30152954037481283,
+                -0.29976360624519494,
+                2.29969482421875
+              ],
+              "error_m": 0.0015775005619507692
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30169474124940443,
+                0.3002363710120317,
+                0.49969482421874994
+              ],
+              "error_m": 0.0017381459706317557
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30169474124940443,
+                0.3002363710120317,
+                2.29969482421875
+              ],
+              "error_m": 0.001738145970631746
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.798470380025476,
+                -0.2991854031841239,
+                0.49969482421874994
+              ],
+              "error_m": 0.0017596697122926265
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.798470380025476,
+                -0.2991854031841239,
+                2.29969482421875
+              ],
+              "error_m": 0.001759669712292617
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7983051791508844,
+                0.30081457407310275,
+                0.49969482421874994
+              ],
+              "error_m": 0.001905014668875256
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7983051791508844,
+                0.30081457407310275,
+                2.29969482421875
+              ],
+              "error_m": 0.001905014668875247
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0012271772550581394,
+          "yaw_error_rad": 6.93476206082861e-05,
+          "translation_component_error_m": 0.0019231674252549382,
+          "samples": [
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30088214000869673,
+                -0.3006620499972108,
+                0.49972534179687494
+              ],
+              "error_m": 0.0011366258497386935
+            },
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30088214000869673,
+                -0.3006620499972108,
+                2.299725341796875
+              ],
+              "error_m": 0.00113662584973868
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30084053143636513,
+                0.2993379485600638,
+                0.49972534179687494
+              ],
+              "error_m": 0.001104645795349589
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30084053143636513,
+                0.2993379485600638,
+                2.299725341796875
+              ],
+              "error_m": 0.0011046457953495753
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7991178549417555,
+                -0.30080768000037317,
+                0.49972534179687494
+              ],
+              "error_m": 0.0012271772550581394
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7991178549417555,
+                -0.30080768000037317,
+                2.299725341796875
+              ],
+              "error_m": 0.001227177255058127
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.799159463514087,
+                0.2991923185569014,
+                0.49972534179687494
+              ],
+              "error_m": 0.001197617646087682
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.799159463514087,
+                0.2991923185569014,
+                2.299725341796875
+              ],
+              "error_m": 0.0011976176460876695
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.00263560154044987,
+          "yaw_error_rad": 0.00020598717188966868,
+          "translation_component_error_m": 0.001096534121126079,
+          "samples": [
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2975879408811535,
+                -0.299574946212509,
+                0.500579833984375
+              ],
+              "error_m": 0.0025169241872784348
+            },
+            {
+              "world_point": [
+                -6.299098489270079,
+                9.700575736070283,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2975879408811535,
+                -0.299574946212509,
+                2.300579833984375
+              ],
+              "error_m": 0.0025169241872784348
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2974643485788926,
+                0.3004250410582774,
+                0.500579833984375
+              ],
+              "error_m": 0.00263560154044987
+            },
+            {
+              "world_point": [
+                -6.307917042427769,
+                10.300510926836925,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2974643485788926,
+                0.3004250410582774,
+                2.300579833984375
+              ],
+              "error_m": 0.00263560154044987
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8024120145665954,
+                -0.3000075192704177,
+                0.500579833984375
+              ],
+              "error_m": 0.002480741473497778
+            },
+            {
+              "world_point": [
+                -4.199325321586839,
+                9.731440672122195,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8024120145665954,
+                -0.3000075192704177,
+                2.300579833984375
+              ],
+              "error_m": 0.002480741473497778
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                0.547321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8025356068688563,
+                0.2999924680003687,
+                0.500579833984375
+              ],
+              "error_m": 0.0026010702362384494
+            },
+            {
+              "world_point": [
+                -4.208143874744528,
+                10.331375862888837,
+                2.347321439453125
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8025356068688563,
+                0.2999924680003687,
+                2.300579833984375
+              ],
+              "error_m": 0.0026010702362384494
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--office_willowgarage_v1/result.json",
+      "raw_report_sha256": "5799fc04f696a6c600ac105b2b9b2add4e2ea5b6fbd4155bd292dff23cafaacd",
+      "console_sha256": "b6d99c6b15082a389ae5f1b9bdfc0f858a0dd0e252189b185674425de94d4aca",
+      "seconds": 41.16258500999538
+    },
+    {
+      "scene": "primitives_corridor_seed1042_v2",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "e70d971a430a339294078d2a3a55bcfb7175b1738de5a59d71e5823e3b07cccb",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=primitives_corridor_seed1042_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 60,
+        "/pointcloud_nonground": 69
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        204
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.003430998326980342,
+          "yaw_error_rad": 0.0001946577959190919,
+          "translation_component_error_m": 0.003430998326980342,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0025216096934551993,
+                0.01049292553216219,
+                -0.03405646549479167
+              ],
+              "measured_navigation": [
+                0.004050638992339373,
+                0.009838366881012917,
+                -0.031055570312500003
+              ],
+              "error_m": 0.003430998326980342
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0014569797658384178,
+          "yaw_error_rad": 0.00012203351054489685,
+          "translation_component_error_m": 0.0014569797658384178,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0025216096934551993,
+                0.01049292553216219,
+                -0.03405646549479167
+              ],
+              "measured_navigation": [
+                0.002336763544008136,
+                0.009334919974207878,
+                -0.03319180078125
+              ],
+              "error_m": 0.0014569797658384178
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.004476021744767221,
+          "yaw_error_rad": 7.262428451161249e-05,
+          "translation_component_error_m": 0.004476021744767221,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.0025216096934551993,
+                0.01049292553216219,
+                -0.03405646549479167
+              ],
+              "measured_navigation": [
+                0.0011774265440180898,
+                0.012305489741265774,
+                -0.037922025390625
+              ],
+              "error_m": 0.004476021744767221
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--primitives_corridor_seed1042_v2/result.json",
+      "raw_report_sha256": "5016ad8820170fc9180592a3c5a1e9b09c807d72e50180a7baa4a4d6554ddee9",
+      "console_sha256": "b7af9f24de88c02229bffba2e6576a999997ff97905c2a981c3181a18027eab1",
+      "seconds": 40.834956915001385
+    },
+    {
+      "scene": "racetrack_aws_day_v2",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=racetrack_aws_day_v2",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 30,
+        "/pointcloud_nonground": 33
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        81,
+        90
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0021894770886372395,
+          "yaw_error_rad": 8.674060693527294e-05,
+          "translation_component_error_m": 0.0021894770886372395,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.103054151450793,
+                6.886798756512419,
+                -0.06794980859375
+              ],
+              "measured_navigation": [
+                8.102464884939055,
+                6.888114369780911,
+                -0.066301859375
+              ],
+              "error_m": 0.0021894770886372395
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0005427531283353307,
+          "yaw_error_rad": 2.7565482356654847e-05,
+          "translation_component_error_m": 0.0005427531283353307,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.103054151450793,
+                6.886798756512419,
+                -0.06794980859375
+              ],
+              "measured_navigation": [
+                8.102920847240298,
+                6.887176513703002,
+                -0.06758359765625
+              ],
+              "error_m": 0.0005427531283353307
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0027288189927737686,
+          "yaw_error_rad": 0.00011430608942858064,
+          "translation_component_error_m": 0.0027288189927737686,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                8.103054151450793,
+                6.886798756512419,
+                -0.06794980859375
+              ],
+              "measured_navigation": [
+                8.103776722173029,
+                6.885105386053344,
+                -0.06996396875
+              ],
+              "error_m": 0.0027288189927737686
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--racetrack_aws_day_v2/result.json",
+      "raw_report_sha256": "8a137e1acd1a851e357119295e4a87505fc3263c03510cd7e1d372acb5ea3281",
+      "console_sha256": "df874e640c7a3b2b983a4b0cd4e40b754f09865ea000370ea1f29d614ed39dfb",
+      "seconds": 43.47509671098669
+    },
+    {
+      "scene": "urban_block_osrf_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=urban_block_osrf_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 70,
+        "/pointcloud_nonground": 79
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        204
+      ],
+      "alignment_checks": [
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0021025253729147716,
+          "yaw_error_rad": 2.562447040012003e-05,
+          "translation_component_error_m": 0.0020565629864565892,
+          "samples": [
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3002095328571367,
+                -0.2979904791281829,
+                0.500335693359375
+              ],
+              "error_m": 0.0020481133230407255
+            },
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3002095328571367,
+                -0.2979904791281829,
+                2.300335693359375
+              ],
+              "error_m": 0.0020481133230407255
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3002249075393751,
+                0.30200952067483305,
+                0.500335693359375
+              ],
+              "error_m": 0.002049743099848801
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3002249075393751,
+                0.30200952067483305,
+                2.300335693359375
+              ],
+              "error_m": 0.002049743099848801
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.799790466453419,
+                -0.29793666774034855,
+                0.500335693359375
+              ],
+              "error_m": 0.0021009365417331434
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.799790466453419,
+                -0.29793666774034855,
+                2.300335693359375
+              ],
+              "error_m": 0.0021009365417331434
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7997750917711808,
+                0.3020633320626674,
+                0.500335693359375
+              ],
+              "error_m": 0.0021025253729147716
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7997750917711808,
+                0.3020633320626674,
+                2.300335693359375
+              ],
+              "error_m": 0.0021025253729147716
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.0019239205866751507,
+          "yaw_error_rad": 2.1662289765606024e-05,
+          "translation_component_error_m": 0.0019177850699411306,
+          "samples": [
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2996810398957279,
+                -0.2985253022561349,
+                0.49880981445312494
+              ],
+              "error_m": 0.0019217207445069529
+            },
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2996810398957279,
+                -0.2985253022561349,
+                2.298809814453125
+              ],
+              "error_m": 0.0019217207445069184
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.2996680425218695,
+                0.30147469760308865,
+                0.49880981445312494
+              ],
+              "error_m": 0.0019239205866751507
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.2996680425218695,
+                0.30147469760308865,
+                2.298809814453125
+              ],
+              "error_m": 0.0019239205866751162
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8003189596115545,
+                -0.2985707930646392,
+                0.49880981445312494
+              ],
+              "error_m": 0.0018870371840206766
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8003189596115545,
+                -0.2985707930646392,
+                2.298809814453125
+              ],
+              "error_m": 0.0018870371840206417
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.8003319569854128,
+                0.3014292067945844,
+                0.49880981445312494
+              ],
+              "error_m": 0.0018892774115626502
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.8003319569854128,
+                0.3014292067945844,
+                2.298809814453125
+              ],
+              "error_m": 0.0018892774115626153
+            }
+          ]
+        },
+        {
+          "policy": "recommended_region",
+          "maximum_position_error_m": 0.003597215589838123,
+          "yaw_error_rad": 3.962180633407253e-06,
+          "translation_component_error_m": 0.003590269648211255,
+          "samples": [
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.30010942707372584,
+                -0.30348421844166934,
+                0.5008544921875
+              ],
+              "error_m": 0.0035891376864410677
+            },
+            {
+              "world_point": [
+                -0.29887435695769227,
+                -0.30970648874154877,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.30010942707372584,
+                -0.30348421844166934,
+                2.3008544921875
+              ],
+              "error_m": 0.0035891376864410677
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                -0.3001070497653458,
+                0.296515781553621,
+                0.5008544921875
+              ],
+              "error_m": 0.0035890659972821104
+            },
+            {
+              "world_point": [
+                -0.3085105664915382,
+                0.29021612582287976,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                -0.3,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                -0.3001070497653458,
+                0.296515781553621,
+                2.3008544921875
+              ],
+              "error_m": 0.0035890659972821104
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7998905729097903,
+                -0.3034925390209995,
+                0.5008544921875
+              ],
+              "error_m": 0.003597215589838123
+            },
+            {
+              "world_point": [
+                1.8008547940178075,
+                -0.27597975537308805,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                -0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7998905729097903,
+                -0.3034925390209995,
+                2.3008544921875
+              ],
+              "error_m": 0.003597215589838123
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                0.56468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                0.5
+              ],
+              "measured_navigation": [
+                1.7998929502181706,
+                0.29650746097429087,
+                0.5008544921875
+              ],
+              "error_m": 0.0035971440616674576
+            },
+            {
+              "world_point": [
+                1.7912185844839617,
+                0.32394285919134047,
+                2.36468594140625
+              ],
+              "reference_navigation": [
+                1.8,
+                0.3,
+                2.3
+              ],
+              "measured_navigation": [
+                1.7998929502181706,
+                0.29650746097429087,
+                2.3008544921875
+              ],
+              "error_m": 0.0035971440616674576
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--urban_block_osrf_v1/result.json",
+      "raw_report_sha256": "32b73fee8b5b287d0ef4ad8dd9d86293150356ee4eddcc6d367a7070305ec581",
+      "console_sha256": "e8d01a0527710c0494e502fa9a02aae877d51f9b9588f192d0311beb3404bef7",
+      "seconds": 41.98554167500697
+    },
+    {
+      "scene": "warehouse_aws_no_roof_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=warehouse_aws_no_roof_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 51,
+        "/pointcloud_nonground": 58
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        173
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.005198346438761954,
+          "yaw_error_rad": 0.00027381517951896583,
+          "translation_component_error_m": 0.005198346438761954,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.00578012689948082,
+                0.006225529592484236,
+                -0.07614896223958333
+              ],
+              "measured_navigation": [
+                0.005487479735165834,
+                0.0049277436919510365,
+                -0.071123734375
+              ],
+              "error_m": 0.005198346438761954
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0006763144471965064,
+          "yaw_error_rad": 5.339208157473588e-05,
+          "translation_component_error_m": 0.0006763144471965064,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.00578012689948082,
+                0.006225529592484236,
+                -0.07614896223958333
+              ],
+              "measured_navigation": [
+                0.00542754540219903,
+                0.006548793520778418,
+                -0.075670853515625
+              ],
+              "error_m": 0.0006763144471965064
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.005626075604442592,
+          "yaw_error_rad": 0.0003272072634855107,
+          "translation_component_error_m": 0.005626075604442592,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.00578012689948082,
+                0.006225529592484236,
+                -0.07614896223958333
+              ],
+              "measured_navigation": [
+                0.006425355561077595,
+                0.007200051564723253,
+                -0.081652298828125
+              ],
+              "error_m": 0.005626075604442592
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--warehouse_aws_no_roof_v1/result.json",
+      "raw_report_sha256": "5b94b6fad1248cd87f21aae445b1e128596b0b5d1940b1e6b936b958680c80ce",
+      "console_sha256": "61bda05ffcbcd40d64fa789bbb2e781d8354c057a4580a9be605339857e3a1a5",
+      "seconds": 40.90926790397498
+    },
+    {
+      "scene": "warehouse_aws_v1",
+      "profile": "landing_dev",
+      "passed": true,
+      "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+      "command": [
+        "ros2",
+        "launch",
+        "easyfly_sim_launcher",
+        "profile.launch.py",
+        "profile:=landing_dev",
+        "scene:=warehouse_aws_v1",
+        "headless:=true",
+        "rviz:=false",
+        "detection_use_gpu:=false",
+        "fcu_url:=udp://127.0.0.1:14540@127.0.0.1:14580"
+      ],
+      "mapping_ready": true,
+      "map_message_counts": {
+        "/occupancy_grid": 56,
+        "/pointcloud_nonground": 62
+      },
+      "sensor_topics": [
+        "/camera/aligned_depth_to_color/depth/image_raw",
+        "/camera/color/image_raw",
+        "/livox/imu",
+        "/livox/lidar"
+      ],
+      "detector_provider": "CPUExecutionProvider",
+      "detector_processed_frames_in_logged_windows": [
+        165
+      ],
+      "alignment_checks": [
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001380159197932735,
+          "yaw_error_rad": 4.081322561544712e-05,
+          "translation_component_error_m": 0.001380159197932735,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006488491160174211,
+                0.011026180349290371,
+                -0.08022814518229167
+              ],
+              "measured_navigation": [
+                0.007071804720908403,
+                0.010583396069705486,
+                -0.0790583046875
+              ],
+              "error_m": 0.001380159197932735
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.0019710609996648988,
+          "yaw_error_rad": 5.9632569807965136e-05,
+          "translation_component_error_m": 0.0019710609996648988,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006488491160174211,
+                0.011026180349290371,
+                -0.08022814518229167
+              ],
+              "measured_navigation": [
+                0.006142716854810715,
+                0.009587395936250687,
+                -0.081530228515625
+              ],
+              "error_m": 0.0019710609996648988
+            }
+          ]
+        },
+        {
+          "policy": "world_origin",
+          "maximum_position_error_m": 0.001901108574293576,
+          "yaw_error_rad": 0.00010044579554565128,
+          "translation_component_error_m": 0.001901108574293576,
+          "samples": [
+            {
+              "world_point": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "reference_navigation": [
+                0.006488491160174211,
+                0.011026180349290371,
+                -0.08022814518229167
+              ],
+              "measured_navigation": [
+                0.0062509519048035145,
+                0.01290774904191494,
+                -0.08009590234375
+              ],
+              "error_m": 0.001901108574293576
+            }
+          ]
+        }
+      ],
+      "normal_process_exits": 27,
+      "forced": false,
+      "leftovers": [],
+      "raw_report": "artifacts/test-v3-scene-profiles-20261030/native/landing_dev--warehouse_aws_v1/result.json",
+      "raw_report_sha256": "07c51a4779123dc84ae2ddb7be97a954526a54f51c5cf44c8cd06af0762e0255",
+      "console_sha256": "c41a0f184281a4d8f34ad300887e8b6eff01bf0f40fd66a2befcaf1c78e4334a",
+      "seconds": 41.773153913003625
+    }
+  ]
+}

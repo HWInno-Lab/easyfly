@@ -1,6 +1,8 @@
 # 远端算法管理
 
-连接页的“远端算法管理”打开独立 Qt 客户端。远端机需先安装同一版本的 EasyFly，配置并主动运行服务；DDS 观测本身不会创建进程。也提供 `easyfly_remote_client` 命令行接口。
+这是保留的 v1 独立算法管理接口，可运行 `easyfly_remote_algorithms` 打开客户端。连接页现使用新的“机载平台管理”入口，完整方案、任务及部署流程见 [ONBOARD.md](ONBOARD.md)。
+
+使用旧客户端时，远端机需先安装同一版本的 EasyFly，配置并主动运行服务；DDS 观测本身不会创建进程。也提供 `easyfly_remote_client` 命令行接口。
 
 ```bash
 ros2 run easyfly_connection_manager easyfly_remote_service --config /absolute/private/server.json

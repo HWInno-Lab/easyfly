@@ -2,7 +2,8 @@
 # Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
 """Reproduce the explicit grounded hospital world from recorded native support.
 
-Only the z token of three include poses changes. Original scene remains intact.
+Only the z token of three include poses changes. Locked upstream input is kept
+outside the runtime package; the retired v1 scene is not recreated.
 """
 import argparse
 import hashlib
@@ -17,7 +18,7 @@ SOURCE_SHA = '70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b'
 
 
 def reviewed_outputs():
-    source = (ROOT / PACKAGE / 'worlds/indoor/hospital/hospital_aws_v1.world').read_bytes()
+    source = (Path(__file__).with_name('source-worlds') / 'hospital_aws_v1.world').read_bytes()
     if hashlib.sha256(source).hexdigest() != SOURCE_SHA:
         raise ValueError('fixed original hospital world required')
     proof_path = ROOT / PACKAGE / 'evidence/hospital_aws_v2/placement-source-s6.json'

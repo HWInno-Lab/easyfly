@@ -183,6 +183,7 @@ public:
       "最后收到 / %1 messages received · %2 · 显示%3 / 输入%4，省略%5").arg(
       layer_snapshot().received).arg(QString::fromStdString(g.detail)).arg(g.vertices.size()).arg(
       g.input_count).arg(g.omitted);
+    if (kind_ == SpatialKind::Cloud) {snapshot_.status += QStringLiteral(" · 当前帧 · 3 px");}
     set_status();
   }
 
@@ -315,7 +316,9 @@ private:
       for (const auto & p : g.vertices) {
         points.push_back({Ogre::Vector3(p.x, p.y, p.z), color});
       }
-      cloud_->setDimensions(g.point_size, g.point_size, g.point_size);
+      // RM_POINTS takes pixel dimensions; map squares retain their metre resolution.
+      const float point_size = kind_ == SpatialKind::Cloud ? 3.0F : g.point_size;
+      cloud_->setDimensions(point_size, point_size, point_size);
       if (!points.empty()) {cloud_->addPoints(points.begin(), points.end());}
     } else if (g.vertices.size() >= 2) {
       const bool segments = g.primitive == spatial::Primitive::Segments;

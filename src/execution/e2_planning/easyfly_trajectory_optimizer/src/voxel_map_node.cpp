@@ -12,19 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "easyfly_trajectory_optimizer/observation_grid.hpp"
-#include <iostream>
-#include <easyfly_msgs/msg/voxel_grid.hpp>
-#include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <tf2_ros/buffer.h>
 #include <tf2_ros/transform_listener.h>
-#include <tf2_eigen/tf2_eigen.hpp>
+
 #include <cstring>
 #include <deque>
 #include <iomanip>
+#include <iostream>
+#include <map>
 #include <random>
 #include <sstream>
+
+#include <easyfly_msgs/msg/voxel_grid.hpp>
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/point_cloud2.hpp>
+#include <tf2_eigen/tf2_eigen.hpp>
+
+#include "easyfly_trajectory_optimizer/observation_grid.hpp"
 
 namespace et = easyfly::trajectory;
 class VoxelMapper : public rclcpp::Node
@@ -110,15 +114,23 @@ public:
       raw_pub_ = create_publisher<easyfly_msgs::msg::VoxelGrid>(
         uninflated_topic, rclcpp::QoS(1).reliable().transient_local());
     }
+    source_frame_ = declare_parameter<std::string>("source_frame", "livox_frame", d);
+    rays_topic_ = declare_parameter<std::string>("rays_topic", "/livox/lidar/rays", d);
+    physical_ = declare_parameter<bool>("physical_livox", false, d);
+    if (source_frame_.empty() || source_frame_[0] == '/' || rays_topic_.empty() ||
+      rays_topic_[0] != '/' || (physical_ && get_parameter("use_sim_time").as_bool()))
+    {
+      throw std::invalid_argument("physical ray frame/topic/wall clock");
+    }
     sub_ = create_subscription<Cloud>(
-      "/livox/lidar/rays", rclcpp::QoS(2).reliable(),
+      rays_topic_, rclcpp::QoS(2).reliable(),
       [this](Cloud::ConstSharedPtr p) {
         if (p->header.stamp.sec < 0 || p->header.stamp.nanosec >= 1000000000) {return;}
         const auto current = clockSample();
         const auto stamp = rclcpp::Time(
           p->header.stamp,
           get_clock()->get_clock_type()).nanoseconds();
-        if (p->header.frame_id != "livox_frame" || stamp <= last_enqueued_ || !fresh(
+        if (p->header.frame_id != source_frame_ || stamp <= last_enqueued_ || !fresh(
           stamp,
           current))
         {
@@ -153,7 +165,7 @@ private:
   {
     if (!rclcpp::ok() || input_latched_) {return;}
     const auto current = clockSample();
-    const auto publisher_count = get_publishers_info_by_topic("/livox/lidar/rays").size();
+    const auto publisher_count = get_publishers_info_by_topic(rays_topic_).size();
     if (publisher_count != 1) {
       if (valid_) {
         RCLCPP_WARN(get_logger(), "Voxel source publisher count changed: %zu", publisher_count);
@@ -169,7 +181,34 @@ private:
         pending_.pop_front(); continue;
       }
       Eigen::Isometry3d transform;
+      std::map<uint32_t, Eigen::Isometry3d> point_transforms;
+      uint32_t last_offset = 0;
       try {
+        if (physical_) {
+          const auto & cloud = *item.cloud;
+          if (cloud.is_bigendian || cloud.height != 1 || !cloud.width || cloud.width > 50000 ||
+            cloud.point_step != 28 || cloud.row_step != cloud.width * 28 ||
+            cloud.data.size() != cloud.row_step || cloud.fields.size() != 7 ||
+            cloud.fields[6].name != "offset_time" || cloud.fields[6].offset != 24 ||
+            cloud.fields[6].datatype != 6 || cloud.fields[6].count != 1)
+          {pending_.pop_front();continue;}
+          bool bad = false;
+          for (size_t i = 0; i < cloud.width; ++i) {
+            uint32_t offset; std::memcpy(&offset, cloud.data.data() + i * 28 + 24, 4);
+            if (offset < last_offset || offset > 200000000 || !fresh(source + offset, current)) {
+              bad = true;break;
+            }
+            last_offset = offset;
+            if (point_transforms.count(offset)) {continue;}
+            const auto tf = buffer_->lookupTransform(
+              "odom", cloud.header.frame_id,
+              rclcpp::Time(source + offset, get_clock()->get_clock_type()));
+            // A latest/static-only transform cannot witness a moving physical sensor.
+            if (rclcpp::Time(tf.header.stamp).nanoseconds() != source + offset) {bad = true;break;}
+            point_transforms.emplace(offset, tf2::transformToEigen(tf));
+          }
+          if (bad) {pending_.pop_front();continue;}
+        }
         transform =
           tf2::transformToEigen(
           buffer_->lookupTransform(
@@ -177,24 +216,30 @@ private:
             rclcpp::Time(item.cloud->header.stamp, get_clock()->get_clock_type())));
       } catch (const tf2::TransformException & e) {last_tf_error_ = e.what(); break;}
       pending_.pop_front();
+      if (physical_ && (source <= last_source_ || !fresh(source, now().nanoseconds()) ||
+        et::Steady::now() - item.received > std::chrono::seconds(1))) {continue;}
       const auto work_started = et::Steady::now();
-      if (!integrate(*item.cloud, transform)) {
+      if (!integrate(*item.cloud, transform, point_transforms)) {
         if (input_latched_) {valid_ = false;pending_.clear();publish(false);return;}
         continue;
       }
-      last_source_ = source; last_received_ = item.received; last_stamp_ = item.cloud->header.stamp;
-      valid_ = true; ++revision_; publish(true);
+      last_source_ = source + last_offset; last_received_ = item.received;
+      last_stamp_ = rclcpp::Time(last_source_, get_clock()->get_clock_type());
+      valid_ = fresh(source, now().nanoseconds()) &&
+        et::Steady::now() - item.received <= std::chrono::seconds(1);
+      ++revision_; publish(valid_);
       last_work_seconds_ = std::chrono::duration<double>(et::Steady::now() - work_started).count();
     }
     if (valid_ &&
       (!fresh(
         last_source_,
         current) || et::Steady::now() - last_received_ > std::chrono::seconds(1) ||
-      get_publishers_info_by_topic("/livox/lidar/rays").size() != 1))
+      get_publishers_info_by_topic(rays_topic_).size() != 1))
     {
       RCLCPP_WARN(
         get_logger(),
-        "Voxel input invalid: source_age=%.6f receipt_age=%.6f pending=%zu last_work=%.6f last_tf=%s",
+        "Voxel input invalid: source_age=%.6f receipt_age=%.6f "
+        "pending=%zu last_work=%.6f last_tf=%s",
         (current - last_source_) / 1e9,
         std::chrono::duration<double>(et::Steady::now() - last_received_).count(),
         pending_.size(), last_work_seconds_, last_tf_error_.c_str());
@@ -230,21 +275,24 @@ private:
     }
     observations_->shift(offset);last_origin_ = sensor;last_origin_source_ = source;return true;
   }
-  bool integrate(const Cloud & cloud, const Eigen::Isometry3d & transform)
+  bool integrate(
+    const Cloud & cloud, const Eigen::Isometry3d & transform,
+    const std::map<uint32_t, Eigen::Isometry3d> & transforms)
   {
     if (cloud.is_bigendian || cloud.height != 1 || cloud.width == 0 || cloud.width > 50000 ||
-      cloud.point_step != 24 || cloud.row_step != cloud.width * 24 ||
+      cloud.point_step != (physical_ ? 28u : 24u) ||
+      cloud.row_step != cloud.width * cloud.point_step ||
       cloud.data.size() != cloud.row_step || !transform.matrix().allFinite()) {return false;}
     const std::vector<std::string> names{"x", "y", "z", "return_type", "range_min", "range_max"};
     const int offsets[]{0, 4, 8, 12, 16, 20};
-    if (cloud.fields.size() != names.size()) {return false;}
+    if (cloud.fields.size() != names.size() + (physical_ ? 1u : 0u)) {return false;}
     for (size_t i = 0; i < names.size(); ++i) {
       if (cloud.fields[i].name != names[i] || cloud.fields[i].offset != unsigned(offsets[i]) ||
         cloud.fields[i].count != 1 || cloud.fields[i].datatype != (i == 3 ? 2 : 7)) {return false;}}
-    struct Ray {et::Vec local; double length, minimum; uint8_t type;};
+    struct Ray {et::Vec local; double length, minimum; uint8_t type; Eigen::Isometry3d pose;};
     std::vector<Ray> measured; measured.reserve(cloud.width);
     for (size_t i = 0; i < cloud.width; ++i) {
-      const auto * bytes = cloud.data.data() + i * 24; float values[6]; std::memcpy(
+      const auto * bytes = cloud.data.data() + i * cloud.point_step; float values[6]; std::memcpy(
         values, bytes,
         24);
       const uint8_t type = bytes[12]; et::Vec local{values[0], values[1], values[2]};
@@ -253,19 +301,28 @@ private:
         minimum < .1 || maximum <= minimum || maximum > 100. || length <= minimum ||
         length > maximum + .01 ||
         (type == 0 && std::abs(length - maximum) > .01)) {continue;}
-      measured.push_back({local, length, minimum, type});
+      if (physical_ && type != 1) {return false;}
+      Eigen::Isometry3d pose = transform;
+      if (physical_) {
+        uint32_t offset;std::memcpy(&offset, bytes + 24, 4);
+        auto found = transforms.find(offset);
+        if (found == transforms.end() || !found->second.matrix().allFinite()) {return false;}
+        pose = found->second;
+      }
+      measured.push_back({local, length, minimum, type, pose});
     }
     if (measured.empty()) {return false;}
-    const et::Vec origin = transform.translation(); size_t rays = 0;
+    const et::Vec sensor_origin = measured.back().pose.translation(); size_t rays = 0;
     const int64_t source = int64_t(cloud.header.stamp.sec) * 1000000000LL +
       cloud.header.stamp.nanosec;
-    if (rolling_ && !moveWindow(origin, source)) {input_latched_ = true;return false;}
+    if (rolling_ && !moveWindow(sensor_origin, source)) {input_latched_ = true;return false;}
     observations_->begin();
-    for (const auto & ray:measured) {
+    for (const auto & ray : measured) {
       const auto & local = ray.local;
       const auto length = ray.length, minimum = ray.minimum;
       const auto type = ray.type;
-      const et::Vec endpoint = transform * local, delta = endpoint - origin;
+      const et::Vec origin = ray.pose.translation();
+      const et::Vec endpoint = ray.pose * local, delta = endpoint - origin;
       // Clip the physical observed ray to the fixed map; no empty-space fill.
       double low = minimum / length, high = 1.;
       const et::Vec corner = grid_.origin + grid_.size.cast<double>() * grid_.resolution;
@@ -283,10 +340,11 @@ private:
       }
       if (!crosses || high < low) {continue;}
       const int steps =
-        std::max(1, int(std::ceil((high - low) * length / (grid_.resolution * .4))));
+        std::max(1, static_cast<int>(std::ceil((high - low) * length / (grid_.resolution * .4))));
       const et::Cell hit = grid_.cell(endpoint);
       for (int j = 0; j <= steps; ++j) {
-        const et::Cell c = grid_.cell(origin + delta * (low + (high - low) * double(j) / steps));
+        const et::Cell c =
+          grid_.cell(origin + delta * (low + (high - low) * static_cast<double>(j) / steps));
         if (!grid_.inside(c) || (type == 1 && c == hit)) {continue;}
         observations_->observeFree(c);
       }
@@ -296,7 +354,7 @@ private:
     observations_->commit();
     // The actual sensor mounting cell is occupied by the sensor itself. Only
     // resolve UNKNOWN there; never clear an observed obstacle or a radius.
-    const auto sensor_cell = grid_.cell(origin);
+    const auto sensor_cell = grid_.cell(sensor_origin);
     if (rays > 0 && grid_.inside(sensor_cell) && grid_.data[grid_.index(sensor_cell)] == -1) {
       grid_.data[grid_.index(sensor_cell)] = 0;
     }
@@ -318,7 +376,7 @@ private:
       for (size_t i = 0; i < grid_.data.size(); ++i) {
         if (grid_.data[i] == 100) {
           const auto c = grid_.cell(i);
-          for (const auto & offset:inflation_) {
+          for (const auto & offset : inflation_) {
             auto n = (c + offset).eval(); if (grid_.inside(n)) {
               msg.data[grid_.index(n)] = 100;
             }
@@ -329,7 +387,8 @@ private:
     pub_->publish(msg);
   }
   std::unique_ptr<et::ObservationGrid> observations_;
-  bool rolling_{false}, input_latched_{false};
+  bool rolling_{false}, input_latched_{false}, physical_{false};
+  std::string source_frame_, rays_topic_;
   Eigen::Vector2d world_min_, world_max_;
   et::Vec last_origin_{et::Vec::Zero()};int64_t last_origin_source_{0};
   et::Grid grid_; double radius_; std::vector<et::Cell> inflation_;

@@ -1,0 +1,7 @@
+#!/usr/bin/python3 -s
+# Copyright 2026 EasyFly Project
+# SPDX-License-Identifier: Apache-2.0
+"""Configure local or remote onboard algorithms and missions from EasyFly."""
+from easyfly_connection_manager.onboard_window import main
+
+main()

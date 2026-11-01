@@ -3,7 +3,7 @@
 两种独立图像检测节点共享的 ROS 接纳模板，不包含检测算法。导出
 `easyfly_image_detection_common::easyfly_image_detection_common` 与 `node.hpp`。
 
-仅支持每进程一个节点、单线程 executor；同步检测，DDS 输入 SensorDataQoS depth=1，
+仅支持每进程一个节点、单线程 executor；同步检测，DDS 输入 volatile depth=1，
 输出 reliable/volatile depth=1，无无界 worker 队列。输入限制为 2073600 像素及 16 MiB
 行布局，支持 BGR8/RGB8 与行尾填充；是否允许 mono8 由具体检测器声明。
 
@@ -16,3 +16,12 @@ valid=true 且 observations=[] 是有效无目标图像；valid=false 表示不�
 结果携带原图 header 和尺寸，失效通知保留最后一次源 header。capabilities.ready 表示
 最近成功处理图像仍有效（不要求有目标），不是飞行安全认证。启动时没有图像时 ready=false。
 所有检测/传输参数只读，修改后需重启节点。
+
+只读参数 `input_reliability` 接受 `auto`（默认）、`reliable`、`best_effort`。
+`auto` 每秒最多查询一次实际 Image 发布端：全部为 reliable 时请求 reliable，
+存在 best-effort 或未知发布端时使用 best-effort；尚无发布端时先采用兼容的 best-effort，
+发布端出现后自动重新选择。只有发布端 GID 集合或选定可靠性变化才重建订阅。
+发布端或可靠性变化先作废原结果；QoS 重建保留同一发布端的时间水位，
+真正收到新发布端的首帧时才重置该水位。默认 0.5 秒源时间与原收龄限制保持不变，
+重建订阅、重复帧及切换可靠性均不能给旧结果续期。显式 reliable 模式要求发布端
+提供可靠传输，不能用于仅 best-effort 的发布端。

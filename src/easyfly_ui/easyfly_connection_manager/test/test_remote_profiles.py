@@ -50,8 +50,14 @@ def test_remote_presets_reject_ambiguous_inputs(change):
         validate(value)
 
 
-def test_orb_runtime_is_created_exclusively(tmp_path):
+def test_orb_runtime_is_created_exclusively(tmp_path, monkeypatch):
     """Meet the real ORB constructor's existing absolute-directory requirement."""
+    source_share = (Path(__file__).resolve().parents[3] / 'perception' / 'p3_tracking' /
+                    'easyfly_orbslam3_integration')
+    assert (source_share / 'launch').is_dir()
+    monkeypatch.setattr(
+        'easyfly_connection_manager.remote_profiles.get_package_share_directory',
+        lambda package: str(source_share))
     profile = copy.deepcopy(config()['profiles']['color_line'])
     profile.update(algorithm='orbslam3', parameters={})
     argv = command(profile, tmp_path, True)

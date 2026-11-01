@@ -22,17 +22,35 @@ GUARD = ('  if (!impl_->ros_node_) {\n'
          '(duplicate name or namespace)");\n'
          '    return;\n'
          '  }\n')
+STAMP_INCLUDE = '#include "easyfly_gazebo_plugins/camera_measurement_stamps.hpp"\n'
+STAMP_MEMBER = ('\n  /// Last published RGB measurement for each camera, '
+                'protected by image_mutex_.\n'
+                '  detail::CameraMeasurementStamps image_stamps_;\n')
+STAMP_GUARD = ('  // Keep CameraInfo and Image in one measurement publication group.\n'
+               '  std::lock_guard<std::mutex> image_lock(impl_->image_mutex_);\n'
+               '  if (impl_->image_stamps_.duplicate(_camera_num, sensor_update_time)) {\n'
+               '    return;\n'
+               '  }\n\n')
+STAMP_RECORD = '  impl_->image_stamps_.published(_camera_num, sensor_update_time);\n'
 spec = importlib.util.spec_from_file_location(
     'shutdown_probe', ROOT / 'scripts/gazebo_shutdown_probe.py')
 probe = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(probe)
 
 
-def test_source_is_only_named_upstream_plus_guard_and_qos_log():
+def test_source_is_only_named_upstream_plus_documented_guards_and_qos_log():
     source = (CAMERA / 'src/safe_camera.cpp').read_text()
     assert source.startswith(NOTE)
     assert source.count(GUARD) == 1
-    restored = source[len(NOTE):].replace(GUARD, '').replace(
+    for patch in (STAMP_INCLUDE, STAMP_MEMBER, STAMP_GUARD, STAMP_RECORD):
+        assert source.count(patch) == 1
+    restored = source[len(NOTE):].replace(GUARD, '')
+    for patch in (STAMP_INCLUDE, STAMP_MEMBER, STAMP_GUARD, STAMP_RECORD):
+        restored = restored.replace(patch, '')
+    restored = restored.replace(
+        '  // Publish image\n',
+        '  std::lock_guard<std::mutex> image_lock(impl_->image_mutex_);\n\n'
+        '  // Publish image\n', 1).replace(
         'EasyFlyGazeboRosCamera', 'GazeboRosCamera').replace(
         '#include "easyfly_gazebo_plugins/safe_camera.hpp"',
         '#include <gazebo_plugins/gazebo_ros_camera.hpp>')

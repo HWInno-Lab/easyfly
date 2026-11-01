@@ -13,6 +13,48 @@ The spatial page also provides an offline geographic map with explicit WGS84/ENU
 datum and an optional complete aircraft display. See [GEOGRAPHY.md](GEOGRAPHY.md)
 for map import, source attribution, coordinate and TF requirements.
 
+## Unified task center
+
+The two tabs `任务与执行` and `任务编辑` share an explicit
+platform selector. The integrated onboard session contributes its persistent
+catalog/execution view and editor save workflow, using the same authenticated
+management bridge and original request identities. There is one offline editor;
+reading an onboard task never overwrites its draft automatically. Explicitly
+opening a task preserves the source bytes and checks both later edits and source
+target changes before replacing a draft.
+
+The task catalog and details use two adjustable columns. Simulation execution
+queries live inside the details area, with enabled action buttons fixed below it.
+The editor’s `保存到平台…` button opens a persistent save window for the selected
+platform; closing it retains its state and creates no operation. Onboard saving
+and simulation saving use the current validated editor snapshot, with no
+unapplied form changes. A local export is optional and independent. Saving does not
+execute or grant review permission. Onboard execution still requires reading and
+reviewing the saved server version under the existing identity and readiness
+checks. Switching targets inhibits the hidden target's controls and retains its
+original unresolved requests. See [LAYOUT.md](LAYOUT.md) and the connection
+manager's `ONBOARD.md` for the user workflow.
+
+The managed onboard channel also provides target following, fixed downward-camera
+precision landing with a static marker, and base FUEL exploration with physical
+Livox hit observations and per-point source-time transforms. These require
+measured configuration and live managed dependencies; software adaptation does
+not certify hardware flight. See the connection manager's `ONBOARD.md` for setup.
+
+The run overview now combines raw GPS/global tracks or local odom geometry with
+identity-bound running mission steps. It does not infer active tasks from the
+catalog or editor. Compact state cards include armed/unknown state and separate
+horizontal/vertical speeds; camera source and focus controls are available here.
+Online street tiles are opt-in, bounded and cached; offline MBTiles remain
+available. See [GEOGRAPHY.md](GEOGRAPHY.md) for coordinate and map-source details.
+
+Mission progress requires the updated `mission_fsm` process, which publishes the
+read-only `/mission/execution_overview` JSON snapshot with reliable transient-local
+QoS. It contains the accepted goal identity, exact validated task bytes/hash and
+actual step progress, and never starts a task. Restart an older managed mission
+component to use this stream; without it the overview reports missing execution
+context and continues to show available vehicle observations.
+
 ## Build and run
 
 From the workspace with compatible ROS Humble/Qt/system dependencies:
@@ -45,7 +87,7 @@ only by an explicit whitelisted read, not by selection or capabilities.
 
 ## Pages and boundaries
 
-Fixed navigation: **连接与仿真 → 运行总览 → 任务中心 → 相机与感知 → 空间视图 →
+Fixed navigation: **连接管理 → 运行总览 → 任务中心 → 相机与感知 → 空间视图 →
 记录与回放 → 诊断与设置**. The task center groups catalog, structured draft editor
 (with advanced YAML tab), import and execution/query. Diagnostics/settings contains
 advanced independent tools. With the optional manager installed, connection editing
@@ -64,6 +106,11 @@ contract, never on the color of a field.
 
 - Overview: icon status cards, an artificial horizon and local heading compass,
   local XY map/actual trajectory and selected camera in independent panels.
+  The local map defaults to the original odom obstacle occupancy grid; the compact
+  Layers menu can enable live obstacle boxes. Unmarked cells are not proof of free
+  or explored space. Invalid/stale grids clear immediately. Optional static boxes
+  ease only small, unambiguous changes for 120 ms; disappearance and dynamic or
+  major geometry changes remain immediate. These layers never alter planning data.
   Position and attitude have separate validity: invalid attitude removes the
   compass/attitude needles and map heading arrow; valid position can remain a
   point. Stale/paused/reset/disconnected observation never displays neutral
@@ -109,7 +156,15 @@ background converter owns copied QImage pixels and at most one active, one
 latest pending and one latest output frame. Camera/session/time-epoch binding
 prevents stale converted output from reappearing. The main thread polls at 10Hz;
 it never waits for a ROS service response. Source age is never advanced using
-steady time. Existing freshness policy and original image/query budgets remain unchanged.
+steady time. Existing source freshness policy and image budgets remain unchanged;
+the read-only perception polling budget is documented in the UI bridge README.
+
+During a brief delivery or decoding gap, the selected camera may retain its last
+successfully decoded raw image for at most five wall seconds from that frame's
+original receipt. An amber paused/expired banner marks this historical preview.
+It has no live-frame timestamp property, recording input or detection overlay.
+Session, camera, topic or epoch changes, invalid data, disconnect and expiry of
+the history limit clear it. A new valid decoded frame restores the live preview.
 
 Selecting a same-frame view lazily adds one separate bounded converter. It saves
 the exact metadata with the image conversion, checks freshness again against
@@ -432,16 +487,19 @@ merely because isolated confirmation/reopen tests pass.
 
 ## Offline mission drafts (D6-5 first increment)
 
-The seventh page, `任务编辑（本地）`, works without ROS connectivity and is
+The `任务编辑` tab in the task center works without ROS connectivity and is
 independent of managed flight controls. It creates a sample, reads a local file,
 edits v1 YAML or step forms, previews the step order/effective values, and exports
 an explicitly chosen local draft. It never starts/cancels missions, writes ROS
 parameters, imports a catalog, or changes the original task file automatically.
 
-Use `新建示例` or `打开本地文件`, wait for background validation, then select a
+Choose one of the six templates or use `打开本地文件`, wait for background validation, then select a
 step under `顺序与类型` and edit `当前步骤参数`. Append has its own type selector.
-The eight existing v1 types are supported, without branches/retries or new
-flight semantics. The existing mission library is the only schema validator;
+The nine existing v1 types have Chinese labels and original English schema keys,
+with parameter units, ranges, purpose and dependency hints. The six templates cover
+basic flight, waypoint patrol, search, exploration, precision landing and following.
+They create editable documents and never run a task. There are no new branches,
+retries or flight semantics. The existing mission library is the only schema validator;
 passing static validation does not establish runtime readiness or flyability.
 The view shows odom/m/rad/s, abort-on-failure, step count, summed timeout caps
 (not estimated flight duration), and the exact content SHA-256.
@@ -594,12 +652,20 @@ private catalog (see easyfly_mission_srvs README). The desktop never starts that
 server or writes its directory directly. No installed/source task catalog is
 made writable. Existing mission execution opt-in is not implied by import.
 
-In `任务编辑/导入`, validate and export the current formal v1 document to a local
-dedicated draft directory. The separate import panel accepts only the exact
-latest successfully exported revision/name/content/hash, with applied forms and
-unchanged selected draft root/name. Raw/form edits immediately invalidate it.
-It imports those reviewed cached bytes, not a later reread of a potentially
-changed disk file. The offline editor itself still has no ROS/flight clients.
+In `任务编辑`, validate the current formal v1 document and click `保存到平台…`.
+The save panel accepts only the exact current validated revision/name/content/hash,
+with no unapplied form changes. Raw/form edits immediately invalidate it. Local
+export to a dedicated draft directory remains an independent optional action.
+Saving uses the reviewed cached bytes rather than rereading a disk file.
+The offline editor itself still has no ROS/flight clients.
+
+Opening the save window reads the configured destination without creating a task.
+Successful saving refreshes the catalog and offers `查看并审阅已保存任务`.
+This shortcut selects or reads the saved platform version; it does not run it or
+check the execution review box. Save receipts are bound to the current target;
+simulation receipts also require the same observer session, epoch and fresh catalog
+identity. Editing, validation and saving have concise state messages; hashes and
+request identities can be expanded separately.
 
 Explicitly read the configured server destination. The confirmation shows its
 directory, server instance, catalog identity, basename and exact SHA-256; default
@@ -719,6 +785,12 @@ and <=20000 occupied centers; boxes <=128. Excess map/box geometry is rejected,
 not silently truncated. Counts, source/receipt ages, missing TF and replacement
 counts appear in the left status pane. DDS deserialization/transport allocation
 is outside these application-cache limits; this is not hostile-input isolation.
+
+Cloud layers render the latest received frame as 3-pixel points. Pixel size is
+independent of world distance; occupied map cells retain their metre-based
+resolution. The freshness deadline does not accumulate scans. In FAST-LIO,
+`/cloud_registered` is a transformed current scan, not the cumulative local map;
+its upstream filtering can make the scan sparse without indicating sensor noise.
 
 Only MoveCamera is instantiated; Orbit/TopDownOrtho, layer switches and view reset
 are the available interactions. No arbitrary `.rviz` loading, property editor,

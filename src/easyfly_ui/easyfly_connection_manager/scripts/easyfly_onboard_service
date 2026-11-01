@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+onboard_bin_dir="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+onboard_prefix="$(dirname -- "$(dirname -- "$onboard_bin_dir")")"
+if [[ -f "$onboard_prefix/setup.bash" ]]; then
+  onboard_setup="$onboard_prefix/setup.bash"
+elif [[ -f "$onboard_prefix/../setup.bash" ]]; then
+  onboard_setup="$onboard_prefix/../setup.bash"
+else
+  echo 'EasyFly installation setup.bash is missing.' >&2
+  exit 2
+fi
+unset AMENT_PREFIX_PATH CMAKE_PREFIX_PATH COLCON_PREFIX_PATH LD_LIBRARY_PATH PYTHONPATH
+set +u
+source "$onboard_setup"
+set -u
+exec /usr/bin/python3 -s -m easyfly_connection_manager.onboard_service "$@"

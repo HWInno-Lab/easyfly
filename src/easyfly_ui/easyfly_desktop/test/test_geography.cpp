@@ -17,6 +17,9 @@
 #include <QFile>
 #include <QImage>
 #include <QLabel>
+#include <QDateTime>
+#include <QNetworkDiskCache>
+#include <QNetworkCacheMetaData>
 #include <QPushButton>
 #include <QTemporaryDir>
 #include <QTest>
@@ -24,6 +27,7 @@
 #include <limits>
 #include "easyfly_desktop/geography.hpp"
 #include "easyfly_desktop/geographic_view.hpp"
+#include "easyfly_desktop/overview_task.hpp"
 #include "support.hpp"
 namespace geo = easyfly_desktop::geo;
 namespace ui = easyfly_desktop;
@@ -142,7 +146,11 @@ TEST(GeographicView, OriginalLandRendersAndGpsDoesNotInventLocalDatum)
   ui::GeographicView view(nullptr, temp.filePath("cache")); view.resize(900, 620); view.show();
   auto s = desktop_test::sample(); s->state.gps_valid = s->state.sdk.value.gps_valid = true;
   s->state.sdk.value.latitude = 47.397742; s->state.sdk.value.longitude = 8.545594;
+  auto fix = std::make_shared<sensor_msgs::msg::NavSatFix>();
+  fix->latitude = 47.397742; fix->longitude = 8.545594; fix->altitude = 500;
+  s->global_position = {fix, desktop_test::evidence()};
   view.snapshot(s, s->produced_steady);
+  EXPECT_TRUE(view.gps_available());
   EXPECT_TRUE(view.property("gps_visible").toBool());
   EXPECT_FALSE(view.property("local_geographic_visible").toBool());
   auto d = datum(); d.origin = {47.397742, 8.545594, 500}; view.set_datum(d);
@@ -180,4 +188,96 @@ TEST(GeographicView, AsyncOfflineImportAndConnectionChangeClearLocalOverlay)
   view.set_datum(datum()); s->stopped = true; view.snapshot(s, s->produced_steady);
   EXPECT_FALSE(view.property("datum_configured").toBool());
   EXPECT_FALSE(view.property("local_geographic_visible").toBool());
+}
+
+TEST(GeographicView, InvalidGlobalFixCannotBorrowSdkGpsAndHistoryRemainsHistorical)
+{
+  desktop_test::application(); QTemporaryDir temp;
+  ui::GeographicView view(nullptr, temp.filePath("cache"));
+  auto state = desktop_test::sample();
+  state->state.sdk.value.gps_valid = state->state.gps_valid = true;
+  state->state.sdk.value.latitude = 47.4; state->state.sdk.value.longitude = 8.5;
+  auto fix = std::make_shared<sensor_msgs::msg::NavSatFix>();
+  fix->latitude = 47.4; fix->longitude = 8.5; fix->altitude = 500;
+  state->global_position = {fix, desktop_test::evidence(ui::bridge::Quality::Invalid)};
+  state->global_trajectory.push_back({1, state->produced_steady, 47.4, 8.5, 500, 1});
+  state->global_trajectory.push_back({2, state->produced_steady, 47.401, 8.501, 500, 2});
+  view.snapshot(state, state->produced_steady);
+  EXPECT_FALSE(view.gps_available());
+  EXPECT_EQ(view.property("global_trajectory_count").toInt(), 2);
+  EXPECT_TRUE(view.findChild<QLabel *>("geographicStatus")->text().contains("历史"));
+  EXPECT_EQ(view.map_source(), "world");
+  EXPECT_EQ(view.property("online_request_count").toInt(), 0);
+}
+TEST(GeographicView, OriginalGpsRetainsBridgeFreshnessWithoutRefreshingReceipt)
+{
+  desktop_test::application(); QTemporaryDir temp;
+  ui::GeographicView view(nullptr, temp.filePath("cache"));
+  auto state = desktop_test::sample();
+  const auto received = state->produced_steady;
+  auto fix = std::make_shared<sensor_msgs::msg::NavSatFix>();
+  fix->header.stamp.sec = 10; fix->header.frame_id = "gps";
+  fix->latitude = 47.4; fix->longitude = 8.5; fix->altitude = 500;
+  ui::bridge::detail::GlobalPositionBuffer buffer;
+  state->clock = {ui::bridge::Quality::ValidAtObservation, 10000000000LL, 0};
+  buffer.observe(fix, state->clock, received, "gps-source");
+  state->clock.now_ns = 11500000000LL; state->produced_steady = received + 1.5;
+  state->global_position = buffer.snapshot(state->clock, state->produced_steady, "gps-source");
+  ASSERT_EQ(state->global_position.evidence.quality, ui::bridge::Quality::ValidAtObservation);
+  view.snapshot(state, state->produced_steady); EXPECT_TRUE(view.gps_available());
+  state->clock.now_ns = 12100000000LL; state->produced_steady = received + 2.1;
+  state->global_position = buffer.snapshot(state->clock, state->produced_steady, "gps-source");
+  ASSERT_EQ(state->global_position.evidence.quality, ui::bridge::Quality::Stale);
+  view.snapshot(state, state->produced_steady); EXPECT_FALSE(view.gps_available());
+}
+TEST(GeographicView, ExplicitOnlineProviderUsesExistingDiskTilesWithoutNetwork)
+{
+  desktop_test::application(); QTemporaryDir temp;
+  const auto directory = temp.filePath("cache");
+  {
+    QNetworkDiskCache cache; cache.setCacheDirectory(directory + "/osm-tiles");
+    QImage image(256, 256, QImage::Format_RGB32); image.fill(QColor("#b5d7ef"));
+    QByteArray bytes; QBuffer buffer(&bytes); buffer.open(QIODevice::WriteOnly);
+    ASSERT_TRUE(image.save(&buffer, "PNG"));
+    for (int x = 0; x < 2; ++x) {
+      for (int y = 0; y < 2; ++y) {
+        QNetworkCacheMetaData metadata;
+        metadata.setUrl(QUrl(QString("https://tile.openstreetmap.org/1/%1/%2.png").arg(x).arg(y)));
+        metadata.setExpirationDate(QDateTime::currentDateTimeUtc().addDays(7));
+        metadata.setSaveToDisk(true);
+        auto * device = cache.prepare(metadata); ASSERT_NE(device, nullptr);
+        device->write(bytes); cache.insert(device);
+      }
+    }
+  }
+  ui::GeographicView view(nullptr, directory); view.resize(640, 420);
+  view.set_compact(true); view.set_map_source("osm"); view.show(); QTest::qWait(250);
+  EXPECT_EQ(view.map_source(), "osm");
+  EXPECT_EQ(view.property("online_request_count").toInt(), 0);
+  view.set_map_source("world");
+  EXPECT_THROW(view.set_map_source("arbitrary-url"), std::runtime_error);
+}
+
+TEST(GeographicView, TaskProjectionRequiresExplicitMatchingDatumAndFreshCurrentTarget)
+{
+  desktop_test::application(); QTemporaryDir temp;
+  ui::GeographicView view(nullptr, temp.filePath("cache"));
+  auto state = desktop_test::sample(); view.snapshot(state, state->produced_steady);
+  ui::OverviewTaskOverlay overlay; overlay.bound = overlay.fresh = true;
+  overlay.geometry.accepted = true; overlay.frame = "odom";
+  overlay.geometry.points = {{0, 0, 0, 1, "takeoff"}, {1, 10, 20, 1, "waypoint"}};
+  overlay.geometry.links = {{0, 1}}; overlay.current_step = 1;
+  overlay.current_target = std::array<double, 3>{10, 20, 1};
+  view.set_task_overlay(overlay);
+  EXPECT_EQ(view.property("geographic_task_point_count").toInt(), 0);
+  EXPECT_FALSE(view.property("geographic_task_target_visible").toBool());
+  view.set_datum(datum());
+  EXPECT_EQ(view.property("geographic_task_point_count").toInt(), 2);
+  EXPECT_TRUE(view.property("geographic_task_target_visible").toBool());
+  overlay.fresh = false; overlay.reason = "telemetry stale"; view.set_task_overlay(overlay);
+  EXPECT_EQ(view.property("geographic_task_point_count").toInt(), 2);
+  EXPECT_FALSE(view.property("geographic_task_target_visible").toBool());
+  overlay.frame = "other"; view.set_task_overlay(overlay);
+  EXPECT_EQ(view.property("geographic_task_point_count").toInt(), 0);
+  view.clear_datum(); EXPECT_FALSE(view.datum().has_value());
 }

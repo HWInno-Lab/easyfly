@@ -17,6 +17,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration, PythonExpression
 from easyfly_launch.composition import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -35,9 +36,11 @@ def generate_launch_description():
                 package="easyfly_pixel_to_3d",
                 plugin="easyfly_pixel_to_3d::PixelTo3dNode",
                 name="easyfly_pixel_to_3d",
-                parameters=[{"use_sim_time": True}],
+                parameters=[{"use_sim_time": ParameterValue(
+                    LaunchConfiguration('use_sim_time'), value_type=bool)}],
             ),
         ],
         output="screen",
     )
-    return LaunchDescription([process_nice, container])
+    return LaunchDescription([
+        process_nice, DeclareLaunchArgument('use_sim_time', default_value='true'), container])

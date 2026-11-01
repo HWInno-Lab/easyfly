@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-30",
+  "reason": "User requested removal of three superseded scenes; retain empty, perception_demo, precision_landing.",
+  "removed": [
+    {
+      "scene": "primitives_corridor_seed1042_v1",
+      "manifest": "src/simulation/easyfly_gazebo_worlds/scenes/primitives_corridor_seed1042_v1.yaml",
+      "manifest_sha256": "f8500029852e4b4a755526b37977ca9ba7a4673b107a4212ac47a0ffd73fd44e",
+      "world": "src/simulation/easyfly_gazebo_worlds/worlds/benchmark/navigation/primitives_corridor_seed1042_v1.world",
+      "world_sha256": "2be7468f1d25096632bebd9f86d52dc9eccde86514e70119fd6f14aa30c9a65c"
+    },
+    {
+      "scene": "racetrack_aws_day_v1",
+      "manifest": "src/simulation/easyfly_gazebo_worlds/scenes/racetrack_aws_day_v1.yaml",
+      "manifest_sha256": "8b87378fa81df5fc9ee33359a3bba397feb81e743d3452ce517e27957f15e155",
+      "world": "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/racetrack_aws_day_v1.world",
+      "world_sha256": "38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c"
+    },
+    {
+      "scene": "hospital_aws_v1",
+      "manifest": "src/simulation/easyfly_gazebo_worlds/scenes/hospital_aws_v1.yaml",
+      "manifest_sha256": "14884347bfcccec789c66362f9365b31006b56bafe8780eeafe993927daa765f",
+      "world": "src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v1.world",
+      "world_sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b"
+    }
+  ],
+  "source_inputs": [
+    {
+      "original": "src/simulation/easyfly_gazebo_worlds/worlds/outdoor/urban/racetrack_aws_day_v1.world",
+      "current": "tools/scenes/source-worlds/racetrack_aws_day_v1.world",
+      "sha256": "38dfd8a4ec546a224a3ee934234896f5ebcf5f12711ec03adc4c32286901602c",
+      "purpose": "Locked upstream input for reproducing v2 only; not installed as a runtime world or registered scene."
+    },
+    {
+      "original": "src/simulation/easyfly_gazebo_worlds/worlds/indoor/hospital/hospital_aws_v1.world",
+      "current": "tools/scenes/source-worlds/hospital_aws_v1.world",
+      "sha256": "70830baa0c3e6fd61fcf80e4c42c063553562aba931a725f9aea2591058e1a7b",
+      "purpose": "Locked upstream input for reproducing v2 only; not installed as a runtime world or registered scene."
+    }
+  ],
+  "historical_evidence": "Preserved unchanged; paths in old reports describe the layout at capture time."
+}

@@ -409,13 +409,15 @@ bool FlightController::precision_control_loop()
         wall_elapsed > 2 * precision_config_.moving_land_timeout)
       {
         precision_stop_reason_ = "moving pad bounded Land interval expired";
-      } else if (precision_target_ready() && std::hypot(
+      } else {
+        const bool outside_handoff_corridor = precision_target_ready() && std::hypot(
           precision_target_.position.x - precision_handoff_board_.x,
           precision_target_.position.y - precision_handoff_board_.y) >
-        precision_config_.moving_max_speed * source_elapsed +
-        2 * precision_config_.moving_fit_error)
-      {
-        precision_stop_reason_ = "moving pad left bounded handoff corridor";
+          precision_config_.moving_max_speed * source_elapsed +
+          2 * precision_config_.moving_fit_error;
+        if (outside_handoff_corridor) {
+          precision_stop_reason_ = "moving pad left bounded handoff corridor";
+        }
       }
     }
     if (!precision_terminal_) {

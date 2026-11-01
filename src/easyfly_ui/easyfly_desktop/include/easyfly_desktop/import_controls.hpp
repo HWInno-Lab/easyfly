@@ -13,6 +13,7 @@
 #ifndef EASYFLY_DESKTOP__IMPORT_CONTROLS_HPP_
 #define EASYFLY_DESKTOP__IMPORT_CONTROLS_HPP_
 #include <QWidget>
+#include <QJsonObject>
 #include <functional>
 #include <memory>
 #include <optional>
@@ -53,6 +54,11 @@ public:
   bool unresolved() const;
   bool stopped() const;
   void stop();
+  void prepare_save();
+  bool matches_saved_receipt(const QJsonObject & receipt) const;
+
+signals:
+  void saved(const QJsonObject & receipt);
 
 private:
   struct Impl;

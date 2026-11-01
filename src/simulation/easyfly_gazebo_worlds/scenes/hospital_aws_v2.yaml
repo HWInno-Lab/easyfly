@@ -82,7 +82,9 @@ asset_sets:
 required_plugins: []
 supported_profiles:
 - base_sim
+- full_perception
 - navigation_dev
+- landing_dev
 legacy_profiles: []
 spawn:
   frame: world
@@ -147,6 +149,8 @@ verification:
   sensors_checked: true
   navigation_tested: true
   evidence_refs:
+  - package: easyfly_gazebo_worlds
+    path: evidence/perception-profiles-20261030.json
   - package: easyfly_gazebo_worlds
     path: evidence/base-sim-startup-20261020.json
   - package: easyfly_gazebo_worlds

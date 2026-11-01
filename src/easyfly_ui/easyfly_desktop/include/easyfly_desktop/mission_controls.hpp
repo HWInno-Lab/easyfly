@@ -56,6 +56,8 @@ public:
   std::shared_ptr<const control::ControlSnapshot> record_state() const;
   void stop();
   void exit_question(bool active);  // Dismiss any operation prompt and disable new operations.
+  QWidget * action_bar();
+  void set_target_active(bool active);
 
 private:
   struct Impl;
