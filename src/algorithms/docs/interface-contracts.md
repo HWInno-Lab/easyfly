@@ -1,9 +1,6 @@
-# 算法接口与行为冻结（ALG-0 至 ALG-8.5）
+# 算法接口与行为契约
 
-基线：`bdbc34c`。以下现有算法行为在 ALG-0 冻结，ALG-1 已建立跟踪与二维规划 API，
-ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预测/滤波、视觉和投影/类别关联抽离，ALG-7 三个子批次已完成地面、障碍几何和占据图拆分。
-本文件记录不变的计算语义和各批次显式新增的接口检查。
-实际头文件与细节见各 API 包 README；以下单位和职责边界继续作为迁移约束。
+本文说明可复用计算接口的数值、状态和所有权边界。V1/V2 数据与配置规则见[感知版本契约](extension-contracts.md)，新增实现按[接入指南](integration-guide.md)完成登记、适配和验收；具体类型及边界以相应 API 头文件与包 README 为准。
 
 ## 1. 通用约定
 
@@ -18,7 +15,7 @@ ALG-2 已接入真实 SORT 与 ID 整合；ALG-3 至 ALG-6 已完成规划、预
   当前真实 provider 必须上报；这与静默切换 SORT/其他跟踪器是不同机制。
 - 公共数据类型不含 ROS 消息，API 不依赖任何具体实现，不创建跨所有算法的总基类。
 
-## 2. 多目标跟踪（ALG-1 / ALG-2）
+## 2. 多目标跟踪
 
 ALG-1 接口：`Tracker::update(const Frame&) -> UpdateResult`、`reset(epoch)`、后端能力描述。
 Frame 携带检测框、类别、置信度、图像尺寸、源时间/epoch 和可选图像/特征；普通类型表达。
@@ -39,11 +36,7 @@ UpdateResult 保留滤波框、最近观测框、原始 ID、命中数、年龄�
 - 原生 Sorter 没有独立 reset 方法。ALG-2 适配器重建实例并保留进程内 raw ID 偏移，
   同时清除整合器和缓存，不使旧世界观测绑定重置后的新轨迹。
 
-ALG-2 已实现 reset/epoch、SORT 工厂和错误结果，并实际验证
-检测→跟踪→三维定位→ID 回流。首次延迟世界观测的继承是独立记录的原有问题修复，
-不能把这部分新旧差异归为纯目录移动；详见 ALG-2 验收。
-
-## 3. 二维栅格路径规划（ALG-1 / ALG-3）
+## 3. 二维栅格路径规划
 
 ALG-1 接口：`GridPlanner::plan(const Request&, const SearchControl&) -> PathResult`。
 Request 包含网格、起终点和地图 epoch/revision/源时间，结果回传地图身份。
@@ -65,16 +58,16 @@ SearchControl 含计算预算和轻量取消检查；结果返回世界 XY 航�
 - 正式配置 grid_stale_timeout=5s、segment_acceptance=.1m、z=.5..2.5m；协调器有独立
   input_freshness 和取消超时。地图接纳、真实端点与子任务排空保留在平台。
 
-ALG-3 按等价迁移、控制增强分开提交并完成实际验证，见 [ALG-3 验收](alg3-validation.md)。
 上边界采用半开区间，非法布局/非有限输入拒绝，非法字节视为障碍；限额 0 禁止展开。
 节点默认限 4,000,000 格/展开、5 秒，地图失效或取消后排空当前子航点并停止后续发送。
 这是协作式中断，不提供分配、容器操作与线程调度的硬实时上界。
 
-## 4. 单目标、检测和标志位姿（ALG-5）
+## 4. 单目标、检测和标志位姿
 
 单目标接口与多目标接口分开：图像和显式 ROI 初始化、update、停止/reset；保留 CSRT
 初始化/重定位成功后才报告 tracking，未知置信度不伪造为 1。ALG-5 的 `easyfly_single_tracking_api`
-和 `easyfly_csrt` 已管理真实模型生命周期，节点通过接口调用 initialize/update/reset。
+和 CSRT/KCF 包装管理真实模型生命周期，节点通过公共工厂与接口调用 initialize/update/reset。
+KCF 初始化时在 ROI 源图像上完成首次训练；跟踪丢失或尺寸变化后要求显式重新初始化。
 
 检测接口接收只读图像视图，返回原图像素框及类别、置信度和实际 provider。
 ALG-5 已拆分纯计算 DetectorParams；原功能包的兼容结构额外保留话题/QoS/性能字段。
@@ -85,13 +78,7 @@ ALG-5 已拆分纯计算 DetectorParams；原功能包的兼容结构额外保�
 歧义拒绝。算法返回相机光学系位姿及原因，CameraInfo 接纳、源时间和结果过期由节点管理。
 标签尺寸默认 0 表示未配置，不能用接口默认值悄悄变为固定尺寸。
 
-ALG-5 同时运行源码 contract 与固定图像的真实 CPU/CUDA 模型对照，记录实际 provider。
-类内 NMS、类别、像素框和调用者 timing 保持；不把历史 CUDA 耗时作为本轮结果，
-不据单帧对照宣称数据集精度。默认同一权重由功能包安装并解析 package:// 路径。
-检测参数/图像格式新增显式拒绝检查，正常算法语义与这些契约增强分别记录。
-普通图像类型、算法参数和详细所有权约束见各新包 README 与 [ALG-5 验收](alg5-validation.md)。
-
-## 5. 预测、预处理和融合建图（ALG-4 / ALG-6 / ALG-7）
+## 5. 预测、预处理和融合建图
 
 - 预测保留两个严格有序真实观测、三维范数限速、跳变/类别变化重置、空帧清历史、
   source/receipt 双时钟与暂停/回退失效。位置按 `observation + velocity*(age+horizon)`；
@@ -113,43 +100,37 @@ ALG-5 同时运行源码 contract 与固定图像的真实 CPU/CUDA 模型对照
 ALG-4 已将完整预测历史模型迁入 `easyfly_motion_prediction`，过滤计算迁入
 `easyfly_pointcloud_filters`；节点直接调用新普通类型/函数，旧头仅保留别名。
 两份核心和节点正文经结构归一后与原版相同，双时钟、源时间 TF、队列/过期规则未改变。
-实际时序、安装与独立消费验证见 [ALG-4 验收](alg4-validation.md)。
 
 ALG-6 已将中位深度/针孔迁入 easyfly_projection，投影与 Z-buffer 迁入 easyfly_projection_py，
 expanded-AABB 双向唯一匹配迁入 easyfly_obstacle_association。后两者仅使用 Python 标准库。
 原 projection.py 保留 ROS 字节布局解析和序列化；分类 core.py 保留消息/快照校验、完整几何深拷贝、TTL。
 像素节点原有 latest TF 回退仍保留；两源精确时间且不回退 latest 的约束属于雷达相机融合。
 C++ 借用视图新增布局/可表示整数检查并通过 memcpy 支持非对齐数据，边界增强与迁移分开提交。
-240 组 C++ 深度/反投影、240 组 Python 投影及 320 组完整分类消息对照，详见 [ALG-6 验收](alg6-validation.md)。
 
 ALG-7.1 已将实际 PCL 候选拟合、四份地面数学/状态辅助迁入 easyfly_ground_segmentation。
 fitGroundCandidate 只返回候选与诊断计数；可信状态由 tracker 消费显式车辆证据决定。
 节点继续采样/接纳状态与 TF、参考系跳变时 reset、维护地图有效性并对完整当前帧分类。
-所有原阈值和正式 YAML 空间支撑选择保持，旧四头为别名；详见 [ALG-7.1 验收](alg7-1-validation.md)。
+所有原阈值和正式 YAML 空间支撑选择保持，旧四头为别名。
 
 ALG-7.2 已将两轮当前帧 PCL 聚类/AABB、动态 Hungarian 关联、EMA 和完整九点截面前向扫掠
 迁入 easyfly_obstacle_geometry。两条 AABB 路径的原 float/double 运算次序分别保留。
 tracker 仅消费显式源时间和当前观测；空帧不保留历史框/速度确认，有限休眠 ID 规则保持。
 节点仍执行输入接纳/失效 reset、原消息精度/唯一 ID 保护和全局点数预算；占据图留待 ALG-7.3。
-详见 [ALG-7.2 验收](alg7-2-validation.md)。
 
 ALG-7.3 已将 observed-cells、cluster-boxes 膨胀、完整预测足迹转换和 GridPersistence
 迁入 easyfly_occupancy_mapping；输出为普通 GridGeometry / vector<int8_t>。
 有界层模板直接消费原地面对象的 normal/valid/zAt，不复制地面判定实现或依赖 ROS/PCL。
 保留 .70m 最小膨胀、体素交集、20帧保持/第21帧释放和尺寸变化清理；节点失效时调用 reset。
 map_validity.hpp、未知失效消息、地图源时间/地面/TF 接纳与发布仍在功能包。
-详见 [ALG-7.3 验收](alg7-3-validation.md)。
 
 ALG-8.1 将 FAST-LIO 完整 ROS 工程分类至 third_party/algorithms/localization/fast_lio。
 包名、话题/消息/配置、ikd-Tree/IKFoM 和 map→odom TF 实现保持；构建增加隔离输出根选择。
 启动参数 scoping 夹具显式隔离无关 PX4 前提，生产 HRT/native IMU 守卫保持并独立回归。
-来源/许可未知项与本地旧安装桥接范围见 [ALG-8.1 验收](alg8-1-validation.md)。
+来源及许可记录见[第三方总表](../../third_party/catalog.json)。
 
 ALG-8.2 EGO 完整 ROS 工程位于 third_party/algorithms/planning/ego_planner，内部8包保持。
 easyfly_local_planner 继续提供平台 launch/接线，既有导航会话、固定终点、碰撞与失效/停流补丁保留。
 迁移不改变消息、配置、速度边界和退出断言；构建依赖通过安装导出目标消费。
-本批原有信号/导航测试与历史 ALG0-B03、semantic shutdown/stress 问题分别记录，
-不以通过局部测试宣称历史问题已修复。详见 [ALG-8.2 验收](alg8-2-validation.md)。
 
 ## 6. 接口外的平台职责
 
@@ -167,7 +148,10 @@ easyfly_local_planner 继续提供平台 launch/接线，既有导航会话、�
 的源码为准，后续变更须更新基线并说明原因。
 
 
-ALG-8.5的[新增算法接入指南](integration-guide.md)按现有工厂和调用点说明扩展步骤。
-当前工厂分别绑定SortParams/AStarParams，仅注册sort/astar；没有目录扫描、插件热加载或通用三维轨迹API。
-额外图像/外观特征/低置信度候选及三维地图要求必须扩展相应数据链，能力声明不能替代真实输入。
-本批未改变上述接口、实现或生产配置；[兼容层审计](compatibility-audit.md)保留原公开转发入口。
+## 7. 公共创建与配置
+
+计算接口不依赖具体算法参数。平台工厂接收 `BackendConfig` 和已校验参数映射，在创建边界转换为实现自己的强类型参数；未知字段、后端、版本和非法数值明确失败。默认多目标 SORT、二维 A*、检测 ONNX、单目标 CSRT；KCF 是显式可选单目标后端。
+
+角色配置、实例创建、运行观测分别报告。V2 采用完整 session/epoch/raw ID 和源观测引用，不能通过改字段单位或只比较整数 ID 替代完整身份；V1 wire 保持独立兼容路径。详细规则见[感知契约](extension-contracts.md)，配置与诊断通道见[接入指南](integration-guide.md)。
+
+公共计算 API 不提供动态插件加载或运行中热切换。新增三维地图、外观特征、低置信度候选等需求时，先扩展真实输入链与接纳协议，再声明算法能力。

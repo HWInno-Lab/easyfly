@@ -13,6 +13,9 @@
 
 """Pair exact observed boxes and camera frames, emitting only fresh appearance identities."""
 
+from easyfly_perception_contracts import NativeSubscription, Producer, SourceGate, writer, tracks_valid, track_snapshot, reference, Context as PerceptionContext
+from easyfly_msgs.msg import ImageTrackArrayV2, VehicleIdentityArrayV2, VehicleIdentityV2
+
 import argparse
 from collections import OrderedDict
 import json
@@ -54,7 +57,7 @@ def configuration(path):
     descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
     with os.fdopen(descriptor) as stream:
         value = json.loads(stream.read(32769))
-    if set(value) != {'version', 'use_sim_time', 'cameras', 'threshold', 'margin'}:
+    if set(value) - {'perception_version'} != {'version', 'use_sim_time', 'cameras', 'threshold', 'margin'} or type(value.get('perception_version', 1)) is not int or value.get('perception_version', 1) not in (1, 2):
         raise ValueError('unexpected vehicle ReID configuration fields')
     if value['version'] != 1 or type(value['use_sim_time']) is not bool:
         raise ValueError('invalid version or clock selection')
@@ -87,7 +90,9 @@ class Reidentification(Node):
     def __init__(self, config, model, context, references=None, gallery_sha256=''):
         super().__init__('vehicle_reidentification', context=context, parameter_overrides=[
             Parameter('use_sim_time', value=config['use_sim_time'])])
+        self.v2 = config.get('perception_version', 1) == 2
         self.config, self.model = config, model
+        self.native_pub = self.create_publisher(VehicleIdentityArrayV2, '/perception/v2/vehicle_identities', 5)
         self.references, self.gallery_sha256 = references or {}, gallery_sha256
         self.publisher = self.create_publisher(VehicleIdentityArray, '/vehicle_identities', 5)
         self.session = uuid.uuid4().hex
@@ -95,20 +100,82 @@ class Reidentification(Node):
         self.gallery.seed(self.references)
         self.inputs = {camera['id']: dict(
             config=camera, images=OrderedDict(), tracks=OrderedDict(), last=0, processed_at=0.,
-            header=None, gids=None, valid=False, reason='awaiting_input')
+            header=None, gids=None, valid=False, reason='awaiting_input', native=OrderedDict(), gate=SourceGate(), producer=Producer())
             for camera in config['cameras']}
         self.clock_ns, self.clock_at, self.last_discovery = 0, 0., 0.
         self.last_invalid = 0.
         for camera in config['cameras']:
-            self.create_subscription(
-                Image, camera['image'],
-                lambda message, key=camera['id']: self.receive(key, 'images', message),
-                qos_profile_sensor_data)
-            self.create_subscription(
-                TrackInfoArray, camera['observed_tracks'],
-                lambda message, key=camera['id']: self.receive(key, 'tracks', message),
-                qos_profile_sensor_data)
+            if self.v2:
+                NativeSubscription(self, Image, camera['image'], self.native_image_receiver(camera['id']))
+            else:
+                self.create_subscription(
+                    Image, camera['image'],
+                    lambda message, key=camera['id']: self.receive(key, 'images', message),
+                    qos_profile_sensor_data)
+            if self.v2:
+                NativeSubscription(self, ImageTrackArrayV2, camera['observed_tracks'], self.native_receiver(camera['id']))
+            else:
+                self.create_subscription(
+                    TrackInfoArray, camera['observed_tracks'],
+                    lambda message, key=camera['id']: self.receive(key, 'tracks', message),
+                    qos_profile_sensor_data)
         self.create_timer(.02, self.tick, clock=Clock(clock_type=ClockType.STEADY_TIME))
+
+    def native_image_receiver(self, camera):
+        def receive(message, info):
+            if writer(self, self.inputs[camera]['config']['image'], info) is None:
+                self.reset('ambiguous_image_writer')
+                return
+            self.receive(camera, 'images', message)
+        return receive
+
+    def native_receiver(self, camera):
+        def receive(message, info):
+            row = self.inputs[camera]
+            source = writer(self, row['config']['observed_tracks'], info)
+            if source is None:
+                self.reset('ambiguous_track_writer')
+                return
+            if not row['gate'].observe(message.context, source):
+                return
+            if row['gate'].changed:
+                self.reset('track_source_changed')
+            if (message.context.camera_id != camera or message.context.header.frame_id != row['config']['frame'] or
+                    not tracks_valid(message)):
+                self.reset('invalid_native_tracks')
+                return
+            try:
+                numeric = track_snapshot(message, observed_only=True)
+            except ValueError:
+                return
+            row['native'][stamp(message.context.header)] = message
+            while len(row['native']) > 4:
+                row['native'].popitem(last=False)
+            self.receive(camera, 'tracks', numeric)
+        return receive
+
+    def publish_native(self, camera, row, output, image=None):
+        native = VehicleIdentityArrayV2()
+        header = image.header if image is not None else output.header
+        native.context = row['producer'].next(header, camera,
+            image.width if image is not None else 0, image.height if image is not None else 0,
+            PerceptionContext.VALID if image is not None and output.valid else PerceptionContext.NOT_READY,
+            output.reason)
+        native.valid, native.reason = output.valid, output.reason
+        native.model_sha256, native.gallery_sha256 = output.model_sha256, output.gallery_sha256
+        tracks = row['native'].get(stamp(header))
+        if tracks is not None and image is not None:
+            if (tracks.context.image_width, tracks.context.image_height) != (image.width, image.height):
+                raise ValueError('native track/image dimensions disagree')
+            native.upstream = reference(tracks.context)
+            observed = {t.key.legacy_raw_id: t for t in tracks.tracks if t.observed_this_frame}
+            for item in output.identities:
+                track = observed[item.source_track_id]
+                native.identities.append(VehicleIdentityV2(observation_index=item.observation_index,
+                    key=track.key, observed_box=track.observed_box, class_name=item.class_name,
+                    identity_id=item.identity_id, state=item.state, cosine_distance=item.cosine_distance,
+                    distance_margin=item.distance_margin))
+        self.native_pub.publish(native)
 
     def reset(self, reason):
         """Start a new identity epoch; never carry a prior source gallery into replacement data."""
@@ -116,6 +183,7 @@ class Reidentification(Node):
         self.gallery = Gallery(self.config['threshold'], self.config['margin'])
         self.gallery.seed(self.references)
         for row in self.inputs.values():
+            row['native'].clear(); row['producer'].reset()
             row['images'].clear()
             row['tracks'].clear()
             row.update(last=0, valid=False, processed_at=0., reason=reason)
@@ -164,7 +232,10 @@ class Reidentification(Node):
                                        valid=False, reason=reason)
         if row['header'] is not None:
             message.header = row['header']
-        self.publisher.publish(message)
+        if self.v2:
+            self.publish_native(camera, row, message)
+        else:
+            self.publisher.publish(message)
 
     def tick(self):
         """Process the newest exact pair and recheck source age after actual inference."""
@@ -207,6 +278,10 @@ class Reidentification(Node):
 
     def process(self, camera, row, image, tracks, received):
         """Infer whole-vehicle crops; source track IDs are exposed solely as correlation fields."""
+        if self.v2:
+            native = row['native'].get(stamp(image.header))
+            if native is None or (native.context.image_width, native.context.image_height) != (image.width, image.height):
+                raise ValueError('native track/image dimensions disagree')
         rgb = np.frombuffer(image.data, dtype=np.uint8).reshape(image.height, image.step)
         rgb = rgb[:, :image.width * 3].reshape(image.height, image.width, 3)
         if image.encoding == 'bgr8':
@@ -245,6 +320,11 @@ class Reidentification(Node):
         if (time.monotonic() - received > 1. or
                 not -.2 <= (clock - stamp(image.header)) / 1e9 <= 1.):
             raise ValueError('source expired during inference')
+        if self.v2:
+            current = [self.get_publishers_info_by_topic(row['config'][name]) for name in ['image', 'observed_tracks']]
+            gids = tuple(bytes(items[0].endpoint_gid).hex() if len(items) == 1 else '' for items in current)
+            if gids != row['gids'] or not all(gids):
+                raise ValueError('input publisher changed during appearance inference')
         matches = self.gallery.associate(camera, stamp(image.header), vectors, time.monotonic())
         for index, match in zip(valid_indices, matches):
             item = output.identities[index]
@@ -252,7 +332,10 @@ class Reidentification(Node):
             item.cosine_distance, item.distance_margin = match['distance'], match['margin']
         output.valid, output.reason = True, 'appearance_observations'
         row.update(valid=True, reason='', processed_at=time.monotonic())
-        self.publisher.publish(output)
+        if self.v2:
+            self.publish_native(camera, row, output, image)
+        else:
+            self.publisher.publish(output)
 
 
 def main():

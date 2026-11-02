@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_ext_validation_env</name><version>0.1.0</version>
+  <description>Explicit isolated Python dependency environment for installed-prefix software fixtures only.</description>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <export><build_type>ament_cmake</build_type></export>
+</package>

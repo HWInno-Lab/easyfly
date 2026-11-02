@@ -1,0 +1,20 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "use_sim_time": {
+      "type": "boolean"
+    },
+    "input_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "output_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    }
+  },
+  "required": []
+}

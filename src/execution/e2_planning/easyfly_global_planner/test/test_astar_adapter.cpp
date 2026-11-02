@@ -92,12 +92,47 @@ TEST(AStarAdapter, ExplicitUnknownThresholdAndResourcePolicy)
   EXPECT_EQ(planner->plan(request, {}).status, gp::Status::ok);
   request.grid.occupied_threshold = 50;
   EXPECT_NE(planner->plan(request, {}).status, gp::Status::ok);
-  planner = easyfly_global_planner::make_planner("astar", {99, 5});
+  planner = easyfly_global_planner::make_planner("astar", {{"max_cells", 99}, {"unstick_cells", 5}});
   EXPECT_EQ(planner->plan(request, {}).status, gp::Status::resource_limit);
 }
 TEST(AStarAdapter, UnknownBackendAndInvalidParametersFailExplicitly)
 {
   EXPECT_THROW(easyfly_global_planner::make_planner("rrt"), std::invalid_argument);
-  EXPECT_THROW(easyfly_global_planner::make_planner("astar", {0, 5}), std::invalid_argument);
-  EXPECT_THROW(easyfly_global_planner::make_planner("astar", {100, -1}), std::invalid_argument);
+  EXPECT_THROW(easyfly_global_planner::make_planner("astar", {{"max_cells", 0}, {"unstick_cells", 5}}), std::invalid_argument);
+  EXPECT_THROW(easyfly_global_planner::make_planner("astar", {{"max_cells", 100}, {"unstick_cells", -1}}), std::invalid_argument);
+}
+
+#include <easyfly_backend_registry/metadata.hpp>
+TEST(AStarAdapter, EveryRegisteredGridBackendHasARealCreator)
+{
+  for (const auto & entry : easyfly::backends::descriptors) {
+    if (std::string(entry.capability) == "grid_planning") {
+      EXPECT_NE(easyfly_global_planner::make_planner(entry.id), nullptr);
+    }
+  }
+}
+
+namespace {
+class FixturePlanner final : public gp::GridPlanner {
+public:
+  explicit FixturePlanner(int marker, bool supported = true) : marker_(marker), supported_(supported) {}
+  gp::Capabilities capabilities() const override {return {"fixture", supported_, true, true};}
+  gp::PathResult plan(const gp::Request & request, const gp::SearchControl &) override {
+    gp::PathResult result; result.status = gp::Status::ok; result.map = request.map;
+    result.expansions = marker_; return result;
+  }
+private: int marker_; bool supported_;
+};
+}
+TEST(PlannerFactory, SelectionIsIndependentOfAStarAndRequiresBoundedControls) {
+  easyfly_global_planner::PlannerFactory f;
+  f.add("fixture", [](const easyfly::backends::Parameters & p) {
+    return std::make_unique<FixturePlanner>(easyfly::backends::parameter<int>(p, "marker"));
+  });
+  auto planner = easyfly_global_planner::make_planner(easyfly::backends::BackendConfig{"fixture", {{"marker", 17}}}, f);
+  gp::Request request; request.map.epoch = 9;
+  auto result = planner->plan(request, {}); EXPECT_EQ(result.expansions, 17u); EXPECT_EQ(result.map.epoch, 9u);
+  easyfly_global_planner::PlannerFactory unsupported;
+  unsupported.add("fixture", [](const auto &) {return std::make_unique<FixturePlanner>(0, false);});
+  EXPECT_THROW(easyfly_global_planner::make_planner(easyfly::backends::BackendConfig{"fixture", {}}, unsupported), std::invalid_argument);
 }

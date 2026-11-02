@@ -23,6 +23,7 @@ follow.launch.py — easyfly_target_tracking 启动 (M4.1).
 """
 
 from ament_index_python.packages import get_package_share_directory
+from launch_ros.parameter_descriptions import ParameterValue
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
@@ -39,7 +40,7 @@ def generate_launch_description():
         executable="target_tracking_node",
         name="easyfly_target_tracking",
         output="screen",
-        parameters=[{
+        parameters=[{"perception_version": ParameterValue(LaunchConfiguration("perception_version", default="1"), value_type=int),
             "use_sim_time": LaunchConfiguration("use_sim_time"),
             "config_file": os.path.join(
                 get_package_share_directory("easyfly_target_tracking"),

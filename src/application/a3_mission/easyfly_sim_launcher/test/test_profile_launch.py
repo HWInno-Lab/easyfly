@@ -40,6 +40,38 @@ def load_entrypoint():
     return module
 
 
+def test_unselected_algorithm_include_does_not_resolve_its_package(monkeypatch):
+    path = WORKSPACE / 'src/simulation/easyfly_px4_sitl/launch/perception_sitl.launch.py'
+    spec = importlib.util.spec_from_file_location('optional_simulation_algorithms', path)
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    def missing(package):
+        raise LookupError('Package should not be resolved: ' + package)
+    monkeypatch.setattr(module, 'get_package_share_directory', missing)
+    context = LaunchContext(); context.launch_configurations['start_detection'] = 'false'
+    action = module._optional_include('start_detection', 'missing_detector', 'detector.launch.py')
+    assert action.visit(context) is None
+    context.launch_configurations['start_detection'] = 'true'
+    with pytest.raises(LookupError, match='missing_detector'):
+        action.visit(context)
+
+
+@pytest.mark.parametrize('strategy,enabled', [('astar', True), ('ego', False),
+    ('combined', False), ('gcopter', False), ('super', False)])
+def test_standalone_grid_planner_only_starts_for_the_astar_strategy(strategy, enabled):
+    path = WORKSPACE / 'src/execution/e2_planning/easyfly_global_planner/launch/navigate.launch.py'
+    spec = importlib.util.spec_from_file_location('selected_navigation_nodes', path)
+    module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    description = module.generate_launch_description(); context = LaunchContext()
+    context.launch_configurations.update(strategy=strategy, localization_backend='fast_lio')
+    for entity in description.entities:
+        if isinstance(entity, DeclareLaunchArgument):
+            entity.execute(context)
+    node = next(entity for entity in description.entities if isinstance(entity, Node) and
+        perform_substitutions(context, normalize_to_list_of_substitutions(entity.node_executable)) ==
+        'global_planner_node')
+    assert node.condition.evaluate(context) is enabled
+
+
 @pytest.mark.parametrize("name,entry", [
     ("base_sim", "easyfly_sim.launch.py"),
     ("full_perception", "perception_sitl.launch.py"),
@@ -59,7 +91,7 @@ def test_profile_expansion(name, entry):
     platform = [action for action in group.get_sub_entities()
                 if isinstance(action, IncludeLaunchDescription)][1]
     assert dict(platform.launch_arguments) == {
-        'profile': name, 'use_sim_time': 'true', 'start_mission_executor': 'false'}
+        'profile': name, 'use_sim_time': 'true', 'start_mission_executor': 'false', 'perception_version': '1'}
     if name != "base_sim":
         assert arguments["local_planner_virtual_ceil_height"] == "3.2"
         expected_strategy = "combined" if name == "navigation_dev" else "astar"
@@ -82,20 +114,23 @@ def test_hardware_rejected_before_include():
         module._launch_profile(context)
 
 
-def nested_entities(entities):
+def nested_entities(entities, context=None):
     for entity in entities:
         yield entity
         if isinstance(entity, TimerAction):
-            yield from nested_entities(entity.actions)
+            yield from nested_entities(entity.actions, context)
         elif isinstance(entity, GroupAction):
-            yield from nested_entities(entity.get_sub_entities())
+            yield from nested_entities(entity.get_sub_entities(), context)
         elif isinstance(entity, OpaqueFunction):
             # Inspect only our reservation closure. Never execute it: that would
             # acquire a live lock and return real process-starting actions.
             function = entity._OpaqueFunction__function
             if function.__module__ == "easyfly_px4_sitl.session_guard":
                 actions = inspect.getclosurevars(function).nonlocals["actions"]
-                yield from nested_entities(actions)
+                yield from nested_entities(actions, context)
+            elif context is not None and function.__qualname__.startswith('_optional_include.'):
+                # This factory only resolves a selected child launch; it never starts nodes.
+                yield from nested_entities(entity.visit(context) or [], context)
 
 
 def expand_include(include, context):
@@ -115,13 +150,15 @@ def test_nested_launch_effective_parameters(name):
     module = load_entrypoint()
     context = LaunchContext()
     context.launch_configurations["profile"] = name
+    if name in ('full_perception', 'landing_dev'):
+        context.launch_configurations['algorithms_json'] = '{"strategy":"ego"}'
     group = next(action for action in module._launch_profile(context)
                  if isinstance(action, GroupAction))
     root_include = next(action for action in group.get_sub_entities()
                         if isinstance(action, IncludeLaunchDescription))
     root_description = expand_include(root_include, context)
     wanted = "px4_sitl.launch.py" if name == "base_sim" else "local_planner.launch.py"
-    for entity in nested_entities(root_description.entities):
+    for entity in nested_entities(root_description.entities, context):
         if not isinstance(entity, IncludeLaunchDescription):
             continue
         source = entity.launch_description_source
@@ -346,7 +383,7 @@ def test_comparison_acceleration_reaches_real_ego_parameters():
     group = next(a for a in module._launch_profile(context) if isinstance(a, GroupAction))
     include = next(a for a in group.get_sub_entities() if isinstance(a, IncludeLaunchDescription))
     root = expand_include(include, context)
-    for entity in nested_entities(root.entities):
+    for entity in nested_entities(root.entities, context):
         if not isinstance(entity, IncludeLaunchDescription):
             continue
         location = perform_substitutions(context, entity.launch_description_source._LaunchDescriptionSource__location)

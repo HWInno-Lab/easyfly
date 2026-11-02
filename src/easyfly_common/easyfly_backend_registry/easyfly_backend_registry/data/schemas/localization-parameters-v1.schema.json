@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "config_file": {
+      "type": "string",
+      "minLength": 0,
+      "maxLength": 4096,
+      "default": ""
+    },
+    "enable_navigation": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": []
+}

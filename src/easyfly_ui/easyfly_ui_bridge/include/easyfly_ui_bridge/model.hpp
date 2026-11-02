@@ -14,6 +14,11 @@
 #ifndef EASYFLY_UI_BRIDGE__MODEL_HPP_
 #define EASYFLY_UI_BRIDGE__MODEL_HPP_
 
+#include <easyfly_msgs/msg/detection_array_v2.hpp>
+#include <easyfly_msgs/msg/image_track_array_v2.hpp>
+#include <easyfly_msgs/msg/target_prediction_array_v2.hpp>
+#include <easyfly_msgs/msg/classified_obstacle_array_v2.hpp>
+#include <easyfly_msgs/srv/get_perception_v2.hpp>
 #include <array>
 #include <cstdint>
 #include <deque>
@@ -165,10 +170,15 @@ struct CameraObservations
   Observation<easyfly_msgs::msg::EllipseObservationArray> ellipses;
   Observation<easyfly_msgs::msg::ColorLineObservationArray> color_lines;
   Observation<sensor_msgs::msg::Image> ellipse_image, color_line_image;
+  easyfly_msgs::msg::DetectionArrayV2::ConstSharedPtr native_detections;
+  easyfly_msgs::msg::ImageTrackArrayV2::ConstSharedPtr native_tracks;
+  easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr native_targets;
   size_t cached_images{0}, cached_bytes{0};
 };
 struct SpecialObservations
 {
+  easyfly_msgs::msg::TargetPredictionArrayV2::ConstSharedPtr native_predictions;
+  easyfly_msgs::msg::ClassifiedObstacleArrayV2::ConstSharedPtr native_classified;
   Observation<easyfly_msgs::msg::TagObservationArray> tags;
   Observation<easyfly_msgs::msg::LandingTarget> landing;
   Observation<easyfly_msgs::msg::LandingGuidanceTarget> guidance;
@@ -215,6 +225,7 @@ struct UiSnapshot
   std::string mission_format;  // Classified on the bridge worker, not the GUI.
   std::map<Key, Observation<easyfly_msgs::srv::QueryParams::Response>> parameters;
   std::map<Key, Observation<easyfly_msgs::srv::GetPerception::Response>> perception;
+  std::map<Key, easyfly_msgs::srv::GetPerceptionV2::Response::ConstSharedPtr> native_perception;
   // Retain bounded upstream envelope even when geometry cannot be retained.
   std::map<Key, PerceptionReport> perception_reports;
   Observation<easyfly_msgs::msg::MissionStatus> last_mission_event;

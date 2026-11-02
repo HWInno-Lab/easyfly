@@ -21,6 +21,7 @@
 namespace easyfly_connection_manager
 {
 QJsonArray algorithm_fields();
+QJsonObject simulation_module_definitions();
 QJsonObject algorithm_defaults();
 void validate_algorithms(const QJsonObject & options);
 struct Profile

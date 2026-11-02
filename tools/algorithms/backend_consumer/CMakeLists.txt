@@ -1,0 +1,13 @@
+cmake_minimum_required(VERSION 3.16)
+project(installed_backend_consumer LANGUAGES CXX)
+find_package(easyfly_multi_object_tracking REQUIRED)
+find_package(easyfly_global_planner REQUIRED)
+find_package(easyfly_object_detection REQUIRED)
+find_package(easyfly_single_object_tracking REQUIRED)
+add_executable(backend_consumer main.cpp)
+target_link_libraries(backend_consumer PRIVATE
+  easyfly_multi_object_tracking::easyfly_multi_object_tracking_backends
+  easyfly_global_planner::easyfly_global_planner_backends
+  easyfly_object_detection::easyfly_object_detection_backends
+  easyfly_single_object_tracking::easyfly_single_object_tracking_backends)
+target_compile_options(backend_consumer PRIVATE -Wall -Wextra -Wpedantic -Werror)

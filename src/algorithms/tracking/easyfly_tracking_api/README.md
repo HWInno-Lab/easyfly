@@ -25,7 +25,7 @@ target_link_libraries(my_tracker PRIVATE easyfly_tracking_api::easyfly_tracking_
 - ok+空数组表示有效空结果，失败时 tracks 必须为空；默认结果是 backend_error。
 - 算法实例串行调用。取消、异步任务、单目标 ROI 管理、服务和飞行策略不属于此接口。
 
-抽象接口本身不能保证任意外部实现遵守契约。真实SORT适配器与回归见[ALG-2验收](../../alg2-validation.md)。
+抽象接口本身不能保证任意外部实现遵守契约。真实SORT适配器与回归见[算法接入指南](../../docs/integration-guide.md)。
 ALG-1测试替身仅验证类型替换和接口含义，不能代替真实跟踪精度或ID稳定性验收。
-新增需求及当前节点未提供的图像/特征输入见[接入指南](../../integration-guide.md)。
+新增需求及当前节点未提供的图像/特征输入见[接入指南](../../docs/integration-guide.md)。
 0.1 接口尚无稳定二进制 ABI 承诺，消费包需随接口变更重新编译。

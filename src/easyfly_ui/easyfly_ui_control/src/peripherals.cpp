@@ -1,3 +1,6 @@
+#include <easyfly_perception_contracts/contracts.hpp>
+#include <easyfly_msgs/srv/manage_single_track_v2.hpp>
+namespace pc = easyfly::perception;
 // Copyright 2026 EasyFly Project
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +29,7 @@ namespace easyfly_ui_control
 {
 namespace
 {
+using SingleV2 = easyfly_msgs::srv::ManageSingleTrackV2;
 using Single = easyfly_msgs::srv::ManageSingleTrack;
 using Angle = easyfly_msgs::srv::SetGimbalAngle;
 using Tracking = easyfly_msgs::srv::SetGimbalTracking;
@@ -77,6 +81,9 @@ struct PeripheralControl::Impl
   rclcpp::Node::SharedPtr node;
   std::unique_ptr<rclcpp::executors::SingleThreadedExecutor> executor;
   rclcpp::Client<Single>::SharedPtr single;
+  rclcpp::Client<SingleV2>::SharedPtr native_single;
+  rclcpp::Subscription<easyfly_msgs::msg::SingleTrackStateV2>::SharedPtr native_single_sub;
+  pc::SourceGate single_gate;
   rclcpp::Client<Angle>::SharedPtr angle;
   rclcpp::Client<Tracking>::SharedPtr tracking;
   rclcpp::Subscription<easyfly_msgs::msg::SingleTrackState>::SharedPtr single_sub;
@@ -86,7 +93,7 @@ struct PeripheralControl::Impl
   explicit Impl(PeripheralConfig options)
   : config(options)
   {
-    if (!std::isfinite(config.response_timeout) || config.response_timeout < .05 ||
+    if ((config.perception_version != 1 && config.perception_version != 2) || !std::isfinite(config.response_timeout) || config.response_timeout < .05 ||
       config.response_timeout > 30 || (config.commands_enabled && !config.use_sim_time))
     {
       throw std::invalid_argument("peripheral commands require simulation; timeout .05..30s");
@@ -154,6 +161,8 @@ struct PeripheralControl::Impl
     return valid(r.state) ? " · state=" + r.state.phase + " ID=" +
            std::to_string(r.state.track_id) : " · invalid state reply";
   }
+  static std::string detail(const SingleV2::Response & r) {return " · native state=" + r.state.phase;}
+  static bool accepted(const SingleV2::Response & r) {return r.accepted;}
   static std::string detail(const Angle::Response &) {return {};}
   static std::string detail(const Tracking::Response &) {return {};}
   static bool accepted(const Single::Response & r) {return r.accepted;}
@@ -172,10 +181,10 @@ struct PeripheralControl::Impl
                ros - stamp(m->header) >= -200000000LL && ros - stamp(m->header) <= 500000000LL &&
                now - receipt >= 0 && now - receipt <= .5 && node->count_publishers(topic) == 1;
       };
-    data.single_fresh = fresh(data.single, data.single_receipt, "/single_track/state");
+    data.single_fresh = fresh(data.single, data.single_receipt, config.perception_version == 2 ? "/perception/v2/single_track/state" : "/single_track/state");
     data.gimbal_fresh = fresh(data.gimbal, data.gimbal_receipt, "/gimbal/state");
     if (now - graph_at >= .25) {
-      data.single_ready = single->service_is_ready() && unique_service("/single_track/manage");
+      data.single_ready = config.perception_version == 2 ? native_single->service_is_ready() && unique_service("/single_track/v2/manage") : single->service_is_ready() && unique_service("/single_track/manage");
       data.angle_ready = angle->service_is_ready() && unique_service("/gimbal/set_angle");
       data.tracking_ready = tracking->service_is_ready() && unique_service("/gimbal/set_tracking");
       graph_at = now;
@@ -196,7 +205,13 @@ struct PeripheralControl::Impl
       data.message = "reply timeout; outcome unknown, further commands blocked";
     }
   }
-  void send(const Single::Request & r) {dispatch<Single>(r, single, "/single_track/manage");}
+  void send(const Single::Request & r) {
+    if (config.perception_version == 1) {dispatch<Single>(r, single, "/single_track/manage"); return;}
+    SingleV2::Request request; request.operation = r.operation; request.image_header = r.image_header;
+    request.roi_x = r.roi_x; request.roi_y = r.roi_y; request.roi_width = r.roi_width;
+    request.roi_height = r.roi_height; request.class_name = r.class_name;
+    dispatch<SingleV2>(request, native_single, "/single_track/v2/manage");
+  }
   void send(const Angle::Request & r) {dispatch<Angle>(r, angle, "/gimbal/set_angle");}
   void send(const Tracking::Request & r) {dispatch<Tracking>(r, tracking, "/gimbal/set_tracking");}
   bool submit(Command command, const std::string & operation)
@@ -223,7 +238,24 @@ struct PeripheralControl::Impl
       single = node->create_client<Single>("/single_track/manage");
       angle = node->create_client<Angle>("/gimbal/set_angle");
       tracking = node->create_client<Tracking>("/gimbal/set_tracking");
-      single_sub = node->create_subscription<easyfly_msgs::msg::SingleTrackState>(
+      native_single = node->create_client<SingleV2>("/single_track/v2/manage");
+      if (config.perception_version == 2) {
+        native_single_sub = node->create_subscription<easyfly_msgs::msg::SingleTrackStateV2>(
+          "/perception/v2/single_track/state", rclcpp::SensorDataQoS(),
+          [this](easyfly_msgs::msg::SingleTrackStateV2::ConstSharedPtr m, const rclcpp::MessageInfo & info) {
+            std::lock_guard<std::mutex> lock(mutex);
+            const auto source = pc::writer(*node, "/perception/v2/single_track/state", info);
+            if (source.empty()) {data.single.reset(); data.native_single.reset(); return;}
+            const auto state = single_gate.observe(m->context, source);
+            if (state == pc::SourceGate::rejected) {return;}
+            if (state == pc::SourceGate::changed) {data.single.reset(); data.native_single.reset(); single_stamp = 0;}
+            try {
+              auto numeric = std::make_shared<const easyfly_msgs::msg::SingleTrackState>(pc::numeric_snapshot(*m));
+              receive<easyfly_msgs::msg::SingleTrackState>(numeric, data.single, single_stamp, data.single_receipt);
+              data.native_single = m;
+            } catch (const std::exception &) {data.single.reset(); data.native_single.reset();}
+          });
+      } else {single_sub = node->create_subscription<easyfly_msgs::msg::SingleTrackState>(
         "/single_track/state", rclcpp::SensorDataQoS().keep_last(1),
         [this](easyfly_msgs::msg::SingleTrackState::ConstSharedPtr m) {
           std::lock_guard<std::mutex> lock(mutex);
@@ -231,6 +263,7 @@ struct PeripheralControl::Impl
             m, data.single, single_stamp,
             data.single_receipt);
         });
+      }
       gimbal_sub = node->create_subscription<easyfly_msgs::msg::GimbalState>(
         "/gimbal/state", rclcpp::SensorDataQoS().keep_last(1),
         [this](easyfly_msgs::msg::GimbalState::ConstSharedPtr m) {
@@ -255,7 +288,7 @@ struct PeripheralControl::Impl
       std::lock_guard<std::mutex> lock(mutex);
       data.message = std::string("worker stopped: ") + e.what();
     }
-    executor.reset(); single_sub.reset(); gimbal_sub.reset();
+    executor.reset(); single_sub.reset(); native_single_sub.reset(); native_single.reset(); gimbal_sub.reset();
     single.reset(); angle.reset(); tracking.reset(); node.reset();
     if (context) {context->shutdown("peripheral observation stopped"); context.reset();}
     std::lock_guard<std::mutex> lock(mutex); data.uncertain |= data.pending;

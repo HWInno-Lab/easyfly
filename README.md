@@ -65,7 +65,7 @@ easyfly_ws/
 └── 内测手册.md              # 安装、操作与测试指南
 ```
 
-项目维护的算法部分目前包含 **4 个能力 API 和 17 个计算组件**。普通算法库通过安装后的 CMake target 或 Python module 消费；FAST-LIO、EGO、OpenVINS 等完整 ROS 工程保留其结构，通过平台适配接入。新增算法参见 [算法索引](src/algorithms/README.md) 和 [接入指南](src/algorithms/integration-guide.md)。
+项目维护的算法部分目前包含 **4 个能力 API 和 17 个计算组件**。普通算法库通过安装后的 CMake target 或 Python module 消费；FAST-LIO、EGO、OpenVINS 等完整 ROS 工程保留其结构，通过平台适配接入。新增算法参见 [算法索引](src/algorithms/README.md) 和 [接入指南](src/algorithms/docs/integration-guide.md)。
 
 ## 环境与安装准备
 
@@ -198,7 +198,7 @@ colcon test-result --test-result-base build-readonly --verbose
 | V-05／V-07：Gazebo／独立观察器历史退出异常 | 当前原场景及退出复测通过，缺少原异常阻塞堆栈，根因仍未关闭 |
 | B-01：FUEL 取消后重新探索偶发地图失效 | 按用户决定暂缓；正常复跑不替代失败／修复对照 |
 | V-09：近距离卡车车尾漏检 | 跟随控制已修，识别质量问题按用户决定保留 |
-| D-04：来源、许可与组合分发材料缺口 | 按用户决定暂缓；规范检查通过不等于许可齐备 |
+| D-04：来源、许可与组合分发材料缺口 | 2026-11-02 已恢复；EGO 原创移植贡献授权已落实，ikd-Tree／FAST-LIVO2 与 VIKIT／LKH 三项仍待权利人材料；见[专项记录](src/third_party/sourcing-and-patches.md#5-d-04-专项处理2026-11-02) |
 | 真实云台、D435i 双目惯性产品接入、目标机／传感器／飞控／RC、HIL／实飞 | 含待实现接口与待设备验收项；仿真不能代替实体链路 |
 | 最新版本自包含离线交付 | 旧 `offline-r3` 已清理，保留历史结论；最新 118 包仍需重建并验收完整离线归档 |
 
@@ -215,11 +215,11 @@ colcon test-result --test-result-base build-readonly --verbose
 | 桌面与连接操作 | [连接管理](src/easyfly_ui/easyfly_connection_manager/README.md) · [桌面操作](src/easyfly_ui/easyfly_desktop/OPERATIONS.md) |
 | 仿真与场景 | [仿真启动器](src/application/a3_mission/easyfly_sim_launcher/README.md) · [PX4 兼容输入](src/simulation/easyfly_px4_sitl/README.md) · [Fast DDS 兼容层](src/simulation/easyfly_fastdds_compat/README.md) |
 | SDK | [C++ SDK](src/application/a1_sdk/easyfly_core/README.md) · [Python 绑定](src/application/a1_sdk/easyfly_pybind/README.md) |
-| 算法开发 | [算法索引](src/algorithms/README.md) · [接口契约](src/algorithms/interface-contracts.md) · [构建约定](src/algorithms/build-conventions.md) · [新增算法接入](src/algorithms/integration-guide.md) |
+| 算法开发 | [算法索引](src/algorithms/README.md) · [接口契约](src/algorithms/docs/interface-contracts.md) · [构建约定](src/algorithms/docs/build-conventions.md) · [新增算法接入](src/algorithms/docs/integration-guide.md) |
 | 新增模块与专项复验 | [内测手册第 13 节](内测手册.md#13-定位与新增能力专项) · [多机仿真](src/simulation/easyfly_fleet_sim/README.md) · [集群规划](src/execution/e2_planning/easyfly_swarm_planner/README.md) |
 | 地图与精降 | [LiDAR Atlas](src/perception/p3_tracking/easyfly_lidar_atlas/README.md) · [双定位切换](src/perception/p3_tracking/easyfly_localization_failover/README.md) · [动态相机／移动板](src/execution/e3_control/easyfly_precision_landing/DYNAMIC.md) |
 | 网络与原始记录 | [Web](src/easyfly_ui/easyfly_web/README.md) · [远端管理](src/easyfly_ui/easyfly_connection_manager/REMOTE.md) · [独立录像／历史回放](src/communication/c3_media/easyfly_video_recorder/README.md) |
-| 定位与检测 | [OpenVINS](src/perception/p3_tracking/easyfly_openvins_integration/README.md) · [椭圆/彩线](src/algorithms/classical-detection.md) · [D435i 采集](src/application/a1_sdk/easyfly_params/config/sensors/README.md) |
+| 定位与检测 | [OpenVINS](src/perception/p3_tracking/easyfly_openvins_integration/README.md) · [椭圆/彩线](src/algorithms/docs/classical-detection.md) · [D435i 采集](src/application/a1_sdk/easyfly_params/config/sensors/README.md) |
 | 外部依赖与来源 | [第三方清单](src/third_party/catalog.json) · [来源与补丁](src/third_party/sourcing-and-patches.md) · [推理运行库](src/third_party/runtimes/README.md) |
 
 新增后端应同时提交实现、平台适配、配置、来源/许可证与对应检查。能力声明只填写实际支持项；变更公共消息或 C++ ABI 时同步重编译消费者。

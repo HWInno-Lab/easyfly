@@ -79,6 +79,11 @@ QJsonArray algorithm_fields()
     QJsonDocument::fromJson(algorithm_ui_schema).object()["fields"].toArray();
   return fields;
 }
+QJsonObject simulation_module_definitions()
+{
+  static const auto definitions = QJsonDocument::fromJson(simulation_module_schema).object();
+  return definitions;
+}
 QJsonObject algorithm_defaults()
 {
   QJsonObject result;
@@ -155,6 +160,7 @@ void Profile::validate() const
   }
   const auto strategy = algorithms["strategy"].toString();
   require(
+    !algorithms["start_navigation"].toBool() ||
     (strategy != "gcopter" && strategy != "super") || selected_profile == "navigation_dev",
     QStringLiteral("GCOPTER / SUPER 需要导航开发运行方案 navigation_dev"));
   require(

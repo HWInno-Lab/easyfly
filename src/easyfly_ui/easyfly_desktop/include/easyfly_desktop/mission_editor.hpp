@@ -48,7 +48,11 @@ public:
   void prepare_directory(const QString & path);
   void export_file(const QString & filename);
 
+protected:
+  void resizeEvent(QResizeEvent * event) override;
+
 private:
+  void reveal_geometry_canvas();
   struct Impl;
   std::unique_ptr<Impl> impl_;
 };

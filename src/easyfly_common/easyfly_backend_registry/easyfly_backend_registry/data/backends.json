@@ -1,0 +1,493 @@
+{
+  "schema_version": 1,
+  "backends": [
+    {
+      "capability": "multi_tracking",
+      "id": "sort",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_multi_object_tracking",
+        "symbol": "easyfly_multi_object_tracking::make_tracker"
+      },
+      "parameter_schema": "schemas/sort-parameters-v1.schema.json",
+      "input_contract": "easyfly.tracking.Frame@1",
+      "output_contract": "easyfly.tracking.UpdateResult@1",
+      "required_inputs": [
+        "detections"
+      ],
+      "controls": {
+        "reset": true,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission"
+        ]
+      }
+    },
+    {
+      "capability": "grid_planning",
+      "id": "astar",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_global_planner",
+        "symbol": "easyfly_global_planner::make_planner"
+      },
+      "parameter_schema": "schemas/astar-parameters-v1.schema.json",
+      "input_contract": "easyfly.grid_planning.Request@1",
+      "output_contract": "easyfly.grid_planning.PathResult@1",
+      "required_inputs": [
+        "occupancy_grid",
+        "start",
+        "goal"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": true
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission"
+        ]
+      }
+    },
+    {
+      "capability": "detection",
+      "id": "onnx",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_object_detection",
+        "symbol": "easyfly_object_detection::createBackend"
+      },
+      "parameter_schema": "schemas/onnx-parameters-v1.schema.json",
+      "input_contract": "easyfly.detection.DetectorBase.detect(BGR8)@1",
+      "output_contract": "easyfly.detection.Detection(original-pixel-xyxy)@1",
+      "required_inputs": [
+        "image"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure",
+          "ONNX Runtime compatible with the exported model",
+          "OpenCV BGR8 preprocessing",
+          "CUDA is requested only; the actual provider may fall back to CPU"
+        ],
+        "assets": [
+          "package://easyfly_object_detection/models/yolo11n.onnx"
+        ],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Current adapter uses the reviewed YOLO letterbox/output layout"
+        ]
+      }
+    },
+    {
+      "capability": "single_tracking",
+      "id": "csrt",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_single_object_tracking",
+        "symbol": "easyfly_single_object_tracking::make_tracker"
+      },
+      "parameter_schema": "schemas/csrt-parameters-v1.schema.json",
+      "input_contract": "easyfly.single_tracking.Tracker.initialize(BGR8,pixel-ROI)@1",
+      "output_contract": "easyfly.single_tracking.Result@1",
+      "required_inputs": [
+        "image",
+        "roi"
+      ],
+      "controls": {
+        "reset": true,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure",
+          "OpenCV tracking module (CSRT)"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "No calibrated confidence; explicit source-image ROI required"
+        ]
+      }
+    },
+    {
+      "capability": "single_tracking",
+      "id": "kcf",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_single_object_tracking",
+        "symbol": "easyfly_single_object_tracking::make_tracker"
+      },
+      "parameter_schema": "schemas/kcf-parameters-v1.schema.json",
+      "input_contract": "easyfly.single_tracking.Tracker.initialize(BGR8,pixel-ROI)@1",
+      "output_contract": "easyfly.single_tracking.Result@1",
+      "required_inputs": [
+        "image",
+        "roi"
+      ],
+      "controls": {
+        "reset": true,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure",
+          "OpenCV 4 tracking module (KCF), provided through easyfly_kcf"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "No calibrated confidence; explicit source-image ROI required",
+          "Tracking loss or changed image dimensions require explicit reinitialization"
+        ]
+      }
+    },
+    {
+      "capability": "localization",
+      "id": "fast_lio",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_fast_lio_integration",
+        "file": "fastlio.launch.py"
+      },
+      "parameter_schema": "schemas/localization-parameters-v1.schema.json",
+      "input_contract": "backend-specific calibrated sensor stream; see implementation launch/config",
+      "output_contract": "LocalizationStatus + backend odometry; navigation via existing guarded adapter",
+      "required_inputs": [
+        "pointcloud",
+        "imu"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Sensor calibration and navigation/external-vision admission remain backend-specific"
+        ]
+      }
+    },
+    {
+      "capability": "localization",
+      "id": "openvins",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_openvins_integration",
+        "file": "openvins.launch.py"
+      },
+      "parameter_schema": "schemas/localization-parameters-v1.schema.json",
+      "input_contract": "backend-specific calibrated sensor stream; see implementation launch/config",
+      "output_contract": "LocalizationStatus + backend odometry; navigation via existing guarded adapter",
+      "required_inputs": [
+        "image",
+        "imu"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Sensor calibration and navigation/external-vision admission remain backend-specific"
+        ]
+      }
+    },
+    {
+      "capability": "localization",
+      "id": "fast_livo2",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_fast_livo2_integration",
+        "file": "fastlivo.launch.py"
+      },
+      "parameter_schema": "schemas/localization-parameters-v1.schema.json",
+      "input_contract": "backend-specific calibrated sensor stream; see implementation launch/config",
+      "output_contract": "LocalizationStatus + backend odometry; navigation via existing guarded adapter",
+      "required_inputs": [
+        "image",
+        "pointcloud",
+        "imu"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Sensor calibration and navigation/external-vision admission remain backend-specific"
+        ]
+      }
+    },
+    {
+      "capability": "localization",
+      "id": "orbslam3",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_orbslam3_integration",
+        "file": "orbslam3.launch.py"
+      },
+      "parameter_schema": "schemas/localization-parameters-v1.schema.json",
+      "input_contract": "backend-specific calibrated sensor stream; see implementation launch/config",
+      "output_contract": "LocalizationStatus + backend odometry; navigation via existing guarded adapter",
+      "required_inputs": [
+        "image",
+        "depth"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure",
+          "Select the settings template matching sensor_mode and provide calibrated RGB-D/IMU inputs"
+        ],
+        "assets": [
+          "package://easyfly_orbslam3_core/vocabulary/ORBvoc.txt",
+          "package://easyfly_orbslam3_integration/config/gazebo_rgbd.yaml",
+          "package://easyfly_orbslam3_integration/config/gazebo_rgbd_imu.yaml"
+        ],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Sensor calibration and navigation/external-vision admission remain backend-specific"
+        ]
+      }
+    },
+    {
+      "capability": "trajectory_planning",
+      "id": "ego",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_local_planner",
+        "file": "local_planner.launch.py"
+      },
+      "parameter_schema": "schemas/trajectory-parameters-v1.schema.json",
+      "input_contract": "NavigationSession + backend-specific map/vehicle input",
+      "output_contract": "managed PositionCommand + session feedback/stop acknowledgement",
+      "required_inputs": [
+        "pointcloud",
+        "odometry",
+        "navigation_session"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Cancellation/deadline are provided by the existing managed ROS session/action adapter; no generic 3D computation API is claimed"
+        ]
+      }
+    },
+    {
+      "capability": "trajectory_planning",
+      "id": "gcopter",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_trajectory_optimizer",
+        "file": "gcopter.launch.py"
+      },
+      "parameter_schema": "schemas/trajectory-parameters-v1.schema.json",
+      "input_contract": "NavigationSession + backend-specific map/vehicle input",
+      "output_contract": "managed PositionCommand + session feedback/stop acknowledgement",
+      "required_inputs": [
+        "voxel_grid",
+        "vehicle_state",
+        "navigation_session"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Cancellation/deadline are provided by the existing managed ROS session/action adapter; no generic 3D computation API is claimed"
+        ]
+      }
+    },
+    {
+      "capability": "trajectory_planning",
+      "id": "super",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_super_planner",
+        "file": "super.launch.py"
+      },
+      "parameter_schema": "schemas/trajectory-parameters-v1.schema.json",
+      "input_contract": "NavigationSession + backend-specific map/vehicle input",
+      "output_contract": "managed PositionCommand + session feedback/stop acknowledgement",
+      "required_inputs": [
+        "voxel_grid",
+        "vehicle_state",
+        "navigation_session"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Cancellation/deadline are provided by the existing managed ROS session/action adapter; no generic 3D computation API is claimed"
+        ]
+      }
+    },
+    {
+      "capability": "exploration",
+      "id": "fuel",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "ros_launch",
+        "package": "easyfly_fuel_exploration",
+        "file": "fuel.launch.py"
+      },
+      "parameter_schema": "schemas/exploration-parameters-v1.schema.json",
+      "input_contract": "Explore action + GCOPTER map/state",
+      "output_contract": "managed NavigateTo child actions + Explore feedback/terminal",
+      "required_inputs": [
+        "voxel_grid",
+        "vehicle_state"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": false
+      },
+      "scope": [
+        "simulation"
+      ],
+      "runtime": {
+        "requirements": [
+          "Install the implementation package and its declared runtime dependency closure"
+        ],
+        "assets": [],
+        "limitations": [
+          "Metadata presence is not runtime readiness or flight permission",
+          "Cancellation/deadline are provided by the existing managed ROS session/action adapter; no generic 3D computation API is claimed",
+          "B-01 cancel/re-explore limitation remains open; do not infer acceptance from registration"
+        ]
+      }
+    }
+  ]
+}

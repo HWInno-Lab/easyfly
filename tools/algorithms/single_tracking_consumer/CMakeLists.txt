@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16)
+project(installed_single_tracking_consumer LANGUAGES CXX)
+find_package(easyfly_single_object_tracking REQUIRED)
+add_executable(single_tracking_consumer main.cpp)
+target_link_libraries(single_tracking_consumer PRIVATE
+  easyfly_single_object_tracking::easyfly_single_object_tracking_backends)
+target_compile_options(single_tracking_consumer PRIVATE -Wall -Wextra -Wpedantic -Werror)

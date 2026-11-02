@@ -27,4 +27,5 @@
   </export>
   <depend>std_msgs</depend>
   <depend>jsoncpp</depend>
+  <depend>easyfly_perception_contracts</depend>
 </package>

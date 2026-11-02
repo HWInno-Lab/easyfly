@@ -13,6 +13,9 @@
 
 """Consume exact visual/depth/calibration tuples and source-time transforms for one task."""
 
+from easyfly_perception_contracts import NativeSubscription, SourceGate, writer, prediction_snapshot, world_valid
+from easyfly_msgs.msg import TargetPredictionArrayV2, ClassifiedObstacleArrayV2
+
 from collections import OrderedDict
 import math
 import time
@@ -42,6 +45,9 @@ class Inputs(Node):
         super().__init__('visual_navigation', context=context, parameter_overrides=[
             Parameter('use_sim_time', value=config['use_sim_time'])])
         self.config = config
+        self.v2 = config.get('perception_version', 1) == 2
+        self.native_prediction = self.native_semantic = None
+        self.native_gates = dict(prediction=SourceGate(), semantic=SourceGate())
         self.streams = {}
         self.topics = dict(observation=config['observation_topic'], depth=config['depth_topic'],
                            info=config['camera_info_topic'], state='/uav_state',
@@ -52,11 +58,20 @@ class Inputs(Node):
         if config['use_predictions']:
             self.topics['prediction'] = '/target_predictions'
             kinds['prediction'] = TargetPredictionArray
+        if self.v2:
+            self.topics['semantic'] = '/perception/v2/obstacles_classified'
+            kinds['semantic'] = ClassifiedObstacleArrayV2
+            if config['use_predictions']:
+                self.topics['prediction'] = '/perception/v2/predictions'
+                kinds['prediction'] = TargetPredictionArrayV2
         for key, topic in self.topics.items():
             self.streams[key] = OrderedDict()
-            self.create_subscription(kinds[key], topic,
-                                     lambda message, name=key: self.receive(name, message),
-                                     qos_profile_sensor_data)
+            if self.v2 and key in ('prediction', 'semantic'):
+                NativeSubscription(self, kinds[key], topic, self.native_receiver(key))
+            else:
+                self.create_subscription(kinds[key], topic,
+                                         lambda message, name=key: self.receive(name, message),
+                                         qos_profile_sensor_data)
         self.clock_ns = 0
         self.clock_at = self.discovery_at = 0.
         self.writers = None
@@ -72,6 +87,46 @@ class Inputs(Node):
         self.listener = TransformListener(self.buffer, self)
         self.trajectory_state = self.create_client(GetTrajectoryState,
                                                    '/flight_control/trajectory_state')
+
+    def native_receiver(self, key):
+        def receive(message, info):
+            topic = self.topics[key]
+            source = writer(self, topic, info)
+            if source is None:
+                self.fault = 'ambiguous_native_' + key
+                self.streams[key].clear()
+                return
+            context = message.context if key == 'prediction' else message.semantic_source.context
+            # Geometry without semantic association remains useful and is not identity evidence.
+            has_context = key == 'prediction' or any(context.producer_session_id.uuid)
+            if has_context:
+                gate = self.native_gates[key]
+                if not gate.observe(context, source):
+                    # Geometry advances independently; identical semantic evidence may
+                    # accompany a new geometry frame without renewing its source age.
+                    if not (key == 'semantic' and self.native_semantic is not None and
+                            bytes(context.producer_session_id.uuid) == gate.current and
+                            context.epoch == gate.epoch and context.sequence == gate.sequence and source == gate.writer and
+                            message.semantic_source == self.native_semantic.semantic_source):
+                        return
+                if gate.changed:
+                    self.fault = 'native_' + key + '_source_changed'
+                    self.streams[key].clear()
+                    return
+            try:
+                if key == 'prediction':
+                    numeric = prediction_snapshot(message)
+                    self.native_prediction = message
+                else:
+                    if has_context and not world_valid(message.semantic_source):
+                        raise ValueError('invalid semantic provenance')
+                    numeric = message.geometry
+                    self.native_semantic = message
+                self.receive(key, numeric)
+            except ValueError as error:
+                self.fault = str(error)
+                self.streams[key].clear()
+        return receive
 
     def receive(self, key, message):
         """Bound caches and never renew receipt time by repeating a source stamp."""

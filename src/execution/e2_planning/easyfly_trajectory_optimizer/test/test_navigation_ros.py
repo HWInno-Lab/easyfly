@@ -33,7 +33,7 @@ from rclpy.qos import DurabilityPolicy, QoSProfile, qos_profile_sensor_data
 
 class Harness:
     def __init__(self, tmp_path, allow_policy=False, dynamic=False, native_fuel=False):
-        os.environ["ROS_DOMAIN_ID"] = "197"
+        os.environ["ROS_DOMAIN_ID"] = os.environ.get("EASYFLY_TEST_ROS_DOMAIN_ID", "197")
         os.environ["ROS_LOCALHOST_ONLY"] = "1"
         rclpy.init()
         self.node = rclpy.create_node("gcopter_component_fixture")

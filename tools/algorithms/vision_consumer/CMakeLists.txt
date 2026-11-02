@@ -15,6 +15,7 @@ if(EASYFLY_CHECK_LEGACY)
   find_package(easyfly_apriltag_detection REQUIRED)
   find_package(easyfly_single_object_tracking REQUIRED)
   target_compile_definitions(vision_consumer PRIVATE EASYFLY_CHECK_LEGACY)
+  target_link_libraries(vision_consumer PRIVATE easyfly_object_detection::easyfly_object_detection_backends)
   target_include_directories(vision_consumer PRIVATE ${easyfly_object_detection_INCLUDE_DIRS}
     ${easyfly_apriltag_detection_INCLUDE_DIRS} ${easyfly_single_object_tracking_INCLUDE_DIRS})
 endif()

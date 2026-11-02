@@ -174,6 +174,7 @@ def effective_px4_directory(requested=''):
 
 def inventory(px4_directory=''):
     from easyfly_px4_sitl.scene_environment import installed_catalog
+    from .scene_previews import get_scene_preview
     requested = effective_px4_directory(px4_directory)
     catalog, notes = installed_catalog(px4_dir=Path(requested) if requested else None)
     rows = []
@@ -182,18 +183,17 @@ def inventory(px4_directory=''):
         preview = []
         world = scene['world']
         try:
-            base = Path(catalog.packages[world['package']]).resolve()
-            path = (base / world['path']).resolve()
-            path.relative_to(base)
+            path = catalog.resolve(world)
             if path.stat().st_size <= 2 * 1024 * 1024:
                 data = path.read_bytes()
                 if hashlib.sha256(data).hexdigest() == world['sha256']:
                     preview = preview_geometry(data)
         except (OSError, ValueError, KeyError, ET.ParseError):
             pass
+        image = get_scene_preview(catalog, scene)
         rows.append(dict(id=key, name=scene['name'], status=scene['status'],
                          profiles=scene['supported_profiles'], validation=report,
-                         preview=preview))
+                         preview=preview, preview_image=image))
     return dict(scenes=rows, notes=notes)
 
 
@@ -202,6 +202,18 @@ def check(profile):
     from ament_index_python.packages import get_package_share_directory
     from easyfly_params.algorithms import validate
     algorithms = validate(profile.get('algorithms', {}))
+    if profile['mode'] == 'sitl':
+        from easyfly_params.simulation import resolve_simulation_modules
+        modules = resolve_simulation_modules(profile['selected_profile'], algorithms)
+        algorithms = modules['options']
+        for module, package in {
+                'pixel_to_3d': 'easyfly_pixel_to_3d',
+                'pointcloud_filter': 'easyfly_pointcloud_filter',
+                'semantic_map': 'easyfly_semantic_map',
+                'target_prediction': 'easyfly_target_prediction',
+                'target_tracking': 'easyfly_target_tracking'}.items():
+            if module in modules['effective']:
+                get_package_share_directory(package)
     for kind in ('ellipse', 'color_line'):
         if algorithms[kind + '_enabled']:
             get_package_share_directory('easyfly_' + kind + '_detection')
@@ -218,9 +230,9 @@ def check(profile):
             get_package_share_directory('easyfly_openvins_integration')
         elif backend in ('fast_livo2', 'orbslam3'):
             get_package_share_directory('easyfly_' + backend + '_integration')
-        if algorithms['strategy'] in ('gcopter', 'super'):
+        if algorithms['start_navigation'] and algorithms['strategy'] in ('gcopter', 'super'):
             get_package_share_directory('easyfly_trajectory_optimizer')
-        if algorithms['strategy'] == 'super':
+        if algorithms['start_navigation'] and algorithms['strategy'] == 'super':
             get_package_share_directory('easyfly_super_planner')
         if algorithms['exploration'] == 'fuel':
             get_package_share_directory('easyfly_fuel_exploration')
@@ -265,7 +277,12 @@ def check(profile):
         path = Path(get_package_prefix(package)) / 'lib' / package / executable
         if not path.is_file() or not os.access(path, os.X_OK):
             raise ValueError('缺少已安装的启动程序：' + str(path))
-    return dict(ok=True, fcu_url=fcu, gcs_url=gcs,
+    resolved = None
+    if profile['mode'] == 'sitl':
+        from easyfly_params.backends import resolve_selection, check_dependencies
+        resolved = resolve_selection(profile['selected_profile'], profile.get('algorithms', {}))
+        resolved['preflight'] = check_dependencies(resolved)
+    return dict(ok=True, effective_backends=resolved, fcu_url=fcu, gcs_url=gcs,
                 selected_px4=str(selected) if selected else '')
 
 
@@ -273,7 +290,7 @@ def simulation_selection(profile, algorithms):
     """Reject incompatible selections before reserving or starting a backend."""
     from easyfly_params.algorithms import localization_backend
     backend = localization_backend(algorithms, profile['selected_profile'])
-    if algorithms['strategy'] in ('gcopter', 'super'):
+    if profile.get('algorithms', {}).get('start_navigation', True) and algorithms['strategy'] in ('gcopter', 'super'):
         if profile['selected_profile'] != 'navigation_dev':
             raise ValueError('GCOPTER / SUPER 需要导航开发运行方案 navigation_dev')
     if algorithms['exploration'] == 'fuel':
@@ -311,10 +328,14 @@ def command(profile, algorithm_runtime=None):
     if gcs:
         common.append(f'gcs_url:={gcs}')
     if profile['mode'] == 'sitl':
-        from easyfly_params.algorithms import validate
+        from easyfly_params.algorithms import validate, fields
         algorithms = validate(profile.get('algorithms', {}))
+        from easyfly_params.simulation import resolve_simulation_modules
+        algorithms = resolve_simulation_modules(profile['selected_profile'], algorithms)['options']
         backend = simulation_selection(profile, algorithms)
-        extra = []
+        version = os.environ.get('EASYFLY_PERCEPTION_VERSION', '1')
+        if version not in ('1','2'): raise ValueError('EASYFLY_PERCEPTION_VERSION must be 1 or 2')
+        extra = ['perception_version:=' + version]
         if profile['selected_profile'] == 'navigation_dev':
             navigation = {'openvins': 'openvins_navigation',
                           'fast_livo2': 'fastlivo_navigation',
@@ -340,7 +361,7 @@ def command(profile, algorithm_runtime=None):
                 'profile:=' + profile['selected_profile'],
                 'scene:=' + profile['simulation']['scene'],
                 'headless:=' + str(not profile['simulation']['gazebo_gui']).lower(),
-                'algorithms_json:=' + json.dumps(algorithms, separators=(',', ':')),
+                'algorithms_json:=' + json.dumps({k:v for k,v in algorithms.items() if k in profile.get('algorithms', {}) or k not in {f['key'] for f in fields() if f.get('backend_role')}}, separators=(',', ':')),
                 'algorithm_image_topic:=' + (topic or '/camera/color/image_raw'),
                 'rviz:=false', *common, *extra]
     return ['ros2', 'launch', 'easyfly_mavlink_bridge', 'mavlink_bridge.launch.py',
@@ -379,6 +400,15 @@ def reserve(profile):
         raise
 
 
+def failure_code(error):
+    """Classify startup failures without eagerly importing the ROS runtime."""
+    if getattr(error, 'code', None): return error.code
+    if isinstance(error, (ImportError, FileNotFoundError)) or (
+            isinstance(error, LookupError) and type(error).__module__.startswith('ament_index_python.')):
+        return 'dependency_missing'
+    return 'unsupported_configuration' if isinstance(error, ValueError) else 'backend_failed'
+
+
 def emit(value):
     global _OUTPUT_AVAILABLE
     if not _OUTPUT_AVAILABLE:
@@ -413,6 +443,7 @@ class Backend:
         self.context = None
         self.executor = None
         self.error = None
+        self.backend_monitor = None
         self.action_states = {}
         self.owner_channel = None
         self.clock_ns = 0
@@ -455,6 +486,9 @@ class Backend:
             parameter_overrides=[Parameter('use_sim_time', value=self.profile['simulation_time'])])
         self.executor = SingleThreadedExecutor(context=self.context)
         self.executor.add_node(self.node)
+        if self.result.get('effective_backends'):
+            from easyfly_perception_contracts.backend_status import BackendMonitor
+            self.backend_monitor = BackendMonitor(self.node, self.result['effective_backends'])
         self.node.create_subscription(State, '/mavros/state', self.on_state,
                                       qos_profile_sensor_data)
         self.node.create_subscription(ExtendedState, '/mavros/extended_state', self.on_landed,
@@ -626,6 +660,8 @@ class Backend:
                     error=getattr(self, 'error', None) or '',
                     diagnosis=diagnosis, recovery=recovery, clock_ns=self.clock_ns,
                     clock_age=clock_age,
+                    algorithm_backends=(self.backend_monitor.snapshot() if getattr(self, 'backend_monitor', None) else {}),
+                    effective_backends=self.result.get('effective_backends'),
                     dds=getattr(self, "dds", {}),
                     pid=self.process.pid if self.process else None,
                     fcu_url=self.result['fcu_url'], gcs_url=self.result['gcs_url'],
@@ -744,7 +780,8 @@ def read_profile():
         line.extend(value)
     if not line.endswith(b'\n') or len(line) > MAX_INPUT:
         raise ValueError('缺少有界配置请求')
-    value = json.loads(line)
+    from easyfly_backend_registry import loads
+    value = loads(line)
     if not isinstance(value, dict):
         raise ValueError('配置必须是对象')
     return value
@@ -800,6 +837,7 @@ def main():
             worker.state.clear()
             return run_owned(worker)
         value = dict(phase='failed', process_running=False, exit_code=2,
+                     error_code=failure_code(exc),
                      error=f'{type(exc).__name__}: {exc}',
                      **(startup.snapshot() if startup else {}))
         if args.control_directory:

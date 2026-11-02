@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "scope": "Match original failing cases and diagnostics; a wrapper name alone never excuses a new failure",
+  "cases": [
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_mission_geometry",
+      "case": "ActualScreenshotsAndClicksNeverUseTaskRpc",
+      "class": "easyfly_desktop.MissionGeometryEditor",
+      "contains": "window.rect().contains(visible)"
+    },
+    {
+      "package": "easyfly_connection_manager",
+      "wrapper": "test_installed_scenes",
+      "case": "test_installed_base_scene_passes_the_actual_preflight[warehouse_aws_v1]",
+      "contains": "package 'easyfly_mavros_runtime' not found"
+    },
+    {
+      "package": "easyfly_connection_manager",
+      "wrapper": "test_installed_scenes",
+      "case": "test_installed_base_scene_passes_the_actual_preflight[office_willowgarage_v1]",
+      "contains": "required reviewed PX4 compatibility missing: mag_lpf_interval_v1"
+    }
+  ]
+}

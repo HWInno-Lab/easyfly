@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.8)
 project(easyfly_ui_bridge)
 
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_backend_registry REQUIRED)
+include_directories(${easyfly_backend_registry_INCLUDE_DIRS})
+find_package(easyfly_perception_contracts REQUIRED)
+include_directories(${easyfly_perception_contracts_INCLUDE_DIRS})
 find_package(rclcpp REQUIRED)
 find_package(easyfly_core REQUIRED)
 find_package(easyfly_msgs REQUIRED)
@@ -16,7 +20,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(${PROJECT_NAME} SHARED src/model.cpp src/mission_details.cpp src/observer.cpp
   src/camera_observations.cpp src/special_observations.cpp)
 # Algorithm observations change UiSnapshot's ABI; reject older bridge libraries.
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 7.0.0 SOVERSION 7)
+set_target_properties(${PROJECT_NAME} PROPERTIES VERSION 8.0.0 SOVERSION 8)
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 target_include_directories(${PROJECT_NAME} PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

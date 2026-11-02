@@ -37,11 +37,15 @@ def generate_launch_description():
                 package="easyfly_multi_object_tracking",
                 plugin="easyfly_multi_object_tracking::TrackingNode",
                 name="easyfly_multi_object_tracking",
-                parameters=[{"use_sim_time": ParameterValue(
+                parameters=[{"tracker_backend": ParameterValue(LaunchConfiguration("backend"), value_type=str),
+                    "backend_parameters": ParameterValue(LaunchConfiguration("backend_parameters"), value_type=str),
+                    "perception_version": ParameterValue(LaunchConfiguration("perception_version", default="1"), value_type=int), "use_sim_time": ParameterValue(
                     LaunchConfiguration('use_sim_time'), value_type=bool)}],
             ),
         ],
         output="screen",
     )
     return LaunchDescription([
+        DeclareLaunchArgument("backend", default_value=""),
+        DeclareLaunchArgument("backend_parameters", default_value=""),
         process_nice, DeclareLaunchArgument('use_sim_time', default_value='true'), container])

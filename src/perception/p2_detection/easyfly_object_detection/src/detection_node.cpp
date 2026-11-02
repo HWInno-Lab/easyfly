@@ -1,3 +1,5 @@
+#include "easyfly_perception_contracts/backend_status.hpp"
+#include "easyfly_backend_registry/configuration_yaml.hpp"
 // Copyright 2026 EasyFly Project
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,6 +45,7 @@
 #include <sensor_msgs/msg/image.hpp>
 #include <opencv2/opencv.hpp>
 #include "easyfly_object_detection/backend_factory.hpp"
+#include "easyfly_perception_contracts/contracts.hpp"
 namespace easyfly_object_detection
 {
 namespace
@@ -165,9 +168,23 @@ public:
   : Node("easyfly_object_detection", options)
   {
     loadParams();
+    const int version = declare_parameter<int>("perception_version", 1, easyfly::perception::frozen());
+    if (version != 1 && version != 2) {throw std::invalid_argument("perception_version must be 1 or 2");}
+    v2_ = version == 2;
+    legacy_publish_ = declare_parameter<bool>("publish_legacy_compatibility", !v2_, easyfly::perception::frozen());
+    camera_ = declare_parameter<std::string>("camera_id", "front", easyfly::perception::frozen());
+    optical_ = declare_parameter<std::string>("optical_frame", "camera_color_optical_frame", easyfly::perception::frozen());
+    max_age_ = declare_parameter<double>("max_age_seconds", .5);
+    if (max_age_ <= 0 || !std::isfinite(max_age_)) {throw std::invalid_argument("max_age_seconds");}
+    v2_pub_ = create_publisher<easyfly_msgs::msg::DetectionArrayV2>("/perception/v2/detections", 10);
     // 后端初始化 + 预热 (阻塞 ~ 秒级, 放在构造函数保证就绪后才开始订阅)
-    detector_ = createBackend(params_);
-    detector_->warmUp();
+    backend_status_ = std::make_unique<easyfly::perception::BackendStatus>(*this, "detection", backend_config_.backend, max_age_);
+    try {
+      backend_config_ = detector_factory().resolve(backend_config_);
+      detector_ = createBackend(backend_config_);
+      detector_->warmUp();
+      backend_status_->created(detector_->params().backend, easyfly::backends::parameters_json(backend_config_.parameters), detector_->activeProvider());
+    } catch (const std::exception & e) {backend_status_->failed(e.what()); backend_status_->publish(); throw;}
     detections_pub_ = create_publisher<easyfly_msgs::msg::DetectionInfoArray>(
       params_.output_topic, 10);
     if (params_.publish_debug_image) {
@@ -184,13 +201,16 @@ public:
     }
     image_sub_ = create_subscription<sensor_msgs::msg::Image>(
       params_.input_topic, input_qos,
-      [this](sensor_msgs::msg::Image::ConstSharedPtr msg) {
+      [this](sensor_msgs::msg::Image::ConstSharedPtr msg, const rclcpp::MessageInfo & info) {
+        const auto identity = v2_ ? easyfly::perception::writer(*this, params_.input_topic, info) : std::string{};
+        if (v2_ && identity.empty()) {return;}
         const auto received_at = SteadyClock::now();
         std::lock_guard<std::mutex> lk(pending_mtx_);
         ++callback_counters_.received;
         if (pending_ != nullptr) {
           ++callback_counters_.overwritten;
         }
+        pending_writer_ = identity;
         pending_ = msg;                       // 最新帧覆盖旧帧 (丢帧节流)
         pending_received_at_ = received_at;
         pending_cv_.notify_one();
@@ -203,7 +223,7 @@ public:
       "检测节点启动: %s → %s (%s, imgsz=%d, conf=%.2f, perf_period=%.1fs, "
       "input_qos=%s/volatile/keep_last(%d))",
       params_.input_topic.c_str(), params_.output_topic.c_str(),
-      params_.backend.c_str(), params_.imgsz, params_.conf_threshold,
+      params_.backend.c_str(), detector_->params().imgsz, detector_->params().conf_threshold,
       params_.performance_log_period_s, params_.input_qos_reliability.c_str(),
       params_.input_qos_depth);
   }
@@ -221,11 +241,11 @@ private:
   void loadParams()
   {
     // config 文件路径 (launch 传入) 或默认包内 detection.yaml
-    declare_parameter<std::string>("config_file", "");
+    declare_parameter<std::string>("config_file", "", easyfly::perception::frozen());
     // Launch-facing overrides use the value "auto" to preserve the YAML
     // setting. This keeps the default CUDA path unchanged while allowing
     // an acceptance run to request CPU explicitly without copying YAML.
-    declare_parameter<std::string>("use_gpu_override", "auto");
+    declare_parameter<std::string>("use_gpu_override", "auto", easyfly::perception::frozen());
     declare_parameter<std::string>("publish_debug_image_override", "auto");
     declare_parameter<std::string>("performance_log_period_s_override", "auto");
     declare_parameter<std::string>("input_qos_reliability_override", "auto");
@@ -237,8 +257,9 @@ private:
     }
     YAML::Node root = YAML::LoadFile(cfg);
     const auto & d = root["detection"];
-    params_.backend = d["backend"].as<std::string>("onnx");
-    params_.model_path = d["model_path"].as<std::string>();
+    params_.backend = declare_parameter<std::string>("backend", d["backend"].as<std::string>("onnx"), easyfly::perception::frozen());
+    if (params_.backend.empty()) params_.backend = d["backend"].as<std::string>("onnx");
+    params_.model_path = d["model_path"].as<std::string>("");
     const std::string packaged_model = "package://easyfly_object_detection/";
     if (params_.model_path.rfind(packaged_model, 0) == 0) {
       params_.model_path = ament_index_cpp::get_package_share_directory(
@@ -309,9 +330,36 @@ private:
     if (d["class_names"]) {
       params_.class_names = d["class_names"].as<std::vector<std::string>>();
     }
-    if (params_.class_names.empty()) {
+    if (params_.backend == "onnx" && params_.class_names.empty() && !d["backend_parameters"]) {
       RCLCPP_FATAL(get_logger(), "detection.yaml 缺少 class_names");
       throw std::runtime_error("class_names empty");
+    }
+    backend_config_ = params_.backend == "onnx" ? detector_config(params_) :
+      easyfly::backends::BackendConfig{params_.backend, {}};
+    const auto native_parameters = easyfly::backends::parameters_from_yaml(d["backend_parameters"], "detection", params_.backend);
+    YAML::Node legacy_parameters(YAML::NodeType::Map);
+    for (const auto & entry : native_parameters) if (d[entry.first]) legacy_parameters[entry.first] = d[entry.first];
+    const auto legacy_values = easyfly::backends::parameters_from_yaml(legacy_parameters, "detection", params_.backend);
+    for (const auto & entry : legacy_values) if (native_parameters.at(entry.first) != entry.second)
+      throw std::invalid_argument("legacy/new detector parameter conflict: " + entry.first);
+    easyfly::backends::overlay(backend_config_.parameters, native_parameters);
+    if (params_.backend == "onnx" && use_gpu_override != "auto" && !use_gpu_override.empty())
+      backend_config_.parameters["use_gpu"] = params_.use_gpu;
+    const auto backend_override = declare_parameter<std::string>("backend_parameters", "", easyfly::perception::frozen());
+    if (!backend_override.empty()) {
+      const auto cli_parameters = easyfly::backends::parameters_from_yaml(
+        YAML::Load(backend_override), "detection", params_.backend);
+      if (params_.backend == "onnx" && use_gpu_override != "auto" && !use_gpu_override.empty() &&
+          cli_parameters.count("use_gpu") && cli_parameters.at("use_gpu") != easyfly::backends::Value{params_.use_gpu})
+        throw std::invalid_argument("conflicting CLI use_gpu parameters");
+      easyfly::backends::overlay(backend_config_.parameters, cli_parameters);
+    }
+    // Asset resolution stays at the platform boundary, not in the compute creator.
+    auto model = backend_config_.parameters.find("model_path");
+    if (model != backend_config_.parameters.end()) {
+      auto & path = std::get<std::string>(model->second);
+      if (path.rfind(packaged_model, 0) == 0) path = ament_index_cpp::get_package_share_directory(
+        "easyfly_object_detection") + "/" + path.substr(packaged_model.size());
     }
     max_interval_ = std::chrono::duration<double>(
       1.0 / d["max_fps"].as<double>(30.0));
@@ -418,13 +466,36 @@ private:
     while (!stop_) {
       sensor_msgs::msg::Image::ConstSharedPtr frame;
       SteadyClock::time_point received_at;
+      std::string source_writer;
       {
         std::unique_lock<std::mutex> lk(pending_mtx_);
         pending_cv_.wait(lk, [this] {return stop_ || pending_ != nullptr;});
         if (stop_) {return;}
         frame = pending_;
+        source_writer = pending_writer_;
         received_at = pending_received_at_;
         pending_ = nullptr;
+      }
+      if (v2_) {
+        const auto clock_now = now().nanoseconds();
+        if (source_writer != source_writer_ || clock_now < last_clock_) {
+          producer_.reset(); last_source_ = 0; source_writer_ = source_writer;
+        }
+        last_clock_ = clock_now;
+        const auto source = easyfly::perception::stamp(frame->header.stamp);
+        if (source <= last_source_) {continue;}
+        last_source_ = source;
+        if (frame->header.frame_id != optical_ || !frame->width || !frame->height ||
+          uint64_t(frame->width)*frame->height > 2073600 ||
+          (frame->encoding != "rgb8" && frame->encoding != "bgr8") ||
+          frame->step < uint64_t(frame->width)*3 || frame->data.size() != uint64_t(frame->step)*frame->height) {
+          publishError(*frame, easyfly::perception::Context::INVALID_INPUT, "invalid_image_layout"); continue;
+        }
+        if (clock_now <= 0 || source <= 0 || source > clock_now + 200000000 ||
+          clock_now-source > static_cast<int64_t>(max_age_*1e9) ||
+          std::chrono::duration<double>(SteadyClock::now()-received_at).count() > max_age_) {
+          publishError(*frame, easyfly::perception::Context::STALE, "stale_image"); continue;
+        }
       }
       const auto processing_start = SteadyClock::now();
       const bool metrics_enabled = params_.performance_log_period_s > 0.0;
@@ -435,13 +506,37 @@ private:
       }
       const auto color_conversion_start =
         metrics_enabled ? SteadyClock::now() : SteadyClock::time_point{};
-      cv::Mat bgr = rgb8_to_bgr_mat(*frame);
+      cv::Mat bgr = v2_ && frame->encoding == "bgr8" ? cv::Mat(frame->height, frame->width, CV_8UC3,
+        const_cast<uint8_t *>(frame->data.data()), frame->step).clone() : rgb8_to_bgr_mat(*frame);
       if (metrics_enabled) {
         timing.color_conversion_ms = std::chrono::duration<double, std::milli>(
           SteadyClock::now() - color_conversion_start).count();
       }
       std::vector<Detection> dets;
-      detector_->detect(bgr, dets, metrics_enabled ? &timing : nullptr);
+      try {detector_->detect(bgr, dets, metrics_enabled ? &timing : nullptr);} catch (const std::exception & e) {
+        if (!v2_) {throw;}
+        publishError(*frame, easyfly::perception::Context::BACKEND_ERROR, e.what()); continue;
+      }
+      if (v2_) {
+        const auto sources = get_publishers_info_by_topic(params_.input_topic);
+        if (sources.size() != 1 || std::string(reinterpret_cast<const char *>(sources.front().endpoint_gid().data()),
+          sources.front().endpoint_gid().size()) != source_writer) {continue;}
+        if (std::chrono::duration<double>(SteadyClock::now()-received_at).count() > max_age_) {
+          publishError(*frame, easyfly::perception::Context::STALE, "inference_result_expired"); continue;
+        }
+        easyfly_msgs::msg::DetectionArrayV2 native;
+        native.context = producer_.next(frame->header, camera_, frame->width, frame->height);
+        native.backend_id = params_.backend; native.active_provider = detector_->activeProvider();
+        for (const auto & d : dets) {
+          easyfly_msgs::msg::DetectionV2 item;
+          item.box.x1 = d.x1; item.box.y1 = d.y1; item.box.x2 = d.x2; item.box.y2 = d.y2;
+          item.class_id = d.class_id; item.class_name = d.class_name;
+          item.confidence_valid = true; item.confidence = d.confidence; native.detections.push_back(item);
+        }
+        if (easyfly::perception::valid(native)) {v2_pub_->publish(native);} else {
+          publishError(*frame, easyfly::perception::Context::BACKEND_ERROR, "invalid_detection_output"); continue;
+        }
+      }
       // 发布 DetectionInfoArray (归一化)
       easyfly_msgs::msg::DetectionInfoArray msg;
       msg.header = frame->header;        // 保留原始时间戳, 供 M5 时空对齐
@@ -460,7 +555,8 @@ private:
         info.position_valid = false;          // M5 pixel_to_3d 填充
         msg.detections.push_back(info);
       }
-      detections_pub_->publish(msg);
+      if (legacy_publish_) {detections_pub_->publish(msg);}
+      backend_status_->input(true, "", easyfly::perception::stamp(frame->header.stamp));
       // 调试图像
       const auto debug_image_start =
         metrics_enabled ? SteadyClock::now() : SteadyClock::time_point{};
@@ -503,7 +599,22 @@ private:
       }
     }
   }
+  void publishError(const sensor_msgs::msg::Image & image, uint8_t status, const std::string & reason)
+  {
+    if (backend_status_) {
+      if (status == easyfly::perception::Context::BACKEND_ERROR) backend_status_->failed(reason);
+      else backend_status_->input(false, reason);
+    }
+    easyfly_msgs::msg::DetectionArrayV2 value;
+    value.context = producer_.next(image.header, camera_, image.width, image.height, status, reason);
+    value.backend_id = params_.backend; value.active_provider = detector_->activeProvider(); v2_pub_->publish(value);
+  }
+  bool v2_{false}, legacy_publish_{true}; std::string camera_, optical_, pending_writer_, source_writer_;
+  double max_age_{.5}; int64_t last_source_{0}, last_clock_{0}; easyfly::perception::Producer producer_;
+  rclcpp::Publisher<easyfly_msgs::msg::DetectionArrayV2>::SharedPtr v2_pub_;
   DetectorParams params_;
+  std::unique_ptr<easyfly::perception::BackendStatus> backend_status_;
+  easyfly::backends::BackendConfig backend_config_;
   std::unique_ptr<DetectorBase> detector_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   rclcpp::Publisher<easyfly_msgs::msg::DetectionInfoArray>::SharedPtr detections_pub_;

@@ -12,6 +12,8 @@
 # limitations under the License.
 """Simulation gimbal node; never publishes aircraft control commands."""
 
+from easyfly_perception_contracts import WorldInput, perception_version, identity
+
 import math
 import time
 
@@ -69,12 +71,18 @@ class GimbalNode(Node):
         self.create_subscription(
             UAVState, "/uav_state", self.receive_uav, qos_profile_sensor_data
         )
-        self.create_subscription(
-            Target3DArray,
-            "/target_positions",
-            self.receive_targets,
-            qos_profile_sensor_data,
-        )
+        self.native_targets = None
+        self.tracking_key = None
+        self.v2 = perception_version(self) == 2
+        if self.v2:
+            self.native_input = WorldInput(self, self.receive_native_targets, self.invalidate_native)
+        else:
+            self.create_subscription(
+                Target3DArray,
+                "/target_positions",
+                self.receive_targets,
+                qos_profile_sensor_data,
+            )
         self.create_service(
             SetGimbalAngle, "/gimbal/set_angle", self.set_angle
         )
@@ -91,6 +99,19 @@ class GimbalNode(Node):
                 clock_type=rclpy.clock.ClockType.STEADY_TIME
             ),
         )
+
+    def receive_native_targets(self, native, numeric):
+        self.native_targets = native
+        if self.tracking_key is not None and not any(
+                identity(t.key) == self.tracking_key and t.key.legacy_raw_id == self.tracking_id
+                for t in native.targets):
+            self.stop_tracking()
+        self.receive_targets(numeric)
+
+    def invalidate_native(self, reason):
+        self.native_targets = self.targets = None
+        if self.tracking_id >= 0:
+            self.stop_tracking()
 
     def receive_uav(self, message):
         """Record both source and monotonic receipt evidence."""
@@ -150,6 +171,7 @@ class GimbalNode(Node):
     def stop_tracking(self):
         """Discard tracking identity and all pending motion."""
         self.tracking_id = -1
+        self.tracking_key = None
         self.device.stop()
 
     def set_angle(self, request, response):
@@ -160,6 +182,7 @@ class GimbalNode(Node):
             (request.pitch_angle, request.yaw_angle, request.roll_angle)
         ):
             self.tracking_id = -1
+            self.tracking_key = None
             response.success = True
             response.message = "accepted; simulated device has not arrived"
         else:
@@ -186,6 +209,9 @@ class GimbalNode(Node):
             self.tracking_id = old_id
             response.message = str(error)
             return response
+        if self.v2:
+            self.tracking_key = next(identity(t.key) for t in self.native_targets.targets
+                                     if t.key.legacy_raw_id == self.tracking_id)
         response.success = True
         response.message = "tracking accepted (simulation only)"
         return response

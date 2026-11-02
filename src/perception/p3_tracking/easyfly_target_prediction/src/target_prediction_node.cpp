@@ -13,6 +13,8 @@
 // limitations under the License.
 
 #include <chrono>
+#include <easyfly_perception_contracts/contracts.hpp>
+namespace pc = easyfly::perception;
 #include <cstdio>
 #include <memory>
 #include <mutex>
@@ -37,6 +39,10 @@ public:
   : Node("target_prediction")
   {
     rcl_interfaces::msg::ParameterDescriptor descriptor;descriptor.read_only = true;
+    const auto version = declare_parameter("perception_version", 1, descriptor);
+    if (version != 1 && version != 2) {throw std::invalid_argument("perception_version must be 1 or 2");}
+    v2_ = version == 2;
+    legacy_ = declare_parameter("publish_legacy_compatibility", !v2_, descriptor);
     Options o;
     o.horizon = declare_parameter("horizon_seconds", .5, descriptor);
     o.max_age = declare_parameter("max_age_seconds", .5, descriptor);
@@ -52,11 +58,13 @@ public:
     if (!std::isfinite(period) || period < .05 || period > 1) {
       throw std::invalid_argument("invalid publish period");
     }
+    options_ = o;
     predictor_ = std::make_unique<Predictor>(o);
+    native_pub_ = create_publisher<easyfly_msgs::msg::TargetPredictionArrayV2>("/perception/v2/predictions", 10);
     publisher_ = create_publisher<easyfly_msgs::msg::TargetPredictionArray>(
       "/target_predictions",
       10);
-    subscriber_ = create_subscription<easyfly_msgs::msg::Target3DArray>(
+    if (!v2_) {subscriber_ = create_subscription<easyfly_msgs::msg::Target3DArray>(
       "/target_positions", rclcpp::SensorDataQoS(),
       [this](easyfly_msgs::msg::Target3DArray::ConstSharedPtr message) {
         Frame frame;frame.frame = message->header.frame_id;
@@ -78,6 +86,27 @@ public:
         predictor_->observe(frame, now().nanoseconds(), steady());
         publish();  // Empty/disappeared identities invalidate immediately, not at next timer.
       });
+    } else {
+      native_input_ = std::make_unique<pc::WorldInput>(*this,
+        [this](easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr m) {
+          std::lock_guard<std::mutex> lock(mutex_);
+          native_ = m; keys_.clear();
+          Frame frame; frame.frame = m->context.header.frame_id;
+          frame.stamp_ns = pc::stamp(m->context.header.stamp); frame.well_formed = true;
+          for (const auto & t : m->targets) {
+            Observation o; o.id = t.key.legacy_raw_id; o.stamp_ns = frame.stamp_ns;
+            o.frame = frame.frame; o.class_name = t.class_name;
+            o.confidence = t.confidence_valid ? t.confidence : 0;
+            o.position_valid = t.position_valid; o.position = {t.position_x, t.position_y, t.position_z};
+            frame.observations.push_back(o); keys_[o.id] = t;
+          }
+          predictor_->observe(frame, now().nanoseconds(), steady()); publish();
+        }, [this](const std::string & reason) {
+          std::lock_guard<std::mutex> lock(mutex_);
+          predictor_ = std::make_unique<Predictor>(options_); keys_.clear(); native_.reset();
+          producer_.reset(); publish_error_ = reason; publish();
+        });
+    }
     max_tracks_ = o.max_tracks;
     timer_ = create_wall_timer(
       std::chrono::duration<double>(period), [this] {
@@ -132,8 +161,35 @@ private:
       message.variance_x = message.variance_y = message.variance_z = p.variance;
       message.valid = p.valid;message.reason = p.reason;output.predictions.push_back(message);
     }
-    publisher_->publish(output);
+    if (legacy_) {publisher_->publish(output);}
+    if (v2_) {
+      easyfly_msgs::msg::TargetPredictionArrayV2 native;
+      native.context = producer_.next(output.header, native_ ? native_->context.camera_id : "front",
+        native_ ? native_->context.image_width : 0, native_ ? native_->context.image_height : 0,
+        native_ ? pc::Context::VALID : pc::Context::NOT_READY, native_ ? "" : publish_error_);
+      if (native_) {native.upstream = pc::reference(native_->context);}
+      for (const auto & p : output.predictions) {
+        const auto found = keys_.find(p.track_id); if (found == keys_.end()) {continue;}
+        const auto & t = found->second;
+        easyfly_msgs::msg::TargetPredictionV2 value;
+        value.header = p.header; value.observation_header = p.observation_header;
+        value.key = t.key; value.observation = t.observation; value.class_id = t.class_id;
+        value.class_name = p.class_name; value.confidence_valid = t.confidence_valid; value.confidence = p.confidence;
+        value.horizon_seconds = p.horizon_seconds; value.observation_age_seconds = p.observation_age_seconds;
+        value.position_x = p.position_x; value.position_y = p.position_y; value.position_z = p.position_z;
+        value.velocity_x = p.velocity_x; value.velocity_y = p.velocity_y; value.velocity_z = p.velocity_z;
+        value.variance_x = p.variance_x; value.variance_y = p.variance_y; value.variance_z = p.variance_z;
+        value.valid = p.valid; value.reason = p.reason; native.predictions.push_back(value);
+      }
+      native_pub_->publish(native);
+    }
   }
+  bool v2_{false}, legacy_{true}; Options options_; pc::Producer producer_;
+  std::string publish_error_{"waiting_for_native_world"};
+  std::unique_ptr<pc::WorldInput> native_input_;
+  easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr native_;
+  std::map<int64_t, easyfly_msgs::msg::WorldTargetV2> keys_;
+  rclcpp::Publisher<easyfly_msgs::msg::TargetPredictionArrayV2>::SharedPtr native_pub_;
   size_t max_tracks_{256};
   std::mutex mutex_;
   std::unique_ptr<Predictor> predictor_;

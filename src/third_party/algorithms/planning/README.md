@@ -21,7 +21,7 @@ bspline_opt通过导出target引用依赖，以支持安装根搬迁。
 本机可能存在被Git忽略的历史planners/ego_planner软链接及父目录COLCON_IGNORE，
 用于已经运行的旧安装/配置链接。它不提交、不参与新包发现，也不是第二份源码。
 新检出应从分类目录构建；旧主安装/构建缓存未被隔离验证覆盖，旧会话结束并切换后才清理桥接。
-复验与范围见 [ALG-8.2](../../../algorithms/alg8-2-validation.md)。
+新增后端的接入及交付要求见[算法接入指南](../../../algorithms/docs/integration-guide.md)。
 
 ## SUPER 实验性后端
 

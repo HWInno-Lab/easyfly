@@ -193,5 +193,10 @@
     "original_fork_package_sha256": "f78c478b39ee212a346e92faf9e1636d2e16e815f2dd89b48e2c06b307e7560e",
     "remaining": "FAST-LIVO2 GPLv2 / VIKIT GPLv3 combined-distribution compatibility is not established by a metadata correction."
   },
-  "atlas_observation_extension": "Default-off read-only publish.atlas_keyframes exposes the original deskewed full native LiDAR scan reprojected with the same post-visual state as paired native odometry; private topics only, no control/TF/covariance change."
+  "atlas_observation_extension": "Default-off read-only publish.atlas_keyframes exposes the original deskewed full native LiDAR scan reprojected with the same post-visual state as paired native odometry; private topics only, no control/TF/covariance change.",
+  "d04_review_20261102": {
+    "record": "src/third_party/license_reviews/d04-20261102/review.json",
+    "status": "open_rightsholder_evidence",
+    "runtime_source_changed": false
+  }
 }

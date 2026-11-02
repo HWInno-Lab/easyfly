@@ -16,20 +16,11 @@
 #include <cmath>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/tracking.hpp>
-namespace easyfly::csrt
-{
-inline bool roi(double x, double y, double w, double h)
-{
-  return std::isfinite(x) && std::isfinite(y) && std::isfinite(w) && std::isfinite(h) && x >= 0 &&
-         y >= 0 && w > 0 && h > 0 && x + w <= 1 && y + h <= 1;
+#include "easyfly_single_tracking_api/roi.hpp"
+namespace easyfly::csrt {
+using easyfly::single_tracking::roi;
+using easyfly::single_tracking::pixels;
 }
-inline cv::Rect pixels(double x, double y, double w, double h, int width, int height)
-{
-  return {static_cast<int>(std::floor(x * width)), static_cast<int>(std::floor(y * height)),
-    static_cast<int>(std::floor(w * width)),
-    static_cast<int>(std::floor(h * height))};
-}
-}  // namespace easyfly::csrt
 
 #include <memory>
 #include <stdexcept>

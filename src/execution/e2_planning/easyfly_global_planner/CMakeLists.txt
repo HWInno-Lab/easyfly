@@ -5,7 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_backend_registry REQUIRED)
+include_directories(${easyfly_backend_registry_INCLUDE_DIRS})
 find_package(rclcpp REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
+find_package(easyfly_perception_contracts REQUIRED)
+include_directories(${easyfly_perception_contracts_INCLUDE_DIRS})
 find_package(rclcpp_components REQUIRED)
 find_package(rclcpp_action REQUIRED)
 find_package(ament_index_cpp REQUIRED)
@@ -20,11 +25,13 @@ find_package(easyfly_astar REQUIRED)
 find_package(easyfly_grid_planner_api REQUIRED)
 find_package(rcl_interfaces REQUIRED)
 
-add_library(${PROJECT_NAME}_backends SHARED src/adapters/astar_adapter.cpp)
+add_library(${PROJECT_NAME}_backends SHARED src/adapters/astar_adapter.cpp src/adapters/planner_factory.cpp)
+set_target_properties(${PROJECT_NAME}_backends PROPERTIES SOVERSION 3)
 target_include_directories(${PROJECT_NAME}_backends PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:include>)
 target_link_libraries(${PROJECT_NAME}_backends PUBLIC
-  easyfly_grid_planner_api::easyfly_grid_planner_api easyfly_astar::easyfly_astar)
+  easyfly_backend_registry::easyfly_backend_registry
+  easyfly_grid_planner_api::easyfly_grid_planner_api PRIVATE easyfly_astar::easyfly_astar)
 
 add_library(${PROJECT_NAME}_nodes SHARED
   src/global_planner_node.cpp
@@ -34,8 +41,8 @@ target_compile_options(${PROJECT_NAME}_nodes PRIVATE -Wall -Wextra)
 target_include_directories(${PROJECT_NAME}_nodes PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 ament_target_dependencies(${PROJECT_NAME}_nodes
-  rclcpp rcl_interfaces rclcpp_components rclcpp_action ament_index_cpp nav_msgs geometry_msgs std_msgs std_srvs easyfly_msgs)
-target_link_libraries(${PROJECT_NAME}_nodes yaml-cpp easyfly_core::easyfly_core ${PROJECT_NAME}_backends)
+  rclcpp diagnostic_msgs rcl_interfaces rclcpp_components rclcpp_action ament_index_cpp nav_msgs geometry_msgs std_msgs std_srvs easyfly_msgs)
+target_link_libraries(${PROJECT_NAME}_nodes yaml-cpp easyfly_core::easyfly_core ${PROJECT_NAME}_backends easyfly_astar::easyfly_astar)
 
 rclcpp_components_register_node(${PROJECT_NAME}_nodes
   PLUGIN "easyfly_global_planner::GlobalPlannerNode"
@@ -86,7 +93,7 @@ if(BUILD_TESTING)
   target_include_directories(test_rolling_target PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
   ament_target_dependencies(test_rolling_target easyfly_msgs)
   ament_add_gtest(test_astar_adapter test/test_astar_adapter.cpp)
-  target_link_libraries(test_astar_adapter ${PROJECT_NAME}_backends)
+  target_link_libraries(test_astar_adapter ${PROJECT_NAME}_backends easyfly_astar::easyfly_astar)
   ament_add_gtest(test_map_validity test/test_map_validity.cpp)
   target_include_directories(test_map_validity PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include)

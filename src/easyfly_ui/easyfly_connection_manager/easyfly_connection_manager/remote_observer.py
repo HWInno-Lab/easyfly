@@ -63,13 +63,42 @@ class Observer:
         qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
         for name in self.action_names:
             self.subscribe_source(name, GoalStatusArray, '/' + name + '/_action/status', qos)
+        self.native_outputs = {}
         for name, profile in config['profiles'].items():
+            if profile['output_type'] in ('easyfly_msgs/msg/DetectionArrayV2', 'easyfly_msgs/msg/ImageTrackArrayV2', 'easyfly_msgs/msg/WorldTargetArrayV2'):
+                self.subscribe_native_output(name, profile)
+                continue
             self.node.create_subscription(
                 get_message(profile['output_type']), profile['output_topic'],
                 lambda m, key=name: self.output(key, m), qos_profile_sensor_data)
         self.profiles = config['profiles']
         self.thread = threading.Thread(target=self.run, name='remote-observer')
         self.thread.start()
+
+    def subscribe_native_output(self, key, profile):
+        from easyfly_perception_contracts import (NativeSubscription, SourceGate, writer,
+                                                detections_valid, tracks_valid, world_valid)
+        gate = SourceGate()
+        validators = dict(DetectionArrayV2=detections_valid, ImageTrackArrayV2=tracks_valid,
+                          WorldTargetArrayV2=world_valid)
+        kind = get_message(profile['output_type'])
+        def receive(message, info):
+            source = writer(self.node, profile['output_topic'], info)
+            valid = source is not None and validators[kind.__name__](message) and (
+                message.context.camera_id == profile.get('camera_id', 'front'))
+            if not valid:
+                with self.lock:
+                    self.outputs.pop(key, None)
+                    getattr(self, 'output_stamps', {}).pop(key, None)
+                    self.native_outputs.pop(key, None)
+                return
+            if not gate.observe(message.context, source): return
+            if gate.changed:
+                with self.lock:
+                    getattr(self, 'output_stamps', {}).pop(key, None)
+            self.native_outputs[key] = message
+            self.output(key, message)
+        NativeSubscription(self.node, kind, profile['output_topic'], receive)
 
     def subscribe_source(self, key, message_type, topic, qos):
         """Give every reader its own generation, including deferred callbacks."""

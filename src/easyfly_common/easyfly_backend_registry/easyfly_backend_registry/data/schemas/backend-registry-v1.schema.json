@@ -1,0 +1,264 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "backends": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "capability": {
+            "enum": [
+              "detection",
+              "multi_tracking",
+              "single_tracking",
+              "grid_planning",
+              "localization",
+              "trajectory_planning",
+              "exploration"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "contract_version": {
+            "const": 1
+          },
+          "entrypoint": {
+            "oneOf": [
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "cpp_creator"
+                  },
+                  "package": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  },
+                  "symbol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-zA-Z_][a-zA-Z0-9_:]*$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "package",
+                  "symbol"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "ros_node"
+                  },
+                  "package": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  },
+                  "executable": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "package",
+                  "executable"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "ros_launch"
+                  },
+                  "package": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  },
+                  "file": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-zA-Z0-9_-]+\\.launch\\.py$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "package",
+                  "file"
+                ]
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "kind": {
+                    "const": "isolated_worker"
+                  },
+                  "package": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  },
+                  "executable": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 256,
+                    "pattern": "^[a-z][a-z0-9_]{0,63}$"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "package",
+                  "executable"
+                ]
+              }
+            ]
+          },
+          "parameter_schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256,
+            "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9_./-]*$"
+          },
+          "input_contract": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "output_contract": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 256
+          },
+          "required_inputs": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            }
+          },
+          "controls": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "reset": {
+                "type": "boolean"
+              },
+              "cancellation": {
+                "type": "boolean"
+              },
+              "deadline": {
+                "type": "boolean"
+              },
+              "expansion_limit": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "reset",
+              "cancellation",
+              "deadline",
+              "expansion_limit"
+            ]
+          },
+          "scope": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "offline_compute",
+                "software_fixture",
+                "simulation",
+                "hardware_unverified",
+                "hardware_verified"
+              ]
+            }
+          },
+          "runtime": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "requirements": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "assets": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              },
+              "limitations": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 512
+                }
+              }
+            },
+            "required": [
+              "requirements",
+              "assets",
+              "limitations"
+            ]
+          }
+        },
+        "required": [
+          "capability",
+          "id",
+          "contract_version",
+          "entrypoint",
+          "parameter_schema",
+          "input_contract",
+          "output_contract",
+          "required_inputs",
+          "controls",
+          "scope"
+        ]
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "backends"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EXT-01 backend registry design v1"
+}

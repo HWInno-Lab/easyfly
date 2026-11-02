@@ -9,8 +9,8 @@
   },
   "limitations": [
     "Selected source files only; excludes unrelated repository history and private editor/agent data.",
-    "The original fork and ROS2 port do not supply a unified root license; TODO metadata remains unresolved.",
-    "This records source identity and local patches, not a new license grant."
+    "Owner original ROS 2 port contributions are Apache-2.0 as confirmed 2026-11-02; inherited GPLv3/BSD/MIT scopes are retained.",
+    "Source reconstruction and a scoped owner grant do not establish platform-wide distribution clearance."
   ],
   "schema_version": 1,
   "component": "ego_planner",
@@ -132,17 +132,17 @@
   },
   "patch": {
     "path": "workspace.patch",
-    "sha256": "d53782631c1661f43443bbea923588c03966502168629edaa82ca918ef843970"
+    "sha256": "54e6c9f4ff93811ff415b2b9c3215c07470e7f2d343229d80cecf143ff38a642"
   },
   "files": {
-    "NOTICE.md": "25427563250ad11bea00ead2bd0abddb82687bcb482d8d389a6b710084960c79",
+    "NOTICE.md": "567425bb55161cee9c16917cd2355562e0357c8799bfadfe63b033d9adc46427",
     "bspline_opt/CMakeLists.txt": "aadf66b55d22411e0a853cdcfd0bc7075a5d7595b3cd613e82bfc1cf1b616444",
     "bspline_opt/include/bspline_opt/bspline_optimizer.h": "7d0dc663785aa970d19cc93518174c4edf751a0f3b83ce1cbd65a65d9ae44394",
     "bspline_opt/include/bspline_opt/collision_sampling.h": "f9b31a2269b2edf17f59c7652113c6e73172e8cbc92e5568686285e0153217ee",
     "bspline_opt/include/bspline_opt/gradient_descent_optimizer.h": "5696103dbf4f8c9f1f13f3af3e754bbcdd828f47f882decff55d2858689290e3",
     "bspline_opt/include/bspline_opt/lbfgs.hpp": "24f06fd04d816fa126a41725f4fe6ffa454ec5f93a44f3ffdbe1a3a88d00e7ed",
     "bspline_opt/include/bspline_opt/uniform_bspline.h": "dfe0744d07ed7cc0b7cbb050f9b80863e32bb5b48c113953e174db008a169881",
-    "bspline_opt/package.xml": "9a4b39b1fce9cbbeb16e52808f17fd5a4cf3c531d8658e6ba527816a8aa1f85e",
+    "bspline_opt/package.xml": "f7a34e0ff649c502dceb568605f2e2cc4e6fcb5b94bc256bb2f9aca2a6cb3fc7",
     "bspline_opt/src/bspline_optimizer.cpp": "0010ec724fa14e2a3f30ae2dc443e0cb2027291365d908d65c9632aec73db7f8",
     "bspline_opt/src/gradient_descent_optimizer.cpp": "a0e92e5b297c813b06a1f972cfe82f938eac65ab39961a282167db2d7730408c",
     "bspline_opt/src/uniform_bspline.cpp": "690d931ef43496d7a3a4e1ee1dc97f28003d3831f16bbfe8600c5ff235df7fce",
@@ -150,16 +150,18 @@
     "ego_to_mavros/CMakeLists.txt": "f1ecbcdae147859b1f63886911e1a7374a21d53de30fa3e336578f03a7b0fae0",
     "ego_to_mavros/include/ego_to_mavros/bridge.hpp": "200f612235b6afd34867df97f33708dea258f9629691995eb224278777309ff0",
     "ego_to_mavros/launch/bridge.launch.py": "957cd1f53806eab763c82125139675197568b3ebae978b06369d15699c772043",
-    "ego_to_mavros/package.xml": "ab12d2406a75f3fbf0d5c3d9988d1b8ec6dad113d66f70b91bb207a7bf0b166c",
+    "ego_to_mavros/package.xml": "1184f31176e9de342644ca2ac050499eacc25fb26068c12d634c88ba10bd0ce8",
     "ego_to_mavros/src/bridge.cpp": "0878bd311a7ea15453e3db9072cc72be38d1c73e701dd4b32cb9584cbf75576a",
     "ego_to_mavros/test/bridge_probe.py": "c4dfd74c564cdf604ee55979f0d3577579ad48e8d7b1fac20660a3326e21b031",
     "ego_to_mavros/test/test_bridge_ros.py": "458a420286f5aa128553e1abb71233704013d7dd64be97801cd7061665118a78",
     "legacy-notice-scope.json": "7fe7a7815406ec3a2ac24ba91db158a96263d8b40dac4e518478e40471dc1438",
+    "licenses/OWNER-PORT-APACHE-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "licenses/OWNER-PORT-GRANT.json": "be23f75245ee2382229ddf56c1e98fba80c3b36d348390e9f64eda81c6636fd3",
     "licenses/UPSTREAM-EGO-GPL-3.0.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
     "path_searching/CMakeLists.txt": "bf586a25abd85eb911109090fac197119cdf7fdb7a71009b7c30c7aa16159a6b",
     "path_searching/cmake/legacy_notice_scope.cmake": "94a4bea8c2ffb605b842a9d8383063b7e7693333e7574091c6d8783dbfae4491",
     "path_searching/include/path_searching/dyn_a_star.h": "3e7d5420f458bd56f55b2f71356ca4677903e2a2307c858502bd74d8fbe185e5",
-    "path_searching/package.xml": "66dc3bfd7cb6927bc6ca68e300aafa2667f5179f65f6f09fb26845557645e454",
+    "path_searching/package.xml": "60e676c904fd7d5fe50ad090b9f4a2c62aeca80a8b544f5df2531acf793498c5",
     "path_searching/src/dyn_a_star.cpp": "59a7f4108431839b8753b17f9710e368e292c7cae78634f0d1d7bdfdf2aa4574",
     "plan_env/CMakeLists.txt": "7160a6991cef72b927353e28aa1a33ec3a9b1814bb9023c6ecd066cb417b421d",
     "plan_env/include/plan_env/grid_map.h": "25c3cc159642fe58c03d97bae39de1b37f2bdf6820c768a4036b178523020fac",
@@ -171,7 +173,7 @@
     "plan_env/include/plan_env/raycast.h": "2e1e9ef4b82fe050d7cdf1be5dc4d0ff3ab28064a60e5bfb4f08f124d2b9626a",
     "plan_env/include/plan_env/trusted_cloud_persistence.h": "5348c6efd475812f500a7269201941201f8340359f0cb9df714e370df2b257b3",
     "plan_env/include/plan_env/virtual_ceiling.h": "74f540e663085a0553b29ee95147c6203cd957c309f62cab8ee29b115288479f",
-    "plan_env/package.xml": "a33b7b135a6f2709e4f8855b2899aa12faaaaaa160756a25927d6cd1b76fd247",
+    "plan_env/package.xml": "8191cce593cce05188959719507901069e2b584cf952257311a633ac412b687a",
     "plan_env/src/grid_map.cpp": "e20a1e2d27b61f28f626bfe2a945b1ea8e8adde70231f80df6db196dbc021240",
     "plan_env/src/obj_generator.cpp": "6af0dbc8ec4d4abc98ab22bbe3fa567ca6ef7c4c54c57e47248fa8b9b5d7c59e",
     "plan_env/src/obj_predictor.cpp": "458532eb2cc06c79bd5f25790749a02aeb1337b780e69f915b0af7c02f252e9e",
@@ -210,7 +212,7 @@
     "plan_manage/launch/single_run_real.launch.py": "05a49a0af0ffa8c16db8770e823c1462eda6f53bd8618a80418396e119f8c0ac",
     "plan_manage/launch/swarm.launch": "55662ee7433e70748ed92ee4fb6143668b3276fb8cfdd12445a4ade73e00942b",
     "plan_manage/launch/swarm_large.launch": "b8dfd466152495887192684d34b3149e3e41aaf2031687ebdcd15607f4140116",
-    "plan_manage/package.xml": "5a17c28cae383b52bd379a109b8b3cdc3190cb73f5660e7600af51fdad8c21d9",
+    "plan_manage/package.xml": "b3fbef9d42c9e3254eb6491842b58dcb5fdbf5a059d24d08747c1e66d2925b67",
     "plan_manage/src/ego_planner_node.cpp": "71cf23a5a18ed6eb89d6f183b25c6a8ad07c3180bed31335b1e886fc2af0d1d0",
     "plan_manage/src/ego_replan_fsm.cpp": "883dd1164422dc0b965765b950e14f5acc0d15928b6c4a6452931711a512d661",
     "plan_manage/src/planner_manager.cpp": "ab8b6c672505de198ca438d7787f02f9b3dca331627fb7c1ed0bc062a5a659a3",
@@ -249,7 +251,7 @@
     "quadrotor_msgs/msg/Serial.msg": "b98a312615a71d66e5e7022adce1fdade90873e77060882c8bd22d8603f846eb",
     "quadrotor_msgs/msg/StatusData.msg": "6aea60de547e5d46749e592b980e8bb4c066172140e1a0eabf113977cdda8130",
     "quadrotor_msgs/msg/TRPYCommand.msg": "c22e8f1db7c33de5324568143dc131d6a2b7cc9a2aad94f471c27761914a720f",
-    "quadrotor_msgs/package.xml": "f4a6e6fbc2b10fb078676ba6f93dd44b7efd089a2f874475f878d0b1e1444269",
+    "quadrotor_msgs/package.xml": "201f42542a330529742474780075be0c8928029595c1d85973f481e0b26b7534",
     "quadrotor_msgs/src/decode_msgs.cpp": "470400e0dbec211363c2239aac39429b9b793536a1765e0b6755a3414df512d4",
     "quadrotor_msgs/src/encode_msgs.cpp": "aca4cb1924100ebfb5c116ed721dd425141090d9f2842040dad9ecb1e31bf687",
     "quadrotor_msgs/src/quadrotor_msgs/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
@@ -274,7 +276,7 @@
     "traj_utils/msg/DataDisp.msg": "2be4716576556029802b796d0fa5b5c28799af95269980bcfc6dec05d84e698b",
     "traj_utils/msg/MultiBsplines.msg": "8a2833175547ea3cd74aefedc054039a45d11c7d91bdba3b6f98c0f56fe18b76",
     "traj_utils/msg/TrajectoryAck.msg": "73103050e3e0d446e984705e7c74ea5f74a337ec91e1ddf7e2e365ce7fa29309",
-    "traj_utils/package.xml": "794fd4a169fbc5ab2aab0cd975e77714fe0cf1dd8cde846ca022584a5f24ce6a",
+    "traj_utils/package.xml": "705492ec9714054f9dab360e4dcc05da9ea8ab3c19cf5f1ddab807f4000c8e1f",
     "traj_utils/src/planning_visualization.cpp": "56a1c905724e8b4e86819491d7981163b411e7a0a4468da2e840009a28c50e80",
     "traj_utils/src/polynomial_traj.cpp": "c5b9edc791f8abd4a73d62f28dffb2650ebb0ee1c5a8568b6706f94e5e59cccc",
     "traj_utils_so/CMakeLists.txt": "38358f3edbcadd88de536cd3eeb1b1d14b0c610315b32e3284dc74a8505d00fd",
@@ -285,14 +287,35 @@
     "traj_utils_so/msg/DataDisp.msg": "c1e8ffe0c7ad00687fc8387691ff05aaf07636f63683e8c57c103bd7f1c07542",
     "traj_utils_so/msg/DataDisp.msg.bak": "6aba4c0a7c417a98433ea3a9b937ee22a34c6ecf2eb66dd5e87ba453d3ad8b72",
     "traj_utils_so/msg/MultiBsplines.msg": "91ad8627db2d8fd306927c51d9ce50a830c25be99ebff160a9c5210f69241a1d",
-    "traj_utils_so/package.xml": "e2afea7944c7c64c32a040e0639fa2057878909edd6b0bcceec25eb8171c8ce3",
+    "traj_utils_so/package.xml": "8a1a65d0b77cfff045dcb87707338d0674713235ca5580b3887966486921fda7",
     "traj_utils_so/src/planning_visualization.cpp": "74d4ffdb77257a9f022c6a6f6bc5aad30037fa3c94fade461678b119fb2ea822",
     "traj_utils_so/src/polynomial_traj.cpp": "c2b7c24bf2ba04248e520357e1eb8d65bf5d667cadf9cbf6dba9355e909cbe1a"
   },
   "reconstruction": {
     "passed": true,
     "zero_fuzz": true,
-    "files": 146
+    "files": 155,
+    "evidence": "artifacts/d04-20261102/after-ego-final-zero-context/result.json"
   },
-  "owner_confirmation_20261028": "Owner confirms ROS 2 port authorship; public license selection is pending. Upstream text and scoped legacy-header checks are delivered in NOTICE.md."
+  "owner_confirmation_20261028": "Owner confirms ROS 2 port authorship; public license selection is pending. Upstream text and scoped legacy-header checks are delivered in NOTICE.md.",
+  "owner_confirmation_20261102": {
+    "date": "2026-11-02",
+    "copyright_notice": "Copyright 2026 EasyFly Project",
+    "license": "Apache-2.0",
+    "scope": "owner_original_ros2_port_contributions_only",
+    "preserve_inherited_licenses": true,
+    "authority": "Repository owner confirmed ROS 2 port authorship on 2026-10-28 and selected this grant in the current D-04 review.",
+    "owner_answer": "沿用 Apache-2.0 和现有项目署名（推荐）",
+    "exclusions": [
+      "Original EGO algorithms and third-party code, including inherited portions of modified files.",
+      "No claim that all files or a combined executable are Apache-2.0-only."
+    ],
+    "combined_work": "Original EGO GPLv3 and all applicable retained component conditions remain applicable to the combined work.",
+    "license_text": "OWNER-PORT-APACHE-2.0.txt",
+    "inherited_notice": "../NOTICE.md"
+  },
+  "previous_review": {
+    "manifest_sha256": "f9d515050f0791595aefee4ff143e8f2b804c3f615dcea0659010c2ebf074110",
+    "patch_sha256": "303a33389ac160aefe636d9c0beeb8a0d63ccb9f66d4ffe6c987457417326727"
+  }
 }

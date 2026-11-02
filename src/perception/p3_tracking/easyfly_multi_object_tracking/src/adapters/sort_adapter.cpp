@@ -1,3 +1,4 @@
+#include <easyfly_backend_registry/metadata.hpp>
 // Copyright 2026 EasyFly Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +20,7 @@
 #include <utility>
 
 #include "easyfly_multi_object_tracking/adapters/tracker_factory.hpp"
+#include "easyfly_sort/sort.hpp"
 
 namespace easyfly_multi_object_tracking
 {
@@ -125,11 +127,29 @@ private:
   std::int64_t offset_{0}, next_id_{0};
 };
 
-std::unique_ptr<tr::Tracker> make_tracker(
-  const std::string & backend,
-  const core::SortParams & params)
+easyfly::backends::Parameters normalize_sort(const easyfly::backends::Parameters & input) {
+  namespace b = easyfly::backends;
+  core::SortParams params;
+  b::Parameters values{{"iou_threshold", params.iou_threshold}, {"max_lost_frames", params.max_lost_frames},
+        {"min_hits", params.min_hits}, {"max_tracks", params.max_tracks}, {"dist_gate_scale", params.dist_gate_scale}};
+  for (const auto & item : input) values[item.first] = item.second;
+  values = b::resolve_parameters("multi_tracking", "sort", values);
+  return values;
+}
+void register_sort(TrackerFactory & result)
 {
-  if (backend == "sort") {return std::make_unique<SortAdapter>(params);}
-  throw std::invalid_argument("unknown tracking backend '" + backend + "' (available: sort)");
+    result.add("sort", [](const easyfly::backends::Parameters & input) {
+      namespace b = easyfly::backends;
+      b::require_backend("multi_tracking", "sort");
+      // Preserve the plain C++ creator's historical defaults; profiles override them.
+      core::SortParams params;
+      const auto values = normalize_sort(input);
+      params.iou_threshold = b::parameter<double>(values, "iou_threshold");
+      params.max_lost_frames = b::parameter<int>(values, "max_lost_frames");
+      params.min_hits = b::parameter<int>(values, "min_hits");
+      params.max_tracks = b::parameter<int>(values, "max_tracks");
+      params.dist_gate_scale = b::parameter<double>(values, "dist_gate_scale");
+      return std::make_unique<SortAdapter>(params);
+    }, normalize_sort);
 }
 }  // namespace easyfly_multi_object_tracking

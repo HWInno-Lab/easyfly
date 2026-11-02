@@ -6,8 +6,26 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(builtin_interfaces REQUIRED)
+find_package(unique_identifier_msgs REQUIRED)
 
 set(msg_files
+  "msg/PerceptionContextV2.msg"
+  "msg/ObservationRefV2.msg"
+  "msg/PixelBoxV2.msg"
+  "msg/TrackKeyV2.msg"
+  "msg/ClassifiedObstacleArrayV2.msg"
+  "msg/DetectionV2.msg"
+  "msg/DetectionArrayV2.msg"
+  "msg/ImageTrackV2.msg"
+  "msg/ImageTrackArrayV2.msg"
+  "msg/WorldTargetV2.msg"
+  "msg/WorldTargetArrayV2.msg"
+  "msg/TargetPredictionV2.msg"
+  "msg/TargetPredictionArrayV2.msg"
+  "msg/SingleTrackStateV2.msg"
+  "msg/VehicleIdentityV2.msg"
+  "msg/VehicleIdentityArrayV2.msg"
+
   "msg/VoxelGrid.msg"
   "msg/PolynomialTrajectory.msg"
   "msg/SepticTrajectory.msg"
@@ -47,6 +65,8 @@ set(msg_files
 )
 
 set(srv_files
+  "srv/GetPerceptionV2.srv"
+  "srv/ManageSingleTrackV2.srv"
   "srv/SetExplorationView.srv"
   "srv/ReserveNavigation.srv"
   "srv/GetPerception.srv"
@@ -86,7 +106,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}
   ${srv_files}
   ${action_files}
-  DEPENDENCIES std_msgs geometry_msgs builtin_interfaces
+  DEPENDENCIES std_msgs geometry_msgs builtin_interfaces unique_identifier_msgs
 )
 
 if(BUILD_TESTING)

@@ -213,5 +213,10 @@
     "notice": "fuel.notices/NLopt-build-dependency.json",
     "notice_sha256": "b903812ec272b28c35c572b03aec2092bb9d4505ab1c9dd42cfd1b6c4b8073f1",
     "linkage": "dynamic"
+  },
+  "d04_review_20261102": {
+    "record": "src/third_party/license_reviews/d04-20261102/review.json",
+    "status": "open_rightsholder_evidence",
+    "runtime_source_changed": false
   }
 }

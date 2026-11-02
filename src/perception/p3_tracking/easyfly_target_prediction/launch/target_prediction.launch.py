@@ -26,7 +26,7 @@ def generate_launch_description():
             Node(
                 package='easyfly_target_prediction',
                 executable='target_prediction_node',
-                parameters=[
+                parameters=[{"perception_version": ParameterValue(LaunchConfiguration("perception_version", default="1"), value_type=int)},
                     {
                         'use_sim_time': ParameterValue(
                             LaunchConfiguration('use_sim_time'),

@@ -25,6 +25,8 @@
 #include <QTabWidget>
 #include <QToolButton>
 #include <QTimer>
+#include <QTreeWidget>
+#include <QTreeWidgetItemIterator>
 #include <QDir>
 #include <QFile>
 #include <QJsonArray>
@@ -482,6 +484,58 @@ TEST(ConnectionManager, SimulationAndSerialCanBeConfiguredWithoutCommandLine)
     ASSERT_TRUE(manager.grab().save(qEnvironmentVariable("EASYFLY_CM_FORM_SCREENSHOT")));
   }
 }
+TEST(ConnectionManager, KcfIsSelectableAndSurvivesSaveReloadWithoutStartingSimulation)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  const auto path = root.path() + "/profiles.json";
+  {
+    cm::ManagerWindow manager(path, root.path() + "/runtime");
+    auto * save = manager.findChild<QPushButton *>("saveConnection");
+    ASSERT_NE(save, nullptr);
+    ASSERT_TRUE(until([&] {return save->isEnabled();}));
+    auto * mode = manager.findChild<QComboBox *>("connectionMode");
+    auto * backend = manager.findChild<QComboBox *>("algorithm_single_tracking_backend");
+    ASSERT_NE(mode, nullptr); ASSERT_NE(backend, nullptr);
+    EXPECT_EQ(mode->currentData(), "sitl");
+    EXPECT_GE(backend->findData("csrt"), 0);
+    const int kcf = backend->findData("kcf");
+    ASSERT_GE(kcf, 0) << "Connection page must be rebuilt with the current registry";
+    EXPECT_TRUE(backend->isEnabled());
+    backend->setCurrentIndex(kcf);
+    QTest::mouseClick(save, Qt::LeftButton);
+    const auto profiles = cm::read_profiles(path);
+    ASSERT_EQ(profiles.size(), 1);
+    EXPECT_EQ(profiles[0].algorithms["single_tracking_backend"], "kcf");
+    EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+    if (qEnvironmentVariableIsSet("EASYFLY_CM_KCF_SCREENSHOT")) {
+      manager.show();
+      auto * tabs = manager.findChild<QTabWidget *>();
+      ASSERT_NE(tabs, nullptr);
+      for (int index = 0; index < tabs->count(); ++index) {
+        if (tabs->tabText(index) == QStringLiteral("算法配置")) {tabs->setCurrentIndex(index);}
+      }
+      for (auto * area : manager.findChildren<QScrollArea *>()) {
+        if (area->widget() && area->widget()->isAncestorOf(backend)) {
+          area->ensureWidgetVisible(backend);
+        }
+      }
+      QCoreApplication::processEvents();
+      ASSERT_TRUE(manager.grab().save(qEnvironmentVariable("EASYFLY_CM_KCF_SCREENSHOT")));
+    }
+  }
+  {
+    cm::ManagerWindow reopened(path, root.path() + "/runtime");
+    auto * save = reopened.findChild<QPushButton *>("saveConnection");
+    ASSERT_NE(save, nullptr);
+    ASSERT_TRUE(until([&] {return save->isEnabled();}));
+    auto * backend = reopened.findChild<QComboBox *>("algorithm_single_tracking_backend");
+    ASSERT_NE(backend, nullptr);
+    EXPECT_EQ(backend->currentData(), "kcf");
+    EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  }
+}
+
 TEST(ConnectionManager, ObserveModeKeepsDdsEditableWithoutStartingBackend)
 {
   QTemporaryDir root;
@@ -993,4 +1047,95 @@ TEST(ConnectionProfile, PeripheralOptInIsIndependentAndPreservesLegacyProfileHas
   auto bad = legacy; auto features = bad["features"].toObject();
   features["peripheral_control"] = "true";
   bad["features"] = features; EXPECT_THROW(cm::Profile::from_json(bad), std::runtime_error);
+}
+
+TEST(ConnectionManager, BackendSelectionAndParametersPersistWithoutStartingRuntime)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  cm::ManagerWindow manager(root.path() + "/profiles.json", root.path() + "/runtime");
+  auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}));
+  auto * profile = manager.findChild<QComboBox *>("connectionProfile");
+  profile->setCurrentIndex(profile->findData("navigation_dev"));
+  auto * choice = manager.findChild<QComboBox *>("algorithm_multi_tracking_backend");
+  auto * hits = manager.findChild<QDoubleSpinBox *>("algorithm_multi_tracking_min_hits");
+  auto * cells = manager.findChild<QDoubleSpinBox *>("algorithm_combined_grid_max_cells");
+  ASSERT_NE(choice, nullptr); ASSERT_NE(hits, nullptr); ASSERT_NE(cells, nullptr);
+  EXPECT_EQ(choice->findData("fixture_missing"), -1);
+  choice->setCurrentIndex(choice->findData("sort")); hits->setValue(5); cells->setValue(654321);
+  QTest::mouseClick(save, Qt::LeftButton);
+  const auto stored = cm::read_profiles(root.path() + "/profiles.json");
+  ASSERT_EQ(stored.size(), 1);
+  EXPECT_EQ(stored[0].algorithms["multi_tracking_backend"], "sort");
+  EXPECT_EQ(stored[0].algorithms["multi_tracking_min_hits"], 5);
+  EXPECT_EQ(stored[0].algorithms["combined_grid_max_cells"], 654321);
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  manager.resize(850, 570); manager.show();
+  auto * tabs = manager.findChild<QTabWidget *>("connectionConfigurationTabs");
+  tabs->setCurrentIndex(1);
+  auto * tree = manager.findChild<QTreeWidget *>("simulationAlgorithmTree");
+  ASSERT_NE(tree, nullptr);
+  QTreeWidgetItem * tracking = nullptr;
+  for (QTreeWidgetItemIterator item(tree); *item; ++item) {
+    if ((*item)->data(0, Qt::UserRole).toString() == "tracking") {tracking = *item; break;}
+  }
+  ASSERT_NE(tracking, nullptr); tree->setCurrentItem(tracking);
+  auto * edit = manager.findChild<QPushButton *>("simulationEditParameters");
+  ASSERT_NE(edit, nullptr); QTest::mouseClick(edit, Qt::LeftButton);
+  QTest::qWait(50);
+  EXPECT_TRUE(hits->isVisibleTo(&manager)); EXPECT_DOUBLE_EQ(hits->value(), 5);
+  auto * area = qobject_cast<QScrollArea *>(tabs->currentWidget()); ASSERT_NE(area, nullptr);
+  EXPECT_EQ(area->horizontalScrollBar()->maximum(), 0);
+  if (qEnvironmentVariableIsSet("EASYFLY_EXT05_SCREENSHOT")) {
+    const auto image = qEnvironmentVariable("EASYFLY_EXT05_SCREENSHOT");
+    ASSERT_TRUE(manager.grab().save(image));
+    area->verticalScrollBar()->setValue(area->verticalScrollBar()->maximum()); QTest::qWait(30);
+    ASSERT_TRUE(manager.grab().save(image + ".advanced.png"));
+  }
+}
+
+TEST(ConnectionManager, CheckedAlgorithmsResolveDependenciesAndSaveWithoutStartingRuntime)
+{
+  QTemporaryDir root;
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  auto initial = cm::Profile::create("Checked algorithms");
+  initial.mode = "sitl"; initial.selected_profile = "base_sim";
+  const auto path = root.path() + "/profiles.json"; cm::write_profiles(path, {initial});
+  cm::ManagerWindow manager(path, root.path() + "/runtime"); manager.show();
+  auto * save = manager.findChild<QPushButton *>("saveConnection");
+  ASSERT_TRUE(until([&] {return save->isEnabled();}, 15000));
+  auto * tree = manager.findChild<QTreeWidget *>("simulationAlgorithmTree"); ASSERT_NE(tree, nullptr);
+  const auto item = [tree](const QString & name) -> QTreeWidgetItem * {
+      for (QTreeWidgetItemIterator it(tree); *it; ++it) {
+        if ((*it)->data(0, Qt::UserRole).toString() == name) {return *it;}
+      }
+      return nullptr;
+    };
+  auto * fuel = item("exploration"); auto * detection = item("object_detection");
+  auto * tracking = item("tracking"); auto * navigation = item("navigation");
+  ASSERT_NE(fuel, nullptr); ASSERT_NE(detection, nullptr);
+  ASSERT_NE(tracking, nullptr); ASSERT_NE(navigation, nullptr);
+  EXPECT_EQ(detection->checkState(0), Qt::Unchecked);
+  fuel->setCheckState(0, Qt::Checked);
+  auto * profile = manager.findChild<QComboBox *>("connectionProfile");
+  auto * slam = manager.findChild<QComboBox *>("algorithm_slam");
+  auto * strategy = manager.findChild<QComboBox *>("algorithm_strategy");
+  EXPECT_EQ(profile->currentData(), "navigation_dev");
+  EXPECT_EQ(slam->currentData(), "fast_lio"); EXPECT_EQ(strategy->currentData(), "gcopter");
+  EXPECT_EQ(navigation->checkState(0), Qt::Checked);
+  EXPECT_EQ(detection->checkState(0), Qt::Unchecked);
+  EXPECT_EQ(item("semantic_map")->checkState(0), Qt::Unchecked);
+  ASSERT_TRUE(until([&] {return save->isEnabled();}, 15000)); save->click();
+  auto stored = cm::read_profiles(path); ASSERT_EQ(stored.size(), 1);
+  EXPECT_EQ(stored[0].algorithms["exploration"], "fuel");
+  EXPECT_EQ(stored[0].algorithms["start_detection"], false);
+  EXPECT_EQ(stored[0].algorithms["start_navigation"], true);
+  tracking->setCheckState(0, Qt::Checked);
+  EXPECT_EQ(detection->checkState(0), Qt::Checked);
+  detection->setCheckState(0, Qt::Unchecked);
+  EXPECT_EQ(tracking->checkState(0), Qt::Unchecked);
+  EXPECT_EQ(fuel->checkState(0), Qt::Checked);
+  EXPECT_FALSE(supervisor.status()["backend_running"].toBool());
+  EXPECT_FALSE(supervisor.status()["process_running"].toBool());
 }

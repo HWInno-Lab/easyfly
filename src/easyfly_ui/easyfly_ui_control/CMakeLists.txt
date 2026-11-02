@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_ui_control)
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_perception_contracts REQUIRED)
+include_directories(${easyfly_perception_contracts_INCLUDE_DIRS})
 find_package(rclcpp REQUIRED)
 find_package(easyfly_msgs REQUIRED)
 find_package(easyfly_mission_format REQUIRED)

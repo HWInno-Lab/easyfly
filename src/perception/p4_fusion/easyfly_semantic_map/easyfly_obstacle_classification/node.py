@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from easyfly_perception_contracts import WorldInput, perception_version
+from easyfly_msgs.msg import ClassifiedObstacleArrayV2
+
 import math
 import time
 import rclpy
@@ -72,9 +75,16 @@ class ObstacleClassifier(Node):
             self.receive_geometry,
             QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL),
         )
-        self.create_subscription(
-            Target3DArray, '/target_positions', self.receive_targets, 10
-        )
+        self.native_targets = None
+        self.v2 = perception_version(self) == 2
+        self.native_pub = self.create_publisher(ClassifiedObstacleArrayV2, '/perception/v2/obstacles_classified', 10)
+        if self.v2:
+            self.native_input = WorldInput(self, self.receive_native, self.invalidate_native)
+        else:
+            self.create_subscription(
+                Target3DArray, '/target_positions', self.receive_targets, 10
+            )
+
         self.create_timer(
             0.05, self.publish, clock=Clock(clock_type=ClockType.STEADY_TIME)
         )
@@ -83,6 +93,13 @@ class ObstacleClassifier(Node):
             '/platform/classification/capabilities',
             self.capabilities,
         )
+
+    def receive_native(self, native, numeric):
+        self.native_targets = native
+        self.receive_targets(numeric)
+
+    def invalidate_native(self, reason):
+        self.native_targets = self.targets = None
 
     def receive_geometry(self, message):
         self.geometry = (message, time.monotonic())
@@ -117,7 +134,13 @@ class ObstacleClassifier(Node):
         return classify(self.geometry[0], targets, now, *self.options)
 
     def publish(self):
-        self.publisher.publish(self.output())
+        output = self.output()
+        self.publisher.publish(output)
+        if self.v2:
+            native = ClassifiedObstacleArrayV2(header=output.header, geometry=output)
+            if self.native_targets is not None and self.targets is not None and time.monotonic() - self.targets[1] <= min(self.options[:2]):
+                native.semantic_source = self.native_targets
+            self.native_pub.publish(native)
 
     def capabilities(self, request, response):
         output = self.output()

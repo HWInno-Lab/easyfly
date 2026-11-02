@@ -37,7 +37,6 @@ for entry conditions, endpoint selection and normal window close behavior.
 Those runtime implementations remain in EasyFly's UI packages.
 Starting QGC directly outside EasyFly is not subject to the offline isolation.
 
-ALG-8.4 only relocates integration documents and updates references. Local binary
-identity and the limits of existing evidence are recorded in
-[provenance.json](provenance.json); relocation validation is documented in
-[ALG-8.4](../../../algorithms/alg8-4-validation.md).
+Local binary identity and evidence limits are recorded in
+[provenance.json](provenance.json). Integration and delivery requirements follow the
+[integration guide](../../../algorithms/docs/integration-guide.md).

@@ -26,7 +26,7 @@ CMake 的 FASTLIO_OUTPUT_ROOT 可显式指定可写日志/PCD根，配置时创�
 它不是第二份源码，也不是可提交/可依赖的接入接口；从当前仓库重新检出只会得到新目录。
 旧主安装/构建缓存没有被这次验证覆盖；切换主安装应使用新源码重新配置构建，确认旧会话结束后再清理本地桥接。
 
-验收和复验入口见 [ALG-8.1](../../../algorithms/alg8-1-validation.md)。
+新增后端的接入及交付要求见[算法接入指南](../../../algorithms/docs/integration-guide.md)。
 
 ## ORB-SLAM3（仿真验收进行中）
 

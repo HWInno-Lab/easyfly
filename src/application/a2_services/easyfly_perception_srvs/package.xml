@@ -23,4 +23,5 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+  <depend>easyfly_perception_contracts</depend>
 </package>

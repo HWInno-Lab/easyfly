@@ -12,6 +12,7 @@
 // limitations under the License.
 #ifndef CAMERA_STREAM_HPP_
 #define CAMERA_STREAM_HPP_
+#include <easyfly_perception_contracts/contracts.hpp>
 #include <array>
 #include <optional>
 #include <set>
@@ -23,6 +24,7 @@ namespace easyfly_ui_bridge
 {
 namespace detail
 {
+namespace pc = easyfly::perception;
 // Worker-private transaction cache. Public buffer/model layouts stay unchanged.
 class CameraStream
 {
@@ -30,11 +32,17 @@ public:
   explicit CameraStream(CameraPerceptionBinding binding)
   : buffer_(std::move(binding)) {}
   void clear()
-  {buffer_.clear(); pairs_ = {}; conflict_stamps_ = {}; completed_headers_ = {}; epoch_.reset();}
+  {native_detections_.reset(); native_tracks_.reset(); native_targets_.reset(); buffer_.clear(); pairs_ = {}; conflict_stamps_ = {}; completed_headers_ = {}; epoch_.reset();}
   void source_identity(const std::string & identity)
   {
     if (identity != identity_) {clear(); identity_ = identity;}
   }
+  void detections_v2(easyfly_msgs::msg::DetectionArrayV2::ConstSharedPtr m, double now, const ClockState & clock)
+  {native(m, native_detections_, gates_[0], now, clock, &CameraObservationBuffer::detections);}
+  void tracks_v2(easyfly_msgs::msg::ImageTrackArrayV2::ConstSharedPtr m, double now, const ClockState & clock)
+  {native(m, native_tracks_, gates_[1], now, clock, &CameraObservationBuffer::tracks);}
+  void targets_v2(easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr m, double now, const ClockState & clock)
+  {native(m, native_targets_, gates_[2], now, clock, &CameraObservationBuffer::targets);}
   void image(sensor_msgs::msg::Image::ConstSharedPtr message, double now, const ClockState & clock)
   {
     origin(clock);
@@ -103,6 +111,23 @@ public:
     reject_conflict(
       3, &CameraObservations::color_lines, &CameraObservations::color_line_image,
       result);
+    if (native_detections_ && result.detections.value && result.detections.value->header == native_detections_->context.header) {
+      result.native_detections = native_detections_;
+      if (result.detection_image.value && (result.detection_image.value->width != native_detections_->context.image_width ||
+          result.detection_image.value->height != native_detections_->context.image_height)) {
+        result.detections = {}; result.detections.evidence.quality = Quality::Invalid;
+      }
+    }
+    if (native_tracks_ && result.tracks.value && result.tracks.value->header == native_tracks_->context.header) {
+      result.native_tracks = native_tracks_;
+      if (result.track_image.value && (result.track_image.value->width != native_tracks_->context.image_width ||
+          result.track_image.value->height != native_tracks_->context.image_height)) {
+        result.tracks = {}; result.tracks.evidence.quality = Quality::Invalid;
+      }
+    }
+    if (native_targets_ && result.targets.value && result.targets.value->header == native_targets_->context.header) {
+      result.native_targets = native_targets_;
+    }
     return result;
   }
   size_t pair_bytes() const
@@ -123,6 +148,24 @@ public:
   }
 
 private:
+  template<typename Message, typename Callback>
+  void native(Message m, Message & retained, pc::SourceGate & gate, double now, const ClockState & clock, Callback callback)
+  {
+    origin(clock);
+    const auto state = gate.observe(m->context);
+    if (state == pc::SourceGate::rejected) {return;}
+    if (state == pc::SourceGate::changed) {clear(); epoch_ = clock.epoch;}
+    try {
+      auto numeric = pc::numeric_snapshot(*m);
+      using Numeric = decltype(numeric);
+      (buffer_.*callback)(std::make_shared<const Numeric>(std::move(numeric)), now, clock.epoch);
+      retained = m; capture(clock, now);
+    } catch (const std::exception &) {clear(); epoch_ = clock.epoch;}
+  }
+  easyfly_msgs::msg::DetectionArrayV2::ConstSharedPtr native_detections_;
+  easyfly_msgs::msg::ImageTrackArrayV2::ConstSharedPtr native_tracks_;
+  easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr native_targets_;
+  std::array<pc::SourceGate, 3> gates_;
   void origin(const ClockState & clock)
   {
     if (!epoch_ || *epoch_ != clock.epoch) {clear(); epoch_ = clock.epoch;}

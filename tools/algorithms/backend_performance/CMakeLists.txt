@@ -1,0 +1,12 @@
+cmake_minimum_required(VERSION 3.16)
+project(installed_backend_performance LANGUAGES CXX)
+foreach(pair "sort;easyfly_multi_object_tracking" "astar;easyfly_global_planner"
+    "csrt;easyfly_single_object_tracking" "onnx;easyfly_object_detection")
+  list(GET pair 0 backend)
+  list(GET pair 1 package)
+  find_package(${package} REQUIRED)
+  add_executable(bench_${backend} main.cpp)
+  target_compile_definitions(bench_${backend} PRIVATE BENCH_${backend})
+  target_link_libraries(bench_${backend} PRIVATE ${package}::${package}_backends)
+  target_compile_options(bench_${backend} PRIVATE -O2 -Wall -Wextra -Wpedantic -Werror)
+endforeach()

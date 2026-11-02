@@ -1,0 +1,106 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "camera_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{1,32}$"
+    },
+    "optical_frame": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "input_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "output_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "use_sim_time": {
+      "type": "boolean"
+    },
+    "perception_version": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "publish_legacy_compatibility": {
+      "type": "boolean"
+    },
+    "max_age_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 5
+    },
+    "world_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "raw_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "publish_debug_image": {
+      "type": "boolean"
+    },
+    "image_width": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "image_height": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "world_frame": {
+      "const": "odom"
+    },
+    "debug_image_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "target_classes": {
+      "type": "array",
+      "maxItems": 128,
+      "items": {
+        "type": "string",
+        "maxLength": 128
+      }
+    },
+    "id_consolidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "reacquire_radius": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "ttl": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 300
+        }
+      },
+      "required": [
+        "enabled",
+        "reacquire_radius",
+        "ttl"
+      ]
+    }
+  },
+  "required": []
+}

@@ -14,3 +14,11 @@ redistribution terms. Direct author download pages timed out during review.
 The original RMIT notice is specific to Delaunay.c. D-04 therefore retains a
 release-permission gap for this component; no commercial or general
 redistribution permission is asserted and no solver is silently substituted.
+
+2026-11-02: the 119 selected files under fuel_planner/utils/lkh_tsp_solver are
+now fingerprinted in ../../../license_reviews/d04-20261102/review.json (D04-LKH).
+Their reproducible identity is the FUEL commit plus this exact subtree and file
+hashes; an independent LKH release number is still unverified. The university's
+LKH-3 description must not be used as this bundled solver's license or version.
+The rights-holder clarification draft is in that review directory. No request
+has been sent and no new redistribution grant has been obtained.

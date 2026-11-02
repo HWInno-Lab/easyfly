@@ -13,11 +13,12 @@
 """Lifecycle admission, endpoints and ownership checks without starting a flight backend."""
 import json
 import stat
+import hashlib
 
 import pytest
 
 from easyfly_connection_manager.backend import (
-    can_stop, check, command, prepare_algorithm_runtime, private, urls, preview_geometry)
+    can_stop, check, command, prepare_algorithm_runtime, private, urls, preview_geometry, inventory)
 
 
 def test_scene_preview_uses_only_bounded_static_geometry():
@@ -27,6 +28,34 @@ def test_scene_preview_uses_only_bounded_static_geometry():
     <size>9 9 9</size></box></geometry></collision></link></model></world></sdf>'''
     assert preview_geometry(data) == [dict(x=1, y=2, width=3, height=4, yaw=0, ground=True)]
     assert preview_geometry(b'x' * (2 * 1024 * 1024 + 1)) == []
+
+
+@pytest.mark.parametrize('trusted,tampered,count', [(True, False, 1),
+                                                   (False, False, 0), (True, True, 0)])
+def test_scene_preview_respects_trusted_symlink_installs_and_hashes(
+        tmp_path, monkeypatch, trusted, tampered, count):
+    from easyfly_px4_sitl.scene_catalog import SceneCatalog
+    share, source = tmp_path / 'share', tmp_path / 'source'
+    share.mkdir()
+    source.mkdir()
+    data = b'''<sdf><world><model><static>true</static><link><collision><geometry>
+    <box><size>3 4 1</size></box></geometry></collision></link></model></world></sdf>'''
+    world = source / 'scene.world'
+    world.write_bytes(data + (b'\n' if tampered else b''))
+    (share / 'scene.world').symlink_to(world)
+    catalog = SceneCatalog.__new__(SceneCatalog)
+    catalog.packages = {'easyfly_gazebo_worlds': share}
+    catalog.external = {}
+    catalog.trusted_sources = (source,) if trusted else ()
+    catalog.scenes = {'sample': dict(name='Sample', status='registered',
+                                   supported_profiles=['navigation_dev'], world=dict(
+                                       package='easyfly_gazebo_worlds', path='scene.world',
+                                       sha256=hashlib.sha256(data).hexdigest()))}
+    monkeypatch.setattr('easyfly_px4_sitl.scene_environment.installed_catalog',
+                        lambda **_: (catalog, []))
+    monkeypatch.setattr('easyfly_connection_manager.backend.effective_px4_directory',
+                        lambda _: None)
+    assert len(inventory()['scenes'][0]['preview']) == count
 
 
 def profile():
@@ -56,6 +85,16 @@ def test_transport_urls_are_arguments_and_not_a_shell():
     assert command(p)[2:4] == ['easyfly_mavlink_bridge', 'mavlink_bridge.launch.py']
     p['fcu']['transport'] = 'tcp'
     assert urls(p)[0] == 'tcp://127.0.0.1:14580'
+
+
+@pytest.mark.parametrize('strategy', ['gcopter', 'super'])
+def test_disabled_navigation_keeps_its_saved_strategy_without_requiring_navigation_profile(strategy):
+    p = profile(); p['selected_profile'] = 'full_perception'
+    p['algorithms'] = dict(strategy=strategy, start_navigation=False)
+    args = command(p)
+    options = json.loads(next(x.split(':=', 1)[1] for x in args if x.startswith('algorithms_json:=')))
+    assert options['strategy'] == strategy
+    assert options['start_navigation'] is False
 
 
 def test_installed_px4_default_preserves_explicit_user_selection(tmp_path, monkeypatch):
@@ -281,6 +320,9 @@ def test_localization_dependencies_are_selected_without_fallback(monkeypatch, se
     p = profile()
     p['simulation']['px4_directory'] = '/inspection/px4-input'
     p['algorithms'] = dict(slam=selection)
+    from easyfly_params.algorithms import fields
+    p['algorithms'].update({field['key']: False for field in fields()
+                            if field['key'].startswith('start_')})
     with pytest.raises(RuntimeError, match='inspection stopped'):
         check(p)
     assert requested == expected
@@ -428,3 +470,12 @@ def test_incompatible_planning_selection_fails_before_storage(tmp_path, options,
     assert not directory.exists()
     with pytest.raises(ValueError, match='FUEL|GCOPTER'):
         command(p)
+
+
+def test_startup_failure_categories_preserve_missing_dependency_reason():
+    from ament_index_python.packages import PackageNotFoundError
+    from easyfly_connection_manager.backend import failure_code
+    assert failure_code(PackageNotFoundError('missing runtime')) == 'dependency_missing'
+    assert failure_code(ModuleNotFoundError('missing SDK')) == 'dependency_missing'
+    assert failure_code(ValueError('unsupported combination')) == 'unsupported_configuration'
+    assert failure_code(RuntimeError('backend process failed')) == 'backend_failed'

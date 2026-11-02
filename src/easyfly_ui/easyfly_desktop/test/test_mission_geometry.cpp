@@ -261,6 +261,22 @@ TEST(MissionGeometryEditor, ActualScreenshotsAndClicksNeverUseTaskRpc)
   window.resize(1024, 720); QTest::qWait(100);
   const QRect visible(canvas->mapTo(&window, QPoint()), canvas->size());
   EXPECT_TRUE(window.rect().contains(visible));
+  auto * scroll = editor->findChild<QScrollArea *>("draftEditorScroll");
+  ASSERT_NE(scroll, nullptr);
+  for (const QSize size : {QSize(1024, 720), QSize(1280, 800), QSize(1440, 900)}) {
+    window.resize(size); QTest::qWait(100);
+    const QRect in_view(canvas->mapTo(scroll->viewport(), QPoint()), canvas->size());
+    EXPECT_TRUE(scroll->viewport()->rect().contains(in_view)) << size.width() << "x" << size.height();
+    for (const char * id : {"draftGeometryFit", "draftGeometryZoomIn", "draftGeometryZoomOut"}) {
+      auto * control = editor->findChild<QPushButton *>(id);
+      ASSERT_NE(control, nullptr);
+      const QRect control_rect(control->mapTo(scroll->viewport(), QPoint()), control->size());
+      EXPECT_TRUE(scroll->viewport()->rect().contains(control_rect)) << id;
+      QTest::mouseClick(control, Qt::LeftButton);
+    }
+    EXPECT_EQ(body->toPlainText(), before);
+  }
+  window.resize(1024, 720); QTest::qWait(100);
   EXPECT_TRUE(
     window.grab().save(
       QString(EASYFLY_GEOMETRY_SCREENSHOT_DIRECTORY) +

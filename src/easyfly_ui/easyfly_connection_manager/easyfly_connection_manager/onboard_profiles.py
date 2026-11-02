@@ -721,7 +721,7 @@ def validate(recipe, require_files=False, standalone=False):
                 'precision hardware config and camera topics must be explicit; no overrides'
             )
         if name == 'target_tracking' and set(entry['parameters']) - (
-            set(TRACK_DEFAULTS) | {'config_file'}
+            set(TRACK_DEFAULTS) | {'config_file', 'perception_version', 'camera_id'}
         ):
             raise ValueError('unknown target_tracking parameter override')
         if name == "mavlink":
@@ -760,6 +760,7 @@ def validate(recipe, require_files=False, standalone=False):
             )
             if not isinstance(path, str) or not path:
                 raise ValueError("hardware configuration required: " + name + "/" + key)
+    perception_contract(recipe)
     order(recipe)
     return recipe
 
@@ -973,3 +974,32 @@ def preflight(recipe, roots, directory=None):
                 'precision control values must come from the shared configuration; no overrides'
             )
     return frozen, hashes
+
+
+def perception_contract(recipe):
+    """Return version-specific telemetry bindings without changing persisted legacy recipes."""
+    versions = {entry['parameters'].get('perception_version', 1) for name, entry in recipe['components'].items()
+                if entry['enabled'] and name in ('detection', 'tracking', 'pixel_to_3d', 'target_tracking')}
+    if any(type(v) is not int for v in versions) or not versions <= {1, 2} or len(versions) > 1:
+        raise ValueError('all enabled perception components must select the same perception_version')
+    version = next(iter(versions), 1)
+    if version == 2:
+        for name, topic in [('detection', '/perception/v2/detections'), ('tracking', '/perception/v2/tracks')]:
+            entry = recipe['components'].get(name)
+            if entry and entry['enabled'] and entry['output_topic'] != entry['remappings'].get(topic, topic):
+                raise ValueError('V2 recipe requires versioned output topic for ' + name)
+    return version
+
+
+def observation_catalog(recipe):
+    import copy
+    result = copy.deepcopy(CATALOG)
+    if perception_contract(recipe) == 2:
+        for role, topic, message in [
+            ('detection', '/perception/v2/detections', 'DetectionArrayV2'),
+            ('tracking', '/perception/v2/tracks', 'ImageTrackArrayV2'),
+            # pixel_to_3d has no independent startup telemetry in recipe schema v1.
+        ]:
+            result[role]['output'] = topic
+            result[role]['message'] = 'easyfly_msgs/msg/' + message
+    return result

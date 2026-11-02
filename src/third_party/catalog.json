@@ -27,10 +27,9 @@
         "easyfly_sim_launcher"
       ],
       "evidence_files": [
-        "src/third_party/algorithms/localization/fast_lio.provenance.json",
-        "src/algorithms/alg8-1-validation.md"
+        "src/third_party/algorithms/localization/fast_lio.provenance.json"
       ],
-      "version_evidence": "package.xml 0.0.0; exact fork/import unknown",
+      "version_evidence": "Reconstruction base Ericsii/FAST_LIO_ROS2@59b082f0d196764d6d3dc784ccb602c26b2de597 and ikd-Tree@e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4; historical checkout not unique.",
       "exact_upstream_import_revision": null,
       "known_local_patch_commits": [
         "7455e06",
@@ -38,13 +37,13 @@
         "c3e41af"
       ],
       "unresolved": [
-        "Exact FAST-LIO/ikd-Tree/IKFoM imports unknown.",
-        "Root GPL-v2 text and package BSD declaration differ; preserved."
+        "Exact pinned ikd-Tree license coverage requires rightsholder evidence; newer main-branch GPLv2 is not applied backwards."
       ],
       "related_paths": [
         "src/third_party/algorithms/localization/fast_lio/include/ikd-Tree",
         "src/third_party/algorithms/localization/fast_lio/include/IKFoM_toolkit"
-      ]
+      ],
+      "license_review": "src/third_party/license_reviews/d04-20261102/review.json"
     },
     {
       "id": "ego_planner",
@@ -63,10 +62,9 @@
         "easyfly_global_planner"
       ],
       "evidence_files": [
-        "src/third_party/algorithms/planning/ego_planner.provenance.json",
-        "src/algorithms/alg8-2-validation.md"
+        "src/third_party/algorithms/planning/ego_planner.provenance.json"
       ],
-      "version_evidence": "8-package local ROS2 import, upstream version unknown",
+      "version_evidence": "Original local ROS2 fork b757687b6dd6bdc50ab20d764fae665b4ce5861b plus seven recorded working-tree files; current selection reconstructs from immutable originals plus patch.",
       "exact_upstream_import_revision": null,
       "known_local_patch_commits": [
         "7455e06",
@@ -79,10 +77,11 @@
         "6d4115e"
       ],
       "unresolved": [
-        "Exact upstream/fork/base unknown.",
-        "TODO/mixed package license metadata and no unified root license."
+        "Historical remote access and uniquely recovered original upstream base remain unverified; mixed-origin file notices remain applicable."
       ],
-      "related_paths": []
+      "related_paths": [],
+      "owner_port_license": "Apache-2.0 for owner original ROS2 port contributions, confirmed 2026-11-02; combined/inherited scopes remain GPLv3 and applicable component licenses.",
+      "license_review": "src/third_party/license_reviews/d04-20261102/review.json"
     },
     {
       "id": "onnxruntime",
@@ -98,8 +97,7 @@
         "easyfly_yolo_onnx"
       ],
       "evidence_files": [
-        "src/third_party/runtimes/onnxruntime.provenance.json",
-        "src/algorithms/alg5-validation.md"
+        "src/third_party/runtimes/onnxruntime.provenance.json"
       ],
       "version_evidence": "VERSION_NUMBER 1.23.2; GIT_COMMIT_ID a83fc4d58cb48eb68890dd689f94f28288cf2278",
       "exact_upstream_import_revision": null,
@@ -123,8 +121,7 @@
         "livox_ros_driver2"
       ],
       "evidence_files": [
-        "src/third_party/sensor_sdks/livox_sdk2.provenance.json",
-        "src/algorithms/alg8-3-validation.md"
+        "src/third_party/sensor_sdks/livox_sdk2.provenance.json"
       ],
       "version_evidence": "header/runtime 1.3.0; CHANGELOG 1.2.5; CMake library variable 0.0.2",
       "exact_upstream_import_revision": null,
@@ -151,8 +148,7 @@
         "realsense2_camera"
       ],
       "evidence_files": [
-        "src/third_party/sensor_sdks/librealsense.provenance.json",
-        "src/algorithms/alg8-3-validation.md"
+        "src/third_party/sensor_sdks/librealsense.provenance.json"
       ],
       "version_evidence": "rs.h/package.xml/runtime 2.56.5",
       "exact_upstream_import_revision": null,
@@ -179,8 +175,7 @@
         "easyfly_connection_manager"
       ],
       "evidence_files": [
-        "src/third_party/tools/qgc/provenance.json",
-        "src/algorithms/alg8-4-validation.md"
+        "src/third_party/tools/qgc/provenance.json"
       ],
       "version_evidence": "prior inspected local sample 5.0.8, bundled Qt6.8.3",
       "exact_upstream_import_revision": null,
@@ -209,8 +204,7 @@
       ],
       "evidence_files": [
         "src/communication/c1_drivers/livox_ros_driver2/README.md",
-        "src/communication/c1_drivers/livox_ros_driver2/LICENSE.txt",
-        "src/algorithms/alg8-3-validation.md"
+        "src/communication/c1_drivers/livox_ros_driver2/LICENSE.txt"
       ],
       "version_evidence": "package.xml 1.0.0, independent of SDK version",
       "exact_upstream_import_revision": null,
@@ -236,8 +230,7 @@
       ],
       "evidence_files": [
         "src/communication/c1_drivers/realsense_ros/README.md",
-        "src/communication/c1_drivers/realsense_ros/LICENSE",
-        "src/algorithms/alg8-3-validation.md"
+        "src/communication/c1_drivers/realsense_ros/LICENSE"
       ],
       "version_evidence": "local HEAD d69f05c1b4a3f0d5740e25d6429d4417c7f3d75d",
       "exact_upstream_import_revision": null,
@@ -335,9 +328,10 @@
         "src/third_party/algorithms/localization/fast_livo2_dependencies"
       ],
       "unresolved": [
-        "Vikit fork declares BSD metadata but contains no standalone full license text; original notices retained.",
+        "VIKIT metadata/full texts corrected; FAST-LIVO2 GPLv2 and inherited VIKIT GPLv3 combined-distribution compatibility still needs applicable authorization or a validated dependency replacement.",
         "Hardware, loop closure and long-term map reuse are not accepted."
-      ]
+      ],
+      "license_review": "src/third_party/license_reviews/d04-20261102/review.json"
     },
     {
       "id": "orb_slam3",
@@ -422,13 +416,14 @@
       "exact_upstream_import_revision": "662dd23c7b52b258d3c4a0155ff6632118e8984f",
       "known_local_patch_commits": [],
       "unresolved": [
-        "Bundled LKH package.xml license TODO preserved; simulation qualification does not establish redistribution rights.",
+        "119 LKH files identified by exact FUEL snapshot and hashes; independent LKH release and source/binary redistribution terms remain unverified.",
         "Native FUEL B-spline/controller, hardware, high-speed and dynamic-scene qualification are outside current bounded Gazebo scope."
       ],
       "related_paths": [
         "src/third_party/algorithms/planning/fuel/fuel_planner/utils/lkh_tsp_solver",
         "src/third_party/algorithms/planning/fuel.notices"
-      ]
+      ],
+      "license_review": "src/third_party/license_reviews/d04-20261102/review.json"
     },
     {
       "id": "gcopter",
@@ -492,5 +487,6 @@
   "placeholder_policy": "No source or package in these empty directories; do not claim integration. SDK private JSON cache is a separate recorded build input.",
   "runtime_selection": "Libraries via exported installed targets/modules; ROS engines via platform launch/session; external QGC by explicitly saved path. No new automatic backend discovery.",
   "licensing_policy": "Preserve upstream file scopes and unknowns; project-maintained algorithms are not claims of theoretical originality.",
-  "patch_record": "src/third_party/sourcing-and-patches.md"
+  "patch_record": "src/third_party/sourcing-and-patches.md",
+  "license_review_date": "2026-11-02"
 }

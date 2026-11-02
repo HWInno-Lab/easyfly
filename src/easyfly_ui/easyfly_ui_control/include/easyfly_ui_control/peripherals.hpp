@@ -15,6 +15,7 @@
 #include <memory>
 #include <string>
 #include <easyfly_msgs/msg/single_track_state.hpp>
+#include <easyfly_msgs/msg/single_track_state_v2.hpp>
 #include <easyfly_msgs/msg/gimbal_state.hpp>
 #include <easyfly_msgs/srv/manage_single_track.hpp>
 #include <easyfly_msgs/srv/set_gimbal_angle.hpp>
@@ -22,7 +23,7 @@
 namespace easyfly_ui_control
 {
 struct PeripheralConfig {bool use_sim_time{true}; bool commands_enabled{false};
-  double response_timeout{2};};
+  double response_timeout{2}; int perception_version{1};};
 struct PeripheralSnapshot
 {
   bool running{false}, stopped{false}, pending{false}, uncertain{false};
@@ -33,6 +34,7 @@ struct PeripheralSnapshot
   int64_t ros_now_ns{0};
   std::string operation, message;
   std::shared_ptr<const easyfly_msgs::msg::SingleTrackState> single;
+  std::shared_ptr<const easyfly_msgs::msg::SingleTrackStateV2> native_single;
   std::shared_ptr<const easyfly_msgs::msg::GimbalState> gimbal;
 };
 // Explicit opt-in, fixed peripheral endpoints only. One in-flight request, no retries.

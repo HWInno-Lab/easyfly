@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>easyfly_perception_contracts</depend>
   <depend>easyfly_detection_api</depend>
   <depend>easyfly_yolo_onnx</depend>
   <depend>rclcpp_components</depend>
@@ -20,6 +21,7 @@
   <depend>yaml-cpp</depend>
 
   <test_depend>ament_cmake_pytest</test_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>rclpy</test_depend>
   <test_depend>ament_index_python</test_depend>
   <test_depend>ament_lint_auto</test_depend>
@@ -30,4 +32,6 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+  <depend>easyfly_backend_registry</depend>
+  <depend>diagnostic_msgs</depend>
 </package>

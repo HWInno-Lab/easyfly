@@ -13,12 +13,12 @@
 
 #include <QCheckBox>
 #include <QDialog>
+#include <QDialogButtonBox>
 #include <QButtonGroup>
 #include <QFrame>
 #include <QGridLayout>
 #include <QStyle>
 #include <QToolButton>
-#include <QPainter>
 #include <QResizeEvent>
 #include <QCloseEvent>
 #include <QTabWidget>
@@ -66,9 +66,43 @@
 #include "easyfly_connection_manager/onboard_page.hpp"
 #include "easyfly_connection_manager/profile.hpp"
 #include "easyfly_connection_manager/rpc.hpp"
+#include "simulation_algorithm_panel.hpp"
+#include "scene_preview.hpp"
 
 namespace easyfly_connection_manager
 {
+namespace
+{
+QWidget * previewControls(ScenePreview * view, QWidget * parent)
+{
+  auto * tools = new QWidget(parent); auto * row = new QHBoxLayout(tools);
+  row->setContentsMargins(0, 0, 0, 0); row->setSpacing(6);
+  auto * out = new QToolButton(tools); out->setText(QStringLiteral("−"));
+  out->setObjectName("scenePreviewZoomOut"); out->setAccessibleName(QStringLiteral("缩小场景预览"));
+  out->setToolTip(QStringLiteral("缩小（− / 滚轮向下）"));
+  auto * in = new QToolButton(tools); in->setText(QStringLiteral("＋"));
+  in->setObjectName("scenePreviewZoomIn"); in->setAccessibleName(QStringLiteral("放大场景预览"));
+  in->setToolTip(QStringLiteral("放大（＋ / 滚轮向上）"));
+  for (auto * button : {out, in}) {button->setMinimumSize(32, 32); button->setAutoRepeat(true);}
+  auto * fit = new QPushButton(QStringLiteral("适应窗口"), tools);
+  fit->setObjectName("scenePreviewFit"); fit->setToolTip(QStringLiteral("显示完整场景（0 / 双击预览）"));
+  auto * ratio = new QLabel(tools); ratio->setObjectName("scenePreviewZoomFactor");
+  ratio->setMinimumWidth(46); ratio->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+  ratio->setToolTip(QStringLiteral("相对于适应窗口大小的缩放倍数"));
+  row->addWidget(out); row->addWidget(in); row->addWidget(fit); row->addStretch(); row->addWidget(ratio);
+  QObject::connect(out, &QToolButton::clicked, view, &ScenePreview::zoomOut);
+  QObject::connect(in, &QToolButton::clicked, view, &ScenePreview::zoomIn);
+  QObject::connect(fit, &QPushButton::clicked, view, &ScenePreview::fitToWindow);
+  const auto refresh = [view, out, in, fit, ratio] {
+      const bool ready = view->hasPreview();
+      out->setEnabled(ready); in->setEnabled(ready); fit->setEnabled(ready);
+      ratio->setText(ready ? QString::number(view->zoomFactor(), 'f', 2) + QStringLiteral("×") : QStringLiteral("—"));
+    };
+  QObject::connect(view, &ScenePreview::viewChanged, tools, refresh); refresh();
+  return tools;
+}
+}  // namespace
+
 struct ManagerWindow::Impl
 {
   ManagerWindow * owner;
@@ -89,6 +123,7 @@ struct ManagerWindow::Impl
   QComboBox * scope, * profile;
   QMap<QString, QWidget *> algorithm_controls;
   QWidget * algorithms_page{nullptr};
+  SimulationAlgorithmPanel * algorithm_panel{nullptr};
   OnboardPage * onboard_page{nullptr};
   QWidget * regular_page{nullptr}, *status_widget{nullptr}, *profile_toolbar_widget{nullptr};
   QToolButton * onboard_card{nullptr}, *refresh_scenes{nullptr};
@@ -126,8 +161,8 @@ struct ManagerWindow::Impl
   QButtonGroup * mode_cards;
   QList<QToolButton *> mode_buttons;
   QLabel * backend_card, * dds_card, * flight_card, * qgc_card;
-  QLabel * scene_preview, * preview_caption;
-  QString preview_key;
+  ScenePreview * scene_preview;
+  QLabel * preview_caption;
   QPushButton * details_toggle;
   QGridLayout * command_grid{nullptr};
   int command_columns{-1};
@@ -328,19 +363,71 @@ struct ManagerWindow::Impl
         "DDS 默认发现。"), owner);
     supported->setWordWrap(true); form->addRow(supported);
 
-    auto * sim_form = page(QStringLiteral("仿真场景")); simulation_form = sim_form;
-    auto * preview_box = new QWidget(owner); auto * preview_layout = new QHBoxLayout(preview_box);
-    preview_layout->setContentsMargins(0, 0, 0, 0);
-    scene_preview = new QLabel(preview_box); scene_preview->setObjectName("scenePreview");
-    scene_preview->setFixedSize(220, 130); scene_preview->setAlignment(Qt::AlignCenter);
-    preview_caption = new QLabel(QStringLiteral("场景静态几何预览"), preview_box);
+    auto * environment_form = page(QStringLiteral("仿真场景"));
+    auto * environment_body = environment_form->parentWidget(); delete environment_form;
+    auto * environment_layout = new QVBoxLayout(environment_body);
+    environment_layout->setContentsMargins(0, 0, 0, 0);
+    auto * environment_columns = new QSplitter(Qt::Horizontal, environment_body);
+    environment_columns->setObjectName("simulationEnvironmentColumns");
+    environment_columns->setChildrenCollapsible(false);
+    environment_layout->addWidget(environment_columns, 1);
+    auto * settings_area = new QScrollArea(environment_columns);
+    settings_area->setWidgetResizable(true); settings_area->setFrameShape(QFrame::NoFrame);
+    settings_area->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    settings_area->setMinimumWidth(270);
+    auto * settings = new QWidget(settings_area); settings_area->setWidget(settings);
+    auto * sim_form = new QFormLayout(settings); simulation_form = sim_form;
+    sim_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    sim_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
+    sim_form->setFormAlignment(Qt::AlignTop);
+    sim_form->setContentsMargins(16, 12, 16, 12); sim_form->setVerticalSpacing(10);
+    auto * preview_box = new QWidget(environment_columns);
+    preview_box->setObjectName("simulationScenePreviewPanel"); preview_box->setMinimumWidth(260);
+    auto * preview_layout = new QVBoxLayout(preview_box);
+    preview_layout->setContentsMargins(12, 12, 12, 12); preview_layout->setSpacing(10);
+    auto * preview_title = new QLabel(QStringLiteral("场景预览"), preview_box);
+    auto preview_font = preview_title->font(); preview_font.setBold(true);
+    preview_title->setFont(preview_font);
+    auto * preview_heading = new QHBoxLayout;
+    preview_heading->addWidget(preview_title); preview_heading->addStretch();
+    auto * expand_preview = new QPushButton(QStringLiteral("大图"), preview_box);
+    expand_preview->setObjectName("scenePreviewExpand");
+    expand_preview->setEnabled(false);
+    expand_preview->setToolTip(QStringLiteral("在独立大窗口中缩放和查看场景细节"));
+    preview_heading->addWidget(expand_preview); preview_layout->addLayout(preview_heading);
+    scene_preview = new ScenePreview(preview_box);
+    QObject::connect(scene_preview, &ScenePreview::viewChanged, expand_preview,
+      [this, expand_preview] {expand_preview->setEnabled(scene_preview->hasPreview());});
+    preview_layout->addWidget(previewControls(scene_preview, preview_box));
+    scene_preview->setToolTip(QStringLiteral("滚轮缩放，按住左键拖动平移；双击适应窗口"));
+    QObject::connect(expand_preview, &QPushButton::clicked, owner, [this] {
+        const auto info = scene->currentData(Qt::UserRole + 1).toJsonObject();
+        if (info.isEmpty()) {return;}
+        QDialog dialog(owner); dialog.setObjectName("scenePreviewDialog");
+        dialog.setWindowTitle(QStringLiteral("场景俯视预览 · %1").arg(info["name"].toString()));
+        dialog.setWindowFlag(Qt::WindowMaximizeButtonHint, true); dialog.setSizeGripEnabled(true);
+        dialog.resize(1200, 850);
+        auto * layout = new QVBoxLayout(&dialog);
+        auto * view = new ScenePreview(&dialog);
+        layout->addWidget(previewControls(view, &dialog)); layout->addWidget(view, 1);
+        auto * caption = new QLabel(preview_caption->text() +
+          QStringLiteral("\n滚轮缩放，按住左键拖动平移；双击适应窗口。"), &dialog);
+        caption->setWordWrap(true); layout->addWidget(caption);
+        auto * buttons = new QDialogButtonBox(QDialogButtonBox::Close, &dialog);
+        buttons->button(QDialogButtonBox::Close)->setText(QStringLiteral("关闭"));
+        QObject::connect(buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        layout->addWidget(buttons);
+        view->setPreview(info["preview"].toArray(), info["preview_image"].toObject());
+        dialog.exec();
+      });
+    preview_caption = new QLabel(QStringLiteral("选择场景后自动显示预览"), preview_box);
+    preview_caption->setObjectName("scenePreviewCaption");
     preview_caption->setWordWrap(true); preview_caption->setMinimumWidth(0);
     preview_caption->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
-    preview_layout->addWidget(scene_preview); preview_layout->addWidget(preview_caption, 1);
-    auto * preview_toggle = new QPushButton(QStringLiteral("场景预览"), owner);
-    preview_toggle->setObjectName("toggleScenePreview"); preview_toggle->setCheckable(true);
-    preview_box->hide();
-    QObject::connect(preview_toggle, &QPushButton::toggled, preview_box, &QWidget::setVisible);
+    preview_layout->addWidget(scene_preview, 1); preview_layout->addWidget(preview_caption);
+    environment_columns->addWidget(settings_area); environment_columns->addWidget(preview_box);
+    environment_columns->setStretchFactor(0, 2); environment_columns->setStretchFactor(1, 3);
+    environment_columns->setSizes({400, 600});
     scene = new QComboBox(owner); scene->setObjectName("connectionScene");
     auto * scene_row = new QWidget(owner); auto * scene_layout = new QHBoxLayout(scene_row);
     scene_layout->setContentsMargins(0, 0, 0, 0); scene_layout->addWidget(scene, 1);
@@ -392,7 +479,6 @@ struct ManagerWindow::Impl
     show_advanced(false);
     QObject::connect(advanced_sim, &QPushButton::toggled, owner, show_advanced);
 
-    sim_form->addRow(preview_toggle); sim_form->addRow(preview_box);
     fcu_form = page(QStringLiteral("飞控链路"));
     transport = new QComboBox(owner); transport->setObjectName(
       "connectionTransport");
@@ -560,105 +646,14 @@ struct ManagerWindow::Impl
     delete profile_row.fieldItem;
     sim_form->insertRow(0, QStringLiteral("运行方案"), profile);
     auto * algorithms_form = page(QStringLiteral("算法配置"));
-    algorithms_page = algorithms_form->parentWidget();
+    algorithms_page = algorithms_form->parentWidget(); delete algorithms_form;
     algorithms_page->setObjectName("algorithmSettings");
-    algorithms_page->setStyleSheet("QWidget#algorithmSettings {background: white;}");
-    auto * algorithm_hint = new QLabel(
-      QStringLiteral(
-        "随本机仿真会话统一启停，保存后重启生效。\n"
-        "几何检测仅输出图像结果；降落准备不包含完整精降。"), owner);
-    algorithm_hint->setWordWrap(true);
-    auto * algorithm_header = new QWidget(owner);
-    auto * algorithm_header_layout = new QHBoxLayout(algorithm_header);
-    algorithm_header_layout->setContentsMargins(0, 0, 0, 0);
-    algorithm_header_layout->addWidget(algorithm_hint, 1);
-    algorithms_form->addRow(algorithm_header);
-    algorithms_form->setContentsMargins(12, 8, 12, 8); algorithms_form->setVerticalSpacing(6);
-    auto * navigation_box = new QGroupBox(QStringLiteral("导航与规划"), owner);
-    navigation_box->setObjectName("navigationAlgorithmGroup");
-    auto * navigation_form = new QFormLayout(navigation_box);
-    navigation_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-    navigation_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
-    algorithms_form->addRow(navigation_box);
-    auto * common = new QWidget(owner); auto * common_grid = new QGridLayout(common);
-    common_grid->setContentsMargins(0, 0, 0, 0);
-    common_grid->setColumnStretch(0, 1); common_grid->setColumnStretch(1, 1);
-    auto * advanced = new QWidget(owner); auto * advanced_grid = new QGridLayout(advanced);
-    advanced_grid->setContentsMargins(0, 0, 0, 0);
-    advanced_grid->setColumnStretch(0, 1); advanced_grid->setColumnStretch(1, 1);
-    QMap<QString, QFormLayout *> algorithm_forms;
-    algorithm_forms["navigation"] = navigation_form;
-    auto * slam_box = new QGroupBox(QStringLiteral("SLAM · 定位与建图"), owner);
-    auto * slam_form = new QFormLayout(slam_box);
-    slam_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-    slam_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
-    algorithm_forms["slam"] = slam_form;
-    algorithms_form->addRow(slam_box);
-    slam_summary = new QLabel(slam_box); slam_summary->setObjectName("slamConfigurationSummary");
-    slam_summary->setWordWrap(true); slam_summary->setTextFormat(Qt::PlainText);
-    slam_summary->setMinimumWidth(0);
-    slam_summary->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
-    auto * slam_toggle = new QPushButton(QStringLiteral("SLAM 高级参数"), slam_box);
-    slam_toggle->setObjectName("toggleSlamAdvanced"); slam_toggle->setCheckable(true);
-    auto * slam_advanced = new QWidget(slam_box); slam_advanced->setObjectName("slamAdvanced");
-    auto * slam_grid = new QGridLayout(slam_advanced); slam_grid->setContentsMargins(0, 0, 0, 0);
-    slam_grid->setColumnStretch(0, 1); slam_grid->setColumnStretch(1, 1);
-    const QStringList slam_groups{"slam_sampling", "slam_mapping"};
-    const QStringList slam_titles{QStringLiteral("采样与计算"), QStringLiteral("地图与距离")};
-    for (int i = 0; i < slam_groups.size(); ++i) {
-      auto * box = new QGroupBox(slam_titles[i], slam_advanced);
-      auto * form = new QFormLayout(box);
-      form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-      form->setRowWrapPolicy(QFormLayout::WrapLongRows);
-      algorithm_forms[slam_groups[i]] = form; slam_grid->addWidget(box, 0, i);
-    }
-    slam_advanced->hide();
-    QObject::connect(slam_toggle, &QPushButton::toggled, slam_advanced, &QWidget::setVisible);
-    const QStringList groups{"overview", "input", "ellipse", "color_line"};
-    const QStringList group_titles{QStringLiteral("图像感知"), QStringLiteral("图像输入"),
-      QStringLiteral("椭圆检测参数"), QStringLiteral("彩线检测参数")};
-    for (int i = 0; i < groups.size(); ++i) {
-      auto * box = new QGroupBox(group_titles[i], owner);
-      auto * group_form = new QFormLayout(box);
-      group_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
-      group_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
-      algorithm_forms[groups[i]] = group_form;
-      (i < 2 ? common_grid : advanced_grid)->addWidget(box, 0, i % 2);
-    }
-    algorithms_form->addRow(common);
-    auto * advanced_toggle = new QPushButton(QStringLiteral("高级检测参数"), owner);
-    advanced_toggle->setObjectName("toggleAlgorithmAdvanced"); advanced_toggle->setCheckable(true);
-    advanced->setObjectName("algorithmAdvanced"); advanced->hide();
-    algorithm_header_layout->addWidget(advanced_toggle); algorithms_form->addRow(advanced);
-    QObject::connect(advanced_toggle, &QPushButton::toggled, advanced, &QWidget::setVisible);
-    for (const auto & item : algorithm_fields()) {
-      const auto field = item.toObject(); const auto key = field["key"].toString();
-      const auto kind = field["kind"].toString(); QWidget * control = nullptr;
-      if (kind == "bool") {control = new QCheckBox(owner);} else if (kind == "choice") {
-        auto * combo = new QComboBox(owner);
-        combo->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-        combo->setMinimumContentsLength(8);
-        for (const auto & choice : field["choices"].toArray()) {
-          const auto pair = choice.toArray();
-          combo->addItem(pair[1].toString(), pair[0].toString());
-        }
-        control = combo;
-      } else if (kind == "string" || kind == "topic") {
-        auto * edit = new QLineEdit(owner);
-        edit->setMaxLength(kind == "topic" ? 256 : 128); control = edit;
-      } else {
-        auto * number = new QDoubleSpinBox(owner);
-        number->setDecimals(kind == "int" ? 0 : 3);
-        number->setRange(field["min"].toDouble(), field["max"].toDouble());
-        number->setSingleStep(kind == "int" ? 1 : .01); control = number;
-      }
-      control->setObjectName("algorithm_" + key); algorithm_controls[key] = control;
-      auto * target_form = (key == "strategy" || key == "exploration") ? navigation_form :
-        algorithm_forms.value(field["group"].toString(), algorithm_forms["overview"]);
-      target_form->addRow(field["label"].toString(), control);
-    }
-    slam_form->addRow(slam_summary); slam_form->addRow(slam_toggle);
-    slam_form->addRow(slam_advanced);
+    auto * algorithms_layout = new QVBoxLayout(algorithms_page);
+    algorithms_layout->setContentsMargins(0, 0, 0, 0);
+    algorithm_panel = new SimulationAlgorithmPanel(algorithm_fields(), algorithms_page);
+    algorithm_panel->setProfileSelector(profile);
+    algorithms_layout->addWidget(algorithm_panel, 1);
+    algorithm_controls = algorithm_panel->controls(); slam_summary = algorithm_panel->slamSummary();
     auto * algorithm_tab = tabs->widget(tabs->count() - 1);
     tabs->removeTab(tabs->count() - 1);
     tabs->insertTab(1, algorithm_tab, QStringLiteral("算法配置"));
@@ -679,6 +674,9 @@ struct ManagerWindow::Impl
         }
         auto * dialog = qobject_cast<QDialog *>(invalid_field->window());
         if (dialog) {dialog->show(); dialog->raise();}
+        if (algorithm_panel->isAncestorOf(invalid_field)) {
+          algorithm_panel->revealControl(invalid_field);
+        }
         invalid_field->setFocus(Qt::OtherFocusReason);
         if (auto * area = qobject_cast<QScrollArea *>(configuration_tabs->currentWidget())) {
           area->ensureWidgetVisible(invalid_field);
@@ -893,6 +891,8 @@ struct ManagerWindow::Impl
     const auto changed = [this] {
         if (!loading) {update(); restore_observer(form_profile());}
       };
+    QObject::connect(algorithm_panel, &SimulationAlgorithmPanel::moduleSelectionChanged,
+      owner, changed);
     for (auto * widget : algorithm_controls) {
       if (auto * value = qobject_cast<QCheckBox *>(widget)) {
         QObject::connect(value, &QCheckBox::toggled, owner, changed);
@@ -1184,7 +1184,7 @@ struct ManagerWindow::Impl
       const auto row = value.toObject();
       if (row["status"] != "registered" ||
         !row["profiles"].toArray().contains(scene_filter_profile)) {continue;}
-      scene->addItem(row["id"].toString() + QStringLiteral(" · 方案兼容"), row["id"]);
+      scene->addItem(row["id"].toString(), row["id"]);
       scene->setItemData(scene->count() - 1, row, Qt::UserRole + 1);
     }
     // Keep an unavailable saved ID in the form state, never in the choices.
@@ -1727,6 +1727,7 @@ struct ManagerWindow::Impl
           "\nFUEL 需要导航开发运行方案、FAST-LIO 和 GCOPTER；"
           "每次新会话保存独立探索记录，启动后等待显式探索任务。"));
     }
+    algorithm_panel->refreshSummary();
     choose_px4->setEnabled(edit && sim);
     choose_qgc->setEnabled(edit);
     qgc_path->setEnabled(edit);
@@ -1769,50 +1770,14 @@ struct ManagerWindow::Impl
     show_validation(valid ? QString() : start->toolTip());
     const auto scene_info = scene->currentData(Qt::UserRole + 1).toJsonObject();
     scene_preview->setVisible(sim); preview_caption->setVisible(sim);
-    const auto shapes = scene_info["preview"].toArray();
-    const auto key = scene->currentData().toString() + ":" +
-      QString::number(qHash(QJsonDocument(shapes).toJson(QJsonDocument::Compact))) + ":" +
-      QString::number(scene_preview->width()) + ":" + QString::number(scene_preview->height());
-    if (preview_key != key) {
-      preview_key = key;
-      if (shapes.isEmpty()) {
-        scene_preview->setPixmap({}); scene_preview->setText(QStringLiteral("暂无几何预览"));
-      } else {
-        QPixmap image(210, 140); image.fill(QColor("#edf3fc")); QPainter painter(&image);
-        painter.setRenderHint(QPainter::Antialiasing);
-        double extent_x = 1, extent_y = 1;
-        for (const auto & item : shapes) {
-          const auto shape = item.toObject();
-          extent_x = std::max(
-            extent_x, std::abs(
-              shape["x"].toDouble()) + shape["width"].toDouble() / 2);
-          extent_y = std::max(
-            extent_y, std::abs(
-              shape["y"].toDouble()) + shape["height"].toDouble() / 2);
-        }
-        const auto scale = std::min(96 / extent_x, 64 / extent_y);
-        painter.translate(105, 70); painter.scale(scale, -scale);
-        for (const auto & item : shapes) {
-          const auto shape = item.toObject(); painter.save();
-          painter.translate(shape["x"].toDouble(), shape["y"].toDouble());
-          painter.rotate(shape["yaw"].toDouble() * 180 / 3.141592653589793);
-          painter.setPen(Qt::NoPen);
-          painter.setBrush(QColor(shape["ground"].toBool() ? "#dbe4f1" : "#527bb5"));
-          painter.drawRect(
-            QRectF(
-              -shape["width"].toDouble() / 2, -shape["height"].toDouble() / 2,
-              shape["width"].toDouble(), shape["height"].toDouble())); painter.restore();
-        }
-        painter.end(); scene_preview->setPixmap(
-          image.scaled(
-            scene_preview->size().boundedTo(QSize(210, 140)), Qt::KeepAspectRatio,
-            Qt::SmoothTransformation));
-      }
-      preview_caption->setText(
-        QStringLiteral("%1\n静态基本几何俯视 · 非实时画面；模型与网格省略")
-        .arg(scene_info["name"].toString(scene->currentData().toString())));
-      preview_caption->setToolTip(preview_caption->text());
-    }
+    const auto image_preview = scene_info["preview_image"].toObject();
+    const auto has_image = scene_preview->setPreview(scene_info["preview"].toArray(), image_preview);
+    preview_caption->setText(
+      scene->currentIndex() < 0 ? QStringLiteral("请选择适用于当前运行方案的场景。") :
+      QStringLiteral("%1\n%2").arg(scene_info["name"].toString(scene->currentData().toString()),
+        has_image ? image_preview["caption"].toString() :
+        QStringLiteral("静态几何俯视示意；模型与网格省略，非实时画面。")));
+    preview_caption->setToolTip(preview_caption->text());
     if (sim) {
       const int compatible_count = scene->count();
       const auto selected_profile = profile->currentData().toString();
@@ -1964,9 +1929,28 @@ struct ManagerWindow::Impl
         progress += QStringLiteral("\n已完成：") + finished.join(QStringLiteral("、"));
       }
     }
-    startup_progress->setText(progress); startup_progress->setVisible(
-      !progress.isEmpty() &&
-      (backend["startup_stage"] != "observing" || backend_fault || details_toggle->isChecked()));
+    if (backend["startup_stage"] == "observing" && !backend_fault && !details_toggle->isChecked()) {progress.clear();}
+    const auto algorithms = backend["algorithm_backends"].toObject();
+    const QMap<QString, QString> role_labels{{"detection", QStringLiteral("目标检测")}, {"multi_tracking", QStringLiteral("多目标跟踪")},
+      {"single_tracking", QStringLiteral("单目标跟踪")}, {"global_grid", QStringLiteral("全局搜索")}, {"combined_grid", QStringLiteral("组合搜索")}};
+    const QMap<QString, QString> phase_labels{{"ready", QStringLiteral("输入就绪")}, {"waiting_input", QStringLiteral("等待有效输入")},
+      {"creating", QStringLiteral("创建中")}, {"not_observed", QStringLiteral("未观测到实例")}, {"unavailable", QStringLiteral("不可用")},
+      {"mismatch", QStringLiteral("配置与实例不一致")}, {"stale", QStringLiteral("状态已过期")}, {"failed", QStringLiteral("创建或运行失败")},
+      {"not_selected", QStringLiteral("未用于当前策略")}, {"disabled", QStringLiteral("本方案未启动")}, {"dedicated_adapter", QStringLiteral("由专用适配器报告状态")}};
+    for (auto it = algorithms.begin(); it != algorithms.end(); ++it) {
+      const auto row = it.value().toObject();
+      if (!progress.isEmpty()) {progress += "\n";}
+      progress += QStringLiteral("%1 · 请求 %2 · %3").arg(role_labels.value(it.key(), it.key()),
+        row["requested_backend"].toString(), phase_labels.value(row["phase"].toString(), row["phase"].toString()));
+      if (row["created"].toBool()) {progress += QStringLiteral(" · 实际 %1").arg(row["active_backend"].toString());}
+      const auto provider = row["provider"].toString();
+      if (!provider.isEmpty() && provider != "not_applicable") {
+        progress += " / " + provider;
+        if (row["provider_fallback"].toBool()) {progress += QStringLiteral("（CUDA 未启用，已回退 CPU）");}
+      }
+      if (details_toggle->isChecked()) {progress += " · " + row["reason"].toString();}
+    }
+    startup_progress->setText(progress); startup_progress->setVisible(!progress.isEmpty());
     const auto workspace = actual["workspace"].toObject();
     stop->setEnabled(
       queried && actual["process_running"].toBool() &&

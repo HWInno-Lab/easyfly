@@ -13,6 +13,9 @@
 # limitations under the License.
 
 """Query snapshots with explicit readiness, freshness and geometry validity."""
+from easyfly_perception_contracts import WorldInput, perception_version
+from easyfly_msgs.srv import GetPerceptionV2
+
 import copy
 import math
 import time
@@ -42,7 +45,6 @@ class PerceptionServices(Node):
         result = self.validate_parameters([self.get_parameter("max_age")])
         if not result.successful:
             raise ValueError(result.reason)
-        self.add_on_set_parameters_callback(self.validate_parameters)
         self.snapshots = {}
         self.state = None
         self.state_time = 0.0
@@ -60,12 +62,18 @@ class PerceptionServices(Node):
             k: self.get_parameter(k + "_topic").value
             for k in ("targets", "obstacles")
         }
-        self.create_subscription(
-            Target3DArray,
-            self.topics["targets"],
-            lambda m: self.receive("targets", m),
-            10,
-        )
+        self.native_targets = None
+        self.v2 = perception_version(self) == 2
+        if self.v2:
+            self.topics['targets'] = '/perception/v2/world_targets'
+            self.native_input = WorldInput(self, self.receive_native, self.invalidate_native)
+        else:
+            self.create_subscription(
+                Target3DArray,
+                self.topics["targets"],
+                lambda m: self.receive("targets", m),
+                10,
+            )
         self.create_subscription(
             ObstacleInfoArray,
             self.topics["obstacles"],
@@ -88,6 +96,7 @@ class PerceptionServices(Node):
             self.poll_precision,
             clock=Clock(clock_type=ClockType.STEADY_TIME),
         )
+        self.create_service(GetPerceptionV2, "/platform/perception/v2/query", self.query_v2)
         self.create_service(
             GetPerception, "/platform/perception/query", self.query
         )
@@ -96,6 +105,32 @@ class PerceptionServices(Node):
             "/platform/perception/capabilities",
             self.capabilities,
         )
+        self.add_on_set_parameters_callback(self.validate_parameters)
+
+    def receive_native(self, native, numeric):
+        self.native_targets = native
+        self.receive('targets', numeric)
+
+    def invalidate_native(self, reason):
+        self.native_targets = None
+        self.snapshots.pop('targets', None)
+
+    def query_v2(self, request, response):
+        if request.kind == 'targets' and (not self.v2 or self.native_targets is None):
+            response.status = response.NOT_READY
+            response.message = 'native V2 source required; legacy recordings are read-only V1'
+            response.age_sec = -1.
+            return response
+        legacy = self.query(request, GetPerception.Response())
+        for key in ['status', 'message', 'source_topic', 'observed_at', 'age_sec', 'obstacles']:
+            setattr(response, key, getattr(legacy, key))
+        if request.kind == 'targets':
+            response.source_topic = '/perception/v2/world_targets'
+            if legacy.status == legacy.VALID:
+                response.targets = copy.deepcopy(self.native_targets)
+                aliases = {t.track_id for t in legacy.targets.targets}
+                response.targets.targets = [t for t in response.targets.targets if t.key.legacy_raw_id in aliases]
+        return response
 
     @staticmethod
     def validate_parameters(parameters):

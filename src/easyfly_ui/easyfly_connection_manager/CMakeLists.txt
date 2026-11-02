@@ -5,9 +5,13 @@ find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 find_package(easyfly_params REQUIRED)
+find_package(easyfly_backend_registry REQUIRED)
 set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
-  "${easyfly_params_DIR}/../config/algorithm_ui.json")
-file(READ "${easyfly_params_DIR}/../config/algorithm_ui.json" ALGORITHM_UI_SCHEMA)
+  "${easyfly_backend_registry_DIR}/../config/algorithm_ui.json")
+file(READ "${easyfly_backend_registry_DIR}/../config/algorithm_ui.json" ALGORITHM_UI_SCHEMA)
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS
+  "${easyfly_params_DIR}/../config/simulation_modules.json")
+file(READ "${easyfly_params_DIR}/../config/simulation_modules.json" SIMULATION_MODULE_SCHEMA)
 configure_file(cmake/algorithm_schema.hpp.in algorithm_schema.hpp @ONLY)
 # Record an installation default as JSON data, never as shell source.
 set(EASYFLY_PX4_COMPAT_ROOT "$ENV{EASYFLY_PX4_HRT_COMPAT_DIR}" CACHE PATH
@@ -24,6 +28,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 add_library(connection_components STATIC
   src/profile.cpp src/rpc.cpp src/supervisor.cpp src/manager_window.cpp src/native_window.cpp
+  src/simulation_algorithm_panel.cpp
+  src/scene_preview.cpp
   src/onboard_page.cpp include/easyfly_connection_manager/onboard_page.hpp
   include/easyfly_connection_manager/rpc.hpp)
 target_include_directories(connection_components PUBLIC include)
@@ -64,6 +70,10 @@ if(BUILD_TESTING)
   target_link_libraries(fixture_workspace Qt5::Network)
   add_dependencies(test_connections fixture_workspace)
   set_tests_properties(test_connections PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+  ament_add_gtest(test_scene_preview test/test_scene_preview.cpp test/qt_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 30)
+  target_link_libraries(test_scene_preview connection_components Qt5::Test)
+  set_tests_properties(test_scene_preview PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   ament_add_gtest(test_onboard_page test/test_onboard_page.cpp test/qt_main.cpp
     SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 60)
   target_link_libraries(test_onboard_page connection_components Qt5::Test)
@@ -74,6 +84,7 @@ if(BUILD_TESTING)
   set_tests_properties(test_onboard_interactions PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
   find_package(ament_cmake_pytest REQUIRED)
   ament_add_pytest_test(test_backend test/test_backend.py TIMEOUT 60)
+  ament_add_pytest_test(test_scene_previews test/test_scene_previews.py TIMEOUT 30)
   ament_add_pytest_test(test_installed_scenes test/test_installed_scenes.py TIMEOUT 60)
   ament_add_pytest_test(test_ownership test/test_ownership.py TIMEOUT 30)
   ament_add_pytest_test(test_remote_profiles test/test_remote_profiles.py TIMEOUT 30

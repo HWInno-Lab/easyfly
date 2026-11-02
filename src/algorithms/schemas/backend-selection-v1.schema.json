@@ -1,0 +1,189 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "backends": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "detection": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "multi_tracking": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "single_tracking": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "global_grid": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "combined_grid": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "localization": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        },
+        "trajectory_planning": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "backend": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256,
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "parameters": {
+              "type": "object"
+            }
+          },
+          "required": [
+            "backend",
+            "parameters"
+          ]
+        }
+      },
+      "required": []
+    },
+    "navigation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "enum": [
+            "astar",
+            "ego",
+            "combined",
+            "gcopter",
+            "super"
+          ]
+        },
+        "grid_role": {
+          "const": "global_grid"
+        },
+        "combined_grid_role": {
+          "const": "combined_grid"
+        }
+      },
+      "required": [
+        "strategy",
+        "grid_role",
+        "combined_grid_role"
+      ]
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "backends",
+    "navigation",
+    "platform"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "EXT-01 effective selection envelope v1; second-stage schemas required"
+}

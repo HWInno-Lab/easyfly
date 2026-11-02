@@ -22,6 +22,8 @@
 #include <QScrollBar>
 #include <QTabWidget>
 #include <QTimer>
+#include <QTreeWidget>
+#include <QTreeWidgetItemIterator>
 #include <cstdio>
 #include "easyfly_connection_manager/manager_window.hpp"
 #include "easyfly_connection_manager/profile.hpp"
@@ -48,20 +50,21 @@ int main(int argc, char ** argv)
         auto * tabs = window.findChild<QTabWidget *>();
         if (!tabs) {app.exit(2); return;}
         for (int i = 0; i < tabs->count(); ++i) {
+          if (!tabs->isTabVisible(i)) {continue;}
           tabs->setCurrentIndex(i); QApplication::processEvents();
           if (!window.grab().save(output + QString("/page-%1.png").arg(i))) {app.exit(2); return;}
         }
         tabs->setCurrentIndex(1);
-        auto * expand = window.findChild<QPushButton *>("toggleSlamAdvanced");
+        auto * expand = window.findChild<QPushButton *>("simulationEditParameters");
         if (!expand) {app.exit(2); return;}
         expand->click();
         for (const auto & size : {QSize(1200, 740), QSize(850, 570)}) {
           window.resize(size); QApplication::processEvents();
           auto * area = qobject_cast<QScrollArea *>(tabs->currentWidget());
-          area->ensureWidgetVisible(window.findChild<QWidget *>("slamAdvanced"), 0, 10);
+          area->ensureWidgetVisible(window.findChild<QWidget *>("simulationAlgorithmPanel"), 0, 10);
           QApplication::processEvents();
           if (area->horizontalScrollBar()->maximum() != 0 ||
-          !window.grab().save(output + QString("/slam-advanced-%1.png").arg(size.width())))
+          !window.grab().save(output + QString("/slam-parameters-%1.png").arg(size.width())))
           {app.exit(2); return;}
         }
         app.quit();

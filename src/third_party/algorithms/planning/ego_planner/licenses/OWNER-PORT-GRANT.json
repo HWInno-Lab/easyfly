@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-02",
+  "copyright_notice": "Copyright 2026 EasyFly Project",
+  "license": "Apache-2.0",
+  "scope": "owner_original_ros2_port_contributions_only",
+  "preserve_inherited_licenses": true,
+  "authority": "Repository owner confirmed ROS 2 port authorship on 2026-10-28 and selected this grant in the current D-04 review.",
+  "owner_answer": "沿用 Apache-2.0 和现有项目署名（推荐）",
+  "exclusions": [
+    "Original EGO algorithms and third-party code, including inherited portions of modified files.",
+    "No claim that all files or a combined executable are Apache-2.0-only."
+  ],
+  "combined_work": "Original EGO GPLv3 and all applicable retained component conditions remain applicable to the combined work.",
+  "license_text": "OWNER-PORT-APACHE-2.0.txt",
+  "inherited_notice": "../NOTICE.md"
+}

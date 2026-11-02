@@ -1,16 +1,16 @@
 # 椭圆与彩线检测
 
-本次将 `easyfly_ellipse_detection`、`easyfly_color_line_detection` 两个预留包实现为可启动的
-图像检测节点，计算代码分别放在独立自有算法包，未导入第三方源码。
+`easyfly_ellipse_detection`、`easyfly_color_line_detection` 提供独立图像检测节点，
+计算代码分别位于独立算法包。
 OpenCV 是已有系统计算依赖，无模型下载或推理 SDK。
 
 | 职责 | 路径 |
 | --- | --- |
-| 椭圆计算 | [easyfly_ellipse](detection/easyfly_ellipse/README.md) |
-| 彩线计算 | [easyfly_color_line](detection/easyfly_color_line/README.md) |
-| 椭圆 ROS 接入 | [easyfly_ellipse_detection](../perception/p2_detection/easyfly_ellipse_detection/README.md) |
-| 彩线 ROS 接入 | [easyfly_color_line_detection](../perception/p2_detection/easyfly_color_line_detection/README.md) |
-| 公共图像传输与时效 | [easyfly_image_detection_common](../perception/p2_detection/easyfly_image_detection_common/README.md) |
+| 椭圆计算 | [easyfly_ellipse](../detection/easyfly_ellipse/README.md) |
+| 彩线计算 | [easyfly_color_line](../detection/easyfly_color_line/README.md) |
+| 椭圆 ROS 接入 | [easyfly_ellipse_detection](../../perception/p2_detection/easyfly_ellipse_detection/README.md) |
+| 彩线 ROS 接入 | [easyfly_color_line_detection](../../perception/p2_detection/easyfly_color_line_detection/README.md) |
+| 公共图像传输与时效 | [easyfly_image_detection_common](../../perception/p2_detection/easyfly_image_detection_common/README.md) |
 
 ## 功能与接口
 
@@ -62,39 +62,6 @@ capabilities.ready 只表示最近成功处理图像仍有效，不要求图中�
 检查消费者没有 ROS 头/运行库或算法源码 include，复制安装公开头不是源码软链接。
 复制安装搬迁验证针对算法 target，不承诺 colcon 生成的整套 ROS shell 脚本可搬迁。
 
-## 验证边界与剩余工作
+## 使用边界
 
-2026-10-18 的最终复验使用 `artifacts/algorithms/classical-detection/final-v3/`，
-源码/配置/消息/验证工具指纹在整个矩阵期间保持一致，机器结果见
-[classical-detection-results.json](baseline/classical-detection-results.json)。
-
-| 验证 | 普通复制安装 | 符号链接安装 |
-| --- | --- | --- |
-| 六包干净构建 | 通过 | 通过 |
-| 算法单元测试 | 10/10 | 10/10 |
-| 真实 ROS 集成测试 | 7/7 | 7/7 |
-| 已注册 CTest 入口（含规范检查） | 38/38 | 38/38 |
-| 无 ROS overlay 的普通 CMake 消费 | 通过 | 通过 |
-| 复制安装整体搬迁后消费 | 通过 | 不适用 |
-
-每种安装的 colcon 原始汇总为 `115 tests, 0 errors, 0 failures, 9 skipped`。
-其中 9 个 skipped 全部来自本机 cppcheck 2.7 被 ament 默认跳过，不能当作静态分析通过；
-17 个功能用例均未跳过。其他已注册规范检查无失败。
-
-算法测试覆盖旋转、尺寸/中心精度、多目标、去重、圆/环、非连续 ROI、输出数量限制、
-矩形/截断/部分弧/小目标过滤、确定性噪声、HSV 红色边界与绿色范围、输入和参数拒绝。
-ROS 测试通过已安装 launch/config 和独立节点进程验证几何输出、RGB/BGR/mono 接纳、
-行尾 padding、错参考系、旧/未来/零时间、损坏 payload、步长/编码/尺寸错误、重复/乱序、
-无目标、停流、仿真时钟暂停/回退及恢复、非法启动参数、绿色配置替换与干净退出。
-
-开发期的首次纯 target 导出漏了 sensor_msgs 类型支持链接，及两份新 CMake 文件缺少
-版权声明的问题均已修复；早期失败日志保留在 final-v1/final-v2，最终结果不混入这些尝试。
-只重建六包依赖闭包，未重新构建整个工作区，未覆盖主 build/install。
-
-合成图像用于验证几何、参数和传输契约，不能替代实景数据集
-精度评估。真实相机的光照、背景纹理和 HSV 范围仍需实测；没有执行实机飞行或自动巡线。
-两个节点仅发布图像几何信息，没有新增米制位姿、导航 Action 或飞控行为。
-
-当前算法预留包剩 `easyfly_vehicle_reid`、`easyfly_depth_estimation`、`easyfly_swarm_planner`、
-`easyfly_trajectory_optimizer` 四个。EGO 的已有内部轨迹优化能力保持不变。
-ALG-9 的历史清单及验证结果保留，退出崩溃、DDS 偶发崩溃和旧规范欠账的未通过状态不变。
+合成图像和软件协议检查不能替代实景数据集精度评估。真实相机的光照、背景纹理和 HSV 范围需要实测。两个节点只发布图像几何，不提供米制位姿、导航 Action 或飞行控制；部署与验收按[接入指南](integration-guide.md)进行。

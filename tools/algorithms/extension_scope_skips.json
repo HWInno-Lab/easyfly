@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "scope": "Reviewed exact case identities; skipped cases are never counted as passes; optional/manual coverage remains open",
+  "cases": [
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_desktop",
+      "name": "OverlayDisplayNeverReplacesRawRecordingPixels",
+      "class": "easyfly_desktop.Desktop",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional local media/recording backend not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_MEDIA"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_processed_camera",
+      "name": "ValidatedClassicalExpiryFreezesPixelsWithoutRenewingOriginalLifetime/Detections",
+      "class": "easyfly_desktop.AllProcessedModes/ProcessedCamera",
+      "classification": "not_applicable_input_mode",
+      "reason": "Only classical geometry modes carry validated negative-result expiry; detections/tracks do not"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_processed_camera",
+      "name": "ValidatedClassicalExpiryFreezesPixelsWithoutRenewingOriginalLifetime/Tracks",
+      "class": "easyfly_desktop.AllProcessedModes/ProcessedCamera",
+      "classification": "not_applicable_input_mode",
+      "reason": "Only classical geometry modes carry validated negative-result expiry; detections/tracks do not"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_processed_camera",
+      "name": "UnverifiedClassicalNegativeCannotReuseValidatedExpiryHistory/Detections",
+      "class": "easyfly_desktop.AllProcessedModes/ProcessedCamera",
+      "classification": "not_applicable_input_mode",
+      "reason": "Only classical geometry modes carry validated negative-result expiry; detections/tracks do not"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_processed_camera",
+      "name": "UnverifiedClassicalNegativeCannotReuseValidatedExpiryHistory/Tracks",
+      "class": "easyfly_desktop.AllProcessedModes/ProcessedCamera",
+      "classification": "not_applicable_input_mode",
+      "reason": "Only classical geometry modes carry validated negative-result expiry; detections/tracks do not"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_rviz_view",
+      "name": "CanvasAndRightControlsAtSupportedWindowSizes",
+      "class": "easyfly_desktop.RvizView",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional RViz embedding not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_RVIZ_EMBED"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_tools",
+      "name": "DISABLED_RealRvizPresets",
+      "class": "easyfly_desktop.Tools",
+      "classification": "uncovered_manual_tools",
+      "reason": "Explicit DISABLED_ real RViz/QGC process test; not enabled by software fixture command"
+    },
+    {
+      "package": "easyfly_desktop",
+      "wrapper": "test_tools",
+      "name": "DISABLED_RealQgcOfflinePreview",
+      "class": "easyfly_desktop.Tools",
+      "classification": "uncovered_manual_tools",
+      "reason": "Explicit DISABLED_ real RViz/QGC process test; not enabled by software fixture command"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_managed_stack",
+      "name": "DISABLED_RealToolsUnresolvedExitAndLookupOnlyReopen",
+      "class": "easyfly_desktop_tests.ManagedStack",
+      "classification": "uncovered_manual_tools",
+      "reason": "Explicit DISABLED_ real RViz/QGC process test; not enabled by software fixture command"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_managed_stack",
+      "name": "RunningMediaToolsExitAndLookupOnlyReopen",
+      "class": "easyfly_desktop_tests.ManagedMediaStack",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional local media/recording backend not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_MEDIA"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_managed_stack",
+      "name": "PendingAdmissionMediaToolsExitAndLookupOnlyReopen",
+      "class": "easyfly_desktop_tests.ManagedMediaStack",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional local media/recording backend not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_MEDIA"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_managed_stack",
+      "name": "DISABLED_RealToolsMediaExitAndLookupOnlyReopen",
+      "class": "easyfly_desktop_tests.ManagedMediaStack",
+      "classification": "uncovered_manual_tools",
+      "reason": "Explicit DISABLED_ real RViz/QGC process test; not enabled by software fixture command"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_managed_stack",
+      "name": "RequiresExplicitMediaBuild",
+      "class": "easyfly_desktop_tests.TimelineStack",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional local media/recording backend not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_MEDIA"
+    },
+    {
+      "package": "easyfly_desktop_tests",
+      "wrapper": "test_parameter_controls",
+      "name": "RequiresExplicitMediaBuild",
+      "class": "easyfly_desktop_tests.ParameterMedia",
+      "classification": "uncovered_optional_build",
+      "reason": "Optional local media/recording backend not compiled",
+      "requires_off_flag": "EASYFLY_ENABLE_MEDIA"
+    }
+  ]
+}

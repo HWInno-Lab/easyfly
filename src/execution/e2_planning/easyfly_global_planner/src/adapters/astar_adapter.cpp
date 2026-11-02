@@ -1,3 +1,4 @@
+#include <easyfly_backend_registry/metadata.hpp>
 // Copyright 2026 EasyFly Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +20,7 @@
 namespace easyfly_global_planner
 {
 namespace gp = easyfly::grid_planning;
+struct AStarParams {std::size_t max_cells{4000000}; int unstick_cells{5};};
 class AStarAdapter final : public gp::GridPlanner
 {
 public:
@@ -110,11 +112,23 @@ public:
 private:
   AStarParams params_;
 };
-std::unique_ptr<gp::GridPlanner> make_planner(
-  const std::string & backend,
-  const AStarParams & params)
+easyfly::backends::Parameters normalize_astar(const easyfly::backends::Parameters & input) {
+  namespace b = easyfly::backends;
+  b::Parameters values{{"max_cells", 4000000}, {"unstick_cells", 5}};
+  for (const auto & item : input) values[item.first] = item.second;
+  values = b::resolve_parameters("grid_planning", "astar", values);
+  return values;
+}
+void register_astar(PlannerFactory & result)
 {
-  if (backend == "astar") {return std::make_unique<AStarAdapter>(params);}
-  throw std::invalid_argument("unknown grid planner backend '" + backend + "' (available: astar)");
+    result.add("astar", [](const easyfly::backends::Parameters & input) {
+      namespace b = easyfly::backends;
+      b::require_backend("grid_planning", "astar");
+      const auto values = normalize_astar(input);
+      AStarParams params;
+      params.max_cells = b::parameter<std::size_t>(values, "max_cells");
+      params.unstick_cells = b::parameter<int>(values, "unstick_cells");
+      return std::make_unique<AStarAdapter>(params);
+    }, normalize_astar);
 }
 }  // namespace easyfly_global_planner

@@ -27,6 +27,6 @@ target_link_libraries(my_planner PRIVATE easyfly_grid_planner_api::easyfly_grid_
 - 失败不携带可执行的部分路径；成功路径保留真实起点和精确目标，同格请求也保留两端点。
   路径是 XY 几何，不是三维轨迹或执行许可。高度、子航点、Action 所有权仍由平台管理。
 
-真实A*适配、控制增强和安装验证见[ALG-3验收](../../alg3-validation.md)。
-API测试替身不能代替实际搜索验收；新增规划器、combined选择及三维数据边界见[接入指南](../../integration-guide.md)。
+真实A*适配、控制增强和安装验证见[算法接入指南](../../docs/integration-guide.md)。
+API测试替身不能代替实际搜索验收；新增规划器、combined选择及三维数据边界见[接入指南](../../docs/integration-guide.md)。
 0.1 接口尚无稳定二进制 ABI 承诺，消费包需随接口变更重新编译。

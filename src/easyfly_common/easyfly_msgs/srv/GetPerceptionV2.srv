@@ -1,0 +1,15 @@
+string kind
+float32 range_limit
+---
+uint8 NOT_READY=0
+uint8 VALID=1
+uint8 STALE=2
+uint8 INVALID=3
+uint8 UNSUPPORTED=4
+uint8 status
+string message
+string source_topic
+builtin_interfaces/Time observed_at
+float64 age_sec
+WorldTargetArrayV2 targets
+ObstacleInfoArray obstacles

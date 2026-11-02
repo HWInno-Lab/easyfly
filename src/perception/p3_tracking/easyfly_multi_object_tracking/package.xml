@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>rclcpp</depend>
+  <depend>easyfly_perception_contracts</depend>
   <depend>rcl_interfaces</depend>
   <depend>rclcpp_components</depend>
   <depend>ament_index_cpp</depend>
@@ -17,8 +18,8 @@
   <depend>easyfly_msgs</depend>
   <depend>std_srvs</depend>
   <depend>easyfly_tracking_api</depend>
-  <depend>easyfly_sort</depend>
-  <depend>easyfly_track_id_fusion</depend>
+  <build_depend>easyfly_sort</build_depend>
+  <build_depend>easyfly_track_id_fusion</build_depend>
   <depend>libopencv-dev</depend>
   <depend>yaml-cpp</depend>
 
@@ -36,4 +37,6 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+  <depend>easyfly_backend_registry</depend>
+  <depend>diagnostic_msgs</depend>
 </package>

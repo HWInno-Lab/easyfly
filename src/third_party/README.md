@@ -19,7 +19,7 @@ ALG-8.1..8.5已完成当前依赖的分类与接入记录；ALG-9整体构建/�
 
 每个外部项目保留一个主要位置，其他用途以tags记录；完整上游工程的内部模块不按本项目分类拆散或复制。
 自有可复用计算及普通包装位于[algorithms](../algorithms/README.md)，新算法的具体步骤见
-[跟踪器/规划器接入指南](../algorithms/integration-guide.md)。算法名称相同不表示代码来源相同。
+[跟踪器/规划器接入指南](../algorithms/docs/integration-guide.md)。算法名称相同不表示代码来源相同。
 
 ## 分类规则与保留边界
 
@@ -48,7 +48,4 @@ RealSense私有构建中的JSON源码缓存是另行固定的构建输入，不�
 - FAST-LIO/EGO的旧源码路径可能保留本机忽略的软链接，父目录COLCON_IGNORE排除重复包。
   它们服务当前旧安装/进程，不能作为新源码依赖；旧消费者退役后再清理，分类工作不启停仿真。
 
-[ALG-8.1](../algorithms/alg8-1-validation.md)、[ALG-8.2](../algorithms/alg8-2-validation.md)、
-[ALG-8.3](../algorithms/alg8-3-validation.md)、[ALG-8.4](../algorithms/alg8-4-validation.md)保留各批实际验证范围。
-[ALG-8.5](../algorithms/alg8-5-validation.md)只收敛索引、指南和兼容审计，
-不宣布历史ALG0-B03、semantic退出问题或来源/许可未知项已解决。
+算法接入与依赖消费遵循[接入指南](../algorithms/docs/integration-guide.md)和[构建约定](../algorithms/docs/build-conventions.md)。来源、许可及已知限制以本目录的来源记录为准。

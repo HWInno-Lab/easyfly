@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "iou_threshold": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "default": 0.15
+    },
+    "max_lost_frames": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 45,
+      "maximum": 2147483647
+    },
+    "min_hits": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 3,
+      "maximum": 2147483647
+    },
+    "max_tracks": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 100,
+      "maximum": 2147483647
+    },
+    "dist_gate_scale": {
+      "type": "number",
+      "minimum": 0,
+      "default": 1.5
+    }
+  },
+  "required": [
+    "iou_threshold",
+    "max_lost_frames",
+    "min_hits",
+    "max_tracks",
+    "dist_gate_scale"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

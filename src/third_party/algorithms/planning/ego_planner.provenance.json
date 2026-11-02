@@ -16,14 +16,38 @@
   ],
   "migration_source_commit": "c3e41af4826cbadbd3e991baec29a2e2048b43bc",
   "package_license_metadata": {
-    "traj_utils": "TODO",
-    "path_searching": "TODO",
-    "traj_utils_so": "TODO",
-    "plan_env": "TODO",
-    "ego_to_mavros": "MIT",
-    "quadrotor_msgs": "BSD",
-    "plan_manage": "TODO",
-    "bspline_opt": "TODO"
+    "bspline_opt": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ],
+    "ego_to_mavros": [
+      "MIT",
+      "Apache-2.0"
+    ],
+    "path_searching": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ],
+    "plan_env": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ],
+    "ego_planner": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ],
+    "quadrotor_msgs": [
+      "BSD",
+      "Apache-2.0"
+    ],
+    "traj_utils": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ],
+    "traj_utils_so": [
+      "GPL-3.0",
+      "Apache-2.0"
+    ]
   },
   "unified_root_license_found": false,
   "notices_preserved": true,
@@ -54,7 +78,9 @@
     },
     "bspline_opt/package.xml": {
       "before_sha256": "9a4b39b1fce9cbbeb16e52808f17fd5a4cf3c531d8658e6ba527816a8aa1f85e",
-      "current_sha256": "9a4b39b1fce9cbbeb16e52808f17fd5a4cf3c531d8658e6ba527816a8aa1f85e"
+      "current_sha256": "f7a34e0ff649c502dceb568605f2e2cc4e6fcb5b94bc256bb2f9aca2a6cb3fc7",
+      "pre_d04_20261102_sha256": "9a4b39b1fce9cbbeb16e52808f17fd5a4cf3c531d8658e6ba527816a8aa1f85e",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "bspline_opt/src/bspline_optimizer.cpp": {
       "before_sha256": "0010ec724fa14e2a3f30ae2dc443e0cb2027291365d908d65c9632aec73db7f8",
@@ -86,7 +112,9 @@
     },
     "ego_to_mavros/package.xml": {
       "before_sha256": "461589eec186263ad0a9e83061f170fe60ad1394b537ed07fe2e0e506e1cfd91",
-      "current_sha256": "ab12d2406a75f3fbf0d5c3d9988d1b8ec6dad113d66f70b91bb207a7bf0b166c"
+      "current_sha256": "1184f31176e9de342644ca2ac050499eacc25fb26068c12d634c88ba10bd0ce8",
+      "pre_d04_20261102_sha256": "ab12d2406a75f3fbf0d5c3d9988d1b8ec6dad113d66f70b91bb207a7bf0b166c",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "ego_to_mavros/src/bridge.cpp": {
       "before_sha256": "e866224575306035c1a74478bcceabc32408190b0428a4c2c8fa2e1a916a9720",
@@ -102,7 +130,9 @@
     },
     "path_searching/package.xml": {
       "before_sha256": "b47733727ae499f7eac5e14a6e82702b2d9590680a664f0e028041734f4192b2",
-      "current_sha256": "66dc3bfd7cb6927bc6ca68e300aafa2667f5179f65f6f09fb26845557645e454"
+      "current_sha256": "60e676c904fd7d5fe50ad090b9f4a2c62aeca80a8b544f5df2531acf793498c5",
+      "pre_d04_20261102_sha256": "66dc3bfd7cb6927bc6ca68e300aafa2667f5179f65f6f09fb26845557645e454",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "path_searching/src/dyn_a_star.cpp": {
       "before_sha256": "71cdc428b366a17e13b96919fecf5ed1d2a2f9bd0c7b58e94e387be4aa3e20f6",
@@ -150,7 +180,9 @@
     },
     "plan_env/package.xml": {
       "before_sha256": "a33b7b135a6f2709e4f8855b2899aa12faaaaaa160756a25927d6cd1b76fd247",
-      "current_sha256": "a33b7b135a6f2709e4f8855b2899aa12faaaaaa160756a25927d6cd1b76fd247"
+      "current_sha256": "8191cce593cce05188959719507901069e2b584cf952257311a633ac412b687a",
+      "pre_d04_20261102_sha256": "a33b7b135a6f2709e4f8855b2899aa12faaaaaa160756a25927d6cd1b76fd247",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "plan_env/src/grid_map.cpp": {
       "before_sha256": "e20a1e2d27b61f28f626bfe2a945b1ea8e8adde70231f80df6db196dbc021240",
@@ -302,7 +334,9 @@
     },
     "plan_manage/package.xml": {
       "before_sha256": "547e54f55befae52873164ab2e24ae37640cbbef05c9d95cfa025421d1f0657c",
-      "current_sha256": "5a17c28cae383b52bd379a109b8b3cdc3190cb73f5660e7600af51fdad8c21d9"
+      "current_sha256": "b3fbef9d42c9e3254eb6491842b58dcb5fdbf5a059d24d08747c1e66d2925b67",
+      "pre_d04_20261102_sha256": "5a17c28cae383b52bd379a109b8b3cdc3190cb73f5660e7600af51fdad8c21d9",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "plan_manage/src/ego_planner_node.cpp": {
       "before_sha256": "c2c0f72f6358fd69d542d6c321206486b130f856ce3ddb0302708e5e0080a860",
@@ -450,7 +484,9 @@
     },
     "quadrotor_msgs/package.xml": {
       "before_sha256": "ee9819352cd962e6076c3696a0571bc8cc71d81a651e264f1827df666173549f",
-      "current_sha256": "f4a6e6fbc2b10fb078676ba6f93dd44b7efd089a2f874475f878d0b1e1444269"
+      "current_sha256": "201f42542a330529742474780075be0c8928029595c1d85973f481e0b26b7534",
+      "pre_d04_20261102_sha256": "f4a6e6fbc2b10fb078676ba6f93dd44b7efd089a2f874475f878d0b1e1444269",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "quadrotor_msgs/src/decode_msgs.cpp": {
       "before_sha256": "6491c37845ea9865c5b87d7d8d8818ea8191a0f26ac0d6a45c05881b9663f25b",
@@ -546,7 +582,9 @@
     },
     "traj_utils/package.xml": {
       "before_sha256": "3698787a85f4bc434e4c00f5f286f4749ee241dfa8a7245edc0d79978513d458",
-      "current_sha256": "794fd4a169fbc5ab2aab0cd975e77714fe0cf1dd8cde846ca022584a5f24ce6a"
+      "current_sha256": "705492ec9714054f9dab360e4dcc05da9ea8ab3c19cf5f1ddab807f4000c8e1f",
+      "pre_d04_20261102_sha256": "794fd4a169fbc5ab2aab0cd975e77714fe0cf1dd8cde846ca022584a5f24ce6a",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "traj_utils/src/planning_visualization.cpp": {
       "before_sha256": "f72f7239d3f063a9567ef08815308f968d79bd3ada8a03025a04935f3e4d6995",
@@ -590,7 +628,9 @@
     },
     "traj_utils_so/package.xml": {
       "before_sha256": "e2afea7944c7c64c32a040e0639fa2057878909edd6b0bcceec25eb8171c8ce3",
-      "current_sha256": "e2afea7944c7c64c32a040e0639fa2057878909edd6b0bcceec25eb8171c8ce3"
+      "current_sha256": "8a1a65d0b77cfff045dcb87707338d0674713235ca5580b3887966486921fda7",
+      "pre_d04_20261102_sha256": "e2afea7944c7c64c32a040e0639fa2057878909edd6b0bcceec25eb8171c8ce3",
+      "d04_change": "Owner-confirmed contribution grant and scoped package metadata; runtime source unchanged."
     },
     "traj_utils_so/src/planning_visualization.cpp": {
       "before_sha256": "74d4ffdb77257a9f022c6a6f6bc5aad30037fa3c94fade461678b119fb2ea822",
@@ -618,8 +658,8 @@
   ],
   "algorithm_cpp_headers_messages_configs_and_safety_thresholds_unchanged": true,
   "limitations": [
-    "Original local fork b757687b6dd6bdc50ab20d764fae665b4ce5861b plus seven original working-tree files exactly match all 109 initial imported files. Selected originals plus a zero-fuzz patch reconstruct current files.",
-    "The fork remote was not independently accessible in this session; original ROS2 port and fork retain TODO or mixed license metadata. No whole-project license is inferred."
+    "Original local fork b757687b6dd6bdc50ab20d764fae665b4ce5861b plus seven original working-tree files reproduce the initial import; current files reconstruct from immutable originals plus the recorded patch.",
+    "Historical fork remote access is not newly verified. Owner grant covers original port contributions only; upstream and embedded conditions remain applicable."
   ],
   "recovered_original_source": {
     "repository": "https://github.com/Gray-Jia/ego-planner-ros2",
@@ -641,5 +681,37 @@
     "files": 153,
     "manifest_sha256": "f9d515050f0791595aefee4ff143e8f2b804c3f615dcea0659010c2ebf074110",
     "patch_sha256": "d53782631c1661f43443bbea923588c03966502168629edaa82ca918ef843970"
+  },
+  "historical_package_license_metadata": {
+    "traj_utils": "TODO",
+    "path_searching": "TODO",
+    "traj_utils_so": "TODO",
+    "plan_env": "TODO",
+    "ego_to_mavros": "MIT",
+    "quadrotor_msgs": "BSD",
+    "plan_manage": "TODO",
+    "bspline_opt": "TODO"
+  },
+  "owner_confirmation_20261102": {
+    "date": "2026-11-02",
+    "copyright_notice": "Copyright 2026 EasyFly Project",
+    "license": "Apache-2.0",
+    "scope": "owner_original_ros2_port_contributions_only",
+    "preserve_inherited_licenses": true,
+    "authority": "Repository owner confirmed ROS 2 port authorship on 2026-10-28 and selected this grant in the current D-04 review.",
+    "owner_answer": "沿用 Apache-2.0 和现有项目署名（推荐）",
+    "exclusions": [
+      "Original EGO algorithms and third-party code, including inherited portions of modified files.",
+      "No claim that all files or a combined executable are Apache-2.0-only."
+    ],
+    "combined_work": "Original EGO GPLv3 and all applicable retained component conditions remain applicable to the combined work.",
+    "license_text": "OWNER-PORT-APACHE-2.0.txt",
+    "inherited_notice": "../NOTICE.md"
+  },
+  "current_source_audit_20261102": {
+    "files": 155,
+    "manifest_sha256": "0e9784fc1dcb508331610126e98485002e9adb2f1c55eef03234b3c0f5dd22fe",
+    "patch_sha256": "54e6c9f4ff93811ff415b2b9c3215c07470e7f2d343229d80cecf143ff38a642",
+    "runtime_source_changed": false
   }
 }

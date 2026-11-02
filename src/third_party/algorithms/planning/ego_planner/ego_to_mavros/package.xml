@@ -5,6 +5,8 @@
   <description>Bridge node between ego_planner PositionCommand and PX4 via MAVROS</description>
   <maintainer email="user@todo.com">user</maintainer>
   <license>MIT</license>
+  <!-- Owner original ROS 2 port contributions only; see ../NOTICE.md. -->
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

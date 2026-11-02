@@ -51,4 +51,5 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+  <exec_depend>easyfly_backend_registry</exec_depend>
 </package>

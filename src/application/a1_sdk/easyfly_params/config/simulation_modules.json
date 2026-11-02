@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "modules": [
+    {
+      "id": "slam",
+      "title": "SLAM 定位建图",
+      "selector": "slam",
+      "disabled": "disabled",
+      "default": "fast_lio",
+      "requires": []
+    },
+    {
+      "id": "navigation",
+      "title": "导航与路径规划",
+      "flag": "start_navigation",
+      "requires": [
+        "slam"
+      ],
+      "strategy_requires": {
+        "astar": [
+          "semantic_map"
+        ],
+        "combined": [
+          "semantic_map"
+        ],
+        "ego": [
+          "semantic_map"
+        ]
+      }
+    },
+    {
+      "id": "exploration",
+      "title": "FUEL 自主探索",
+      "selector": "exploration",
+      "disabled": "none",
+      "default": "fuel",
+      "requires": [
+        "navigation"
+      ],
+      "forces": {
+        "slam": "fast_lio",
+        "strategy": "gcopter"
+      },
+      "profile": "navigation_dev"
+    },
+    {
+      "id": "object_detection",
+      "title": "目标检测",
+      "flag": "start_detection",
+      "requires": []
+    },
+    {
+      "id": "tracking",
+      "title": "多目标跟踪",
+      "flag": "start_tracking",
+      "requires": [
+        "object_detection"
+      ]
+    },
+    {
+      "id": "single_tracking",
+      "title": "单目标跟踪",
+      "flag": "start_single_tracking",
+      "requires": []
+    },
+    {
+      "id": "pixel_to_3d",
+      "title": "目标三维定位",
+      "flag": "start_pixel_to_3d",
+      "requires": [
+        "tracking"
+      ]
+    },
+    {
+      "id": "target_prediction",
+      "title": "目标运动预测",
+      "flag": "start_target_prediction",
+      "requires": [
+        "pixel_to_3d"
+      ]
+    },
+    {
+      "id": "target_tracking",
+      "title": "目标跟随",
+      "flag": "start_target_tracking",
+      "requires": [
+        "pixel_to_3d"
+      ],
+      "forces": {
+        "slam": "fast_lio"
+      }
+    },
+    {
+      "id": "pointcloud_filter",
+      "title": "点云滤波",
+      "flag": "start_pointcloud_filter",
+      "requires": [
+        "slam"
+      ]
+    },
+    {
+      "id": "semantic_map",
+      "title": "障碍与占据地图",
+      "flag": "start_semantic_map",
+      "requires": [
+        "pointcloud_filter"
+      ]
+    },
+    {
+      "id": "ellipse",
+      "title": "椭圆检测",
+      "flag": "ellipse_enabled",
+      "requires": []
+    },
+    {
+      "id": "color_line",
+      "title": "彩线检测",
+      "flag": "color_line_enabled",
+      "requires": []
+    }
+  ]
+}

@@ -6,8 +6,13 @@ ownership of original EGO algorithms or embedded third-party files.
 The recovered local port is Gray-Jia/ego-planner-ros2 at
 b757687b6dd6bdc50ab20d764fae665b4ce5861b (plus seven recorded local files).
 Its exact source selection and EasyFly patch remain in ../ego_planner.sources/.
-A new public license declaration for the owner's port is pending their choice;
-this record does not invent one. Existing file notices remain in force.
+On 2026-11-02 the owner selected Apache-2.0 for their original ROS 2 port
+contributions, with Copyright 2026 EasyFly Project. See
+licenses/OWNER-PORT-GRANT.json and licenses/OWNER-PORT-APACHE-2.0.txt.
+This grant covers only contributions the owner is entitled to license, including
+only their original additions within mixed files. It does not relicense inherited
+EGO or third-party code. The combined work remains subject to original EGO GPLv3
+and all other applicable retained conditions. Existing notices remain in force.
 
 Original EGO's GPLv3 text is restored verbatim from ZJU-FAST-Lab/ego-planner
 commit 5e72241 (the license-adding commit), under licenses/. This is upstream
@@ -33,3 +38,12 @@ D-04 tracks actual permission gaps independently of the V-02 technical checks.
 FindEigen3.cmake is not excepted: its original authors/years and BSD two-clause grant are preserved. The full
 standard BSD two-clause text has been added to the first comment block so the
 checker can recognize both the copyright and license.
+
+## 2026-11-02 package metadata
+
+The six previous TODO package tags now list GPL-3.0 and Apache-2.0.
+The original MIT tag of ego_to_mavros and BSD tag of quadrotor_msgs remain;
+Apache-2.0 records the owner contribution scope above. These tags list
+applicable scopes; they are not alternative licenses for all package files.
+Per-file BSD and other inherited notices continue to apply. This closes the
+owner port grant decision; it is not a platform-wide distribution approval.

@@ -1,23 +1,19 @@
-// Copyright 2026 EasyFly Project
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
 #pragma once
-#include <memory>
-#include "easyfly_yolo_onnx/backend_factory.hpp"
-#include "easyfly_object_detection/types.hpp"
+#include "easyfly_backend_registry/configuration.hpp"
 #include "easyfly_object_detection/detector_base.hpp"
-namespace easyfly_object_detection
-{
-inline std::unique_ptr<DetectorBase> createBackend(const DetectorParams & params)
-{return easyfly::yolo_onnx::createBackend(params);}
+namespace easyfly_object_detection {
+using DetectorFactory = easyfly::backends::Factory<easyfly::detection::DetectorBase>;
+const DetectorFactory & detector_factory();
+inline std::unique_ptr<easyfly::detection::DetectorBase> createBackend(
+  const easyfly::backends::BackendConfig & config, const DetectorFactory & factory = detector_factory()) {
+  auto result = factory.create(config);
+  if (result->params().backend != config.backend) throw std::runtime_error("detector creator identity mismatch");
+  return result;
 }
+// Compatibility for existing typed callers. No implementation header is exposed.
+easyfly::backends::BackendConfig detector_config(const easyfly::detection::DetectorParams & params);
+inline std::unique_ptr<easyfly::detection::DetectorBase> createBackend(const easyfly::detection::DetectorParams & params) {
+  return createBackend(detector_config(params));
+}
+}  // namespace easyfly_object_detection

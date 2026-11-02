@@ -170,3 +170,31 @@ TEST(CameraStream, ExtraImagesAreDeduplicatedAndIndependentlyByteBounded)
   auto replay = image(0, true); replay->data[0] = 20; stream.image(replay, 1.14, clock);
   EXPECT_EQ(stream.snapshot(clock, 1.15).detections.evidence.quality, b::Quality::Invalid);
 }
+
+TEST(CameraStream, NativeEvidenceKeepsCompleteKeyAndRejectsDimensionGuessing)
+{
+  namespace pc = easyfly::perception;
+  b::detail::CameraStream stream(binding()); const auto clock = clock_state();
+  pc::Producer producer, detector;
+  auto native = std::make_shared<easyfly_msgs::msg::ImageTrackArrayV2>();
+  native->context = producer.next(image()->header, "front", 640, 480);
+  native->upstream = pc::reference(detector.next(image()->header, "front", 640, 480));
+  easyfly_msgs::msg::ImageTrackV2 t;
+  t.key.tracker_session_id = native->context.producer_session_id; t.key.raw_id = int64_t(INT32_MAX) + 100;
+  t.key.legacy_id_valid = true; t.key.legacy_raw_id = t.key.legacy_stable_id = 7;
+  t.filtered_box.x1 = t.filtered_box.y1 = 10; t.filtered_box.x2 = t.filtered_box.y2 = 30;
+  t.filtered_box_valid = true; t.observed_box = t.filtered_box; t.observed_box_valid = true;
+  t.observed_this_frame = true; t.image_velocity_unit = t.PIXELS_PER_SECOND;
+  t.image_velocity_valid = true; t.image_velocity_x = 120;
+  native->tracks.push_back(t); stream.image(image(), 1., clock); stream.tracks_v2(native, 1.01, clock);
+  auto snapshot = stream.snapshot(clock, 1.02);
+  ASSERT_TRUE(snapshot.native_tracks); ASSERT_TRUE(snapshot.tracks.value);
+  EXPECT_EQ(snapshot.native_tracks->tracks[0].key.raw_id, int64_t(INT32_MAX) + 100);
+  EXPECT_EQ(snapshot.tracks.value->tracks[0].track_id, 7);
+  EXPECT_EQ(snapshot.tracks.value->tracks[0].velocity_x, 0);
+  producer.reset(); auto next = std::make_shared<easyfly_msgs::msg::ImageTrackArrayV2>(*native);
+  auto h = image(100000000)->header; next->context = producer.next(h, "front", 100, 100);
+  next->tracks[0].key.tracker_epoch = next->context.epoch;
+  stream.tracks_v2(next, 1.1, clock); stream.image(image(100000000), 1.11, clock);
+  EXPECT_EQ(stream.snapshot(clock, 1.12).tracks.evidence.quality, b::Quality::Invalid);
+}

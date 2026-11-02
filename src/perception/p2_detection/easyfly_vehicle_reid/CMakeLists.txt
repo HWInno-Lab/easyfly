@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_vehicle_reid)
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_perception_contracts REQUIRED)
+include_directories(${easyfly_perception_contracts_INCLUDE_DIRS})
 find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS scripts/vehicle_reid DESTINATION lib/${PROJECT_NAME})

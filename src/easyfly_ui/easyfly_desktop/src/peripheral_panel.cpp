@@ -232,7 +232,7 @@ struct PeripheralPanel::Impl
         try {
           bound_simulation = simulation; port = factory(
             {simulation, allowed && simulation,
-              2});
+              2, qEnvironmentVariable("EASYFLY_PERCEPTION_VERSION", "1").toInt()});
         } catch (const std::exception & e) {
           status->setText(text(e.what()));
         }

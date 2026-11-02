@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>easyfly_perception_contracts</name><version>0.1.0</version>
+  <description>Versioned perception admission, identity and compatibility at the ROS boundary.</description>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>Apache-2.0</license>
+  <buildtool_depend>ament_cmake</buildtool_depend><buildtool_depend>ament_cmake_python</buildtool_depend>
+  <build_depend>pybind11-dev</build_depend>
+  <depend>rclcpp</depend><depend>easyfly_msgs</depend><depend>sensor_msgs</depend>
+  <exec_depend>rclpy</exec_depend><exec_depend>unique_identifier_msgs</exec_depend>
+  <test_depend>ament_cmake_gtest</test_depend><test_depend>ament_cmake_pytest</test_depend>
+  <export><build_type>ament_cmake</build_type></export>
+  <depend>diagnostic_msgs</depend>
+  <exec_depend>easyfly_backend_registry</exec_depend>
+</package>

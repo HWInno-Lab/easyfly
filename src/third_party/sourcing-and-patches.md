@@ -1,6 +1,6 @@
 # 来源、版本与本地补丁登记
 
-更新日期：2026-10-28。当前入口是[catalog.json](catalog.json)，共 15 个登记对象：12 个第三方项目、保留原位的 2 个 ROS 驱动和 1 组模型资产。
+来源总表基线：2026-10-28；D-04 专项更新：2026-11-02。当前入口是[catalog.json](catalog.json)，共 15 个登记对象：12 个第三方项目、保留原位的 2 个 ROS 驱动和 1 组模型资产。
 它记录当前算法分层涉及的边界，不是整个平台的完整软件物料清单，也不参与运行时后端发现。
 项目维护的SORT/A*等实现由algorithms管理；系统OpenCV/PCL/Eigen不额外复制为vendored源码。
 
@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | FAST-LIO及内嵌ikd-Tree/IKFoM | 官方 ROS2 59b082f0＋精确 ikd-Tree e2e3f4e9 可逐字节重建；历史 checkout 非唯一 | 包元数据已记录根 GPL-v2 与文件 BSD 通知；旧 ikd-Tree 缺独立许可仍保留 | [清单](algorithms/localization/fast_lio.provenance.json) |
 | OpenVINS | 官方提交 `69488123ed9362dd44b6f28e7f4680abbff1442b`，运行所需三包及配置子集 | 原 GPLv3 文本、源文件 GPLv3-or-later 通知保留并安装；六项有序补丁（生命周期、许可安装、工作线程、ZUPT 就绪、源时间诊断、原生输入边界） | [清单](algorithms/localization/open_vins.provenance.json) |
-| EGO完整8包 | 原本地 fork b757687b 的 102 个 Git 文件＋7 个工作区文件与首次导入完全一致；原始选集及补丁随源码交付 | 用户已确认 ROS 2 移植作者身份；恢复上游 GPLv3 文本，逐文件登记旧版权头检查范围；移植部分公开授权选择待确认 | [清单](algorithms/planning/ego_planner.provenance.json) |
+| EGO完整8包 | 原本地 fork b757687b 的 102 个 Git 文件＋7 个工作区文件与首次导入完全一致；原始选集不变，当前 155 文件由更新补丁零模糊重建 | 用户于 2026-11-02 确认原创 ROS 2 移植贡献使用 Apache-2.0、Copyright 2026 EasyFly Project；六个 TODO 元数据已补齐，原 MIT／BSD 声明保留；上游 GPLv3 与其他原文件条件继续适用，组合程序不声明为仅 Apache | [清单](algorithms/planning/ego_planner.provenance.json)、[贡献授权](algorithms/planning/ego_planner/licenses/OWNER-PORT-GRANT.json) |
 | FAST-LIVO2 | 固定 ROS2 导入 `837b7bbc1431cb04cf936528e52c83c835efba8e` | VIKIT 的 BSD-only 元数据已按同一分叉父提交及文件原声明纠正，完整 GPLv3／LGPL2.1／MIT 文本随包安装；FAST-LIVO2 GPLv2 与 VIKIT GPLv3 的组合分发兼容范围仍待闭环 | [清单](algorithms/localization/fast_livo2.provenance.json) |
 | ORB-SLAM3 / Pangolin | ORB 固定提交 `4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4`，选定输入可重建 | ORB GPLv3；DBoW2 文本已从其指定 ORB2 来源恢复并安装，Pangolin 分别登记 | [清单](algorithms/localization/orb_slam3.provenance.json) |
 | GCOPTER | 官方提交 `e0444f6d47b84f972ced91746b05feb36ce1fd4f` | MIT，原文保留安装；一项 C++17 比较器补丁 | [清单](algorithms/planning/gcopter.provenance.json) |
@@ -38,7 +38,7 @@ SDK GIT_COMMIT_ID、本地导入提交、原始归档SHA、签名认证是不同
 | FAST-LIO 本地退出修复（2026-10-26） | [原生信号回归](algorithms/localization/fast_lio/test/test_signal_shutdown.py)、[说明](algorithms/localization/fast_lio/README.md) | 删除在 POSIX SIGINT 回调中同步调用 ROS shutdown 的处理器，保留 rclcpp 专用信号线程；真实旧进程持锁中断死锁对照，当前两安装通过。未修改估计或传感器数据；小时故障的具体锁未捕获；后续 V-08 普通完整小时复验已通过，不追认该历史事故唯一同因。 |
 | FAST-LIO 地图发布修复（2026-10-26） | [点集回归](algorithms/localization/fast_lio/test/test_map_snapshot.cpp)、[范围说明](algorithms/localization/fast_lio/README.md) | 用原生局部 ikd-tree 的互斥快照替换重复追加扫描；后台重建忙时跳过可视化发布，不阻塞定位。地图保存改为最近的局部快照，传感器历史需显式录制。两安装原生回归和实际地面输出对照已完成，修复后 V-08 第三轮普通完整小时通过；保留前两轮原始失败。 |
 | EGO | 7455e06及来源清单中的本地安全/会话/轨迹历史；6d4115e | 保留既有补丁；ALG-8.2仅目录、构建导出和测试路径调整 |
-| ORT包装/部署 | [ALG-5](../algorithms/alg5-validation.md)，54dca69、ecaa432 | EasyFly封装、provider/SONAME/许可安装及本地说明；不称为SDK算法补丁 |
+| ORT包装/部署 | [算法接入指南](../algorithms/docs/integration-guide.md)，54dca69、ecaa432 | EasyFly封装、provider/SONAME/许可安装及本地说明；不称为SDK算法补丁 |
 | 两份SDK/驱动 | c707cd3；5d84150 | 原导入；SDK文件全部原样分类，驱动/嵌套仓库保持 |
 | QGC接入资料 | 01de492、2b69165 | 本地UI接入与文档分类；用户二进制未改 |
 
@@ -73,9 +73,37 @@ unknown字段使用null并说明原因，不填写猜测的tag、提交、许可
 
 ## 4. 兼容与剩余验收
 
-[兼容层审计](../algorithms/compatibility-audit.md)登记旧公开头和本地桥接为何保留。
+公开头的兼容与移除要求见[构建约定](../algorithms/docs/build-conventions.md)。
 已有转发头、包装和平台接纳有不同职责，不按“文件同名”删除。
-[新增算法指南](../algorithms/integration-guide.md)给出跟踪器/规划器的实际改动边界。
+[新增算法指南](../algorithms/docs/integration-guide.md)给出跟踪器/规划器的实际改动边界。
 ALG-8 分类与 ALG-9 两种安装构建均有历史记录；当前软件／仿真结论以 2026-10-25／26 的 V 轮为准。
 B-06／B-10／B-11 等已完成对应 DDS 缺陷对照与修复；部分独立历史异常、硬件及来源／许可缺口继续保留。
 具体见[当前未完成清单](../../未完成.md)，不将历史失败或未知来源改写为已确认。
+
+## 5. D-04 专项处理（2026-11-02）
+
+用户已恢复本项。四个具体子项中，EGO 原创移植贡献的署名／许可选择已关闭；
+ikd-Tree 固定旧版本、FAST-LIVO2／VIKIT 组合、LKH 版本与分发许可三项仍待权利人材料。
+逐文件 SHA、原始选集／补丁、实际链接证据和关闭条件见
+[机器清单](license_reviews/d04-20261102/review.json)。这是这四项的定向物料清单，不是全平台 SBOM。
+
+- ikd-Tree：官方 main 快照 `c0e36a16b6e4d557d3783b16911207f6398dd478` 带 GPLv2，
+  但两份源码的 SHA 与固定旧版本不同；本轮没有取得覆盖该旧版本的明确授权。
+- FAST-LIVO2／VIKIT：当前 CMake 实际链接 `vikit_common`，后者实际编译保留
+  GPLv3-or-later 通知的 `robust_cost.cpp`。官方 [issue #413](https://github.com/hku-mars/FAST-LIVO2/issues/413)
+  本次查阅仍开放。GPLv2 文本附录的示例通知不等于项目已授予“或以后版本”；
+  兼容判断参考 [GNU FAQ](https://www.gnu.org/licenses/gpl-faq.en.html#v2v3Compatibility)，不以修改包标签代替授权。
+- LKH：已锁定 FUEL `662dd23c7b52b258d3c4a0155ff6632118e8984f` 中的 119 个文件及本地选择，
+  独立 LKH 发行版本仍未核实。作者大学页面描述的是 LKH-3，不能据此认定捆绑版本或取得分发权；
+  原包 TODO 和 Delaunay.c 的独立 RMIT 通知均保留。
+
+[三份权利人询证草稿](license_reviews/d04-20261102/AUTHORIZATION-REQUESTS.txt)已准备，尚未发送。
+需要取得覆盖具体文件和组合方式的许可，或另行实施并验证独立授权的替代方案。
+本轮不更换算法、不修改运行代码、不重写既有安装或历史验收。
+
+```sh
+# 检查记录、源码和许可材料是否仍与本次审查一致；通过不表示三项授权已取得。
+python3 tools/source/verify_d04_licenses.py
+# 还要求四个子项全部关闭；当前会明确返回 2 并列出三项缺口。
+python3 tools/source/verify_d04_licenses.py --require-closed
+```

@@ -6,6 +6,8 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(easyfly_perception_contracts REQUIRED)
+include_directories(${easyfly_perception_contracts_INCLUDE_DIRS})
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(jsoncpp REQUIRED)

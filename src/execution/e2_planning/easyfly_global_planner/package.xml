@@ -23,7 +23,7 @@
   <depend>easyfly_msgs</depend>
   <depend>easyfly_core</depend>
   <depend>yaml-cpp</depend>
-  <depend>easyfly_astar</depend>
+  <build_depend>easyfly_astar</build_depend>
   <depend>easyfly_grid_planner_api</depend>
   <depend>rcl_interfaces</depend>
   <exec_depend>easyfly_obstacle_avoidance</exec_depend>
@@ -45,4 +45,7 @@
   <export>
     <build_type>ament_cmake</build_type>
   </export>
+  <depend>easyfly_backend_registry</depend>
+  <depend>diagnostic_msgs</depend>
+  <depend>easyfly_perception_contracts</depend>
 </package>

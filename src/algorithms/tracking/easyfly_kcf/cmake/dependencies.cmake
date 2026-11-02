@@ -1,0 +1,3 @@
+include(CMakeFindDependencyMacro)
+find_dependency(easyfly_single_tracking_api)
+find_dependency(OpenCV 4 COMPONENTS core tracking)

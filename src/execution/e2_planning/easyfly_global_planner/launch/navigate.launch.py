@@ -76,17 +76,6 @@ def generate_launch_description():
         ]
     )
     selected = PythonExpression(["(", vio, ") or (", livo, ") or (", orb, ")"])
-    enabled = IfCondition(
-        PythonExpression(
-            [
-                "'",
-                LaunchConfiguration("localization_backend"),
-                "' == 'fast_lio' or (",
-                selected,
-                ")",
-            ]
-        )
-    )
     state_topic = PythonExpression(
         [
             "'/localization/' + '",
@@ -97,7 +86,9 @@ def generate_launch_description():
         ]
     )
     node = Node(
-        condition=enabled,
+        condition=IfCondition(PythonExpression([
+            "'", LaunchConfiguration("strategy"), "' == 'astar' and ('",
+            LaunchConfiguration("localization_backend"), "' == 'fast_lio' or (", selected, "))"])),
         package="easyfly_global_planner",
         executable="global_planner_node",
         name="easyfly_global_planner",
@@ -107,6 +98,8 @@ def generate_launch_description():
             {
                 "use_sim_time": LaunchConfiguration("use_sim_time"),
                 "action_name": "/navigate_astar",
+                "planner_backend": ParameterValue(LaunchConfiguration("global_grid_backend"), value_type=str),
+                "planner_parameters": ParameterValue(LaunchConfiguration("global_grid_parameters"), value_type=str),
                 "config_file": os.path.join(
                     get_package_share_directory("easyfly_global_planner"),
                     "config",
@@ -129,6 +122,8 @@ def generate_launch_description():
             {
                 "use_sim_time": LaunchConfiguration("use_sim_time"),
                 "strategy": LaunchConfiguration("strategy"),
+                "combined_planner_backend": ParameterValue(LaunchConfiguration("combined_grid_backend"), value_type=str),
+                "combined_planner_parameters": ParameterValue(LaunchConfiguration("combined_grid_parameters"), value_type=str),
                 "gcopter_segmented_navigation": ParameterValue(
                     LaunchConfiguration("gcopter_dynamic_navigation"), value_type=bool),
                 "local_goal_distance": ParameterValue(PythonExpression([
@@ -192,6 +187,10 @@ def generate_launch_description():
     )
     return LaunchDescription(
         [
+            DeclareLaunchArgument('global_grid_backend', default_value='astar'),
+            DeclareLaunchArgument('global_grid_parameters', default_value=''),
+            DeclareLaunchArgument('combined_grid_backend', default_value='astar'),
+            DeclareLaunchArgument('combined_grid_parameters', default_value=''),
             use_sim_time_arg,
             strategy_arg,
             DeclareLaunchArgument(

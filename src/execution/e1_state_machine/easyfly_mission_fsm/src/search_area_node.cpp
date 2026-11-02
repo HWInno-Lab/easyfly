@@ -1,3 +1,5 @@
+#include <easyfly_perception_contracts/contracts.hpp>
+namespace pc = easyfly::perception;
 #include <easyfly_core/client.hpp>
 #include <easyfly_core/ownership_registry.hpp>
 #include <easyfly_msgs/srv/get_action_ownership.hpp>
@@ -23,7 +25,7 @@ class SearchNode : public rclcpp::Node {
     std::vector<SearchPoint> route;
     size_t index{0};
     double area{0}, total_area{0};
-    std::set<int32_t> targets;
+    std::set<std::string> targets;
     std::shared_ptr<easyfly_core::Operation> child;
     Clock::time_point started{Clock::now()}, segment{Clock::now()}, stopping;
     std::string stop_reason;
@@ -77,8 +79,18 @@ class SearchNode : public rclcpp::Node {
              easyfly_msgs::srv::GetActionOwnership::Response::SharedPtr response) {
         response->goal_id = request->goal_id; response->state = ownership_.state(request->goal_id);
       });
-    targets_ = create_subscription<easyfly_msgs::msg::Target3DArray>("/target_positions", 10,
+    const auto version = declare_parameter("perception_version", 1, frozen);
+    if (version != 1 && version != 2) {throw std::invalid_argument("perception_version must be 1 or 2");}
+    if (version == 1) {targets_ = create_subscription<easyfly_msgs::msg::Target3DArray>("/target_positions", 10,
       [this](easyfly_msgs::msg::Target3DArray::ConstSharedPtr message) {observe(*message);});
+    } else {
+      native_input_ = std::make_unique<pc::WorldInput>(*this,
+        [this](easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr m) {
+          native_ = m; native_keys_.clear();
+          for (const auto & t : m->targets) {native_keys_[t.key.legacy_raw_id] = pc::identity(t.key);}
+          observe(pc::numeric_snapshot(*m));
+        }, [this](const std::string & reason) {native_.reset(); native_keys_.clear(); stop(reason);});
+    }
     capabilities_ = create_service<easyfly_msgs::srv::GetCapabilities>("/platform/search/capabilities",
       [this](easyfly_msgs::srv::GetCapabilities::Request::SharedPtr,
         easyfly_msgs::srv::GetCapabilities::Response::SharedPtr response) {
@@ -122,10 +134,11 @@ class SearchNode : public rclcpp::Node {
         t.confidence < 0 || t.confidence > 1 ||
         std::abs(t.position_x - goal->center_x) > goal->area_width / 2 ||
         std::abs(t.position_y - goal->center_y) > goal->area_height / 2) continue;
-      if (!active_->targets.count(t.track_id) && active_->targets.size() == 4096) {
+      const auto identity = native_ ? native_keys_.at(t.track_id) : std::to_string(t.track_id);
+      if (!active_->targets.count(identity) && active_->targets.size() == 4096) {
         stop("target_identity_capacity_exceeded"); return;
       }
-      active_->targets.insert(t.track_id);
+      active_->targets.insert(identity);
     }
   }
   void stop(const std::string & reason, bool user=false) {
@@ -198,6 +211,9 @@ class SearchNode : public rclcpp::Node {
       run.parent->publish_feedback(feedback);
     } catch (const std::exception & exc) {stop(std::string("search_internal_error:") + exc.what());}
   }
+  std::unique_ptr<pc::WorldInput> native_input_;
+  easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr native_;
+  std::map<int32_t, std::string> native_keys_;
   SearchBounds bounds_;
   double spacing_, segment_budget_, total_budget_, cancel_budget_;
   std::unique_ptr<easyfly_core::Client> sdk_;

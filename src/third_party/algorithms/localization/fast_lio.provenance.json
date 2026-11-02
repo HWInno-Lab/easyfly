@@ -323,5 +323,10 @@
       "BSD-3-Clause"
     ],
     "scope": "Root LICENSE and individual file notices; unresolved ikd-Tree license scope retained in NOTICE.md."
+  },
+  "d04_review_20261102": {
+    "record": "src/third_party/license_reviews/d04-20261102/review.json",
+    "status": "open_rightsholder_evidence",
+    "runtime_source_changed": false
   }
 }

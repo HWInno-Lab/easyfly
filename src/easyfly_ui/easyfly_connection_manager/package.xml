@@ -53,4 +53,6 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
   <export><build_type>ament_cmake</build_type></export>
+  <depend>easyfly_backend_registry</depend>
+  <exec_depend>easyfly_perception_contracts</exec_depend>
 </package>

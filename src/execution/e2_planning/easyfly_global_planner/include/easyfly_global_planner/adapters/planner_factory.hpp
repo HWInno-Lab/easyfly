@@ -1,28 +1,20 @@
-// Copyright 2026 EasyFly Project
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0
 #pragma once
-#include <cstddef>
-#include <memory>
-#include <string>
+#include "easyfly_backend_registry/configuration.hpp"
 #include "easyfly_grid_planner_api/planner.hpp"
-namespace easyfly_global_planner
-{
-struct AStarParams
-{
-  std::size_t max_cells{4000000};
-  int unstick_cells{5};
-};
-std::unique_ptr<easyfly::grid_planning::GridPlanner> make_planner(
-  const std::string & backend, const AStarParams & params = {});
+namespace easyfly_global_planner {
+using PlannerFactory = easyfly::backends::Factory<easyfly::grid_planning::GridPlanner>;
+const PlannerFactory & planner_factory();
+inline std::unique_ptr<easyfly::grid_planning::GridPlanner> make_planner(
+  const easyfly::backends::BackendConfig & config, const PlannerFactory & factory = planner_factory()) {
+  auto result = factory.create(config);
+  const auto caps = result->capabilities();
+  if (caps.backend != config.backend || !caps.cancellation || !caps.deadline || !caps.expansion_limit)
+    throw std::invalid_argument("grid backend must match selection and support cancellation/deadline/expansion limit");
+  return result;
+}
+inline std::unique_ptr<easyfly::grid_planning::GridPlanner> make_planner(
+  const std::string & backend, const easyfly::backends::Parameters & parameters = {}) {
+  return make_planner(easyfly::backends::BackendConfig{backend, parameters});
+}
 }  // namespace easyfly_global_planner

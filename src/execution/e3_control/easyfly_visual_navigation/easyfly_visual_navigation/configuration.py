@@ -43,7 +43,8 @@ def configuration(path):
     fields = {'version', 'mode', 'use_sim_time', 'target', 'plane_z', 'corridor_min',
               'corridor_max', 'max_speed', 'max_acceleration', 'timeout_s', 'optical_frame',
               'observation_topic', 'depth_topic', 'camera_info_topic', 'use_predictions'}
-    if (set(value) != fields or value['version'] != 1 or
+    if (set(value) - {'perception_version'} != fields or value['version'] != 1 or
+            type(value.get('perception_version', 1)) is not int or value.get('perception_version', 1) not in (1, 2) or
             value['mode'] not in ('line', 'ellipse') or
             type(value['use_sim_time']) is not bool or
             type(value['use_predictions']) is not bool or

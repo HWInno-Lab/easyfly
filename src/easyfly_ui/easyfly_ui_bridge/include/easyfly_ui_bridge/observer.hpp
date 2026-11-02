@@ -34,6 +34,7 @@ struct BridgeConfig
   std::array<CameraPerceptionBinding, 2> camera_perception{{
     {"/camera/color/image_raw", "/detections", "/tracks_raw", "/target_positions", "odom", "", ""},
     {}}};
+  int perception_version{1};
 };
 enum class RequestStatus {Queued, Busy, RateLimited, Invalid, Closed};
 struct RequestReceipt

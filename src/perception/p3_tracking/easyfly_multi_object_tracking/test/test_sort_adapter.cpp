@@ -38,7 +38,7 @@ tr::Frame frame(std::int64_t stamp = 1)
 TEST(SortAdapter, ExactNativeResultsAcrossMotionOcclusionAndClasses)
 {
   core::SortParams params;
-  auto adapter = platform::make_tracker("sort", params);
+  auto adapter = platform::make_tracker("sort");
   core::Sorter direct(params);
   for (int step = 0; step < 100; ++step) {
     auto input = frame(step + 1);
@@ -115,11 +115,11 @@ TEST(SortAdapter, ResetAcceptsNewEpochWithoutReusingPublishedRawId)
 TEST(SortAdapter, UnknownBackendAndInvalidParamsFailExplicitly)
 {
   EXPECT_THROW(platform::make_tracker("bytetrack", {}), std::invalid_argument);
-  core::SortParams params;
-  params.max_tracks = 0;
+  easyfly::backends::Parameters params;
+  params["max_tracks"] = 0;
   EXPECT_THROW(platform::make_tracker("sort", params), std::invalid_argument);
-  params.max_tracks = 100;
-  params.iou_threshold = std::numeric_limits<double>::quiet_NaN();
+  params["max_tracks"] = 100;
+  params["iou_threshold"] = std::numeric_limits<double>::quiet_NaN();
   EXPECT_THROW(platform::make_tracker("sort", params), std::invalid_argument);
   auto adapter = platform::make_tracker("sort", {});
   EXPECT_EQ(adapter->capabilities().backend, "sort");
@@ -134,4 +134,65 @@ TEST(SortAdapter, LegacyIncludesAreAliasesToIndependentCores)
   platform::IdConsolidator identity;
   identity.update({7}, {}, 0);
   EXPECT_EQ(identity.stableId(7), 7);
+}
+
+#include <easyfly_backend_registry/metadata.hpp>
+TEST(SortAdapter, EveryRegisteredTrackingBackendHasARealCreator)
+{
+  for (const auto & entry : easyfly::backends::descriptors) {
+    if (std::string(entry.capability) == "multi_tracking") {
+      EXPECT_NE(platform::make_tracker(entry.id), nullptr);
+    }
+  }
+}
+
+namespace {
+class FixtureTracker final : public tr::Tracker {
+public:
+  explicit FixtureTracker(double marker) : marker_(marker) {}
+  tr::Capabilities capabilities() const override {return {"fixture", {}, tr::VelocityUnit::pixels_per_second};}
+  void reset(std::uint64_t epoch) override {epoch_ = epoch;}
+  tr::UpdateResult update(const tr::Frame & frame) override {
+    tr::UpdateResult result; result.source = frame.source; result.velocity_unit = capabilities().velocity_unit;
+    result.status = frame.source.epoch == epoch_ ? tr::Status::ok : tr::Status::invalid_input;
+    tr::Track track; track.raw_id = 1LL << 40; track.vx = marker_; result.tracks.push_back(track); return result;
+  }
+private: double marker_; std::uint64_t epoch_{0};
+};
+}
+TEST(TrackerFactory, SelectedCreatorReceivesOwnParametersAndKeepsNativeUnit) {
+  platform::TrackerFactory factory;
+  factory.add("fixture", [](const easyfly::backends::Parameters & p) {
+    return std::make_unique<FixtureTracker>(easyfly::backends::parameter<double>(p, "marker"));
+  });
+  auto tracker = platform::make_tracker(easyfly::backends::BackendConfig{"fixture", {{"marker", 12.5}}}, factory);
+  tracker->reset(7); auto input = frame(); input.source.epoch = 7;
+  const auto result = tracker->update(input);
+  EXPECT_EQ(result.status, tr::Status::ok); EXPECT_EQ(result.tracks[0].raw_id, 1LL << 40);
+  EXPECT_DOUBLE_EQ(result.tracks[0].vx, 12.5);
+  EXPECT_NO_THROW(platform::require_supported_inputs(tracker->capabilities(), false));
+  EXPECT_THROW(platform::require_supported_inputs(tracker->capabilities(), true), std::invalid_argument);
+  auto caps = tracker->capabilities(); caps.inputs.image = true;
+  EXPECT_THROW(platform::require_supported_inputs(caps, false), std::invalid_argument);
+  caps.inputs.image = false; caps.inputs.appearance_dimension = 128;
+  EXPECT_THROW(platform::require_supported_inputs(caps, false), std::invalid_argument);
+  caps.inputs.appearance_dimension = 0; caps.inputs.low_confidence_detections = true;
+  EXPECT_THROW(platform::require_supported_inputs(caps, false), std::invalid_argument);
+  EXPECT_THROW(platform::make_tracker("fixture"), std::invalid_argument);
+  EXPECT_THROW(platform::make_tracker("sort", {{"max_tracks", std::int64_t{1LL << 40}}}), std::invalid_argument);
+}
+
+TEST(TrackerBoundary, RejectNarrowingUnitsAndMalformedOutputBeforePublication) {
+  auto tracker = platform::make_tracker("sort", {{"min_hits", 1}});
+  const auto input = frame(); auto result = tracker->update(input); auto caps = tracker->capabilities();
+  ASSERT_TRUE(platform::valid_tracking_output(result, input, caps, true));
+  result.tracks[0].raw_id = 1LL << 40;
+  EXPECT_FALSE(platform::valid_tracking_output(result, input, caps, true));
+  EXPECT_TRUE(platform::valid_tracking_output(result, input, caps, false));
+  result.tracks.push_back(result.tracks[0]);
+  EXPECT_FALSE(platform::valid_tracking_output(result, input, caps, false));
+  result.tracks.pop_back(); result.velocity_unit = tr::VelocityUnit::pixels_per_second;
+  EXPECT_FALSE(platform::valid_tracking_output(result, input, caps, false));
+  result.velocity_unit = caps.velocity_unit; result.tracks[0].vx = NAN;
+  EXPECT_FALSE(platform::valid_tracking_output(result, input, caps, false));
 }

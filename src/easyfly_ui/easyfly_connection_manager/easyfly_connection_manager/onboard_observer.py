@@ -21,7 +21,7 @@ from rosidl_runtime_py.convert import message_to_ordereddict
 from rclpy.time import Time
 from tf2_ros import Buffer, TransformException, TransformListener
 
-from .onboard_profiles import CATALOG, NODE_NAMES
+from .onboard_profiles import CATALOG, NODE_NAMES, observation_catalog
 from .remote_observer import Observer
 
 
@@ -57,18 +57,23 @@ TASK_ACTION_TYPES = {
 class PlatformObserver(Observer):
     """Reuse live FCU source epochs; startup additionally needs advancing output stamps."""
 
+    catalog = CATALOG  # V1 default for legacy injected observers; real recipes override it.
+
     def __init__(self, recipe):
         self.output_stamps = {}
         self.output_ids = {}
         self.recipe = recipe
+        self.catalog = observation_catalog(recipe)
+        self.perception_gates = {}
         self.ever_connected = False
         profiles = {
             "platform": dict(output_topic="/uav_state", output_type="easyfly_msgs/msg/UAVState")
         }
         for name, entry in recipe["components"].items():
-            if CATALOG[name]["message"]:
+            if self.catalog[name]["message"]:
                 profiles[name] = dict(
-                    output_topic=entry["output_topic"], output_type=CATALOG[name]["message"]
+                    output_topic=entry["output_topic"], output_type=self.catalog[name]["message"],
+                    camera_id=entry["parameters"].get("camera_id", "front")
                 )
         super().__init__(dict(simulation_time=False, profiles=profiles))
         self.tf_buffer = Buffer(node=self.node)
@@ -105,7 +110,16 @@ class PlatformObserver(Observer):
 
     def output(self, key, message):
         """Require actual source progress as well as receipt activity."""
-        header = getattr(message, "header", None)
+        context = getattr(message, 'context', None)
+        if context is not None:
+            from easyfly_perception_contracts import SourceGate, context_valid
+            gate = self.perception_gates.setdefault(key, SourceGate())
+            if not context_valid(context) or not gate.observe(context):
+                return
+            if gate.changed or context.status != context.VALID:
+                with self.lock: self.output_stamps.pop(key, None)
+                if context.status != context.VALID: return
+        header = context.header if context is not None else getattr(message, "header", None)
         stamp = header.stamp.sec * 10 ** 9 + header.stamp.nanosec if header else 0
         now = self.node.get_clock().now().nanoseconds
         with self.lock:
@@ -122,7 +136,7 @@ class PlatformObserver(Observer):
 
     def ready(self, name, since):
         """Do not infer a sensor/map from a live process or an old DDS sample."""
-        spec = CATALOG[name]
+        spec = self.catalog[name]
         if name == "mavlink" and not self.snapshot("platform")["grounded"]:
             return False
         if name == "fuel":

@@ -1,0 +1,13 @@
+# initialize / reset / query. Accepted is not successful image tracking.
+string operation
+# initialize must bind to the displayed source image header.
+std_msgs/Header image_header
+float32 roi_x
+float32 roi_y
+float32 roi_width
+float32 roi_height
+string class_name
+---
+bool accepted
+string message
+SingleTrackStateV2 state

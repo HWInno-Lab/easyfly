@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-02",
+  "ikd_main": {
+    "repository": "https://github.com/hku-mars/ikd-Tree",
+    "commit": "c0e36a16b6e4d557d3783b16911207f6398dd478",
+    "observed_files_sha256": {
+      "README.md": "8b5dc5648fb3d774c2da42a59edf153e6a9e2d4693ad10f88a97be11f80e2a93",
+      "LICENSE": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "ikd-Tree/ikd_Tree.cpp": "cc4f816c79c52806eb321c3d94f3b968e668e702d55f6a97d9ba3ded0cdd1299",
+      "ikd-Tree/ikd_Tree.h": "32b63d3e86259a55cabf896b819123150e127fd7e64ba60a4c35a2fb0d3eb210"
+    },
+    "source": "https://codeload.github.com/hku-mars/ikd-Tree/tar.gz/refs/heads/main",
+    "limitation": "The two main-branch source hashes differ from the pinned fast_lio revision; no backwards grant inferred.",
+    "download_archive_sha256": "5220a8721ad2a7cacf6360f33c86417638f806f8ca0d8cf49195b3c3519a8822"
+  },
+  "fastlivo_issue": {
+    "url": "https://github.com/hku-mars/FAST-LIVO2/issues/413",
+    "observed_state": "open",
+    "observation": "Web view contains the reported GPLv2/GPLv3 compatibility question; no resolving author grant obtained."
+  },
+  "lkh": {
+    "publication": "https://forskning.ruc.dk/da/publications/an-extension-of-the-lin-kernighan-helsgaun-tsp-solver-for-constra/",
+    "limitation": "This describes LKH-3 academic/non-commercial availability; it does not establish the FUEL bundled version or redistribution grant.",
+    "download_attempts": [
+      "GitHub license-history API: HTTP 403",
+      "Author webhotel4 HTTPS page: SSL unexpected EOF; web fetch also timed out"
+    ]
+  },
+  "gpl_compatibility_reference": "https://www.gnu.org/licenses/gpl-faq.en.html#v2v3Compatibility"
+}

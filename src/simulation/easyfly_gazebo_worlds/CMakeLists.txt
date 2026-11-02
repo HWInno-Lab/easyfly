@@ -5,7 +5,7 @@ project(easyfly_gazebo_worlds)
 
 install(FILES empty.world perception_demo.world precision_landing.world
   DESTINATION share/${PROJECT_NAME})
-install(DIRECTORY scenes schemas licenses worlds evidence generators
+install(DIRECTORY scenes schemas licenses worlds evidence generators previews
   DESTINATION share/${PROJECT_NAME}
   PATTERN ".git" EXCLUDE
   PATTERN "__pycache__" EXCLUDE

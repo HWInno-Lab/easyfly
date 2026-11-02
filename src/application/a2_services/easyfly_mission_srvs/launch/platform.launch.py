@@ -29,6 +29,7 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from pathlib import Path
 
 
@@ -47,7 +48,7 @@ def service_nodes(context):
             package='easyfly_perception_srvs',
             executable='perception_services',
             output='screen',
-            parameters=[clock],
+            parameters=[clock, {'perception_version': ParameterValue(LaunchConfiguration('perception_version', default='1'), value_type=int)}],
         ),
         Node(
             package='easyfly_mission_srvs',
@@ -76,6 +77,7 @@ def generate_launch_description():
     )
     return LaunchDescription(
         [
+            DeclareLaunchArgument('perception_version', default_value='1'),
             DeclareLaunchArgument('use_sim_time', default_value='true'),
             DeclareLaunchArgument(
                 'profile', default_value='navigation_dev', choices=PROFILES

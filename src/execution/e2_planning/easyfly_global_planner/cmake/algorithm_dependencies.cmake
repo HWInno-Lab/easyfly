@@ -13,11 +13,11 @@
 # limitations under the License.
 
 include(CMakeFindDependencyMacro)
-find_dependency(easyfly_astar)
+find_dependency(easyfly_backend_registry)
 find_dependency(easyfly_grid_planner_api)
 get_filename_component(_easyfly_planner_include "${CMAKE_CURRENT_LIST_DIR}/../../../include" ABSOLUTE)
 set(easyfly_global_planner_INCLUDE_DIRS "${_easyfly_planner_include}")
-foreach(_easyfly_planner_dependency easyfly_astar easyfly_grid_planner_api)
+foreach(_easyfly_planner_dependency easyfly_grid_planner_api)
   get_target_property(_easyfly_planner_headers
     ${_easyfly_planner_dependency}::${_easyfly_planner_dependency} INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND easyfly_global_planner_INCLUDE_DIRS ${_easyfly_planner_headers})

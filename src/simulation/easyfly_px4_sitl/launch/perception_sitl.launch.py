@@ -35,7 +35,8 @@ from launch.actions import (
 from launch.conditions import IfCondition, UnlessCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import EnvironmentVariable, LaunchConfiguration, PythonExpression
-from launch_ros.actions import Node
+from launch_ros.actions import Node, SetParameter
+from launch_ros.parameter_descriptions import ParameterValue
 from easyfly_px4_sitl.session_guard import guarded_launch
 from easyfly_px4_sitl.hrt_compatibility import select_px4_directory
 from easyfly_px4_sitl.imu_compatibility import require_native_imu
@@ -43,6 +44,18 @@ from easyfly_px4_sitl.scoped_timer import ScopedTimerAction as TimerAction
 from easyfly_px4_sitl.telemetry import heartbeat_configuration_action
 from easyfly_px4_sitl.scene_inputs import preflight_action, scene_value, selection_arguments
 from easyfly_px4_sitl.rendering import renderer_environment
+
+
+def _optional_include(flag, package, filename, launch_arguments=None, condition=None):
+    """Resolve optional packages only when their selected branch is entered."""
+    def include(context):
+        if condition is not None and not condition.evaluate(context):
+            return []
+        return [IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(get_package_share_directory(package) + '/launch/' + filename),
+            launch_arguments=launch_arguments or [])]
+    return OpaqueFunction(function=include,
+        condition=IfCondition(LaunchConfiguration(flag, default='true')))
 
 
 def _openvins(context):
@@ -156,7 +169,8 @@ def _vio_navigation():
 
 def _navigation_condition():
     return IfCondition(PythonExpression([
-        "'", LaunchConfiguration('slam_enabled', default='true'), "' == 'true' and ('",
+        "'", LaunchConfiguration('start_navigation', default='true'), "' == 'true' and '",
+        LaunchConfiguration('slam_enabled', default='true'), "' == 'true' and ('",
         LaunchConfiguration('localization_backend', default='fast_lio'),
         "' == 'fast_lio' or (", _vio_navigation(), "))"]))
 
@@ -357,9 +371,7 @@ def generate_launch_description():
         "'false' if '", LaunchConfiguration("headless"),
         "'.lower() == 'true' else '", LaunchConfiguration("debug_image"), "'"
     ])
-    detection = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_object_detection") + "/launch/detection.launch.py"),
+    detection = _optional_include("start_detection", "easyfly_object_detection", "detection.launch.py",
         launch_arguments={
             "use_sim_time": "true",
             "publish_debug_image": effective_debug_image,
@@ -369,25 +381,30 @@ def generate_launch_description():
             "input_qos_reliability": LaunchConfiguration(
                 "detection_input_qos_reliability"),
             "input_qos_depth": LaunchConfiguration("detection_input_qos_depth"),
+            "backend": LaunchConfiguration('detection_backend'),
+            "backend_parameters": LaunchConfiguration('detection_parameters'),
             "process_nice": _perception_nice(),
         }.items())
 
     # ---- P4 多目标跟踪 (M4): SORT ----
-    tracking = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_multi_object_tracking") + "/launch/tracking.launch.py"),
-        launch_arguments={"process_nice": _perception_nice()}.items())
+    tracking = _optional_include("start_tracking", "easyfly_multi_object_tracking", "tracking.launch.py",
+        launch_arguments={"process_nice": _perception_nice(),
+                          "backend": LaunchConfiguration('multi_tracking_backend'),
+                          "backend_parameters": LaunchConfiguration('multi_tracking_parameters')}.items())
+
+    single_tracking = _optional_include("start_single_tracking", "easyfly_single_object_tracking", "single_object_tracking.launch.py",
+        launch_arguments={'use_sim_time': 'true', 'image_topic': '/camera/color/image_raw',
+            'perception_version': LaunchConfiguration('perception_version'),
+            'tracker_backend': LaunchConfiguration('single_tracking_backend'),
+            'backend_parameters': LaunchConfiguration('single_tracking_parameters')}.items())
 
     # ---- P5 像素转 3D (M5): 目标世界系定位 ----
-    pixel_to_3d = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_pixel_to_3d") + "/launch/pixel_to_3d.launch.py"),
+    pixel_to_3d = _optional_include("start_pixel_to_3d", "easyfly_pixel_to_3d", "pixel_to_3d.launch.py",
         launch_arguments={"process_nice": _perception_nice()}.items())
 
     # ---- P3 SLAM (M3): fast_lio + map→odom TF ----
-    fastlio_include = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_fast_lio_integration") + "/launch/fastlio.launch.py"),
+    fastlio_include = _optional_include(
+        "slam_enabled", "easyfly_fast_lio_integration", "fastlio.launch.py",
         launch_arguments={
             "use_sim_time": "true",
             "fastlio_config_file": "mid360.yaml",
@@ -440,12 +457,8 @@ def generate_launch_description():
                           "target_system": LaunchConfiguration("target_system")}.items())
 
     # ---- M4.0 规划基础设施: 点云滤波 (P1) + 障碍表征 (P4) ----
-    pcf = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_pointcloud_filter") + "/launch/pcf.launch.py"))
-    semantic_map = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_semantic_map") + "/launch/semantic_map.launch.py"),
+    pcf = _optional_include("start_pointcloud_filter", "easyfly_pointcloud_filter", "pcf.launch.py")
+    semantic_map = _optional_include("start_semantic_map", "easyfly_semantic_map", "semantic_map.launch.py",
         launch_arguments={"capture_shutdown": LaunchConfiguration(
             "semantic_capture_shutdown"),
             "ground_model_frame": scene_value('ground_model_frame'),
@@ -464,15 +477,15 @@ def generate_launch_description():
     fastlivo = GroupAction(condition=_backend_condition('fast_livo2'), actions=[OpaqueFunction(function=_fastlivo)])
     orbslam3 = GroupAction(condition=_backend_condition('orbslam3'), actions=[OpaqueFunction(function=_orbslam3)])
     p2_nodes = TimerAction(period=14.0, actions=[detection, fastlio, openvins, fastlivo, orbslam3])
-    p4_nodes = TimerAction(period=16.0, actions=[tracking])
-    p5_nodes = TimerAction(period=18.0, actions=[pixel_to_3d])
+    p4_nodes = TimerAction(period=16.0, actions=[tracking, single_tracking])
+    prediction = _optional_include('start_target_prediction', 'easyfly_target_prediction',
+        'target_prediction.launch.py', launch_arguments={'use_sim_time': 'true'}.items())
+    p5_nodes = TimerAction(period=18.0, actions=[pixel_to_3d, prediction])
     exec_nodes = TimerAction(period=10.0, actions=[flight_control, mission_fsm])
     # M4.0: 依赖 P1 静态 TF (12s) 与雷达数据, 20s 启动足够稳
     m40_nodes = TimerAction(period=20.0, actions=[pcf, semantic_map])
     # M4.1: 跟随节点 (常驻 idle 无副作用, 经 /track_target action 发起)
-    follow = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_target_tracking") + "/launch/follow.launch.py"))
+    follow = _optional_include("start_target_tracking", "easyfly_target_tracking", "follow.launch.py")
     m41_nodes = TimerAction(
         period=22.0, actions=[follow], condition=_backend_condition('fast_lio'))
     # M4.2: 全局规划节点 (常驻 idle 无副作用, 经 /navigate action 发起)
@@ -483,11 +496,10 @@ def generate_launch_description():
     super_evidence_arg = DeclareLaunchArgument('super_evidence_directory', default_value='')
     super_committed_arg = DeclareLaunchArgument('super_execute_committed', default_value='false', choices=['true', 'false'])
     ego_acceleration_arg = DeclareLaunchArgument('local_planner_max_acceleration', default_value='6.0', choices=['2.0', '6.0'])
-    navigate = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_global_planner") + "/launch/navigate.launch.py"),
+    navigate = _optional_include("start_navigation", "easyfly_global_planner", "navigate.launch.py",
         launch_arguments={"use_sim_time": "true",
                           "strategy": LaunchConfiguration("navigation_strategy"),
+                          **{key: LaunchConfiguration(key) for key in ('global_grid_backend', 'global_grid_parameters', 'combined_grid_backend', 'combined_grid_parameters')},
                           'gcopter_dynamic_navigation': LaunchConfiguration('gcopter_dynamic_navigation'),
                           "localization_backend": PythonExpression([
                               "'", LaunchConfiguration('localization_backend'), "' if '",
@@ -497,14 +509,12 @@ def generate_launch_description():
                               'openvins_navigation', default='false'),
                           'fastlivo_navigation': LaunchConfiguration('fastlivo_navigation', default='false'),
                           'orbslam3_navigation': LaunchConfiguration('orbslam3_navigation', default='false')}.items())
-    m42_nodes = TimerAction(period=24.0, actions=[navigate])
+    m42_nodes = TimerAction(period=24.0, actions=[navigate], condition=_navigation_condition())
     # M4.3: EGO-Planner 局部规划 (ego_planner_node + traj_server)。
     # position_cmd 是飞控指令流；急停恢复使用 traj_server 专用 trajectory_ack。
-    local_planner = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            get_package_share_directory("easyfly_local_planner") + "/launch/local_planner.launch.py"),
+    local_planner = _optional_include("start_navigation", "easyfly_local_planner", "local_planner.launch.py",
         condition=UnlessCondition(PythonExpression([
-            "'", LaunchConfiguration('navigation_strategy'), "' in ('gcopter','super')"])),
+            "'", LaunchConfiguration('navigation_strategy'), "' not in ('ego','combined')"])),
         launch_arguments={
             "use_sim_time": "true",
             "virtual_ceil_height": LaunchConfiguration("local_planner_virtual_ceil_height"),
@@ -521,6 +531,19 @@ def generate_launch_description():
         condition=_navigation_condition())
 
     actions = [
+        *[DeclareLaunchArgument(flag, default_value=default, choices=['true', 'false'])
+          for flag, default in [
+            ('start_detection', 'true'), ('start_tracking', 'true'),
+            ('start_single_tracking', 'true'), ('start_pixel_to_3d', 'true'),
+            ('start_pointcloud_filter', 'true'), ('start_semantic_map', 'true'),
+            ('start_target_tracking', 'true'), ('start_navigation', 'true'),
+            ('start_target_prediction', 'false')]],
+        *[DeclareLaunchArgument(role + '_backend', default_value=default) for role, default in
+          [('detection', ''), ('multi_tracking', ''), ('single_tracking', 'csrt'), ('global_grid', 'astar'), ('combined_grid', 'astar')]],
+        *[DeclareLaunchArgument(role + '_parameters', default_value='' if role != 'single_tracking' else '{}') for role in
+          ('detection', 'multi_tracking', 'single_tracking', 'global_grid', 'combined_grid')],
+        DeclareLaunchArgument("perception_version", default_value="1", choices=["1", "2"]),
+        SetParameter(name="perception_version", value=ParameterValue(LaunchConfiguration("perception_version"), value_type=int)),
         *selection_arguments('full_perception'),
         set_model_path,
         set_plugin_path,

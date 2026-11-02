@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "backends": {
+    "multi_tracking": {
+      "backend": "sort",
+      "parameters": {
+        "iou_threshold": 0.15,
+        "max_lost_frames": 45,
+        "min_hits": 3,
+        "max_tracks": 100,
+        "dist_gate_scale": 1.5
+      }
+    },
+    "global_grid": {
+      "backend": "astar",
+      "parameters": {
+        "max_cells": 4000000,
+        "unstick_cells": 5
+      }
+    },
+    "combined_grid": {
+      "backend": "astar",
+      "parameters": {
+        "max_cells": 1000000,
+        "unstick_cells": 0
+      }
+    }
+  },
+  "navigation": {
+    "strategy": "combined",
+    "grid_role": "global_grid",
+    "combined_grid_role": "combined_grid"
+  },
+  "platform": {}
+}

@@ -1,3 +1,6 @@
+#include <easyfly_backend_registry/metadata.hpp>
+#include <easyfly_perception_contracts/contracts.hpp>
+namespace pc = easyfly::perception;
 // Copyright 2026 EasyFly Project
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -39,6 +42,7 @@ using Caps = easyfly_msgs::srv::GetCapabilities;
 using Mission = easyfly_msgs::srv::ManageMission;
 using Details = easyfly_msgs::srv::GetMissionDetails;
 using Params = easyfly_msgs::srv::QueryParams;
+using PerceptionV2 = easyfly_msgs::srv::GetPerceptionV2;
 using Perception = easyfly_msgs::srv::GetPerception;
 using Image = sensor_msgs::msg::Image;
 std::atomic<uint64_t> next_session{0};
@@ -110,6 +114,10 @@ struct Observer::Impl
   rclcpp::Client<Details>::SharedPtr details_client;
   rclcpp::Client<Params>::SharedPtr params_client;
   rclcpp::Client<Perception>::SharedPtr perception_client;
+  rclcpp::Client<PerceptionV2>::SharedPtr native_perception_client;
+  pc::SourceGate prediction_gate;
+  easyfly_msgs::msg::TargetPredictionArrayV2::ConstSharedPtr native_predictions;
+  easyfly_msgs::msg::ClassifiedObstacleArrayV2::ConstSharedPtr native_classified;
   std::vector<rclcpp::SubscriptionBase::SharedPtr> subscriptions;
   std::array<Image::ConstSharedPtr, 2> incoming_images;
   std::array<double, 2> image_received{};
@@ -132,7 +140,7 @@ struct Observer::Impl
   explicit Impl(const BridgeConfig & options, std::shared_ptr<const UiSnapshot> previous_session)
   : config(options), clock(options.use_sim_time)
   {
-    if (config.selected_profile.empty() || config.selected_profile.size() > 256) {
+    if ((config.perception_version != 1 && config.perception_version != 2) || config.selected_profile.empty() || config.selected_profile.size() > 256) {
       throw std::invalid_argument("invalid UI profile label");
     }
     for (const auto & topic : config.image_topics) {
@@ -156,15 +164,18 @@ struct Observer::Impl
         throw std::invalid_argument("invalid camera perception target frame");
       }
     }
+    if (config.perception_version == 2) {
+      for (auto & binding : config.camera_perception) {
+        if (binding.detections_topic == "/detections") {binding.detections_topic = "/perception/v2/detections";}
+        if (binding.tracks_topic == "/tracks_raw") {binding.tracks_topic = "/perception/v2/tracks_raw";}
+        if (binding.targets_topic == "/target_positions") {binding.targets_topic = "/perception/v2/world_targets";}
+      }
+    }
     data.observation_session_id = ++next_session;
     data.selected_profile = config.selected_profile;
-    if (config.selected_localization_backend != "external" &&
-      config.selected_localization_backend != "fast_lio" &&
-      config.selected_localization_backend != "openvins" &&
-      config.selected_localization_backend != "fast_livo2" &&
-      config.selected_localization_backend != "orbslam3" &&
-      config.selected_localization_backend != "disabled")
-    {throw std::invalid_argument("invalid selected localization backend");}
+    if (config.selected_localization_backend != "external" && config.selected_localization_backend != "disabled") {
+      easyfly::backends::require_backend("localization", config.selected_localization_backend);
+    }
     data.selected_localization_backend = config.selected_localization_backend;
     data.localization_navigation_enabled = config.localization_navigation_enabled;
     data.navigation_localization.evidence.endpoint =
@@ -191,17 +202,17 @@ struct Observer::Impl
     }
     for (Key key : {Key::FlightCapabilities, Key::MissionCapabilities,
         Key::PerceptionCapabilities, Key::LandingCapabilities})
-    {data.capabilities[key].evidence.endpoint = endpoint(key);}
+    {data.capabilities[key].evidence.endpoint = observed_endpoint(key);}
     for (Key key : {Key::MissionList, Key::MissionValidation, Key::MissionQuery}) {
-      data.missions[key].evidence.endpoint = endpoint(key);
+      data.missions[key].evidence.endpoint = observed_endpoint(key);
     }
     for (Key key : {Key::Profile, Key::UseSimTime, Key::OperatorNote, Key::ExportPretty}) {
-      data.parameters[key].evidence.endpoint = endpoint(key);
+      data.parameters[key].evidence.endpoint = observed_endpoint(key);
     }
     data.mission_details.evidence.endpoint = endpoint(Key::MissionDetails);
     for (Key key : {Key::Targets, Key::Obstacles}) {
-      data.perception[key].evidence.endpoint = endpoint(key);
-      data.perception_reports[key].evidence.endpoint = endpoint(key);
+      data.perception[key].evidence.endpoint = observed_endpoint(key);
+      data.perception_reports[key].evidence.endpoint = observed_endpoint(key);
     }
     publish();
     worker = std::thread([this] {run();});
@@ -244,10 +255,15 @@ struct Observer::Impl
     const auto found = reserved.find(request.key);
     if (found != reserved.end() && found->second == request.id) {reserved.erase(found);}
   }
+  std::string observed_endpoint(Key key) const
+  {
+    return config.perception_version == 2 && (key == Key::Targets || key == Key::Obstacles) ?
+      "/platform/perception/v2/query" : endpoint(key);
+  }
   Evidence evidence(const Request & request, Quality quality, const std::string & reason)
   {
     Evidence e;
-    e.quality = quality; e.reason = reason.substr(0, 2048); e.endpoint = endpoint(request.key);
+    e.quality = quality; e.reason = reason.substr(0, 2048); e.endpoint = observed_endpoint(request.key);
     e.request_id = request.id; e.time_epoch = request.epoch;
     e.received_steady = detail::steady_seconds();
     e.first_source_steady = e.received_steady;
@@ -289,26 +305,26 @@ struct Observer::Impl
       current_epoch.store(clock.state(detail::steady_seconds()).epoch);
     }
     for (auto & item : data.capabilities) {
-      item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
+      item.second = {}; item.second.evidence.endpoint = observed_endpoint(item.first);
     }
     for (auto & item : data.missions) {
-      item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
+      item.second = {}; item.second.evidence.endpoint = observed_endpoint(item.first);
     }
     for (auto & item : data.parameters) {
-      item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
+      item.second = {}; item.second.evidence.endpoint = observed_endpoint(item.first);
     }
     data.mission_details = {}; data.mission_plan.reset(); data.mission_format.clear();
     data.mission_details.evidence.endpoint = endpoint(Key::MissionDetails);
     for (auto & item : data.perception) {
-      item.second = {}; item.second.evidence.endpoint = endpoint(item.first);
+      item.second = {}; item.second.evidence.endpoint = observed_endpoint(item.first);
     }
     for (auto & item : data.perception_reports) {
-      item.second = PerceptionReport(); item.second.evidence.endpoint = endpoint(item.first);
+      item.second = PerceptionReport(); item.second.evidence.endpoint = observed_endpoint(item.first);
     }
     for (auto & image : data.images) {image = {};}
     for (auto & buffer : camera_buffers) {if (buffer) {buffer->clear();}}
     data.camera_perception = {};
-    if (special_buffer) {special_buffer->clear();} data.special = {};
+    if (special_buffer) {special_buffer->clear();} data.special = {}; data.native_perception.clear();
     data.task_backends.clear(); data.backend_graph_observed = 0;
     incoming_images = {}; incoming_event.reset();
     data.trajectory.clear();
@@ -407,9 +423,9 @@ struct Observer::Impl
       inspect(config.image_topics[i], "sensor_msgs/msg/Image", true);
       const auto & binding = config.camera_perception[i];
       if (camera_buffers[i]) {
-        inspect(binding.detections_topic, "easyfly_msgs/msg/DetectionInfoArray", false);
-        inspect(binding.tracks_topic, "easyfly_msgs/msg/TrackInfoArray", false);
-        inspect(binding.targets_topic, "easyfly_msgs/msg/Target3DArray", false);
+        inspect(binding.detections_topic, config.perception_version == 2 ? "easyfly_msgs/msg/DetectionArrayV2" : "easyfly_msgs/msg/DetectionInfoArray", false);
+        inspect(binding.tracks_topic, config.perception_version == 2 ? "easyfly_msgs/msg/ImageTrackArrayV2" : "easyfly_msgs/msg/TrackInfoArray", false);
+        inspect(binding.targets_topic, config.perception_version == 2 ? "easyfly_msgs/msg/WorldTargetArrayV2" : "easyfly_msgs/msg/Target3DArray", false);
         inspect(binding.ellipse_topic, "easyfly_msgs/msg/EllipseObservationArray", false);
         inspect(binding.color_line_topic, "easyfly_msgs/msg/ColorLineObservationArray", false);
         std::string identity;
@@ -465,6 +481,7 @@ struct Observer::Impl
     details_client = node->create_client<Details>(endpoint(Key::MissionDetails));
     params_client = node->create_client<Params>(endpoint(Key::Profile));
     perception_client = node->create_client<Perception>(endpoint(Key::Targets));
+    native_perception_client = node->create_client<PerceptionV2>("/platform/perception/v2/query");
     if (config.use_sim_time) {
       subscriptions.push_back(
         node->create_subscription<rosgraph_msgs::msg::Clock>(
@@ -579,8 +596,34 @@ struct Observer::Impl
     special_subscribe("/landing_target", easyfly_msgs::msg::LandingTarget{});
     special_subscribe("/landing/guidance_target", easyfly_msgs::msg::LandingGuidanceTarget{});
     special_subscribe("/mission/step_feedback", easyfly_msgs::msg::MissionStepFeedback{});
+    if (config.perception_version == 1) {
     special_subscribe("/target_predictions", easyfly_msgs::msg::TargetPredictionArray{});
     special_subscribe("/obstacles_classified", easyfly_msgs::msg::ClassifiedObstacleArray{});
+    } else {
+      subscriptions.push_back(node->create_subscription<easyfly_msgs::msg::TargetPredictionArrayV2>(
+        "/perception/v2/predictions", rclcpp::SensorDataQoS(),
+        [this](easyfly_msgs::msg::TargetPredictionArrayV2::ConstSharedPtr m, const rclcpp::MessageInfo & info) {
+          const auto source = pc::writer(*node, "/perception/v2/predictions", info);
+          if (source.empty()) {native_predictions.reset(); special_buffer->clear(); return;}
+          const auto state = prediction_gate.observe(m->context, source);
+          if (state == pc::SourceGate::rejected) {return;}
+          if (state == pc::SourceGate::changed) {special_buffer->clear(); native_predictions.reset();}
+          try {
+            auto numeric = std::make_shared<const easyfly_msgs::msg::TargetPredictionArray>(pc::numeric_snapshot(*m));
+            native_predictions = m; special_buffer->receive(numeric, detail::steady_seconds(), data.clock.epoch);
+          } catch (const std::exception &) {native_predictions.reset(); special_buffer->clear();}
+        }));
+      subscriptions.push_back(node->create_subscription<easyfly_msgs::msg::ClassifiedObstacleArrayV2>(
+        "/perception/v2/obstacles_classified", rclcpp::SensorDataQoS(),
+        [this](easyfly_msgs::msg::ClassifiedObstacleArrayV2::ConstSharedPtr m, const rclcpp::MessageInfo & info) {
+          if (pc::writer(*node, "/perception/v2/obstacles_classified", info).empty() || m->geometry.obstacles.size() > 128) {
+            native_classified.reset(); return;
+          }
+          native_classified = m;
+          special_buffer->receive(std::make_shared<const easyfly_msgs::msg::ClassifiedObstacleArray>(m->geometry),
+            detail::steady_seconds(), data.clock.epoch);
+        }));
+    }
     subscriptions.push_back(
       node->create_subscription<easyfly_msgs::msg::MissionStatus>(
         "/mission_status", rclcpp::QoS(1),
@@ -606,6 +649,7 @@ struct Observer::Impl
                     message, received, clock.state(received, node->now().nanoseconds()));
                 }));
           };
+        if (config.perception_version == 1) {
         subscribe(
           binding.detections_topic, easyfly_msgs::msg::DetectionInfoArray{},
           &detail::CameraStream::detections);
@@ -615,6 +659,11 @@ struct Observer::Impl
         subscribe(
           binding.targets_topic, easyfly_msgs::msg::Target3DArray{},
           &detail::CameraStream::targets);
+        } else {
+          subscribe(binding.detections_topic, easyfly_msgs::msg::DetectionArrayV2{}, &detail::CameraStream::detections_v2);
+          subscribe(binding.tracks_topic, easyfly_msgs::msg::ImageTrackArrayV2{}, &detail::CameraStream::tracks_v2);
+          subscribe(binding.targets_topic, easyfly_msgs::msg::WorldTargetArrayV2{}, &detail::CameraStream::targets_v2);
+        }
         subscribe(
           binding.ellipse_topic, easyfly_msgs::msg::EllipseObservationArray{},
           &detail::CameraStream::ellipses);
@@ -732,9 +781,7 @@ struct Observer::Impl
     } else {
       auto input = std::make_shared<Perception::Request>();
       input->kind = request.key == Key::Targets ? "targets" : "obstacles";
-      send<Perception>(
-        request, perception_client, input,
-        [this, request](Perception::Response::SharedPtr response) {
+      auto handle = [this, request](Perception::Response::SharedPtr response) {
           const auto quality = detail::validate_perception(*response, request.key, data.clock);
           auto e =
           evidence(
@@ -777,7 +824,24 @@ struct Observer::Impl
           report.message = response->message.substr(0, 2048);
           report.observed_at = response->observed_at; report.reported_age_sec = response->age_sec;
           report.evidence = e;
-        });
+        };
+      if (config.perception_version == 1) {send<Perception>(request, perception_client, input, handle);} else {
+        auto native_input = std::make_shared<PerceptionV2::Request>(); native_input->kind = input->kind;
+        send<PerceptionV2>(request, native_perception_client, native_input,
+          [this, request, handle](PerceptionV2::Response::SharedPtr native) {
+            auto response = std::make_shared<Perception::Response>();
+            response->status = native->status; response->message = native->message; response->source_topic = native->source_topic;
+            response->observed_at = native->observed_at; response->age_sec = native->age_sec; response->obstacles = native->obstacles;
+            if (request.key == Key::Targets && native->status == native->VALID) {
+              try {response->targets = pc::numeric_snapshot(native->targets);} catch (const std::exception &) {response->status = response->INVALID;}
+            }
+            if (detail::validate_perception(*response, request.key, data.clock) == Quality::ValidAtObservation &&
+              native->targets.targets.size() <= 100 && native->obstacles.obstacles.size() <= 10000 &&
+              native->targets.context.reason.size() <= 256) {data.native_perception[request.key] = native;}
+            else {data.native_perception.erase(request.key);}
+            handle(response);
+          });
+      }
     }
   }
   void requests(double now)
@@ -828,7 +892,12 @@ struct Observer::Impl
         };
       unique_source(data.special.tags); unique_source(data.special.landing);
       unique_source(data.special.guidance); unique_source(data.special.step_feedback);
-      unique_source(data.special.predictions); unique_source(data.special.classified);
+      if (config.perception_version == 1) {unique_source(data.special.predictions); unique_source(data.special.classified);} else {
+        data.special.predictions.evidence.endpoint = "/perception/v2/predictions";
+        data.special.classified.evidence.endpoint = "/perception/v2/obstacles_classified";
+        unique_source(data.special.predictions); unique_source(data.special.classified);
+        data.special.native_predictions = native_predictions; data.special.native_classified = native_classified;
+      }
     }
     if (data.navigation_localization.value) {
       auto & e = data.navigation_localization.evidence;
@@ -1045,7 +1114,7 @@ struct Observer::Impl
     data.camera_perception = {};
     if (special_buffer) {special_buffer->clear();} data.special = {};
     data.task_backends.clear(); data.backend_graph_observed = 0;
-    caps_clients.clear(); mission_client.reset(); params_client.reset(); perception_client.reset();
+    caps_clients.clear(); mission_client.reset(); params_client.reset(); perception_client.reset(); native_perception_client.reset();
     details_client.reset();
     if (executor) {executor->cancel(); executor->remove_node(node); executor.reset();}
     node.reset();

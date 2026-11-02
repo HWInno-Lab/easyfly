@@ -36,7 +36,7 @@ def generate_launch_description():
                 package="easyfly_pixel_to_3d",
                 plugin="easyfly_pixel_to_3d::PixelTo3dNode",
                 name="easyfly_pixel_to_3d",
-                parameters=[{"use_sim_time": ParameterValue(
+                parameters=[{"perception_version": ParameterValue(LaunchConfiguration("perception_version", default="1"), value_type=int), "use_sim_time": ParameterValue(
                     LaunchConfiguration('use_sim_time'), value_type=bool)}],
             ),
         ],

@@ -5,7 +5,9 @@
   <version>0.0.0</version>
   <description>The traj_utils package</description>
   <maintainer email="bzhouai@todo.todo">bzhouai</maintainer>
-  <license>TODO</license>
+  <license>GPL-3.0</license>
+  <!-- Owner original ROS 2 port contributions only; see ../NOTICE.md. -->
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -26,6 +26,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QResizeEvent>
 #include <QSignalBlocker>
 #include <QSplitter>
 #include <QTabWidget>
@@ -353,6 +354,19 @@ struct MissionEditor::Impl
     QObject::connect(name, &QLineEdit::textChanged, owner, [this] {notify(); enable();});
     auto * timer = new QTimer(owner); timer->setInterval(50);
     QObject::connect(timer, &QTimer::timeout, owner, [this] {poll();}); timer->start(); enable();
+    auto fit_current_page = [tabs, owner = owner](int current) {
+        // Hidden parameter forms must not impose their height on the geometry page.
+        for (int index = 0; index < tabs->count(); ++index) {
+          auto * page = tabs->widget(index);
+          auto policy = page->sizePolicy();
+          policy.setVerticalPolicy(index == current ? QSizePolicy::Preferred : QSizePolicy::Ignored);
+          page->setSizePolicy(policy);
+        }
+        tabs->updateGeometry();
+        QTimer::singleShot(0, owner, [owner] {owner->reveal_geometry_canvas();});
+      };
+    QObject::connect(tabs, &QTabWidget::currentChanged, owner, fit_current_page);
+    fit_current_page(tabs->currentIndex());
   }
   QPushButton * button(
     QHBoxLayout * layout, const char * id, const QString & title,
@@ -803,6 +817,24 @@ MissionEditor::MissionEditor(
   std::function<void()> changed)
 : QWidget(parent), impl_(std::make_unique<Impl>(this, std::move(paths), std::move(changed))) {}
 MissionEditor::~MissionEditor() = default;
+void MissionEditor::resizeEvent(QResizeEvent * event)
+{
+  QWidget::resizeEvent(event);
+  QTimer::singleShot(0, this, [this] {reveal_geometry_canvas();});
+}
+void MissionEditor::reveal_geometry_canvas()
+{
+  auto * scroll = findChild<QScrollArea *>("draftEditorScroll");
+  auto * canvas = findChild<MissionGeometryCanvas *>("draftGeometry");
+  if (scroll && canvas && canvas->isVisibleTo(this) &&
+    canvas->height() + 16 <= scroll->viewport()->height())
+  {
+    const auto * fit = findChild<QPushButton *>("draftGeometryFit");
+    const int spare = (scroll->viewport()->height() - canvas->height()) / 2;
+    const int margin = std::min(spare, fit ? fit->sizeHint().height() + 12 : 8);
+    scroll->ensureWidgetVisible(canvas, 0, margin);
+  }
+}
 bool MissionEditor::dirty() const {return impl_->dirty();}
 bool MissionEditor::busy() const {return impl_->busy();}
 bool MissionEditor::stopped() const {return impl_->worker.state().stopped;}

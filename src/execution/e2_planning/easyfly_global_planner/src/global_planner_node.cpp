@@ -1,3 +1,5 @@
+#include "easyfly_perception_contracts/backend_status.hpp"
+#include "easyfly_backend_registry/configuration_yaml.hpp"
 // Copyright 2026 EasyFly Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,7 +69,7 @@ public:
     loadParams();
     rcl_interfaces::msg::ParameterDescriptor descriptor;
     descriptor.read_only = true;
-    AStarParams algorithm_params;
+    easyfly::backends::Parameters algorithm_params;
     const auto max_cells = declare_parameter<std::int64_t>("max_grid_cells", 4000000, descriptor);
     const auto expansions = declare_parameter<std::int64_t>(
       "planning_max_expansions", 4000000,
@@ -78,18 +80,29 @@ public:
     {
       throw std::invalid_argument("invalid planning budget");
     }
-    algorithm_params.max_cells = static_cast<std::size_t>(max_cells);
+    algorithm_params["max_cells"] = max_cells;
+    algorithm_params["unstick_cells"] = declare_parameter<std::int64_t>("unstick_cells", 5, descriptor);
     planning_max_expansions_ = static_cast<std::size_t>(expansions);
-    planner_ = make_planner(
-      declare_parameter<std::string>(
-        "planner_backend", "astar", descriptor), algorithm_params);
+    const auto backend = declare_parameter<std::string>("planner_backend", "astar", descriptor);
+    const auto config = declare_parameter<std::string>("planner_parameters", "", descriptor);
+    // Never leak the old A* fields into a different implementation.
+    if (backend != "astar") algorithm_params.clear();
+    if (!config.empty()) {
+      easyfly::backends::overlay(algorithm_params, easyfly::backends::parameters_from_yaml(
+        YAML::Load(config), "grid_planning", backend));
+    }
+    const auto resolved = planner_factory().resolve({backend, algorithm_params});
+    planner_ = make_planner(resolved);
+    backend_status_ = std::make_unique<easyfly::perception::BackendStatus>(*this, "global_grid", backend, std::max(.05, std::min(params_.state_timeout, params_.grid_stale_timeout)));
+    backend_status_->created(planner_->capabilities().backend, easyfly::backends::parameters_json(resolved.parameters));
     auto qos = rclcpp::QoS(10);
     grid_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
       params_.grid_topic, qos,
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
         std::lock_guard<std::mutex> send_lock(send_mtx_);
         std::lock_guard<std::mutex> lk(snap_mtx_);
-        if (!occupancyGridReady(*msg)) {
+        status_grid_valid_ = occupancyGridReady(*msg);
+        if (!status_grid_valid_) {
           ++map_invalidations_;
           search_stop_ = true;
         }
@@ -97,6 +110,7 @@ public:
         latest_grid_ = std::move(msg);
         grid_arrival_ = std::chrono::steady_clock::now();
         grid_received_ = true;
+        updateBackendInput();
       });
     state_sub_ = create_subscription<easyfly_msgs::msg::UAVState>(
       "/uav_state", qos,
@@ -105,6 +119,7 @@ public:
         latest_state_ = *msg;
         state_received_ = true;
         state_arrival_ = std::chrono::steady_clock::now();
+        updateBackendInput();
       });
     cli_wp_ = rclcpp_action::create_client<GoToWaypoint>(this, "/goto_waypoint");
     as_nav_ = rclcpp_action::create_server<NavigateTo>(
@@ -140,6 +155,15 @@ private:
     double child_cancel_timeout{5.0};
     double child_cancel_max_wait{30.0};
   };
+  std::unique_ptr<easyfly::perception::BackendStatus> backend_status_;
+  bool status_grid_valid_{false};
+  void updateBackendInput() {
+    const bool ready = grid_received_ && state_received_ && latest_grid_ && status_grid_valid_ &&
+      latest_state_.connected && latest_state_.pose_valid && latest_state_.header.frame_id == "odom" && std::isfinite(latest_state_.position_x) &&
+      std::isfinite(latest_state_.position_y) && std::isfinite(latest_state_.position_z);
+    const auto stamp = ready ? std::min(easyfly::perception::stamp(latest_grid_->header.stamp), easyfly::perception::stamp(latest_state_.header.stamp)) : 0;
+    backend_status_->input(ready, "map_or_state_not_valid", stamp);
+  }
   void loadParams()
   {
     declare_parameter<std::string>("config_file", "");

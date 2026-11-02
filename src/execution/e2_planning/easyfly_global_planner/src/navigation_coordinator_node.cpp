@@ -1,3 +1,5 @@
+#include "easyfly_perception_contracts/backend_status.hpp"
+#include "easyfly_backend_registry/configuration_yaml.hpp"
 // Copyright 2026 EasyFly Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -148,7 +150,14 @@ public:
         "frame/map integration required",
         localization.c_str());
     }
-    combined_planner_ = make_planner("astar", {1000000, 0});
+    const auto combined_backend = declare_parameter<std::string>("combined_planner_backend", "astar", descriptor);
+    easyfly::backends::Parameters combined_parameters;
+    if (combined_backend == "astar") combined_parameters = {{"max_cells", 1000000}, {"unstick_cells", 0}};
+    const auto combined_config = declare_parameter<std::string>("combined_planner_parameters", "", descriptor);
+    if (!combined_config.empty()) easyfly::backends::overlay(combined_parameters,
+      easyfly::backends::parameters_from_yaml(YAML::Load(combined_config), "grid_planning", combined_backend));
+    const auto resolved = planner_factory().resolve({combined_backend, combined_parameters});
+    combined_planner_ = make_planner(resolved);
     strategy_ = declare_parameter<std::string>("strategy", "astar");
     if (strategy_ != "astar" && strategy_ != "ego" && strategy_ != "combined" &&
       strategy_ != "gcopter" && strategy_ != "super")
@@ -182,6 +191,9 @@ public:
     goal_timeout_ = positive("goal_timeout", 120.0);
     input_timeout_ = positive("input_timeout", 5.0);
     freshness_ = positive("input_freshness", 1.0);
+    backend_status_ = std::make_unique<easyfly::perception::BackendStatus>(*this, "combined_grid", combined_backend, freshness_);
+    backend_status_->created(combined_planner_->capabilities().backend, easyfly::backends::parameters_json(resolved.parameters));
+    if (strategy_ != "combined") backend_status_->input(false, "role_not_selected_by_strategy");
     step_ = positive("local_goal_distance", 3.0);
     default_speed_ = positive("default_speed", 2.0);
     z_min_ = declare_parameter<double>("z_min", 0.5);
@@ -202,12 +214,12 @@ public:
     state_sub_ = create_subscription<easyfly_msgs::msg::UAVState>(
       "/uav_state", 10,
       [this](easyfly_msgs::msg::UAVState::ConstSharedPtr msg) {
-        state_ = msg; state_received_ = Clock::now();
+        state_ = msg; state_received_ = Clock::now(); updateBackendInput();
       });
     map_sub_ = create_subscription<nav_msgs::msg::OccupancyGrid>(
       declare_parameter<std::string>("grid_topic", "/occupancy_grid"), 1,
       [this](nav_msgs::msg::OccupancyGrid::ConstSharedPtr msg) {
-        map_ = msg; map_received_ = Clock::now();
+        map_ = msg; map_received_ = Clock::now(); status_grid_valid_ = occupancyGridReady(*msg); updateBackendInput();
       });
     if ((strategy_ == "gcopter" || strategy_ == "super")) {
       voxel_sub_ = create_subscription<easyfly_msgs::msg::VoxelGrid>(
@@ -403,6 +415,15 @@ private:
       (stamp.sec == 0 && stamp.nanosec == 0)) {return false;}
     const double age = (now() - rclcpp::Time(stamp, get_clock()->get_clock_type())).seconds();
     return age >= -0.2 && age <= freshness_;
+  }
+  std::unique_ptr<easyfly::perception::BackendStatus> backend_status_;
+  bool status_grid_valid_{false};
+  void updateBackendInput() {
+    const bool ready = strategy_ == "combined" && navigation_enabled_ && state_ && map_ &&
+      state_->connected && state_->pose_valid && state_->header.frame_id == "odom" && status_grid_valid_ && std::isfinite(state_->position_x) &&
+      std::isfinite(state_->position_y) && std::isfinite(state_->position_z);
+    const auto stamp = ready ? std::min(easyfly::perception::stamp(state_->header.stamp), easyfly::perception::stamp(map_->header.stamp)) : 0;
+    backend_status_->input(ready, strategy_ != "combined" ? "role_not_selected_by_strategy" : "map_state_or_localization_not_valid", stamp);
   }
   bool stateReady() const
   {

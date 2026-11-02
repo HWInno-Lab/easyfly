@@ -1,3 +1,5 @@
+#include <easyfly_perception_contracts/contracts.hpp>
+namespace pc = easyfly::perception;
 // Copyright 2026 EasyFly Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -74,7 +76,10 @@ public:
   {
     loadParams();
     auto qos = rclcpp::QoS(10);
-    targets_sub_ = create_subscription<easyfly_msgs::msg::Target3DArray>(
+    const auto version = declare_parameter("perception_version", 1, pc::frozen());
+    if (version != 1 && version != 2) {throw std::invalid_argument("perception_version must be 1 or 2");}
+    v2_ = version == 2;
+    if (!v2_) {targets_sub_ = create_subscription<easyfly_msgs::msg::Target3DArray>(
       params_.input_topic, qos,
       [this](easyfly_msgs::msg::Target3DArray::ConstSharedPtr msg) {
         std::lock_guard<std::mutex> lk(snap_mtx_);
@@ -82,6 +87,18 @@ public:
         ++targets_generation_;
         last_arrival_ = std::chrono::steady_clock::now();          // 数据断流检测
       });
+    } else {
+      native_input_ = std::make_unique<pc::WorldInput>(*this,
+        [this](easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr m) {
+          std::lock_guard<std::mutex> lk(snap_mtx_);
+          native_targets_ = m; latest_targets_ = pc::numeric_snapshot(*m);
+          ++targets_generation_; last_arrival_ = std::chrono::steady_clock::now();
+        }, [this](const std::string &) {
+          native_fault_ = true; stop_req_ = true;
+          std::lock_guard<std::mutex> lk(snap_mtx_);
+          native_targets_.reset(); latest_targets_ = easyfly_msgs::msg::Target3DArray(); ++targets_generation_;
+        });
+    }
     state_sub_ = create_subscription<easyfly_msgs::msg::UAVState>(
       params_.uav_state_topic, qos,
       [this](easyfly_msgs::msg::UAVState::SharedPtr msg) {
@@ -267,6 +284,24 @@ private:
     if (goal->target_id < -2) {
       return rclcpp_action::GoalResponse::REJECT;
     }
+    if (v2_) {
+      std::lock_guard<std::mutex> snapshot_lock(snap_mtx_);
+      const auto receipt_age = std::chrono::duration<double>(std::chrono::steady_clock::now() - last_arrival_).count();
+      const auto source_age = native_targets_ ? now().nanoseconds() - pc::stamp(native_targets_->context.header.stamp) : -1;
+      if (!native_targets_ || source_age < -200000000LL || source_age > 500000000LL || receipt_age > .5) {
+        return rclcpp_action::GoalResponse::REJECT;
+      }
+      Target3D selected;
+      if (!findTarget(latest_targets_, goal->target_id, latest_state_, selected)) {
+        return rclcpp_action::GoalResponse::REJECT;
+      }
+      const auto chosen = std::find_if(native_targets_->targets.begin(), native_targets_->targets.end(),
+        [&](const auto & t) {return t.key.legacy_raw_id == selected.track_id && t.position_valid;});
+      if (chosen == native_targets_->targets.end()) {return rclcpp_action::GoalResponse::REJECT;}
+      goal_key_ = chosen->key; goal_alias_ = selected.track_id;
+      native_fault_ = false;
+      goal_native_ = native_targets_;  // Full identity and source generation stay pinned for this task.
+    }
     goal_pending_ = true;
     pending_goal_uuid_ = uuid;
     pending_cancel_ = false;
@@ -357,7 +392,7 @@ private:
       active_ = true;
       active_goal_ = gh;
       cancel_req_ = false;
-      stop_req_ = false;
+      stop_req_ = v2_ && native_fault_;
       child_fault_ = false;
       waypoint_lifecycle_ = WaypointLifecycle();
       ++goal_generation_;
@@ -868,7 +903,7 @@ private:
     } waypoint_cleanup{this, &wp_gh_, &wp_goal_fut_, &wp_res_fut_,
       &wp_has_, &wp_pending_, &wp_cancel_sent_};
     const auto goal = gh->get_goal();
-    const int target_id = goal->target_id;
+    const int target_id = v2_ ? goal_alias_ : goal->target_id;
     const double follow_distance =
       std::isfinite(goal->follow_distance) && goal->follow_distance > 0 ?
       goal->follow_distance : params_.default_follow_distance;
@@ -953,7 +988,8 @@ private:
         auto res = std::make_shared<TrackTarget::Result>();
         res->success = false;
         res->message = "cancelled before target acquired";
-        gh->canceled(res);
+        if (native_fault_) {res->message = "perception_source_changed_or_invalid"; gh->abort(res);}
+        else if (stop_req_) {res->message = "stopped"; gh->succeed(res);} else {gh->canceled(res);}
         return;
       }
       if (!acquisition_error.empty()) {
@@ -990,10 +1026,10 @@ private:
         }
         auto res = std::make_shared<TrackTarget::Result>();
         res->success = false;
-        res->message = stop_req_ ? "stopped" :
+        res->message = native_fault_ ? "perception_source_changed_or_invalid" : stop_req_ ? "stopped" :
           (takeover_ ? "external takeover (RTL/AUTO.LAND)" : "cancelled");
         // 终态语义: 用户主动取消=CANCELED, 接管/异常=ABORTED, 停止指令=SUCCEEDED
-        if (stop_req_) {gh->succeed(res);} else if (cancel_req_) {gh->canceled(res);} else {
+        if (native_fault_) {gh->abort(res);} else if (stop_req_) {gh->succeed(res);} else if (cancel_req_) {gh->canceled(res);} else {
           gh->abort(res);
         }
         break;
@@ -1082,7 +1118,7 @@ private:
       // SORT 在视角/检出变化时会重新分配 id (Q19: 飞行中 ~26 个/次),
       // 锁定单一 id 在实战中脆弱。丢失判定前先在"最后已知位置"附近
       // (reacquire_radius) 认领新 id —— 等价于操作员视觉重锁。
-      if (!seen && last_accepted_.count(cur_tid_)) {
+      if (!v2_ && !seen && last_accepted_.count(cur_tid_)) {
         const auto arr2 = snapTargets();
         if (arr2.generation > 0 && !targetArrayFrameValid(arr2.message)) {
           RCLCPP_ERROR(
@@ -1436,6 +1472,10 @@ private:
   uint64_t goal_generation_{0};
   std::atomic<bool> active_{false};
   std::atomic<bool> cancel_req_{false};
+  pc::Key goal_key_; int32_t goal_alias_{-1};
+  bool v2_{false}; std::atomic<bool> native_fault_{false};
+  std::unique_ptr<pc::WorldInput> native_input_;
+  easyfly_msgs::msg::WorldTargetArrayV2::ConstSharedPtr native_targets_, goal_native_;
   std::atomic<bool> stop_req_{false};
   std::atomic<bool> child_fault_{false};
   rclcpp::Subscription<easyfly_msgs::msg::Target3DArray>::SharedPtr targets_sub_;

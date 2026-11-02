@@ -57,7 +57,9 @@ def generate_launch_description():
                 package="easyfly_object_detection",
                 plugin="easyfly_object_detection::DetectionNode",
                 name="easyfly_object_detection",
-                parameters=[{
+                parameters=[{"backend": ParameterValue(LaunchConfiguration("backend"), value_type=str),
+                    "backend_parameters": ParameterValue(LaunchConfiguration("backend_parameters"), value_type=str),
+                    "perception_version": ParameterValue(LaunchConfiguration("perception_version", default="1"), value_type=int),
                     "use_sim_time": LaunchConfiguration("use_sim_time"),
                     "config_file": ParameterValue(
                         LaunchConfiguration("config_file"), value_type=str),
@@ -77,6 +79,8 @@ def generate_launch_description():
         output="screen",
     )
     return LaunchDescription([
+        DeclareLaunchArgument("backend", default_value=""),
+        DeclareLaunchArgument("backend_parameters", default_value=""),
         process_nice,
         use_sim_time_arg,
         config_file_arg,

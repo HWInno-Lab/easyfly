@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "camera_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_]{1,32}$"
+    },
+    "optical_frame": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256
+    },
+    "input_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "output_topic": {
+      "type": "string",
+      "pattern": "^/[A-Za-z_][A-Za-z0-9_]*(/[A-Za-z_][A-Za-z0-9_]*)*$",
+      "maxLength": 256
+    },
+    "use_sim_time": {
+      "type": "boolean"
+    },
+    "perception_version": {
+      "enum": [
+        1,
+        2
+      ]
+    },
+    "publish_legacy_compatibility": {
+      "type": "boolean"
+    },
+    "max_age_seconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 5
+    }
+  },
+  "required": []
+}

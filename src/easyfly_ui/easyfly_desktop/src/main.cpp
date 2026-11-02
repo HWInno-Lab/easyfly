@@ -204,6 +204,9 @@ int main(int argc, char ** argv)
     journal_path.filename() == ".." || parser.isSet("system-time"))) ||
     (!missions.enabled && parser.isSet("mission-journal"))) {parser.showHelp(2);}
   easyfly_ui_bridge::BridgeConfig config;
+  const auto perception_version = qEnvironmentVariable("EASYFLY_PERCEPTION_VERSION", "1");
+  if (perception_version != "1" && perception_version != "2") {parser.showHelp(2);}
+  config.perception_version = perception_version.toInt();
   config.use_sim_time = !parser.isSet("system-time"); config.selected_profile = parser.value(
     "profile").toStdString();
   const auto localization = qEnvironmentVariable("EASYFLY_LOCALIZATION_BACKEND");

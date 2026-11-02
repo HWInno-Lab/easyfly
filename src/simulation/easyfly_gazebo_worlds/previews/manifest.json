@@ -1,0 +1,519 @@
+{
+  "schema_version": 1,
+  "generator": "Gazebo Classic native camera",
+  "scenes": {
+    "primitives_sparse_seed42_v1": {
+      "scene_id": "primitives_sparse_seed42_v1",
+      "world_sha256": "417ac4a6ca3e3e11a7d96516037fa7ec0be6fd3622819103ebdac41e9a889d63",
+      "asset_identity": {},
+      "file": "primitives_sparse_seed42_v1.png",
+      "image_sha256": "97c49a32e1ddb861766eafb41c00706844726ac2d10880472d4f6a5de6218753",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -6.199999999999999,
+        -5.2,
+        0,
+        8.2,
+        5.2,
+        4
+      ],
+      "geometry_links": 20,
+      "camera": {
+        "x": 1.0,
+        "y": 0.0,
+        "z": 17.96725771223543,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 67.96725771223544,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "warehouse_aws_v1": {
+      "scene_id": "warehouse_aws_v1",
+      "world_sha256": "4a7d96866367df85668b09a71c60ce3a2807e7d3fe05df77a0edc62a1fa8e263",
+      "asset_identity": {
+        "aws_warehouse_v1": "ffaadd0933f5c1d62633ccdefb6c82af4985890430b9955ffdfe713f994bc993"
+      },
+      "file": "warehouse_aws_v1.png",
+      "image_sha256": "79e90dad987842c2cad6aa5f1e009e6ce317f4141042b6600206ba976536b425",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -6.990232944488525,
+        -10.453330993652344,
+        0,
+        6.990236759185791,
+        10.45333480834961,
+        10.124242782592773
+      ],
+      "geometry_links": 25,
+      "camera": {
+        "x": 1.9073486328125e-06,
+        "y": 1.9073486328125e-06,
+        "z": 29.537850848161153,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 27.037850848161153,
+        "far": 79.53785084816116,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "bookstore_aws_v1": {
+      "scene_id": "bookstore_aws_v1",
+      "world_sha256": "24c090cd7d9cc5fc4d4efaf87bff34230ccf2fa76f54c66eae8667a5843ef0fd",
+      "asset_identity": {
+        "aws_bookstore_v1": "fc17318fc04eb48647d5797d63d0f631a94e6e67323b8fc11dc38cb3e27e2494"
+      },
+      "file": "bookstore_aws_v1.png",
+      "image_sha256": "fc85b78ce25791a7c933e371386e055e9ce332768cf3194015dd07e386b154b3",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -7.900695571523666,
+        -7.298858642578125,
+        -0.276618,
+        7.80154275894165,
+        7.3295233025503155,
+        3.441426225250244
+      ],
+      "geometry_links": 81,
+      "camera": {
+        "x": -0.04957640629100801,
+        "y": 0.015332329986095239,
+        "z": 21.418368568575993,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 18.918368568575993,
+        "far": 71.69498656857598,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "forest_pine_v1": {
+      "scene_id": "forest_pine_v1",
+      "world_sha256": "960af1553c92ac8ca1be5adb9550f96b68603594e18b0048776dba7e99206f1b",
+      "asset_identity": {
+        "osrf_pine_tree_v1": "973597d8cdef250faa0c21d1fcf1e89ac88bec15f9e9140985fda0f8fefae7c3",
+        "gazebo_builtin_v1": "afd41083f69c457d077e19cd273d4bdc2374347e084c2931a7481d3db5953fd8"
+      },
+      "file": "forest_pine_v1.png",
+      "image_sha256": "3d57b3afee84d8ff7616fcd45ddabcb2ed2f44109a5ba7e34a1fadfb3d8ab40c",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -6.053894192623933,
+        -6.11310071345444,
+        1.4542950843576818e-08,
+        5.999002293299178,
+        6.068867358850957,
+        4.866661071777344
+      ],
+      "geometry_links": 20,
+      "camera": {
+        "x": -0.02744594966237779,
+        "y": -0.022116677301741383,
+        "z": 20.621169174380427,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 70.62116917438043,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "fuel_room_v1": {
+      "scene_id": "fuel_room_v1",
+      "world_sha256": "b97596ee03ce01a395cbc38b5459bf0f5be30a96e01348fe04340b1b0d32c16a",
+      "asset_identity": {},
+      "file": "fuel_room_v1.png",
+      "image_sha256": "da6655abe9309b11a677bcd44673a8a8353f884b8119358babcbe4a02beea25e",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -3,
+        -3,
+        0,
+        7.3999999999999995,
+        3,
+        4
+      ],
+      "geometry_links": 6,
+      "camera": {
+        "x": 2.1999999999999997,
+        "y": 0.0,
+        "z": 12.587463903281142,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 10.087463903281142,
+        "far": 62.58746390328114,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "fuel_warehouse_v1": {
+      "scene_id": "fuel_warehouse_v1",
+      "world_sha256": "3670960b0174d03fdc34c489466b6ebb93a6b54296275acca7b5e668b5b149e5",
+      "asset_identity": {},
+      "file": "fuel_warehouse_v1.png",
+      "image_sha256": "62dc678d0b86e38f95d61e28feb97bd40c3860e6ef79eab6e796c37a086c1592",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -3,
+        -3,
+        0,
+        7.3999999999999995,
+        3,
+        4
+      ],
+      "geometry_links": 6,
+      "camera": {
+        "x": 2.1999999999999997,
+        "y": 0.0,
+        "z": 12.587463903281142,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 10.087463903281142,
+        "far": 62.58746390328114,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "gcopter_3d_lane_v1": {
+      "scene_id": "gcopter_3d_lane_v1",
+      "world_sha256": "1a2df19cb1ac30e6cf354a6b8506cdb23916c1cb7c756f56020edef0f171802a",
+      "asset_identity": {},
+      "file": "gcopter_3d_lane_v1.png",
+      "image_sha256": "6898437b567d6b988df0b90914961095151d525bfb6e311b4bb36e486dab0c93",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -6.199999999999999,
+        -5.2,
+        0,
+        8.2,
+        5.2,
+        4
+      ],
+      "geometry_links": 4,
+      "camera": {
+        "x": 1.0,
+        "y": 0.0,
+        "z": 17.96725771223543,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 67.96725771223544,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "hospital_aws_v2": {
+      "scene_id": "hospital_aws_v2",
+      "world_sha256": "b27fca8bdb6ca7ba1d40cad7bfbc72a3708bb0e4ecf177026b2785bc1867db16",
+      "asset_identity": {
+        "aws_hospital_repaired_v1": "e45ecc08a6f33e4732237ca005ab3553be3244732d2ee8f107526b3cc27f5f70",
+        "fuel_hospital_adjtable_v4": "a8fd39db987caa6a20b3d2dcdb5a05adf8be66b0547e6c580e60c1324adffad9",
+        "fuel_hospital_anesthesiamachine_v2": "6261f7fb38735e2bb2c1c3cc79ae95371afeda60608368eda3309b943d2c088c",
+        "fuel_hospital_bmwcart_v2": "6b80158a1e023f942649f02be6b06c23e5943f33f6f059554365db944986302e",
+        "fuel_hospital_bpcart_repaired_v1": "8ade7c3dc40563cc848c9f9ef50b07281abcc94cf284292c247356007b43f435",
+        "fuel_hospital_bedtable_repaired_v1": "92afad6f4c63dd63d209b5eef00579988364a0cfe13536bccd6ecf545018dfb1",
+        "fuel_hospital_bedsidetable_v2": "52c9d7ac0b94b50ed35b3a047d1c09dfa4e36b2643ebba91a12b495784f6951d",
+        "fuel_hospital_bloodpressuremonitor_v2": "323136152de70b6b194582e158f069afebc18b59658a54e0d51391f09e5b96f1",
+        "fuel_hospital_cgmclassic_v4": "dc5892fa7a1709a6ab083cd938b656686e16d46b2ade0bfb35132fd2c1e5f256",
+        "fuel_hospital_chair_v3": "fd478821ef469b99edddf2b556abce198e1c3eb3781de0423a1e4414d542cfc2",
+        "fuel_hospital_drawer_v2": "92efc54517f79684b6c2cc5cd1c4222d9066de65e4a74786adf4ebc7b41e789d",
+        "fuel_hospital_elderladypatient_v2": "2f1b61ddb5d63b8d2631d0d8cd98a6f18fb727f63e57c397295218bffec9be33",
+        "fuel_hospital_eldermalepatient_v2": "ed24ee8fecc9dc39debaf734a0d9d0568129c0b689c57ffb4183c0ae705937c1",
+        "fuel_hospital_femalevisitor_v2": "85f55716f2d91df47e1cc5c68c3977c7a3908972c77971934ff6b2f7aef0b755",
+        "fuel_hospital_femalevisitorsit_v2": "efc57212de562d251f6dbebfaa593bca945388898d707a5f82772d59452b0d07",
+        "fuel_hospital_ivstand_v2": "4d2579e24aa51abb21f00a8daf910a1b903dbc60d0d20f3597ce5f28252b3acf",
+        "fuel_hospital_instrumentcart1_v2": "5827107d988d8e97d5ef4c1133918962bd355d52d9f3d9fc8b83a59aa482988e",
+        "fuel_hospital_instrumentcart2_v2": "84faa81b115eaed2e3d8f1c21dbf8b4354a6b45f3995ec489323a79222ad54eb",
+        "fuel_hospital_kitchensink_v2": "49afe23f7f2166914366c02d670deda6a1de7964118cf9b5cb9767c6975a15df",
+        "fuel_hospital_malepatientbed_v2": "ce52c81f34b51f1f60f0580775705b8b878cec36522aac664dd6c76a9a87c2d1",
+        "fuel_hospital_malevisitoronphone_v2": "8826ca17590f0fa6d98638b7842a13c728b2132f8745df94ca746455dca5d5d0",
+        "fuel_hospital_malevisitorsit_v2": "f20c69ce59d1f3551b90ed13594e84046fce9fb561af5440d539ac9e8d796d92",
+        "fuel_hospital_metalcabinet_v2": "6ee654ee1ef71344ed64b6b58b60461916a9329ef71c6755af705e2bf43e36ab",
+        "fuel_hospital_mopcart3_v2": "3c3652bddefdb4d0c4fa3e05fb08855296c479d8f96865a97b3636540421ea88",
+        "fuel_hospital_officechairblack_v2": "e977d61084cab923fec168d8b528baab3385e1588332d3fe8de99a5e1210e1c6",
+        "fuel_hospital_parkingtrolleymax_v3": "46fae87f3ba26114688cf89d2f27b65e73966be22da0b591c07fd6f9b2a57b8f",
+        "fuel_hospital_parkingtrolleymin_v3": "d2d4147ace2b598173f86923e9e5cd4a3fadd69285aaff376c1eeaee49af01fa",
+        "fuel_hospital_patientfsit_v2": "aff54c06cc5c2a31b933f1a6f41512a0a74792394d99582fa64d5de9ad3bdad1",
+        "fuel_hospital_patientwheelchair_v4": "34a51c4445b154562b8b55d331166b173be4fe8228887bf9bdc414b58912bdc4",
+        "fuel_hospital_potatochipchair_v3": "a3e0dfb9270c2da56d61d872127c496ccd747f8da7546c6a2e43c5341eb85213",
+        "fuel_hospital_scrubs_v2": "4eedb48fef1b5dad2dc792858cffc79367d72d448fecca6e129923a4579dfd82",
+        "fuel_hospital_shower_v2": "64abaa2d2bdb7da23741add7eb3391f1edb4e7ea4b90fb7dcc8b8cac88bd506d",
+        "fuel_hospital_storagerack_v2": "2db1c13d8aa42d37d06a6edee810c9ed57cb7dd3b09c527d351f5003d831cf9c",
+        "fuel_hospital_storagerackcoveropen_v2": "9235db486dd01398bd89b43ec93dbf573d25828d5767bcd64fdfc23e65dc4586",
+        "fuel_hospital_storagerackcovered_v2": "456a852c456c5c58d3a7afebdb5c08ad7d0858e387a287af2e284e16513f8668",
+        "fuel_hospital_surgicaltrolley_v2": "5dca06c87146067aeb80a56df8b126fc8d6a4deb63ea10407c4e36618a2feaf1",
+        "fuel_hospital_surgicaltrolleymed_v2": "e737e9f54406e7eebad734700e2a11c2ae9c175952faad8ef287d4c36602e84b",
+        "fuel_hospital_toilet_v2": "f2915f55be2ffa8fb55884ba51e586026f73aac26dd4fe556ec0ad9caaac3bd0",
+        "fuel_hospital_trolleybed_v3": "f319af18428b8a6355dfb2596d1c9f2a551ec231a6c4c5736a7b72af64113e90",
+        "fuel_hospital_trolleybedpatient_v3": "30118eafa69dcf1f79e18498d738193d5ebace9efc5d45a4f974be8f6f0c3c6d",
+        "fuel_hospital_vendingmachine_v3": "d3c887274358ce87809a4f15dc173014f747f4d0004f8183ccd2813f2e6d2d8f",
+        "fuel_hospital_visitorkidsit_v2": "f99ebcfc0340b53a08e692d60bfc8808823ea5c538bbde510d2f6634702f14e3",
+        "fuel_hospital_whitechipchair_v3": "cc8863c58dda10125c4e05b3783142747a7c64de7d22ab3ee8532ead9fab4947",
+        "fuel_hospital_xraymachine_v2": "ae03b6573deb1f47469cd783ad1e0ce62c22f2382949044f1567cbbed5401831",
+        "gazebo_builtin_v1": "afd41083f69c457d077e19cd273d4bdc2374347e084c2931a7481d3db5953fd8"
+      },
+      "file": "hospital_aws_v2.png",
+      "image_sha256": "bd33cdfa90e09ce0e17c123de367acaac2fd104f951196e205da3175fb8d57b3",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -12.572123018310547,
+        -35.07148411083985,
+        -2.999729871749878,
+        12.577455859442074,
+        21.977779960632326,
+        3.0153799057006836
+      ],
+      "geometry_links": 177,
+      "camera": {
+        "x": 0.0026664205657631612,
+        "y": -6.546852075103761,
+        "z": 76.2797938499653,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 73.7797938499653,
+        "far": 129.27952372171518,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "house_aws_v1": {
+      "scene_id": "house_aws_v1",
+      "world_sha256": "8eef40841c462e3f015dc092f24a1b696ea10f8f05b662b529b76ddd720b544f",
+      "asset_identity": {
+        "aws_house_v1": "5671b91cc7983d8bee763f679a7811a3ac4a57c831abb169aeff8e115fbe7953"
+      },
+      "file": "house_aws_v1.png",
+      "image_sha256": "7f57cc8347180cace33a3c01cef02cdaf713f161803e71d744766da93744ad42",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -9.5,
+        -5.7000041007995605,
+        -0.03026149454518623,
+        9.5,
+        5.7000041007995605,
+        3
+      ],
+      "geometry_links": 74,
+      "camera": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 20.929020592532854,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 18.429020592532854,
+        "far": 70.95928208707804,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "office_willowgarage_v1": {
+      "scene_id": "office_willowgarage_v1",
+      "world_sha256": "67bd8622684a8c0e7d846e9f3980998bacefc7ef27ef3cc8929502c637565bc6",
+      "asset_identity": {
+        "osrf_willowgarage_v1": "00cf9f6b42347e2f6102449b7222be025e93336397aafa811cc3e7768de9dac0",
+        "gazebo_builtin_v1": "afd41083f69c457d077e19cd273d4bdc2374347e084c2931a7481d3db5953fd8"
+      },
+      "file": "office_willowgarage_v1.png",
+      "image_sha256": "3f9f0e4d13edd1183289876d1a9fd559703bb62203360c8512d96bb3b4b1d88f",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -19.982537500560284,
+        -20.846934020519257,
+        0,
+        751.051513671875,
+        53.26033020019531,
+        2.8447999954223633
+      ],
+      "geometry_links": 1,
+      "camera": {
+        "x": 365.53448808565736,
+        "y": 16.206698089838028,
+        "z": 750.3632845579391,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 747.8632845579391,
+        "far": 800.3632845579391,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "primitives_corridor_seed1042_v2": {
+      "scene_id": "primitives_corridor_seed1042_v2",
+      "world_sha256": "e70d971a430a339294078d2a3a55bcfb7175b1738de5a59d71e5823e3b07cccb",
+      "asset_identity": {},
+      "file": "primitives_corridor_seed1042_v2.png",
+      "image_sha256": "64b569fba7f573821e9cae0700b0d3529074b54a80afdd76e9532366e236eb1c",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -6.199999999999999,
+        -6.2,
+        0,
+        8.2,
+        6.2,
+        4
+      ],
+      "geometry_links": 18,
+      "camera": {
+        "x": 1.0,
+        "y": 0.0,
+        "z": 20.03648107701105,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 70.03648107701105,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "racetrack_aws_day_v2": {
+      "scene_id": "racetrack_aws_day_v2",
+      "world_sha256": "740862e7349a219dc6cf890614d4dc76cf312316764098433b52ee430ad45469",
+      "asset_identity": {
+        "aws_racetrack_day_v1": "0b4d762d7ba07bd992349f54d510e721e1640bd31c902cf6c2de297d1b3a15eb"
+      },
+      "file": "racetrack_aws_day_v2.png",
+      "image_sha256": "4ec22f69ce9cae7eccfc8a8c7e0bccf4b0b023edb881ab0b45d4a1e6d6ccd319",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -89.66972961425782,
+        -86.75740051269531,
+        -0.7826017260551452,
+        79.78284606933593,
+        82.69517517089844,
+        15.04068374633789
+      ],
+      "geometry_links": 238,
+      "camera": {
+        "x": -4.943441772460943,
+        "y": -2.0311126708984375,
+        "z": 234.1877017625261,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 284.97030348858124,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "urban_block_osrf_v1": {
+      "scene_id": "urban_block_osrf_v1",
+      "world_sha256": "8cbbb5e2a00af673ef08ae3e528d628d54d1d4794543c2d3d569b30d290967a1",
+      "asset_identity": {
+        "osrf_urban_buildings_v1": "2970eb53ebfabdd4613f32a84909d3d1d19cc89f83320ddd592153770f32a035",
+        "gazebo_builtin_v1": "afd41083f69c457d077e19cd273d4bdc2374347e084c2931a7481d3db5953fd8"
+      },
+      "file": "urban_block_osrf_v1.png",
+      "image_sha256": "0c46a0bf066f79f501ed9a3e821d599640d4b47ea7a6fd1fe07ac8a4462f8b0a",
+      "kind": "native_topview",
+      "caption": "Gazebo 原生场景俯视图",
+      "cut_height_m": null,
+      "bounds": [
+        -60,
+        -55,
+        -0.2,
+        60,
+        75,
+        45.90516443178058
+      ],
+      "geometry_links": 4,
+      "camera": {
+        "x": 0.0,
+        "y": 10.0,
+        "z": 214.02956281979962,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 0.1,
+        "far": 264.22956281979964,
+        "width": 1024,
+        "height": 768
+      }
+    },
+    "warehouse_aws_no_roof_v1": {
+      "scene_id": "warehouse_aws_no_roof_v1",
+      "world_sha256": "bd05d247e4715b7810c1f1edd8353a907af5bd8b81391c126dcb73803b7906bf",
+      "asset_identity": {
+        "aws_warehouse_v1": "ffaadd0933f5c1d62633ccdefb6c82af4985890430b9955ffdfe713f994bc993"
+      },
+      "file": "warehouse_aws_no_roof_v1.png",
+      "image_sha256": "4435d89007d5127af70a918b98c4290d38493753c6920acb79f1922e84303ff3",
+      "kind": "native_topview_cutaway",
+      "caption": "Gazebo 原生俯视剖切图（高于 2.5 米的结构已裁切）",
+      "cut_height_m": 2.5,
+      "bounds": [
+        -6.990232944488525,
+        -10.453330993652344,
+        0,
+        6.990236759185791,
+        10.453332901000977,
+        10.018061637878418
+      ],
+      "geometry_links": 24,
+      "camera": {
+        "x": 1.9073486328125e-06,
+        "y": 9.5367431640625e-07,
+        "z": 29.53784838145468,
+        "roll": 0.0,
+        "pitch": 1.5707963267948966,
+        "yaw": 1.5707963267948966,
+        "horizontal_fov": 1.0471975511965976,
+        "near": 27.03784838145468,
+        "far": 79.53784838145468,
+        "width": 1024,
+        "height": 768
+      }
+    }
+  }
+}

@@ -15,14 +15,14 @@
 # Public targets expose plain algorithm libraries only. Use standard CMake
 # dependencies so installed adapter consumption does not initialize a ROS build.
 include(CMakeFindDependencyMacro)
+find_dependency(easyfly_backend_registry)
 find_dependency(easyfly_tracking_api)
-find_dependency(easyfly_sort)
-find_dependency(easyfly_track_id_fusion)
 
-# Keep the legacy include variable for existing header consumers as well.
+# Generic factory headers expose the API only. Legacy concrete headers require
+# explicit find_package/target_link_libraries for the corresponding implementation.
 get_filename_component(easyfly_multi_object_tracking_INCLUDE_DIRS
   "${CMAKE_CURRENT_LIST_DIR}/../../../include" ABSOLUTE)
-foreach(_api easyfly_tracking_api easyfly_sort easyfly_track_id_fusion)
+foreach(_api easyfly_tracking_api)
   get_target_property(_includes ${_api}::${_api} INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND easyfly_multi_object_tracking_INCLUDE_DIRS ${_includes})
 endforeach()

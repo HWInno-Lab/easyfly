@@ -66,9 +66,9 @@ EXTRA_PARAMETERS = {
         smooth_alpha=0.1,
         body_to_base_translation=[],
     ),
-    'tracking': dict(config_file='', tracker_backend='sort'),
+    'tracking': dict(config_file='', tracker_backend='sort', perception_version=1, camera_id='front'),
     'pointcloud_filter': dict(config_file=''),
-    'pixel_to_3d': dict(config_file=''),
+    'pixel_to_3d': dict(config_file='', perception_version=1, camera_id='front'),
     'semantic_map': dict(
         config_file='',
         grid_footprint_mode='cluster_boxes',

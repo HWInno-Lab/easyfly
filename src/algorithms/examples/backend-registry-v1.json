@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "backends": [
+    {
+      "capability": "multi_tracking",
+      "id": "sort",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_multi_object_tracking",
+        "symbol": "easyfly_multi_object_tracking::make_tracker"
+      },
+      "parameter_schema": "schemas/sort-parameters-v1.schema.json",
+      "input_contract": "easyfly.tracking.Frame@1",
+      "output_contract": "easyfly.tracking.UpdateResult@1",
+      "required_inputs": [
+        "detections"
+      ],
+      "controls": {
+        "reset": true,
+        "cancellation": false,
+        "deadline": false,
+        "expansion_limit": false
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ]
+    },
+    {
+      "capability": "grid_planning",
+      "id": "astar",
+      "contract_version": 1,
+      "entrypoint": {
+        "kind": "cpp_creator",
+        "package": "easyfly_global_planner",
+        "symbol": "easyfly_global_planner::make_planner"
+      },
+      "parameter_schema": "schemas/astar-parameters-v1.schema.json",
+      "input_contract": "easyfly.grid_planning.Request@1",
+      "output_contract": "easyfly.grid_planning.PathResult@1",
+      "required_inputs": [
+        "occupancy_grid",
+        "start",
+        "goal"
+      ],
+      "controls": {
+        "reset": false,
+        "cancellation": true,
+        "deadline": true,
+        "expansion_limit": true
+      },
+      "scope": [
+        "offline_compute",
+        "software_fixture"
+      ]
+    }
+  ]
+}

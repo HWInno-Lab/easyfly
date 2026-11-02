@@ -7,4 +7,4 @@
 本机 `src/third_party/QGC.AppImage` 保持原位置并继续忽略；文档分类不改变运行程序路径。
 启动、隔离、联网维护、会话所有权与正常关闭仍由 EasyFly UI 层实现。
 
-迁移记录见 [ALG-8.4](../../algorithms/alg8-4-validation.md)。
+接入约定见[算法接入指南](../../algorithms/docs/integration-guide.md)。

@@ -46,9 +46,11 @@
 #include <visualization_msgs/msg/marker_array.hpp>
 #include "easyfly_pixel_to_3d/frame_contract.hpp"
 #include "easyfly_projection/projection.hpp"
+#include "easyfly_perception_contracts/contracts.hpp"
 #include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 namespace easyfly_pixel_to_3d
 {
+namespace pc = easyfly::perception;
 using easyfly_msgs::msg::Target3D;
 using easyfly_msgs::msg::Target3DArray;
 class PixelTo3dNode : public rclcpp::Node
@@ -58,11 +60,26 @@ public:
   : Node("easyfly_pixel_to_3d", options)
   {
     loadParams();
+    const int version = declare_parameter<int>("perception_version", 1, pc::frozen());
+    if (version != 1 && version != 2) {throw std::invalid_argument("perception_version must be 1 or 2");}
+    v2_ = version == 2; legacy_publish_ = declare_parameter<bool>("publish_legacy_compatibility", !v2_, pc::frozen());
+    camera_ = declare_parameter<std::string>("camera_id", "front", pc::frozen());
+    v2_pub_ = create_publisher<easyfly_msgs::msg::WorldTargetArrayV2>("/perception/v2/world_targets", 10);
     tf_buffer_ = std::make_unique<tf2_ros::Buffer>(get_clock());
     tf_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
     cam_info_sub_ = create_subscription<sensor_msgs::msg::CameraInfo>(
       params_.camera_info_topic, 10,
-      [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg) {
+      [this](sensor_msgs::msg::CameraInfo::ConstSharedPtr msg, const rclcpp::MessageInfo & info) {
+        if (v2_) {
+          const auto source = pc::writer(*this, params_.camera_info_topic, info);
+          if (source.empty() || msg->header.frame_id != params_.camera_optical_frame || !msg->width || !msg->height ||
+            !std::all_of(msg->k.begin(), msg->k.end(), [](double v) {return std::isfinite(v);}) || !std::isfinite(msg->k[4]) || msg->k[0] <= 0 || msg->k[4] <= 0) {return;}
+          if (cam_info_ && (source != camera_writer_ || msg->width != cam_info_->width ||
+            msg->height != cam_info_->height || msg->k != cam_info_->k)) {
+            producer_.reset(); depth_buf_.clear();
+          }
+          camera_writer_ = source; cam_info_ = msg;
+        }
         if (!cam_info_) {
           cam_info_ = msg;
           RCLCPP_INFO(
@@ -72,14 +89,28 @@ public:
       });
     depth_sub_ = create_subscription<sensor_msgs::msg::Image>(
       params_.depth_topic, rclcpp::SensorDataQoS(),
-      [this](sensor_msgs::msg::Image::ConstSharedPtr msg) {
+      [this](sensor_msgs::msg::Image::ConstSharedPtr msg, const rclcpp::MessageInfo & info) {
+        if (v2_) {
+          const auto source = pc::writer(*this, params_.depth_topic, info);
+          const auto clock = now().nanoseconds();
+          if (clock < depth_clock_) {producer_.reset(); depth_buf_.clear();}
+          depth_clock_ = clock;
+          if (source.empty() || msg->header.frame_id != params_.camera_optical_frame || pc::stamp(msg->header.stamp) <= 0 ||
+              uint64_t(msg->width) * msg->height > 2073600 || msg->data.size() > 16U * 1024 * 1024) {return;}
+          if (source != depth_writer_) {producer_.reset(); depth_buf_.clear(); depth_writer_ = source;}
+          if (!depth_buf_.empty() && pc::stamp(msg->header.stamp) <= pc::stamp(depth_buf_.back()->header.stamp)) {return;}
+        }
         // Q20: 环形缓冲最近 N 帧深度, 供按 tracks 时间戳匹配
         depth_buf_.push_back(msg);
         if (depth_buf_.size() > 10) {depth_buf_.pop_front();}
       });
-    tracks_sub_ = create_subscription<easyfly_msgs::msg::TrackInfoArray>(
+    if (!v2_) {tracks_sub_ = create_subscription<easyfly_msgs::msg::TrackInfoArray>(
       params_.input_topic, 10,
       [this](easyfly_msgs::msg::TrackInfoArray::ConstSharedPtr msg) {onTracks(msg);});
+    } else {
+      v2_sub_ = create_subscription<easyfly_msgs::msg::ImageTrackArrayV2>("/perception/v2/tracks_raw", 10,
+        [this](easyfly_msgs::msg::ImageTrackArrayV2::ConstSharedPtr m, const rclcpp::MessageInfo & info) {onV2Tracks(m, info);});
+    }
     target_pub_ = create_publisher<Target3DArray>(params_.output_topic, 10);
     marker_pub_ = create_publisher<visualization_msgs::msg::MarkerArray>(
       params_.marker_topic, 10);
@@ -148,6 +179,73 @@ private:
         static_cast<int>(depth.height), depth.step},
       {params_.min_depth, params_.max_depth, params_.min_valid_ratio});
   }
+  void v2Error(const easyfly_msgs::msg::ImageTrackArrayV2 & input, const std::string & reason)
+  {
+    easyfly_msgs::msg::WorldTargetArrayV2 out;
+    auto h = input.context.header; h.frame_id = params_.target_frame;
+    out.context = producer_.next(h, camera_, input.context.image_width, input.context.image_height,
+      pc::Context::INVALID_INPUT, reason); out.upstream = pc::reference(input.context); v2_pub_->publish(out);
+  }
+  void onV2Tracks(easyfly_msgs::msg::ImageTrackArrayV2::ConstSharedPtr input, const rclcpp::MessageInfo & info)
+  {
+    const auto source = pc::writer(*this, "/perception/v2/tracks_raw", info);
+    if (source.empty() || input->context.camera_id != camera_ || input->context.header.frame_id != params_.camera_optical_frame) {return;}
+    const auto admission = source_gate_.observe(input->context, source);
+    if (admission == pc::SourceGate::rejected) {return;}
+    if (admission == pc::SourceGate::changed) {producer_.reset();}
+    if (!pc::valid(*input)) {v2Error(*input, "invalid_tracks"); return;}
+    if (!cam_info_ || cam_info_->width != input->context.image_width || cam_info_->height != input->context.image_height ||
+      get_publishers_info_by_topic(params_.camera_info_topic).size() != 1 ||
+      get_publishers_info_by_topic(params_.depth_topic).size() != 1) {v2Error(*input, "camera_binding_not_ready"); return;}
+    const auto age = (now()-rclcpp::Time(input->context.header.stamp)).seconds();
+    if (age < -.2 || age > .5) {v2Error(*input, "stale_tracks"); return;}
+    sensor_msgs::msg::Image::ConstSharedPtr depth; double distance = .2 + 1e-9;
+    for (const auto & sample : depth_buf_) {
+      const auto delta = std::abs((rclcpp::Time(sample->header.stamp)-rclcpp::Time(input->context.header.stamp)).seconds());
+      if (delta < distance) {depth = sample; distance = delta;}
+    }
+    if (!depth || depth->width != input->context.image_width || depth->height != input->context.image_height ||
+      depth->encoding != "32FC1" || depth->step < uint64_t(depth->width)*4 ||
+      depth->data.size() != uint64_t(depth->height)*depth->step) {v2Error(*input, "depth_pair_not_ready"); return;}
+    geometry_msgs::msg::TransformStamped transform;
+    try {transform = tf_buffer_->lookupTransform(params_.target_frame, params_.camera_optical_frame,
+      input->context.header.stamp, rclcpp::Duration::from_seconds(.02));}
+    catch (const tf2::TransformException &) {v2Error(*input, "source_time_transform_unavailable"); return;}
+    easyfly_msgs::msg::WorldTargetArrayV2 out;
+    auto h = input->context.header; h.frame_id = params_.target_frame;
+    out.context = producer_.next(h, camera_, input->context.image_width, input->context.image_height);
+    out.upstream = pc::reference(input->context); out.depth_stamp = depth->header.stamp;
+    out.transform_stamp = input->context.header.stamp; out.transform_exact = true;
+    for (const auto & track : input->tracks) {
+      if (!track.observed_this_frame) {continue;}
+      const auto & b = track.observed_box;
+      easyfly_msgs::msg::TrackInfo box;
+      box.bbox_center_x = (b.x1+b.x2)/2/depth->width; box.bbox_center_y = (b.y1+b.y2)/2/depth->height;
+      box.bbox_width = (b.x2-b.x1)/depth->width; box.bbox_height = (b.y2-b.y1)/depth->height;
+      const float z = medianDepth(box, *depth);
+      easyfly_msgs::msg::WorldTargetV2 target; target.key = track.key; target.observation = input->upstream;
+      target.class_id = track.class_id; target.class_name = track.class_name;
+      target.confidence_valid = track.confidence_valid; target.confidence = track.confidence;
+      target.pixel_u = static_cast<int32_t>((b.x1+b.x2)/2); target.pixel_v = static_cast<int32_t>((b.y1+b.y2)/2);
+      target.optical_depth_m = z > 0 ? z : 0.;
+      if (z > 0) {
+        const auto xyz = easyfly::projection::pinhole(target.pixel_u, target.pixel_v, z,
+          cam_info_->k[0], cam_info_->k[4], cam_info_->k[2], cam_info_->k[5]);
+        geometry_msgs::msg::Point a, world; a.x = xyz[0]; a.y = xyz[1]; a.z = xyz[2];
+        tf2::doTransform(a, world, transform); target.position_x = world.x; target.position_y = world.y; target.position_z = world.z;
+        target.position_valid = std::isfinite(world.x) && std::isfinite(world.y) && std::isfinite(world.z);
+      }
+      out.targets.push_back(target);
+    }
+    if (!pc::valid(out)) {v2Error(*input, "invalid_projection_output"); return;}
+    v2_pub_->publish(out);
+    if (legacy_publish_) {target_pub_->publish(pc::numeric_snapshot(out));}
+  }
+  int64_t depth_clock_{0};
+  bool v2_{false}, legacy_publish_{true}; std::string camera_, camera_writer_, depth_writer_;
+  pc::Producer producer_; pc::SourceGate source_gate_;
+  rclcpp::Subscription<easyfly_msgs::msg::ImageTrackArrayV2>::SharedPtr v2_sub_;
+  rclcpp::Publisher<easyfly_msgs::msg::WorldTargetArrayV2>::SharedPtr v2_pub_;
   void onTracks(const easyfly_msgs::msg::TrackInfoArray::ConstSharedPtr & msg)
   {
     if (!cam_info_) {

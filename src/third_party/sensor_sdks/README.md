@@ -37,7 +37,7 @@ Livox原LICENSE.txt按其列出的MIT范围保留；RealSense根Apache-2.0、NOT
 本批没有旧SDK软链接，旧安装资源没有指向这些源码根的链接，colcon包集合仍为91。
 
 验证工具为工作区 `tools/algorithms/verify_sensor_sdks.py`，
-完整命令见 [ALG-8.3验收](../../algorithms/alg8-3-validation.md)。
+参数以该工具的 `--help` 为准；依赖隔离要求见[构建约定](../../algorithms/docs/build-conventions.md)。
 两种驱动安装分别验证默认系统SDK与显式选择的新编译SDK；普通复制安装和SDK根实际搬迁后重新消费。
 运行版本查询、512组RealSense几何正反投影/外参变换/FOV、两类ROS消息CDR往返及真实组件库加载。
 不初始化Livox SDK、不创建相机/雷达节点，不枚举设备；不以软件验证认定实机或飞行已验收。

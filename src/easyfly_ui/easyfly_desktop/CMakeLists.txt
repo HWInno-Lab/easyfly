@@ -186,7 +186,8 @@ if(BUILD_TESTING)
   add_dependencies(test_mission_controls easyfly_desktop)
   set_tests_properties(test_mission_controls PROPERTIES
     ENVIRONMENT "QT_QPA_PLATFORM=offscreen;ROS_DOMAIN_ID=93;ROS_LOCALHOST_ONLY=1")
-  ament_add_gtest(test_desktop test/test_desktop.cpp TIMEOUT 90)
+  ament_add_gtest(test_desktop test/test_desktop.cpp test/qt_test_main.cpp
+    SKIP_LINKING_MAIN_LIBRARIES TIMEOUT 90)
   set_target_properties(test_desktop PROPERTIES AUTOMOC ON)
   target_link_libraries(test_desktop desktop_widgets Qt5::Test)
   target_compile_definitions(test_desktop PRIVATE

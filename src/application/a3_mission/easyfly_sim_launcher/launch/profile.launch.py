@@ -7,12 +7,16 @@ import re
 
 from ament_index_python.packages import get_package_share_directory
 from easyfly_params.configuration import PROFILES, ensure_launchable, load_profile
+from easyfly_backend_registry import loads
+from easyfly_params.backends import resolve_selection, parse_layers, launch_values, check_dependencies
+from launch_ros.parameter_descriptions import ParameterValue
+from launch_ros.actions import SetParameter
 from easyfly_params.algorithms import validate, detector_parameters, localization_backend
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument, GroupAction, IncludeLaunchDescription, LogInfo, OpaqueFunction)
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, EnvironmentVariable
 from launch_ros.actions import Node
 from easyfly_px4_sitl.scene_environment import installed_catalog
 from easyfly_px4_sitl.scene_inputs import resolve_scene
@@ -29,6 +33,9 @@ def _launch_profile(context):
         raise ValueError(
             'raw world is only supported by the low-level px4_sitl debugging entrypoint')
     arguments = dict(profile['launch_arguments'])
+    version = LaunchConfiguration('perception_version', default='1').perform(context)
+    if version not in ('1', '2'): raise ValueError('perception_version must be 1 or 2')
+    arguments['perception_version'] = version
     headless = LaunchConfiguration('headless', default='').perform(context).strip().lower()
     if headless:
         if headless not in ('true', 'false'):
@@ -44,9 +51,30 @@ def _launch_profile(context):
             raise ValueError('unsupported local planner acceleration bound')
         arguments['rviz'] = LaunchConfiguration('rviz', default='true').perform(context)
     raw_options = LaunchConfiguration('algorithms_json', default='').perform(context)
-    options = validate(json.loads(raw_options) if raw_options else {})
+    raw_algorithm_options = loads(raw_options) if raw_options else {}
+    options = validate(raw_algorithm_options)
     backend = localization_backend(options, profile['name'])
-    if options['strategy'] in ('gcopter', 'super') and profile['name'] != 'navigation_dev':
+    config_file = LaunchConfiguration('backend_config_file', default='').perform(context)
+    config_json = LaunchConfiguration('backends_json', default='').perform(context)
+    file_layer, cli_layer = parse_layers(config_file, config_json)
+    legacy_gpu = arguments['detection_use_gpu']
+    if legacy_gpu not in ('auto', 'true', 'false'): raise ValueError('detection_use_gpu must be auto/true/false')
+    if legacy_gpu != 'auto':
+        if raw_algorithm_options.get('provider', 'auto') != 'auto' and (raw_algorithm_options['provider'] == 'cuda') != (legacy_gpu == 'true'):
+            raise ValueError('conflicting provider selections')
+        cli_layer = cli_layer or {}
+        choice = cli_layer.setdefault('backends', {}).setdefault('detection', {}).setdefault('parameters', {})
+        if 'use_gpu' in choice and choice['use_gpu'] != (legacy_gpu == 'true'): raise ValueError('conflicting provider selections')
+        choice['use_gpu'] = legacy_gpu == 'true'
+    resolved = resolve_selection(profile['name'], raw_algorithm_options, file_layer, cli_layer)
+    modules = resolved['simulation_modules']
+    options = modules['options']
+    resolved['preflight'] = check_dependencies(resolved)
+    effective_backends = resolved['selection']
+    if profile['entrypoint'] != 'base':
+        arguments.update(launch_values(resolved))
+        arguments.update(modules['launch_arguments'])
+    if raw_algorithm_options.get('start_navigation', True) and options['strategy'] in ('gcopter', 'super') and profile['name'] != 'navigation_dev':
         raise ValueError(options['strategy'].upper() + ' simulation navigation requires navigation_dev')
     if options['strategy'] in ('gcopter', 'super'):
         key = options['strategy'] + '_evidence_directory'
@@ -122,6 +150,8 @@ def _launch_profile(context):
             options['provider']]
         if profile['entrypoint'] != 'base' and options['strategy'] != 'profile':
             arguments['navigation_strategy'] = options['strategy']
+    if profile["entrypoint"] != "base":
+        arguments["detection_use_gpu"] = str(effective_backends["backends"]["detection"]["parameters"]["use_gpu"]).lower()
     detectors = []
     for kind in ('ellipse', 'color_line'):
         if not options[kind + '_enabled']:
@@ -157,17 +187,21 @@ def _launch_profile(context):
             Path(get_package_share_directory('easyfly_mission_srvs')) /
             'launch/platform.launch.py')),
         launch_arguments={'profile': profile['name'], 'use_sim_time': 'true',
-                          'start_mission_executor': 'false'}.items())
+                          'start_mission_executor': 'false', 'perception_version': version}.items())
     message = f"D0-D2 profile={profile['name']} readiness={profile['readiness']}"
     if profile.get("note"):
         message += ": " + profile["note"]
     # Parent generic config_file/use_sim_time overrides must not pollute child defaults.
-    return [LogInfo(msg=message), GroupAction(
+    return [LogInfo(msg=message), LogInfo(msg="Effective backends: " + json.dumps(resolved, sort_keys=True)), GroupAction(
         scoped=True, forwarding=False, actions=[include, platform, *detectors])]
 
 
 def generate_launch_description():
     return LaunchDescription([
+        DeclareLaunchArgument("backend_config_file", default_value=""),
+        DeclareLaunchArgument("backends_json", default_value=""),
+        DeclareLaunchArgument("perception_version", default_value=EnvironmentVariable("EASYFLY_PERCEPTION_VERSION", default_value="1"), choices=["1", "2"]),
+        SetParameter(name="perception_version", value=ParameterValue(LaunchConfiguration("perception_version"), value_type=int)),
         DeclareLaunchArgument("profile", default_value="base_sim", choices=PROFILES),
         DeclareLaunchArgument('scene', default_value='',
                               description='Registered scene ID; empty preserves profile defaults'),
