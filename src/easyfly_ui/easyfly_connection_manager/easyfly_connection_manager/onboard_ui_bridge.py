@@ -155,11 +155,27 @@ class Bridge:
         )
 
     def refresh(self):
+        # A failed poll must also revoke freshness for a foreground operation
+        # already queued behind it in the serial JSON-lines transport.
+        self.fresh_at = 0.0
         if not self.client:
             raise ValueError("尚未连接平台")
         self.snapshot = self.client.status()
         self.fresh_at = time.monotonic()
         return self.state()
+
+    def require_target(self, data):
+        """Bind queued actions to the identity the desktop actually confirmed."""
+        self.fresh()
+        expected = data.get("expected_target")
+        current = self.target()
+        keys = {"server_id", "boot_id", "client_id"}
+        if (
+            not isinstance(expected, dict)
+            or set(expected) != keys
+            or any(not expected[key] or expected[key] != current[key] for key in keys)
+        ):
+            raise ValueError("平台身份或服务会话已变化，请重新查询并确认；未提交操作")
 
     def connect_path(self, path, alias="", local_root=None):
         settings = client_settings(path)
@@ -245,7 +261,7 @@ class Bridge:
         return dict(recipe=recipe, added=added, startup_order=profiles.order(recipe))
 
     def operate(self, data, request_id):
-        self.fresh()
+        self.require_target(data)
         operation, values = data["operation"], data.get("values", {})
         if operation not in OPERATIONS:
             raise ValueError("未支持的机载操作")
@@ -335,15 +351,15 @@ class Bridge:
             self.review = None
             return {}
         if op == "logs":
-            self.fresh()
+            self.require_target(data)
             return self.state(self.client.logs(data["component"]))
         if op == "export_connection":
-            self.fresh()
+            self.require_target(data)
             if not self.local_root:
                 raise ValueError("只有本机部署可以导出连接包")
             return dict(path=export_client(self.local_root, data["directory"]))
         if op == "install_service":
-            self.fresh()
+            self.require_target(data)
             if not self.local_root:
                 raise ValueError("只有本机部署可以启用本机服务")
             result = install_user_service(self.local_root, self.client, self.snapshot)

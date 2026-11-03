@@ -35,6 +35,7 @@
 #include <QSaveFile>
 #include <QTabWidget>
 #include <QTemporaryDir>
+#include <QTextEdit>
 #include <QTest>
 #include <QTimer>
 #include <QTreeWidget>
@@ -168,7 +169,125 @@ QComboBox * strategySelector(QWidget * page)
   }
   return nullptr;
 }
+
+class EnabledChanges : public QObject
+{
+public:
+  int count{0};
+  bool eventFilter(QObject * object, QEvent * event) override
+  {
+    if (event->type() == QEvent::EnabledChange) {++count;}
+    return QObject::eventFilter(object, event);
+  }
+};
 }  // namespace
+
+TEST(OnboardInteractions, BackgroundPollingDoesNotToggleActionAvailability)
+{
+  FakeBridge bridge;
+  easyfly_connection_manager::OnboardPage page(bridge.runtime()); page.show();
+  ASSERT_TRUE(connectLocal(page));
+  auto * start = page.findChild<QPushButton *>("onboardStart");
+  auto * check = page.findChild<QPushButton *>("onboardCheck");
+  auto * local = page.findChild<QPushButton *>("onboardConnectLocal");
+  EnabledChanges changes;
+  for (auto * button : {start, check, local}) {button->installEventFilter(&changes);}
+  const auto count = bridge.requests("status").size();
+  ASSERT_TRUE(until([&] {return bridge.requests("status").size() >= count + 3;}));
+  QTest::qWait(50);
+  EXPECT_EQ(changes.count, 0);
+  EXPECT_TRUE(start->isEnabled()); EXPECT_TRUE(check->isEnabled()); EXPECT_TRUE(local->isEnabled());
+}
+
+TEST(OnboardInteractions, ForegroundActionDuringPollIsSubmittedOnceAndRemainsExclusive)
+{
+  for (const auto & action : {QStringLiteral("check"), QStringLiteral("start")}) {
+    FakeBridge bridge;
+    easyfly_connection_manager::OnboardPage page(bridge.runtime()); page.show();
+    ASSERT_TRUE(connectLocal(page));
+    auto * start = page.findChild<QPushButton *>("onboardStart");
+    auto * check = page.findChild<QPushButton *>("onboardCheck");
+    auto * local = page.findChild<QPushButton *>("onboardConnectLocal");
+    bridge.control["hold_status"] = true; bridge.control["hold_operate"] = true;
+    bridge.saveControl();
+    const auto count = bridge.requests("status").size();
+    ASSERT_TRUE(until([&] {return bridge.requests("status").size() > count;}));
+    EXPECT_TRUE(start->isEnabled()); EXPECT_TRUE(check->isEnabled());
+    bool confirmed = false; QTimer response; response.setInterval(10);
+    QObject::connect(
+      &response, &QTimer::timeout, &page, [&] {
+        if (auto * box = messageBox(QStringLiteral("启动机载平台"))) {
+          confirmed = true; box->button(QMessageBox::Yes)->click();
+        }
+      });
+    response.start(); (action == "start" ? start : check)->click(); response.stop();
+    EXPECT_EQ(confirmed, action == "start");
+    EXPECT_FALSE(start->isEnabled()); EXPECT_FALSE(check->isEnabled());
+    EXPECT_FALSE(local->isEnabled()); EXPECT_TRUE(bridge.requests("operate").isEmpty());
+    // Disabled buttons must not enqueue a second foreground operation.
+    check->click(); local->click();
+    bridge.control["hold_status"] = false; bridge.saveControl();
+    ASSERT_TRUE(until([&] {return bridge.requests("operate").size() == 1;}));
+    QTest::qWait(100);
+    EXPECT_FALSE(start->isEnabled()); EXPECT_FALSE(check->isEnabled());
+    const auto data = bridge.requests("operate").first()["data"].toObject();
+    EXPECT_EQ(data["operation"].toString(), action);
+    EXPECT_EQ(data["values"].toObject()["recipe_hash"].toString(), QString(64, 'a'));
+    EXPECT_EQ(data["expected_target"].toObject(),
+      (QJsonObject{{"server_id", QString(32, 'a')}, {"boot_id", QString(32, '1')},
+        {"client_id", QString(32, 'c')}}));
+    bridge.control["hold_operate"] = false; bridge.saveControl();
+    ASSERT_TRUE(until([&] {return start->isEnabled();}));
+    EXPECT_EQ(bridge.requests("operate").size(), 1);
+    EXPECT_EQ(bridge.requests("connect_local").size(), 1);
+  }
+}
+
+TEST(OnboardInteractions, SlowOrFailedPollStillRevokesActionAvailability)
+{
+  FakeBridge bridge;
+  easyfly_connection_manager::OnboardPage page(bridge.runtime()); page.show();
+  ASSERT_TRUE(connectLocal(page));
+  auto * start = page.findChild<QPushButton *>("onboardStart");
+  auto * check = page.findChild<QPushButton *>("onboardCheck");
+  auto * connection = page.findChild<QLabel *>("onboardConnectionStatus");
+  bridge.control["hold_status"] = true; bridge.saveControl();
+  const auto count = bridge.requests("status").size();
+  ASSERT_TRUE(until([&] {return bridge.requests("status").size() > count;}));
+  EXPECT_TRUE(start->isEnabled());
+  ASSERT_TRUE(until([&] {return !start->isEnabled();}, 3500));
+  EXPECT_FALSE(check->isEnabled());
+  EXPECT_TRUE(connection->text().contains(QStringLiteral("状态未知")));
+  check->click(); EXPECT_TRUE(bridge.requests("operate").isEmpty());
+  bridge.control["hold_status"] = false; bridge.control["fail_status"] = true;
+  bridge.saveControl();
+  ASSERT_TRUE(until([&] {
+    return page.findChild<QLabel *>("onboardResult")->text().contains("arranged status failure");
+  }));
+  EXPECT_FALSE(start->isEnabled()); EXPECT_FALSE(check->isEnabled());
+  bridge.control["fail_status"] = false; bridge.saveControl();
+  ASSERT_TRUE(until([&] {return start->isEnabled();}));
+}
+
+TEST(OnboardInteractions, TargetSwitchDuringPollKeepsTheNewTargetAndVersion)
+{
+  FakeBridge bridge;
+  easyfly_connection_manager::OnboardPage page(bridge.runtime()); page.show();
+  ASSERT_TRUE(connectLocal(page));
+  bridge.control["hold_status"] = true; bridge.saveControl();
+  const auto count = bridge.requests("status").size();
+  ASSERT_TRUE(until([&] {return bridge.requests("status").size() > count;}));
+  auto * connect = page.findChild<QPushButton *>("onboardConnectRecent");
+  ASSERT_TRUE(connect->isEnabled()); connect->click();
+  EXPECT_FALSE(page.findChild<QPushButton *>("onboardStart")->isEnabled());
+  bridge.control["hold_status"] = false; bridge.saveControl();
+  auto * name = page.findChild<QLineEdit *>("onboardRecipeName");
+  ASSERT_TRUE(until([&] {return name->text() == "platform-B";}));
+  EXPECT_TRUE(page.findChild<QTextEdit *>("onboardRecipeState")->toPlainText().contains(QString(64, 'b')));
+  QTest::qWait(1200);
+  EXPECT_EQ(name->text(), "platform-B");
+  EXPECT_EQ(bridge.requests("connect_remote").size(), 1);
+}
 
 TEST(OnboardInteractions, DiscardThenConnectLoadsTheNewTargetAndVersion)
 {
@@ -195,8 +314,8 @@ TEST(OnboardInteractions, DiscardThenConnectLoadsTheNewTargetAndVersion)
     "name=" << name->text().toStdString() << "; result=" <<
     page.findChild<QLabel *>("onboardResult")->text().toStdString() << "; remote requests=" <<
     bridge.requests("connect_remote").size();
-  auto * state = page.findChild<QLabel *>("onboardRecipeState");
-  ASSERT_NE(state, nullptr); EXPECT_TRUE(state->text().contains(QString(64, 'b')));
+  auto * state = page.findChild<QTextEdit *>("onboardRecipeState");
+  ASSERT_NE(state, nullptr); EXPECT_TRUE(state->toPlainText().contains(QString(64, 'b')));
   auto * save = page.findChild<QPushButton *>("onboardSaveRecipe");
   ASSERT_TRUE(until([&] {return save->isEnabled();})); save->click();
   ASSERT_TRUE(until([&] {return !bridge.requests("operate").isEmpty();}));
@@ -345,7 +464,7 @@ TEST(OnboardInteractions, ConfirmationCannotAuthorizeAChangedRecipeVersion)
   easyfly_connection_manager::OnboardPage page(bridge.runtime()); page.show();
   ASSERT_TRUE(connectLocal(page));
   auto * start = page.findChild<QPushButton *>("onboardStart");
-  auto * state = page.findChild<QLabel *>("onboardRecipeState");
+  auto * state = page.findChild<QTextEdit *>("onboardRecipeState");
   bool saw_dialog = false, saw_changed_version = false;
   QElapsedTimer deadline; deadline.start(); QTimer response; response.setInterval(10);
   QObject::connect(
@@ -355,7 +474,7 @@ TEST(OnboardInteractions, ConfirmationCannotAuthorizeAChangedRecipeVersion)
         saw_dialog = true; bridge.control["hash_A"] = QString(64, 'd');
         bridge.control["name_A"] = "external-new-version"; bridge.saveControl();
       }
-      if (state->text().contains(QString(64, 'd'))) {
+      if (state->toPlainText().contains(QString(64, 'd'))) {
         saw_changed_version = true; box->button(QMessageBox::Yes)->click();
       } else if (deadline.elapsed() > 6000) {box->button(QMessageBox::No)->click();}
     });

@@ -21,6 +21,7 @@
 #include <QPlainTextEdit>
 #include <QPushButton>
 #include <QTabWidget>
+#include <QTextEdit>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTreeWidget>
@@ -57,7 +58,7 @@ TEST(OnboardNativePage, SharedTaskPageAndOfflineDraftHaveNoPlatformSideEffect)
   EXPECT_EQ(page->missionPage(), tasks);
   // Rendering empty JSON must not insert target keys or start polling a nonexistent platform.
   QTest::qWait(150);
-  const auto offline_identity = page->findChild<QLabel *>("onboardIdentity")->text();
+  const auto offline_identity = page->findChild<QTextEdit *>("onboardIdentity")->toPlainText();
   EXPECT_TRUE(offline_identity.contains(QStringLiteral("尚未连接")));
   EXPECT_EQ(page->findChildren<QTabWidget *>().first()->count(), 4);
   auto * management = page->findChild<QTabWidget *>("onboardManagementTabs");

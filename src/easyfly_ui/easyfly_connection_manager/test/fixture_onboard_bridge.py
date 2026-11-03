@@ -61,7 +61,7 @@ def main():
             recipe["name"] = name
         target = dict(
             server_id=selected.lower() * 32,
-            boot_id=("1" if selected == "A" else "2") * 32,
+            boot_id=control().get("boot_" + selected, ("1" if selected == "A" else "2") * 32),
             client_id="c" * 32,
             ros_domain_id=187,
             local_only=False,
@@ -111,12 +111,19 @@ def main():
                 value = state()
             elif operation == "status":
                 wait_for_release("hold_status")
+                if control().get("fail_status", False):
+                    raise OSError("arranged status failure")
                 value = state()
             elif operation == "prepare":
                 wait_for_release("hold_prepare")
                 value = profiles.enable_dependencies(data["recipe"], data.get("enable", []))
                 value["startup_order"] = profiles.order(value["recipe"])
             elif operation == "operate":
+                expected = data.get("expected_target")
+                actual = state()["target"]
+                if expected != {key: actual[key] for key in ("server_id", "boot_id", "client_id")}:
+                    raise ValueError("arranged target mismatch")
+                wait_for_release("hold_operate")
                 values = data.get("values", {})
                 action = data["operation"]
                 if action == "configure":

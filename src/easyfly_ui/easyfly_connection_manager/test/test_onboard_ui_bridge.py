@@ -26,7 +26,11 @@ from easyfly_connection_manager import onboard_ui_bridge as module  # noqa: E402
 
 
 def request(op, data=None):
-    return dict(id=uuid.uuid4().hex, op=op, data=data or {})
+    data = dict(data or {})
+    if op in ("operate", "logs", "export_connection", "install_service"):
+        data.setdefault("expected_target", dict(
+            server_id="a" * 32, boot_id="b" * 32, client_id="d" * 32))
+    return dict(id=uuid.uuid4().hex, op=op, data=data)
 
 
 class Client:
@@ -184,6 +188,43 @@ def test_operations_use_the_authenticated_boot_and_original_id(bridge):
     with pytest.raises(ValueError, match="新鲜"):
         bridge.handle(request("operate", original["data"]))
     assert len(bridge.client.calls) == 1
+
+
+@pytest.mark.parametrize("key", ["server_id", "boot_id", "client_id"])
+def test_operation_rejects_identity_changed_by_preceding_poll(bridge, monkeypatch, key):
+    queued = request("operate", dict(operation="start", values={"recipe_hash": "saved-version"}))
+    if key == "client_id":
+        bridge.client.config[key] = "e" * 32
+    else:
+        changed = copy.deepcopy(bridge.snapshot)
+        changed[key] = "e" * 32
+        monkeypatch.setattr(bridge.client, "status", lambda: changed)
+    bridge.handle(request("status"))
+    with pytest.raises(ValueError, match="平台身份或服务会话"):
+        bridge.handle(queued)
+    assert bridge.client.calls == []
+
+
+def test_failed_poll_revokes_freshness_for_queued_operation(bridge, monkeypatch):
+    queued = request("operate", dict(operation="start", values={"recipe_hash": "saved-version"}))
+
+    def failure():
+        raise OSError("arranged poll failure")
+
+    monkeypatch.setattr(bridge.client, "status", failure)
+    with pytest.raises(OSError, match="arranged poll failure"):
+        bridge.handle(request("status"))
+    with pytest.raises(ValueError, match="新鲜"):
+        bridge.handle(queued)
+    assert bridge.client.calls == []
+
+
+def test_operation_requires_explicit_confirmed_target(bridge):
+    queued = request("operate", dict(operation="check", values={"recipe_hash": "saved-version"}))
+    del queued["data"]["expected_target"]
+    with pytest.raises(ValueError, match="平台身份或服务会话"):
+        bridge.handle(queued)
+    assert bridge.client.calls == []
 
 
 def test_template_configuration_requires_capability_without_upload_replay(bridge):

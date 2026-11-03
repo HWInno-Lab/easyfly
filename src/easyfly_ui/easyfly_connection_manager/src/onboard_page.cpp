@@ -40,6 +40,7 @@
 #include <QProcess>
 #include <QPushButton>
 #include <QRegularExpression>
+#include <QResizeEvent>
 #include <QScrollArea>
 #include <QSet>
 #include <QSignalBlocker>
@@ -48,16 +49,57 @@
 #include <QStackedWidget>
 #include <QTabWidget>
 #include <QTableWidget>
+#include <QTextDocument>
+#include <QTextEdit>
+#include <QTextOption>
 #include <QTimer>
 #include <QTreeWidget>
 #include <QUuid>
 #include <QVBoxLayout>
 #include <algorithm>
+#include <cmath>
 
 namespace easyfly_connection_manager
 {
 namespace
 {
+class WrappingStatusText final : public QTextEdit
+{
+public:
+  explicit WrappingStatusText(QWidget * parent) : QTextEdit(parent)
+  {
+    setReadOnly(true); setFrameShape(QFrame::NoFrame);
+    setStyleSheet("background: transparent; border: none; padding: 0;");
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+    setMinimumWidth(0); setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+    document()->setDocumentMargin(0);
+    QObject::connect(this, &QTextEdit::textChanged, this, [this] {fitContentHeight();});
+  }
+
+  void setText(const QString & value)
+  {
+    if (value != toPlainText()) {setPlainText(value);}
+  }
+
+protected:
+  void resizeEvent(QResizeEvent * event) override
+  {
+    QTextEdit::resizeEvent(event); fitContentHeight();
+  }
+
+private:
+  void fitContentHeight()
+  {
+    const auto margin = contentsMargins();
+    const int desired = static_cast<int>(std::ceil(document()->size().height())) +
+      margin.top() + margin.bottom() + 2 * frameWidth();
+    if (height() != desired) {setFixedHeight(desired);}
+  }
+};
+
 QString json(const QJsonObject & value)
 {
   return QString::fromUtf8(QJsonDocument(value).toJson(QJsonDocument::Indented));
@@ -103,7 +145,7 @@ QString groupFor(const QString & id, const QJsonObject & spec)
 struct OnboardPage::Impl
 {
   OnboardPage * owner;
-  QString runtime, pending, kind, operation, loaded_hash, upload_component, upload_key,
+  QString runtime, pending, status_pending, kind, operation, loaded_hash, upload_component, upload_key,
     task_request;
   // QTextDocument normalizes line endings; retain the original source for transfer and drafts.
   QString mission_source, focused_mission;
@@ -122,7 +164,8 @@ struct OnboardPage::Impl
   QSet<QString> prepare_queue;
   QStringList preparing_enable;
   QPushButton * advanced_edit{nullptr};
-  QLabel * identity, * result, * recipe_state, * plan, * conditions, * task_identity, * task_policy;
+  WrappingStatusText * identity, * recipe_state;
+  QLabel * result, * plan, * conditions, * task_identity, * task_policy;
   QLabel * connection_status, * runtime_status, * draft_status;
   QLabel * algorithm_title, * algorithm_description, * algorithm_inputs, * algorithm_dependencies;
   QLabel * algorithm_outputs, * algorithm_notes;
@@ -161,27 +204,37 @@ struct OnboardPage::Impl
     connection_status = status_card("onboardConnectionStatus");
     runtime_status = status_card("onboardRuntimeStatus");
     draft_status = status_card("onboardDraftStatus"); layout->addLayout(status_row);
-    auto * connections = new QHBoxLayout;
-    connections->addWidget(new QLabel(QStringLiteral("常用平台")));
-    recent = new QComboBox(owner); recent->setObjectName("onboardRecentPlatforms");
-    recent->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-    recent->setMinimumContentsLength(8); recent->setMinimumWidth(0);
-    connections->addWidget(recent, 1);
-    recent_connect = button(QStringLiteral("连接所选平台"), "onboardConnectRecent", connections);
-    layout->addLayout(connections);
     auto * tabs = new QTabWidget; tabs->setObjectName("onboardManagementTabs");
     tabs->setMinimumHeight(120); layout->addWidget(tabs, 1);
-    auto * environment = new QScrollArea(tabs); environment->setWidgetResizable(true);
+    auto * environment = new QSplitter(Qt::Horizontal, tabs);
     environment->setObjectName("onboardEnvironmentPage");
-    environment->setFrameShape(QFrame::NoFrame);
-    environment->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    auto * environment_body = new QWidget; environment->setWidget(environment_body);
+    environment->setChildrenCollapsible(false); environment->setHandleWidth(8);
+    auto * options = new QScrollArea(environment); options->setWidgetResizable(true);
+    options->setObjectName("onboardEnvironmentOptions");
+    options->setAccessibleName(QStringLiteral("机载平台运行选项"));
+    options->setFrameShape(QFrame::NoFrame);
+    options->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    options->setMinimumWidth(0);
+    auto * environment_body = new QWidget; options->setWidget(environment_body);
+    environment_body->setMinimumWidth(0);
     auto * environment_layout = new QVBoxLayout(environment_body);
-    environment_layout->setContentsMargins(16, 12, 16, 12); environment_layout->setSpacing(10);
+    environment_layout->setContentsMargins(12, 12, 8, 12); environment_layout->setSpacing(10);
+    auto * connection_group = new QGroupBox(QStringLiteral("平台连接"));
+    auto * connection_layout = new QVBoxLayout(connection_group);
+    connection_layout->setContentsMargins(10, 12, 10, 10); connection_layout->setSpacing(10);
+    auto * connections = new QHBoxLayout;
+    recent = new QComboBox(owner); recent->setObjectName("onboardRecentPlatforms");
+    recent->setAccessibleName(QStringLiteral("常用平台"));
+    recent->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    recent->setMinimumContentsLength(4); recent->setMinimumWidth(0);
+    connections->addWidget(recent, 1);
+    recent_connect = button(QStringLiteral("连接所选平台"), "onboardConnectRecent", connections);
     auto * environment_form = new QFormLayout;
     environment_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
     environment_form->setRowWrapPolicy(QFormLayout::WrapLongRows);
-    environment_form->setVerticalSpacing(10); environment_layout->addLayout(environment_form);
+    environment_form->setVerticalSpacing(10); environment_form->addRow(
+      QStringLiteral("常用平台"), connections);
+    connection_layout->addLayout(environment_form); environment_layout->addWidget(connection_group);
     local = new QPushButton(QStringLiteral("初始化 / 连接本机平台"), owner);
     local->setObjectName("onboardConnectLocal");
     environment_form->addRow(QStringLiteral("本机平台"), local);
@@ -193,22 +246,33 @@ struct OnboardPage::Impl
     remote_layout->addWidget(alias, 1);
     remote = button(QStringLiteral("连接远端平台…"), "onboardConnectRemote", remote_layout);
     environment_form->addRow(QStringLiteral("远端平台"), remote_row);
-    identity = label("onboardIdentity", environment_layout);
+    auto * recipe_group = new QGroupBox(QStringLiteral("运行方案"));
+    auto * recipe_group_layout = new QVBoxLayout(recipe_group);
+    recipe_group_layout->setContentsMargins(10, 12, 10, 10); recipe_group_layout->setSpacing(10);
+    auto * recipe_form = new QFormLayout;
+    recipe_form->setFieldGrowthPolicy(QFormLayout::AllNonFixedFieldsGrow);
+    recipe_form->setRowWrapPolicy(QFormLayout::WrapLongRows); recipe_form->setVerticalSpacing(8);
+    recipe_group_layout->addLayout(recipe_form); environment_layout->addWidget(recipe_group);
     recipe_name = new QLineEdit; recipe_name->setObjectName("onboardRecipeName");
+    recipe_name->setMinimumWidth(0);
     auto * recipe_row = new QWidget; auto * recipe_layout = new QHBoxLayout(recipe_row);
     recipe_layout->setContentsMargins(0, 0, 0, 0); recipe_layout->addWidget(recipe_name, 1);
     read = button(QStringLiteral("读取目标方案"), "onboardReadRecipe", recipe_layout);
-    environment_form->addRow(QStringLiteral("运行方案"), recipe_row);
-    autostart = new QCheckBox(QStringLiteral("服务启动时自动运行方案（不执行任务）"));
-    environment_form->addRow(autostart);
-    recipe_state = label("onboardRecipeState", environment_layout);
-    auto * draft_actions = new QHBoxLayout;
-    auto * draft_save = button(QStringLiteral("保存本地草稿"), "onboardSaveDraft", draft_actions);
-    auto * draft_load = button(QStringLiteral("恢复本地草稿"), "onboardLoadDraft", draft_actions);
-    auto * advanced = button(
-      QStringLiteral("高级方案 JSON…"), "onboardAdvancedRecipe", draft_actions);
-    advanced_edit = advanced; draft_actions->addStretch();
-    environment_layout->addLayout(draft_actions);
+    recipe_form->addRow(QStringLiteral("方案名称"), recipe_row);
+    autostart = new QCheckBox(QStringLiteral("服务启动时自动运行方案"));
+    autostart->setToolTip(QStringLiteral("仅启动设备与算法模块，不执行飞行任务。"));
+    recipe_form->addRow(autostart);
+    auto * autostart_hint = label("onboardAutostartHint", recipe_group_layout);
+    autostart_hint->setText(QStringLiteral("自动运行仅启动模块，不执行任务。"));
+    auto * draft_save = new QPushButton(QStringLiteral("保存本地草稿"));
+    draft_save->setObjectName("onboardSaveDraft");
+    auto * draft_load = new QPushButton(QStringLiteral("恢复本地草稿"));
+    draft_load->setObjectName("onboardLoadDraft");
+    auto * advanced = new QPushButton(QStringLiteral("高级方案 JSON…"));
+    advanced->setObjectName("onboardAdvancedRecipe"); advanced_edit = advanced;
+    auto * draft_actions = new QGridLayout;
+    draft_actions->addWidget(draft_save, 0, 0); draft_actions->addWidget(draft_load, 0, 1);
+    draft_actions->addWidget(advanced, 1, 0, 1, 2); recipe_group_layout->addLayout(draft_actions);
     auto * deployment = new QGroupBox(QStringLiteral("首次部署与本机服务设置（展开）"));
     deployment->setObjectName("onboardDeploymentSettings");
     deployment->setCheckable(true); deployment->setChecked(false);
@@ -241,7 +305,34 @@ struct OnboardPage::Impl
       QStringLiteral(
         "管理本机或远端机载平台；关闭管理页面后，机载服务继续运行。"));
     heading->setWordWrap(true); environment_layout->addWidget(heading);
-    environment_layout->addStretch(); tabs->addTab(environment, QStringLiteral("运行环境"));
+    environment_layout->addStretch();
+    auto * environment_status = new QScrollArea(environment);
+    environment_status->setWidgetResizable(true);
+    environment_status->setObjectName("onboardEnvironmentStatus");
+    environment_status->setAccessibleName(QStringLiteral("机载平台状态"));
+    environment_status->setFrameShape(QFrame::NoFrame);
+    environment_status->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    environment_status->setMinimumWidth(0);
+    auto * environment_status_body = new QWidget; environment_status->setWidget(environment_status_body);
+    environment_status_body->setMinimumWidth(0);
+    auto * environment_status_layout = new QVBoxLayout(environment_status_body);
+    environment_status_layout->setContentsMargins(8, 12, 12, 12);
+    environment_status_layout->setSpacing(10);
+    auto * identity_group = new QGroupBox(QStringLiteral("平台身份与状态"));
+    auto * identity_layout = new QVBoxLayout(identity_group);
+    identity_layout->setContentsMargins(12, 12, 12, 12);
+    identity = new WrappingStatusText(owner); identity->setObjectName("onboardIdentity");
+    identity_layout->addWidget(identity);
+    auto * recipe_status_group = new QGroupBox(QStringLiteral("方案与运行会话"));
+    auto * recipe_status_layout = new QVBoxLayout(recipe_status_group);
+    recipe_status_layout->setContentsMargins(12, 12, 12, 12);
+    recipe_state = new WrappingStatusText(owner); recipe_state->setObjectName("onboardRecipeState");
+    recipe_status_layout->addWidget(recipe_state);
+    environment_status_layout->addWidget(identity_group);
+    environment_status_layout->addWidget(recipe_status_group);
+    environment_status_layout->addStretch();
+    environment->setStretchFactor(0, 3); environment->setStretchFactor(1, 2);
+    environment->setSizes({540, 360}); tabs->addTab(environment, QStringLiteral("运行环境"));
     createEditor(tabs, QStringLiteral("设备管理"), &devices, &device_form);
     createEditor(tabs, QStringLiteral("算法配置"), &algorithms, &algorithm_form);
     auto * status_area = new QScrollArea(tabs); status_area->setWidgetResizable(true);
@@ -459,7 +550,7 @@ struct OnboardPage::Impl
       });
     QObject::connect(
       &bridge, &QProcess::errorOccurred, owner, [this](QProcess::ProcessError) {
-        pending.clear(); fresh_clock.invalidate();
+        pending.clear(); status_pending.clear(); fresh_clock.invalidate();
         result->setText(
           QStringLiteral(
             "机载管理适配器不可用"
@@ -468,7 +559,7 @@ struct OnboardPage::Impl
     QObject::connect(
       &bridge, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), owner,
       [this](int, QProcess::ExitStatus) {
-        pending.clear(); fresh_clock.invalidate();
+        pending.clear(); status_pending.clear(); fresh_clock.invalidate();
         result->setText(
           QStringLiteral(
             "管理适配器已断开；机"
@@ -479,7 +570,7 @@ struct OnboardPage::Impl
     QObject::connect(
       &timer, &QTimer::timeout, owner, [this] {
         update(); pumpPrepare();
-        if (!closing && pending.isEmpty() && !target.isEmpty() &&
+        if (!closing && pending.isEmpty() && status_pending.isEmpty() && !target.isEmpty() &&
         (!poll_clock.isValid() || poll_clock.elapsed() >= 800)) {send("status");}
       });
     timer.start(); ensureBridge(); update();
@@ -859,7 +950,7 @@ struct OnboardPage::Impl
   }
   bool send(const QString & op, const QJsonObject & data = {})
   {
-    if (!pending.isEmpty()) {
+    if (!pending.isEmpty() || (op == "status" && !status_pending.isEmpty())) {
       result->setText(
         QStringLiteral(
           "请等待当前请求完成；"
@@ -873,7 +964,13 @@ struct OnboardPage::Impl
     }
     if (bridge.state() != QProcess::Running) {return false;}
     const auto id = QUuid::createUuid().toString(QUuid::WithoutBraces).remove('-');
-    const auto bytes = QJsonDocument(QJsonObject{{"id", id}, {"op", op}, {"data", data}}).toJson(
+    auto request_data = data;
+    if (QStringList{"operate", "logs", "export_connection", "install_service"}.contains(op)) {
+      request_data["expected_target"] = QJsonObject{{"server_id", target["server_id"]},
+        {"boot_id", target["boot_id"]}, {"client_id", target["client_id"]}};
+    }
+    const auto bytes = QJsonDocument(QJsonObject{
+      {"id", id}, {"op", op}, {"data", request_data}}).toJson(
       QJsonDocument::Compact) + '\n';
     if (bytes.size() > 524288) {
       result->setText(
@@ -881,9 +978,15 @@ struct OnboardPage::Impl
           "请求超过允许大小，未"
           "发送或截断。")); return false;
     }
-    pending = id; kind = op; last_ok = false;
+    // The bridge consumes JSON lines serially. A user request may follow an
+    // outstanding read-only poll without losing either response or allowing a
+    // second foreground request. Polling must not toggle action availability.
+    if (op == "status") {status_pending = id;} else {
+      pending = id; kind = op; last_ok = false;
+    }
     if (bridge.write(bytes) != bytes.size()) {
-      pending.clear(); result->setText(
+      if (op == "status") {status_pending.clear();} else {pending.clear();}
+      result->setText(
         QStringLiteral(
           "请求未完整送达；请先"
           "查询状态，未自动重发"
@@ -946,13 +1049,17 @@ struct OnboardPage::Impl
       if (line.size() > 524288) {continue;}
       QJsonParseError error; const auto document = QJsonDocument::fromJson(line, &error);
       if (error.error != QJsonParseError::NoError || !document.isObject()) {continue;}
-      const auto reply = document.object(); if (reply["id"].toString() != pending) {continue;}
-      const auto completed = kind; pending.clear(); last_ok = reply["ok"].toBool();
+      const auto reply = document.object(); const auto id = reply["id"].toString();
+      const bool status_reply = !status_pending.isEmpty() && id == status_pending;
+      if (!status_reply && (pending.isEmpty() || id != pending)) {continue;}
+      const auto completed = status_reply ? QStringLiteral("status") : kind;
+      const bool ok = reply["ok"].toBool();
+      if (status_reply) {status_pending.clear();} else {pending.clear(); last_ok = ok;}
       if (reply.contains("task_request")) {
         task_request = reply["task_request"].toString();
         task_pending = reply["task_pending"].toBool();
       }
-      if (!last_ok) {
+      if (!ok) {
         if (completed == "prepare") {preparing_enable.clear();}
         fresh_clock.invalidate(); result->setText(
           QStringLiteral("未完成：") + reply["error"].toString() +
@@ -1634,7 +1741,7 @@ struct OnboardPage::Impl
   }
   void pumpPrepare()
   {
-    if (closing || !pending.isEmpty() || prepare_queue.isEmpty() ||
+    if (closing || !pending.isEmpty() || !status_pending.isEmpty() || prepare_queue.isEmpty() ||
       bridge.state() != QProcess::Running) {return;}
     QJsonArray enable; QStringList selected;
     for (const auto & id : prepare_queue) {
@@ -1745,7 +1852,7 @@ struct OnboardPage::Impl
     draft_status->setText(
       QStringLiteral("运行方案 · %1").arg(
         (dirty || target.isEmpty()) ? QStringLiteral("本地编辑") : QStringLiteral("与目标一致")));
-    const bool editing = !busy || kind == "status" || kind == "prepare";
+    const bool editing = !busy || kind == "prepare";
     local->setEnabled(!busy); remote->setEnabled(!busy); recent_connect->setEnabled(
       !busy && recent->count());
     devices->setEnabled(editing); algorithms->setEnabled(editing);
