@@ -1,16 +1,9 @@
+// SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+// SPDX-FileCopyrightText: 2026 贾国源
+// License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_yolo_onnx/licenses/.
+// This revision offers no Apache-2.0 option for the listed original code.
 // Copyright 2026 EasyFly Project
 //
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
 // EasyFly P2: NMS 后处理 (自实现, 不依赖 OpenCV DNN)
 // 与 Python 基准 (/tmp 基准脚本) 同构: 按类别独立 NMS, IoU 阈值判定

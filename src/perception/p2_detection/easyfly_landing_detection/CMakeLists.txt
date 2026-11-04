@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_landing_detection/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_landing_detection)
 find_package(ament_cmake REQUIRED)
@@ -27,5 +31,9 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_landing_ros test/test_landing_ros.py TIMEOUT 60
     ENV ROS_DOMAIN_ID=106 ROS_LOG_DIR=/tmp/easyfly_d4_landing_ros)
 endif()
+
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
 
 ament_package()

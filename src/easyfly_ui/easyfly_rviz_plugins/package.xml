@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_rviz_plugins/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 <package format="3">
   <name>easyfly_rviz_plugins</name>
   <version>0.1.0</version>
   <description>Read-only RViz odometry display with explicit retired scene-node cleanup</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
-  <license>Apache-2.0</license>
+  <!-- Listed own code is offered only under the EasyFly license; retained third-party materials have separate terms. -->
+  <license>LicenseRef-EasyFly-Restricted-1.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>pluginlib</depend>
   <depend>rviz_common</depend>

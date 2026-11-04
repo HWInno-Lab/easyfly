@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "confirmed_policy_inputs_not_effective_license",
+  "authoritative_language": "zh-CN",
+  "governing_law": "Mainland China law, subject to applicable mandatory rules",
+  "dispute_resolution": "Legally competent People’s Court; no exclusive court chosen",
+  "necessary_patent_license": {
+    "provided_within_permitted_uses": true,
+    "limited_to_claims_owner_or_licensor_can_license": true,
+    "third_party_patents_included": false,
+    "noninfringement_guaranteed": false
+  },
+  "cure_and_reinstatement": {
+    "notice_received_days": 30,
+    "unauthorized_commercial_and_teaching_use_must_stop_immediately": true,
+    "cure_does_not_approve_past_or_future_out_of_scope_uses": true
+  },
+  "owner_answers": [
+    "采用这一安排（推荐）",
+    "在允许用途内提供该必要专利许可（推荐）",
+    "采用30日纠正与恢复机制（推荐）"
+  ],
+  "retained_policy": {
+    "internal_use_exemption_beneficiary": "江西穹瞰无人机科技有限公司",
+    "other_enterprises_receive_internal_use_exemption": false,
+    "teaching_requires_separate_authorization": true
+  },
+  "no_root_license_change": true,
+  "no_existing_scope_approved": true
+}

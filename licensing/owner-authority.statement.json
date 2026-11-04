@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "owner_statement_recorded_not_a_file_scope_clearance",
+  "author": "贾国源",
+  "declared_copyright_holder": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_name": "贾国源",
+  "contact_email": "15103443485@163.com",
+  "owner_statement": "本人持有版权并授权公司对外许可",
+  "evidence_type": "explicit_owner_confirmation_in_project_discussion",
+  "scope": "Rights actually held by the owner in original EasyFly contributions; excludes inherited and third-party rights.",
+  "ownership_transfer_claimed": false,
+  "exclusive_authority": "not_specified",
+  "existing_grants_revoked": false,
+  "company_owns_all_repository_rights_claimed": false,
+  "remaining_review": [
+    "Per-file scope and third-party/inherited conditions",
+    "Prior external grants and release history",
+    "Any required written corporate authorization details and separate contract terms"
+  ]
+}

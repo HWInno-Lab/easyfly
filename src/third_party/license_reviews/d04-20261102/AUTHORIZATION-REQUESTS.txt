@@ -1,0 +1,42 @@
+D-04 rights-holder clarification drafts — 2026-11-02
+These drafts have NOT been sent. A response must identify the grantor, their
+authority, the exact covered files/revision, permitted distribution and terms.
+
+1. ikd-Tree — Yixi Cai / Wei Xu / Fu Zhang, per upstream developer notices
+Repository: https://github.com/hku-mars/ikd-Tree
+Pinned revision: e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4 (fast_lio branch).
+Please confirm the applicable license for ikd_Tree.cpp and ikd_Tree.h at this
+revision. Its selected tree contains no standalone grant. The main branch has
+GPLv2 evidence but different code. Does a GPLv2 grant cover these exact files,
+including modification and redistribution of source/binaries as part of FAST-LIO?
+Please distinguish commercial use under GPL obligations from any separate
+proprietary/commercial license. Local modifications are recorded in
+algorithms/localization/fast_lio.sources/workspace.patch.
+
+2. FAST-LIVO2 / VIKIT — FAST-LIVO2 copyright holders
+FAST-LIVO2 selected ROS2 revision: 837b7bbc1431cb04cf936528e52c83c835efba8e.
+VIKIT fork: f262533d04d99282ef63b2b3c8900eac71e6eafb.
+Upstream issue: https://github.com/hku-mars/FAST-LIVO2/issues/413
+FAST-LIVO2 states GPLv2; VIKIT inherits GPLv3 and compiles robust_cost.cpp with
+an explicit GPLv3-or-later notice. The actual fastlivo_engine/mapping targets
+link vikit_common, and inherited camera headers enter the engine. Please provide
+a GPLv3-compatible grant for the FAST-LIVO2 contributions you control, or an
+explicit applicable linking exception/other permission covering this combination.
+The GPL license's example application notice is not treated as a project grant
+of 'or later'. A BSD tag on a downstream VIKIT fork does not relicense inherited
+code. Any permission must cover all relevant rightsholders, not only a maintainer.
+
+3. Bundled LKH — Keld Helsgaun and FUEL integrator for their respective changes
+FUEL: HKUST-Aerial-Robotics/FUEL@662dd23c7b52b258d3c4a0155ff6632118e8984f
+Path: fuel_planner/utils/lkh_tsp_solver, 119 selected files (review.json hashes).
+Please identify the original LKH release and supply its original license/terms,
+plus the license for FUEL's lkh_interface.cpp/local adaptations. The wrapper's
+package.xml says TODO. Please confirm whether those terms permit redistribution
+of modified source and linked binaries with GPLv3 FUEL (academic/non-commercial
+and commercial scenarios separately). The RMIT notice covers Delaunay.c only;
+the LKH-3 publication does not identify this bundled release. A download/use
+statement is not being treated as a redistribution grant.
+
+Possible engineering alternative if grants cannot be obtained: separately review
+an independently licensed replacement/adapter and rerun affected numerical,
+lifecycle and flight acceptance. No replacement or runtime switch is made here.

@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_msgs/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # Appearance identity observation; never substitutes a tracker ID or a flight target.
 int32 observation_index
 int32 source_track_id

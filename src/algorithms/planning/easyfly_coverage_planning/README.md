@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_coverage_planning/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_coverage_planning
 
 项目维护的 C++17 矩形蛇形覆盖路线和已完成条带面积计算，迁自任务状态机包。

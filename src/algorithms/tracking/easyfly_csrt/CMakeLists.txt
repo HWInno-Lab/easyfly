@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_csrt/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.16)
 project(easyfly_csrt)
 find_package(ament_cmake REQUIRED)
@@ -25,4 +29,8 @@ if(BUILD_TESTING)
   ament_add_gtest(test_csrt_api test/test_csrt_api.cpp)
   target_link_libraries(test_csrt_api ${PROJECT_NAME})
 endif()
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
+
 ament_package(CONFIG_EXTRAS cmake/dependencies.cmake)

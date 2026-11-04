@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_gimbal_control/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_gimbal_control)
 
@@ -18,5 +22,9 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_gimbal_ros test/test_gimbal_ros.py TIMEOUT 30)
   set_tests_properties(test_gimbal_ros PROPERTIES ENVIRONMENT "ROS_DOMAIN_ID=194")
 endif()
+
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
 
 ament_package()

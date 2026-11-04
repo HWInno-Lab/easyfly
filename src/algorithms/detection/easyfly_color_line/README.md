@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_color_line/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_color_line
 
 项目维护的普通 C++17/OpenCV 彩色直线区域检测库，不依赖 ROS 运行库或 EasyFly 消息。

@@ -1,8 +1,15 @@
 <?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_perception_contracts/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 <package format="3">
   <name>easyfly_perception_contracts</name><version>0.1.0</version>
   <description>Versioned perception admission, identity and compatibility at the ROS boundary.</description>
-  <maintainer email="dev@easyfly.local">EasyFly</maintainer><license>Apache-2.0</license>
+  <maintainer email="dev@easyfly.local">EasyFly</maintainer><!-- Listed own code is offered only under the EasyFly license; retained third-party materials have separate terms. -->
+  <license>LicenseRef-EasyFly-Restricted-1.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend><buildtool_depend>ament_cmake_python</buildtool_depend>
   <build_depend>pybind11-dev</build_depend>
   <depend>rclcpp</depend><depend>easyfly_msgs</depend><depend>sensor_msgs</depend>

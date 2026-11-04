@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "draft_review_examples_not_a_runtime_policy_engine_or_legal_clearance",
+  "assumption": "Cases concern hypothetical materials validly covered by a finalized new license, except explicitly noted historical grants; current root LICENSE remains Apache-2.0.",
+  "license_draft": "licensing/EasyFly-Restricted-1.0.draft.txt",
+  "cases": [
+    {
+      "id": "U01",
+      "scenario": "个人自学",
+      "review_outcome": "free",
+      "reason": "按实际个人学习用途；不用于组织教学"
+    },
+    {
+      "id": "U02",
+      "scenario": "教师或学生开展自身学术研究",
+      "review_outcome": "free",
+      "reason": "研究用途不因其教学身份而被排除"
+    },
+    {
+      "id": "U03",
+      "scenario": "免费大学实验课或公益培训",
+      "review_outcome": "separate_teaching_authorization",
+      "reason": "不收费和非营利不产生教学免费豁免"
+    },
+    {
+      "id": "U04",
+      "scenario": "江西穹瞰无人机科技有限公司内部生产运营",
+      "review_outcome": "free",
+      "reason": "仅限该公司本身的内部用途"
+    },
+    {
+      "id": "U05",
+      "scenario": "江西穹瞰无人机科技有限公司内部商业产品研发",
+      "review_outcome": "free",
+      "reason": "内部研发目标商业化本身不取消其特定豁免"
+    },
+    {
+      "id": "U06",
+      "scenario": "其他企业内部生产运营或产品开发",
+      "review_outcome": "separate_commercial_authorization",
+      "reason": "内部部署或尚未盈利不产生免费豁免"
+    },
+    {
+      "id": "U07",
+      "scenario": "江西穹瞰无人机科技有限公司的关联企业内部商业研发",
+      "review_outcome": "separate_commercial_authorization",
+      "reason": "关联关系不自动扩展特定主体豁免"
+    },
+    {
+      "id": "U08",
+      "scenario": "商业资助的学术研究本身",
+      "review_outcome": "free",
+      "reason": "资助关系本身不取消研究免费资格"
+    },
+    {
+      "id": "U09",
+      "scenario": "以研究为名的付费委托开发和商业交付",
+      "review_outcome": "separate_commercial_authorization",
+      "reason": "按实际活动和交付关系判断"
+    },
+    {
+      "id": "U10",
+      "scenario": "任何企业内组织教学培训",
+      "review_outcome": "separate_teaching_authorization",
+      "reason": "特定公司内部使用豁免不自动覆盖教学"
+    },
+    {
+      "id": "U11",
+      "scenario": "按原许可和用途限制分享源码或编译程序",
+      "review_outcome": "redistribution_permitted_with_conditions",
+      "reason": "分享行为本身不自动成为商业产品交付"
+    },
+    {
+      "id": "U12",
+      "scenario": "对外销售商业产品或提供商业托管服务",
+      "review_outcome": "separate_commercial_authorization",
+      "reason": "与普通合规分享分别判断"
+    },
+    {
+      "id": "U13",
+      "scenario": "科研报告演示与操作培训混合的活动",
+      "review_outcome": "requires_context_review",
+      "reason": "分别核实研究交流和教学活动，不作身份推定"
+    },
+    {
+      "id": "U14",
+      "scenario": "收到通知后继续未获授权的商业或教学使用",
+      "review_outcome": "not_permitted_under_free_grant",
+      "reason": "应立即停止，30日纠正期不是继续使用宽限"
+    },
+    {
+      "id": "U15",
+      "scenario": "30日内完整纠正并恢复遵守免费许可条件",
+      "review_outcome": "free_grant_reinstatement_only",
+      "reason": "不补发商业教学许可，也不自动免除既往依法应负责任"
+    },
+    {
+      "id": "U16",
+      "scenario": "下游持续遵守许可但上游发生违规",
+      "review_outcome": "no_automatic_downstream_termination",
+      "reason": "分别判断下游自身是否符合条件"
+    },
+    {
+      "id": "U17",
+      "scenario": "按历史Apache许可已有效取得的版本",
+      "review_outcome": "retain_original_grant",
+      "reason": "本草案不追溯限制；不能据此要求重复商业付费"
+    },
+    {
+      "id": "U18",
+      "scenario": "将新许可直接覆盖第三方GPL衍生组合",
+      "review_outcome": "no_override_of_inherited_conditions",
+      "reason": "需逐项核对，不用自有商业授权代替缺失第三方权限"
+    }
+  ]
+}

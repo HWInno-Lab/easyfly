@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "public_primary_sources_rechecked_not_a_license_clearance",
+  "research_delegated_by_owner": true,
+  "private_rights_or_contract_facts_inferred": false,
+  "primary_fetch_metadata": {
+    "ikd_pinned_tree": {
+      "url": "https://api.github.com/repos/hku-mars/ikd-Tree/git/trees/e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4?recursive=1",
+      "retrieved_at": "2026-11-03T08:28:26.265694+00:00",
+      "http_status": 200,
+      "final_url": "https://api.github.com/repos/hku-mars/ikd-Tree/git/trees/e2e3f4e9d3b95a9e66b1ba83dc98d4a05ed8a3c4?recursive=1",
+      "sha256": "59fdb7d234715ec939e8aeba3707f8b011ea582b29ea4267e3119f51b37bb7d3",
+      "bytes": 841,
+      "tree_truncated": false,
+      "paths": [
+        "README.md",
+        "ikd_Tree.cpp",
+        "ikd_Tree.h"
+      ],
+      "license_named_paths": []
+    },
+    "ikd_main_license": {
+      "url": "https://raw.githubusercontent.com/hku-mars/ikd-Tree/main/LICENSE",
+      "retrieved_at": "2026-11-03T08:28:26.266914+00:00",
+      "http_status": 200,
+      "final_url": "https://raw.githubusercontent.com/hku-mars/ikd-Tree/main/LICENSE",
+      "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643",
+      "bytes": 18092
+    },
+    "fastlivo_issue_413": {
+      "url": "https://api.github.com/repos/hku-mars/FAST-LIVO2/issues/413",
+      "retrieved_at": "2026-11-03T08:28:26.267234+00:00",
+      "http_status": 200,
+      "final_url": "https://api.github.com/repos/hku-mars/FAST-LIVO2/issues/413",
+      "sha256": "cf4c1c9191101e468fe9ddddd86528dc1ebe93a66797c80ad1845083992295ae",
+      "bytes": 2571,
+      "state": "open",
+      "updated_at": "2025-12-16T07:48:42Z",
+      "comments": 0
+    },
+    "fastlivo_issue_comments": {
+      "url": "https://api.github.com/repos/hku-mars/FAST-LIVO2/issues/413/comments",
+      "retrieved_at": "2026-11-03T08:28:26.267434+00:00",
+      "http_status": 200,
+      "final_url": "https://api.github.com/repos/hku-mars/FAST-LIVO2/issues/413/comments",
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "bytes": 2,
+      "comment_count": 0
+    },
+    "lkh_author_alternate": {
+      "url": "https://www.akira.ruc.dk/~keld/research/LKH-3/",
+      "retrieved_at": "2026-11-03T08:28:26.267642+00:00",
+      "error": "URLError: <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'www.akira.ruc.dk'. (_ssl.c:1007)>",
+      "no_authorization_inferred_from_failure": true
+    }
+  },
+  "ikd_result": "The exact pinned tree has no license-named path. This is not exhaustive proof of absence of inline permissions. No applicable new exact-revision grant identified; current main license is not applied backwards to the older source.",
+  "ikd_main_license_bytes_match_prior_observation": true,
+  "fastlivo_result": "Issue #413 remains open with zero comments in the fetched API snapshot. No resolving rightsholder grant obtained; issue state alone is not a legal incompatibility ruling.",
+  "fastlivo_issue": "https://github.com/hku-mars/FAST-LIVO2/issues/413",
+  "lkh_university_primary": "https://forskning.ruc.dk/da/publications/an-extension-of-the-lin-kernighan-helsgaun-tsp-solver-for-constra/",
+  "lkh_result": "University abstract describes LKH-3 academic/noncommercial availability, not this exact FUEL bundle identity or independent redistribution permission. Author-page timeout/certificate failures do not establish absence of permission or supply a grant.",
+  "ego_upstream_primary": "https://github.com/ZJU-FAST-Lab/ego-planner/blob/master/README.md",
+  "ego_result": "Upstream README identifies GPLv3; exact retained GPL text exists locally. The current original-port grant comes from the owner exception, not from treating all port files as upstream-owned.",
+  "license_mirror_primary": "https://opensource.org/license/gpl-3.0",
+  "new_applicable_third_party_grants_found": false,
+  "open_upstream_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH"
+  ],
+  "rights_holder_contact_sent": false,
+  "removed_local_raw_response_reference": "artifacts/license-transition/gpl-exception-20261103-162621/public-fetch",
+  "local_raw_response_records": null,
+  "raw_responses_removed_by_owner_cleanup": "2026-11-04",
+  "public_primary_observations_and_hashes_retained": true
+}

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_target_tracking/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_target_tracking
 
 TrackTarget 在首次捕获目标时，以无人机到目标的水平朝向建立固定 odom 偏移，长度为 follow_distance。后续目标移动会等量平移跟随点；同一任务内重新捕获 SORT ID 时保留该偏移。若首次水平距离不超过 0.3 m，则使用无人机当前航向的后方作为偏移方向。

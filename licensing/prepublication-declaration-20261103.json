@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "owner_declared_no_prior_external_distribution",
+  "owner": "贾国源",
+  "question": "修订前，是否曾把带 Apache-2.0 声明的 EasyFly 自有代码提供给他人，例如公开仓库、私发源码、交付客户或开放协作访问？",
+  "answer": "从未提供给他人，仅本人本地保存",
+  "scope": "Only contributions actually owned by the author; no statement about the validity or revocability of third-party grants.",
+  "implementation": "Replace prior private Apache declarations before first external provision; do not grant an Apache alternative for currently covered original contributions.",
+  "independently_verified": false,
+  "actually_effective_prior_rights_revoked": false,
+  "excluded_packages_automatically_cleared": false
+}

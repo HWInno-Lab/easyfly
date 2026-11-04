@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_vehicle_reid/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # EasyFly 车辆外观重识别
 
 已完成本地软件／渲染仿真验收。使用真实 OSNet 车辆模型输出 512 维外观特征，按余弦距离关联；

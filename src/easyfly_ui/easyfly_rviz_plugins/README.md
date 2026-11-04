@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_rviz_plugins/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # EasyFly RViz odometry lifetime
 
 This read-only plugin subclasses the installed RViz 11.2.26 odometry display.

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_video_recorder/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 独立录像、轨迹与原始数据
 
 `video_recorder` 是独立 ROS 2 节点，订阅原始 `sensor_msgs/Image` 和

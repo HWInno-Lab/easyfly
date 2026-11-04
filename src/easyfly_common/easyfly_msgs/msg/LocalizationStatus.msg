@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_msgs/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # Freshness/admission contract for an explicitly selected localization backend.
 # ESTIMATING means fresh finite output; it is not proof of visual tracking quality
 # or flight readiness. Consumers must match session_id/generation and pose_stamp.

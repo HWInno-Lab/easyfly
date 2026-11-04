@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "drafting_notes_not_a_legal_opinion_or_release_clearance",
+  "confirmed_inputs_record": "licensing/decisions-20261103.json",
+  "sources": [
+    {
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "sections": [
+        "2",
+        "4"
+      ],
+      "used_for": "Preserve historical grants and attribution; no retroactive restriction."
+    },
+    {
+      "url": "https://www.apache.org/foundation/license-faq.html#mod-license",
+      "used_for": "Independent license name for materially changed terms."
+    },
+    {
+      "url": "https://www.samr.gov.cn/zw/zfxxgk/fdzdgknr/bgt/art/2023/art_60fb3863b7364b759123a42d1df568ca.html",
+      "sections": [
+        "Civil Code 496",
+        "Civil Code 497",
+        "Civil Code 498",
+        "Civil Code 506"
+      ],
+      "used_for": "Draft prompt/explanation obligations, fair standard terms, and retained mandatory liability."
+    },
+    {
+      "url": "https://cicc.court.gov.cn/html/1/218/62/83/443.html",
+      "section": "Civil Procedure Law (2023) article 35",
+      "access_note": "Official search excerpt consulted; direct open redirected. Draft does not choose an exclusive forum.",
+      "used_for": "Avoid inventing an exclusive court or overriding mandatory jurisdiction."
+    }
+  ],
+  "not_assumed": [
+    "30-day cure is an owner-approved contract choice, not asserted as a statutory requirement.",
+    "No factual claim is made that relevant patents exist or third-party patent rights have been cleared.",
+    "No arbitrary monetary liability ceiling, automatic historical fee or punitive amount was introduced.",
+    "Chinese governing law text does not claim to displace applicable mandatory rules.",
+    "Copyright notice flags and package dependency paths do not establish copyright ownership or a derived combination."
+  ],
+  "drafts": [
+    "licensing/EasyFly-Restricted-1.0.draft.txt",
+    "licensing/AUTHORIZATION.draft.txt",
+    "licensing/CONTRIBUTION-POLICY.draft.txt"
+  ],
+  "remaining_release_conditions": [
+    "Approved file/contribution scope and effective version",
+    "Historical-release and combination review",
+    "Actual authorization documentation and final legal review",
+    "Corresponding source/notice installation and distribution validation"
+  ]
+}

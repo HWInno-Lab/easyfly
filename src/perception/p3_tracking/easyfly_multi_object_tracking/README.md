@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_multi_object_tracking/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 多目标跟踪接入（ALG-2）
 
 节点负责 ROS 数据转换、类别过滤、配置、ID 整合和发布；SORT 核心已迁入

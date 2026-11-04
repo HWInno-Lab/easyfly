@@ -6,7 +6,7 @@ EasyFly 面向自主飞行算法开发、仿真联调和任务验证，提供 C+
 
 **首次部署与内测请先阅读 [内测手册](内测手册.md)**，其中包含完整安装准备、构建步骤、功能用例、仿真飞行入口、通过标准和问题记录模板。
 
-状态核对：**2026-10-29**。本文描述当前工作区快照，部分实现尚未进入 Git。本次按用户要求清空 `artifacts/`，其中的验收安装、依赖缓存、离线归档与原始证据已删除；使用前需重新部署。统一计划见 [plan-v6.md](plan-v6.md)，历史结论、剩余事项和清理影响见 [schedule-v6.md](schedule-v6.md)。
+功能状态核对：**2026-10-29**；目录清理更新：**2026-11-04**。日常构建统一使用根 `build/`、`install/`。本次清空 `artifacts/` 的历史输出，当前构建必需的 Fast DDS 归档和 PX4 仿真兼容输入迁至本机 `dependencies/`。完整部署及验收仍须按内测手册核对；历史结论与剩余事项见 [schedule-v6.md](schedule-v6.md)。
 
 RealSense 驱动包含固定的本地构建适配。新克隆后先运行
 `python3 tools/source/restore_realsense.py`；它使用随源码交付的 Git bundle 离线恢复
@@ -57,6 +57,7 @@ easyfly_ws/
 │   ├── easyfly_ui/          # 桌面、连接管理、观察与控制适配
 │   ├── simulation/          # 场景、模型、插件及仿真兼容层
 │   └── third_party/         # 外部算法、运行库、设备 SDK 与工具资料
+├── dependencies/            # 本机持久依赖输入，不入 Git
 ├── models/                  # 推理模型资产
 ├── tools/                   # 算法检查、场景准备与诊断工具
 ├── scripts/                 # 开发与诊断辅助脚本
@@ -146,16 +147,16 @@ ros2 launch easyfly_sim_launcher profile.launch.py \
 
 已有兼容的系统 ROS、Qt 和开发依赖时，可以先构建桌面的六包依赖闭包。它可以观察已有平台、编辑本地草稿；完整仿真和连接管理需另外部署。
 
-在工作区根目录的新终端执行，只加载系统 ROS。以下使用独立目录，关闭录像和内嵌 RViz：
+在工作区根目录的新终端执行，只加载系统 ROS。桌面构建同样使用唯一的根 `build/`、`install/` 和 `log/`；以下配置关闭录像和内嵌 RViz，完整平台继续在同一目录按内测手册配置构建：
 
 ```bash
 source /opt/ros/humble/setup.bash
-colcon --log-base log-readonly build --base-paths src \
-  --build-base build-readonly --install-base install-readonly \
+colcon --log-base log build --base-paths src \
+  --build-base build --install-base install \
   --packages-up-to easyfly_desktop --executor sequential \
   --cmake-args -DBUILD_TESTING=ON \
   -DEASYFLY_ENABLE_MEDIA=OFF -DEASYFLY_ENABLE_RVIZ_EMBED=OFF
-source install-readonly/setup.bash
+source install/setup.bash
 ros2 run easyfly_desktop easyfly_desktop
 ```
 
@@ -167,18 +168,18 @@ ros2 run easyfly_desktop easyfly_desktop
 
 测试按“安装检查 → 软件组件 → 只读观察 → 指定仿真任务 → 异常与压力专项”推进。每轮保留源码、依赖、配置和原始结果；行为检查、规范检查、跳过项及硬件未测项分别报告。
 
-上面的独立桌面构建可执行软件检查：
+上面的桌面构建可执行软件检查：
 
 ```bash
 export ROS_LOCALHOST_ONLY=1
 export ROS_DOMAIN_ID=226
 export QT_QPA_PLATFORM=offscreen
-colcon --log-base log-readonly-test test --base-paths src \
-  --build-base build-readonly --install-base install-readonly \
+colcon --log-base log test --base-paths src \
+  --build-base build --install-base install \
   --packages-select easyfly_msgs easyfly_core easyfly_mission_format \
   easyfly_ui_control easyfly_ui_bridge easyfly_desktop \
   --executor sequential --return-code-on-test-failure --ctest-args -j1 --output-on-failure
-colcon test-result --test-result-base build-readonly --verbose
+colcon test-result --test-result-base build --verbose
 ```
 
 这是软件/夹具检查，不证明真实图形渲染或飞行通过；GUI 人工检查应使用正常图形环境。完整平台还需包含 `easyfly_desktop_tests` 等联合用例。集成测试含固定 domain，按手册串行运行。
@@ -198,7 +199,7 @@ colcon test-result --test-result-base build-readonly --verbose
 | V-05／V-07：Gazebo／独立观察器历史退出异常 | 当前原场景及退出复测通过，缺少原异常阻塞堆栈，根因仍未关闭 |
 | B-01：FUEL 取消后重新探索偶发地图失效 | 按用户决定暂缓；正常复跑不替代失败／修复对照 |
 | V-09：近距离卡车车尾漏检 | 跟随控制已修，识别质量问题按用户决定保留 |
-| D-04：来源、许可与组合分发材料缺口 | 2026-11-02 已恢复；EGO 原创移植贡献授权已落实，ikd-Tree／FAST-LIVO2 与 VIKIT／LKH 三项仍待权利人材料；见[专项记录](src/third_party/sourcing-and-patches.md#5-d-04-专项处理2026-11-02) |
+| D-04：来源、许可与组合分发材料缺口 | 2026-11-03 已落实 EGO 原创移植贡献 GPL 例外；旧 ikd-Tree、FAST-LIVO2／VIKIT、LKH 当前3项开放，见[当前复核记录](licensing/d04-current.review.json)及[原专项记录](src/third_party/sourcing-and-patches.md#5-d-04-专项处理2026-11-02) |
 | 真实云台、D435i 双目惯性产品接入、目标机／传感器／飞控／RC、HIL／实飞 | 含待实现接口与待设备验收项；仿真不能代替实体链路 |
 | 最新版本自包含离线交付 | 旧 `offline-r3` 已清理，保留历史结论；最新 118 包仍需重建并验收完整离线归档 |
 
@@ -224,10 +225,16 @@ colcon test-result --test-result-base build-readonly --verbose
 
 新增后端应同时提交实现、平台适配、配置、来源/许可证与对应检查。能力声明只填写实际支持项；变更公共消息或 C++ ABI 时同步重编译消费者。
 
-`docs/`、开发计划、阶段验收报告和 `artifacts/` 按当前策略不入 Git。当前工作区保留统一 v6 计划、文字报告与源码说明；原产物已清空，重新部署时须重新准备完整依赖并生成新的运行证据。
+`dependencies/` 保存本机持久依赖，`artifacts/` 保存可清理的临时产物；二者按当前策略不入 Git。开发计划、阶段报告与源码说明用于追溯，已删除的原始产物不再作为仍可读取的验收证据。新部署须准备对应依赖并重新生成运行证据。
 
 ## 许可证
 
-EasyFly 自有代码采用 [Apache License 2.0](LICENSE)，署名为 `EasyFly Project`。
+EasyFly 正在对现有自有代码实施许可修订。本工作区许可修订版为 `EF-LICENSE-20261103-02`，已登记的自有材料采用[《EasyFly 使用许可（有限用途免费）》1.0](LICENSES/EasyFly-Restricted-1.0.txt)。具体文件、内容指纹、保留范围和待核事项见[适用范围清单](licensing/scope.json)及[迁移状态](licensing/MIGRATION-STATUS.md)，根 [LICENSE](LICENSE) 为统一入口。
+
+公开作者为**贾国源**；经作者授权对外许可的机构为**江西穹瞰无人机科技有限公司**。个人学习、非商业实验及学术研究按全文规定免费，商业资助的研究本身仍可免费；内部使用免费豁免仅限该公司。教学需要单独授权，其他企业内部商业使用及商业产品、服务、委托开发和商业交付按全文办理[商业／教学授权](licensing/AUTHORIZATION.md)。联系人：贾国源，邮箱：15103443485@163.com。
+
+作者已确认此前自有代码**从未提供给他人、仅本人本地保存**，现于首次对外提供前撤换已登记自有贡献的旧 Apache-2.0 声明，**不为这些贡献提供 Apache 并行选项**，见[作者陈述](licensing/prepublication-declaration-20261103.json)。第三方许可继续单独适用；若查明某份材料确实另有合法有效的既有授权，本次修订也不能单方收回。范围外的自有材料仍须逐项核对，模型、场景及混合来源没有统一改标。该有限用途许可不属于 Apache-2.0，也不应称为 OSI 认可的开源许可。
+
+明确列入[许可例外](licensing/EXCEPTIONS.md)的 EGO 原创 ROS 2 移植贡献采用 GPL-3.0-only，不附加主协议的商业／教学另行授权限制；未列入的其他自有材料不自动适用该例外。当前[暂不接收外部代码及资源贡献](CONTRIBUTING.md)。首次交付形式和实际发行组合留待 EasyFly 验收时补充，本轮没有对外发布。
 
 第三方源码、设备 SDK、模型、场景资源及本地移植保留各自许可证和版权通知，根许可证不替代这些声明。部分历史资产的来源/许可仍有待补全项，具体见 [第三方来源与补丁](src/third_party/sourcing-and-patches.md) 和 [模型资产登记](src/third_party/model-assets.provenance.json)。

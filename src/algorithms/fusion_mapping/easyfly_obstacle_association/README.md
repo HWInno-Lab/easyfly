@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_obstacle_association/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_obstacle_association
 
 Python 标准库模块 `easyfly_obstacle_association.core`；普通 frozen dataclass 描述 AABB、目标和关联结果。

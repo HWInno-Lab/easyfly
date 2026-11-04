@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_lidar_camera_fusion/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # Independent source-time lidar/camera projection
 
 Launch `fusion.launch.py use_sim_time:=false` outside simulation. Inputs default

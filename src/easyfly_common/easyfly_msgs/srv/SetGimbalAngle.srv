@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_msgs/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # 设置云台角度
 float32 pitch_angle   # 俯仰角 [度]
 float32 yaw_angle     # 偏航角 [度]

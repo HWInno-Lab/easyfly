@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_msgs/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # 轨迹跟随 (M4.3): 把 EGO-Planner /position_cmd 流转发为 UAVCommand TRAJECTORY
 # 进入条件: 仅 HOVER (与既有单动作槽互斥); 需已 arm + OFFBOARD
 float64 target_x            # 轨迹终点 x [m]，固定 odom/ENU（到达判定用）

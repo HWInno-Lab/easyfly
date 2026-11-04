@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_apriltag_detection/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_apriltag_detection)
 find_package(ament_cmake REQUIRED)
@@ -32,4 +36,8 @@ install(TARGETS tag_fixture DESTINATION lib/${PROJECT_NAME})
 install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
 ament_export_include_directories(include/${PROJECT_NAME})
 ament_export_dependencies(easyfly_tag_pose)
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
+
 ament_package()

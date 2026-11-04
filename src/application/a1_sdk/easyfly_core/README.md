@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_core/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # EasyFly owned C++ SDK
 
 `Client` owns a separate ROS Context, Node, and one executor thread. It neither

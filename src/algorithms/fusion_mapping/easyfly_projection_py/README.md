@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_projection_py/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_projection_py
 
 仅依赖 Python 标准库的计算模块 `easyfly_projection_py.core`；ament 只负责构建/安装。

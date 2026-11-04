@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_coord_transform/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_coord_transform)
 
@@ -44,5 +48,9 @@ endif()
 
 ament_export_dependencies(rclcpp tf2_ros)
 ament_export_include_directories(include)
+
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
 
 ament_package()

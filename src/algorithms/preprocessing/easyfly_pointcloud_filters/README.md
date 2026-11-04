@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_pointcloud_filters/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_pointcloud_filters
 
 项目维护的 C++17 距离过滤与体素 first-wins 降采样，迁自 easyfly_pointcloud_filter。

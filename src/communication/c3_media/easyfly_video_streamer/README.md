@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_video_streamer/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 视频网络推流
 
 独立 `video_sender` 将 ROS `sensor_msgs/Image` 编码为 MJPEG，经 HTTP multipart 传输；`video_receiver` 校验并解码为新的图像话题，保留源时间与坐标系。接收端不会重复发布上一帧，不提供飞行控制接口。

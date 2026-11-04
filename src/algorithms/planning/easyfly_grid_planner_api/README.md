@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_grid_planner_api/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_grid_planner_api
 
 ROS 运行时无关的 C++17 二维栅格路径规划接口。ALG-1 建立普通类型、O(1)布局校验及控制辅助；

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_astar/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_astar
 
 项目维护的 C++17 二维八邻域 A*、起点脱困和半格采样视线剪枝，迁自全局规划包。

@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+// SPDX-FileCopyrightText: 2026 贾国源
+// License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_sort/licenses/.
+// This revision offers no Apache-2.0 option for the listed original code.
 // EasyFly M4: SORT 主类 (Track 生命周期 + 关联流程)
 // 论文: Bewley et al., "Simple Online and Realtime Tracking", 2016
 #ifndef EASYFLY_SORT_SORT_HPP_

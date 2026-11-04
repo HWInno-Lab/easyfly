@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "owner_selected_existing_own_code_migration",
+  "owner_instruction": "现在easyfly的开发已经接近尾声，现有的代码都要开始进行修改了",
+  "interpretation": "Proceed with existing owned contributions as well as future registered own contributions; not limited to future additions.",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "authorization_basis": "Previously confirmed owner copyright in own original contributions and company licensing authority.",
+  "third_party_rights_included": false,
+  "historical_grants_revoked": false,
+  "edition_assigned_for_worktree_identification": "EF-LICENSE-20261103-01",
+  "edition_is_a_product_version_or_published_git_tag": false,
+  "independent_legal_clearance_claimed": false
+}

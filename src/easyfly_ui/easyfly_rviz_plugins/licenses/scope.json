@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "edition": "EF-LICENSE-20261103-02",
+  "package": "easyfly_rviz_plugins",
+  "license": "LicenseRef-EasyFly-Restricted-1.0",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_email": "15103443485@163.com",
+  "historical_grants_preserved": true,
+  "ownership_basis": "Owner declaration; not independent legal clearance",
+  "not_a_third_party_license_grant": true,
+  "files": [
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "048c31a486c2f195c2c85f9ac28d130997571a91e85dcc018a456c8cb30a5fad",
+      "before_sha256": "601ad0cf1e905cf0fa43570f5c6940d2f1d93c5d6f3ea34b1e303dcbee9d1138",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_bundle_install",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "CMakeLists.txt"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "469b6b2fad684eda198bb3de94d4017897959cf4b0f506738adc745d5c757aa6",
+      "before_sha256": "cde138acf7b59e1c602062b292cdd73ee181fb96ba6ecf66902ea2b74ff31b66",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "README.md"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "b31b0d914c57dce632d7ce3fb565d3e0b56ba987b67faafaa5d52f7e8a2cb936",
+      "before_sha256": "5b4fb006672b6be9b40e5319b359cd0ee6ed05159c5bad3804d38ed59c83901c",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "cmake/dependencies.cmake"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "efbc0a9c4fe5c177965da7194b4ab9e93029a88b5377209f7d5d682e8edd37dc",
+      "before_sha256": "328ad7543de3c901d869881605edda61d7dd2200858e47b8066fdec43644f55e",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "include/easyfly_rviz_plugins/odometry_display.hpp"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "437fb24e41135848de8e98a1a79a820555d5c70c9e6e42201639c70e0e53a70e",
+      "before_sha256": "9a8ce82f9b25ac5288ad9c03d0a18b8911af01708be4aac2b6c8c07438dc103f",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_package_metadata",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "package.xml"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "d356cdd6c7f2243bf8f4e44c0449c99b63f2627fbe4e7588bc51d3bacffcf2b1",
+      "before_sha256": "f45db1c091007e3ef747228bcd14abc38ce53589099800829bf809cfff3f0107",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "plugins.xml"
+    },
+    {
+      "package": "easyfly_rviz_plugins",
+      "sha256": "b177699ad4eb3d2212bcb6eb5dd01cf018aa20cb9dfcf91e63c4aa998a1d030e",
+      "before_sha256": "6fa8ba85b1315b4aee52c96c28ae9387431dc84468afb47650070e0bfad7cb2e",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "src/odometry_display.cpp"
+    }
+  ],
+  "retained_files": [],
+  "binary_scope": "Applies only to the covered original contributions in corresponding object forms; no assertion that third-party combinations are cleared.",
+  "current_own_code_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "apache_text_role": "third_party_and_reference_only_not_a_new_grant_for_own_code",
+  "declared_license_ids": [
+    "LicenseRef-EasyFly-Restricted-1.0"
+  ],
+  "retained_license_notices": []
+}

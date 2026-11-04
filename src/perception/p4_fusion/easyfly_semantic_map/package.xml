@@ -1,4 +1,10 @@
 <?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_semantic_map/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>easyfly_semantic_map</name>
@@ -9,7 +15,8 @@
     + 2D 占据栅格 /occupancy_grid (供 M4.2 全局规划) + RViz markers。
   </description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
-  <license>Apache-2.0</license>
+  <!-- Listed own code is offered only under the EasyFly license; retained third-party materials have separate terms. -->
+  <license>LicenseRef-EasyFly-Restricted-1.0</license>
   <depend>easyfly_ground_segmentation</depend>
   <depend>easyfly_obstacle_geometry</depend>
   <depend>easyfly_occupancy_mapping</depend>

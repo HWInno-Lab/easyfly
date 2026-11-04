@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "current_D04_policy_overlay_with_scoped_owner_gpl_exception",
+  "historical_dossier": {
+    "path": "src/third_party/license_reviews/d04-20261102/review.json",
+    "sha256": "857421e1dddf6d1716f830ddaf6e74ef59be72dbd56581d62685a2a4d8fb784b"
+  },
+  "prior_owner_port_record": {
+    "path": "src/third_party/algorithms/planning/ego_planner/licenses/OWNER-PORT-GRANT.json",
+    "sha256": "be23f75245ee2382229ddf56c1e98fba80c3b36d348390e9f64eda81c6636fd3"
+  },
+  "owner_prepublication_record": {
+    "path": "licensing/prepublication-declaration-20261103.json",
+    "sha256": "0e614e0493ce5efec786bdaa6ff45fcb83f6525e6dfe62c92aa3c0673f583f50"
+  },
+  "historical_dossier_edited": false,
+  "prior_owner_port_record_edited": false,
+  "historical_open_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH"
+  ],
+  "reopened_items": [
+    {
+      "id": "D04-EGO-PORT",
+      "status": "reopened_owner_private_apache_arrangement_withdrawn",
+      "reason": "Owner states original contributions were never provided to others and instructs replacement of the own-code Apache arrangement before first provision. The previous Apache record is retained as prior internal evidence, not relied on as the current resolution.",
+      "required_evidence": "Determine a valid licensing and delivery arrangement for the actually owned port contributions and inherited GPL combination, or a separately reviewed replacement. Do not automatically apply restricted terms to inherited GPL code.",
+      "new_restricted_grant_for_EGO_made_here": false
+    }
+  ],
+  "current_open_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH"
+  ],
+  "rights_clearance_claimed": false,
+  "third_party_licenses_changed": false,
+  "limits": "The old dossier and withdrawn-arrangement snapshot remain immutable. The current EGO owner grant is a GPL-3.0-only exception. Three external provenance/combination grants remain open; package metadata and delivery synchronization remain separate pending work.",
+  "prior_reopening_record": {
+    "path": "licensing/history/d04-20261103-pre-gpl-exception.json",
+    "sha256": "860d35af3bd4465271870da844f74ffd306857d4915c6ee5aec93e7c9fbd3435"
+  },
+  "resolved_items": [
+    {
+      "id": "D04-EGO-PORT",
+      "status": "resolved_scoped_owner_gpl_grant",
+      "grant": {
+        "path": "licensing/exceptions/EGO-PORT-GPL-3.0-only.json",
+        "sha256": "4fdfcdc17238073e2c1a0f0a5dca94357178dc82a217c0d1c1a368119a9cd7ee"
+      },
+      "resolution_scope": "Owner original port grant decision only; package metadata, installed materials and combined distribution are not approved.",
+      "delivery_materials_synchronized": false
+    }
+  ]
+}

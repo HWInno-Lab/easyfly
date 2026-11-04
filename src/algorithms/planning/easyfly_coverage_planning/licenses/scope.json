@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "edition": "EF-LICENSE-20261103-02",
+  "package": "easyfly_coverage_planning",
+  "license": "LicenseRef-EasyFly-Restricted-1.0",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_email": "15103443485@163.com",
+  "historical_grants_preserved": true,
+  "ownership_basis": "Owner declaration; not independent legal clearance",
+  "not_a_third_party_license_grant": true,
+  "files": [
+    {
+      "package": "easyfly_coverage_planning",
+      "sha256": "9f11e93ddfc82eb5c485181308987cbcc9a13f8f2e0de047994d1ea2e1533e73",
+      "before_sha256": "4668b603ae25e22ad8a5a4f9f03b7ad3ded3086429d9e55e2a058e1b75c23c25",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_bundle_install",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "CMakeLists.txt"
+    },
+    {
+      "package": "easyfly_coverage_planning",
+      "sha256": "5883c9823e390d7bee1b796a728d11f8eba991c67e6839a9694b415cf679f60b",
+      "before_sha256": "374028a4957d3474b9a72b4980db8d5a9d5ca2d694b717b015603f026f6f1440",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "README.md"
+    },
+    {
+      "package": "easyfly_coverage_planning",
+      "sha256": "61f411188e91f14d41b79267318ca3cfa909a6b3c5f803664a916edcab1c9d29",
+      "before_sha256": "a13a32aa31c119ec8d3e7a9b6a53e711cfc27eed5f3c121e81d8bdf1ba168df1",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "include/easyfly_coverage_planning/search_geometry.hpp"
+    },
+    {
+      "package": "easyfly_coverage_planning",
+      "sha256": "9cfaa92709640421783d913dc4a850ea0b066f27b94582d78f9e5e2d4dd2ba0e",
+      "before_sha256": "48b4e0807fcba16545c89cf4ba42567695c7684189e58d3e30070c828d407f72",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_package_metadata",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "package.xml"
+    },
+    {
+      "package": "easyfly_coverage_planning",
+      "sha256": "2554f973904f530c20082299df1fbcee0696901382f0a7d9c51b1b230a0c1c12",
+      "before_sha256": "97a00a30d02c966a7a5b99423a0591299c3cac0df93d0193c37f179279eacf18",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "test/test_search_geometry.cpp"
+    }
+  ],
+  "retained_files": [],
+  "binary_scope": "Applies only to the covered original contributions in corresponding object forms; no assertion that third-party combinations are cleared.",
+  "current_own_code_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "apache_text_role": "third_party_and_reference_only_not_a_new_grant_for_own_code",
+  "declared_license_ids": [
+    "LicenseRef-EasyFly-Restricted-1.0"
+  ],
+  "retained_license_notices": []
+}

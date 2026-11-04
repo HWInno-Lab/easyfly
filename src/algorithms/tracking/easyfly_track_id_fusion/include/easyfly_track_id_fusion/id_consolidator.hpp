@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+// SPDX-FileCopyrightText: 2026 贾国源
+// License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_track_id_fusion/licenses/.
+// This revision offers no Apache-2.0 option for the listed original code.
 // EasyFly M4-Q19: 世界系 id 整合器 (轻量 ReID)
 //
 // 解决的问题: SORT 在像素空间工作, 目标离开视野/遮挡超过 max_lost 后轨迹

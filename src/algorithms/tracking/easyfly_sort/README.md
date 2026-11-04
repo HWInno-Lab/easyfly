@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_sort/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_sort
 
 从 EasyFly 跟踪功能包迁出的自有 SORT 实现，保留原卡尔曼、IoU/中心距离门限、

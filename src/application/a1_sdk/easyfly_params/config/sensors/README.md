@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_params/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # D435i 双目＋IMU 采集配置
 
 `d435i_stereo_imu.yaml` 是实机传感器采集预设，用于后续 OpenVINS 双目惯性后端。

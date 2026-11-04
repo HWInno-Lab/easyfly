@@ -1,10 +1,17 @@
 <?xml version="1.0"?>
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_ellipse_detection/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 <package format="3">
   <name>easyfly_ellipse_detection</name>
   <version>0.1.0</version>
   <description>Image-space ellipse observations with bounded, freshness-checked ROS transport.</description>
   <maintainer email="dev@easyfly.org">EasyFly Team</maintainer>
-  <license>Apache-2.0</license>
+  <!-- Listed own code is offered only under the EasyFly license; retained third-party materials have separate terms. -->
+  <license>LicenseRef-EasyFly-Restricted-1.0</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <depend>easyfly_image_detection_common</depend>
   <depend>easyfly_ellipse</depend>

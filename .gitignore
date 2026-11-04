@@ -24,6 +24,7 @@ log-v2/
 # 根目录过程文档仅本地保留；对外保留 README 和内测手册。
 /*.md
 !/README.md
+!/CONTRIBUTING.md
 !/内测手册.md
 /使用手册附件/
 # 文档、UI 参考图及开发记录仅本地保留，不再入库。
@@ -76,6 +77,8 @@ __pycache__/
 htmlcov/
 # G1-G4 验收过程归档, 仅本地留存不入库
 artifacts/
+# Persistent local runtime/build inputs; kept outside disposable artifacts.
+/dependencies/
 
 # 算法验证基线、验收报告与迁移过程记录仅本地保留。
 # 保留 README、接口/构建/接入说明，以及盘点工具实际读取的 migration-inventory.json。
@@ -96,6 +99,14 @@ test-results-v219/
 # Required third-party license texts are source deliverables.
 !src/**/LICENSE*.txt
 !src/**/NOTICE*.txt
+
+# Root license texts must accompany the published source even with *.txt ignored.
+!/LICENSES/*.txt
+
+# Reviewable license-transition drafts must be available with their scope records.
+!/licensing/*.draft.txt
+!src/**/licenses/*.txt
+!src/third_party/license_reviews/**/*.txt
 
 # Source fixtures and upstream notices must survive a clean checkout.
 !src/**/license.txt

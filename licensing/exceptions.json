@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "edition": "EF-GPL-EXCEPTIONS-20261103-01",
+  "status": "explicit_scoped_owner_exceptions_not_blanket_relicensing",
+  "default_own_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "owner_decision": {
+    "path": "licensing/followup-decisions-20261103.json",
+    "sha256": "3f0df363e294e266e22d83b2ab68651f63e19c0caad4172b95e7d915e75714f0"
+  },
+  "exceptions": [
+    {
+      "id": "EGO-OWNER-ROS2-PORT-GPL-3.0-only",
+      "license": "GPL-3.0-only",
+      "grant": {
+        "path": "licensing/exceptions/EGO-PORT-GPL-3.0-only.json",
+        "sha256": "4fdfcdc17238073e2c1a0f0a5dca94357178dc82a217c0d1c1a368119a9cd7ee"
+      }
+    }
+  ],
+  "unlisted_materials_automatically_excepted": false,
+  "third_party_rights_expanded": false
+}

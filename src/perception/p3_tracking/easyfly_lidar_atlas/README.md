@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_lidar_atlas/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 原生激光关键帧地图与独立全局定位
 
 E-07 已完成明确范围内的原生仿真验收。支持显式连接运行中的 FAST-LIO 或

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "type": "implementation_notes_not_legal_opinion",
+  "fact_basis": {
+    "path": "licensing/prepublication-declaration-20261103.json",
+    "sha256": "0e614e0493ce5efec786bdaa6ff45fcb83f6525e6dfe62c92aa3c0673f583f50"
+  },
+  "inference": "On the owner account of no prior external provision and only within actually controlled original rights, replace the private own-code Apache proposal before first external provision. Do not describe this as revocation of an actually effective license.",
+  "sources": [
+    {
+      "url": "https://www.apache.org/licenses/LICENSE-2.0",
+      "sections": [
+        "1 definitions of Licensor/Work",
+        "2 irrevocable copyright license",
+        "4 preservation and modifications"
+      ],
+      "use": "Protect actual independent existing rights if contrary facts emerge; do not create a fresh own-code Apache option through old notices."
+    },
+    {
+      "url": "https://www.ncac.gov.cn/xxfb/flfg/flfg_532/202103/t20210309_50530.html",
+      "sections": [
+        "10 author rights and licensing",
+        "13 inherited works rights",
+        "26 license arrangements"
+      ],
+      "use": "Author control is limited to actually owned rights and does not remove inherited or third-party rights."
+    }
+  ],
+  "independent_ownership_or_distribution_audit_completed": false,
+  "D04_effect": "EGO original-port Apache arrangement no longer used as current closing basis; current overlay reports four open items, old dossier remains unchanged."
+}

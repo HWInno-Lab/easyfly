@@ -1,5 +1,8 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_trajectory_optimizer/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # Copyright 2026 EasyFly Project
-# Licensed under the Apache License, Version 2.0.
 """Pure hardware calibration validation; no ROS graph or launch side effects."""
 import math
 

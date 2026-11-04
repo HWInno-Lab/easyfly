@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_image_detection_common/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # Classical detector ROS transport
 
 两种独立图像检测节点共享的 ROS 接纳模板，不包含检测算法。导出

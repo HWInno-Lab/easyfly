@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_yolo_onnx/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_yolo_onnx
 
 EasyFly 自有 YOLO ONNX 包装，C++17 SHARED target `easyfly_yolo_onnx::easyfly_yolo_onnx`。

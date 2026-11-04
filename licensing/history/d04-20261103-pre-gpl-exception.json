@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "current_D04_policy_overlay_not_a_license_grant",
+  "historical_dossier": {
+    "path": "src/third_party/license_reviews/d04-20261102/review.json",
+    "sha256": "857421e1dddf6d1716f830ddaf6e74ef59be72dbd56581d62685a2a4d8fb784b"
+  },
+  "prior_owner_port_record": {
+    "path": "src/third_party/algorithms/planning/ego_planner/licenses/OWNER-PORT-GRANT.json",
+    "sha256": "be23f75245ee2382229ddf56c1e98fba80c3b36d348390e9f64eda81c6636fd3"
+  },
+  "owner_prepublication_record": {
+    "path": "licensing/prepublication-declaration-20261103.json",
+    "sha256": "0e614e0493ce5efec786bdaa6ff45fcb83f6525e6dfe62c92aa3c0673f583f50"
+  },
+  "historical_dossier_edited": false,
+  "prior_owner_port_record_edited": false,
+  "historical_open_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH"
+  ],
+  "reopened_items": [
+    {
+      "id": "D04-EGO-PORT",
+      "status": "reopened_owner_private_apache_arrangement_withdrawn",
+      "reason": "Owner states original contributions were never provided to others and instructs replacement of the own-code Apache arrangement before first provision. The previous Apache record is retained as prior internal evidence, not relied on as the current resolution.",
+      "required_evidence": "Determine a valid licensing and delivery arrangement for the actually owned port contributions and inherited GPL combination, or a separately reviewed replacement. Do not automatically apply restricted terms to inherited GPL code.",
+      "new_restricted_grant_for_EGO_made_here": false
+    }
+  ],
+  "current_open_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH",
+    "D04-EGO-PORT"
+  ],
+  "rights_clearance_claimed": false,
+  "third_party_licenses_changed": false,
+  "limits": "The original 2026-11-02 checker verifies its historical dossier. Current policy status must also use this overlay; a historical three-open result is not the current four-open result."
+}

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_pointcloud_filter/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # Point cloud filtering
 
 The node filters Livox samples by range and voxel size, then transforms them to

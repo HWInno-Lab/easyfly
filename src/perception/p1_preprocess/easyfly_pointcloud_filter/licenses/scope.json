@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "edition": "EF-LICENSE-20261103-02",
+  "package": "easyfly_pointcloud_filter",
+  "license": "LicenseRef-EasyFly-Restricted-1.0",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_email": "15103443485@163.com",
+  "historical_grants_preserved": true,
+  "ownership_basis": "Owner declaration; not independent legal clearance",
+  "not_a_third_party_license_grant": true,
+  "files": [
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "7733d2580e7ff4c2c062c8ca25172c4d6ba027456c7b2edcef44e915eaa307c9",
+      "before_sha256": "adf06eba4d22958e9f970a5ae45b536d34fbacee81bc10b1d9fb58f372a934f1",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_bundle_install",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "CMakeLists.txt"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "608f7393e6ba5172b025a48672b9de1c8073c0227f9145501c0d581222e361cc",
+      "before_sha256": "966031486cddc3397b3234d410e8c6a74c5fc825437cf514e6ee00f147027ab7",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "README.md"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "ed7bda8d1eb9ff3af62d1bb015b58c8addbc7bb72be6a1449ef43067e764db43",
+      "before_sha256": "a39c85904f7e8a0c1330a0381988a9e1cc2f2ebe6167c2c480ea781c8626cf9f",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "config/pointcloud_filter.yaml"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "a595cc5c0f382576eca3ee2c09d66936162c047637cf68002fbf7760232d910c",
+      "before_sha256": "db5ab7f71b056f7583b0df672d3614976271d7fd7805c285f26c69e9e3a2d881",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "include/easyfly_pointcloud_filter/filter_core.hpp"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "58cbe81036066c5b93f42357c6e387bf4839c87bb84ee3da3110c19f25d2c65c",
+      "before_sha256": "55750c48c5025a6b7533f1dad40694f3d01327469b4a286985694b7d67004c5d",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "launch/pcf.launch.py"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "528b1531aee24b360756e743ce38f1a75dbbb6040dc601839f2b9528572d6a78",
+      "before_sha256": "caf882687af916c28a6ac043cc095777dddc7599462ff802928eb395821d841d",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_package_metadata",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "package.xml"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "83830402472a4bd99e9abd2e74f8554f05ff13c2697779ed18c16111a4a8f1dc",
+      "before_sha256": "fa549d400f45c33f519c48a504a1ee3a9f83df59f32e7404ac8b18c60ea4e04a",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "src/pointcloud_filter_node.cpp"
+    },
+    {
+      "package": "easyfly_pointcloud_filter",
+      "sha256": "b66c3eada97d952fb4a5fb3b5c270aa620b58aab5d47fdb57b494a77a738acd3",
+      "before_sha256": "91512b285b7cd2bc5db47ba4c15b5809aa2236067bfc607f230e3b216b1fa681",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "test/test_transform_timing.py"
+    }
+  ],
+  "retained_files": [],
+  "binary_scope": "Applies only to the covered original contributions in corresponding object forms; no assertion that third-party combinations are cleared.",
+  "current_own_code_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "apache_text_role": "third_party_and_reference_only_not_a_new_grant_for_own_code",
+  "declared_license_ids": [
+    "LicenseRef-EasyFly-Restricted-1.0"
+  ],
+  "retained_license_notices": []
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "edition": "EF-LICENSE-20261103-02",
+  "package": "easyfly_perception_srvs",
+  "license": "LicenseRef-EasyFly-Restricted-1.0",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_email": "15103443485@163.com",
+  "historical_grants_preserved": true,
+  "ownership_basis": "Owner declaration; not independent legal clearance",
+  "not_a_third_party_license_grant": true,
+  "files": [
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "9b15a4b12cb092f857f231ceaf0249989a0dabeb7b76710a7cc6ce7f9af4c8e8",
+      "before_sha256": "7042c6f39716427fb5441a2942ab5f9a6c5e6bc28eca7d4f00c779a1600c78e6",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_bundle_install",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "CMakeLists.txt"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "595a74393f36af94abb639fce8a0895566c31ca8e3f1051d1a76dca5d2fcf3e4",
+      "before_sha256": "d25d6feb53bbcec3c95feeafb078e9bf8e822aa6bb142074e743399ef66b08ce",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "easyfly_perception_srvs/__init__.py"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "3248efbbd2f0258b9419fa1155b2efab8961d1ff68a16fe882865d9e38eb1d49",
+      "before_sha256": "b2de649157917016a28d65c6809e2e966dfa033dc2a9c95c892fc5ff4f29dd8d",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "easyfly_perception_srvs/node.py"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "c4fb792b9a8f3496d95326355137fc19ca398021dae51c73f66bbb823fa0f0fa",
+      "before_sha256": "d501b9dc284f99f2444ed4d879e1de4499158ca88c34595f2c08d9ca9a3af063",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_package_metadata",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "package.xml"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "3bcbb451af0a513d428e5af3cd47409e65af6417ce45c55b5979e7a025088c78",
+      "before_sha256": "2012742d9b5cb0c35642594d5f7cf421d3c6896e377d14e24e773c187bb1180a",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "scripts/perception_services"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "d3193d329fb5e717454448b70dfcb1c0ce79fe2932902e8f3e5758f9b316580d",
+      "before_sha256": "a30cfcc7c5a6aab3250981d435194b6a5db97c4fedcc72aa3b32273b7761f277",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "test/test_services.py"
+    },
+    {
+      "package": "easyfly_perception_srvs",
+      "sha256": "b29215910645ac917248a685737517e2012ccb1ab4ba4e0eb54c42f3fbf9f28b",
+      "before_sha256": "df4f4bcf283f943b7ebecf3a41434ace7a2c0ab2d2190fc75e866057dd59cbc7",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "test/test_shutdown.py"
+    }
+  ],
+  "retained_files": [],
+  "binary_scope": "Applies only to the covered original contributions in corresponding object forms; no assertion that third-party combinations are cleared.",
+  "current_own_code_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "apache_text_role": "third_party_and_reference_only_not_a_new_grant_for_own_code",
+  "declared_license_ids": [
+    "LicenseRef-EasyFly-Restricted-1.0"
+  ],
+  "retained_license_notices": []
+}

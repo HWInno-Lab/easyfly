@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_semantic_map/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 可信地面与室内空间支撑
 
 地面候选在未解锁、连接正常、位姿有效且状态新鲜时初始化。已解锁时保持已有模型，

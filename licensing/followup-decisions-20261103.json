@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-03",
+  "status": "owner_followup_decisions_recorded",
+  "raw_answers": {
+    "1": "暂无",
+    "2": "这个你应该能查询的到吧",
+    "3": "暂无",
+    "4": "可作为例外",
+    "5": "暂缓这部分内容，我会在easyfly验收的时候补充这部分内容",
+    "6": "暂不接收"
+  },
+  "interpretation": {
+    "rights_documents": "No additional documents supplied; not proof of absence of coauthor, employment or commissioned rights.",
+    "provenance_research": "Agent to research public and repository provenance; private contracts and undisclosed facts are not inferred from search.",
+    "upstream_authorizations": "No additional rightsholder grants supplied.",
+    "gpl_compatible_exceptions": "Owner permits exceptions for own port/modification contributions actually requiring an upstream-compatible arrangement; determine concrete scope individually.",
+    "first_delivery_plan": "Deferred by owner until EasyFly acceptance; no release format, publication or distribution approval inferred.",
+    "external_contributions": "Not accepting external code or resource contributions at present."
+  },
+  "prior_owner_identity_and_company_authority_unchanged": true,
+  "blanket_relicense_authority_for_third_party_material_claimed": false
+}

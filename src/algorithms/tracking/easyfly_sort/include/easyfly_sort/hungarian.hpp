@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+// SPDX-FileCopyrightText: 2026 贾国源
+// License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_sort/licenses/.
+// This revision offers no Apache-2.0 option for the listed original code.
 // EasyFly M4: 匈牙利算法 (最小代价分配) + IoU 工具
 // 经典 O(n³) 实现 ( potentials / KM 风格 ), 用于检测-轨迹关联。
 #ifndef EASYFLY_SORT_HUNGARIAN_HPP_

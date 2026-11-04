@@ -32,7 +32,7 @@ while IFS=$'\t' read -r name path kind; do
   esac
 done <<< "$listing"
 (( ${#packages[@]} > 0 )) || { echo "层 $layer 未发现可构建包" >&2; exit 1; }
-command=(colcon build --base-paths src --symlink-install --packages-up-to "${packages[@]}")
+command=(colcon build --base-paths src --build-base build --install-base install --symlink-install --packages-up-to "${packages[@]}")
 if "$dry_run"; then
   printf '层包选择集合（colcon 将补齐依赖闭包）:\n'
   printf '  %s\n' "${packages[@]}"

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_depth_estimation/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # EasyFly 独立双目深度估计
 
 已完成软件与限定米制双目仿真验收。输入是独立、已校正的左右相机图像和对应每帧 CameraInfo；

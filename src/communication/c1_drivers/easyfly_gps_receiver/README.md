@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_gps_receiver/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 独立串口 GPS 接收器
 
 `gps_receiver` 直接读取用户指定字符设备，与 MAVROS GPS 接入独立。支持原始 8N1 串口的 NMEA GGA + RMC 配对，发布 `sensor_msgs/NavSatFix`、`sensor_msgs/TimeReference` 和私有 `~/status` JSON。

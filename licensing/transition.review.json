@@ -1,0 +1,62 @@
+{
+  "schema_version": 2,
+  "status": "existing_code_scoped_revision_implemented_not_published",
+  "edition": "EF-LICENSE-20261103-02",
+  "start_policy": "review_existing_owned_contributions_as_well_as_future_contributions",
+  "owner_instruction": "现在easyfly的开发已经接近尾声，现有的代码都要开始进行修改了",
+  "current_scope": {
+    "path": "licensing/scope.json",
+    "sha256": "ffff91249a5cf7766ff9cc31b54533477e905e24369216ba5b23ecee5acbe935"
+  },
+  "historical_draft_review": null,
+  "implemented_packages": 65,
+  "implemented_file_entries": 731,
+  "pending_non_external_packages": 32,
+  "retained_external_packages": 24,
+  "independent_legal_clearance_claimed": false,
+  "publication_performed": false,
+  "open_D04_items": [
+    "D04-IKD",
+    "D04-LIVO-VIKIT",
+    "D04-LKH"
+  ],
+  "review_materials_sha256": {
+    "LICENSE": "3d84ed80fb8e19bda5168ac363918f0ca2100c26f399ee452fc72a8654ebc294",
+    "README.md": "57353b07b0175416ba6136090a5ae28a205a5f1b0d541339cf2096b376499e0a",
+    "licensing/README.md": "c3bf86944ede180e74cfcec6cbb57cdba1b6b8e0076310b9abcc7c85fb5c0285",
+    "licensing/MIGRATION-STATUS.md": "73ccbd51ceb17ea2f13bc736f035f2e4764bbe8971ba92506eba36f3c5efc23e",
+    "licensing/AUTHORIZATION.md": "a0e2fbec901ed643f7a9e857d6bf04fec42e271e5421776d4671bbd9dc8bb307",
+    "LICENSES/EasyFly-Restricted-1.0.txt": "2151a6239ae49725b62b19780be1baffa1af8c79f11a7ad30e66225cd7dc607b",
+    "LICENSES/Apache-2.0.txt": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "licensing/EXCEPTIONS.md": "e2f653c704d51f062f6ce65cd1b24323e282fc7ae3bb2a659401e531af434343",
+    "CONTRIBUTING.md": "8ab2ccd7d845574b70c8e6c508c7af44d5e5348d26466b57941353d7745800a6",
+    "LICENSES/GPL-3.0-only.txt": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986"
+  },
+  "previous_edition": "EF-LICENSE-20261103-01",
+  "prepublication_record": {
+    "path": "licensing/prepublication-declaration-20261103.json",
+    "sha256": "0e614e0493ce5efec786bdaa6ff45fcb83f6525e6dfe62c92aa3c0673f583f50"
+  },
+  "d04_current_review": {
+    "path": "licensing/d04-current.review.json",
+    "sha256": "b1da63fba836fe4f9ebae6b08d6974b96a9fe027387edc77367bda53a42f3996"
+  },
+  "actually_effective_prior_rights_if_any_not_revoked": true,
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "historical_draft_review_publicly_delivered": false,
+  "gpl_exception_edition": "EF-GPL-EXCEPTIONS-20261103-01",
+  "exceptions_registry": {
+    "path": "licensing/exceptions.json",
+    "sha256": "d9afec7689dc1e2c94f8f5314ae7896d1f3864a80b9b6ebb3bef5f7470104f44"
+  },
+  "first_delivery_plan": "deferred_by_owner_until_easyfly_acceptance",
+  "external_contributions_accepted": false,
+  "followup_decisions": {
+    "path": "licensing/followup-decisions-20261103.json",
+    "sha256": "3f0df363e294e266e22d83b2ab68651f63e19c0caad4172b95e7d915e75714f0"
+  },
+  "removed_historical_draft_reference": "artifacts/license-transition/prepublication-apache-switch-20261103-160324/prior-history/20261103-pre-transition/licensing/transition.review.json",
+  "historical_draft_removed_by_owner_cleanup": "2026-11-04"
+}

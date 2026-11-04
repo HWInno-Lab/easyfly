@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_udp_protocol/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 独立 UDP 协议与里程计传输
 
 本包与 MAVROS UDP 独立。`udp_peer` 在两个显式 IPv4 端点间传递原生 `nav_msgs/Odometry` 和带随机挑战的心跳，完整保留源时间、两个坐标系、位姿、速度以及两组 6×6 协方差。输出话题不会发布 TF 或执行飞行动作。

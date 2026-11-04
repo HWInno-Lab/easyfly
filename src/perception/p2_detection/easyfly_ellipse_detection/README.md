@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_ellipse_detection/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # 椭圆检测
 
 本包负责 ROS 图像接纳和结果发布，计算实现在

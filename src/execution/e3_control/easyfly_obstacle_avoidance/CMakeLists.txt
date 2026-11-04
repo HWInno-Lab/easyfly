@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_obstacle_avoidance/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 cmake_minimum_required(VERSION 3.8)
 project(easyfly_obstacle_avoidance)
 
@@ -20,5 +24,9 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_supervisor test/test_supervisor.py
     TIMEOUT 45 ENV ROS_LOG_DIR=/tmp/easyfly_d1_supervisor_test ROS_DOMAIN_ID=85)
 endif()
+
+# EasyFly license bundle: copied from this package, with no workspace-root dependency.
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/licenses/"
+  DESTINATION "share/${PROJECT_NAME}/licenses")
 
 ament_package()

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_ground_segmentation/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # easyfly_ground_segmentation
 
 ALG-7.1 的自有 C++17 计算包，target `easyfly_ground_segmentation::easyfly_ground_segmentation`。

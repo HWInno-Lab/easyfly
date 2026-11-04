@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_perception_contracts/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # Perception contracts
 
 V2-native validation, UUID/session/epoch admission, int64 identity, bounded producer-owned int32 aliases and one-way numeric compatibility views. Pixel velocity units never imply world velocity. A V1 numeric view cannot manufacture V2 evidence.

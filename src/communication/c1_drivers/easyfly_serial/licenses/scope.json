@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "edition": "EF-LICENSE-20261103-02",
+  "package": "easyfly_serial",
+  "license": "LicenseRef-EasyFly-Restricted-1.0",
+  "author": "贾国源",
+  "authorized_licensor": "江西穹瞰无人机科技有限公司",
+  "contact_email": "15103443485@163.com",
+  "historical_grants_preserved": true,
+  "ownership_basis": "Owner declaration; not independent legal clearance",
+  "not_a_third_party_license_grant": true,
+  "files": [
+    {
+      "package": "easyfly_serial",
+      "sha256": "9534dbad6c405f915c85657ed129cc7e80b366748acd2e541c48f75e88a46a49",
+      "before_sha256": "36f19ac8ff29a5f31c8f6a392df3d1e26881608efca2aaa2ebe21c1ef6729031",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_bundle_install",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "CMakeLists.txt"
+    },
+    {
+      "package": "easyfly_serial",
+      "sha256": "c5e8b49300b5f143c4ffa246ce40896bc4fccd40a8d31e2c863b581fdb5a8170",
+      "before_sha256": "a98a49f2dc927806b0981a92ee6240f753831a67f7dfea309fc2f7755b5846bf",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "include/easyfly_serial/serial_port.hpp"
+    },
+    {
+      "package": "easyfly_serial",
+      "sha256": "7c52f306edecf13efebea49c6202664d5b58c27db639cf24cb5524d20d886b9b",
+      "before_sha256": "5503af0c8d3e880034be6da19c3eb0130b3fb344268911582ad625b04cd8d20b",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_and_package_metadata",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "package.xml"
+    },
+    {
+      "package": "easyfly_serial",
+      "sha256": "a8bb990d1731026b19723f56b919211f6b07b213eaeef8384bcfefec1dcc549b",
+      "before_sha256": "6b634e0ed72e70832975ac07a4f572a657e159cc52e9ab01f9caf621c27b366b",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "src/serial_port.cpp"
+    },
+    {
+      "package": "easyfly_serial",
+      "sha256": "524687a55eafc3f65a918272f1f369e308033ca04b8489f863733dfb07d485a1",
+      "before_sha256": "e3e0290f98c54acb23ec44686f6b5301694039559b5fd943c94dc67bbf569c3e",
+      "historical_license": "Apache-2.0",
+      "historical_grants_preserved": true,
+      "license": "LicenseRef-EasyFly-Restricted-1.0",
+      "edit_kind": "license_comments_only",
+      "authority_basis": "owner_statement_and_existing_code_migration_instruction",
+      "new_apache_grant_in_this_revision": false,
+      "path": "test/test_loopback.cpp"
+    }
+  ],
+  "retained_files": [],
+  "binary_scope": "Applies only to the covered original contributions in corresponding object forms; no assertion that third-party combinations are cleared.",
+  "current_own_code_license": "LicenseRef-EasyFly-Restricted-1.0",
+  "new_apache_grants_for_covered_own_code": false,
+  "prior_own_apache_declarations": "withdrawn_private_unpublished_proposal_not_current_license",
+  "publication_history_basis": "owner_declared_no_prior_external_distribution_not_independently_verified",
+  "apache_text_role": "third_party_and_reference_only_not_a_new_grant_for_own_code",
+  "declared_license_ids": [
+    "LicenseRef-EasyFly-Restricted-1.0"
+  ],
+  "retained_license_notices": []
+}

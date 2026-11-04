@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2026 EasyFly Project. SPDX-License-Identifier: Apache-2.0 -->
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_video_streamer/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
+<!-- Copyright 2026 EasyFly Project -->
 <!-- Explicit same-host raw-image transport; opt in for every local image endpoint. -->
 <profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
   <transport_descriptors>

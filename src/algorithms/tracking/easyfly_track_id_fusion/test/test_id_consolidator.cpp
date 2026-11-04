@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+// SPDX-FileCopyrightText: 2026 贾国源
+// License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_track_id_fusion/licenses/.
+// This revision offers no Apache-2.0 option for the listed original code.
 // IdConsolidator 单元测试 (Q19): 世界系 id 重关联
 #include <gtest/gtest.h>
 

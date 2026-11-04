@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_msgs/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # 目标跟踪
 int32  target_id          # 目标ID (-1=跟踪最近目标, -2=停止跟踪)
 float64 follow_distance   # 跟随距离 [m]

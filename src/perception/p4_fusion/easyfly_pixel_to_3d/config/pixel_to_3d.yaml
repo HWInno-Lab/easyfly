@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+# SPDX-FileCopyrightText: 2026 贾国源
+# License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_pixel_to_3d/licenses/.
+# This revision offers no Apache-2.0 option for the listed original code.
 # EasyFly M5 像素转 3D 配置
 pixel_to_3d:
   # ---- 话题 ----

@@ -1,3 +1,9 @@
+<!--
+  SPDX-License-Identifier: LicenseRef-EasyFly-Restricted-1.0
+  SPDX-FileCopyrightText: 2026 贾国源
+  License edition: EF-LICENSE-20261103-02; bundle: share/easyfly_pybind/licenses/.
+  This revision offers no Apache-2.0 option for the listed original code.
+-->
 # Python binding of easyfly_core
 
 This is the same C++ SDK, not a second flight state machine. ROS threads never
