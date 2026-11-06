@@ -63,7 +63,13 @@ def atomic(path, value):
 
 def private_directory(path):
     """Create or validate an exclusive administrative state directory."""
-    path.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if path.resolve() != path:
+        raise ValueError('state directory must be private, owned and without symlinks')
+    # pathlib's parents=True creates intermediate directories with default
+    # permissions, leaving ~/.config/easyfly public when onboard is created first.
+    if not path.parent.exists():
+        private_directory(path.parent)
+    path.mkdir(mode=0o700, exist_ok=True)
     info = path.lstat()
     if (not stat.S_ISDIR(info.st_mode) or path.resolve() != path or
             info.st_uid != os.geteuid() or info.st_mode & 0o077):

@@ -133,6 +133,10 @@ struct ManagerWindow::Impl
   QMap<int, Profile> mode_drafts;
   bool onboard_visible{false}, observation_profile{false};
   QLabel * validation_summary{nullptr}, *operation_hint{nullptr}, *startup_progress{nullptr};
+  QLabel * profile_error{nullptr};
+  QPushButton * repair_permissions{nullptr}, *reload_profiles{nullptr};
+  QList<QPushButton *> profile_actions;
+  QString config_error;
   QMap<QWidget *, QLabel *> field_errors;
   QWidget * invalid_field{nullptr};
   QLabel * slam_summary{nullptr};
@@ -240,6 +244,27 @@ struct ManagerWindow::Impl
         left->show(); left->raise(); left->activateWindow();
       });
     auto * left_layout = new QVBoxLayout(left);
+    profile_error = new QLabel(left); profile_error->setObjectName("connectionProfilesError");
+    profile_error->setTextFormat(Qt::PlainText); profile_error->setWordWrap(true);
+    profile_error->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+    left_layout->addWidget(profile_error);
+    repair_permissions = new QPushButton(QStringLiteral("修复配置目录权限"), left);
+    repair_permissions->setObjectName("repairConnectionPermissions");
+    repair_permissions->setToolTip(QStringLiteral("仅将当前用户拥有的配置目录权限设为 0700，不修改配置文件内容"));
+    left_layout->addWidget(repair_permissions);
+    reload_profiles = new QPushButton(QStringLiteral("重新读取配置"), left);
+    reload_profiles->setObjectName("reloadConnectionProfiles"); left_layout->addWidget(reload_profiles);
+    QObject::connect(repair_permissions, &QPushButton::clicked, owner, [this] {
+      try {
+        repair_directory_permissions(QFileInfo(config_file).absolutePath());
+        read_configuration(); refresh(0);
+      } catch (const std::exception & error) {
+        config_error = QString::fromUtf8(error.what()); update();
+      }
+    });
+    QObject::connect(reload_profiles, &QPushButton::clicked, owner, [this] {
+      read_configuration(); refresh(0);
+    });
     list = new QListWidget(left); list->setObjectName("connectionList");
     list->setMinimumWidth(120);
     list->setTextElideMode(Qt::ElideRight);
@@ -260,6 +285,7 @@ struct ManagerWindow::Impl
     auto * export_button = button(
       QStringLiteral(
         "导出"), "exportConnections", transfer);
+    profile_actions = {add, copy, import, export_button};
     profile_save = button(QStringLiteral("保存名称与配置"), "saveManagedProfile", left_layout);
     QObject::connect(profile_save, &QPushButton::clicked, owner, [this] {save_current();});
     auto * done = new QPushButton(QStringLiteral("返回配置页"), left);
@@ -858,18 +884,7 @@ struct ManagerWindow::Impl
       "QLabel[connectionHealth=unknown] {color:#667085;}"
       "QLineEdit,QSpinBox,QComboBox {min-height:24px;}");
 
-    try {
-      profiles = read_profiles(config_file);
-      for (const auto & p : profiles) {persisted_hashes.insert(p.id, p.hash());}
-    } catch (const std::exception & error) {
-      healthy = false;
-      notice(QString::fromUtf8(error.what()) + QStringLiteral("；保留原文件，不覆盖。"));
-    }
-    if (healthy && profiles.isEmpty()) {
-      auto initial = Profile::create(QStringLiteral("本机仿真"));
-      initial.mode = "sitl";
-      profiles.push_back(initial);
-    }
+    read_configuration();
     QObject::connect(
       connection_selector, qOverload<int>(&QComboBox::currentIndexChanged),
       owner, [this](int row) {if (!loading) {list->setCurrentRow(row);}});
@@ -1174,6 +1189,23 @@ struct ManagerWindow::Impl
         }
       });
     refresh(0); load_scenes(); timer.start(); rpc.connect_to(runtime);
+  }
+  void read_configuration()
+  {
+    try {
+      const auto next = read_profiles(config_file);
+      profiles = next; persisted_hashes.clear(); healthy = true; config_error.clear();
+      for (const auto & p : profiles) {persisted_hashes.insert(p.id, p.hash());}
+      if (profiles.isEmpty()) {
+        auto initial = Profile::create(QStringLiteral("本机仿真")); initial.mode = "sitl";
+        profiles.push_back(initial);
+      }
+      notice(QString());
+    } catch (const std::exception & error) {
+      healthy = false;
+      config_error = QString::fromUtf8(error.what()) + QStringLiteral("；保留原文件，不覆盖。");
+      notice(config_error);
+    }
   }
   void filter_scenes()
   {
@@ -1575,7 +1607,7 @@ struct ManagerWindow::Impl
     const auto live = actual["workspace"].toObject();
     const auto backend_phase = actual["backend"].toObject()["phase"].toString();
     const bool backend_stopping = backend_phase == "stopping" || backend_phase == "stop_unknown";
-    const bool backend_fault = backend_phase == "degraded" || backend_phase == "unknown" ||
+    const bool backend_fault = backend_phase == "failed" || backend_phase == "degraded" || backend_phase == "unknown" ||
       backend_phase == "stop_unknown" || actual["recovery_blocked"].toBool() ||
       !actual["recovery_error"].toString().isEmpty() ||
       (actual["backend_running"].toBool() && !actual["backend_fresh"].toBool());
@@ -1583,7 +1615,7 @@ struct ManagerWindow::Impl
       QStringLiteral("仿真 / 通信 · %1").arg(
         actual["backend_running"].toBool() ?
         (backend_fault ? QStringLiteral("运行异常") : QStringLiteral("运行中")) :
-        QStringLiteral("未运行")));
+        (backend_phase == "failed" ? QStringLiteral("失败") : QStringLiteral("未运行"))));
     dds_card->setText(
       QStringLiteral("DDS · %1").arg(
         actual["workspace_fresh"].toBool() && live["observer_running"].toBool() ?
@@ -1767,7 +1799,12 @@ struct ManagerWindow::Impl
     try {
       form_profile().validate(); valid = true;
     } catch (const std::exception & error) {start->setToolTip(error.what());}
-    show_validation(valid ? QString() : start->toolTip());
+    show_validation(!healthy ? config_error : valid ? QString() : start->toolTip());
+    profile_error->setText(!healthy ? QStringLiteral("无法读取连接配置：") + config_error : QString());
+    profile_error->setVisible(!healthy);
+    repair_permissions->setVisible(!healthy && directory_permissions_repairable(QFileInfo(config_file).absolutePath()));
+    reload_profiles->setVisible(!healthy);
+    for (auto * action : profile_actions) {action->setEnabled(healthy);}
     const auto scene_info = scene->currentData(Qt::UserRole + 1).toJsonObject();
     scene_preview->setVisible(sim); preview_caption->setVisible(sim);
     const auto image_preview = scene_info["preview_image"].toObject();
@@ -1929,6 +1966,10 @@ struct ManagerWindow::Impl
         progress += QStringLiteral("\n已完成：") + finished.join(QStringLiteral("、"));
       }
     }
+    if (backend_phase == "failed") {
+      progress = stage.isEmpty() ? QStringLiteral("启动失败") :
+        QStringLiteral("启动失败（阶段：%1）").arg(stage);
+    }
     if (backend["startup_stage"] == "observing" && !backend_fault && !details_toggle->isChecked()) {progress.clear();}
     const auto algorithms = backend["algorithm_backends"].toObject();
     const QMap<QString, QString> role_labels{{"detection", QStringLiteral("目标检测")}, {"multi_tracking", QStringLiteral("多目标跟踪")},
@@ -1996,7 +2037,7 @@ struct ManagerWindow::Impl
         values["Tx total bytes"].toString(
           "未知"), values["Rx total bytes"].toString("未知"));
     }
-    if (actual["phase"] == "starting_backend") {
+    if (actual["phase"] == "starting_backend" && backend_phase != "failed" && backend_phase != "stopped") {
       state = backend["message"].toString(
         QStringLiteral(
           "仿真/通信预检查与启动中，请稍"

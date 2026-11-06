@@ -13,9 +13,11 @@
 
 """Keep delayed simulation actions inside their original launch input scope."""
 
+from copy import deepcopy
+
 from launch.actions import (
     GroupAction,
-    ResetLaunchConfigurations,
+    OpaqueFunction,
     SetEnvironmentVariable,
     TimerAction,
     UnsetEnvironmentVariable,
@@ -26,9 +28,15 @@ class ScopedTimerAction(TimerAction):
     """Humble TimerAction retains locals, but not scoped configs/environment."""
 
     def execute(self, context):
-        self._saved_configurations = dict(context.launch_configurations)
+        # launch_ros also stores typed values here (e.g. global_params tuples).
+        # They are already evaluated state, not substitution expressions.
+        self._saved_configurations = deepcopy(context.launch_configurations)
         self._saved_environment = dict(context.environment)
         return super().execute(context)
+
+    def _restore_configurations(self, context):
+        context.launch_configurations.clear()
+        context.launch_configurations.update(deepcopy(self._saved_configurations))
 
     def handle(self, context):
         actions = super().handle(context)
@@ -45,7 +53,7 @@ class ScopedTimerAction(TimerAction):
         # unchanged afterward, including on nested timers. Shutdown cancellation
         # and period resolution stay owned by the original TimerAction.
         return [GroupAction(scoped=True, actions=[
-            ResetLaunchConfigurations(self._saved_configurations),
+            OpaqueFunction(function=self._restore_configurations),
             *restore_environment,
             *actions,
         ])]

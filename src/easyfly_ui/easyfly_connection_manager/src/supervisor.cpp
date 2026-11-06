@@ -254,7 +254,7 @@ struct Supervisor::Impl
               end)).object();
           backend_input.remove(0, end + 1);
           if (value.isEmpty()) {continue;}
-          backend_state = value; backend_heartbeat = clock.elapsed();
+          receive_backend(value);
           if (value["process_running"].toBool() &&
           process.state() == QProcess::NotRunning &&
           phase == "starting_backend")
@@ -295,6 +295,11 @@ struct Supervisor::Impl
           }
         }
         backend_heartbeat = -1;
+        if (backend_state["phase"] == "failed") {
+          phase = "failed"; message = backend_state["error"].toString();
+        } else if (phase == "starting_backend") {
+          phase = "stopped"; message = backend_state["message"].toString();
+        }
         if (backend_state["process_running"] == false && backend_state.contains("exit_code")) {
           backend_identity = {}; recovered_backend = false;
         } else if (backend_state["phase"] != "stopped") {
@@ -458,6 +463,11 @@ struct Supervisor::Impl
   void receive_backend(const QJsonObject & value)
   {
     backend_state = value; backend_heartbeat = clock.elapsed();
+    if (value["phase"] == "failed") {
+      phase = "failed"; message = value["error"].toString(value["message"].toString());
+    } else if (value["phase"] == "stopped" && phase == "starting_backend") {
+      phase = "stopped"; message = value["message"].toString();
+    }
     if (value["process_running"] == false && value.contains("exit_code")) {
       recovered_backend = false; backend_identity = {}; persist();
     }

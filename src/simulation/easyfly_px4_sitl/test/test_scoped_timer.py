@@ -26,6 +26,7 @@ from launch.actions import (
 )
 from launch.substitutions import LaunchConfiguration
 from launch.events import Shutdown
+from launch_ros.actions import SetParameter
 from easyfly_px4_sitl.scoped_timer import ScopedTimerAction
 
 
@@ -112,3 +113,39 @@ def test_shutdown_still_cancels_pending_scoped_actions():
     ]))
     assert service.run() == 0
     assert not seen
+
+
+def test_typed_global_parameters_survive_nested_timers_without_scope_leaks():
+    seen = []
+
+    def inspect(context, expected, label):
+        assert context.launch_configurations['global_params'] == expected
+        seen.append(label)
+        return []
+
+    service = LaunchService()
+    service.include_launch_description(LaunchDescription([
+        SetParameter(name='parent', value=99),
+        GroupAction(forwarding=False, actions=[
+            SetParameter(name='perception_version', value=1),
+            ScopedTimerAction(period=.01, actions=[
+                OpaqueFunction(function=inspect, kwargs={
+                    'expected': [('perception_version', 1)], 'label': 'delayed'}),
+                SetParameter(name='nested', value=2),
+                ScopedTimerAction(period=.01, actions=[
+                    OpaqueFunction(function=inspect, kwargs={
+                        'expected': [('perception_version', 1), ('nested', 2)],
+                        'label': 'nested'}),
+                ]),
+            ]),
+            # SetParameter mutates its list in place after the timer is scheduled.
+            SetParameter(name='later', value=7),
+        ]),
+        SetParameter(name='parent_after', value=3),
+        ScopedTimerAction(period=.05, actions=[
+            OpaqueFunction(function=inspect, kwargs={
+                'expected': [('parent', 99), ('parent_after', 3)], 'label': 'parent'}),
+        ]),
+    ]))
+    assert service.run() == 0
+    assert seen == ['delayed', 'nested', 'parent']

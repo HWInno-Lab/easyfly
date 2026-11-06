@@ -53,6 +53,8 @@ struct Profile
   QString gcs_url() const;
 };
 QString private_directory(const QString & path, bool create = true);
+bool directory_permissions_repairable(const QString & path);
+void repair_directory_permissions(const QString & path);
 QString default_runtime_directory();
 QString default_config_file();
 QString desktop_program();

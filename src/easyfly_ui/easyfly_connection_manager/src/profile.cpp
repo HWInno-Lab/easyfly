@@ -24,6 +24,7 @@
 #include <QStandardPaths>
 #include <QUuid>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <unistd.h>
 #include <cmath>
 #include <stdexcept>
@@ -457,6 +458,26 @@ QString private_directory(const QString & path, bool create)
     QFileInfo(path).canonicalFilePath() == path,
     QStringLiteral("私有目录不能通过符号链接访问"));
   return path;
+}
+bool directory_permissions_repairable(const QString & path)
+{
+  struct stat info {};
+  return QDir::isAbsolutePath(path) && QDir::cleanPath(path) == path && path != "/" &&
+         QFileInfo(path).canonicalFilePath() == path &&
+         ::lstat(QFile::encodeName(path).constData(), &info) == 0 &&
+         S_ISDIR(info.st_mode) && info.st_uid == ::getuid() && (info.st_mode & 0077);
+}
+void repair_directory_permissions(const QString & path)
+{
+  require(directory_permissions_repairable(path), QStringLiteral("此目录不可自动修复，请检查路径和所有者"));
+  const int fd = ::open(QFile::encodeName(path).constData(), O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+  require(fd >= 0, QStringLiteral("无法打开待修复的配置目录"));
+  struct stat info {};
+  const bool owned = ::fstat(fd, &info) == 0 && S_ISDIR(info.st_mode) && info.st_uid == ::getuid();
+  const bool repaired = owned && ::fchmod(fd, 0700) == 0;
+  ::close(fd);
+  require(repaired, QStringLiteral("配置目录权限修复失败；未修改配置内容"));
+  private_directory(path, false);
 }
 QString default_runtime_directory()
 {

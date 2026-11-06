@@ -14,6 +14,8 @@
 
 import copy
 import json
+import os
+import stat
 from pathlib import Path
 import sys
 
@@ -28,6 +30,32 @@ def config():
     """Load the installed contract example without embedding actual credentials."""
     root = Path(__file__).resolve().parents[1]
     return json.loads((root / 'config/remote-server.example.json').read_text())
+
+
+def test_onboard_first_creates_private_intermediate_config_directories(tmp_path):
+    from easyfly_connection_manager.remote_service import private_directory
+    parent = tmp_path / '.config' / 'easyfly'
+    previous = os.umask(0o022)
+    try:
+        private_directory(parent / 'onboard')
+    finally:
+        os.umask(previous)
+    assert stat.S_IMODE(parent.stat().st_mode) == 0o700
+    assert stat.S_IMODE((parent / 'onboard').stat().st_mode) == 0o700
+
+
+def test_private_directory_does_not_change_existing_parents_or_follow_symlinks(tmp_path):
+    from easyfly_connection_manager.remote_service import private_directory
+    shared = tmp_path / 'existing'
+    shared.mkdir(mode=0o755)
+    shared.chmod(0o755)
+    private_directory(shared / 'private')
+    assert stat.S_IMODE(shared.stat().st_mode) == 0o755
+    link = tmp_path / 'link'
+    link.symlink_to(shared, target_is_directory=True)
+    with pytest.raises(ValueError):
+        private_directory(link / 'must-not-be-created')
+    assert not (shared / 'must-not-be-created').exists()
 
 
 @pytest.mark.parametrize('change', [

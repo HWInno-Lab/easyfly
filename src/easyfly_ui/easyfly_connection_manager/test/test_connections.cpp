@@ -217,6 +217,100 @@ TEST(ConnectionProfile, PrivateAtomicStorePreservesInvalidData)
   EXPECT_THROW(cm::read_profiles(path), std::runtime_error);
   ASSERT_EQ(::chmod(root.path().toUtf8().constData(), 0700), 0);
 }
+TEST(ConnectionProfile, ExplicitPermissionRepairPreservesFilesAndRejectsAliases)
+{
+  QTemporaryDir root;
+  const auto directory = root.path() + "/config";
+  ASSERT_TRUE(QDir().mkdir(directory));
+  ASSERT_EQ(::chmod(directory.toUtf8().constData(), 0755), 0);
+  QFile file(directory + "/connections.json");
+  ASSERT_TRUE(file.open(QIODevice::WriteOnly)); file.write("preserve invalid bytes"); file.close();
+  const auto alias = root.path() + "/alias";
+  ASSERT_TRUE(QFile::link(directory, alias));
+  EXPECT_FALSE(cm::directory_permissions_repairable(alias));
+  EXPECT_THROW(cm::repair_directory_permissions(alias), std::runtime_error);
+  ASSERT_TRUE(cm::directory_permissions_repairable(directory));
+  cm::repair_directory_permissions(directory);
+  struct stat info {};
+  ASSERT_EQ(::stat(directory.toUtf8().constData(), &info), 0);
+  EXPECT_EQ(info.st_mode & 0777, 0700);
+  EXPECT_FALSE(cm::directory_permissions_repairable(directory));
+  ASSERT_TRUE(file.open(QIODevice::ReadOnly)); EXPECT_EQ(file.readAll(), "preserve invalid bytes");
+}
+
+TEST(ConnectionManager, PublicConfigDirectoryHasVisibleRepairAndRecoversWithoutRestart)
+{
+  QTemporaryDir root;
+  const auto directory = root.path() + "/config";
+  ASSERT_TRUE(QDir().mkdir(directory));
+  ASSERT_EQ(::chmod(directory.toUtf8().constData(), 0755), 0);
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  cm::ManagerWindow manager(directory + "/connections.json", root.path() + "/runtime");
+  manager.show();
+  auto * dialog = manager.findChild<QDialog *>("connectionProfilesDialog");
+  manager.findChild<QPushButton *>("manageConnections")->click();
+  auto * error = dialog->findChild<QLabel *>("connectionProfilesError");
+  auto * repair = dialog->findChild<QPushButton *>("repairConnectionPermissions");
+  auto * add = manager.findChild<QPushButton *>("newConnection");
+  auto * name = manager.findChild<QLineEdit *>("connectionName");
+  ASSERT_TRUE(until([&] {return error->isVisible();}));
+  EXPECT_TRUE(error->text().contains("0700")); EXPECT_TRUE(repair->isVisible());
+  EXPECT_FALSE(add->isEnabled()); EXPECT_FALSE(name->isEnabled());
+  repair->click();
+  ASSERT_TRUE(until([&] {return name->isEnabled();}));
+  EXPECT_FALSE(error->isVisible()); EXPECT_FALSE(repair->isVisible());
+  EXPECT_EQ(manager.findChild<QComboBox *>("connectionSelector")->count(), 1);
+  add->click(); EXPECT_EQ(manager.findChild<QComboBox *>("connectionSelector")->count(), 2);
+  name->setFocus(); name->selectAll(); QTest::keyClicks(name, "Recovered profile");
+  EXPECT_EQ(name->text(), "Recovered profile");
+  manager.findChild<QPushButton *>("saveManagedProfile")->click();
+  ASSERT_EQ(cm::read_profiles(directory + "/connections.json").size(), 2);
+}
+
+TEST(ConnectionManager, CorruptConfigurationIsExplainedAndNeverOverwrittenByRecovery)
+{
+  QTemporaryDir root;
+  const auto path = root.path() + "/connections.json";
+  QFile file(path); ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+  file.write("{broken"); file.close(); ASSERT_TRUE(file.setPermissions(QFile::ReadOwner | QFile::WriteOwner));
+  cm::Supervisor supervisor(root.path() + "/runtime", DESKTOP_BINARY_FROM_TEST);
+  cm::ManagerWindow manager(path, root.path() + "/runtime"); manager.show();
+  manager.findChild<QPushButton *>("manageConnections")->click();
+  auto * error = manager.findChild<QLabel *>("connectionProfilesError");
+  EXPECT_FALSE(error->text().isEmpty());
+  EXPECT_FALSE(manager.findChild<QPushButton *>("repairConnectionPermissions")->isVisible());
+  EXPECT_FALSE(manager.findChild<QPushButton *>("newConnection")->isEnabled());
+  manager.findChild<QPushButton *>("reloadConnectionProfiles")->click();
+  ASSERT_TRUE(file.open(QIODevice::ReadOnly)); EXPECT_EQ(file.readAll(), "{broken"); file.close();
+  cm::write_profiles(path, {cm::Profile::create("Restored")});
+  manager.findChild<QPushButton *>("reloadConnectionProfiles")->click();
+  ASSERT_TRUE(until([&] {return manager.findChild<QLineEdit *>("connectionName")->isEnabled();}));
+  EXPECT_EQ(manager.findChild<QLineEdit *>("connectionName")->text(), "Restored");
+}
+
+TEST(ConnectionManager, FailedPreflightReachesFailureStateAndShowsReason)
+{
+  QTemporaryDir root;
+  auto p = cm::Profile::create("Missing serial device");
+  p.mode = "communication"; p.transport = "serial";
+  p.serial_device = "/dev/easyfly-test-device-does-not-exist";
+  const auto runtime = root.path() + "/runtime", path = root.path() + "/connections.json";
+  cm::write_profiles(path, {p});
+  cm::Supervisor supervisor(runtime, DESKTOP_BINARY_FROM_TEST);
+  cm::ManagerWindow manager(path, runtime); manager.show();
+  Peer peer(runtime);
+  ASSERT_TRUE(peer.request({{"op", "start"}, {"profile", p.json()}})["ok"].toBool());
+  ASSERT_TRUE(until([&] {
+    return supervisor.status()["phase"] == "failed" && !supervisor.status()["backend_running"].toBool();
+  }, 10000));
+  auto * summary = manager.findChild<QLabel *>("connectionActualState");
+  auto * progress = manager.findChild<QLabel *>("connectionStartupProgress");
+  ASSERT_TRUE(until([&] {return summary->text().contains(QStringLiteral("串口设备不存在"));}));
+  EXPECT_TRUE(progress->text().contains(QStringLiteral("启动失败")));
+  EXPECT_FALSE(summary->text().contains(QStringLiteral("请稍候")));
+  EXPECT_EQ(manager.property("connectionState").toJsonObject()["phase"], "failed");
+}
+
 TEST(ConnectionProfile, SelectedEnvironmentClearsInheritedDiscovery)
 {
   const auto old_server = qgetenv("ROS_DISCOVERY_SERVER");
